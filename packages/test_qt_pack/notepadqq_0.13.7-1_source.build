@@ -1,0 +1,54 @@
+ dpkg-buildpackage -rfakeroot -d -us -uc -S
+dpkg-buildpackage: export CFLAGS from dpkg-buildflags (origin: vendor): -g -O2
+dpkg-buildpackage: export CPPFLAGS from dpkg-buildflags (origin: vendor): 
+dpkg-buildpackage: export CXXFLAGS from dpkg-buildflags (origin: vendor): -g -O2
+dpkg-buildpackage: export FFLAGS from dpkg-buildflags (origin: vendor): -g -O2
+dpkg-buildpackage: export LDFLAGS from dpkg-buildflags (origin: vendor): -Wl,-Bsymbolic-functions
+dpkg-buildpackage: source package notepadqq
+dpkg-buildpackage: source version 0.13.7-1
+dpkg-buildpackage: source changed by Daniele Di Sarli <danieleds0@gmail.com>
+ dpkg-source --before-build notepadqq-0.13.7
+ fakeroot debian/rules clean
+dh_testdir
+dh_testroot
+rm -f build-stamp
+# Add here commands to clean up after the build process.
+#/usr/bin/make clean
+#/usr/bin/make distclean
+dh_clean
+ dpkg-source -b notepadqq-0.13.7
+dpkg-source: info: using source format `3.0 (quilt)'
+dpkg-source: info: building notepadqq using existing ./notepadqq_0.13.7.orig.tar.gz
+dpkg-source: info: building notepadqq in notepadqq_0.13.7-1.debian.tar.gz
+dpkg-source: info: building notepadqq in notepadqq_0.13.7-1.dsc
+ dpkg-genchanges -S >../notepadqq_0.13.7-1_source.changes
+dpkg-genchanges: including full source code in upload
+ dpkg-source --after-build notepadqq-0.13.7
+dpkg-buildpackage: full upload (original source is included)
+Now running lintian...
+W: notepadqq source: dh-make-template-in-source debian/menu.ex
+W: notepadqq source: dh-make-template-in-source debian/manpage.sgml.ex
+W: notepadqq source: dh-make-template-in-source debian/watch.ex
+W: notepadqq source: dh-make-template-in-source debian/manpage.1.ex
+W: notepadqq source: dh-make-template-in-source debian/postrm.ex
+W: notepadqq source: dh-make-template-in-source debian/init.d.ex
+W: notepadqq source: dh-make-template-in-source debian/emacsen-install.ex
+W: notepadqq source: dh-make-template-in-source debian/manpage.xml.ex
+W: notepadqq source: dh-make-template-in-source debian/postinst.ex
+W: notepadqq source: dh-make-template-in-source debian/notepadqq.cron.d.ex
+W: notepadqq source: dh-make-template-in-source debian/notepadqq.doc-base.EX
+W: notepadqq source: dh-make-template-in-source debian/preinst.ex
+W: notepadqq source: dh-make-template-in-source debian/notepadqq.default.ex
+W: notepadqq source: dh-make-template-in-source debian/prerm.ex
+W: notepadqq source: dh-make-template-in-source debian/emacsen-remove.ex
+W: notepadqq source: dh-make-template-in-source debian/emacsen-startup.ex
+W: notepadqq source: out-of-date-standards-version 3.8.4 (current is 3.9.1)
+Finished running lintian.
+Now signing changes and any dsc files...
+ signfile notepadqq_0.13.7-1.dsc Daniele Di Sarli <danieleds0@gmail.com>
+gpg: gpg-agent non è disponibile in questa sessione
+
+ signfile notepadqq_0.13.7-1_source.changes Daniele Di Sarli <danieleds0@gmail.com>
+gpg: gpg-agent non è disponibile in questa sessione
+
+Successfully signed dsc and changes files

@@ -1,0 +1,44 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Format: 1.8
+Date: Wed, 30 Mar 2011 22:55:12 +0200
+Source: notepadqq
+Binary: notepadqq
+Architecture: source
+Version: 0.13.7-1
+Distribution: maverick
+Urgency: low
+Maintainer: Daniele Di Sarli <danieleds0@gmail.com>
+Changed-By: Daniele Di Sarli <danieleds0@gmail.com>
+Description: 
+ notepadqq  - Source code editor
+Changes: 
+ notepadqq (0.13.7-1) maverick; urgency=low
+ .
+   * Software icons now are the system icons
+   * Improved the real-time highlight of selected words
+Checksums-Sha1: 
+ c4f5bd33af1fd7a5a546b9e6a10986e84dc520b4 1381 notepadqq_0.13.7-1.dsc
+ e9ed17ca894250f03f2aca3af4d70090272827b9 93029 notepadqq_0.13.7.orig.tar.gz
+ ae76efec11c16688c26a0e3c5612a71702ac33ab 11898 notepadqq_0.13.7-1.debian.tar.gz
+Checksums-Sha256: 
+ 296463eece7fd54ac29ec3d52601cc08781bec94f2fbc33e60cbb225e7f18a94 1381 notepadqq_0.13.7-1.dsc
+ a6268431c2202b26e6354d8d0d22f73fe0353bdb3b9a0fb28945e80da708b116 93029 notepadqq_0.13.7.orig.tar.gz
+ c95c5a1a61bc626c16568d6b2992fe275c399c564483b6a9d84ddabd13f59fa3 11898 notepadqq_0.13.7-1.debian.tar.gz
+Files: 
+ 2f4b07e0c070cae16ac62a95266918cd 1381 main/devel extra notepadqq_0.13.7-1.dsc
+ ffd8421d0cc16cb4367915fb8027f34c 93029 main/devel extra notepadqq_0.13.7.orig.tar.gz
+ 7b0e0e728ace089d9c746974d6324673 11898 main/devel extra notepadqq_0.13.7-1.debian.tar.gz
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNk59QAAoJEAxTuFTjBqAJxMQH/2JS+GR32+8PkoBGhoEOc28A
+4Phk7f/VmT2A3XaqpPdkl6migvSnq37yqNlxKxDCFGpNY1tS520l0xrfidOGbGXv
+Q0/F+4pEJkUImeB+KhTGlg9NP9TNsuDRCeFPvH6qCM9/Y536YSs6FADcU45YGvf0
+0gAf1ShkIAPGw16KT2peiP09v2XT72eXMyqh0PmtLTqkK8S4Pwm2F8e43iojmVTo
+PtQEP8odRbik6z39kFAK4G2bskZ/7Fs7Rk/Qeu3zBRN7hnSOMugksOgYKtsf41YZ
+q/0u/X/RFzYSgKQ/6ZnaGqSCh5jW3EUDnyE2JiFUJtpZiwEC4yHpUoClxzMT8C8=
+=7ljb
+-----END PGP SIGNATURE-----

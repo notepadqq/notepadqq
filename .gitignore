@@ -1,0 +1,12 @@
+# Temp files
+*~
+.directory
+*.kate-swp
+*.swp
+.DS_Store
+
+notepadqq-build-desktop
+build
+src/notepadqq.pro.user
+src/Makefile
+docs/html

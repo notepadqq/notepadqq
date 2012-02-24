@@ -1,0 +1,23 @@
+ -   Resize della statusBar: permettere l'overlap delle QLabel [il tizio su #qt non sembra molto d'accordo]
+ -   Dare vita alle QLabel nella statusBar
+ -   Rilevare modifiche esterne a un file già caricato (QFileSystemWatcher)
+ -   Aggiungere supporto agli altri tipi di file
+ -   CopyAvailable SIGNAL
+ -   Attivare / disattivare le voci del menu "modifica" in base alla situazione
+ -   Colore dei simboli "show white space and tabs" e "show wrap symbol"
+ -   Quando una tab viene chiusa per qualche motivo (es. context menu), torna all'ultima tab selezionata
+ -   Dopo l'highlight del testo selezionato, ripristinare la corretta posizione delle scrollbar
+ -   "Reload from disk" deve ripristinare la posizione del cursore e delle scrollbar, se possibile
+ -   Single instance e workspaces, http://ubuntuforums.org/showthread.php?t=1070892
+ 
+ Dipendenze:
+ objdump -p notepadqq-build-desktop/notepadqq |grep NEEDED
+  NEEDED               libqscintilla2.so.5
+  NEEDED               libQtGui.so.4
+  NEEDED               libQtNetwork.so.4
+  NEEDED               libQtCore.so.4
+  NEEDED               libpthread.so.0
+  NEEDED               libstdc++.so.6
+  NEEDED               libm.so.6
+  NEEDED               libgcc_s.so.1
+  NEEDED               libc.so.6

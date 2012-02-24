@@ -1,0 +1,20 @@
+?package(notepadqq):\
+    needs="x11"\
+    section="Applications/Programming"\
+    hints="Experienced"\
+    title="Notepadqq"\
+    longtitle="Source code editor"\
+    icon="/usr/share/pixmaps/notepadqq_32x32.xpm"\
+    icon32x32="/usr/share/pixmaps/notepadqq_32x32.xpm"\
+    icon16x16="/usr/share/pixmaps/notepadqq_16x16.xpm"\
+    command="/usr/bin/notepadqq"
+?package(notepadqq):\
+    needs="x11"\
+    section="Applications/Editors"\
+    hints="Experienced"\
+    title="Notepadqq"\
+    longtitle="Source code editor"\
+    icon="/usr/share/pixmaps/notepadqq_32x32.xpm"\
+    icon32x32="/usr/share/pixmaps/notepadqq_32x32.xpm"\
+    icon16x16="/usr/share/pixmaps/notepadqq_16x16.xpm"\
+    command="/usr/bin/notepadqq"

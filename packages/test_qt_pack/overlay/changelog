@@ -1,0 +1,18 @@
+notepadqq (0.13.8-1) lucid maverick natty; urgency=low
+
+  * Added support for mouse wheel zooming
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Thu, 31 Mar 2011 00:12:55 +0200
+
+notepadqq (0.13.7-1) maverick; urgency=low
+
+  * Software icons now are the system icons
+  * Improved the real-time highlight of selected words
+
+ -- Daniele Di Sarli <daniele@nb-dds>  Wed, 30 Mar 2011 22:55:12 +0200
+
+notepadqq (0.13.6-2) maverick; urgency=low
+
+  * Initial release (Closes: #0)
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Mon, 28 Mar 2011 23:59:00 +0200

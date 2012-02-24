@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Notepadqq
+GenericName=Notepadqq source editor
+Comment=Source code editor
+Comment[en_GB]=Source code editor
+Comment[it]=Editor di codice sorgente
+Exec=notepadqq
+Terminal=false
+Type=Application
+StartupNotify=false
+MimeType=text/plain;
+Icon=notepadqq_mainicon_32.png
+Categories=Application;Development;Utility;TextEditor;

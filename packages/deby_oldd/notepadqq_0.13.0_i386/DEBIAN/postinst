@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+# install alternatives link for notepadqq
+
+case "$1" in
+    configure)
+        # register notepadqq as a gnome-text-editor in the alternatives system
+        update-alternatives \
+            --install \
+                /usr/bin/gnome-text-editor \
+                gnome-text-editor \
+                /usr/bin/notepadqq \
+                50 \
+            --slave \
+                /usr/share/man/man1/gnome-text-editor.1.gz \
+                gnome-text-editor.1.gz \
+                /usr/share/man/man1/notepadqq.1.gz
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 0
+    ;;
+esac
+
+
+if [ "$1" = "configure" ] && [ -x "`which update-menus 2>/dev/null`" ]; then
+	update-menus
+fi
+
+
+
+exit 0

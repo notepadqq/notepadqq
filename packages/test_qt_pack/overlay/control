@@ -1,0 +1,17 @@
+Source: notepadqq
+Section: devel
+Priority: extra
+Maintainer: Daniele Di Sarli <danieleds0@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), libqt4-dev, qt4-qmake, libqscintilla2-dev
+Standards-Version: 3.9.1
+Homepage: http://notepadqq.sourceforge.net
+#Vcs-Git: git://git.debian.org/collab-maint/notepadqq.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/notepadqq.git;a=summary
+
+Package: notepadqq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqscintilla2-5, file
+Description: Source code editor
+ Notepadqq is the Linux clone of Notepad++.
+ .
+ It is based on Scintilla, a syntax-highlight library.
