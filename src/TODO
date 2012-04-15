@@ -9,7 +9,7 @@
  -   "Reload from disk" deve ripristinare la posizione del cursore e delle scrollbar, se possibile
  -   Single instance e workspaces, http://ubuntuforums.org/showthread.php?t=1070892
  -   Leggermente più scura la scritta "nqq" nelle icone
- -   Provare notepadqq su natty per verificare l'interfaccia utente
+ -   Provare notepadqq su precise e debian per verificare l'interfaccia utente
  -   Aggiungere parametri -h(--help) e -v(--version), come da man page
  -   Testare apertura di notepadqq tramite context menu di sistema su un file
  -   URGENTE: L'highlight della selezione è lento con file grandi. È meglio iniziare il ciclo di highlight partendo dalla schermata correntemente visualizzata.
@@ -21,7 +21,7 @@
  
  -- Launchpad
  -   Supportare le traduzioni
- -   Supportare svn (mirror con sourceforge, oppure importazione svn?)
+ -   Supportare git (mirror o importazione da github?)
  
  Dipendenze:
  objdump -p notepadqq-build-desktop/notepadqq |grep NEEDED
