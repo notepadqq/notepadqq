@@ -33,7 +33,7 @@
 
 
 const QString VERSION = "0.13.10"; // major.minor.revision
-const QString COPYRIGHT = QObject::trUtf8("Copyright © 2010-2011, the Notepadqq team");
+const QString COPYRIGHT = QObject::trUtf8("Copyright © 2010-2012, the Notepadqq team");
 const QString URL = "http://notepadqq.sourceforge.net/";
 
 
