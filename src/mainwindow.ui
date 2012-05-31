@@ -10,9 +10,6 @@
     <height>329</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string notr="true">Notepadqq</string>
-  </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
     <normaloff>:/icons/icons/notepadqq.svg</normaloff>:/icons/icons/notepadqq.svg</iconset>
@@ -42,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

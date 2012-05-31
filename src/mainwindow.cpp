@@ -918,14 +918,18 @@ void MainWindow::updateGui(int index, QTabWidgetqq * _tabWidget)
         QString descr = fileFormatDescription(filename);
         statusBar_fileFormat->setText(descr);
 
-        QString modified_sign = "";
-        if(sci->isModified()) modified_sign = "*";
+        //QString modified_sign = "";
+        //if(sci->isModified()) modified_sign = "*";
+        this->setWindowModified(sci->isModified());
+
         if(sci->fileName() == "")
         {
-            this->setWindowTitle(modified_sign + _tabWidget->tabText(index) + " - " + QCoreApplication::applicationName());
+            this->setWindowFilePath(_tabWidget->tabText(index));
+            //this->setWindowTitle(modified_sign + _tabWidget->tabText(index) + " - " + QCoreApplication::applicationName());
             ui->actionReload_from_Disk->setEnabled(false);
         } else {
-            this->setWindowTitle(modified_sign + sci->fileName() + " - " + QCoreApplication::applicationName());
+            this->setWindowFilePath(sci->fileName());
+            //this->setWindowTitle(modified_sign + sci->fileName() + " - " + QCoreApplication::applicationName());
             ui->actionReload_from_Disk->setEnabled(true);
         }
 
