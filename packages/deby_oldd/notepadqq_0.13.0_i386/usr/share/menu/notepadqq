@@ -1,7 +1,0 @@
-?package(notepadqq):\
-    needs="x11"\
-    section="Applications/Development"\
-    title="Notepadqq"\
-    longtitle="Source code editor"\
-    icon="/usr/share/pixmaps/notepadqq_mainicon_32.png"\
-    command="/usr/bin/notepadqq"

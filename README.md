@@ -3,7 +3,7 @@ Notepadqq
 
 Dependencies
 ------------
-   * QScintilla (libqscintilla2-5)
+   * QScintilla (libqscintilla2-8)
 
 How to build
 ------------
