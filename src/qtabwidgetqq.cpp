@@ -21,7 +21,10 @@
  */
 
 #include "qtabwidgetqq.h"
+#include "qsciscintillaqq.h"
+#include "constants.h"
 #include <QTabBar>
+#include <QVBoxLayout>
 
 QTabWidgetqq::QTabWidgetqq(QWidget *parent) :
     QTabWidget(parent)
@@ -34,3 +37,60 @@ int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
     return this->tabBar()->tabAt(pos);
 }
 
+void QTabWidgetqq::addNewDocument()
+{
+    //addEditorTab(true, tr("new") + " " + QString::number(++newTabCount));
+}
+
+/**
+ * Adds a tab to the tabWidget
+ *
+ * @param   setFocus    If true, the new tab will receive focus
+ * @param   title       The title of the new tab
+ */
+int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
+{
+
+    // Let's add a new tab...
+    QWidget *newTab = new QWidget(this);
+    int index = this->addTab(newTab, title);
+    if(setFocus) {
+        this->setCurrentIndex(index);
+    }
+    this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
+    // Create textbox
+    QsciScintillaqq* sci = new QsciScintillaqq(this->widget(index)); //ui->textEdit;
+
+    connect(sci, SIGNAL(modificationChanged(bool)), SLOT(on_scintillaModificationChanged(bool)));
+    connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
+    connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
+    connect(sci, SIGNAL(selectionChanged()), SLOT(on_scintillaSelectionChanged()));
+    connect(sci, SIGNAL(cursorPositionChanged(int,int)), SLOT(on_scintillaCursorPositionChanged(int,int)));
+    connect(sci, SIGNAL(updateUI()), SLOT(on_scintillaUpdateUI()));
+
+
+    layout->addWidget(sci);
+    this->widget(index)->setLayout(layout);
+    this->setDocumentMode(true);
+    this->setTabToolTip(index, "");
+
+    /*
+    bool _showallchars = ui->actionShow_All_Characters->isChecked();
+    updateScintillaPropertiesForAllTabs();
+    if(_showallchars) {
+        ui->actionShow_All_Characters->setChecked(true);
+        on_actionShow_All_Characters_triggered();
+    }
+    */
+
+    sci->setFocus();
+    // sci->SendScintilla(QsciScintilla::SCI_SETFOCUS, true);
+    // sci->SendScintilla(QsciScintilla::SCI_GRABFOCUS);
+
+    // updateGui(index, tabWidget1); TODO
+
+    return index;
+}

@@ -66,6 +66,7 @@ private:
     void keyReleaseEvent(QKeyEvent *e);
     int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
     bool isCtrlPressed;
+    void initialize();
 private slots:
     void internFileChanged(const QString &path);
     void wheelEvent(QWheelEvent * e);

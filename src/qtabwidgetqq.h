@@ -32,9 +32,14 @@ public:
     explicit QTabWidgetqq(QWidget *parent = 0);
     int getTabIndexAt(const QPoint &pos);
 
+    void addNewDocument();
 signals:
 
 public slots:
+
+private:
+    int _showAllChars;
+    int addEditorTab(bool setFocus, QString title);
 
 };
 

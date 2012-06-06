@@ -27,6 +27,7 @@
 #include <QString>
 #include <QDir>
 #include <QProcessEnvironment>
+#include <QCoreApplication>
 
 
 #define SINGLEINSTANCE_EXPERIMENTAL true // When true, enable the experimental function for the "single instance" system

@@ -115,7 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
 
-    QString  axx = QIcon::themeName();
+    //QString  axx = QIcon::themeName();
 
     // Add main QTabWidgetqq
     tabWidget1 = new QTabWidgetqq(ui->centralWidget->parentWidget());
@@ -514,51 +514,12 @@ int MainWindow::addEditorTab(bool setFocus, QString title, QTabWidgetqq * _tabWi
     // Create textbox
     QsciScintillaqq* sci = new QsciScintillaqq(_tabWidget->widget(index)); //ui->textEdit;
 
-    // Set font
-    QFont *f = new QFont("Courier New", 10, -1, false);
-    sci->setFont(*f);
-    QColor *c = new QColor("#000000"); // DB8B0B
-    sci->setColor(*c);
-    sci->setCaretForegroundColor(QColor("#5E5E5E"));
-
-
-    sci->setMarginLineNumbers(1, true);
-    sci->setMarginWidth(1, 47);
-    sci->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
-    sci->setAutoIndent(true);
-    sci->setAutoCompletionThreshold(2);
-    sci->setUtf8(true);
-    //sci->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, 950);
-    //sci->SendScintilla(QsciScintilla::SCI_SETFOLDFLAGS, QsciScintilla::SC_FOLDFLAG_LINEBEFORE_CONTRACTED + QsciScintilla::SC_FOLDFLAG_LINEAFTER_CONTRACTED);
-
-    /*QsciAPIs apis(&lex);
-    apis.add("test");
-    apis.add("test123");
-    apis.add("foobar");
-    apis.prepare();
-    lex.setAPIs(&apis);*/
-
-    autoLexer(sci->fileName(), sci);
-
-    sci->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
-    sci->setCaretLineVisible(true);
-    sci->setCaretLineBackgroundColor(QColor("#E6EBF5"));
-    sci->setIndentationGuidesForegroundColor(QColor("#C0C0C0"));
-
-    sci->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
-    sci->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, 0x00FF24);
-    sci->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
-    sci->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
-
     connect(sci, SIGNAL(modificationChanged(bool)), SLOT(on_scintillaModificationChanged(bool)));
     connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
     connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
     connect(sci, SIGNAL(selectionChanged()), SLOT(on_scintillaSelectionChanged()));
     connect(sci, SIGNAL(cursorPositionChanged(int,int)), SLOT(on_scintillaCursorPositionChanged(int,int)));
     connect(sci, SIGNAL(updateUI()), SLOT(on_scintillaUpdateUI()));
-
-    delete f;
-    delete c;
 
     layout->addWidget(sci);
     _tabWidget->widget(index)->setLayout(layout);

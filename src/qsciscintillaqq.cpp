@@ -21,6 +21,7 @@
  */
 
 #include "qsciscintillaqq.h"
+#include "constants.h"
 #include <QFileSystemWatcher>
 #include <QKeyEvent>
 #include <QIODevice>
@@ -41,6 +42,8 @@ QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     setIgnoreNextSignal(false);
     connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
     connect(this,SIGNAL(SCN_UPDATEUI()), SLOT(handleUpdateUI_All()));
+
+    this->initialize();
 }
 
 QsciScintillaqq::~QsciScintillaqq()
@@ -264,4 +267,49 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
     {
         QsciScintilla::wheelEvent(e);
     }
+}
+
+/**
+ * Initialize Scintilla settings
+ */
+void QsciScintillaqq::initialize()
+{
+    // Set font
+    QFont *f = new QFont("Courier New", 10, -1, false);
+    this->setFont(*f);
+    QColor *c = new QColor("#000000"); // DB8B0B
+    this->setColor(*c);
+    this->setCaretForegroundColor(QColor("#5E5E5E"));
+
+
+    this->setMarginLineNumbers(1, true);
+    this->setMarginWidth(1, 47);
+    this->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
+    this->setAutoIndent(true);
+    this->setAutoCompletionThreshold(2);
+    this->setUtf8(true);
+    //sci->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, 950);
+    //sci->SendScintilla(QsciScintilla::SCI_SETFOLDFLAGS, QsciScintilla::SC_FOLDFLAG_LINEBEFORE_CONTRACTED + QsciScintilla::SC_FOLDFLAG_LINEAFTER_CONTRACTED);
+
+    /*QsciAPIs apis(&lex);
+    apis.add("test");
+    apis.add("test123");
+    apis.add("foobar");
+    apis.prepare();
+    lex.setAPIs(&apis);*/
+
+    // autoLexer(sci->fileName(), sci); TODO
+
+    this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
+    this->setCaretLineVisible(true);
+    this->setCaretLineBackgroundColor(QColor("#E6EBF5"));
+    this->setIndentationGuidesForegroundColor(QColor("#C0C0C0"));
+
+    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, 0x00FF24);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
+
+    delete f;
+    delete c;
 }
