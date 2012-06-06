@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     frmabout.cpp \
     userlexer.cpp \
     qtabwidgetqq.cpp \
-    generalfunctions.cpp
+    generalfunctions.cpp \
+    qtabwidgetscontainer.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     constants.h \
     userlexer.h \
     qtabwidgetqq.h \
-    generalfunctions.h
+    generalfunctions.h \
+    qtabwidgetscontainer.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui

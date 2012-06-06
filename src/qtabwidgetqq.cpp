@@ -29,7 +29,14 @@
 QTabWidgetqq::QTabWidgetqq(QWidget *parent) :
     QTabWidget(parent)
 {
-
+    this->setObjectName("tabWidget");
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    this->setDocumentMode(true);
+    this->setTabsClosable(true);
+    this->setMovable(true);
+    //tabWidget1->setTabIcon(0, QIcon());
+    this->setStyleSheet("QTabBar::tab { height: 27px; }");
+    //tabWidget1->setIconSize(QSize(12,12));
 }
 
 int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
@@ -39,7 +46,7 @@ int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
 
 void QTabWidgetqq::addNewDocument()
 {
-    //addEditorTab(true, tr("new") + " " + QString::number(++newTabCount));
+    addEditorTab(true, tr("new") + " " + QString::number(0));
 }
 
 /**
@@ -73,11 +80,11 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
 
 
     layout->addWidget(sci);
-    this->widget(index)->setLayout(layout);
-    this->setDocumentMode(true);
+    //this->widget(index)->setLayout(layout);
+    //this->setDocumentMode(true);
     this->setTabToolTip(index, "");
 
-    /*
+    /* TODO
     bool _showallchars = ui->actionShow_All_Characters->isChecked();
     updateScintillaPropertiesForAllTabs();
     if(_showallchars) {
