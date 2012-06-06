@@ -97,6 +97,13 @@ private slots:
     void on_actionSave_as_triggered();
     void on_actionSave_triggered();
     void on_action_Open_triggered();
+    void on_action_Undo_triggered();
+    void on_action_Redo_triggered();
+    void on_actionCu_t_triggered();
+    void on_action_Copy_triggered();
+    void on_action_Paste_triggered();
+    void on_actionSelect_All_triggered();
+    void on_action_Delete_triggered();
 };
 
 #endif // MAINWINDOW_H;

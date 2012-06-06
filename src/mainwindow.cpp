@@ -374,3 +374,52 @@ void MainWindow::on_action_Open_triggered()
     // Set focus here (bug #760308)
     openDocuments(fileNames, container->focusQTabWidgetqq());
 }
+
+void MainWindow::on_action_Undo_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->undo();
+}
+
+void MainWindow::on_action_Redo_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->redo();
+}
+
+void MainWindow::on_actionCu_t_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->cut();
+}
+
+void MainWindow::on_action_Copy_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->copy();
+}
+
+void MainWindow::on_action_Paste_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->paste();
+}
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectAll(true);
+}
+
+void MainWindow::on_action_Delete_triggered()
+{
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    int lineFrom, indexFrom;
+    sci->getCursorPosition(&lineFrom, &indexFrom);
+
+    if(sci->selectedText().length() == 0)
+    {
+        // If nothing is selected, select next letter
+        int pos = sci->positionFromLineIndex(lineFrom, indexFrom);
+        int lineTo, indexTo;
+        sci->lineIndexFromPosition(++pos, &lineTo, &indexTo);
+        sci->setSelection(lineFrom, indexFrom, lineTo, indexTo);
+    }
+
+    // Remove all the selected text
+    sci->removeSelectedText();
+}
