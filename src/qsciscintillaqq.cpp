@@ -23,12 +23,48 @@
 #include "qsciscintillaqq.h"
 #include "qtabwidgetqq.h"
 #include "constants.h"
+#include "generalfunctions.h"
 #include <QFileSystemWatcher>
 #include <QKeyEvent>
 #include <QIODevice>
 #include <QTextCodec>
 #include <QTextStream>
 #include <Qsci/qsciscintillabase.h>
+
+#include <Qsci/qscilexerbash.h>
+#include <Qsci/qscilexerbatch.h>
+#include <Qsci/qscilexercmake.h>
+#include <Qsci/qscilexercpp.h>
+#include <Qsci/qscilexercsharp.h>
+#include <Qsci/qscilexercss.h>
+#include <Qsci/qscilexerd.h>
+#include <Qsci/qscilexerdiff.h>
+#include <Qsci/qscilexerfortran.h>
+#include <Qsci/qscilexerfortran77.h>
+#include <Qsci/qscilexerhtml.h>
+#include <Qsci/qscilexeridl.h>
+#include <Qsci/qscilexerjava.h>
+#include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qscilexerlua.h>
+#include <Qsci/qscilexermakefile.h>
+#include <Qsci/qscilexerpascal.h>
+#include <Qsci/qscilexerperl.h>
+#include <Qsci/qscilexerpostscript.h>
+#include <Qsci/qscilexerpov.h>
+#include <Qsci/qscilexerproperties.h> /**/
+#include <Qsci/qscilexerpython.h>
+#include <Qsci/qscilexerruby.h>
+#include <Qsci/qscilexerspice.h>
+#include <Qsci/qscilexersql.h>
+#include <Qsci/qscilexertcl.h>
+#include <Qsci/qscilexertex.h>
+#include <Qsci/qscilexerverilog.h>
+#include <Qsci/qscilexervhdl.h>
+#include <Qsci/qscilexerxml.h>
+#include <Qsci/qscilexeryaml.h>
+
+#include <Qsci/qscilexercustom.h>
+#include <userlexer.h>
 
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
@@ -360,4 +396,148 @@ bool QsciScintillaqq::isNewEmptyDocument()
     } else {
         return false;
     }
+}
+
+void QsciScintillaqq::autoSyntaxHighlight()
+{
+    QFont *f;
+    f = new QFont("Courier New", 10, -1, false);
+
+    if(this->fileName() != "")
+    {
+
+        QString ext = QFileInfo(this->fileName()).suffix().toLower();
+        if(ext=="cmake")
+        {
+            QsciLexerCMake lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="cs")
+        {
+            QsciLexerCSharp lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="css")
+        {
+            QsciLexerCSS lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="d")
+        {
+            QsciLexerD lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="diff" || ext=="patch")
+        {
+            QsciLexerDiff lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="f" || ext=="for" || ext=="f90" || ext=="f95")
+        {
+            QsciLexerFortran lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        } else if(ext=="f77")
+        {
+            QsciLexerFortran77 lex(this);
+
+            lex.setDefaultFont(*f);
+            lex.setFont(*f);
+            this->setLexer(&lex);
+        }
+        else
+        {
+            // Let's try with mime-types!
+
+            QString fileMime = generalFunctions::getFileMime(this->fileName());
+            if(fileMime == "text/html" ||
+               fileMime == "text/x-php")
+            {
+                    QsciLexerHTML lex(this);
+
+                    lex.setDefaultFont(*f);
+                    //lex.setDefaultColor(QColor("#000000"));
+                    //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+                    lex.setFont(*f);
+                    this->setLexer(&lex); // ** TODO SEGFAULT? **
+            }
+            else if( fileMime == "text/x-c")
+            {
+                     QsciLexerCPP lex(this);
+
+                     lex.setDefaultFont(*f);
+                     //lex.setDefaultColor(QColor("#000000"));
+                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+                     lex.setFont(*f);
+                     this->setLexer(&lex);
+            }
+            else if( fileMime == "text/x-shellscript" )
+            {
+                     QsciLexerBash lex(this);
+
+                     lex.setDefaultFont(*f);
+                     //lex.setDefaultColor(QColor("#000000"));
+                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+                     lex.setFont(*f);
+                     this->setLexer(&lex);
+            }
+            else if( fileMime == "application/xml" )
+            {
+                     QsciLexerXML lex(this);
+
+                     lex.setDefaultFont(*f);
+                     //lex.setDefaultColor(QColor("#000000"));
+                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+                     lex.setFont(*f);
+                     this->setLexer(&lex);
+            }
+            else if( fileMime == "text/x-msdos-batch" )
+            {
+                     QsciLexerBatch lex(this);
+
+                     lex.setDefaultFont(*f);
+                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+                     lex.setFont(*f);
+                     this->setLexer(&lex);
+            }
+            /* else if( ext == "test")
+{
+userLexer lex(this);
+f = new QFont("Courier New", 10, -1, false);
+lex.setDefaultFont(*f);
+lex.setDefaultColor(QColor("#000000"));
+//lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
+lex.setFont(*f);
+this->setLexer(&lex);
+} */
+            else
+            {
+                    // Plain text
+                    this->setLexer(0);
+            }
+
+        }
+
+    } else
+    {
+        this->setLexer(0);
+    }
+
+    if(this->lexer() != 0)
+    {
+        //
+    }
+
 }

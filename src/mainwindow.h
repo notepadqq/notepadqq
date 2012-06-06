@@ -76,6 +76,7 @@ public:
     int writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName);
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
     int saveAs(QsciScintillaqq *sci);
+    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
 private:
     Ui::MainWindow *ui;
     QSettings * settings;
@@ -95,6 +96,7 @@ private slots:
     int on_tab_close_requested(int index);
     void on_actionSave_as_triggered();
     void on_actionSave_triggered();
+    void on_action_Open_triggered();
 };
 
 #endif // MAINWINDOW_H;

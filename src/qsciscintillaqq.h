@@ -61,6 +61,7 @@ public:
     int getTabIndex();
     QTabWidgetqq *getTabWidget();
     bool isNewEmptyDocument();
+    void autoSyntaxHighlight();
 private:
     typedef QByteArray ScintillaString;
     QFileSystemWatcher *fswatch;

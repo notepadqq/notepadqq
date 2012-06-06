@@ -34,6 +34,7 @@ public:
     int getTabIndexAt(const QPoint &pos);
 
     int addNewDocument();
+    int addEditorTab(bool setFocus, QString title);
     QsciScintillaqq *focusQSciScintillaqq();
     QsciScintillaqq *QSciScintillaqqAt(int index);
 signals:
@@ -43,7 +44,6 @@ public slots:
     void on_modification_changed(bool m);
 
 private:
-    int addEditorTab(bool setFocus, QString title);
     static int _newTabCount;
 
 };

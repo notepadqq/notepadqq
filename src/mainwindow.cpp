@@ -27,41 +27,6 @@
 #include "generalfunctions.h"
 #include "qtabwidgetscontainer.h"
 
-#include <Qsci/qscilexerbash.h>
-#include <Qsci/qscilexerbatch.h>
-#include <Qsci/qscilexercmake.h>
-#include <Qsci/qscilexercpp.h>
-#include <Qsci/qscilexercsharp.h>
-#include <Qsci/qscilexercss.h>
-#include <Qsci/qscilexerd.h>
-#include <Qsci/qscilexerdiff.h>
-#include <Qsci/qscilexerfortran.h>
-#include <Qsci/qscilexerfortran77.h>
-#include <Qsci/qscilexerhtml.h>
-#include <Qsci/qscilexeridl.h>
-#include <Qsci/qscilexerjava.h>
-#include <Qsci/qscilexerjavascript.h>
-#include <Qsci/qscilexerlua.h>
-#include <Qsci/qscilexermakefile.h>
-#include <Qsci/qscilexerpascal.h>
-#include <Qsci/qscilexerperl.h>
-#include <Qsci/qscilexerpostscript.h>
-#include <Qsci/qscilexerpov.h>
-#include <Qsci/qscilexerproperties.h> /**/
-#include <Qsci/qscilexerpython.h>
-#include <Qsci/qscilexerruby.h>
-#include <Qsci/qscilexerspice.h>
-#include <Qsci/qscilexersql.h>
-#include <Qsci/qscilexertcl.h>
-#include <Qsci/qscilexertex.h>
-#include <Qsci/qscilexerverilog.h>
-#include <Qsci/qscilexervhdl.h>
-#include <Qsci/qscilexerxml.h>
-#include <Qsci/qscilexeryaml.h>
-
-#include <Qsci/qscilexercustom.h>
-#include <userlexer.h>
-
 #include <Qsci/qsciapis.h>
 #include <QFile>
 #include <QTextStream>
@@ -316,7 +281,7 @@ int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename, bool updat
             sci->setFileName(fi.absoluteFilePath());
             sci->setModified(false);
             tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            //autoLexer(sci->fileName(), sci); TODO
+            sci->autoSyntaxHighlight();
 
             // Update tab text
             tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
@@ -338,4 +303,74 @@ void MainWindow::on_actionSave_as_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     save(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+}
+
+void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
+{
+    if(!fileNames.isEmpty())
+    {
+        settings->setValue("lastSelectedDir", QFileInfo(fileNames[0]).absolutePath());
+        // Ok, now open our files
+        for (int i = 0; i < fileNames.count(); i++) {
+
+            QFile file(fileNames[i]);
+            QFileInfo fi(fileNames[i]);
+
+            int index = tabWidget->addEditorTab(true, fi.fileName());
+            QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
+
+            sci->encoding = generalFunctions::getFileEncoding(fi.absoluteFilePath());
+
+            if (!sci->read(&file, sci->encoding)) {
+                // Manage error
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(QCoreApplication::applicationName());
+                msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
+                msgBox.setDetailedText(file.errorString());
+                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
+                msgBox.setDefaultButton(QMessageBox::Retry);
+                msgBox.setIcon(QMessageBox::Critical);
+                int ret = msgBox.exec();
+                if(ret == QMessageBox::Abort) {
+                    tabWidget->removeTab(index);
+                    break;
+                } else if(ret == QMessageBox::Retry) {
+                    tabWidget->removeTab(index);
+                    i--;
+                    continue;
+                } else if(ret == QMessageBox::Ignore) {
+                    tabWidget->removeTab(index);
+                    continue;
+                }
+            }
+
+            // If there was only a new empty tab opened, remove it
+            if(tabWidget->count() == 2 && tabWidget->QSciScintillaqqAt(0)->isNewEmptyDocument()) {
+                tabWidget->removeTab(0);
+                index--;
+            }
+
+            sci->setFileName(fi.absoluteFilePath());
+            sci->setEolMode(sci->guessEolMode());
+            sci->setModified(false);
+            tabWidget->setTabToolTip(index, sci->fileName());
+            sci->autoSyntaxHighlight();
+
+            // updateGui(index, tabWidget1);
+
+            file.close();
+
+            sci->setFocus(Qt::OtherFocusReason);
+            //tabWidget1->setFocus();
+            //tabWidget1->currentWidget()->setFocus();
+        }
+    }
+}
+
+void MainWindow::on_action_Open_triggered()
+{
+    // Ask for file names...
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
+    // Set focus here (bug #760308)
+    openDocuments(fileNames, container->focusQTabWidgetqq());
 }
