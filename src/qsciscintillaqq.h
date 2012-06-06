@@ -30,6 +30,8 @@
 #define ScintillaStringData(s)      (s).constData()
 #define ScintillaStringLength(s)    (s).size()
 
+class QTabWidgetqq;
+
 class QsciScintillaqq : public QsciScintilla
 {
     Q_OBJECT
@@ -56,6 +58,9 @@ public:
         struct Sci_CharacterRange chrgText; // returned as position of matching text
     };
 
+    int getTabIndex();
+    QTabWidgetqq *getTabWidget();
+    bool isNewEmptyDocument();
 private:
     typedef QByteArray ScintillaString;
     QFileSystemWatcher *fswatch;

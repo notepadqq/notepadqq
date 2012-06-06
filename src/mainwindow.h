@@ -25,8 +25,7 @@
 
 #include <QMainWindow>
 #include <Qsci/qsciscintilla.h>
-#include "qsciscintillaqq.h"
-#include "qtabwidgetqq.h"
+#include "qtabwidgetscontainer.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -44,7 +43,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QSplitter * mainSplitter;
+    QTabWidgetsContainer *container;
 
     /**
      * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
@@ -72,7 +71,11 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
-
+    int askIfWantToSave(QsciScintillaqq *sci, int reason);
+    int save(QsciScintillaqq *sci);
+    int writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName);
+    QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
+    int saveAs(QsciScintillaqq *sci);
 private:
     Ui::MainWindow *ui;
     QSettings * settings;
@@ -87,7 +90,11 @@ private:
     // QActionGroup *encodeGroup;
 
 private slots:
-
+    void on_action_New_triggered();
+    void on_text_changed();
+    int on_tab_close_requested(int index);
+    void on_actionSave_as_triggered();
+    void on_actionSave_triggered();
 };
 
 #endif // MAINWINDOW_H;

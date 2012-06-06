@@ -21,6 +21,7 @@
  */
 
 #include "qsciscintillaqq.h"
+#include "qtabwidgetqq.h"
 #include "constants.h"
 #include <QFileSystemWatcher>
 #include <QKeyEvent>
@@ -312,4 +313,51 @@ void QsciScintillaqq::initialize()
 
     delete f;
     delete c;
+}
+
+int QsciScintillaqq::getTabIndex()
+{
+    QWidget *widget = this->parentWidget();
+    while(widget->objectName() != "singleTabWidget")
+    {
+        widget = widget->parentWidget();
+    }
+
+    QWidget *tabwidget = widget->parentWidget();
+    while(tabwidget->objectName() != "tabWidget")
+    {
+        tabwidget = tabwidget->parentWidget();
+    }
+
+    QTabWidgetqq *tabwidget_cast = static_cast<QTabWidgetqq *>(tabwidget);
+
+    return tabwidget_cast->indexOf(widget);
+}
+
+QTabWidgetqq *QsciScintillaqq::getTabWidget()
+{
+    QWidget *tabwidget = this->parentWidget();
+    while(tabwidget->objectName() != "tabWidget")
+    {
+        tabwidget = tabwidget->parentWidget();
+    }
+
+    return static_cast<QTabWidgetqq *>(tabwidget);
+}
+
+/**
+* Detects if the document is a new empty document
+*
+* @return true or false
+*/
+bool QsciScintillaqq::isNewEmptyDocument()
+{
+    if(this->text() == ""
+       && this->isModified() == false
+       && this->fileName() == "" ) {
+
+        return true;
+    } else {
+        return false;
+    }
 }
