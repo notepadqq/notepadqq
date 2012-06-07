@@ -79,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
 
+    // TODO Context menu
+
     QTabWidgetqq *mainTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
     int new_doc = mainTabWidget->addNewDocument();
     connect(mainTabWidget->QSciScintillaqqAt(new_doc), SIGNAL(textChanged()), this, SLOT(on_text_changed()));
@@ -106,11 +108,11 @@ void MainWindow::on_text_changed()
 
 }
 
-int MainWindow::on_tab_close_requested(int index)
+int MainWindow::kindlyTabClose(QsciScintillaqq *sci)
 {
     int result = MainWindow::tabCloseResult_AlreadySaved;
-    QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
-    QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
+    QTabWidgetqq *_tabWidget = sci->getTabWidget();
+    int index = sci->getTabIndex();
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
     if(!(_tabWidget->count() == 1
@@ -145,11 +147,25 @@ int MainWindow::on_tab_close_requested(int index)
     }
 
     if(_tabWidget->count() == 0) {
-        // Not so good... 0 tabs opened is a bad idea
-        ui->action_New->trigger();
+        /* Not so good... 0 tabs opened is a bad idea
+         * So, if there are more than one TabWidgets opened (split-screen)
+         * then we completely remove this one. Otherwise, we add a new empty tab.
+        */
+        if(container->count() > 1) {
+            _tabWidget->deleteLater();
+        } else {
+            _tabWidget->addNewDocument();
+        }
     }
 
     return result;
+}
+
+int MainWindow::on_tab_close_requested(int index)
+{
+    QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
+    QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
+    return kindlyTabClose(sci);
 }
 
 int MainWindow::askIfWantToSave(QsciScintillaqq *sci, int reason)
@@ -422,4 +438,73 @@ void MainWindow::on_action_Delete_triggered()
 
     // Remove all the selected text
     sci->removeSelectedText();
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+    kindlyTabClose(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+}
+
+void MainWindow::on_actionC_lose_All_triggered()
+{
+
+}
+
+void MainWindow::on_actionZoom_In_triggered()
+{
+    // TODO Eseguire lo zoom per TUTTI i documenti aperti. Stessa cosa per lo zoom via rotellina mouse.
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomIn();
+}
+
+void MainWindow::on_actionZoom_Out_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomOut();
+}
+
+void MainWindow::on_actionRestore_Default_Zoom_triggered()
+{
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomTo(0);
+}
+
+void MainWindow::on_actionAbout_Notepadqq_triggered()
+{
+    frmAbout *_about;
+    _about = new frmAbout(this);
+    _about->exec();
+
+    _about->deleteLater();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    for(int i = 0; i < container->count(); i++) {
+        QTabWidgetqq *tabWidget = container->QTabWidgetqqAt(i);
+        int tab_count = tabWidget->count();
+        for(int j = 0; j < tab_count; j++) {
+            QsciScintillaqq *sci = tabWidget->QSciScintillaqqAt(j);
+            if(sci->isModified()) {
+                tabWidget->setCurrentIndex(j);
+                sci->setFocus();
+                int ret = askIfWantToSave(sci, askToSaveChangesReason_tabClosing);
+                if(ret == QMessageBox::Save) {
+                    if(save(sci) == MainWindow::saveFileResult_Canceled)
+                    {
+                        // hmm... the user canceled the "save dialog". Let's stop the close event.
+                        event->ignore();
+                        break;
+                    }
+                } else if(ret == QMessageBox::Discard) {
+                    // Don't save
+                } else if(ret == QMessageBox::Cancel) {
+                    event->ignore();
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QApplication::aboutQt();
 }

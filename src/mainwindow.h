@@ -77,6 +77,7 @@ public:
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
     int saveAs(QsciScintillaqq *sci);
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
+    int kindlyTabClose(QsciScintillaqq *sci);
 private:
     Ui::MainWindow *ui;
     QSettings * settings;
@@ -89,6 +90,7 @@ private:
     QLocalServer * instanceServer;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_action_New_triggered();
@@ -104,6 +106,13 @@ private slots:
     void on_action_Paste_triggered();
     void on_actionSelect_All_triggered();
     void on_action_Delete_triggered();
+    void on_actionClose_triggered();
+    void on_actionC_lose_All_triggered();
+    void on_actionZoom_In_triggered();
+    void on_actionZoom_Out_triggered();
+    void on_actionRestore_Default_Zoom_triggered();
+    void on_actionAbout_Notepadqq_triggered();
+    void on_actionAbout_Qt_triggered();
 };
 
 #endif // MAINWINDOW_H;
