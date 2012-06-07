@@ -71,6 +71,7 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
+    void processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
     int askIfWantToSave(QsciScintillaqq *sci, int reason);
     int save(QsciScintillaqq *sci);
     int writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName);
@@ -81,16 +82,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QSettings * settings;
-    QMenu * tabContextMenu;
+    QSettings *settings;
+    QMenu *tabContextMenu;
     QList<QAction *> tabContextMenuActions;
-    QLabel * statusBar_fileFormat;
-    QLabel * statusBar_lengthInfo;
-    QLabel * statusBar_selectionInfo;
-    QLabel * statusBar_EOLstyle;
-    QLabel * statusBar_textFormat;
-    QLabel * statusBar_overtypeNotify;
-    QLocalServer * instanceServer;
+    QLabel *statusBar_fileFormat;
+    QLabel *statusBar_lengthInfo;
+    QLabel *statusBar_selectionInfo;
+    QLabel *statusBar_EOLstyle;
+    QLabel *statusBar_textFormat;
+    QLabel *statusBar_overtypeNotify;
+    QLocalServer *instanceServer;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
     void closeEvent(QCloseEvent *event);
@@ -126,6 +127,8 @@ private slots:
     void on_actionCurrent_Filename_to_Clipboard_triggered();
     void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
     void on_actionSave_All_triggered();
+    void on_instanceServer_NewConnection();
+    void on_instanceServer_Socket_ReadyRead();
 };
 
 #endif // MAINWINDOW_H;

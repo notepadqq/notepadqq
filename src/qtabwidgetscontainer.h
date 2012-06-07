@@ -10,7 +10,7 @@ class QTabWidgetsContainer : public QSplitter
 public:
     explicit QTabWidgetsContainer(QWidget *parent = 0);
     
-    QTabWidgetqq *focusQTabWidgetqq();
+    QTabWidgetqq *focusQTabWidgetqq(bool fallback = true);
     QTabWidgetqq *QTabWidgetqqAt(int index);
 signals:
     

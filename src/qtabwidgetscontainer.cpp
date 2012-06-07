@@ -6,12 +6,15 @@ QTabWidgetsContainer::QTabWidgetsContainer(QWidget *parent) :
     this->setOrientation(Qt::Horizontal);
 }
 
-QTabWidgetqq *QTabWidgetsContainer::focusQTabWidgetqq()
+QTabWidgetqq *QTabWidgetsContainer::focusQTabWidgetqq(bool fallback)
 {
     QObject *focus = this->focusWidget();
 
     if(focus == 0) {
-        return 0;
+        if(fallback && this->count() > 0)
+            return this->QTabWidgetqqAt(0);
+        else
+            return 0;
     } else {
         // Find the first top level focused widget
         while(focus->parent() != this) {

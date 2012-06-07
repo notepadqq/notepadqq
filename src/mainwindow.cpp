@@ -102,14 +102,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Ok, now it's time to create or first tabWidget.
     QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
-    // And, of course, we add a new document to it.
-    int new_doc = firstTabWidget->addNewDocument();
+    // The first document in the tabWidget will be created by processCommandLineArgs()
     // Now we connect the corresponding signals to our slots.
-    //connect(firstTabWidget->QSciScintillaqqAt(new_doc), SIGNAL(textChanged()), this, SLOT(on_text_changed()));
     connect(firstTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tab_close_requested(int)));
     connect(firstTabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_tabWidget_customContextMenuRequested(QPoint)));
 
     container->addWidget(firstTabWidget);
+
+    if(this->layoutDirection() == Qt::RightToLeft) {
+        ui->actionText_Direction_RTL->setChecked(true);
+    }
+
+    processCommandLineArgs(QApplication::arguments(), false);
+
+    instanceServer = new QLocalServer(this);
+    connect(instanceServer, SIGNAL(newConnection()), SLOT(on_instanceServer_NewConnection()));
+    instanceServer->removeServer(INSTANCESERVER_ID);
+    instanceServer->listen(INSTANCESERVER_ID);
+
 
     // Focus on the editor of the first tab
     container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
@@ -118,6 +128,36 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternalMessage)
+{
+    bool activateWindow = false;
+
+    if(arguments.count() <= 1)
+    {
+        QTabWidgetqq *focusedTabWidget = container->focusQTabWidgetqq();
+        focusedTabWidget->addNewDocument();
+        activateWindow = true;
+    }
+    else
+    {
+        // Open selected files
+        QStringList files;
+        for(int i = 1; i < arguments.count(); i++)
+        {
+            files.append(arguments.at(i));
+        }
+        openDocuments(files, container->focusQTabWidgetqq());
+        activateWindow = true;
+    }
+
+    if(fromExternalMessage && activateWindow)
+    {
+        // Activate the window
+        this->activateWindow();
+        this->raise();
+    }
 }
 
 // Custom context menu for right-clicks on the tab title
@@ -624,6 +664,42 @@ void MainWindow::on_actionSave_All_triggered()
         for(int j = 0; j < tab_count; j++) {
             QsciScintillaqq *sci = tabWidget->QSciScintillaqqAt(j);
             save(sci);
+        }
+    }
+}
+
+void MainWindow::on_instanceServer_NewConnection()
+{
+    while(instanceServer->hasPendingConnections())
+    {
+        QLocalSocket *client = instanceServer->nextPendingConnection();
+        connect(client, SIGNAL(readyRead()), SLOT(on_instanceServer_Socket_ReadyRead()));
+    }
+}
+
+void MainWindow::on_instanceServer_Socket_ReadyRead()
+{
+    QLocalSocket *instanceSocket = static_cast<QLocalSocket*>(sender());
+    QString message = "";
+    QByteArray ar_raw;
+
+    if(instanceSocket->bytesAvailable() > 0) {
+        ar_raw = instanceSocket->readAll();
+        message = QString::fromUtf8(ar_raw);
+
+
+        if(message == "NEW_CLIENT")
+        {
+            instanceSocket->write(QString("HELLO").toUtf8());
+            instanceSocket->waitForBytesWritten(400);
+        }
+        else
+        {
+            // Command line args
+            QDataStream args(&ar_raw,QIODevice::ReadOnly);
+            QStringList remote_args;
+            args >> remote_args;
+            processCommandLineArgs(remote_args, true);
         }
     }
 }
