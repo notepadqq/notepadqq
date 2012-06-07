@@ -582,3 +582,36 @@ void MainWindow::on_actionWikipedia_Search_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
 }
+
+void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
+{
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if(sci->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absoluteFilePath());
+    } else {
+        QApplication::clipboard()->setText(sci->getTabWidget()->tabText(sci->getTabIndex()));
+    }
+}
+
+void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
+{
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if(sci->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(sci->fileName()).fileName());
+    } else {
+        QApplication::clipboard()->setText(sci->getTabWidget()->tabText(sci->getTabIndex()));
+    }
+}
+
+void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
+{
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if(sci->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absolutePath());
+    } else {
+        QApplication::clipboard()->setText("");
+    }
+}
