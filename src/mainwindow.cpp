@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings = new QSettings();
 
+    // "container" is the object that contains all the TabWidgets.
     container = new QTabWidgetsContainer(this);
     this->setCentralWidget(container);
 
@@ -61,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    ui->actionEncode_in_UCS_2_Little_Endian->setActionGroup(encodeGroup);
 //    ui->actionEncode_in_UCS_2_Big_Endian->setActionGroup(encodeGroup);
 
+    // Let's assign icons to our actions
     ui->action_New->setIcon(QIcon::fromTheme("document-new", QIcon(ui->action_New->icon())));
     ui->action_Open->setIcon(QIcon::fromTheme("document-open", QIcon(ui->action_Open->icon())));
     ui->actionSave->setIcon(QIcon::fromTheme("document-save", QIcon(ui->actionSave->icon())));
@@ -79,14 +81,35 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
 
-    // TODO Context menu
 
-    QTabWidgetqq *mainTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
-    int new_doc = mainTabWidget->addNewDocument();
-    connect(mainTabWidget->QSciScintillaqqAt(new_doc), SIGNAL(textChanged()), this, SLOT(on_text_changed()));
-    connect(mainTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tab_close_requested(int)));
+    // Context menu initialization
+    tabContextMenu = new QMenu;
+    QAction *separator = new QAction(this);
+    separator->setSeparator(true);
+    tabContextMenuActions.append(ui->actionClose);
+    tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
+    tabContextMenuActions.append(ui->actionSave);
+    tabContextMenuActions.append(ui->actionSave_as);
+    tabContextMenuActions.append(ui->actionRename);
+    tabContextMenuActions.append(ui->actionDelete_from_Disk);
+    tabContextMenuActions.append(ui->actionPrint);
+    tabContextMenuActions.append(separator);
+    tabContextMenuActions.append(ui->actionMove_to_Other_View);
+    tabContextMenuActions.append(ui->actionClone_to_Other_View);
+    tabContextMenuActions.append(ui->actionMove_to_New_Instance);
+    tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
+    tabContextMenu->addActions(tabContextMenuActions);
 
-    container->addWidget(mainTabWidget);
+    // Ok, now it's time to create or first tabWidget.
+    QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
+    // And, of course, we add a new document to it.
+    int new_doc = firstTabWidget->addNewDocument();
+    // Now we connect the corresponding signals to our slots.
+    //connect(firstTabWidget->QSciScintillaqqAt(new_doc), SIGNAL(textChanged()), this, SLOT(on_text_changed()));
+    connect(firstTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tab_close_requested(int)));
+    connect(firstTabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_tabWidget_customContextMenuRequested(QPoint)));
+
+    container->addWidget(firstTabWidget);
 
     // Focus on the editor of the first tab
     container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
@@ -95,6 +118,19 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+// Custom context menu for right-clicks on the tab title
+void MainWindow::on_tabWidget_customContextMenuRequested(QPoint pos)
+{
+    QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
+    int index = _tabWidget->getTabIndexAt(pos);
+
+    if(index != -1)
+    {
+        _tabWidget->setCurrentIndex(index);
+        tabContextMenu->exec(_tabWidget->mapToGlobal(pos));
+    }
 }
 
 void MainWindow::on_action_New_triggered()
@@ -387,7 +423,7 @@ void MainWindow::on_action_Open_triggered()
 {
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
-    // Set focus here (bug #760308)
+    // TODO set focus here (bug #760308)
     openDocuments(fileNames, container->focusQTabWidgetqq());
 }
 
@@ -447,7 +483,20 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionC_lose_All_triggered()
 {
-
+    for(int i = 0; i < container->count(); i++) {
+        QTabWidgetqq *tabWidget = container->QTabWidgetqqAt(i);
+        int tab_count = tabWidget->count();
+        for(int j = 0; j < tab_count; j++) {
+            // Always remove the tab at position 0, 'cause we're sure there's always something at pos 0.
+            QsciScintillaqq *sci = tabWidget->QSciScintillaqqAt(0);
+            int result = kindlyTabClose(sci);
+            if(result == MainWindow::tabCloseResult_Canceled)
+            {
+                // Abort! Stop everything.
+                break;
+            }
+        }
+    }
 }
 
 void MainWindow::on_actionZoom_In_triggered()

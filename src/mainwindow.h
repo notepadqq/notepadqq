@@ -78,9 +78,12 @@ public:
     int saveAs(QsciScintillaqq *sci);
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
     int kindlyTabClose(QsciScintillaqq *sci);
+
 private:
     Ui::MainWindow *ui;
     QSettings * settings;
+    QMenu * tabContextMenu;
+    QList<QAction *> tabContextMenuActions;
     QLabel * statusBar_fileFormat;
     QLabel * statusBar_lengthInfo;
     QLabel * statusBar_selectionInfo;
@@ -118,6 +121,7 @@ private slots:
     void on_actionLaunch_in_Chromium_triggered();
     void on_actionGoogle_Search_triggered();
     void on_actionWikipedia_Search_triggered();
+    void on_tabWidget_customContextMenuRequested(QPoint pos);
 };
 
 #endif // MAINWINDOW_H;
