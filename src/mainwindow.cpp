@@ -615,3 +615,15 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
         QApplication::clipboard()->setText("");
     }
 }
+
+void MainWindow::on_actionSave_All_triggered()
+{
+    for(int i = 0; i < container->count(); i++) {
+        QTabWidgetqq *tabWidget = container->QTabWidgetqqAt(i);
+        int tab_count = tabWidget->count();
+        for(int j = 0; j < tab_count; j++) {
+            QsciScintillaqq *sci = tabWidget->QSciScintillaqqAt(j);
+            save(sci);
+        }
+    }
+}
