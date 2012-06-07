@@ -5,6 +5,10 @@ Dependencies
 ------------
    * QScintilla (libqscintilla2-8)
 
+Bug Tracking
+------------
+To report any bug, use Launchpad: https://bugs.launchpad.net/notepadqq
+
 How to build
 ------------
 You can use Qt Creator to automatically build Notepadqq, and that's the recommended way.
