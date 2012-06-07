@@ -10,7 +10,18 @@ QT       += core gui \
 TARGET = notepadqq
 TEMPLATE = app
 
-DESTDIR = ../build
+RCC_DIR = ../build/build_data
+UI_DIR = ../build/build_data
+MOC_DIR = ../build/build_data
+OBJECTS_DIR = ../build/build_data
+
+CONFIG(debug, debug|release) {
+    DESTDIR = ../build/debug
+}
+CONFIG(release, debug|release) {
+    DESTDIR = ../build/release
+}
+
 
 
 SOURCES += main.cpp\
