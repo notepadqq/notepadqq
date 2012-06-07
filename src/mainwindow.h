@@ -113,6 +113,11 @@ private slots:
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionAbout_Notepadqq_triggered();
     void on_actionAbout_Qt_triggered();
+    void on_actionLaunch_in_Firefox_triggered();
+    void on_actionGet_php_help_triggered();
+    void on_actionLaunch_in_Chromium_triggered();
+    void on_actionGoogle_Search_triggered();
+    void on_actionWikipedia_Search_triggered();
 };
 
 #endif // MAINWINDOW_H;

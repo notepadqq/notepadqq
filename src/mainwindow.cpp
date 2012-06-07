@@ -508,3 +508,28 @@ void MainWindow::on_actionAbout_Qt_triggered()
 {
     QApplication::aboutQt();
 }
+
+void MainWindow::on_actionLaunch_in_Firefox_triggered()
+{
+    QProcess::startDetached("firefox", QStringList(container->focusQTabWidgetqq()->focusQSciScintillaqq()->fileName()));
+}
+
+void MainWindow::on_actionGet_php_help_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://php.net/" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+}
+
+void MainWindow::on_actionLaunch_in_Chromium_triggered()
+{
+    QProcess::startDetached("chromium-browser", QStringList(container->focusQTabWidgetqq()->focusQSciScintillaqq()->fileName()));
+}
+
+void MainWindow::on_actionGoogle_Search_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://www.google.com/search?q=" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+}
+
+void MainWindow::on_actionWikipedia_Search_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+}

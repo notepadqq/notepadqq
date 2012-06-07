@@ -416,11 +416,6 @@
      <string>Se&amp;ttings</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu_Window">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>&amp;?</string>
@@ -469,7 +464,6 @@
    <addaction name="menuSe_ttings"/>
    <addaction name="menuMacro"/>
    <addaction name="menuRun"/>
-   <addaction name="menu_Window"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
