@@ -5,7 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui \
-            network
+            network \
+            xml
 
 TARGET = notepadqq
 TEMPLATE = app

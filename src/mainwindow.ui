@@ -415,6 +415,7 @@
     <property name="title">
      <string>Se&amp;ttings</string>
     </property>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -1499,6 +1500,15 @@
   <action name="actionPHP">
    <property name="text">
     <string>PHP</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/preferences.png</normaloff>:/icons/icons/preferences.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
    </property>
   </action>
  </widget>

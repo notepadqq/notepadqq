@@ -97,9 +97,12 @@ private:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+    void _on_text_changed();
+    int  _on_tab_close_requested(int index);
+    void _on_tabWidget_customContextMenuRequested(QPoint pos);
+    void _on_instanceServer_NewConnection();
+    void _on_instanceServer_Socket_ReadyRead();
     void on_action_New_triggered();
-    void on_text_changed();
-    int on_tab_close_requested(int index);
     void on_actionSave_as_triggered();
     void on_actionSave_triggered();
     void on_action_Open_triggered();
@@ -122,13 +125,12 @@ private slots:
     void on_actionLaunch_in_Chromium_triggered();
     void on_actionGoogle_Search_triggered();
     void on_actionWikipedia_Search_triggered();
-    void on_tabWidget_customContextMenuRequested(QPoint pos);
     void on_actionCurrent_Full_File_path_to_Clipboard_triggered();
     void on_actionCurrent_Filename_to_Clipboard_triggered();
     void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
     void on_actionSave_All_triggered();
-    void on_instanceServer_NewConnection();
-    void on_instanceServer_Socket_ReadyRead();
+    void on_actionE_xit_triggered();
+    void on_actionClose_All_BUT_Current_Document_triggered();
 };
 
 #endif // MAINWINDOW_H;

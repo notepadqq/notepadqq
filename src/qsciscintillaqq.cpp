@@ -30,6 +30,9 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <Qsci/qsciscintillabase.h>
+#include <QtXml/qdom.h>
+#include <QHash>
+#include <QMessageBox>
 
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -78,7 +81,7 @@ QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     isCtrlPressed = false;
     setIgnoreNextSignal(false);
     connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
-    connect(this,SIGNAL(SCN_UPDATEUI()), SLOT(handleUpdateUI_All()));
+    connect(this,SIGNAL(SCN_UPDATEUI(int)), SLOT(handleUpdateUI_All(int)));
 
     this->initialize();
 }
@@ -96,9 +99,10 @@ QString QsciScintillaqq::fileName()
 void QsciScintillaqq::setFileName(QString filename)
 {
     _fileName = filename;
-    fswatch->removePath(fileName());
-    if(filename != "")
+    if(filename != "") {
+        fswatch->removePath(fileName());
         fswatch->addPath(filename);
+    }
 }
 
 void QsciScintillaqq::setFileWatchEnabled(bool enable)
@@ -229,7 +233,7 @@ bool QsciScintillaqq::read(QIODevice *io, QString readEncodedAs)
     return true;
 }
 
-void QsciScintillaqq::handleUpdateUI_All()
+void QsciScintillaqq::handleUpdateUI_All(int)
 {
      emit updateUI();
 }
@@ -400,6 +404,48 @@ bool QsciScintillaqq::isNewEmptyDocument()
 
 void QsciScintillaqq::autoSyntaxHighlight()
 {
+    /* We'll parse the example.xml */
+    QFile *file = new QFile("/home/daniele/.wine/drive_c/Program Files/Notepad++/langs.model.xml");
+
+    QDomDocument doc( "myDocument" );
+    doc.setContent( file );                        // myFile is a QFile
+
+    QDomElement docElement = doc.documentElement();   // docElement now refers to the node "xml"
+    QDomNode node;
+
+    node = docElement.firstChildElement("Languages");
+    if(!node.isNull()) {
+        node = node.firstChildElement("Language");
+        while(!node.isNull()) {
+            QString languageName = node.attributes().namedItem("name").nodeValue();
+            if(languageName != "cpp") continue;
+            QStringList extensions = node.attributes().namedItem("ext").nodeValue().split(" ", QString::SkipEmptyParts);
+            QString commentLine = node.attributes().namedItem("commentLine").nodeValue();
+            QString commentStart = node.attributes().namedItem("commentStart").nodeValue();
+            QString commentEnd = node.attributes().namedItem("commentEnd").nodeValue();
+            QHash<QString, QStringList> kwclass;
+
+            QDomNode keywords_node = node.firstChildElement("Keywords");
+            while(!keywords_node.isNull()) {
+                QString keyword_class_name = node.attributes().namedItem("name").nodeValue();
+                QStringList keywords = node.nodeValue().split(" ", QString::SkipEmptyParts);
+                kwclass.insert(keyword_class_name, keywords);
+
+                keywords_node = keywords_node.nextSiblingElement("Keywords");
+            }
+
+            this->lexer()->setDefaultColor(QColor("#000000"));
+
+
+
+            node = node.nextSiblingElement("Language");
+        }
+    }
+
+    return;
+
+
+
     QFont *f;
     f = new QFont("Courier New", 10, -1, false);
 

@@ -62,8 +62,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("notepadqq");
     QCoreApplication::setOrganizationDomain("http://notepadqq.sourceforge.net/");
     QCoreApplication::setApplicationName("Notepadqq");
-    QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, true);
+    //QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, true);
     QCoreApplication::setAttribute(Qt::AA_NativeWindows, true);
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, false);
 
     MainWindow w;
     w.showMaximized();

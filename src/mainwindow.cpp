@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Stop_Recording->setIcon(QIcon::fromTheme("media-playback-stop", QIcon(ui->action_Stop_Recording->icon())));
     ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
-
+    ui->actionPreferences->setIcon(QIcon::fromTheme("preferences-other", QIcon(ui->actionPreferences->icon())));
 
     // Context menu initialization
     tabContextMenu = new QMenu;
@@ -104,8 +104,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
     // The first document in the tabWidget will be created by processCommandLineArgs()
     // Now we connect the corresponding signals to our slots.
-    connect(firstTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tab_close_requested(int)));
-    connect(firstTabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_tabWidget_customContextMenuRequested(QPoint)));
+    connect(firstTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
+    connect(firstTabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
 
     container->addWidget(firstTabWidget);
 
@@ -116,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent) :
     processCommandLineArgs(QApplication::arguments(), false);
 
     instanceServer = new QLocalServer(this);
-    connect(instanceServer, SIGNAL(newConnection()), SLOT(on_instanceServer_NewConnection()));
+    connect(instanceServer, SIGNAL(newConnection()), SLOT(_on_instanceServer_NewConnection()));
     instanceServer->removeServer(INSTANCESERVER_ID);
     instanceServer->listen(INSTANCESERVER_ID);
 
@@ -161,7 +161,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
 }
 
 // Custom context menu for right-clicks on the tab title
-void MainWindow::on_tabWidget_customContextMenuRequested(QPoint pos)
+void MainWindow::_on_tabWidget_customContextMenuRequested(QPoint pos)
 {
     QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
     int index = _tabWidget->getTabIndexAt(pos);
@@ -179,7 +179,7 @@ void MainWindow::on_action_New_triggered()
     focusedTabWidget->addNewDocument();
 }
 
-void MainWindow::on_text_changed()
+void MainWindow::_on_text_changed()
 {
 
 }
@@ -237,7 +237,7 @@ int MainWindow::kindlyTabClose(QsciScintillaqq *sci)
     return result;
 }
 
-int MainWindow::on_tab_close_requested(int index)
+int MainWindow::_on_tab_close_requested(int index)
 {
     QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
     QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
@@ -533,15 +533,18 @@ void MainWindow::on_actionC_lose_All_triggered()
             if(result == MainWindow::tabCloseResult_Canceled)
             {
                 // Abort! Stop everything.
-                break;
+                goto End;
             }
         }
     }
+
+    End:
+        return;
 }
 
 void MainWindow::on_actionZoom_In_triggered()
 {
-    // TODO Eseguire lo zoom per TUTTI i documenti aperti. Stessa cosa per lo zoom via rotellina mouse.
+    // TODO Eseguire lo zoom per TUTTI i documenti aperti. Stessa cosa per lo zoom via rotellina del mouse.
     container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomIn();
 }
 
@@ -668,16 +671,16 @@ void MainWindow::on_actionSave_All_triggered()
     }
 }
 
-void MainWindow::on_instanceServer_NewConnection()
+void MainWindow::_on_instanceServer_NewConnection()
 {
     while(instanceServer->hasPendingConnections())
     {
         QLocalSocket *client = instanceServer->nextPendingConnection();
-        connect(client, SIGNAL(readyRead()), SLOT(on_instanceServer_Socket_ReadyRead()));
+        connect(client, SIGNAL(readyRead()), SLOT(_on_instanceServer_Socket_ReadyRead()));
     }
 }
 
-void MainWindow::on_instanceServer_Socket_ReadyRead()
+void MainWindow::_on_instanceServer_Socket_ReadyRead()
 {
     QLocalSocket *instanceSocket = static_cast<QLocalSocket*>(sender());
     QString message = "";
@@ -702,4 +705,53 @@ void MainWindow::on_instanceServer_Socket_ReadyRead()
             processCommandLineArgs(remote_args, true);
         }
     }
+}
+
+void MainWindow::on_actionE_xit_triggered()
+{
+    this->close();
+}
+
+void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
+{
+    QTabWidgetqq *keep_tabWidget = container->focusQTabWidgetqq();
+    QsciScintillaqq* keep_sci = keep_tabWidget->focusQSciScintillaqq();
+
+    for(int i = container->count() - 1; i >= 0; i--) {
+        QTabWidgetqq *cur_tabwidget = container->QTabWidgetqqAt(i);
+        if(cur_tabwidget == keep_tabWidget) {
+
+            for(int j = cur_tabwidget->count() - 1; j >= 0; j--) {
+                QsciScintillaqq *cur_sci = cur_tabwidget->QSciScintillaqqAt(j);
+                if(cur_sci == keep_sci)
+                {
+                    // Do nothing
+                } else {
+                    cur_tabwidget->setCurrentIndex(j);
+                    cur_sci->setFocus();
+                    int result = kindlyTabClose(cur_sci);
+                    if(result == MainWindow::tabCloseResult_Canceled) {
+                        goto Dengo;
+                    }
+                }
+            }
+
+        } else {
+
+            for(int j = cur_tabwidget->count() - 1; j >= 0; j--) {
+                QsciScintillaqq *cur_sci = cur_tabwidget->QSciScintillaqqAt(j);
+                int result = kindlyTabClose(cur_sci);
+                if(result == MainWindow::tabCloseResult_Canceled) {
+                    goto Dengo;
+                }
+            }
+
+            cur_tabwidget->deleteLater();
+        }
+    }
+
+    // Screw good practice. How bad can it be?
+    // http://xkcd.com/292/
+    Dengo:
+        return;
 }

@@ -92,7 +92,7 @@ public slots:
     bool write(QIODevice *io);
     bool read(QIODevice *io);
     bool read(QIODevice *io, QString readEncodedAs);
-    void handleUpdateUI_All();
+    void handleUpdateUI_All(int);
     bool highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector);
     QsciScintilla::EolMode guessEolMode();
     ScintillaString convertTextQ2S(const QString &q) const;
