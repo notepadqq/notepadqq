@@ -24,7 +24,10 @@
 #define QTABWIDGETQQ_H
 
 #include "qsciscintillaqq.h"
+#include "qtabwidgetscontainer.h"
 #include <QTabWidget>
+
+class QTabWidgetsContainer;
 
 class QTabWidgetqq : public QTabWidget
 {
@@ -37,6 +40,7 @@ public:
     int addEditorTab(bool setFocus, QString title);
     QsciScintillaqq *focusQSciScintillaqq();
     QsciScintillaqq *QSciScintillaqqAt(int index);
+    QTabWidgetsContainer *getTabWidgetsContainer();
 signals:
 
 public slots:

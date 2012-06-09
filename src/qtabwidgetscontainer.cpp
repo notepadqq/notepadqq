@@ -40,3 +40,9 @@ QTabWidgetqq *QTabWidgetsContainer::QTabWidgetqqAt(int index)
         return static_cast<QTabWidgetqq *>(widget);
     }
 }
+
+// This method is called from QTabWidgetqq childs, with method QTabWidgetqq::addEditorTab()
+void QTabWidgetsContainer::_on_newQsciScintillaqqWidget(QsciScintillaqq *sci)
+{
+    emit newQsciScintillaqqChildCreated(sci);
+}

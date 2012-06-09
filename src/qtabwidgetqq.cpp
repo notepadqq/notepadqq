@@ -22,6 +22,7 @@
 
 #include "qtabwidgetqq.h"
 #include "qsciscintillaqq.h"
+#include "qtabwidgetscontainer.h"
 #include "constants.h"
 #include <QTabBar>
 #include <QVBoxLayout>
@@ -77,6 +78,7 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     sci->setObjectName("editorWidget");
 
     connect(sci, SIGNAL(modificationChanged(bool)), this, SLOT(on_modification_changed(bool)));
+
     /* TODO
     connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
     connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
@@ -99,12 +101,15 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     }
     */
 
+    this->getTabWidgetsContainer()->_on_newQsciScintillaqqWidget(sci);
+
     sci->setFocus();
     // sci->SendScintilla(QsciScintilla::SCI_SETFOCUS, true);
     // sci->SendScintilla(QsciScintilla::SCI_GRABFOCUS);
 
     // updateGui(index, tabWidget1); TODO
 
+    // Emettere segnale QsciScintillaqq_Created(QsciScintillaqq *sci)
 
     this->setUpdatesEnabled(true);
 
@@ -125,6 +130,16 @@ QsciScintillaqq *QTabWidgetqq::QSciScintillaqqAt(int index)
     } else {
         return 0;
     }
+}
+
+QTabWidgetsContainer *QTabWidgetqq::getTabWidgetsContainer()
+{
+    QTabWidgetsContainer *container;
+    do {
+         container = qobject_cast<QTabWidgetsContainer *>(this->parentWidget());
+    } while(!container);
+
+    return container;
 }
 
 void QTabWidgetqq::on_text_changed()

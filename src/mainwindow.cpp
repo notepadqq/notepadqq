@@ -42,6 +42,7 @@
 #include <QTemporaryFile>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // "container" is the object that contains all the TabWidgets.
     container = new QTabWidgetsContainer(this);
     this->setCentralWidget(container);
+    connect(container, SIGNAL(newQsciScintillaqqChildCreated(QsciScintillaqq*)), this, SLOT(_on_newQsciScintillaqqChildCreated(QsciScintillaqq*)));
 
 //    encodeGroup = new QActionGroup(ui->menuEncoding);
 //    ui->actionEncode_in_ANSI->setActionGroup(encodeGroup);
@@ -704,6 +706,33 @@ void MainWindow::_on_instanceServer_Socket_ReadyRead()
             args >> remote_args;
             processCommandLineArgs(remote_args, true);
         }
+    }
+}
+
+void MainWindow::_on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci)
+{
+    connect(sci, SIGNAL(copyAvailable(bool)), this, SLOT(_on_sci_copyAvailable(bool)));
+    connect(sci, SIGNAL(SCN_UPDATEUI(int)), this, SLOT(_on_sci_updateUI()));
+}
+
+void MainWindow::_on_sci_copyAvailable(bool yes)
+{
+    // TODO Call me on every tab switch!!
+    QsciScintillaqq *sci = static_cast<QsciScintillaqq *>(sender());
+    if(sci->hasFocus()) {
+        ui->actionCu_t->setEnabled(yes);
+        ui->action_Copy->setEnabled(yes);
+    }
+}
+
+void MainWindow::_on_sci_updateUI()
+{
+    QsciScintillaqq *sci = static_cast<QsciScintillaqq *>(sender());
+    if(sci->hasFocus()) {
+        //this->setWindowTitle(QString::number(QDateTime::currentDateTime().toTime_t()));
+        ui->action_Undo->setEnabled(sci->SendScintilla(QsciScintillaBase::SCI_CANUNDO));
+        ui->action_Redo->setEnabled(sci->SendScintilla(QsciScintillaBase::SCI_CANREDO));
+        ui->action_Paste->setEnabled(sci->SendScintilla(QsciScintillaBase::SCI_CANPASTE));
     }
 }
 

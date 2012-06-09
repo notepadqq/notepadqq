@@ -13,8 +13,10 @@ public:
     QTabWidgetqq *focusQTabWidgetqq(bool fallback = true);
     QTabWidgetqq *QTabWidgetqqAt(int index);
 signals:
+    void newQsciScintillaqqChildCreated(QsciScintillaqq *sci);
     
 public slots:
+    void _on_newQsciScintillaqqWidget(QsciScintillaqq *sci); // Called when a child scintilla widget is inserted
     
 };
 

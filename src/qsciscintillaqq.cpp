@@ -81,7 +81,7 @@ QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     isCtrlPressed = false;
     setIgnoreNextSignal(false);
     connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
-    connect(this,SIGNAL(SCN_UPDATEUI(int)), SLOT(handleUpdateUI_All(int)));
+    connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
 
     this->initialize();
 }
@@ -231,11 +231,6 @@ bool QsciScintillaqq::read(QIODevice *io, QString readEncodedAs)
     this->setText(txt);
 
     return true;
-}
-
-void QsciScintillaqq::handleUpdateUI_All(int)
-{
-     emit updateUI();
 }
 
 bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector)
@@ -402,6 +397,11 @@ bool QsciScintillaqq::isNewEmptyDocument()
     }
 }
 
+void QsciScintillaqq::forceUIUpdate()
+{
+    emit updateUI();
+}
+
 void QsciScintillaqq::autoSyntaxHighlight()
 {
     /* We'll parse the example.xml */
@@ -418,25 +418,28 @@ void QsciScintillaqq::autoSyntaxHighlight()
         node = node.firstChildElement("Language");
         while(!node.isNull()) {
             QString languageName = node.attributes().namedItem("name").nodeValue();
-            if(languageName != "cpp") continue;
-            QStringList extensions = node.attributes().namedItem("ext").nodeValue().split(" ", QString::SkipEmptyParts);
-            QString commentLine = node.attributes().namedItem("commentLine").nodeValue();
-            QString commentStart = node.attributes().namedItem("commentStart").nodeValue();
-            QString commentEnd = node.attributes().namedItem("commentEnd").nodeValue();
-            QHash<QString, QStringList> kwclass;
 
-            QDomNode keywords_node = node.firstChildElement("Keywords");
-            while(!keywords_node.isNull()) {
-                QString keyword_class_name = node.attributes().namedItem("name").nodeValue();
-                QStringList keywords = node.nodeValue().split(" ", QString::SkipEmptyParts);
-                kwclass.insert(keyword_class_name, keywords);
+            if(languageName == "cpp") {
+                QStringList extensions = node.attributes().namedItem("ext").nodeValue().split(" ", QString::SkipEmptyParts);
+                QString commentLine = node.attributes().namedItem("commentLine").nodeValue();
+                QString commentStart = node.attributes().namedItem("commentStart").nodeValue();
+                QString commentEnd = node.attributes().namedItem("commentEnd").nodeValue();
+                QHash<QString, QStringList> kwclass;
 
-                keywords_node = keywords_node.nextSiblingElement("Keywords");
+                QDomNode keywords_node = node.firstChildElement("Keywords");
+                while(!keywords_node.isNull()) {
+                    QString keyword_class_name = keywords_node.attributes().namedItem("name").nodeValue();
+
+                    QStringList keywords = keywords_node.toElement().text().split(" ", QString::SkipEmptyParts);
+                    kwclass.insert(keyword_class_name, keywords);
+
+                    keywords_node = keywords_node.nextSiblingElement("Keywords");
+                }
+
+                //this->lexer()->setDefaultColor(QColor("#000000"));
+
+                break;
             }
-
-            this->lexer()->setDefaultColor(QColor("#000000"));
-
-
 
             node = node.nextSiblingElement("Language");
         }

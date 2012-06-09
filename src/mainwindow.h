@@ -102,6 +102,9 @@ private slots:
     void _on_tabWidget_customContextMenuRequested(QPoint pos);
     void _on_instanceServer_NewConnection();
     void _on_instanceServer_Socket_ReadyRead();
+    void _on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci);
+    void _on_sci_copyAvailable(bool yes);
+    void _on_sci_updateUI();
     void on_action_New_triggered();
     void on_actionSave_as_triggered();
     void on_actionSave_triggered();
