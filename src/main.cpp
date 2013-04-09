@@ -35,6 +35,7 @@
 // required for build: libgtk3.0-dev
 
 void processOtherInstances();
+int numberOfFilesInArgs(QStringList arguments);
 
 int main(int argc, char *argv[])
 {
@@ -42,7 +43,13 @@ int main(int argc, char *argv[])
     a.processEvents();
 
 #if SINGLEINSTANCE_EXPERIMENTAL
-    processOtherInstances();
+    /* Attach to an existing instance
+     * only if there is at least
+     * one file in the arguments.
+     */
+    if(numberOfFilesInArgs(QApplication::arguments()) > 0) {
+        processOtherInstances();
+    }
 #endif
 
     // Load current locale
@@ -73,6 +80,9 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
+int numberOfFilesInArgs(QStringList arguments) {
+    return arguments.count() - 1;
+}
 
 void processOtherInstances()
 {
