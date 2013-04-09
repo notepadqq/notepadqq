@@ -12,6 +12,7 @@ public:
     
     QTabWidgetqq *focusQTabWidgetqq(bool fallback = true);
     QTabWidgetqq *QTabWidgetqqAt(int index);
+    QTabWidgetqq *addQTabWidgetqq();
 signals:
     void newQsciScintillaqqChildCreated(QsciScintillaqq *sci);
     

@@ -80,6 +80,7 @@ public:
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
     int kindlyTabClose(QsciScintillaqq *sci);
 
+    void connect_tabWidget(QTabWidgetqq *tabWidget);
 private:
     Ui::MainWindow *ui;
     QSettings *settings;
@@ -134,6 +135,7 @@ private slots:
     void on_actionSave_All_triggered();
     void on_actionE_xit_triggered();
     void on_actionClose_All_BUT_Current_Document_triggered();
+    void on_actionClone_to_Other_View_triggered();
 };
 
 #endif // MAINWINDOW_H;

@@ -41,6 +41,13 @@ QTabWidgetqq *QTabWidgetsContainer::QTabWidgetqqAt(int index)
     }
 }
 
+QTabWidgetqq *QTabWidgetsContainer::addQTabWidgetqq()
+{
+    QTabWidgetqq *tabWidget = new QTabWidgetqq(this); // this.parentWidget()
+    this->addWidget(tabWidget);
+    return tabWidget;
+}
+
 // This method is called from QTabWidgetqq childs, with method QTabWidgetqq::addEditorTab()
 void QTabWidgetsContainer::_on_newQsciScintillaqqWidget(QsciScintillaqq *sci)
 {

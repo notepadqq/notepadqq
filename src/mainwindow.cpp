@@ -784,3 +784,27 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
     Dengo:
         return;
 }
+
+void MainWindow::on_actionClone_to_Other_View_triggered()
+{
+    QWidget *cur_widget = container->focusQTabWidgetqq()->currentWidget();
+    //QsciScintillaqq* focus_sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if(container->focusQTabWidgetqq() == container->QTabWidgetqqAt(0)) {
+        if(container->count() < 2) {
+            QTabWidgetqq *tabWidget = container->addQTabWidgetqq();
+            connect_tabWidget(tabWidget);
+
+            //int index = tabWidget->addEditorTab(true, "???");
+            //tabWidget->addTab(cur_widget, "gmm");
+            //QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
+        } else {
+            //
+        }
+    }
+}
+
+void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
+{
+    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
+    connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
+}
