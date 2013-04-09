@@ -8,6 +8,7 @@
 notepadqq-build-desktop
 build
 src/notepadqq.pro.user
+src/notepadqq.pro.user.*
 src/Makefile
 docs/html
 packages
