@@ -204,7 +204,7 @@ bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, lon
     if (searchFrom == searchTo)
         return false;
 
-    while(1)
+    while(searchFrom < searchTo)
     {
         SendScintilla(SCI_SETSEARCHFLAGS, searchFlags);
         SendScintilla(SCI_SETTARGETSTART, searchFrom);
@@ -215,7 +215,6 @@ bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, lon
             return false;
         }
 
-
         // It was found.
         long targstart = SendScintilla(SCI_GETTARGETSTART);
         long targend = SendScintilla(SCI_GETTARGETEND);
@@ -225,12 +224,9 @@ bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, lon
                            targstart,
                            targend - targstart);
 
-        searchFrom++;
-
+        searchFrom = targend + 1;
     }
-
     return true;
-
 }
 
 QsciScintillaqq::ScintillaString QsciScintillaqq::convertTextQ2S(const QString &q) const
