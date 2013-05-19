@@ -461,8 +461,10 @@ void MainWindow::on_action_Open_triggered()
 {
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
-    // Set focus here (bug #760308)
+    // A patch for bug #760308
+    QWidget* foc = focusWidget();
     openNewFile(fileNames);
+    foc->setFocus();
 }
 
 /**
