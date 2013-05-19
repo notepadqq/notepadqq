@@ -954,6 +954,7 @@ bool MainWindow::reloadFromDisk(QString filename, bool askConfirm, QsciScintilla
 {
     if(filename != "")
     {
+        int line=0,index=0;
         int ret = QMessageBox::Yes;
 
         if(askConfirm == true && sci->isModified())
@@ -968,6 +969,7 @@ bool MainWindow::reloadFromDisk(QString filename, bool askConfirm, QsciScintilla
         }
 
         if(ret == QMessageBox::Yes) {
+            sci->getCursorPosition(&line,&index);
             QFile file(filename);
             QFileInfo fi(filename);
 
@@ -1003,6 +1005,7 @@ bool MainWindow::reloadFromDisk(QString filename, bool askConfirm, QsciScintilla
                 sci->setEolMode(sci->guessEolMode());
                 sci->setModified(false);
                 updateGui(tabWidget1->currentIndex(), tabWidget1);
+                sci->setCursorPosition(line,index);
                 return true;
             } else
             {
