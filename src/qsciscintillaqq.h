@@ -78,6 +78,7 @@ signals:
 public slots:
     void setFileName(QString filename);
     void setFileWatchEnabled(bool enable);
+    void fixMarginWidth();
     bool fileWatchEnabled();
     void setIgnoreNextSignal(bool ignore=true);
     bool ignoreNextSignal();
