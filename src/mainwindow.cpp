@@ -518,6 +518,7 @@ int MainWindow::addEditorTab(bool setFocus, QString title, QTabWidgetqq * _tabWi
 
     connect(sci, SIGNAL(modificationChanged(bool)), SLOT(on_scintillaModificationChanged(bool)));
     connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
+
     connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
     connect(sci, SIGNAL(selectionChanged()), SLOT(on_scintillaSelectionChanged()));
     connect(sci, SIGNAL(cursorPositionChanged(int,int)), SLOT(on_scintillaCursorPositionChanged(int,int)));
@@ -684,6 +685,7 @@ int MainWindow::writeDocument(int index, QString filename, bool updateFileName)
         updateGui(index, tabWidget1);
 
         file.close();
+
         sci->setFileWatchEnabled(true); //******************************** <-------------
     } while (retry);
 
@@ -1284,6 +1286,7 @@ void MainWindow::on_scintillaTextChanged()
                                          QString::number(sci->text().length())
                                         ,QString::number(sci->lines())
                                         ));
+    sci->fixMarginWidth();
 }
 
 void MainWindow::on_scintillaSelectionChanged()
@@ -1586,19 +1589,25 @@ void MainWindow::on_actionDecrease_Line_Indent_triggered()
 void MainWindow::on_actionZoom_In_triggered()
 {
     //getCurrentTextBox(tabWidget1)->SendScintilla(QsciScintilla::SCI_ZOOMIN);
-    getCurrentTextBox(tabWidget1)->zoomIn();
+    QsciScintillaqq* sci = getCurrentTextBox(tabWidget1);
+    sci->zoomIn();
+    sci->fixMarginWidth();
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
     //getCurrentTextBox(tabWidget1)->SendScintilla(QsciScintilla::SCI_ZOOMOUT);
-    getCurrentTextBox(tabWidget1)->zoomOut();
+    QsciScintillaqq* sci = getCurrentTextBox(tabWidget1);
+    sci->zoomOut();
+    sci->fixMarginWidth();
 }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
     //getCurrentTextBox(tabWidget1)->SendScintilla(QsciScintilla::SCI_SETZOOM, 0);
-    getCurrentTextBox(tabWidget1)->zoomTo(0);
+    QsciScintillaqq* sci = getCurrentTextBox(tabWidget1);
+    sci->zoomTo(0);
+    sci->fixMarginWidth();
 }
 
 void MainWindow::on_actionClone_to_Other_View_triggered()

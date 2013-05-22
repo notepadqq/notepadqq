@@ -237,6 +237,12 @@ QsciScintillaqq::ScintillaString QsciScintillaqq::convertTextQ2S(const QString &
     return q.toLatin1();
 }
 
+void QsciScintillaqq::fixMarginWidth()
+{
+    //Set margin to line characters+1 for padding
+    this->setMarginWidth(1,QString::number(this->lines()).prepend("00"));
+}
+
 void QsciScintillaqq::wheelEvent(QWheelEvent * e)
 {
     if(isCtrlPressed)
@@ -259,6 +265,7 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
                 this->zoomOut();
             }
         }
+        this->fixMarginWidth();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -279,7 +286,7 @@ void QsciScintillaqq::initialize()
 
 
     this->setMarginLineNumbers(1, true);
-    this->setMarginWidth(1, 47);
+    this->fixMarginWidth();
     this->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
     this->setAutoIndent(true);
     this->setAutoCompletionThreshold(2);
