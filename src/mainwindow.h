@@ -79,7 +79,6 @@ public:
     int saveAs(QsciScintillaqq *sci);
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
     int kindlyTabClose(QsciScintillaqq *sci);
-
     void connect_tabWidget(QTabWidgetqq *tabWidget);
 private:
     Ui::MainWindow *ui;

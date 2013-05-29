@@ -122,7 +122,6 @@ MainWindow::MainWindow(QWidget *parent) :
     instanceServer->removeServer(INSTANCESERVER_ID);
     instanceServer->listen(INSTANCESERVER_ID);
 
-
     // Focus on the editor of the first tab
     container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
 }
@@ -131,6 +130,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 
 void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternalMessage)
 {
@@ -548,18 +548,20 @@ void MainWindow::on_actionC_lose_All_triggered()
 
 void MainWindow::on_actionZoom_In_triggered()
 {
-    // TODO Eseguire lo zoom per TUTTI i documenti aperti. Stessa cosa per lo zoom via rotellina del mouse.
     container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomIn();
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
     container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomOut();
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
 }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
     container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomTo(0);
+    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
 }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()

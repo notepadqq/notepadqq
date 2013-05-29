@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "mainwindow.h"
 #include "qsciscintillaqq.h"
 #include "qtabwidgetqq.h"
 #include "constants.h"
@@ -301,7 +301,8 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
         }else if( e->delta() > 0) {
             this->zoomIn();
         }
-        updateLineMargin();
+        this->updateLineMargin();
+        this->syncZoom();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -596,4 +597,15 @@ this->setLexer(&lex);
 
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
+}
+
+//Ensures all QSciScintillaqq widgets within the same tab group keep the same zoom level.
+void QsciScintillaqq::syncZoom() {
+    QTabWidgetqq* tabWidget = this->getTabWidget();
+    int maxindex = tabWidget->count();
+    double currentZoom = this->SendScintilla(QsciScintillaBase::SCI_GETZOOM);
+    for(int i=0;i<maxindex;i++){
+        tabWidget->QSciScintillaqqAt(i)->zoomTo(currentZoom);
+        tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
+    }
 }
