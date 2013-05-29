@@ -78,11 +78,11 @@ QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     BOM = false;
     this->setFileName("");
     fswatch = new QFileSystemWatcher(parent);
-    isCtrlPressed = false;
+    //isCtrlPressed = false;
     setIgnoreNextSignal(false);
     connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
-
+    connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
     this->initialize();
 }
 
@@ -168,9 +168,9 @@ bool QsciScintillaqq::overType()
 
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_Control) {
-         isCtrlPressed = true;
-    }
+    //if(e->key() == Qt::Key_Control) {
+    //     isCtrlPressed = true;
+    //}
 
     emit keyPressed(e);
     QsciScintilla::keyPressEvent(e);
@@ -178,9 +178,9 @@ void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 
 void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_Control) {
-         isCtrlPressed = false;
-    }
+    //if(e->key() == Qt::Key_Control) {
+    //     isCtrlPressed = false;
+    //}
 
     emit keyReleased(e);
     QsciScintilla::keyReleaseEvent(e);
@@ -275,26 +275,33 @@ QsciScintillaqq::ScintillaString QsciScintillaqq::convertTextQ2S(const QString &
 
 void QsciScintillaqq::wheelEvent(QWheelEvent * e)
 {
-    if(isCtrlPressed)
+    //if(isCtrlPressed)
+    if(e->modifiers() & Qt::ControlModifier)
     {
-        e->accept();
+//        e->accept();
 
-        int d = e->delta() / 120;
-        if(d>0)
-        {
-            while(d > 0)
-            {
-                d -= 120;
-                this->zoomIn();
-            }
-        } else
-        {
-            while(d < 0)
-            {
-                d += 120;
-                this->zoomOut();
-            }
+//        int d = e->delta() / 120;
+//        if(d>0)
+//        {
+//            while(d > 0)
+//            {
+//                d -= 120;
+//                this->zoomIn();
+//            }
+//        } else
+//        {
+//            while(d < 0)
+//            {
+//                d += 120;
+//                this->zoomOut();
+//            }
+//        }
+        if( e->delta() < 0) {
+            this->zoomOut();
+        }else if( e->delta() > 0) {
+            this->zoomIn();
         }
+        updateLineMargin();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -315,7 +322,7 @@ void QsciScintillaqq::initialize()
 
 
     this->setMarginLineNumbers(1, true);
-    this->setMarginWidth(1, 47);
+    this->updateLineMargin();
     this->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
     this->setAutoIndent(true);
     this->setAutoCompletionThreshold(2);
@@ -585,4 +592,8 @@ this->setLexer(&lex);
         //
     }
 
+}
+
+void QsciScintillaqq::updateLineMargin() {
+    setMarginWidth(1,QString("00%1").arg(lines()));
 }
