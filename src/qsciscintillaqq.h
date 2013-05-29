@@ -63,6 +63,7 @@ public:
     bool isNewEmptyDocument();
     void autoSyntaxHighlight();
     void forceUIUpdate();
+    void syncZoom();
 private:
     typedef QByteArray ScintillaString;
     QFileSystemWatcher *fswatch;
@@ -72,7 +73,7 @@ private:
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
     int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
-    bool isCtrlPressed;
+    //bool isCtrlPressed;
     void initialize();
 private slots:
     void internFileChanged(const QString &path);
@@ -88,6 +89,7 @@ public slots:
     bool fileWatchEnabled();
     void setIgnoreNextSignal(bool ignore=true);
     bool ignoreNextSignal();
+    void updateLineMargin();
     QString fileName();
     bool overType();
     bool write(QIODevice *io);
