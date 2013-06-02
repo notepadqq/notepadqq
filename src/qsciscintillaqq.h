@@ -64,6 +64,7 @@ public:
     void autoSyntaxHighlight();
     void forceUIUpdate();
     void syncZoom();
+    void countFinds(QString needle);
 private:
     typedef QByteArray ScintillaString;
     QFileSystemWatcher *fswatch;

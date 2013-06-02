@@ -595,6 +595,7 @@ this->setLexer(&lex);
 
 }
 
+//Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
 }
@@ -608,4 +609,18 @@ void QsciScintillaqq::syncZoom() {
         tabWidget->QSciScintillaqqAt(i)->zoomTo(currentZoom);
         tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
     }
+}
+void QsciScintillaqq::countFinds(QString needle) {
+    QMessageBox msgBox;
+    QString txt = this->text();
+    int index = 0;
+    int count = 0;
+    while((index=txt.indexOf(needle,index,Qt::CaseInsensitive)) != -1){
+        count++;
+        index = this->text().indexOf(needle,index,Qt::CaseInsensitive);
+    }
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setText(QString("Found %i instances of \"%s\"").arg(count).arg(needle));
+    msgBox.exec();
 }
