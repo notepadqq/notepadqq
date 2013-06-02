@@ -55,27 +55,44 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>361</width>
-       <height>101</height>
+       <width>351</width>
+       <height>31</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="leftMargin">
-       <number>20</number>
+     <layout class="QHBoxLayout" name="hz_params">
+      <property name="spacing">
+       <number>3</number>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Find What : </string>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="vt_params1">
+        <property name="leftMargin">
+         <number>30</number>
         </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="lbl_findWhat">
+          <property name="text">
+           <string>Find What : </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit">
-        <property name="mouseTracking">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item>
+       <layout class="QVBoxLayout" name="vt_params2">
+        <item>
+         <widget class="QLineEdit" name="edt_findWhat">
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -84,13 +101,13 @@
       <rect>
        <x>380</x>
        <y>10</y>
-       <width>182</width>
-       <height>171</height>
+       <width>161</width>
+       <height>62</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton">
+     <layout class="QVBoxLayout" name="vt_action">
+      <item>
+       <widget class="QPushButton" name="btn_findNext">
         <property name="text">
          <string>Find Next</string>
         </property>
@@ -99,8 +116,8 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="btnCount">
+      <item>
+       <widget class="QPushButton" name="btn_countInstances">
         <property name="text">
          <string>Count</string>
         </property>
@@ -108,34 +125,49 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="formLayoutWidget_3">
+    <widget class="QWidget" name="opts" native="true">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>110</y>
-       <width>268</width>
-       <height>81</height>
+       <width>177</width>
+       <height>72</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBox">
+     <layout class="QVBoxLayout" name="vt_opts">
+      <property name="spacing">
+       <number>3</number>
+      </property>
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="cb_optMatchWhole">
         <property name="text">
          <string>Match whole word only</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="checkBox_2">
+      <item>
+       <widget class="QCheckBox" name="cb_optMatchCase">
         <property name="text">
          <string>Match case</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="cb_wrap">
+      <item>
+       <widget class="QCheckBox" name="cb_optWrap">
         <property name="text">
-         <string>Wrap Around</string>
+         <string>Wrap around</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -145,19 +177,78 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tab_replace">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>Replace</string>
     </attribute>
+    <widget class="QWidget" name="formLayoutWidget_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>351</width>
+       <height>58</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="hz_params_r">
+      <property name="spacing">
+       <number>3</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="vt_params1_r">
+        <property name="leftMargin">
+         <number>30</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lbl_findWhat_r">
+          <property name="text">
+           <string>Find What : </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Replace with : </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="vt_params2_r">
+        <item>
+         <widget class="QLineEdit" name="edt_findWhat_r">
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="edt_replaceWith_r"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="gb_srchmode">
    <property name="geometry">
     <rect>
-     <x>1</x>
-     <y>223</y>
-     <width>181</width>
-     <height>101</height>
+     <x>0</x>
+     <y>230</y>
+     <width>177</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -174,38 +265,15 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>163</width>
-      <height>80</height>
+      <width>157</width>
+      <height>62</height>
      </rect>
     </property>
-    <layout class="QFormLayout" name="formLayout_5">
-     <item row="2" column="0">
-      <widget class="QRadioButton" name="rb_srch_ext">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Extended</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QRadioButton" name="rb_srch_regexp">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Regular Expressions</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
+    <layout class="QVBoxLayout" name="vt_srchmode">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
       <widget class="QRadioButton" name="rb_srch_normal">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -224,16 +292,42 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QRadioButton" name="rb_srch_ext">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Extended</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rb_srch_regexp">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Regular Expressions</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="gb_dir">
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>223</y>
-     <width>101</width>
-     <height>101</height>
+     <y>230</y>
+     <width>81</width>
+     <height>88</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -250,19 +344,22 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>81</width>
-      <height>71</height>
+      <width>65</width>
+      <height>48</height>
      </rect>
     </property>
-    <layout class="QFormLayout" name="formLayout_4">
-     <item row="0" column="1">
+    <layout class="QVBoxLayout" name="vt_dir">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
       <widget class="QRadioButton" name="rb_up">
        <property name="text">
         <string>Up</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item>
       <widget class="QRadioButton" name="rb_down">
        <property name="text">
         <string>Down</string>

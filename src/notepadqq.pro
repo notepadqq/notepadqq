@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     userlexer.cpp \
     qtabwidgetqq.cpp \
     generalfunctions.cpp \
-    qtabwidgetscontainer.cpp
+    qtabwidgetscontainer.cpp \
+    frmsrchreplace.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -41,10 +42,12 @@ HEADERS  += mainwindow.h \
     userlexer.h \
     qtabwidgetqq.h \
     generalfunctions.h \
-    qtabwidgetscontainer.h
+    qtabwidgetscontainer.h \
+    frmsrchreplace.h
 
 FORMS    += mainwindow.ui \
-    frmabout.ui
+    frmabout.ui \
+    frmsrchreplace.ui
 
 LIBS += -lqscintilla2
 

@@ -16,7 +16,18 @@ public:
     ~frmsrchreplace();
     
 private:
+    bool newsearch;
     Ui::frmsrchreplace *ui;
+    Qt::CaseSensitivity matchCase();
+
+
+
+private slots:
+    void buttonCountInstances_clicked();
+    void buttonFindNext_clicked();
+    void updateMode(int newIndex);
+    void searchChanged();
+
 };
 
 #endif // FRMSRCHREPLACE_H

@@ -64,7 +64,8 @@ public:
     void autoSyntaxHighlight();
     void forceUIUpdate();
     void syncZoom();
-    void countFinds(QString needle);
+    void countFinds(QString needle, Qt::CaseSensitivity casesense=Qt::CaseInsensitive);
+    void findString(QString needle, bool regexp=false, bool casesense=false, bool wholeword=false, bool wrap=true, bool forward=true, bool newsearch=false);
 private:
     typedef QByteArray ScintillaString;
     QFileSystemWatcher *fswatch;
