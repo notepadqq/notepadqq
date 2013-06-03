@@ -610,29 +610,3 @@ void QsciScintillaqq::syncZoom() {
         tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
     }
 }
-void QsciScintillaqq::countFinds(QString needle, Qt::CaseSensitivity casesense) {
-    QMessageBox msgBox;
-    QString txt = this->text();
-    int index = 0;
-    int count = 0;
-
-    if(txt.length() == 0) {
-        return;
-    }
-    while((index=txt.indexOf(needle,index,casesense)) != -1){
-        count++;
-        index = index+needle.length();
-    }
-    msgBox.setWindowTitle(QCoreApplication::applicationName());
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.setText(QString("Found %1 instances of \"%2\"").arg(count).arg(needle));
-    msgBox.exec();
-}
-
-void QsciScintillaqq::findString(QString needle, bool regexp, bool casesense, bool wholeword, bool wrap, bool forward, bool newsearch) {
-    //int *line=0,*index=0;
-    //this->getCursorPosition(line,index);
-    if((newsearch)||(!findNext())) {
-        this->findFirst(needle,regexp,casesense,wholeword,wrap,forward,-1,-1);
-    }
-}

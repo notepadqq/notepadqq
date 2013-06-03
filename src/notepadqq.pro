@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     qtabwidgetqq.cpp \
     generalfunctions.cpp \
     qtabwidgetscontainer.cpp \
-    frmsrchreplace.cpp
+    frmsrchreplace.cpp \
+    searchengine.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -43,7 +44,9 @@ HEADERS  += mainwindow.h \
     qtabwidgetqq.h \
     generalfunctions.h \
     qtabwidgetscontainer.h \
-    frmsrchreplace.h
+    frmsrchreplace.h \
+    ../searchengine.h \
+    searchengine.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

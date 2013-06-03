@@ -2,7 +2,7 @@
 #define FRMSRCHREPLACE_H
 
 #include <QDialog>
-
+#include "searchengine.h"
 namespace Ui {
 class frmsrchreplace;
 }
@@ -16,17 +16,25 @@ public:
     ~frmsrchreplace();
     
 private:
-    bool newsearch;
     Ui::frmsrchreplace *ui;
-    Qt::CaseSensitivity matchCase();
+    searchengine *se;
+    bool newsearch;
+    bool regexp;
+    bool casesense;
+    bool wholeword;
+    bool wrap;
+    bool forward;
 
+    void updateParameters();
 
+    void showEvent(QShowEvent *e);
+    void closeEvent(QCloseEvent *e);
 
 private slots:
     void buttonCountInstances_clicked();
     void buttonFindNext_clicked();
     void updateMode(int newIndex);
-    void searchChanged();
+    void setNewSearch(bool isnew=true);
 
 };
 
