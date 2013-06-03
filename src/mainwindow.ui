@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -123,6 +123,7 @@
     <property name="title">
      <string>&amp;Search</string>
     </property>
+    <addaction name="actionSearch"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -1509,6 +1510,11 @@
    </property>
    <property name="text">
     <string>Preferences...</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search...</string>
    </property>
   </action>
  </widget>

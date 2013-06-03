@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "frmabout.h"
+#include "frmsrchreplace.h"
 #include "constants.h"
 #include "generalfunctions.h"
 #include "qtabwidgetscontainer.h"
@@ -124,6 +125,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Focus on the editor of the first tab
     container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
+
+    // Build the search dialog for later use
+    searchDialog = new frmsrchreplace(this);
+    searchDialog->hide();
 }
 
 MainWindow::~MainWindow()
@@ -805,6 +810,11 @@ void MainWindow::on_actionClone_to_Other_View_triggered()
             //
         }
     }
+}
+
+void MainWindow::on_actionSearch_triggered()
+{
+    searchDialog->show();
 }
 
 void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)

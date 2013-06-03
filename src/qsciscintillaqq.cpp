@@ -595,6 +595,7 @@ this->setLexer(&lex);
 
 }
 
+//Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
 }

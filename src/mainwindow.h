@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <Qsci/qsciscintilla.h>
 #include "qtabwidgetscontainer.h"
+#include "frmsrchreplace.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -92,6 +93,7 @@ private:
     QLabel *statusBar_textFormat;
     QLabel *statusBar_overtypeNotify;
     QLocalServer *instanceServer;
+    frmsrchreplace* searchDialog;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
     void closeEvent(QCloseEvent *event);
@@ -135,6 +137,7 @@ private slots:
     void on_actionE_xit_triggered();
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionClone_to_Other_View_triggered();
+    void on_actionSearch_triggered();
 };
 
 #endif // MAINWINDOW_H;
