@@ -392,6 +392,17 @@ bool MainWindow::isNewEmptyTab(int index)
     }
 }
 
+bool MainWindow::fileAlreadyOpened(const QString & filepath)
+{
+    // visit all QScintilla instance to check if "filepath" is already opened
+    for ( int i = 0; i < tabWidget1->count(); ++i ) {
+        QsciScintillaqq* sci = getTextBoxFromIndex(i, tabWidget1);
+        if ( sci && sci->fileName() == filepath )
+            return true;
+    }
+    return false;
+}
+
 void MainWindow::openNewFile(QStringList fileNames)
 {
     if(!fileNames.isEmpty())
@@ -402,6 +413,9 @@ void MainWindow::openNewFile(QStringList fileNames)
 
             QFile file(fileNames[i]);
             QFileInfo fi(fileNames[i]);
+
+            if ( fileAlreadyOpened(fi.absoluteFilePath()) )
+                continue;
 
             int index = addEditorTab(true, fi.fileName(), tabWidget1);
             QsciScintillaqq* sci = this->getTextBoxFromIndex(index, tabWidget1);
@@ -757,6 +771,7 @@ void MainWindow::autoLexer(QString fullFileName, QsciScintillaqq* parent)
             // Let's try with mime-types!
 
             QString fileMime = generalFunctions::getFileMime(fullFileName);
+
             if(fileMime == "text/html" ||
                fileMime == "text/x-php")
             {
@@ -1535,7 +1550,7 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 }
 
 void MainWindow::on_actionIncrease_Line_Indent_triggered()
-{          
+{
     QsciScintillaqq *sci = getCurrentTextBox(tabWidget1);
     int lineFrom, indexFrom, lineTo, indexTo;
     sci->getSelection(&lineFrom, &indexFrom, &lineTo, &indexTo);
