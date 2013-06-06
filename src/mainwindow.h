@@ -71,6 +71,7 @@ public:
     void encodeIn(QString _enc, bool _bom, QsciScintillaqq * sci);
     void convertTo(QString _enc, bool _bom, QsciScintillaqq * sci);
     bool reloadFromDisk(QString filename, bool askConfirm, QsciScintillaqq * sci);
+    bool fileAlreadyOpened(const QString & filepath);
 
     /**
      * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
