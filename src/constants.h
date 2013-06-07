@@ -48,10 +48,6 @@ inline QString ApplicationL10nDir() {
     return def;
 }
 
-
-
-
-
 /*** DON'T TOUCH ANYTHING AFTER HERE. You are likely to be eaten by a grue if you do. ***/
 const int SELECTOR_DefaultSelectionHighlight = 8;
 const QString INSTANCESERVER_ID = "notepadqq-{38fe96c0-030a-11e0-a976-0800200c9a66}"
