@@ -30,6 +30,7 @@
 #include <QtNetwork/QLocalSocket>
 #include <QDesktopWidget>
 #include "constants.h"
+#include "optparse/qtoptparser.h"
 
 // package libgtk3.0-0
 // required for build: libgtk3.0-dev
@@ -41,6 +42,23 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.processEvents();
+
+    QtOptParser opt;
+    opt.addSwitch("h", "help"   );
+    opt.addSwitch("v", "version");
+
+    if ( !opt.parse(a.arguments()) )
+        return -1;
+    if ( opt.hasOption("help") ) {
+        qDebug() << "print help";
+        opt.printHelp();
+        return 0;
+    }
+    if ( opt.hasOption("version") ) {
+        qDebug() << "print version";
+        opt.printVersion();
+        return 0;
+    }
 
 #ifdef SINGLEINSTANCE_EXPERIMENTAL
     /* Attach to an existing instance
