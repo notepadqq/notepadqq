@@ -1710,6 +1710,12 @@ void MainWindow::on_actionLowercase_triggered()
     }
 }
 
+#ifdef WIN32 // this is a hotfix to build in MSVC2008, which don't know the function "random()"
+static int random() {
+    return rand() % 100 + 1;
+}
+#endif
+
 void MainWindow::convertTo(QString _enc, bool _bom, QsciScintillaqq * sci)
 {
     sci->encoding = _enc;

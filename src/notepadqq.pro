@@ -32,6 +32,17 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     frmabout.ui
 
+win32 {
+
+    OTHER_FILES += \
+        ../../qscintilla/include/Scintilla.iface \
+        ../../qscintilla/include/HFacer.py \
+        ../../qscintilla/include/Face.py
+
+    # this is needed in order to set the correct export declaration on QScintilla headers
+    DEFINES += QSCINTILLA_DLL
+}
+
 LIBS += -lqscintilla2
 
 OTHER_FILES += \

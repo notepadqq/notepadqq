@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.processEvents();
 
-#if SINGLEINSTANCE_EXPERIMENTAL
+#ifdef SINGLEINSTANCE_EXPERIMENTAL
     /* Attach to an existing instance
      * only if there is at least
      * one file in the arguments.
