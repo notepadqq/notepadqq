@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     frmabout.cpp \
     userlexer.cpp \
     qtabwidgetqq.cpp \
-    generalfunctions.cpp
+    generalfunctions.cpp \
+    optparse/qtoptparser.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -27,10 +28,22 @@ HEADERS  += mainwindow.h \
     constants.h \
     userlexer.h \
     qtabwidgetqq.h \
-    generalfunctions.h
+    generalfunctions.h \
+    optparse/qtoptparser.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui
+
+win32 {
+
+    OTHER_FILES += \
+        ../../qscintilla/include/Scintilla.iface \
+        ../../qscintilla/include/HFacer.py \
+        ../../qscintilla/include/Face.py
+
+    # this is needed in order to set the correct export declaration on QScintilla headers
+    DEFINES += QSCINTILLA_DLL
+}
 
 LIBS += -lqscintilla2
 
