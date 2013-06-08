@@ -440,7 +440,7 @@ void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
             QFileInfo fi(fileNames[i]);
 
             int x = fileAlreadyOpened(fi.absoluteFilePath());
-            if (x >= -1 ) {
+            if (x > -1 ) {
                 if(fileNames.count() == 1){
                     tabWidget->setCurrentIndex(x);
                 }
