@@ -83,6 +83,7 @@ public:
     int kindlyTabClose(QsciScintillaqq *sci);
     void connect_tabWidget(QTabWidgetqq *tabWidget);
     searchengine* getSearchEngine();
+    bool fileAlreadyOpened(const QString & filepath);
 
     //Singleton instance of main window class
     static MainWindow* instance();
