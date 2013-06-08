@@ -12,6 +12,7 @@ public:
     void setWrap(bool yes);
     void setWholeWord(bool yes);
     void setForward(bool yes);
+    bool getForward();
     void setRegExp(bool yes);
     void setCaseSensitive(bool yes);
     void setPattern(QString pattern);
@@ -21,6 +22,8 @@ public:
 
     int countOccurrences();
     int findString();
+    int replace(QString with, bool all=false);
+
 
 private:
     QString needle;

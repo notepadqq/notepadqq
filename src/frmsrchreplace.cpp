@@ -13,6 +13,9 @@ frmsrchreplace::frmsrchreplace(QWidget *parent) :
     //Pretty button signals
     connect(ui->btn_countInstances,SIGNAL(clicked()),this,SLOT(buttonCountInstances_clicked()));
     connect(ui->btn_findNext,SIGNAL(clicked()),this,SLOT(buttonFindNext_clicked()));
+    connect(ui->btn_findNext_r,SIGNAL(clicked()),this,SLOT(buttonFindNext_clicked()));
+    connect(ui->btn_replace,SIGNAL(clicked()),this,SLOT(buttonReplace_clicked()));
+    connect(ui->btn_replaceAll,SIGNAL(clicked()),this,SLOT(buttonReplaceAll_clicked()));
 
     //Signals to let the search engine know we changed parameters
     connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(updateMode(int)));
@@ -64,7 +67,10 @@ void frmsrchreplace::showEvent(QShowEvent *e)
 void frmsrchreplace::updateMode(int newIndex)
 {
     ui->opts->setParent(ui->tabWidget->widget(newIndex));
+    ui->findParam->setParent(ui->tabWidget->widget(newIndex));
     ui->opts->show();
+    ui->findParam->show();
+
     if(newIndex == 2) {
         ui->cb_optWrap->setEnabled(false);
     }else {
@@ -93,6 +99,26 @@ void frmsrchreplace::buttonFindNext_clicked()
     updateParameters();
     se()->setContext(sci);
     se()->findString();
+}
+
+void frmsrchreplace::buttonReplace_clicked()
+{
+    updateParameters();
+    se()->setContext(MainWindow::instance()->container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    se()->replace(ui->edt_replaceWith_r->text());
+}
+
+void frmsrchreplace::buttonReplaceAll_clicked()
+{
+    QMessageBox mb;
+
+    updateParameters();
+    se()->setContext(MainWindow::instance()->container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    int occurrences = se()->replace(ui->edt_replaceWith_r->text(),true);
+
+    if(occurrences > 0) {
+        mb.setText(QString("Replaced %1 occurrences of %2").arg(occurrences).arg(se()->pattern()));
+    }
 }
 
 void frmsrchreplace::updateParameters()

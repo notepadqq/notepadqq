@@ -146,6 +146,8 @@ private slots:
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionClone_to_Other_View_triggered();
     void on_actionSearch_triggered();
+    void on_actionFind_Next_triggered();
+    void on_actionFind_Previous_triggered();
 };
 
 #endif // MAINWINDOW_H;

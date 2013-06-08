@@ -838,3 +838,25 @@ searchengine* MainWindow::getSearchEngine()
 {
     return se;
 }
+
+void MainWindow::on_actionFind_Next_triggered()
+{
+    if(se->getForward()) {
+        se->findString();
+    }else {
+        se->setForward(true);
+        se->setNewSearch(true);
+        se->findString();
+    }
+}
+
+void MainWindow::on_actionFind_Previous_triggered()
+{
+    if(!se->getForward()) {
+        se->findString();
+    }else {
+        se->setForward(false);
+        se->setNewSearch(true);
+        se->findString();
+    }
+}

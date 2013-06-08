@@ -124,6 +124,7 @@
      <string>&amp;Search</string>
     </property>
     <addaction name="actionSearch"/>
+    <addaction name="separator"/>
     <addaction name="actionFind_Next"/>
     <addaction name="actionFind_Previous"/>
    </widget>
@@ -1516,7 +1517,7 @@
   </action>
   <action name="actionSearch">
    <property name="text">
-    <string>Find...</string>
+    <string>&amp;Find...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
@@ -1524,7 +1525,7 @@
   </action>
   <action name="actionFind_Next">
    <property name="text">
-    <string>Find Next</string>
+    <string>Find &amp;Next</string>
    </property>
    <property name="shortcut">
     <string>F3</string>
@@ -1532,7 +1533,7 @@
   </action>
   <action name="actionFind_Previous">
    <property name="text">
-    <string>Find Previous</string>
+    <string>Find &amp;Previous</string>
    </property>
    <property name="shortcut">
     <string>Shift+F3</string>

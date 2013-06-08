@@ -33,6 +33,8 @@ private:
 private slots:
     void buttonCountInstances_clicked();
     void buttonFindNext_clicked();
+    void buttonReplace_clicked();
+    void buttonReplaceAll_clicked();
     void updateMode(int newIndex);
     void setNewSearch(bool isnew=true);
 
