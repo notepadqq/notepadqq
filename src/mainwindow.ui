@@ -1516,6 +1516,9 @@
    </property>
   </action>
   <action name="actionSearch">
+   <property name="icon">
+    <iconset theme="edit-find"/>
+   </property>
    <property name="text">
     <string>&amp;Find...</string>
    </property>
@@ -1524,6 +1527,9 @@
    </property>
   </action>
   <action name="actionFind_Next">
+   <property name="icon">
+    <iconset theme="go-next"/>
+   </property>
    <property name="text">
     <string>Find &amp;Next</string>
    </property>
@@ -1532,6 +1538,9 @@
    </property>
   </action>
   <action name="actionFind_Previous">
+   <property name="icon">
+    <iconset theme="go-previous"/>
+   </property>
    <property name="text">
     <string>Find &amp;Previous</string>
    </property>

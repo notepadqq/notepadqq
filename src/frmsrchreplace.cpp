@@ -118,6 +118,9 @@ void frmsrchreplace::buttonReplaceAll_clicked()
 
     if(occurrences > 0) {
         mb.setText(QString("Replaced %1 occurrences of %2").arg(occurrences).arg(se()->pattern()));
+        mb.setWindowTitle(QCoreApplication::applicationName());
+        mb.setStandardButtons(QMessageBox::Ok);
+        mb.exec();
     }
 }
 

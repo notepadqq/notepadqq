@@ -96,15 +96,16 @@ int searchengine::findString()
     if(needle.length() == 0){
         return -1;
     }
-    if((this->newsearch)||(!context->findNext())) {
-        this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,-1,-1);
-        //Step backwards an extra step for fluid searching
-        if(!forward) {
-            this->context->findNext();
-        }
 
-        this->setNewSearch(false);
+    int line=0,index=0;
+    this->context->getCursorPosition(&line,&index);
+    this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,line,index);
+
+    if(!forward) {
+        this->context->findNext();
     }
+
+    this->setNewSearch(false);
 
     return 0;
 }
@@ -127,7 +128,9 @@ int searchengine::replace(QString with, bool all)
         }else {
             if(forward) {
                 this->context->getCursorPosition(&line,&index);
-                this->context->findFirst(needle,regexp,casesense,wholeword,wrap,false,line,index);
+                if(!this->context->findFirst(needle,regexp,casesense,wholeword,false,false,line,index)){
+                    this->context->findFirst(needle,regexp,casesense,wholeword,false,true,line,index);
+                }
                 this->context->replace(with);
             }else {
                 this->context->findFirst(needle,regexp,casesense,wholeword,wrap,false,line,index);
