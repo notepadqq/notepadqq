@@ -5,7 +5,6 @@
 class searchengine
 {
 public:
-    searchengine();
     searchengine(bool regexp=false, bool casesense=false, bool wholeword=false, bool wrap=true, bool forward=true);
 
     QString pattern();

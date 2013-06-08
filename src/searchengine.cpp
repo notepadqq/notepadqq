@@ -1,9 +1,4 @@
 #include "searchengine.h"
-#include <QDebug>
-#include <QStringList>
-searchengine::searchengine()
-{
-}
 
 searchengine::searchengine(bool regexp, bool casesense, bool wholeword, bool wrap, bool forward)
 {
@@ -95,7 +90,13 @@ int searchengine::findString()
 {
     if((this->newsearch)||(!context->findNext())) {
         this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,-1,-1);
+        //Step backwards an extra step for fluid searching
+        if(!forward) {
+            context->findNext();
+        }
+
         this->setNewSearch(false);
     }
+
     return 0;
 }

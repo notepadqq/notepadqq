@@ -124,6 +124,8 @@
      <string>&amp;Search</string>
     </property>
     <addaction name="actionSearch"/>
+    <addaction name="actionFind_Next"/>
+    <addaction name="actionFind_Previous"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -1514,7 +1516,26 @@
   </action>
   <action name="actionSearch">
    <property name="text">
-    <string>Search...</string>
+    <string>Find...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFind_Next">
+   <property name="text">
+    <string>Find Next</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionFind_Previous">
+   <property name="text">
+    <string>Find Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
    </property>
   </action>
  </widget>

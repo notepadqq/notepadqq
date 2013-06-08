@@ -36,24 +36,27 @@ frmsrchreplace::~frmsrchreplace()
     delete ui;
 }
 
+searchengine* frmsrchreplace::se()
+{
+    MainWindow* mref = MainWindow::instance();
+    if(QString(mref->metaObject()->className()).compare("MainWindow") == 0) {
+        return mref->getSearchEngine();
+    }
+    return 0;
+}
+
 void frmsrchreplace::setNewSearch(bool isnew)
 {
-    se->setNewSearch(isnew);
+    se()->setNewSearch(isnew);
 }
 
 void frmsrchreplace::closeEvent(QCloseEvent *e)
 {
-    delete se;
     QDialog::closeEvent(e);
 }
 
 void frmsrchreplace::showEvent(QShowEvent *e)
 {
-    se = new searchengine(ui->rb_srch_regexp->isChecked(),
-                          ui->cb_optMatchCase->isChecked(),
-                          ui->cb_optMatchWhole->isChecked(),
-                          ui->cb_optWrap->isChecked(),
-                          ui->rb_down->isChecked());
     QDialog::showEvent(e);
 }
 
@@ -75,35 +78,33 @@ void frmsrchreplace::buttonCountInstances_clicked()
 
     updateParameters();
 
-    if(se->pattern().length() == 0) {
+    if(se()->pattern().length() == 0) {
         ui->edt_findWhat->setFocus();
         return;
     }
-    qDebug() << se->pattern();
-    mb.setText(QString("Found %1 occurrences of %2").arg(se->countOccurrences()).arg(se->pattern()));
+    mb.setText(QString("Found %1 occurrences of %2").arg(se()->countOccurrences()).arg(se()->pattern()));
     mb.exec();
 }
 
 //Need a cleaner way to do this later
 void frmsrchreplace::buttonFindNext_clicked()
 {
-    MainWindow *mref = (MainWindow*)this->parent();
-    QsciScintillaqq *sci = mref->container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = MainWindow::instance()->container->focusQTabWidgetqq()->focusQSciScintillaqq();
     updateParameters();
-    se->setContext(sci);
-    se->findString();
+    se()->setContext(sci);
+    se()->findString();
 }
 
 void frmsrchreplace::updateParameters()
 {
-    MainWindow *mref = (MainWindow*)this->parent();
+    MainWindow *mref = MainWindow::instance();
     QsciScintillaqq *sci = mref->container->focusQTabWidgetqq()->focusQSciScintillaqq();
 
-    se->setCaseSensitive(ui->cb_optMatchCase->isChecked());
-    se->setWholeWord(ui->cb_optMatchWhole->isChecked());
-    se->setForward(ui->rb_down->isChecked());
-    se->setRegExp(ui->rb_srch_regexp->isChecked());
-    se->setWrap(ui->cb_optWrap->isChecked());
-    se->setPattern(ui->edt_findWhat->text());
-    se->setHaystack(sci->text());
+    se()->setCaseSensitive(ui->cb_optMatchCase->isChecked());
+    se()->setWholeWord(ui->cb_optMatchWhole->isChecked());
+    se()->setForward(ui->rb_down->isChecked());
+    se()->setRegExp(ui->rb_srch_regexp->isChecked());
+    se()->setWrap(ui->cb_optWrap->isChecked());
+    se()->setPattern(ui->edt_findWhat->text());
+    se()->setHaystack(sci->text());
 }

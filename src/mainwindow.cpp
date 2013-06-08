@@ -24,6 +24,7 @@
 #include "ui_mainwindow.h"
 #include "frmabout.h"
 #include "frmsrchreplace.h"
+#include "searchengine.h"
 #include "constants.h"
 #include "generalfunctions.h"
 #include "qtabwidgetscontainer.h"
@@ -45,6 +46,8 @@
 #include <QUrl>
 #include <QDateTime>
 
+MainWindow* MainWindow::wMain = 0;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -52,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     settings = new QSettings();
-
     // "container" is the object that contains all the TabWidgets.
     container = new QTabWidgetsContainer(this);
     this->setCentralWidget(container);
@@ -129,11 +131,20 @@ MainWindow::MainWindow(QWidget *parent) :
     // Build the search dialog for later use
     searchDialog = new frmsrchreplace(this);
     searchDialog->hide();
+    se = new searchengine();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+MainWindow* MainWindow::instance()
+{
+    if(!wMain){
+        wMain = new MainWindow();
+    }
+    return wMain;
 }
 
 
@@ -821,4 +832,9 @@ void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
 {
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
+}
+
+searchengine* MainWindow::getSearchEngine()
+{
+    return se;
 }

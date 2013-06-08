@@ -27,6 +27,7 @@
 #include <Qsci/qsciscintilla.h>
 #include "qtabwidgetscontainer.h"
 #include "frmsrchreplace.h"
+#include "searchengine.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -81,6 +82,11 @@ public:
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
     int kindlyTabClose(QsciScintillaqq *sci);
     void connect_tabWidget(QTabWidgetqq *tabWidget);
+    searchengine* getSearchEngine();
+
+    //Singleton instance of main window class
+    static MainWindow* instance();
+
 private:
     Ui::MainWindow *ui;
     QSettings *settings;
@@ -94,6 +100,8 @@ private:
     QLabel *statusBar_overtypeNotify;
     QLocalServer *instanceServer;
     frmsrchreplace* searchDialog;
+    searchengine* se;
+    static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
     void closeEvent(QCloseEvent *event);
