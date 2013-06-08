@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_NativeWindows, true);
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, false);
 
-    MainWindow w;
-    w.showMaximized();
+    MainWindow* w = MainWindow::instance();
+    w->showMaximized();
 
     //gdk_notify_startup_complete();
 

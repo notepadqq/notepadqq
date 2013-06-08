@@ -24,6 +24,7 @@
 #include "ui_mainwindow.h"
 #include "frmabout.h"
 #include "frmsrchreplace.h"
+#include "searchengine.h"
 #include "constants.h"
 #include "generalfunctions.h"
 #include "qtabwidgetscontainer.h"
@@ -45,6 +46,8 @@
 #include <QUrl>
 #include <QDateTime>
 
+MainWindow* MainWindow::wMain = 0;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -52,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     settings = new QSettings();
-
     // "container" is the object that contains all the TabWidgets.
     container = new QTabWidgetsContainer(this);
     this->setCentralWidget(container);
@@ -84,6 +86,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
     ui->actionPreferences->setIcon(QIcon::fromTheme("preferences-other", QIcon(ui->actionPreferences->icon())));
+    ui->actionSearch->setIcon(QIcon::fromTheme("edit-find",QIcon(ui->actionSearch->icon())));
+    ui->actionFind_Next->setIcon(QIcon::fromTheme("go-next",QIcon(ui->actionFind_Next->icon())));
+    ui->actionFind_Previous->setIcon(QIcon::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
+
 
     // Context menu initialization
     tabContextMenu = new QMenu;
@@ -129,11 +135,20 @@ MainWindow::MainWindow(QWidget *parent) :
     // Build the search dialog for later use
     searchDialog = new frmsrchreplace(this);
     searchDialog->hide();
+    se = new searchengine();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+MainWindow* MainWindow::instance()
+{
+    if(!wMain){
+        wMain = new MainWindow();
+    }
+    return wMain;
 }
 
 
@@ -404,6 +419,19 @@ void MainWindow::on_actionSave_triggered()
     save(container->focusQTabWidgetqq()->focusQSciScintillaqq());
 }
 
+int MainWindow::fileAlreadyOpened(const QString & filepath)
+{
+    QTabWidgetqq* tabWidget = container->focusQTabWidgetqq();
+    // visit all QScintilla instance to check if "filepath" is already opened
+    for ( int i = 0; i < tabWidget->count(); ++i ) {
+        QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(i);
+        if ( sci && sci->fileName() == filepath ) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
 {
     if(!fileNames.isEmpty())
@@ -414,6 +442,14 @@ void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
 
             QFile file(fileNames[i]);
             QFileInfo fi(fileNames[i]);
+
+            int x = fileAlreadyOpened(fi.absoluteFilePath());
+            if (x > -1 ) {
+                if(fileNames.count() == 1){
+                    tabWidget->setCurrentIndex(x);
+                }
+                continue;
+            }
 
             int index = tabWidget->addEditorTab(true, fi.fileName());
             QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
@@ -821,4 +857,31 @@ void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
 {
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
+}
+
+searchengine* MainWindow::getSearchEngine()
+{
+    return se;
+}
+
+void MainWindow::on_actionFind_Next_triggered()
+{
+    if(se->getForward()) {
+        se->findString();
+    }else {
+        se->setForward(true);
+        se->setNewSearch(true);
+        se->findString();
+    }
+}
+
+void MainWindow::on_actionFind_Previous_triggered()
+{
+    if(!se->getForward()) {
+        se->findString();
+    }else {
+        se->setForward(false);
+        se->setNewSearch(true);
+        se->findString();
+    }
 }
