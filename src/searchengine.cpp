@@ -1,9 +1,4 @@
 #include "searchengine.h"
-#include <QDebug>
-#include <QStringList>
-searchengine::searchengine()
-{
-}
 
 searchengine::searchengine(bool regexp, bool casesense, bool wholeword, bool wrap, bool forward)
 {
@@ -13,6 +8,7 @@ searchengine::searchengine(bool regexp, bool casesense, bool wholeword, bool wra
     this->wrap = wrap;
     this->forward = forward;
     this->newsearch = true;
+    this->context = 0;
 }
 
 QString searchengine::pattern()
@@ -22,6 +18,10 @@ QString searchengine::pattern()
 
 void searchengine::setForward(bool yes) {
     this->forward = yes;
+}
+
+bool searchengine::getForward() {
+    return this->forward;
 }
 
 void searchengine::setWrap(bool yes) {
@@ -93,9 +93,74 @@ int searchengine::countOccurrences()
 
 int searchengine::findString()
 {
-    if((this->newsearch)||(!context->findNext())) {
-        this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,-1,-1);
-        this->setNewSearch(false);
+    if(needle.length() == 0){
+        return -1;
+    }
+
+    int line=0,index=0;
+    this->context->getCursorPosition(&line,&index);
+    this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,line,index);
+
+    if(!forward) {
+        this->context->findNext();
+    }
+
+    this->setNewSearch(false);
+
+    return 0;
+}
+
+int searchengine::replace(QString with, bool all)
+{
+    bool foundFirst = false;
+    int occurrences = 0;
+    if(!this->context) {
+        return -1;
+    }
+
+    //Set search to non-wrapping mode if we're replacing all occurrences to avoid infinite loop.
+    if(all) {
+        foundFirst = this->context->findFirst(needle,regexp,casesense,wholeword,false,forward,0,0);
+    }else{
+        int line=0,index=0;
+        if(!this->newsearch){
+            this->context->replace(with);
+        }else {
+            if(forward) {
+                this->context->getCursorPosition(&line,&index);
+                if(!this->context->findFirst(needle,regexp,casesense,wholeword,false,false,line,index)){
+                    this->context->findFirst(needle,regexp,casesense,wholeword,false,true,line,index);
+                }
+                this->context->replace(with);
+            }else {
+                this->context->findFirst(needle,regexp,casesense,wholeword,wrap,false,line,index);
+                this->context->replace(with);
+            }
+        }
+        this->context->getCursorPosition(&line,&index);
+
+        this->context->findFirst(needle,regexp,casesense,wholeword,wrap,forward,line,index);
+        this->newsearch = false;
+    }
+
+    if(foundFirst) {
+        int line=0,index=0;
+
+        if(all) {
+            this->context->beginUndoAction();
+            int curline=0,curindex=0;
+            this->context->getCursorPosition(&curline,&curindex);
+            while(this->context->findFirst(needle,regexp,casesense,wholeword,false,forward,line,index)) {
+                occurrences++;
+                this->context->replace(with);
+                this->context->getCursorPosition(&line,&index);
+            }
+            this->context->endUndoAction();
+            this->context->setCursorPosition(curline,curindex);
+            this->context->ensureCursorVisible();
+        }
+
+        return occurrences;
     }
     return 0;
 }
