@@ -415,17 +415,17 @@ void MainWindow::on_actionSave_triggered()
     save(container->focusQTabWidgetqq()->focusQSciScintillaqq());
 }
 
-bool MainWindow::fileAlreadyOpened(const QString & filepath)
+int MainWindow::fileAlreadyOpened(const QString & filepath)
 {
     QTabWidgetqq* tabWidget = container->focusQTabWidgetqq();
     // visit all QScintilla instance to check if "filepath" is already opened
     for ( int i = 0; i < tabWidget->count(); ++i ) {
         QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(i);
         if ( sci && sci->fileName() == filepath ) {
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
 }
 
 void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
@@ -439,7 +439,11 @@ void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
             QFile file(fileNames[i]);
             QFileInfo fi(fileNames[i]);
 
-            if ( fileAlreadyOpened(fi.absoluteFilePath()) ) {
+            int x = fileAlreadyOpened(fi.absoluteFilePath());
+            if (x >= -1 ) {
+                if(fileNames.count() == 1){
+                    tabWidget->setCurrentIndex(x);
+                }
                 continue;
             }
 
