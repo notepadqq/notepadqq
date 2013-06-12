@@ -12,7 +12,7 @@ public:
     explicit docengine(QObject *parent = 0);
     ~docengine();
 
-    bool saveDocument(QsciScintillaqq* sci,QString fileName="",bool copy=false);
+    int saveDocument(QsciScintillaqq* sci,QString fileName="",bool copy=false);
     bool loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget,bool reload=false);
     void addDocument(const QString & fileName);
     void removeDocument(QString fileName);

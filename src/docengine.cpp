@@ -34,7 +34,7 @@ void docengine::removeDocument(QString fileName)
     }
 }
 
-bool docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
+int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 {
     QTabWidgetqq* tabWidget = sci->getTabWidget();
     QFile file(fileName);
@@ -43,7 +43,7 @@ bool docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 
     while(!file.open(QIODevice::WriteOnly)){
         if(!errorSaveDocument(&file)) {
-            return false;
+            return MainWindow::saveFileResult_Canceled;
         }
     }
 
@@ -57,7 +57,7 @@ bool docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 
     while(file.write(string) == -1){
         if(!errorSaveDocument(&file)) {
-            return false;
+            return MainWindow::saveFileResult_Canceled;
         }
     }
 
@@ -80,7 +80,7 @@ bool docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 
     }
 
-    return true;
+    return MainWindow::saveFileResult_Saved;
 }
 
 bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bool reload)
