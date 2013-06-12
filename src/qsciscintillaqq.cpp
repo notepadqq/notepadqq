@@ -72,15 +72,14 @@
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
 {
-
-    _fileWatchEnabled = true;
+//    _fileWatchEnabled = true;
     encoding = "UTF-8";
     BOM = false;
     this->setFileName("");
-    fswatch = new QFileSystemWatcher(parent);
-    //isCtrlPressed = false;
-    setIgnoreNextSignal(false);
-    connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
+//    fswatch = new QFileSystemWatcher(parent);
+//    isCtrlPressed = false;
+//    setIgnoreNextSignal(false);
+//    connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
     connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
     this->initialize();
@@ -88,7 +87,7 @@ QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
 
 QsciScintillaqq::~QsciScintillaqq()
 {
-    delete fswatch;
+    //delete fswatch;
 }
 
 QString QsciScintillaqq::fileName()
@@ -99,45 +98,45 @@ QString QsciScintillaqq::fileName()
 void QsciScintillaqq::setFileName(QString filename)
 {
     _fileName = filename;
-    if(filename != "") {
-        fswatch->removePath(fileName());
-        fswatch->addPath(filename);
-    }
+//    if(filename != "") {
+//        fswatch->removePath(fileName());
+//        fswatch->addPath(filename);
+//    }
 }
 
-void QsciScintillaqq::setFileWatchEnabled(bool enable)
-{
-    _fileWatchEnabled = enable;
-}
+//void QsciScintillaqq::setFileWatchEnabled(bool enable)
+//{
+//    _fileWatchEnabled = enable;
+//}
 
-void QsciScintillaqq::setIgnoreNextSignal(bool ignore)
-{
-    _ignoreNextSignal = ignore;
-}
+//void QsciScintillaqq::setIgnoreNextSignal(bool ignore)
+//{
+//    _ignoreNextSignal = ignore;
+//}
 
-bool QsciScintillaqq::ignoreNextSignal()
-{
-    return _ignoreNextSignal;
-}
+//bool QsciScintillaqq::ignoreNextSignal()
+//{
+//    return _ignoreNextSignal;
+//}
 
-bool QsciScintillaqq::fileWatchEnabled()
-{
-    return _fileWatchEnabled;
-}
+//bool QsciScintillaqq::fileWatchEnabled()
+//{
+//    return _fileWatchEnabled;
+//}
 
-void QsciScintillaqq::internFileChanged(const QString &path)
-{
-    if(fileWatchEnabled())
-    {
-        if(ignoreNextSignal()) {
-            setIgnoreNextSignal(false);
-        } else {
-            emit fileChanged(path, this);
-        }
-    }
-    // Starts the filesystemwatcher again
-    setFileName(this->fileName());
-}
+//void QsciScintillaqq::internFileChanged(const QString &path)
+//{
+//    if(fileWatchEnabled())
+//    {
+//        if(ignoreNextSignal()) {
+//            setIgnoreNextSignal(false);
+//        } else {
+//            emit fileChanged(path, this);
+//        }
+//    }
+//    // Starts the filesystemwatcher again
+//    setFileName(this->fileName());
+//}
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
@@ -609,4 +608,15 @@ void QsciScintillaqq::syncZoom() {
         tabWidget->QSciScintillaqqAt(i)->zoomTo(currentZoom);
         tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
     }
+}
+
+QString QsciScintillaqq::baseName()
+{
+    QFile file(this->fileName());
+    if(!file.exists()) {
+        return "";
+    }
+    QFileInfo fi(file);
+
+    return fi.fileName();
 }

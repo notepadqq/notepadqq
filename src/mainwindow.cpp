@@ -136,6 +136,9 @@ MainWindow::MainWindow(QWidget *parent) :
     searchDialog = new frmsrchreplace(this);
     searchDialog->hide();
     se = new searchengine();
+
+    //Document monitoring,saving,loading engine for centralized document management.
+    de = new docengine(this);
 }
 
 MainWindow::~MainWindow()
@@ -170,7 +173,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
         {
             files.append(arguments.at(i));
         }
-        openDocuments(files, container->focusQTabWidgetqq());
+        de->loadDocuments(files, container->focusQTabWidgetqq());
         activateWindow = true;
     }
 
@@ -263,7 +266,20 @@ int MainWindow::_on_tab_close_requested(int index)
 {
     QTabWidgetqq *_tabWidget = static_cast<QTabWidgetqq *>(sender());
     QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
-    return kindlyTabClose(sci);
+
+    //Clean up document monitoring, if possible
+    QString filePath(sci->fileName());
+    int retval = kindlyTabClose(sci);
+    switch(retval) {
+        case MainWindow::tabCloseResult_Saved:
+        case MainWindow::tabCloseResult_NotSaved:
+        case MainWindow::tabCloseResult_AlreadySaved:
+            de->removeDocument(filePath);
+            break;
+        default:
+            break;
+    }
+    return retval;
 }
 
 int MainWindow::askIfWantToSave(QsciScintillaqq *sci, int reason)
@@ -321,18 +337,18 @@ int MainWindow::save(QsciScintillaqq *sci)
         // Call "save as"
         return saveAs(sci);
     } else {
-        return writeDocument(sci, sci->fileName(), true);
+        return de->saveDocument(sci,sci->fileName());
     }
 }
 
-int MainWindow::saveAs(QsciScintillaqq *sci)
+int MainWindow::saveAs(QsciScintillaqq *sci,bool copy)
 {
     // Ask for a file name
     QString filename = QFileDialog::getSaveFileName(0, tr("Save as"), getSaveDialogDefaultFileName(sci), tr("Any file (*)"), 0, 0);
     if (filename != "") {
         settings->setValue("lastSelectedDir", QFileInfo(filename).absolutePath());
         // Write
-        return writeDocument(sci, filename, true);
+        return de->saveDocument(sci,filename,copy);
     } else {
         return MainWindow::saveFileResult_Canceled;
     }
@@ -359,59 +375,24 @@ QString MainWindow::getSaveDialogDefaultFileName(QsciScintillaqq *sci)
 *
 * @return an integer value from enum MainWindow::saveFileResult.
 */
-int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName)
-{
-    QTabWidgetqq *tabWidget = sci->getTabWidget();
-    bool retry = true;
-    do
-    {
-        retry = false;
-        sci->setFileWatchEnabled(false); //*********************************** <---------------------
-        QFile file(filename);
-        QFileInfo fi(file);
+//int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename)
+//{
+//    QTabWidgetqq *tabWidget = sci->getTabWidget();
+//    if(!de->saveDocument(sci,filename)) {
+//        return MainWindow::saveFileResult_Canceled;
+//    }
 
-        if(!sci->write(&file)) {
-            // Manage error
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
-            msgBox.setDetailedText(file.errorString());
-            msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
-            msgBox.setDefaultButton(QMessageBox::Retry);
-            msgBox.setIcon(QMessageBox::Critical);
-            int ret = msgBox.exec();
-            if(ret == QMessageBox::Abort) {
-                return MainWindow::saveFileResult_Canceled;
-                break;
-            } else if(ret == QMessageBox::Retry) {
-                retry = true;
-                continue;
-            }
-        }
-
-        if(updateFileName) // TODO Use signal
-        {
-            // Update document's filename
-            sci->setFileName(fi.absoluteFilePath());
-            sci->setModified(false);
-            tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            sci->autoSyntaxHighlight();
-
-            // Update tab text
-            tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
-        }
-        //updateGui(sci->getTabIndex(), tabWidget1);
-
-        file.close();
-        sci->setFileWatchEnabled(true); //******************************** <-------------
-    } while (retry);
-
-    return MainWindow::saveFileResult_Saved;
-}
+//    return MainWindow::saveFileResult_Saved;
+//}
 
 void MainWindow::on_actionSave_as_triggered()
 {
     saveAs(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+}
+
+void MainWindow::on_actionSave_a_Copy_As_triggered()
+{
+    saveAs(container->focusQTabWidgetqq()->focusQSciScintillaqq(),true);
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -419,88 +400,6 @@ void MainWindow::on_actionSave_triggered()
     save(container->focusQTabWidgetqq()->focusQSciScintillaqq());
 }
 
-int MainWindow::fileAlreadyOpened(const QString & filepath)
-{
-    QTabWidgetqq* tabWidget = container->focusQTabWidgetqq();
-    // visit all QScintilla instance to check if "filepath" is already opened
-    for ( int i = 0; i < tabWidget->count(); ++i ) {
-        QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(i);
-        if ( sci && sci->fileName() == filepath ) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void MainWindow::openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget)
-{
-    if(!fileNames.isEmpty())
-    {
-        settings->setValue("lastSelectedDir", QFileInfo(fileNames[0]).absolutePath());
-        // Ok, now open our files
-        for (int i = 0; i < fileNames.count(); i++) {
-
-            QFile file(fileNames[i]);
-            QFileInfo fi(fileNames[i]);
-
-            int x = fileAlreadyOpened(fi.absoluteFilePath());
-            if (x > -1 ) {
-                if(fileNames.count() == 1){
-                    tabWidget->setCurrentIndex(x);
-                }
-                continue;
-            }
-
-            int index = tabWidget->addEditorTab(true, fi.fileName());
-            QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
-
-            sci->encoding = generalFunctions::getFileEncoding(fi.absoluteFilePath());
-
-            if (!sci->read(&file, sci->encoding)) {
-                // Manage error
-                QMessageBox msgBox;
-                msgBox.setWindowTitle(QCoreApplication::applicationName());
-                msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
-                msgBox.setDetailedText(file.errorString());
-                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
-                msgBox.setDefaultButton(QMessageBox::Retry);
-                msgBox.setIcon(QMessageBox::Critical);
-                int ret = msgBox.exec();
-                if(ret == QMessageBox::Abort) {
-                    tabWidget->removeTab(index);
-                    break;
-                } else if(ret == QMessageBox::Retry) {
-                    tabWidget->removeTab(index);
-                    i--;
-                    continue;
-                } else if(ret == QMessageBox::Ignore) {
-                    tabWidget->removeTab(index);
-                    continue;
-                }
-            }
-
-            // If there was only a new empty tab opened, remove it
-            if(tabWidget->count() == 2 && tabWidget->QSciScintillaqqAt(0)->isNewEmptyDocument()) {
-                tabWidget->removeTab(0);
-                index--;
-            }
-
-            sci->setFileName(fi.absoluteFilePath());
-            sci->setEolMode(sci->guessEolMode());
-            sci->setModified(false);
-            tabWidget->setTabToolTip(index, sci->fileName());
-            sci->autoSyntaxHighlight();
-
-            // updateGui(index, tabWidget1);
-
-            file.close();
-
-            sci->setFocus(Qt::OtherFocusReason);
-            //tabWidget1->setFocus();
-            //tabWidget1->currentWidget()->setFocus();
-        }
-    }
-}
 
 void MainWindow::on_action_Open_triggered()
 {
@@ -508,7 +407,7 @@ void MainWindow::on_action_Open_triggered()
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
     // A patch for bug #760308
     QWidget* foc = focusWidget();
-    openDocuments(fileNames, container->focusQTabWidgetqq());
+    de->loadDocuments(fileNames, container->focusQTabWidgetqq());
     foc->setFocus();
 }
 
@@ -884,4 +783,9 @@ void MainWindow::on_actionFind_Previous_triggered()
         se->setNewSearch(true);
         se->findString();
     }
+}
+
+QSettings* MainWindow::getSettings()
+{
+    return settings;
 }
