@@ -12,19 +12,24 @@ public:
     explicit docengine(QObject *parent = 0);
     ~docengine();
 
-    bool saveDocument(QsciScintillaqq* sci,QString fileName="");
-    bool loadDocument(QsciScintillaqq* sci,QString fileName="");
+    bool saveDocument(QsciScintillaqq* sci,QString fileName="",bool copy=false);
+    bool loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget,bool reload=false);
+    void addDocument(const QString & fileName);
+    void removeDocument(QString fileName);
+    int  isDocumentOpen(const QString & filePath);
+    //This one is going to be used for close all but X tab.
     void verifyDocuments();
+
+    void setFileWatcherEnabled(bool yes);
+    bool isFileWatcherEnabled();
 
 private:
     QFileSystemWatcher* fw;
-    void addDocument(const QString & fileName);
-    void removeDocument(QString fileName);
+
 
 
 private slots:
-    void reloadDocument(QsciScintillaqq* sci, QString fileName);
-    void fileChanged(QString fileName);
+    void documentChanged(QString fileName);
     bool errorSaveDocument(QFile *file);
 
 };

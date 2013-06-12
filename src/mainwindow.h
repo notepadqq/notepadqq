@@ -79,8 +79,9 @@ public:
     int save(QsciScintillaqq *sci);
 //    int writeDocument(QsciScintillaqq *sci, QString filename);
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
-    int saveAs(QsciScintillaqq *sci);
-    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
+    int saveAs(QsciScintillaqq *sci,bool copy=false);
+//    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
+    QSettings* getSettings();
     int kindlyTabClose(QsciScintillaqq *sci);
     void connect_tabWidget(QTabWidgetqq *tabWidget);
     searchengine* getSearchEngine();
@@ -151,6 +152,7 @@ private slots:
     void on_actionSearch_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
+    void on_actionSave_a_Copy_As_triggered();
 };
 
 #endif // MAINWINDOW_H;
