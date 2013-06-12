@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     generalfunctions.cpp \
     qtabwidgetscontainer.cpp \
     frmsrchreplace.cpp \
-    searchengine.cpp
+    searchengine.cpp \
+    docengine.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     qtabwidgetscontainer.h \
     frmsrchreplace.h \
     ../searchengine.h \
-    searchengine.h
+    searchengine.h \
+    docengine.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
