@@ -136,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent) :
     searchDialog = new frmsrchreplace(this);
     searchDialog->hide();
     se = new searchengine();
+    de = new docengine(this);
 }
 
 MainWindow::~MainWindow()
@@ -321,7 +322,7 @@ int MainWindow::save(QsciScintillaqq *sci)
         // Call "save as"
         return saveAs(sci);
     } else {
-        return writeDocument(sci, sci->fileName(), true);
+        return de->saveDocument(sci,sci->fileName());
     }
 }
 
@@ -332,7 +333,7 @@ int MainWindow::saveAs(QsciScintillaqq *sci)
     if (filename != "") {
         settings->setValue("lastSelectedDir", QFileInfo(filename).absolutePath());
         // Write
-        return writeDocument(sci, filename, true);
+        return de->saveDocument(sci,filename);
     } else {
         return MainWindow::saveFileResult_Canceled;
     }
@@ -359,55 +360,15 @@ QString MainWindow::getSaveDialogDefaultFileName(QsciScintillaqq *sci)
 *
 * @return an integer value from enum MainWindow::saveFileResult.
 */
-int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName)
-{
-    QTabWidgetqq *tabWidget = sci->getTabWidget();
-    bool retry = true;
-    do
-    {
-        retry = false;
-        sci->setFileWatchEnabled(false); //*********************************** <---------------------
-        QFile file(filename);
-        QFileInfo fi(file);
+//int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename)
+//{
+//    QTabWidgetqq *tabWidget = sci->getTabWidget();
+//    if(!de->saveDocument(sci,filename)) {
+//        return MainWindow::saveFileResult_Canceled;
+//    }
 
-        if(!sci->write(&file)) {
-            // Manage error
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
-            msgBox.setDetailedText(file.errorString());
-            msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
-            msgBox.setDefaultButton(QMessageBox::Retry);
-            msgBox.setIcon(QMessageBox::Critical);
-            int ret = msgBox.exec();
-            if(ret == QMessageBox::Abort) {
-                return MainWindow::saveFileResult_Canceled;
-                break;
-            } else if(ret == QMessageBox::Retry) {
-                retry = true;
-                continue;
-            }
-        }
-
-        if(updateFileName) // TODO Use signal
-        {
-            // Update document's filename
-            sci->setFileName(fi.absoluteFilePath());
-            sci->setModified(false);
-            tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            sci->autoSyntaxHighlight();
-
-            // Update tab text
-            tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
-        }
-        //updateGui(sci->getTabIndex(), tabWidget1);
-
-        file.close();
-        sci->setFileWatchEnabled(true); //******************************** <-------------
-    } while (retry);
-
-    return MainWindow::saveFileResult_Saved;
-}
+//    return MainWindow::saveFileResult_Saved;
+//}
 
 void MainWindow::on_actionSave_as_triggered()
 {

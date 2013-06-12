@@ -28,6 +28,7 @@
 #include "qtabwidgetscontainer.h"
 #include "frmsrchreplace.h"
 #include "searchengine.h"
+#include "docengine.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -76,7 +77,7 @@ public:
     void processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
     int askIfWantToSave(QsciScintillaqq *sci, int reason);
     int save(QsciScintillaqq *sci);
-    int writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName);
+//    int writeDocument(QsciScintillaqq *sci, QString filename);
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
     int saveAs(QsciScintillaqq *sci);
     void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
@@ -101,7 +102,8 @@ private:
     QLabel *statusBar_overtypeNotify;
     QLocalServer *instanceServer;
     frmsrchreplace* searchDialog;
-    searchengine* se;
+    searchengine *se;
+    docengine    *de;
     static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
