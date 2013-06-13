@@ -7,13 +7,17 @@ class QSettings;
 namespace widesettings {
 
     extern const char * SETTING_WRAP_MODE;
+    extern const char * SETTING_EOL_MODE;
 
     bool apply_wrap_mode (QsciScintilla::WrapMode m, QsciScintillaqq * w);
     bool apply_invisible_chars(bool v, QsciScintillaqq* w);
+    bool apply_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq * w);
+    bool set_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq * w);
     bool toggle_word_wrap(QsciScintillaqq * w);
     bool toggle_invisible_chars(QsciScintillaqq * w);
 
     void apply_settings(QsciScintillaqq * w);
+    void apply_single_document_settings(QsciScintillaqq * w );
 }
 
 #endif // APPWIDESETTINGS_H

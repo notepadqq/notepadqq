@@ -160,6 +160,10 @@ void MainWindow::init()
             widesettings::apply_settings(sqq);
         }
     }
+
+    QsciScintillaqq* sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if( !sci ) return;
+    update_single_document_ui(sci);
 }
 
 MainWindow* MainWindow::instance()
@@ -226,7 +230,11 @@ void MainWindow::_on_tabWidget_customContextMenuRequested(QPoint pos)
 void MainWindow::on_action_New_triggered()
 {
     QTabWidgetqq *focusedTabWidget = container->focusQTabWidgetqq();
-    focusedTabWidget->addNewDocument();
+    int index = focusedTabWidget->addNewDocument();
+
+    QsciScintillaqq *sci = focusedTabWidget->QSciScintillaqqAt(index);
+    if( !sci ) return;
+    widesettings::apply_single_document_settings(sci);
 }
 
 void MainWindow::_on_text_changed()
@@ -824,6 +832,18 @@ void MainWindow::on_actionWord_wrap_triggered()
     if ( !sci || !widesettings::toggle_word_wrap(sci) ) return;
 }
 
+void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
+{
+    QsciScintilla::EolMode eol = sci->eolMode();
+    ui->actionWindows_Format->setChecked( (eol == QsciScintilla::EolWindows ) ? true : false );
+    ui->actionWindows_Format->setDisabled( (eol == QsciScintilla::EolWindows ) ? true : false );
+    ui->actionUNIX_Format->setChecked( (eol == QsciScintilla::EolUnix ) ? true : false);
+    ui->actionUNIX_Format->setDisabled( (eol == QsciScintilla::EolUnix ) ? true : false );
+    ui->actionMac_Format->setChecked( (eol == QsciScintilla::EolMac ) ? true : false);
+    ui->actionMac_Format->setDisabled( (eol == QsciScintilla::EolMac ) ? true : false );
+
+}
+
 void MainWindow::_apply_wide_settings_to_tab( int index )
 {
     qDebug() << "switched to tab " << index;
@@ -831,6 +851,7 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
     QTabWidgetqq *_tabWidget = qobject_cast<QTabWidgetqq *>(sender());
     QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
     if ( !sci ) return;
+    update_single_document_ui(sci);
     widesettings::apply_settings(sci);
 }
 
@@ -839,4 +860,28 @@ void MainWindow::on_actionShow_All_Characters_triggered()
     // APPLY TO CURRENT TAB
     QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
+}
+
+void MainWindow::on_actionWindows_Format_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolWindows, sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionMac_Format_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolMac, sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionUNIX_Format_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolUnix, sci) ) return;
+    update_single_document_ui(sci);
 }

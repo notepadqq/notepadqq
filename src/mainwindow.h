@@ -90,6 +90,7 @@ public:
     void connect_tabWidget(QTabWidgetqq *tabWidget);
     searchengine* getSearchEngine();
     int fileAlreadyOpened(const QString & filepath);
+    void update_single_document_ui( QsciScintillaqq* sci );
 
     //Singleton instance of main window class
     static MainWindow* instance();
@@ -161,6 +162,9 @@ private slots:
     void on_actionSave_a_Copy_As_triggered();
     void on_actionWord_wrap_triggered();
     void on_actionShow_All_Characters_triggered();
+    void on_actionUNIX_Format_triggered();
+    void on_actionMac_Format_triggered();
+    void on_actionWindows_Format_triggered();
 };
 
 #endif // MAINWINDOW_H;
