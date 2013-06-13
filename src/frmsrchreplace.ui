@@ -50,13 +50,13 @@
     <attribute name="title">
      <string>Find</string>
     </attribute>
-    <widget class="QWidget" name="formLayoutWidget">
+    <widget class="QFrame" name="findParam">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
-       <width>351</width>
-       <height>31</height>
+       <y>0</y>
+       <width>361</width>
+       <height>44</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="hz_params">
@@ -64,7 +64,7 @@
        <number>3</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>1</number>
       </property>
       <item>
        <layout class="QVBoxLayout" name="vt_params1">
@@ -185,9 +185,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
+       <y>40</y>
        <width>351</width>
-       <height>58</height>
+       <height>28</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="hz_params_r">
@@ -203,16 +203,6 @@
          <number>30</number>
         </property>
         <item>
-         <widget class="QLabel" name="lbl_findWhat_r">
-          <property name="text">
-           <string>Find What : </string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="label">
           <property name="text">
            <string>Replace with : </string>
@@ -227,16 +217,48 @@
       <item>
        <layout class="QVBoxLayout" name="vt_params2_r">
         <item>
-         <widget class="QLineEdit" name="edt_findWhat_r">
-          <property name="mouseTracking">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLineEdit" name="edt_replaceWith_r"/>
         </item>
        </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="formLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>10</y>
+       <width>161</width>
+       <height>89</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="vt_action_2">
+      <property name="spacing">
+       <number>3</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="btn_findNext_r">
+        <property name="text">
+         <string>Find Next</string>
+        </property>
+        <property name="default">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_replace">
+        <property name="text">
+         <string>Replace</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_replaceAll">
+        <property name="text">
+         <string>Replace All</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

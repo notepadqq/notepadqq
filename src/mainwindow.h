@@ -27,6 +27,8 @@
 #include <Qsci/qsciscintilla.h>
 #include "qtabwidgetscontainer.h"
 #include "frmsrchreplace.h"
+#include "searchengine.h"
+#include "docengine.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -75,12 +77,19 @@ public:
     void processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
     int askIfWantToSave(QsciScintillaqq *sci, int reason);
     int save(QsciScintillaqq *sci);
-    int writeDocument(QsciScintillaqq *sci, QString filename, bool updateFileName);
+//    int writeDocument(QsciScintillaqq *sci, QString filename);
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
-    int saveAs(QsciScintillaqq *sci);
-    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
+    int saveAs(QsciScintillaqq *sci,bool copy=false);
+//    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
+    QSettings* getSettings();
     int kindlyTabClose(QsciScintillaqq *sci);
     void connect_tabWidget(QTabWidgetqq *tabWidget);
+    searchengine* getSearchEngine();
+    int fileAlreadyOpened(const QString & filepath);
+
+    //Singleton instance of main window class
+    static MainWindow* instance();
+
 private:
     Ui::MainWindow *ui;
     QSettings *settings;
@@ -94,6 +103,9 @@ private:
     QLabel *statusBar_overtypeNotify;
     QLocalServer *instanceServer;
     frmsrchreplace* searchDialog;
+    searchengine *se;
+    docengine    *de;
+    static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;
     void closeEvent(QCloseEvent *event);
@@ -138,6 +150,9 @@ private slots:
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionClone_to_Other_View_triggered();
     void on_actionSearch_triggered();
+    void on_actionFind_Next_triggered();
+    void on_actionFind_Previous_triggered();
+    void on_actionSave_a_Copy_As_triggered();
 };
 
 #endif // MAINWINDOW_H;

@@ -17,7 +17,6 @@ public:
     
 private:
     Ui::frmsrchreplace *ui;
-    searchengine *se;
     bool newsearch;
     bool regexp;
     bool casesense;
@@ -26,6 +25,7 @@ private:
     bool forward;
 
     void updateParameters();
+    searchengine* se();
 
     void showEvent(QShowEvent *e);
     void closeEvent(QCloseEvent *e);
@@ -33,6 +33,8 @@ private:
 private slots:
     void buttonCountInstances_clicked();
     void buttonFindNext_clicked();
+    void buttonReplace_clicked();
+    void buttonReplaceAll_clicked();
     void updateMode(int newIndex);
     void setNewSearch(bool isnew=true);
 
