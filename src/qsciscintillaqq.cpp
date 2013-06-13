@@ -67,7 +67,7 @@
 #include <Qsci/qscilexeryaml.h>
 
 #include <Qsci/qscilexercustom.h>
-#include <userlexer.h>
+#include "userlexer.h"
 
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)

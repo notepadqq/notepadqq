@@ -65,16 +65,11 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     // Let's add a new tab...
     QWidget *widget = new QWidget(this);
     widget->setObjectName("singleTabWidget");
-    int index = this->addTab(widget, title);
-    if(setFocus) {
-        this->setCurrentIndex(index);
-    }
-    this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     // Create textbox
-    QsciScintillaqq* sci = new QsciScintillaqq(this->widget(index));
+    QsciScintillaqq* sci = new QsciScintillaqq(widget);
     sci->setObjectName("editorWidget");
 
     connect(sci, SIGNAL(modificationChanged(bool)), this, SLOT(on_modification_changed(bool)));
@@ -88,9 +83,9 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     */
 
     layout->addWidget(sci);
-    this->widget(index)->setLayout(layout);
+    widget->setLayout(layout);
     //this->setDocumentMode(true);
-    this->setTabToolTip(index, "");
+
 
     /* TODO
     bool _showallchars = ui->actionShow_All_Characters->isChecked();
@@ -100,6 +95,14 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
         on_actionShow_All_Characters_triggered();
     }
     */
+
+    // Add the tab as last thing so we can use QSciScintillaqqAt method on currentTabChanged signal
+    int index = this->addTab(widget, title);
+    if(setFocus) {
+        this->setCurrentIndex(index);
+    }
+    this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
+
 
     this->getTabWidgetsContainer()->_on_newQsciScintillaqqWidget(sci);
 

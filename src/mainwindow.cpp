@@ -28,6 +28,9 @@
 #include "constants.h"
 #include "generalfunctions.h"
 #include "qtabwidgetscontainer.h"
+#include "appwidesettings.h"
+
+#include <assert.h>
 
 #include <Qsci/qsciapis.h>
 #include <QFile>
@@ -111,11 +114,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Ok, now it's time to create or first tabWidget.
     QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
-    // The first document in the tabWidget will be created by processCommandLineArgs()
-    // Now we connect the corresponding signals to our slots.
-    connect(firstTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
-    connect(firstTabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
-
     container->addWidget(firstTabWidget);
 
     if(this->layoutDirection() == Qt::RightToLeft) {
@@ -139,6 +137,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Document monitoring,saving,loading engine for centralized document management.
     de = new docengine(this);
+
+    // The first document in the tabWidget was created by processCommandLineArgs()
+    // Now we connect the corresponding signals to our slots.
+    connect_tabWidget(firstTabWidget);
 }
 
 MainWindow::~MainWindow()
@@ -146,11 +148,34 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::init()
+{
+    // APPLY WIDE SETTINGS TO ALL OPEN TABS
+    for ( int i = 0; i < container->count(); ++i ) {
+        QTabWidgetqq* tqq = qobject_cast<QTabWidgetqq*>( container->widget(i) );
+        if ( !tqq ) continue;
+        for ( int j = 0; j < tqq->count(); ++j ) {
+            QsciScintillaqq* sqq = tqq->QSciScintillaqqAt(j);
+            if ( !sqq ) continue;
+            widesettings::apply_settings(sqq);
+        }
+    }
+}
+
 MainWindow* MainWindow::instance()
 {
+    // avoid calling MainWindow::instance() inside MainWindow constructor
+    static bool recursive_call = false;
+    assert( recursive_call == false );
+
+    recursive_call = true;
+
     if(!wMain){
         wMain = new MainWindow();
     }
+
+    recursive_call = false;
+
     return wMain;
 }
 
@@ -663,6 +688,7 @@ void MainWindow::_on_sci_copyAvailable(bool yes)
 {
     // TODO Call me on every tab switch!!
     QsciScintillaqq *sci = static_cast<QsciScintillaqq *>(sender());
+
     if(sci->hasFocus()) {
         ui->actionCu_t->setEnabled(yes);
         ui->action_Copy->setEnabled(yes);
@@ -756,6 +782,7 @@ void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
 {
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
+    connect(tabWidget, SIGNAL(currentChanged(int)), SLOT(_apply_wide_settings_to_tab(int)));
 }
 
 searchengine* MainWindow::getSearchEngine()
@@ -788,4 +815,21 @@ void MainWindow::on_actionFind_Previous_triggered()
 QSettings* MainWindow::getSettings()
 {
     return settings;
+}
+
+void MainWindow::on_actionWord_wrap_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if ( !sci || !widesettings::toggle_word_wrap(sci) ) return;
+}
+
+void MainWindow::_apply_wide_settings_to_tab( int index )
+{
+    qDebug() << "switched to tab " << index;
+
+    QTabWidgetqq *_tabWidget = qobject_cast<QTabWidgetqq *>(sender());
+    QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
+    if ( !sci ) return;
+    widesettings::apply_settings(sci);
 }
