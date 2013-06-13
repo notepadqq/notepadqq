@@ -833,3 +833,10 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
     if ( !sci ) return;
     widesettings::apply_settings(sci);
 }
+
+void MainWindow::on_actionShow_All_Characters_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
+}

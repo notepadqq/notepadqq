@@ -160,6 +160,7 @@ private slots:
     void on_actionFind_Previous_triggered();
     void on_actionSave_a_Copy_As_triggered();
     void on_actionWord_wrap_triggered();
+    void on_actionShow_All_Characters_triggered();
 };
 
 #endif // MAINWINDOW_H;
