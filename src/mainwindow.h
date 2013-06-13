@@ -46,6 +46,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    // 2-STEP initializer
+    void init();
+
     QTabWidgetsContainer *container;
 
     /**
@@ -119,6 +123,8 @@ private slots:
     void _on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci);
     void _on_sci_copyAvailable(bool yes);
     void _on_sci_updateUI();
+    void _apply_wide_settings_to_tab(int tab);
+
     void on_action_New_triggered();
     void on_actionSave_as_triggered();
     void on_actionSave_triggered();
@@ -153,6 +159,7 @@ private slots:
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
     void on_actionSave_a_Copy_As_triggered();
+    void on_actionWord_wrap_triggered();
 };
 
 #endif // MAINWINDOW_H;

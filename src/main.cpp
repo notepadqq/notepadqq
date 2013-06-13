@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.processEvents();
 
-#if SINGLEINSTANCE_EXPERIMENTAL
+#if defined(SINGLEINSTANCE_EXPERIMENTAL)
     /* Attach to an existing instance
      * only if there is at least
      * one file in the arguments.
@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, false);
 
     MainWindow* w = MainWindow::instance();
+    // 2-STEP initializer
+    w->init();
     w->showMaximized();
 
     //gdk_notify_startup_complete();
