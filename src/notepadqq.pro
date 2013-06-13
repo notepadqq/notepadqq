@@ -23,6 +23,10 @@ CONFIG(release, debug|release) {
     DESTDIR = ../build/release
 }
 
+win32 {
+    DEFINES += QSCINTILLA_DLL
+    LIBS += User32.lib
+}
 
 
 SOURCES += main.cpp\
@@ -35,7 +39,8 @@ SOURCES += main.cpp\
     qtabwidgetscontainer.cpp \
     frmsrchreplace.cpp \
     searchengine.cpp \
-    docengine.cpp
+    docengine.cpp \
+    appwidesettings.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -46,9 +51,10 @@ HEADERS  += mainwindow.h \
     generalfunctions.h \
     qtabwidgetscontainer.h \
     frmsrchreplace.h \
-    ../searchengine.h \
     searchengine.h \
-    docengine.h
+    searchengine.h \
+    docengine.h \
+    appwidesettings.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
