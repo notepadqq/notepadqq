@@ -158,12 +158,11 @@ void MainWindow::init()
             QsciScintillaqq* sqq = tqq->QSciScintillaqqAt(j);
             if ( !sqq ) continue;
             widesettings::apply_settings(sqq);
+            widesettings::apply_single_document_settings(sqq);
+            update_single_document_ui(sqq);
+
         }
     }
-
-    QsciScintillaqq* sci = getFocusedEditor();
-    if( !sci ) return;
-    update_single_document_ui(sci);
 }
 
 MainWindow* MainWindow::instance()
@@ -231,10 +230,11 @@ void MainWindow::on_action_New_triggered()
 {
     QTabWidgetqq *focusedTabWidget = container->focusQTabWidgetqq();
     int index = focusedTabWidget->addNewDocument();
-
-    QsciScintillaqq *sci = focusedTabWidget->QSciScintillaqqAt(index);
+    QsciScintillaqq* sci = focusedTabWidget->QSciScintillaqqAt(index);
     if( !sci ) return;
+    widesettings::apply_settings(sci);
     widesettings::apply_single_document_settings(sci);
+    update_single_document_ui(sci);
 }
 
 void MainWindow::_on_text_changed()
@@ -450,6 +450,8 @@ void MainWindow::on_action_Open_triggered()
     QWidget* foc = focusWidget();
     de->loadDocuments(fileNames, container->focusQTabWidgetqq());
     foc->setFocus();
+
+    update_single_document_ui(getFocusedEditor());
 }
 
 void MainWindow::on_actionReload_from_Disk_triggered()
@@ -850,7 +852,11 @@ void MainWindow::on_actionWord_wrap_triggered()
 
 void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
 {
-    QsciScintilla::EolMode eol = sci->eolMode();
+    QsciScintilla::EolMode eol = sci->guessEolMode();
+    if(eol == -1) {
+        eol = static_cast<QsciScintilla::EolMode>(
+                    settings->value(widesettings::SETTING_EOL_MODE,QsciScintilla::EolUnix).toInt() );
+    }
 
     ui->actionWindows_Format->setChecked( (eol == QsciScintilla::EolWindows ) ? true : false );
     ui->actionWindows_Format->setDisabled( (eol == QsciScintilla::EolWindows ) ? true : false );
@@ -870,7 +876,6 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
     if ( !sci ) return;
     widesettings::apply_settings(sci);
     update_single_document_ui(sci);
-
 }
 
 void MainWindow::on_actionShow_All_Characters_triggered()

@@ -100,11 +100,18 @@ void QsciScintillaqq::setFileName(QString filename)
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
-    QString a = this->text();
-    int _win = a.count(QRegExp("\r\n"));
-    int _mac = a.count(QRegExp("\r"));
-    int _unix= a.count(QRegExp("\n"));
+    int   _docLength = this->length();
+    char *_docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
+    QTextCodec *codec = QTextCodec::codecForName(this->encoding.toUtf8());
+    QByteArray a = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
+    int _win = a.count("\r\n");
+    int _mac = a.count('\r');
+    int _unix= a.count('\n');
+
+    if( (_win+_mac+_unix) == 0) {
+        return static_cast<QsciScintilla::EolMode>(-1);
+    }
     if(_win >= _mac && _win >= _unix)
     {
         return QsciScintilla::EolWindows;
