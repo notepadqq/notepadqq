@@ -24,6 +24,7 @@
 #include "qsciscintillaqq.h"
 #include "qtabwidgetscontainer.h"
 #include "constants.h"
+#include "mainwindow.h"
 #include <QTabBar>
 #include <QVBoxLayout>
 

@@ -33,6 +33,8 @@
 #include <QtXml/qdom.h>
 #include <QHash>
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
 
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -122,6 +124,24 @@ bool QsciScintillaqq::overType()
         return false;
 }
 
+void QsciScintillaqq::safeCopy()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    int  contentLength = this->length()-1;
+    char stringData[contentLength+1];
+    this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
+
+    //Replace NUL byte characters with a space so it can be pasted into other places.
+    for(int i=0;i<contentLength-1;i++) {
+        if(stringData[i] == '\0') {
+            stringData[i] = ' ';
+        }
+    }
+    stringData[contentLength] = '\0';
+
+    clipboard->setText(stringData);
+}
+
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 {
     emit keyPressed(e);
@@ -130,6 +150,11 @@ void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 
 void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
 {
+    if(e->modifiers() & Qt::ControlModifier) {
+        if(e->key() == Qt::Key_C) {
+            safeCopy();
+        }
+    }
     emit keyReleased(e);
     QsciScintilla::keyReleaseEvent(e);
 }

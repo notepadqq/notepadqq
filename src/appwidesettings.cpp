@@ -76,12 +76,16 @@ namespace widesettings {
         QsciScintilla::WrapMode m = static_cast<QsciScintilla::WrapMode>(
                     MainWindow::instance()->getSettings()->value(SETTING_WRAP_MODE).toInt() );
 
-        bool show_all_chars = MainWindow::instance()->getSettings()->value(SETTING_SHOW_ALL_CHARS).toBool();
-        double zoom_level   = MainWindow::instance()->getSettings()->value(SETTING_ZOOM_LEVEL).toDouble();
+        bool show_all_chars             = MainWindow::instance()->getSettings()->value(SETTING_SHOW_ALL_CHARS).toBool();
+        double zoom_level               = MainWindow::instance()->getSettings()->value(SETTING_ZOOM_LEVEL).toDouble();
+
+        QsciScintilla::EolMode eol_mode = static_cast<QsciScintilla::EolMode>(
+                    MainWindow::instance()->getSettings()->value(SETTING_EOL_MODE).toInt() );
 
         apply_wrap_mode(m, w);
         apply_invisible_chars(show_all_chars, w);
         apply_zoom_level(zoom_level, w);
+        apply_eol_mode(eol_mode, w);
     }
 
     //These are applied under special cases(ex. new documents and currently active document only) to avoid nerfing other documents accidentally

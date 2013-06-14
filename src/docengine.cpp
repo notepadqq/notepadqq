@@ -104,7 +104,8 @@ bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
     txt = stream.readAll();
     io->close();
 
-    sci->setText(txt);
+    sci->clear();
+    sci->append(txt);
 
     return true;
 }

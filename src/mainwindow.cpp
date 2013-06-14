@@ -844,6 +844,7 @@ void MainWindow::on_actionWord_wrap_triggered()
 void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
 {
     QsciScintilla::EolMode eol = sci->eolMode();
+
     ui->actionWindows_Format->setChecked( (eol == QsciScintilla::EolWindows ) ? true : false );
     ui->actionWindows_Format->setDisabled( (eol == QsciScintilla::EolWindows ) ? true : false );
     ui->actionUNIX_Format->setChecked( (eol == QsciScintilla::EolUnix ) ? true : false);
@@ -860,8 +861,9 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
     QTabWidgetqq *_tabWidget = qobject_cast<QTabWidgetqq *>(sender());
     QsciScintillaqq *sci = _tabWidget->QSciScintillaqqAt(index);
     if ( !sci ) return;
-    update_single_document_ui(sci);
     widesettings::apply_settings(sci);
+    update_single_document_ui(sci);
+
 }
 
 void MainWindow::on_actionShow_All_Characters_triggered()

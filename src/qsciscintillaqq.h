@@ -68,6 +68,7 @@ private:
     void keyReleaseEvent(QKeyEvent *e);
     int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
     void initialize();
+    void safeCopy();
 private slots:
     void wheelEvent(QWheelEvent * e);
 signals:
