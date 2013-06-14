@@ -753,16 +753,28 @@
    </property>
   </action>
   <action name="actionWindows_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Windows Format</string>
    </property>
   </action>
   <action name="actionUNIX_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>UNIX Format</string>
    </property>
   </action>
   <action name="actionMac_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Mac Format</string>
    </property>
