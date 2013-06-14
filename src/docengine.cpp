@@ -34,6 +34,7 @@ void docengine::removeDocument(QString fileName)
     }
 }
 
+
 int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 {
     QTabWidgetqq* tabWidget = sci->getTabWidget();
@@ -84,6 +85,30 @@ int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
     return MainWindow::saveFileResult_Saved;
 }
 
+bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
+{
+    if( !sci )                          return false;
+    if(!io->open(QIODevice::ReadOnly))  return false;
+    QFileInfo fi(static_cast<QFile>(io));
+    QString readEncodedAs = generalFunctions::getFileEncoding(fi.absoluteFilePath());
+
+    QTextStream stream ( io );
+    QString txt;
+
+    // stream.setCodec("Windows-1252");
+    stream.setCodec((encoding != "") ? encoding.toUtf8() : readEncodedAs.toUtf8());
+    // stream.setCodec("UTF-16BE");
+    // stream.setCodec("UTF-16LE");
+
+
+    txt = stream.readAll();
+    io->close();
+
+    sci->setText(txt);
+
+    return true;
+}
+
 bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bool reload)
 {
     MainWindow* mwin = MainWindow::instance();
@@ -116,7 +141,7 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
 
             sci->encoding = generalFunctions::getFileEncoding(fi.absoluteFilePath());
 
-            if (!sci->read(&file, sci->encoding)) {
+            if (!read(&file, sci)) {
                 // Manage error
                 QMessageBox msgBox;
                 msgBox.setWindowTitle(mwin->windowTitle());

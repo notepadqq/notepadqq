@@ -72,14 +72,9 @@
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
 {
-//    _fileWatchEnabled = true;
     encoding = "UTF-8";
     BOM = false;
     this->setFileName("");
-//    fswatch = new QFileSystemWatcher(parent);
-//    isCtrlPressed = false;
-//    setIgnoreNextSignal(false);
-//    connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
     connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
     this->initialize();
@@ -98,45 +93,7 @@ QString QsciScintillaqq::fileName()
 void QsciScintillaqq::setFileName(QString filename)
 {
     _fileName = filename;
-//    if(filename != "") {
-//        fswatch->removePath(fileName());
-//        fswatch->addPath(filename);
-//    }
 }
-
-//void QsciScintillaqq::setFileWatchEnabled(bool enable)
-//{
-//    _fileWatchEnabled = enable;
-//}
-
-//void QsciScintillaqq::setIgnoreNextSignal(bool ignore)
-//{
-//    _ignoreNextSignal = ignore;
-//}
-
-//bool QsciScintillaqq::ignoreNextSignal()
-//{
-//    return _ignoreNextSignal;
-//}
-
-//bool QsciScintillaqq::fileWatchEnabled()
-//{
-//    return _fileWatchEnabled;
-//}
-
-//void QsciScintillaqq::internFileChanged(const QString &path)
-//{
-//    if(fileWatchEnabled())
-//    {
-//        if(ignoreNextSignal()) {
-//            setIgnoreNextSignal(false);
-//        } else {
-//            emit fileChanged(path, this);
-//        }
-//    }
-//    // Starts the filesystemwatcher again
-//    setFileName(this->fileName());
-//}
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
@@ -167,69 +124,14 @@ bool QsciScintillaqq::overType()
 
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 {
-    //if(e->key() == Qt::Key_Control) {
-    //     isCtrlPressed = true;
-    //}
-
     emit keyPressed(e);
     QsciScintilla::keyPressEvent(e);
 }
 
 void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
 {
-    //if(e->key() == Qt::Key_Control) {
-    //     isCtrlPressed = false;
-    //}
-
     emit keyReleased(e);
     QsciScintilla::keyReleaseEvent(e);
-}
-
-bool QsciScintillaqq::write(QIODevice *io)
-{
-    if(!io->open(QIODevice::WriteOnly))
-        return false;
-
-    QTextCodec *codec = QTextCodec::codecForName(encoding.toUtf8());
-    QString textToSave = this->text();
-    if(BOM)
-    {
-        textToSave = QChar(QChar::ByteOrderMark) + textToSave;
-    }
-    QByteArray string = codec->fromUnicode(textToSave);
-
-    if(io->write(string) == -1)
-        return false;
-    io->close();
-
-    return true;
-}
-
-bool QsciScintillaqq::read(QIODevice *io)
-{
-    return this->read(io, "UTF-8");
-}
-
-bool QsciScintillaqq::read(QIODevice *io, QString readEncodedAs)
-{
-    if(!io->open(QIODevice::ReadOnly))
-        return false;
-
-    QTextStream stream ( io );
-    QString txt;
-
-    // stream.setCodec("Windows-1252");
-    stream.setCodec(readEncodedAs.toUtf8());
-    // stream.setCodec("UTF-16BE");
-    // stream.setCodec("UTF-16LE");
-
-
-    txt = stream.readAll();
-    io->close();
-
-    this->setText(txt);
-
-    return true;
 }
 
 bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector)

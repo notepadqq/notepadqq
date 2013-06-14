@@ -25,6 +25,7 @@ public:
 
 private:
     QFileSystemWatcher* fw;
+    bool read(QIODevice *io, QsciScintillaqq* sci, QString encoding="");
 
 
 

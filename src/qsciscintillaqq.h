@@ -63,35 +63,22 @@ public:
     void forceUIUpdate();
 private:
     typedef QByteArray ScintillaString;
-//    QFileSystemWatcher *fswatch;
     QString _fileName;
-//    bool _fileWatchEnabled;
-//    bool _ignoreNextSignal;
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
     int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
-    //bool isCtrlPressed;
     void initialize();
 private slots:
-//    void internFileChanged(const QString &path);
     void wheelEvent(QWheelEvent * e);
 signals:
-//    void fileChanged(const QString &path, QsciScintillaqq* sender);
     void keyPressed(QKeyEvent *e);
     void keyReleased(QKeyEvent *e);
     void updateUI();
 public slots:
     void setFileName(QString filename);
-//    void setFileWatchEnabled(bool enable);
-//    bool fileWatchEnabled();
-//    void setIgnoreNextSignal(bool ignore=true);
-//    bool ignoreNextSignal();
     void updateLineMargin();
     QString fileName();
     bool overType();
-    bool write(QIODevice *io);
-    bool read(QIODevice *io);
-    bool read(QIODevice *io, QString readEncodedAs);
     bool highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector);
     QsciScintilla::EolMode guessEolMode();
     ScintillaString convertTextQ2S(const QString &q) const;
