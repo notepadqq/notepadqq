@@ -274,34 +274,14 @@ QsciScintillaqq::ScintillaString QsciScintillaqq::convertTextQ2S(const QString &
 
 void QsciScintillaqq::wheelEvent(QWheelEvent * e)
 {
-    //if(isCtrlPressed)
     if(e->modifiers() & Qt::ControlModifier)
     {
-//        e->accept();
-
-//        int d = e->delta() / 120;
-//        if(d>0)
-//        {
-//            while(d > 0)
-//            {
-//                d -= 120;
-//                this->zoomIn();
-//            }
-//        } else
-//        {
-//            while(d < 0)
-//            {
-//                d += 120;
-//                this->zoomOut();
-//            }
-//        }
         if( e->delta() < 0) {
-            this->zoomOut();
+            MainWindow::instance()->on_actionZoom_Out_triggered();
         }else if( e->delta() > 0) {
-            this->zoomIn();
+            MainWindow::instance()->on_actionZoom_In_triggered();
         }
         this->updateLineMargin();
-        this->syncZoom();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -597,26 +577,4 @@ this->setLexer(&lex);
 //Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
-}
-
-//Ensures all QSciScintillaqq widgets within the same tab group keep the same zoom level.
-void QsciScintillaqq::syncZoom() {
-    QTabWidgetqq* tabWidget = this->getTabWidget();
-    int maxindex = tabWidget->count();
-    double currentZoom = this->SendScintilla(QsciScintillaBase::SCI_GETZOOM);
-    for(int i=0;i<maxindex;i++){
-        tabWidget->QSciScintillaqqAt(i)->zoomTo(currentZoom);
-        tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
-    }
-}
-
-QString QsciScintillaqq::baseName()
-{
-    QFile file(this->fileName());
-    if(!file.exists()) {
-        return "";
-    }
-    QFileInfo fi(file);
-
-    return fi.fileName();
 }

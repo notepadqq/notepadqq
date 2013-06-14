@@ -161,7 +161,7 @@ void MainWindow::init()
         }
     }
 
-    QsciScintillaqq* sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq* sci = getFocusedEditor();
     if( !sci ) return;
     update_single_document_ui(sci);
 }
@@ -240,6 +240,14 @@ void MainWindow::on_action_New_triggered()
 void MainWindow::_on_text_changed()
 {
 
+}
+
+//Short-circuit function to get the currently active editor/scintilla widget
+QsciScintillaqq* MainWindow::getFocusedEditor()
+{
+    QsciScintillaqq* sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    if( !sci ) return 0;
+    return sci;
 }
 
 int MainWindow::kindlyTabClose(QsciScintillaqq *sci)
@@ -420,17 +428,17 @@ QString MainWindow::getSaveDialogDefaultFileName(QsciScintillaqq *sci)
 
 void MainWindow::on_actionSave_as_triggered()
 {
-    saveAs(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    saveAs(getFocusedEditor());
 }
 
 void MainWindow::on_actionSave_a_Copy_As_triggered()
 {
-    saveAs(container->focusQTabWidgetqq()->focusQSciScintillaqq(),true);
+    saveAs(getFocusedEditor(),true);
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    save(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    save(getFocusedEditor());
 }
 
 
@@ -446,37 +454,37 @@ void MainWindow::on_action_Open_triggered()
 
 void MainWindow::on_action_Undo_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->undo();
+    getFocusedEditor()->undo();
 }
 
 void MainWindow::on_action_Redo_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->redo();
+    getFocusedEditor()->redo();
 }
 
 void MainWindow::on_actionCu_t_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->cut();
+    getFocusedEditor()->cut();
 }
 
 void MainWindow::on_action_Copy_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->copy();
+    getFocusedEditor()->copy();
 }
 
 void MainWindow::on_action_Paste_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->paste();
+    getFocusedEditor()->paste();
 }
 
 void MainWindow::on_actionSelect_All_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectAll(true);
+    getFocusedEditor()->selectAll(true);
 }
 
 void MainWindow::on_action_Delete_triggered()
 {
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     int lineFrom, indexFrom;
     sci->getCursorPosition(&lineFrom, &indexFrom);
 
@@ -495,7 +503,7 @@ void MainWindow::on_action_Delete_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    kindlyTabClose(container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    kindlyTabClose(getFocusedEditor());
 }
 
 void MainWindow::on_actionC_lose_All_triggered()
@@ -521,20 +529,21 @@ void MainWindow::on_actionC_lose_All_triggered()
 
 void MainWindow::on_actionZoom_In_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomIn();
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
+    getFocusedEditor()->zoomIn();
+    double zoomLevel = static_cast<double>(getFocusedEditor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
+    widesettings::apply_zoom_level(zoomLevel, getFocusedEditor());
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomOut();
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
+    getFocusedEditor()->zoomOut();
+    double zoomLevel = static_cast<double>(getFocusedEditor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
+    widesettings::apply_zoom_level(zoomLevel, getFocusedEditor());
 }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->zoomTo(0);
-    container->focusQTabWidgetqq()->focusQSciScintillaqq()->syncZoom();
+    widesettings::apply_zoom_level(0,getFocusedEditor());
 }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()
@@ -582,32 +591,32 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_actionLaunch_in_Firefox_triggered()
 {
-    QProcess::startDetached("firefox", QStringList(container->focusQTabWidgetqq()->focusQSciScintillaqq()->fileName()));
+    QProcess::startDetached("firefox", QStringList(getFocusedEditor()->fileName()));
 }
 
 void MainWindow::on_actionGet_php_help_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://php.net/" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://php.net/" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
 }
 
 void MainWindow::on_actionLaunch_in_Chromium_triggered()
 {
-    QProcess::startDetached("chromium-browser", QStringList(container->focusQTabWidgetqq()->focusQSciScintillaqq()->fileName()));
+    QProcess::startDetached("chromium-browser", QStringList(getFocusedEditor()->fileName()));
 }
 
 void MainWindow::on_actionGoogle_Search_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.google.com/search?q=" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://www.google.com/search?q=" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
 }
 
 void MainWindow::on_actionWikipedia_Search_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(container->focusQTabWidgetqq()->focusQSciScintillaqq()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
 }
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absoluteFilePath());
@@ -618,7 +627,7 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).fileName());
@@ -629,7 +638,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absolutePath());
@@ -766,7 +775,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 void MainWindow::on_actionClone_to_Other_View_triggered()
 {
     QWidget *cur_widget = container->focusQTabWidgetqq()->currentWidget();
-    //QsciScintillaqq* focus_sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    //QsciScintillaqq* focus_sci = getFocusedEditor();
     if(container->focusQTabWidgetqq() == container->QTabWidgetqqAt(0)) {
         if(container->count() < 2) {
             QTabWidgetqq *tabWidget = container->addQTabWidgetqq();
@@ -828,7 +837,7 @@ QSettings* MainWindow::getSettings()
 void MainWindow::on_actionWord_wrap_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::toggle_word_wrap(sci) ) return;
 }
 
@@ -858,14 +867,14 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
 void MainWindow::on_actionShow_All_Characters_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
 }
 
 void MainWindow::on_actionWindows_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolWindows, sci) ) return;
     update_single_document_ui(sci);
 }
@@ -873,7 +882,7 @@ void MainWindow::on_actionWindows_Format_triggered()
 void MainWindow::on_actionMac_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolMac, sci) ) return;
     update_single_document_ui(sci);
 }
@@ -881,7 +890,7 @@ void MainWindow::on_actionMac_Format_triggered()
 void MainWindow::on_actionUNIX_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolUnix, sci) ) return;
     update_single_document_ui(sci);
 }

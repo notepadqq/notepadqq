@@ -38,6 +38,7 @@ int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 {
     QTabWidgetqq* tabWidget = sci->getTabWidget();
     QFile file(fileName);
+    QFileInfo fi(file);
 
     removeDocument(sci->fileName());
 
@@ -72,7 +73,7 @@ int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
             sci->setFileName(fileName);
             sci->autoSyntaxHighlight();
             tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            tabWidget->setTabText(sci->getTabIndex(), sci->baseName());
+            tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
 
         }
         sci->setModified(false);

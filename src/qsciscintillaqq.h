@@ -36,8 +36,6 @@ class QsciScintillaqq : public QsciScintilla
 {
     Q_OBJECT
     Q_PROPERTY(QString _fileName READ fileName WRITE setFileName)
-//    Q_PROPERTY(bool _fileWatchEnabled READ fileWatchEnabled WRITE setFileWatchEnabled)
-//    Q_PROPERTY(bool _ignoreNextSignal READ ignoreNextSignal WRITE setIgnoreNextSignal)
 
 public:
     ~QsciScintillaqq();
@@ -63,7 +61,6 @@ public:
     bool isNewEmptyDocument();
     void autoSyntaxHighlight();
     void forceUIUpdate();
-    void syncZoom();
 private:
     typedef QByteArray ScintillaString;
 //    QFileSystemWatcher *fswatch;
@@ -91,7 +88,6 @@ public slots:
 //    bool ignoreNextSignal();
     void updateLineMargin();
     QString fileName();
-    QString baseName();
     bool overType();
     bool write(QIODevice *io);
     bool read(QIODevice *io);
