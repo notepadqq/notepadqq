@@ -452,6 +452,12 @@ void MainWindow::on_action_Open_triggered()
     foc->setFocus();
 }
 
+void MainWindow::on_actionReload_from_Disk_triggered()
+{
+    QsciScintillaqq *sci = getFocusedEditor();
+    de->loadDocuments(QStringList(sci->fileName()),sci->getTabWidget(),true);
+}
+
 void MainWindow::on_action_Undo_triggered()
 {
     getFocusedEditor()->undo();
@@ -464,12 +470,13 @@ void MainWindow::on_action_Redo_triggered()
 
 void MainWindow::on_actionCu_t_triggered()
 {
-    getFocusedEditor()->cut();
+    getFocusedEditor()->safeCopy();
+    getFocusedEditor()->removeSelectedText();
 }
 
 void MainWindow::on_action_Copy_triggered()
 {
-    getFocusedEditor()->copy();
+    getFocusedEditor()->safeCopy();
 }
 
 void MainWindow::on_action_Paste_triggered()

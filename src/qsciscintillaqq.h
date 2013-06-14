@@ -61,6 +61,7 @@ public:
     bool isNewEmptyDocument();
     void autoSyntaxHighlight();
     void forceUIUpdate();
+    void safeCopy();
 private:
     typedef QByteArray ScintillaString;
     QString _fileName;
@@ -68,7 +69,6 @@ private:
     void keyReleaseEvent(QKeyEvent *e);
     int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
     void initialize();
-    void safeCopy();
 private slots:
     void wheelEvent(QWheelEvent * e);
 signals:

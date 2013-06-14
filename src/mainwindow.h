@@ -165,6 +165,7 @@ private slots:
     void on_actionUNIX_Format_triggered();
     void on_actionMac_Format_triggered();
     void on_actionWindows_Format_triggered();
+    void on_actionReload_from_Disk_triggered();
 
 public slots:
     void on_actionZoom_In_triggered();
