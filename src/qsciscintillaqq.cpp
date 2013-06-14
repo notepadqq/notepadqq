@@ -281,7 +281,6 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
         }else if( e->delta() > 0) {
             MainWindow::instance()->on_actionZoom_In_triggered();
         }
-        this->updateLineMargin();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -302,7 +301,6 @@ void QsciScintillaqq::initialize()
 
 
     this->setMarginLineNumbers(1, true);
-    this->updateLineMargin();
     this->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
     this->setAutoIndent(true);
     this->setAutoCompletionThreshold(2);
