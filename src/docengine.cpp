@@ -34,53 +34,76 @@ void docengine::removeDocument(QString fileName)
     }
 }
 
-
-int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
+bool docengine::write(QIODevice *io, QsciScintillaqq* sci)
 {
-    QTabWidgetqq* tabWidget = sci->getTabWidget();
-    QFile file(fileName);
-    QFileInfo fi(file);
-
-    removeDocument(sci->fileName());
-
-    while(!file.open(QIODevice::WriteOnly)){
-        if(!errorSaveDocument(&file)) {
-            return MainWindow::saveFileResult_Canceled;
-        }
-    }
-
+    if(!io->open(QIODevice::WriteOnly))
+        return false;
+    QTextStream stream(io);
     //Support for saving in all supported formats....
     int   _docLength = sci->length();
     char *_docBuffer = (char*)sci->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
     QTextCodec *codec = QTextCodec::codecForName(sci->encoding.toUtf8());
     QByteArray string = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
-    if(sci->BOM) {
-        string.prepend(QChar::ByteOrderMark);
+    if(sci->BOM)
+    {
+        stream.setGenerateByteOrderMark(true);
     }
+    stream.setCodec(codec);
 
-    while(file.write(string) == -1){
-        if(!errorSaveDocument(&file)) {
-            return MainWindow::saveFileResult_Canceled;
+    if(io->write(string) == -1)
+        return false;
+    io->close();
+
+    return true;
+}
+
+int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
+{
+    QTabWidgetqq* tabWidget = sci->getTabWidget();
+    QFile file(fileName);
+    QFileInfo fi(file);
+    bool retry = true;
+    do {
+        retry = false;
+        removeDocument(sci->fileName());
+
+        if(!write(&file,sci)) {
+            // Manage error
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(MainWindow::instance()->windowTitle());
+            msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
+            msgBox.setDetailedText(file.errorString());
+            msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+            msgBox.setDefaultButton(QMessageBox::Retry);
+            msgBox.setIcon(QMessageBox::Critical);
+            int ret = msgBox.exec();
+            if(ret == QMessageBox::Abort) {
+                return MainWindow::saveFileResult_Canceled;
+                break;
+            } else if(ret == QMessageBox::Retry) {
+                retry = true;
+                continue;
+            }
         }
-    }
-
-    file.close();
 
     //Update the file name if necessary.
-    if(!copy){
-        if((fileName != "") && (sci->fileName() != fileName)) {
-            removeDocument(sci->fileName());
-            sci->setFileName(fileName);
-            sci->autoSyntaxHighlight();
-            tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
+        if(!copy){
+            if((fileName != "") && (sci->fileName() != fileName)) {
+                removeDocument(sci->fileName());
+                sci->setFileName(fileName);
+                sci->autoSyntaxHighlight();
+                tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
+                tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
 
+            }
+            sci->setModified(false);
         }
-        sci->setModified(false);
         addDocument(fileName);
 
-    }
+        file.close();
+
+    }while(retry);
 
     return MainWindow::saveFileResult_Saved;
 }

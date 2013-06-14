@@ -903,3 +903,13 @@ void MainWindow::on_actionUNIX_Format_triggered()
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolUnix, sci) ) return;
     update_single_document_ui(sci);
 }
+
+void MainWindow::on_actionUPPERCASE_triggered()
+{
+    getFocusedEditor()->SendScintilla(QsciScintilla::SCI_UPPERCASE);
+}
+
+void MainWindow::on_actionLowercase_triggered()
+{
+    getFocusedEditor()->SendScintilla(QsciScintilla::SCI_LOWERCASE);
+}
