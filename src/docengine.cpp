@@ -49,13 +49,15 @@ int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
         }
     }
 
+    //Support for saving in all supported formats....
+    int   _docLength = sci->length();
+    char *_docBuffer = (char*)sci->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
     QTextCodec *codec = QTextCodec::codecForName(sci->encoding.toUtf8());
-    QString textToSave = sci->text();
-    if(sci->BOM) {
-        textToSave = QChar(QChar::ByteOrderMark) + textToSave;
-    }
+    QByteArray string = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
-    QByteArray string = codec->fromUnicode(textToSave);
+    if(sci->BOM) {
+        string.prepend(QChar::ByteOrderMark);
+    }
 
     while(file.write(string) == -1){
         if(!errorSaveDocument(&file)) {
@@ -63,14 +65,12 @@ int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
         }
     }
 
-
     file.close();
 
     //Update the file name if necessary.
     if(!copy){
         if((fileName != "") && (sci->fileName() != fileName)) {
             removeDocument(sci->fileName());
-            addDocument(fileName);
             sci->setFileName(fileName);
             sci->autoSyntaxHighlight();
             tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
@@ -95,11 +95,7 @@ bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
     QTextStream stream ( io );
     QString txt;
 
-    // stream.setCodec("Windows-1252");
     stream.setCodec((encoding != "") ? encoding.toUtf8() : readEncodedAs.toUtf8());
-    // stream.setCodec("UTF-16BE");
-    // stream.setCodec("UTF-16LE");
-
 
     txt = stream.readAll();
     io->close();

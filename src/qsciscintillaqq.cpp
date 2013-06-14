@@ -35,6 +35,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
+#include <QChar>
 
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -130,7 +131,6 @@ void QsciScintillaqq::safeCopy()
     int  contentLength = this->length()-1;
     char stringData[contentLength+1];
     this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
-
     //Replace NUL byte characters with a space so it can be pasted into other places.
     for(int i=0;i<contentLength-1;i++) {
         if(stringData[i] == '\0') {
@@ -138,7 +138,6 @@ void QsciScintillaqq::safeCopy()
         }
     }
     stringData[contentLength] = '\0';
-
     clipboard->setText(stringData);
 }
 
