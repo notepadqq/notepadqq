@@ -92,6 +92,7 @@ public:
     int fileAlreadyOpened(const QString & filepath);
     void update_single_document_ui( QsciScintillaqq* sci );
     QFont* systemMonospace();
+    void createStatusBar();
 
     //Singleton instance of main window class
     static MainWindow* instance();
@@ -119,6 +120,8 @@ private:
     // QActionGroup *encodeGroup;
     void closeEvent(QCloseEvent *event);
 
+    void updateTypingMode(bool yes);
+
 private slots:
     void _on_text_changed();
     int  _on_tab_close_requested(int index);
@@ -129,6 +132,8 @@ private slots:
     void _on_sci_copyAvailable(bool yes);
     void _on_sci_updateUI();
     void _apply_wide_settings_to_tab(int tab);
+    void _on_editor_cursor_position_change(int line, int index);
+    void _on_editor_keyrelease(QKeyEvent* e);
 
     void on_action_New_triggered();
     void on_actionSave_as_triggered();

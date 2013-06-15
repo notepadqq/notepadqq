@@ -157,8 +157,10 @@ void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
 {
     if(e->modifiers() & Qt::ControlModifier) {
-        if(e->key() == Qt::Key_C) {
+        switch(e->key()) {
+        case Qt::Key_C:
             safeCopy();
+            break;
         }
     }
     emit keyReleased(e);
