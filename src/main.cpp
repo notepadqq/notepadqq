@@ -30,12 +30,14 @@
 #include <QtNetwork/QLocalSocket>
 #include <QDesktopWidget>
 #include "constants.h"
+#include "generalfunctions.h"
 
 // package libgtk3.0-0
 // required for build: libgtk3.0-dev
 
 void processOtherInstances();
 int numberOfFilesInArgs(QStringList arguments);
+void setupSystemIconTheme();
 
 int main(int argc, char *argv[])
 {
@@ -72,6 +74,9 @@ int main(int argc, char *argv[])
     //QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, true);
     QCoreApplication::setAttribute(Qt::AA_NativeWindows, true);
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, false);
+
+    // ON SOME SYSTEM ICON THEME IS NOT DETECTED BY QT
+    setupSystemIconTheme();
 
     MainWindow* w = MainWindow::instance();
     // 2-STEP initializer
@@ -147,4 +152,23 @@ void processOtherInstances()
             app_socket->disconnectFromServer();
         }
     //}
+}
+
+void setupSystemIconTheme()
+{
+    // SET SYSTEM AND USER ICON THEME PATH
+    // THIS SHOULD BE OK ON MOST LINUX SYSTEMS
+    QStringList icon_theme_paths;
+    icon_theme_paths << QDir::home().absoluteFilePath(".icons/");
+    icon_theme_paths << QString("/usr/share/icons");
+    QIcon::setThemeSearchPaths(icon_theme_paths);
+
+    // USE DCONF TO GET THE CURRENT THEME NAME
+    // THIS SHOULD WORK ON MODERN GNOME SYSTEMS
+    QString icon_theme_name = generalFunctions::readDConfKey("/org/gnome/desktop/interface/icon-theme");
+    qDebug() << "detected " << icon_theme_name << " icon theme";
+    if ( !icon_theme_name.isNull() && !icon_theme_name.isEmpty() ) {
+
+        QIcon::setThemeName(icon_theme_name);
+    }
 }

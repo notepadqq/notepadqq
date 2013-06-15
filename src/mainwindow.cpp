@@ -70,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    ui->actionEncode_in_UCS_2_Little_Endian->setActionGroup(encodeGroup);
 //    ui->actionEncode_in_UCS_2_Big_Endian->setActionGroup(encodeGroup);
 
+    qDebug() << "Fetching icon from " << QIcon::themeName();
+
     // Let's assign icons to our actions
     ui->action_New->setIcon(QIcon::fromTheme("document-new", QIcon(ui->action_New->icon())));
     ui->action_Open->setIcon(QIcon::fromTheme("document-open", QIcon(ui->action_Open->icon())));
