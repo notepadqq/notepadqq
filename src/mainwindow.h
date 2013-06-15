@@ -90,6 +90,7 @@ public:
     void connect_tabWidget(QTabWidgetqq *tabWidget);
     searchengine* getSearchEngine();
     int fileAlreadyOpened(const QString & filepath);
+    QFont* systemMonospace();
 
     //Singleton instance of main window class
     static MainWindow* instance();
@@ -109,6 +110,7 @@ private:
     frmsrchreplace* searchDialog;
     searchengine *se;
     docengine    *de;
+    QFont        *system_monospace;
     static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;

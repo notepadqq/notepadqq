@@ -90,3 +90,36 @@ QString generalFunctions::getOutputFromFileMimeCmd(QString file, QString mimeArg
        return "";
     }
 }
+
+QString generalFunctions::readDConfKey(QString schema, QString key)
+{
+    try {
+      QProcess *process = new QProcess();
+      QStringList *args = new QStringList();
+      args->append("get");
+      args->append(schema);
+      args->append(key);
+      process->start("gsettings", *args);
+      if(process->waitForStarted(2000))
+      {
+          process->closeWriteChannel();
+          process->waitForFinished(2000);
+          QByteArray qba = process->readAll();
+          QTextCodec *codec = QTextCodec::codecForLocale();
+          QTextDecoder *decoder = codec->makeDecoder();
+          QString result = decoder->toUnicode(qba);
+
+          delete args;
+          delete decoder;
+          delete process;
+
+          result = result.trimmed().mid(1, result.length()-3);
+          return result;
+      } else {
+          return "";
+      }
+    }
+    catch (...) {
+       return "";
+    }
+}
