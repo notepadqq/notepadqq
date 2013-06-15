@@ -165,7 +165,7 @@ void setupSystemIconTheme()
 
     // USE DCONF TO GET THE CURRENT THEME NAME
     // THIS SHOULD WORK ON MODERN GNOME SYSTEMS
-    QString icon_theme_name = generalFunctions::readDConfKey("/org/gnome/desktop/interface/icon-theme");
+    QString icon_theme_name = generalFunctions::readDConfKey("org.gnome.desktop.interface", "icon-theme");
     qDebug() << "detected " << icon_theme_name << " icon theme";
     if ( !icon_theme_name.isNull() && !icon_theme_name.isEmpty() ) {
 
