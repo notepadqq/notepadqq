@@ -257,6 +257,12 @@ void MainWindow::createStatusBar()
 
     status->setFixedHeight(22);
 
+    label = new QLabel("File Format", this);
+    label->setFrameShape(QFrame::StyledPanel);
+    label->setMinimumWidth(128);
+    status->addWidget(label);
+    statusBar_fileFormat = label;
+
     label = new QLabel("Length : 0     Lines : 1", this);
     label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
@@ -990,7 +996,9 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
         break;
      default:
         break;
+
     }
+    statusBar_fileFormat->setText("File Format");
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
