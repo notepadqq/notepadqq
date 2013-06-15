@@ -33,6 +33,9 @@
 #include <QtXml/qdom.h>
 #include <QHash>
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
+#include <QChar>
 
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -72,14 +75,9 @@
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
 {
-//    _fileWatchEnabled = true;
     encoding = "UTF-8";
     BOM = false;
     this->setFileName("");
-//    fswatch = new QFileSystemWatcher(parent);
-//    isCtrlPressed = false;
-//    setIgnoreNextSignal(false);
-//    connect(fswatch, SIGNAL(fileChanged(QString)), SLOT(internFileChanged(QString)));
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
     connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
     this->initialize();
@@ -98,53 +96,22 @@ QString QsciScintillaqq::fileName()
 void QsciScintillaqq::setFileName(QString filename)
 {
     _fileName = filename;
-//    if(filename != "") {
-//        fswatch->removePath(fileName());
-//        fswatch->addPath(filename);
-//    }
 }
-
-//void QsciScintillaqq::setFileWatchEnabled(bool enable)
-//{
-//    _fileWatchEnabled = enable;
-//}
-
-//void QsciScintillaqq::setIgnoreNextSignal(bool ignore)
-//{
-//    _ignoreNextSignal = ignore;
-//}
-
-//bool QsciScintillaqq::ignoreNextSignal()
-//{
-//    return _ignoreNextSignal;
-//}
-
-//bool QsciScintillaqq::fileWatchEnabled()
-//{
-//    return _fileWatchEnabled;
-//}
-
-//void QsciScintillaqq::internFileChanged(const QString &path)
-//{
-//    if(fileWatchEnabled())
-//    {
-//        if(ignoreNextSignal()) {
-//            setIgnoreNextSignal(false);
-//        } else {
-//            emit fileChanged(path, this);
-//        }
-//    }
-//    // Starts the filesystemwatcher again
-//    setFileName(this->fileName());
-//}
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
-    QString a = this->text();
-    int _win = a.count(QRegExp("\r\n"));
-    int _mac = a.count(QRegExp("\r"));
-    int _unix= a.count(QRegExp("\n"));
+    int   _docLength = this->length();
+    char *_docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
+    QTextCodec *codec = QTextCodec::codecForName(this->encoding.toUtf8());
+    QByteArray a = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
+    int _win = a.count("\r\n");
+    int _mac = a.count('\r');
+    int _unix= a.count('\n');
+
+    if( (_win+_mac+_unix) == 0) {
+        return static_cast<QsciScintilla::EolMode>(-1);
+    }
     if(_win >= _mac && _win >= _unix)
     {
         return QsciScintilla::EolWindows;
@@ -165,71 +132,37 @@ bool QsciScintillaqq::overType()
         return false;
 }
 
+void QsciScintillaqq::safeCopy()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    int  contentLength = this->length()-1;
+    char stringData[contentLength+1];
+    this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
+    //Replace NUL byte characters with a space so it can be pasted into other places.
+    for(int i=0;i<contentLength-1;i++) {
+        if(stringData[i] == '\0') {
+            stringData[i] = ' ';
+        }
+    }
+    stringData[contentLength] = '\0';
+    clipboard->setText(stringData);
+}
+
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
 {
-    //if(e->key() == Qt::Key_Control) {
-    //     isCtrlPressed = true;
-    //}
-
     emit keyPressed(e);
     QsciScintilla::keyPressEvent(e);
 }
 
 void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
 {
-    //if(e->key() == Qt::Key_Control) {
-    //     isCtrlPressed = false;
-    //}
-
+    if(e->modifiers() & Qt::ControlModifier) {
+        if(e->key() == Qt::Key_C) {
+            safeCopy();
+        }
+    }
     emit keyReleased(e);
     QsciScintilla::keyReleaseEvent(e);
-}
-
-bool QsciScintillaqq::write(QIODevice *io)
-{
-    if(!io->open(QIODevice::WriteOnly))
-        return false;
-
-    QTextCodec *codec = QTextCodec::codecForName(encoding.toUtf8());
-    QString textToSave = this->text();
-    if(BOM)
-    {
-        textToSave = QChar(QChar::ByteOrderMark) + textToSave;
-    }
-    QByteArray string = codec->fromUnicode(textToSave);
-
-    if(io->write(string) == -1)
-        return false;
-    io->close();
-
-    return true;
-}
-
-bool QsciScintillaqq::read(QIODevice *io)
-{
-    return this->read(io, "UTF-8");
-}
-
-bool QsciScintillaqq::read(QIODevice *io, QString readEncodedAs)
-{
-    if(!io->open(QIODevice::ReadOnly))
-        return false;
-
-    QTextStream stream ( io );
-    QString txt;
-
-    // stream.setCodec("Windows-1252");
-    stream.setCodec(readEncodedAs.toUtf8());
-    // stream.setCodec("UTF-16BE");
-    // stream.setCodec("UTF-16LE");
-
-
-    txt = stream.readAll();
-    io->close();
-
-    this->setText(txt);
-
-    return true;
 }
 
 bool QsciScintillaqq::highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector)
@@ -274,34 +207,13 @@ QsciScintillaqq::ScintillaString QsciScintillaqq::convertTextQ2S(const QString &
 
 void QsciScintillaqq::wheelEvent(QWheelEvent * e)
 {
-    //if(isCtrlPressed)
     if(e->modifiers() & Qt::ControlModifier)
     {
-//        e->accept();
-
-//        int d = e->delta() / 120;
-//        if(d>0)
-//        {
-//            while(d > 0)
-//            {
-//                d -= 120;
-//                this->zoomIn();
-//            }
-//        } else
-//        {
-//            while(d < 0)
-//            {
-//                d += 120;
-//                this->zoomOut();
-//            }
-//        }
         if( e->delta() < 0) {
-            this->zoomOut();
+            MainWindow::instance()->on_actionZoom_Out_triggered();
         }else if( e->delta() > 0) {
-            this->zoomIn();
+            MainWindow::instance()->on_actionZoom_In_triggered();
         }
-        this->updateLineMargin();
-        this->syncZoom();
     } else
     {
         QsciScintilla::wheelEvent(e);
@@ -322,7 +234,6 @@ void QsciScintillaqq::initialize()
 
 
     this->setMarginLineNumbers(1, true);
-    this->updateLineMargin();
     this->setFolding(QsciScintillaqq::BoxedTreeFoldStyle);
     this->setAutoIndent(true);
     this->setAutoCompletionThreshold(2);
@@ -597,26 +508,4 @@ this->setLexer(&lex);
 //Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
-}
-
-//Ensures all QSciScintillaqq widgets within the same tab group keep the same zoom level.
-void QsciScintillaqq::syncZoom() {
-    QTabWidgetqq* tabWidget = this->getTabWidget();
-    int maxindex = tabWidget->count();
-    double currentZoom = this->SendScintilla(QsciScintillaBase::SCI_GETZOOM);
-    for(int i=0;i<maxindex;i++){
-        tabWidget->QSciScintillaqqAt(i)->zoomTo(currentZoom);
-        tabWidget->QSciScintillaqqAt(i)->updateLineMargin();
-    }
-}
-
-QString QsciScintillaqq::baseName()
-{
-    QFile file(this->fileName());
-    if(!file.exists()) {
-        return "";
-    }
-    QFileInfo fi(file);
-
-    return fi.fileName();
 }

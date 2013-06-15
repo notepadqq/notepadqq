@@ -90,9 +90,12 @@ public:
     void connect_tabWidget(QTabWidgetqq *tabWidget);
     searchengine* getSearchEngine();
     int fileAlreadyOpened(const QString & filepath);
+    void update_single_document_ui( QsciScintillaqq* sci );
 
     //Singleton instance of main window class
     static MainWindow* instance();
+
+    QsciScintillaqq* getFocusedEditor();
 
 private:
     Ui::MainWindow *ui;
@@ -138,8 +141,6 @@ private slots:
     void on_action_Delete_triggered();
     void on_actionClose_triggered();
     void on_actionC_lose_All_triggered();
-    void on_actionZoom_In_triggered();
-    void on_actionZoom_Out_triggered();
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionAbout_Notepadqq_triggered();
     void on_actionAbout_Qt_triggered();
@@ -161,6 +162,16 @@ private slots:
     void on_actionSave_a_Copy_As_triggered();
     void on_actionWord_wrap_triggered();
     void on_actionShow_All_Characters_triggered();
+    void on_actionUNIX_Format_triggered();
+    void on_actionMac_Format_triggered();
+    void on_actionWindows_Format_triggered();
+    void on_actionReload_from_Disk_triggered();
+    void on_actionUPPERCASE_triggered();
+    void on_actionLowercase_triggered();
+
+public slots:
+    void on_actionZoom_In_triggered();
+    void on_actionZoom_Out_triggered();
 };
 
 #endif // MAINWINDOW_H;

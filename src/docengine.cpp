@@ -34,53 +34,99 @@ void docengine::removeDocument(QString fileName)
     }
 }
 
+bool docengine::write(QIODevice *io, QsciScintillaqq* sci)
+{
+    if(!io->open(QIODevice::WriteOnly))
+        return false;
+    QTextStream stream(io);
+    //Support for saving in all supported formats....
+    int   _docLength = sci->length();
+    char *_docBuffer = (char*)sci->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
+    QTextCodec *codec = QTextCodec::codecForName(sci->encoding.toUtf8());
+    QByteArray string = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
+
+    if(sci->BOM)
+    {
+        stream.setGenerateByteOrderMark(true);
+    }
+    stream.setCodec(codec);
+
+    if(io->write(string) == -1)
+        return false;
+    io->close();
+
+    return true;
+}
+
 int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 {
     QTabWidgetqq* tabWidget = sci->getTabWidget();
     QFile file(fileName);
+    QFileInfo fi(file);
+    bool retry = true;
+    do {
+        retry = false;
+        removeDocument(sci->fileName());
 
-    removeDocument(sci->fileName());
-
-    while(!file.open(QIODevice::WriteOnly)){
-        if(!errorSaveDocument(&file)) {
-            return MainWindow::saveFileResult_Canceled;
+        if(!write(&file,sci)) {
+            // Manage error
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(MainWindow::instance()->windowTitle());
+            msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
+            msgBox.setDetailedText(file.errorString());
+            msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+            msgBox.setDefaultButton(QMessageBox::Retry);
+            msgBox.setIcon(QMessageBox::Critical);
+            int ret = msgBox.exec();
+            if(ret == QMessageBox::Abort) {
+                return MainWindow::saveFileResult_Canceled;
+                break;
+            } else if(ret == QMessageBox::Retry) {
+                retry = true;
+                continue;
+            }
         }
-    }
-
-    QTextCodec *codec = QTextCodec::codecForName(sci->encoding.toUtf8());
-    QString textToSave = sci->text();
-    if(sci->BOM) {
-        textToSave = QChar(QChar::ByteOrderMark) + textToSave;
-    }
-
-    QByteArray string = codec->fromUnicode(textToSave);
-
-    while(file.write(string) == -1){
-        if(!errorSaveDocument(&file)) {
-            return MainWindow::saveFileResult_Canceled;
-        }
-    }
-
-
-    file.close();
 
     //Update the file name if necessary.
-    if(!copy){
-        if((fileName != "") && (sci->fileName() != fileName)) {
-            removeDocument(sci->fileName());
-            addDocument(fileName);
-            sci->setFileName(fileName);
-            sci->autoSyntaxHighlight();
-            tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
-            tabWidget->setTabText(sci->getTabIndex(), sci->baseName());
+        if(!copy){
+            if((fileName != "") && (sci->fileName() != fileName)) {
+                removeDocument(sci->fileName());
+                sci->setFileName(fileName);
+                sci->autoSyntaxHighlight();
+                tabWidget->setTabToolTip(sci->getTabIndex(), sci->fileName());
+                tabWidget->setTabText(sci->getTabIndex(), fi.fileName());
 
+            }
+            sci->setModified(false);
         }
-        sci->setModified(false);
         addDocument(fileName);
 
-    }
+        file.close();
+
+    }while(retry);
 
     return MainWindow::saveFileResult_Saved;
+}
+
+bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
+{
+    if( !sci )                          return false;
+    if(!io->open(QIODevice::ReadOnly))  return false;
+    QFileInfo fi(static_cast<QFile>(io));
+    QString readEncodedAs = generalFunctions::getFileEncoding(fi.absoluteFilePath());
+
+    QTextStream stream ( io );
+    QString txt;
+
+    stream.setCodec((encoding != "") ? encoding.toUtf8() : readEncodedAs.toUtf8());
+
+    txt = stream.readAll();
+    io->close();
+
+    sci->clear();
+    sci->append(txt);
+
+    return true;
 }
 
 bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bool reload)
@@ -115,7 +161,7 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
 
             sci->encoding = generalFunctions::getFileEncoding(fi.absoluteFilePath());
 
-            if (!sci->read(&file, sci->encoding)) {
+            if (!read(&file, sci)) {
                 // Manage error
                 QMessageBox msgBox;
                 msgBox.setWindowTitle(mwin->windowTitle());

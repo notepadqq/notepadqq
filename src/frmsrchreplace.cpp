@@ -95,7 +95,7 @@ void frmsrchreplace::buttonCountInstances_clicked()
 //Need a cleaner way to do this later
 void frmsrchreplace::buttonFindNext_clicked()
 {
-    QsciScintillaqq *sci = MainWindow::instance()->container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = MainWindow::instance()->getFocusedEditor();
     updateParameters();
     se()->setContext(sci);
     se()->findString();
@@ -104,7 +104,7 @@ void frmsrchreplace::buttonFindNext_clicked()
 void frmsrchreplace::buttonReplace_clicked()
 {
     updateParameters();
-    se()->setContext(MainWindow::instance()->container->focusQTabWidgetqq()->focusQSciScintillaqq());
+    se()->setContext(MainWindow::instance()->getFocusedEditor());
     se()->replace(ui->edt_replaceWith_r->text());
 }
 
@@ -126,8 +126,7 @@ void frmsrchreplace::buttonReplaceAll_clicked()
 
 void frmsrchreplace::updateParameters()
 {
-    MainWindow *mref = MainWindow::instance();
-    QsciScintillaqq *sci = mref->container->focusQTabWidgetqq()->focusQSciScintillaqq();
+    QsciScintillaqq *sci = MainWindow::instance()->getFocusedEditor();
 
     se()->setCaseSensitive(ui->cb_optMatchCase->isChecked());
     se()->setWholeWord(ui->cb_optMatchWhole->isChecked());
