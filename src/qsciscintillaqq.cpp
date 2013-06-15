@@ -363,8 +363,7 @@ void QsciScintillaqq::autoSyntaxHighlight()
 
 
 
-    QFont *f;
-    f = new QFont("Courier New", 10, -1, false);
+    QFont *f = MainWindow::instance()->systemMonospace();
 
     if(this->fileName() != "")
     {

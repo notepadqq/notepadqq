@@ -91,6 +91,7 @@ public:
     searchengine* getSearchEngine();
     int fileAlreadyOpened(const QString & filepath);
     void update_single_document_ui( QsciScintillaqq* sci );
+    QFont* systemMonospace();
 
     //Singleton instance of main window class
     static MainWindow* instance();
@@ -112,6 +113,7 @@ private:
     frmsrchreplace* searchDialog;
     searchengine *se;
     docengine    *de;
+    QFont        *system_monospace;
     static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;

@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    system_monospace = NULL;
+
     settings = new QSettings();
     // "container" is the object that contains all the TabWidgets.
     container = new QTabWidgetsContainer(this);
@@ -145,11 +147,39 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete system_monospace;
     delete ui;
 }
 
 void MainWindow::init()
 {
+    // GET SYSTEM FONTS USING DCONF
+    QString mono_font_name = generalFunctions::readDConfKey("org.gnome.desktop.interface", "monospace-font-name");
+    QString app_font_name  = generalFunctions::readDConfKey("org.gnome.desktop.interface", "font-name");
+    qDebug() << "detected " << mono_font_name << " monospace font name";
+    qDebug() << "detected " << app_font_name << " font name";
+
+    QRegExp rx("([\\w\\s]+)\\s(\\d{1,3})");
+    if ( !mono_font_name.isNull() && !mono_font_name.isEmpty() ) {
+        if (rx.indexIn(mono_font_name, 0) != -1) {
+            qDebug() << rx.cap(1) << rx.cap(2);
+            system_monospace = new QFont(rx.cap(1), rx.cap(2).toInt());
+        }
+    }
+
+    if (system_monospace == NULL)
+        system_monospace = new QFont("Courier New", 10);
+
+    widesettings::apply_monospace_font(system_monospace->family(), system_monospace->pointSize(), NULL);
+
+    if ( !app_font_name.isNull() && !app_font_name.isEmpty() ) {
+        if (rx.indexIn(app_font_name, 0) != -1) {
+            qDebug() << rx.cap(1) << rx.cap(2);
+            QFont system_font(rx.cap(1), rx.cap(2).toInt());
+            qApp->setFont( system_font );
+        }
+    }
+
     // APPLY WIDE SETTINGS TO ALL OPEN TABS
     for ( int i = 0; i < container->count(); ++i ) {
         QTabWidgetqq* tqq = qobject_cast<QTabWidgetqq*>( container->widget(i) );
@@ -182,6 +212,10 @@ MainWindow* MainWindow::instance()
     return wMain;
 }
 
+QFont *MainWindow::systemMonospace()
+{
+    return system_monospace;
+}
 
 void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternalMessage)
 {

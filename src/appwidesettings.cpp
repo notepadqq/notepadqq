@@ -1,29 +1,45 @@
 #include "appwidesettings.h"
 #include "mainwindow.h"
 #include <QSettings>
+#include <QDebug>
 
 namespace widesettings {
     const char * SETTING_WRAP_MODE      = "wrap_mode";
     const char * SETTING_SHOW_ALL_CHARS = "show_all_chars";
     const char * SETTING_EOL_MODE       = "eol_mode";
     const char * SETTING_ZOOM_LEVEL     = "zoom_level";
-
+    const char * SETTING_MONO_FONT_NAME = "mono_font_name";
+    const char * SETTING_MONO_FONT_SIZE = "mono_font_size";
 
     bool apply_wrap_mode(QsciScintilla::WrapMode m, QsciScintillaqq* w)
     {
+        MainWindow::instance()->getSettings()->setValue(SETTING_WRAP_MODE, m);
+
         if ( !w )                 return false;
         if ( m == w->wrapMode() ) return false;
         w->setWrapMode(m);
-        MainWindow::instance()->getSettings()->setValue(SETTING_WRAP_MODE, m);
         return true;
     }
 
     bool apply_invisible_chars(bool v, QsciScintillaqq* w)
     {
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_ALL_CHARS, v);
+
         if ( !w )                 return false;
         w->setEolVisibility(v);
         w->setWhitespaceVisibility( v ? QsciScintillaqq::WsVisible : QsciScintillaqq::WsInvisible );
-        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_ALL_CHARS, v);
+        return true;
+    }
+
+    bool apply_monospace_font(QString family, int size, QsciScintillaqq* w)
+    {
+        MainWindow::instance()->getSettings()->setValue(SETTING_MONO_FONT_NAME, family);
+        MainWindow::instance()->getSettings()->setValue(SETTING_MONO_FONT_SIZE, size);
+
+        if ( !w )                 return false;
+        QFont f(family, size);
+        qDebug() << family << " size: " << size;
+        w->setFont(f);
         return true;
     }
 
@@ -93,5 +109,9 @@ namespace widesettings {
         QsciScintilla::EolMode eol = static_cast<QsciScintilla::EolMode>(
                     MainWindow::instance()->getSettings()->value(SETTING_EOL_MODE).toInt() );
         apply_eol_mode(eol, w);
+
+        QString mono_font_name = MainWindow::instance()->getSettings()->value(SETTING_MONO_FONT_NAME).toString();
+        int     mono_font_size = MainWindow::instance()->getSettings()->value(SETTING_MONO_FONT_SIZE).toInt();
+        apply_monospace_font(mono_font_name, mono_font_size, w);
     }
 }

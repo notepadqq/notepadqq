@@ -17,8 +17,9 @@ namespace widesettings {
     bool apply_zoom_level(double m, QsciScintillaqq* w);
 
     bool set_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq * w);
+    bool apply_monospace_font(QString family, int size, QsciScintillaqq* w);
     bool toggle_word_wrap(QsciScintillaqq * w);
-    bool toggle_invisible_chars(QsciScintillaqq * w);
+    bool toggle_invisible_chars(QsciScintillaqq * w);    
 
     void apply_settings(QsciScintillaqq * w);
     void apply_single_document_settings(QsciScintillaqq * w );
