@@ -118,6 +118,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
     container->addWidget(firstTabWidget);
 
+    //Build the status bar.
+    createStatusBar();
+
     if(this->layoutDirection() == Qt::RightToLeft) {
         ui->actionText_Direction_RTL->setChecked(true);
     }
@@ -245,6 +248,84 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
         this->activateWindow();
         this->raise();
     }
+}
+
+void MainWindow::createStatusBar()
+{
+    QStatusBar* status = this->statusBar();
+    QLabel* label;
+
+    status->setFixedHeight(22);
+
+    label = new QLabel("File Format", this);
+    label->setFrameShape(QFrame::StyledPanel);
+    label->setMinimumWidth(128);
+    status->addWidget(label);
+    statusBar_fileFormat = label;
+
+    label = new QLabel("Length : 0     Lines : 1", this);
+    label->setFrameShape(QFrame::StyledPanel);
+    status->addWidget(label);
+    statusBar_lengthInfo = label;
+
+    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0",this);
+    label->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+    label->setFrameShape(QFrame::StyledPanel);
+    status->addWidget(label);
+    statusBar_selectionInfo = label;
+
+    label = new QLabel("EOL",this);
+    label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
+    label->setMinimumWidth(128);
+    label->setFrameShape(QFrame::StyledPanel);
+    status->addWidget(label);
+    statusBar_EOLstyle = label;
+
+    label = new QLabel("Encoding",this);
+    label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
+    label->setMinimumWidth(128);
+    label->setFrameShape(QFrame::StyledPanel);
+    status->addWidget(label);
+    statusBar_fileFormat = label;
+
+    label = new QLabel("INS",this);
+    label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
+    label->setMinimumWidth(32);
+    label->setFrameShape(QFrame::StyledPanel);
+    status->addWidget(label);
+    statusBar_overtypeNotify = label;
+}
+
+void MainWindow::_on_editor_cursor_position_change(int line, int index)
+{
+    QsciScintillaqq *sci  = getFocusedEditor();
+    int lineFrom=0,indexFrom=0,lineTo=0,indexTo=0;
+    int selectionCharacters = 0;
+    int selectionLines = 0;
+
+    sci->getSelection(&lineFrom,&indexFrom,&lineTo,&indexTo);
+    selectionLines = std::abs(lineFrom-lineTo);
+    selectionCharacters = selectionLines+std::abs(indexFrom-indexTo);
+    if(selectionCharacters > 0)selectionLines++;
+
+    statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").arg(line+1).arg(index+1).arg(selectionCharacters).arg(selectionLines));
+
+}
+
+void MainWindow::_on_editor_keyrelease(QKeyEvent* e)
+{
+    QsciScintillaqq* sci = qobject_cast<QsciScintillaqq*>(sender());
+    switch(e->key())
+    {
+    case Qt::Key_Insert:
+        updateTypingMode(sci->overType());
+        break;
+    }
+}
+
+void MainWindow::updateTypingMode(bool yes)
+{
+    statusBar_overtypeNotify->setText(yes ? "OVR" : "INS");
 }
 
 // Custom context menu for right-clicks on the tab title
@@ -742,6 +823,8 @@ void MainWindow::_on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci)
 {
     connect(sci, SIGNAL(copyAvailable(bool)), this, SLOT(_on_sci_copyAvailable(bool)));
     connect(sci, SIGNAL(SCN_UPDATEUI(int)), this, SLOT(_on_sci_updateUI()));
+    connect(sci,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(_on_editor_cursor_position_change(int,int)));
+    connect(sci,SIGNAL(keyReleased(QKeyEvent*)),this,SLOT(_on_editor_keyrelease(QKeyEvent*)));
 }
 
 void MainWindow::_on_sci_copyAvailable(bool yes)
@@ -764,6 +847,8 @@ void MainWindow::_on_sci_updateUI()
         ui->action_Redo->setEnabled(sci->SendScintilla(QsciScintillaBase::SCI_CANREDO));
         ui->action_Paste->setEnabled(sci->SendScintilla(QsciScintillaBase::SCI_CANPASTE));
     }
+
+    statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(sci->length()).arg(sci->lines()));
 }
 
 void MainWindow::on_actionE_xit_triggered()
@@ -899,6 +984,21 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
     ui->actionMac_Format->setChecked( (eol == QsciScintilla::EolMac ) ? true : false);
     ui->actionMac_Format->setDisabled( (eol == QsciScintilla::EolMac ) ? true : false );
 
+    switch(eol) {
+    case QsciScintilla::EolWindows:
+        statusBar_EOLstyle->setText(tr("DOS/Windows"));
+        break;
+    case QsciScintilla::EolUnix:
+        statusBar_EOLstyle->setText(tr("UNIX"));
+        break;
+    case QsciScintilla::EolMac:
+        statusBar_EOLstyle->setText(tr("Mac"));
+        break;
+     default:
+        break;
+
+    }
+    statusBar_fileFormat->setText("File Format");
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
