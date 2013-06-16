@@ -23,6 +23,9 @@
 #include "generalfunctions.h"
 #include <QStringList>
 #include <QProcess>
+#include <QDir>
+#include <QFile>
+#include <QApplication>
 #include <QTextDecoder>
 
 
@@ -122,4 +125,11 @@ QString generalFunctions::readDConfKey(QString schema, QString key)
     catch (...) {
        return "";
     }
+}
+
+QString generalFunctions::getUserFilePath(QString relativePath)
+{
+    QString userFilePath = QString("%1/%2/%3/%4").arg(QDir::homePath()).arg(".config").arg(qApp->applicationName().toLower()).arg(relativePath);
+    if ( QFile(userFilePath).exists() ) return userFilePath;
+    return QString("/usr/share/%1/%2").arg(qApp->applicationName().toLower()).arg(relativePath);
 }
