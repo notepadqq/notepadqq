@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -123,6 +123,10 @@
     <property name="title">
      <string>&amp;Search</string>
     </property>
+    <addaction name="actionSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionFind_Next"/>
+    <addaction name="actionFind_Previous"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -415,11 +419,7 @@
     <property name="title">
      <string>Se&amp;ttings</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menu_Window">
-    <property name="title">
-     <string>&amp;Window</string>
-    </property>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -469,14 +469,13 @@
    <addaction name="menuSe_ttings"/>
    <addaction name="menuMacro"/>
    <addaction name="menuRun"/>
-   <addaction name="menu_Window"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="iconSize">
     <size>
-     <width>16</width>
-     <height>16</height>
+     <width>22</width>
+     <height>22</height>
     </size>
    </property>
    <attribute name="toolBarArea">
@@ -754,16 +753,28 @@
    </property>
   </action>
   <action name="actionWindows_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Windows Format</string>
    </property>
   </action>
   <action name="actionUNIX_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>UNIX Format</string>
    </property>
   </action>
   <action name="actionMac_Format">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Mac Format</string>
    </property>
@@ -1505,6 +1516,54 @@
   <action name="actionPHP">
    <property name="text">
     <string>PHP</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/preferences.png</normaloff>:/icons/icons/preferences.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset theme="edit-find">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Find...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFind_Next">
+   <property name="icon">
+    <iconset theme="go-next">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Find &amp;Next</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionFind_Previous">
+   <property name="icon">
+    <iconset theme="go-previous">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Find &amp;Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F3</string>
    </property>
   </action>
  </widget>

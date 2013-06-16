@@ -30,37 +30,21 @@
 #include <QtNetwork/QLocalSocket>
 #include <QDesktopWidget>
 #include "constants.h"
-#include "optparse/qtoptparser.h"
+#include "generalfunctions.h"
 
 // package libgtk3.0-0
 // required for build: libgtk3.0-dev
 
 void processOtherInstances();
 int numberOfFilesInArgs(QStringList arguments);
+void setupSystemIconTheme();
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.processEvents();
 
-    QtOptParser opt;
-    opt.addSwitch("h", "help"   );
-    opt.addSwitch("v", "version");
-
-    if ( !opt.parse(a.arguments()) )
-        return -1;
-    if ( opt.hasOption("help") ) {
-        qDebug() << "print help";
-        opt.printHelp();
-        return 0;
-    }
-    if ( opt.hasOption("version") ) {
-        qDebug() << "print version";
-        opt.printVersion();
-        return 0;
-    }
-
-#ifdef SINGLEINSTANCE_EXPERIMENTAL
+#if defined(SINGLEINSTANCE_EXPERIMENTAL)
     /* Attach to an existing instance
      * only if there is at least
      * one file in the arguments.
@@ -87,11 +71,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("notepadqq");
     QCoreApplication::setOrganizationDomain("http://notepadqq.sourceforge.net/");
     QCoreApplication::setApplicationName("Notepadqq");
-    QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, true);
+    //QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, true);
     QCoreApplication::setAttribute(Qt::AA_NativeWindows, true);
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, false);
 
-    MainWindow w;
-    w.showMaximized();
+    // ON SOME SYSTEM ICON THEME IS NOT DETECTED BY QT
+    setupSystemIconTheme();
+
+    MainWindow* w = MainWindow::instance();
+    // 2-STEP initializer
+    w->init();
+    w->showMaximized();
 
     //gdk_notify_startup_complete();
 
@@ -162,4 +152,23 @@ void processOtherInstances()
             app_socket->disconnectFromServer();
         }
     //}
+}
+
+void setupSystemIconTheme()
+{
+    // SET SYSTEM AND USER ICON THEME PATH
+    // THIS SHOULD BE OK ON MOST LINUX SYSTEMS
+    QStringList icon_theme_paths;
+    icon_theme_paths << QDir::home().absoluteFilePath(".icons/");
+    icon_theme_paths << QString("/usr/share/icons");
+    QIcon::setThemeSearchPaths(icon_theme_paths);
+
+    // USE DCONF TO GET THE CURRENT THEME NAME
+    // THIS SHOULD WORK ON MODERN GNOME SYSTEMS
+    QString icon_theme_name = generalFunctions::readDConfKey("org.gnome.desktop.interface", "icon-theme");
+    qDebug() << "detected " << icon_theme_name << " icon theme";
+    if ( !icon_theme_name.isNull() && !icon_theme_name.isEmpty() ) {
+
+        QIcon::setThemeName(icon_theme_name);
+    }
 }

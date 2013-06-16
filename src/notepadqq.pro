@@ -5,12 +5,28 @@
 #-------------------------------------------------
 
 QT       += core gui \
-            network
+            network \
+            xml
 
 TARGET = notepadqq
 TEMPLATE = app
 
-DESTDIR = ../build
+RCC_DIR = ../build/build_data
+UI_DIR = ../build/build_data
+MOC_DIR = ../build/build_data
+OBJECTS_DIR = ../build/build_data
+
+CONFIG(debug, debug|release) {
+    DESTDIR = ../build/debug
+}
+CONFIG(release, debug|release) {
+    DESTDIR = ../build/release
+}
+
+win32 {
+    DEFINES += QSCINTILLA_DLL
+    LIBS += User32.lib
+}
 
 
 SOURCES += main.cpp\
@@ -20,7 +36,11 @@ SOURCES += main.cpp\
     userlexer.cpp \
     qtabwidgetqq.cpp \
     generalfunctions.cpp \
-    optparse/qtoptparser.cpp
+    qtabwidgetscontainer.cpp \
+    frmsrchreplace.cpp \
+    searchengine.cpp \
+    docengine.cpp \
+    appwidesettings.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -29,21 +49,16 @@ HEADERS  += mainwindow.h \
     userlexer.h \
     qtabwidgetqq.h \
     generalfunctions.h \
-    optparse/qtoptparser.h
+    qtabwidgetscontainer.h \
+    frmsrchreplace.h \
+    searchengine.h \
+    searchengine.h \
+    docengine.h \
+    appwidesettings.h
 
 FORMS    += mainwindow.ui \
-    frmabout.ui
-
-win32 {
-
-    OTHER_FILES += \
-        ../../qscintilla/include/Scintilla.iface \
-        ../../qscintilla/include/HFacer.py \
-        ../../qscintilla/include/Face.py
-
-    # this is needed in order to set the correct export declaration on QScintilla headers
-    DEFINES += QSCINTILLA_DLL
-}
+    frmabout.ui \
+    frmsrchreplace.ui
 
 LIBS += -lqscintilla2
 

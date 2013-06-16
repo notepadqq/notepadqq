@@ -32,6 +32,7 @@ public:
     generalFunctions();
     static QString getFileMime(QString file);
     static QString getFileEncoding(QString file);
+    static QString readDConfKey(QString schema, QString key);
 private:
     static QString getOutputFromFileMimeCmd(QString file, QString mimeArg);
 };

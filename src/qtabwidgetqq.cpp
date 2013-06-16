@@ -22,14 +22,25 @@
 
 #include "qtabwidgetqq.h"
 #include "qsciscintillaqq.h"
+#include "qtabwidgetscontainer.h"
 #include "constants.h"
+#include "mainwindow.h"
 #include <QTabBar>
 #include <QVBoxLayout>
+
+int QTabWidgetqq::_newTabCount = 0;
 
 QTabWidgetqq::QTabWidgetqq(QWidget *parent) :
     QTabWidget(parent)
 {
-
+    this->setObjectName("tabWidget");
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    this->setDocumentMode(true);
+    this->setTabsClosable(true);
+    this->setMovable(true);
+    //tabWidget1->setTabIcon(0, QIcon());
+    this->setStyleSheet("QTabBar::tab { height: 24px; }");
+    //tabWidget1->setIconSize(QSize(12,12));
 }
 
 int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
@@ -37,9 +48,9 @@ int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
     return this->tabBar()->tabAt(pos);
 }
 
-void QTabWidgetqq::addNewDocument()
+int QTabWidgetqq::addNewDocument()
 {
-    //addEditorTab(true, tr("new") + " " + QString::number(++newTabCount));
+    return addEditorTab(true, tr("new") + " " + QString::number(++_newTabCount));
 }
 
 /**
@@ -50,34 +61,34 @@ void QTabWidgetqq::addNewDocument()
  */
 int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
 {
+    this->setUpdatesEnabled(false);
 
     // Let's add a new tab...
-    QWidget *newTab = new QWidget(this);
-    int index = this->addTab(newTab, title);
-    if(setFocus) {
-        this->setCurrentIndex(index);
-    }
-    this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
+    QWidget *widget = new QWidget(this);
+    widget->setObjectName("singleTabWidget");
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     // Create textbox
-    QsciScintillaqq* sci = new QsciScintillaqq(this->widget(index)); //ui->textEdit;
+    QsciScintillaqq* sci = new QsciScintillaqq(widget);
+    sci->setObjectName("editorWidget");
 
-    connect(sci, SIGNAL(modificationChanged(bool)), SLOT(on_scintillaModificationChanged(bool)));
+    connect(sci, SIGNAL(modificationChanged(bool)), this, SLOT(on_modification_changed(bool)));
+
+    /* TODO
     connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
     connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
     connect(sci, SIGNAL(selectionChanged()), SLOT(on_scintillaSelectionChanged()));
     connect(sci, SIGNAL(cursorPositionChanged(int,int)), SLOT(on_scintillaCursorPositionChanged(int,int)));
     connect(sci, SIGNAL(updateUI()), SLOT(on_scintillaUpdateUI()));
-
+    */
 
     layout->addWidget(sci);
-    this->widget(index)->setLayout(layout);
-    this->setDocumentMode(true);
-    this->setTabToolTip(index, "");
+    widget->setLayout(layout);
+    //this->setDocumentMode(true);
 
-    /*
+
+    /* TODO
     bool _showallchars = ui->actionShow_All_Characters->isChecked();
     updateScintillaPropertiesForAllTabs();
     if(_showallchars) {
@@ -86,11 +97,66 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     }
     */
 
+    // Add the tab as last thing so we can use QSciScintillaqqAt method on currentTabChanged signal
+    int index = this->addTab(widget, title);
+    if(setFocus) {
+        this->setCurrentIndex(index);
+    }
+    this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
+
+
+    this->getTabWidgetsContainer()->_on_newQsciScintillaqqWidget(sci);
+
     sci->setFocus();
     // sci->SendScintilla(QsciScintilla::SCI_SETFOCUS, true);
     // sci->SendScintilla(QsciScintilla::SCI_GRABFOCUS);
 
     // updateGui(index, tabWidget1); TODO
 
+    // Emettere segnale QsciScintillaqq_Created(QsciScintillaqq *sci)
+
+    this->setUpdatesEnabled(true);
+
     return index;
+}
+
+QsciScintillaqq *QTabWidgetqq::focusQSciScintillaqq()
+{
+    return QSciScintillaqqAt(this->currentIndex());
+}
+
+QsciScintillaqq *QTabWidgetqq::QSciScintillaqqAt(int index)
+{
+    QWidget *widget = this->widget(index);
+
+    if(widget != 0) {
+        return widget->findChild<QsciScintillaqq *>("editorWidget");
+    } else {
+        return 0;
+    }
+}
+
+QTabWidgetsContainer *QTabWidgetqq::getTabWidgetsContainer()
+{
+    QTabWidgetsContainer *container;
+    do {
+         container = qobject_cast<QTabWidgetsContainer *>(this->parentWidget());
+    } while(!container);
+
+    return container;
+}
+
+void QTabWidgetqq::on_text_changed()
+{
+
+}
+
+void QTabWidgetqq::on_modification_changed(bool m)
+{
+    QsciScintillaqq *send = static_cast<QsciScintillaqq *>(sender());
+    if(m) {
+        this->setTabIcon(send->getTabIndex(), QIcon(":/icons/icons/unsaved.png"));
+    } else {
+        this->setTabIcon(send->getTabIndex(), QIcon(":/icons/icons/saved.png"));
+    }
 }

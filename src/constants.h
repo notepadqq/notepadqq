@@ -33,7 +33,7 @@
 #define SINGLEINSTANCE_EXPERIMENTAL true // When true, enable the experimental function for the "single instance" system
 
 
-const QString VERSION = "0.13.11"; // major.minor.revision
+const QString VERSION = "0.20.0"; // major.minor.revision
 const QString COPYRIGHT = QObject::trUtf8("Copyright © 2010-2012, the Notepadqq team");
 const QString URL = "http://notepadqq.sourceforge.net/";
 
@@ -47,6 +47,10 @@ inline QString ApplicationL10nDir() {
     if(!QDir(def).exists()) def = QCoreApplication::applicationDirPath() + "/L10n";
     return def;
 }
+
+
+
+
 
 /*** DON'T TOUCH ANYTHING AFTER HERE. You are likely to be eaten by a grue if you do. ***/
 const int SELECTOR_DefaultSelectionHighlight = 8;

@@ -29,5 +29,6 @@
         <file>icons/player_stop.png</file>
         <file>icons/savemacro.png</file>
         <file>icons/notepadqq.svg</file>
+        <file>icons/preferences.png</file>
     </qresource>
 </RCC>
