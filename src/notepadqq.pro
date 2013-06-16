@@ -91,3 +91,5 @@ unix {
     #icon64.path = $$DATADIR/icons/hicolor/64x64/apps
     #icon64.files += fsudoku.png
 }
+
+unix|win32: LIBS += -lmagic
