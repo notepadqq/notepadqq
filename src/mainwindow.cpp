@@ -48,6 +48,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDateTime>
+#include <Qsci/qsciapis.h>
 
 MainWindow* MainWindow::wMain = 0;
 
@@ -267,8 +268,8 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
 void MainWindow::initLanguages()
 {
     QActionGroup*       actionGroup = new QActionGroup(this);
-    QStringList         list = lexer_factory->languages();
-    QMap<QChar,QMenu*> submenu;
+    QStringList         list        = lexer_factory->languages();
+    QMap<QChar,QMenu*>  submenu;
 
     //Build all the actions
     foreach(QString lang, list) {
@@ -278,7 +279,7 @@ void MainWindow::initLanguages()
             current_letter  = new QMenu(letter,this);
             submenu[letter] = current_letter;
         }
-        QAction* newLang = actionGroup->addAction(lang);
+        QAction* newLang = actionGroup->addAction(letter + lang.mid(1));
         current_letter->addAction(newLang);
         newLang->setCheckable(true);
         connect(newLang,SIGNAL(triggered()),this,SLOT(setLanguage()));
@@ -358,13 +359,14 @@ void MainWindow::createStatusBar()
 
 void MainWindow::_on_editor_cursor_position_change(int line, int index)
 {
-    QsciScintillaqq *sci  = getFocusedEditor();
-    int lineFrom=0,indexFrom=0,lineTo=0,indexTo=0;
+    QsciScintillaqq*    sci = getFocusedEditor();
     int selectionCharacters = 0;
-    int selectionLines = 0;
+    int selectionLines      = 0;
+    int lineFrom = 0,indexFrom = 0, lineTo = 0, indexTo = 0;
+
 
     sci->getSelection(&lineFrom,&indexFrom,&lineTo,&indexTo);
-    selectionLines = std::abs(lineFrom-lineTo);
+    selectionLines      = std::abs(lineFrom-lineTo);
     selectionCharacters = selectionLines+std::abs(indexFrom-indexTo);
     if(selectionCharacters > 0)selectionLines++;
 

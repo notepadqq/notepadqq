@@ -334,12 +334,16 @@ void QsciScintillaqq::forceUIUpdate()
 
 void QsciScintillaqq::autoSyntaxHighlight()
 {
-    QFileInfo info(fileName());
-
     // DELETE THE OLD LEXER
     if ( lexer() ) lexer()->deleteLater();
+    QsciLexer* lex;
 
-    QsciLexer* lex = MainWindow::instance()->getLexerFactory()->createLexer(info, this);
+    if(_forcedLanguage.isEmpty()) {
+        QFileInfo info(fileName());
+        lex = MainWindow::instance()->getLexerFactory()->createLexer( info, this);
+    }else {
+        lex = MainWindow::instance()->getLexerFactory()->createLexer( _forcedLanguage, this);
+    }
     if ( lex ) {
         setLexer(lex);
     }
@@ -352,7 +356,7 @@ QString QsciScintillaqq::forcedLanguage()
 
 void QsciScintillaqq::setForcedLanguage(QString language)
 {
-    _forcedLanguage = language;
+    _forcedLanguage = language.toLower();
     autoSyntaxHighlight();
 }
 
