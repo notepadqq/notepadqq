@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QChar>
+#include <magic.h>
 
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -425,7 +426,7 @@ void QsciScintillaqq::autoSyntaxHighlight()
         {
             // Let's try with mime-types!
 
-            QString fileMime = generalFunctions::getFileMime(this->fileName());
+            QString fileMime = generalFunctions::getFileMimeType(this->fileName());
             if(fileMime == "text/html" ||
                fileMime == "text/x-php")
             {

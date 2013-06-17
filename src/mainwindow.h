@@ -35,6 +35,7 @@
 #include <QtNetwork/QLocalServer>
 #include <QActionGroup>
 
+#define FILETYPES_FILE "filetypes.list"
 namespace Ui {
     class MainWindow;
 }
