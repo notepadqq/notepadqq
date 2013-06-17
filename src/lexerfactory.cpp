@@ -300,7 +300,14 @@ QsciLexer* LexerFactory::applyColorScheme(ShrPtrLangDefinition lang, QsciLexer* 
 
 QsciLexer* LexerFactory::createLexer(QFileInfo info, QObject *parent)
 {
-    ShrPtrLangDefinition lang = detectLanguage(info);
+    QsciScintillaqq*     sci  = qobject_cast<QsciScintillaqq*>(parent);
+    ShrPtrLangDefinition lang;
+    if( (sci) && (!(sci->forcedLanguage().isEmpty()))){
+        lang = languages_by_name.value(sci->forcedLanguage());
+        qDebug() << sci->forcedLanguage();
+    }else {
+        lang = detectLanguage(info);
+    }
     if ( lang.isNull() )
         return NULL;
     return applyColorScheme( lang, createLexer( lang->name, parent ) );

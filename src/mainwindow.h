@@ -125,6 +125,7 @@ private:
     void updateTypingMode(bool yes);
     void initLanguages();
 
+
 private slots:
     void _on_text_changed();
     int  _on_tab_close_requested(int index);
@@ -137,6 +138,8 @@ private slots:
     void _apply_wide_settings_to_tab(int tab);
     void _on_editor_cursor_position_change(int line, int index);
     void _on_editor_keyrelease(QKeyEvent* e);
+    void setLanguage();
+
 
     void on_action_New_triggered();
     void on_actionSave_as_triggered();
@@ -182,6 +185,8 @@ private slots:
 public slots:
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();
+
 };
+
 
 #endif // MAINWINDOW_H;

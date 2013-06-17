@@ -57,44 +57,51 @@ public:
         struct Sci_CharacterRange chrgText; // returned as position of matching text
     };
 
-    int getTabIndex();
-    QTabWidgetqq *getTabWidget();
-    bool isNewEmptyDocument();
-    void autoSyntaxHighlight();
-    void forceUIUpdate();
-    void safeCopy();
+    int           getTabIndex();
+    bool          isNewEmptyDocument();
+    void          autoSyntaxHighlight();
+    void          forceUIUpdate();
+    void          safeCopy();
 
-    QString fileName();
-    QString encoding();
-    bool    BOM();
+    QString       fileName();
+    QString       encoding();
+    QString       forcedLanguage();
+    QTabWidgetqq* tabWidget();
 
-    void setFileName(QString filename);
-    void setEncoding(QString enc="UTF-8");
-    void    setBOM(bool yes=true);
+    bool          BOM();
+
+    void          setFileName(QString filename);
+    void          setEncoding(QString enc="UTF-8");
+    void          setForcedLanguage(QString language);
+    void          setBOM(bool yes=true);
 
 private:
     typedef QByteArray ScintillaString;
     QString _fileName;
     QString _encoding;
+    QString _forcedLanguage;
+    bool    _BOM;
 
-    bool _BOM;
-    int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
+    int     oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
 
-    void keyPressEvent(QKeyEvent *e);
-    void keyReleaseEvent(QKeyEvent *e);
-    void initialize();
+    void    keyPressEvent(QKeyEvent *e);
+    void    keyReleaseEvent(QKeyEvent *e);
+    void    initialize();
+
 private slots:
-    void wheelEvent(QWheelEvent * e);
+    void    wheelEvent(QWheelEvent * e);
+
 signals:
-    void keyPressed(QKeyEvent *e);
-    void keyReleased(QKeyEvent *e);
-    void updateUI();
+    void    keyPressed(QKeyEvent *e);
+    void    keyReleased(QKeyEvent *e);
+    void    updateUI();
+
 public slots:
-    void updateLineMargin();
-    bool overType();
-    bool highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector);
+    void                   updateLineMargin();
+    bool                   overType();
+    bool                   highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector);
     QsciScintilla::EolMode guessEolMode();
-    ScintillaString convertTextQ2S(const QString &q) const;
+    ScintillaString        convertTextQ2S(const QString &q) const;
 };
 
 #endif // QSCISCINTILLAQQ_H

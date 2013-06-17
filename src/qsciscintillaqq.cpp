@@ -42,17 +42,19 @@
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
 {
-    _encoding = "UTF-8";
-    _BOM = false;
-    this->setFileName("");
+    _encoding   = "UTF-8";
+    _BOM        = false;
+    _forcedLanguage = "";
+    _fileName   = "";
+
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
     connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
+
     this->initialize();
 }
 
 QsciScintillaqq::~QsciScintillaqq()
 {
-    //delete fswatch;
 }
 
 QString QsciScintillaqq::fileName()
@@ -297,7 +299,7 @@ int QsciScintillaqq::getTabIndex()
     return tabwidget_cast->indexOf(widget);
 }
 
-QTabWidgetqq *QsciScintillaqq::getTabWidget()
+QTabWidgetqq *QsciScintillaqq::tabWidget()
 {
     QWidget *tabwidget = this->parentWidget();
     while(tabwidget->objectName() != "tabWidget")
@@ -341,6 +343,17 @@ void QsciScintillaqq::autoSyntaxHighlight()
     if ( lex ) {
         setLexer(lex);
     }
+}
+
+QString QsciScintillaqq::forcedLanguage()
+{
+    return _forcedLanguage;
+}
+
+void QsciScintillaqq::setForcedLanguage(QString language)
+{
+    _forcedLanguage = language;
+    autoSyntaxHighlight();
 }
 
 //Keeps the line margin readable at all times
