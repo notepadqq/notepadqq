@@ -23,7 +23,11 @@
 #include "generalfunctions.h"
 #include <QStringList>
 #include <QProcess>
+#include <QDir>
+#include <QFile>
+#include <QApplication>
 #include <QTextDecoder>
+#include <QDesktopServices>
 
 
 generalFunctions::generalFunctions()
@@ -122,4 +126,18 @@ QString generalFunctions::readDConfKey(QString schema, QString key)
     catch (...) {
        return "";
     }
+}
+
+QString generalFunctions::getUserFilePath(QString relativePath)
+{
+#if defined(_WIN32)
+    QString appData      = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    QString userFilePath = QString("%1/%2/%3").arg(appData).arg(qApp->applicationName().toLower()).arg(relativePath);
+    QString sysFilePath  = QString("%1/%2").arg(qApp->applicationDirPath()).arg(relativePath);
+#else
+    QString userFilePath = QString("%1/%2/%3/%4").arg(QDir::homePath()).arg(".config").arg(qApp->applicationName().toLower()).arg(relativePath);
+    QString sysFilePath  = QString("/usr/share/%1/%2").arg(qApp->applicationName().toLower()).arg(relativePath);
+#endif
+    if ( QFile(userFilePath).exists() ) return userFilePath;
+    return sysFilePath;
 }

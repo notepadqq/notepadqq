@@ -37,7 +37,7 @@
 #include <QClipboard>
 #include <QChar>
 
-#include <Qsci/qscilexerbash.h>
+/*#include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
 #include <Qsci/qscilexercmake.h>
 #include <Qsci/qscilexercpp.h>
@@ -57,7 +57,7 @@
 #include <Qsci/qscilexerperl.h>
 #include <Qsci/qscilexerpostscript.h>
 #include <Qsci/qscilexerpov.h>
-#include <Qsci/qscilexerproperties.h> /**/
+#include <Qsci/qscilexerproperties.h>
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qscilexerruby.h>
 #include <Qsci/qscilexerspice.h>
@@ -69,7 +69,7 @@
 #include <Qsci/qscilexerxml.h>
 #include <Qsci/qscilexeryaml.h>
 
-#include <Qsci/qscilexercustom.h>
+#include <Qsci/qscilexercustom.h>*/
 #include "userlexer.h"
 
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
@@ -135,8 +135,12 @@ bool QsciScintillaqq::overType()
 void QsciScintillaqq::safeCopy()
 {
     QClipboard *clipboard = QApplication::clipboard();
-    int  contentLength = this->length()-1;
+    const int  contentLength = this->length()-1;
+#if (defined(__APPLE__) || (defined(_WIN32)))
+    char* stringData = new char[contentLength+1];
+#else
     char stringData[contentLength+1];
+#endif
     this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
     //Replace NUL byte characters with a space so it can be pasted into other places.
     for(int i=0;i<contentLength-1;i++) {
@@ -146,6 +150,9 @@ void QsciScintillaqq::safeCopy()
     }
     stringData[contentLength] = '\0';
     clipboard->setText(stringData);
+#if (defined(__APPLE__) || (defined(_WIN32)))
+    delete stringData;
+#endif
 }
 
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
@@ -320,190 +327,16 @@ void QsciScintillaqq::forceUIUpdate()
 
 void QsciScintillaqq::autoSyntaxHighlight()
 {
-    /* We'll parse the example.xml */
-    QFile *file = new QFile("/home/daniele/.wine/drive_c/Program Files/Notepad++/langs.model.xml");
-
-    QDomDocument doc( "myDocument" );
-    doc.setContent( file );                        // myFile is a QFile
-
-    QDomElement docElement = doc.documentElement();   // docElement now refers to the node "xml"
-    QDomNode node;
-
-    node = docElement.firstChildElement("Languages");
-    if(!node.isNull()) {
-        node = node.firstChildElement("Language");
-        while(!node.isNull()) {
-            QString languageName = node.attributes().namedItem("name").nodeValue();
-
-            if(languageName == "cpp") {
-                QStringList extensions = node.attributes().namedItem("ext").nodeValue().split(" ", QString::SkipEmptyParts);
-                QString commentLine = node.attributes().namedItem("commentLine").nodeValue();
-                QString commentStart = node.attributes().namedItem("commentStart").nodeValue();
-                QString commentEnd = node.attributes().namedItem("commentEnd").nodeValue();
-                QHash<QString, QStringList> kwclass;
-
-                QDomNode keywords_node = node.firstChildElement("Keywords");
-                while(!keywords_node.isNull()) {
-                    QString keyword_class_name = keywords_node.attributes().namedItem("name").nodeValue();
-
-                    QStringList keywords = keywords_node.toElement().text().split(" ", QString::SkipEmptyParts);
-                    kwclass.insert(keyword_class_name, keywords);
-
-                    keywords_node = keywords_node.nextSiblingElement("Keywords");
-                }
-
-                //this->lexer()->setDefaultColor(QColor("#000000"));
-
-                break;
-            }
-
-            node = node.nextSiblingElement("Language");
-        }
-    }
-
-    return;
-
-
-
     QFont *f = MainWindow::instance()->systemMonospace();
+    QFileInfo info(fileName());
 
-    if(this->fileName() != "")
-    {
-
-        QString ext = QFileInfo(this->fileName()).suffix().toLower();
-        if(ext=="cmake")
-        {
-            QsciLexerCMake lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="cs")
-        {
-            QsciLexerCSharp lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="css")
-        {
-            QsciLexerCSS lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="d")
-        {
-            QsciLexerD lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="diff" || ext=="patch")
-        {
-            QsciLexerDiff lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="f" || ext=="for" || ext=="f90" || ext=="f95")
-        {
-            QsciLexerFortran lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        } else if(ext=="f77")
-        {
-            QsciLexerFortran77 lex(this);
-
-            lex.setDefaultFont(*f);
-            lex.setFont(*f);
-            this->setLexer(&lex);
-        }
-        else
-        {
-            // Let's try with mime-types!
-
-            QString fileMime = generalFunctions::getFileMime(this->fileName());
-            if(fileMime == "text/html" ||
-               fileMime == "text/x-php")
-            {
-                    QsciLexerHTML lex(this);
-
-                    lex.setDefaultFont(*f);
-                    //lex.setDefaultColor(QColor("#000000"));
-                    //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-                    lex.setFont(*f);
-                    this->setLexer(&lex); // ** TODO SEGFAULT? **
-            }
-            else if( fileMime == "text/x-c")
-            {
-                     QsciLexerCPP lex(this);
-
-                     lex.setDefaultFont(*f);
-                     //lex.setDefaultColor(QColor("#000000"));
-                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-                     lex.setFont(*f);
-                     this->setLexer(&lex);
-            }
-            else if( fileMime == "text/x-shellscript" )
-            {
-                     QsciLexerBash lex(this);
-
-                     lex.setDefaultFont(*f);
-                     //lex.setDefaultColor(QColor("#000000"));
-                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-                     lex.setFont(*f);
-                     this->setLexer(&lex);
-            }
-            else if( fileMime == "application/xml" )
-            {
-                     QsciLexerXML lex(this);
-
-                     lex.setDefaultFont(*f);
-                     //lex.setDefaultColor(QColor("#000000"));
-                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-                     lex.setFont(*f);
-                     this->setLexer(&lex);
-            }
-            else if( fileMime == "text/x-msdos-batch" )
-            {
-                     QsciLexerBatch lex(this);
-
-                     lex.setDefaultFont(*f);
-                     //lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-                     lex.setFont(*f);
-                     this->setLexer(&lex);
-            }
-            /* else if( ext == "test")
-{
-userLexer lex(this);
-f = new QFont("Courier New", 10, -1, false);
-lex.setDefaultFont(*f);
-lex.setDefaultColor(QColor("#000000"));
-//lex.setColor(QColor("#ff3300"), QsciLexerHTML::PHPKeyword);
-lex.setFont(*f);
-this->setLexer(&lex);
-} */
-            else
-            {
-                    // Plain text
-                    this->setLexer(0);
-            }
-
-        }
-
-    } else
-    {
-        this->setLexer(0);
+    // TODO. WHERE SHOULD I DELETE THE CREATED LEXER???
+    QsciLexer* lex = MainWindow::instance()->getLexerFactory()->createLexer(info, this);
+    if ( lex ) {
+        lex->setDefaultFont(*f);
+        lex->setFont(*f);
+        setLexer(lex);
     }
-
-    if(this->lexer() != 0)
-    {
-        //
-    }
-
 }
 
 //Keeps the line margin readable at all times
