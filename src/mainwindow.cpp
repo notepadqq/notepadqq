@@ -226,6 +226,11 @@ MainWindow* MainWindow::instance()
 
 QFont *MainWindow::systemMonospace()
 {
+    if ( system_monospace == NULL ) {
+        ShrPtrWordsStyle global_overrides =
+            getLexerFactory()->getGlobalStyler()->words_stylers_by_name.value(stylename::GLOBAL_OVERRIDE);
+        system_monospace = new QFont( global_overrides->font_name, global_overrides->font_size );
+    }
     return system_monospace;
 }
 

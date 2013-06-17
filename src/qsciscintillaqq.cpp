@@ -222,11 +222,13 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
 void QsciScintillaqq::initialize()
 {
     // Set font
-    QFont *f = new QFont("Courier New", 10, -1, false);
-    this->setFont(*f);
-    QColor *c = new QColor("#000000"); // DB8B0B
-    this->setColor(*c);
-    this->setCaretForegroundColor(QColor("#5E5E5E"));
+    //QFont *f = new QFont("Courier New", 10, -1, false);
+    //this->setFont(*f);
+    //QColor *c = new QColor("#000000"); // DB8B0B
+    //this->setColor(*c);
+
+    QFont* system_font = MainWindow::instance()->systemMonospace();
+    qDebug() << "system font: " << system_font->family() << " " << system_font->pointSize();
 
 
     this->setMarginLineNumbers(1, true);
@@ -244,20 +246,36 @@ void QsciScintillaqq::initialize()
     apis.prepare();
     lex.setAPIs(&apis);*/
 
-    // autoLexer(sci->fileName(), sci); TODO
+    // GLOBALS
+    ShrPtrStylerDefinition glob_style = MainWindow::instance()->getLexerFactory()->getGlobalStyler();
+    ShrPtrWordsStyle       def_style  = glob_style->words_stylers_by_name.value(stylename::DEFAULT);
+    this->setColor(def_style->fg_color);
+    this->setPaper(def_style->bg_color);
 
     this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
     this->setCaretLineVisible(true);
-    this->setCaretLineBackgroundColor(QColor("#E6EBF5"));
-    this->setIndentationGuidesForegroundColor(QColor("#C0C0C0"));
 
+    ShrPtrWordsStyle caret_style       = glob_style->words_stylers_by_name.value(stylename::CARET);
+    ShrPtrWordsStyle indent_style      = glob_style->words_stylers_by_name.value(stylename::INDENT_GUIDELINE);
+    ShrPtrWordsStyle select_style      = glob_style->words_stylers_by_name.value(stylename::SELECTED_TEXT);
+    ShrPtrWordsStyle fold_margin_style = glob_style->words_stylers_by_name.value(stylename::FOLD_MARGIN);
+    ShrPtrWordsStyle margins_style     = glob_style->words_stylers_by_name.value(stylename::LINE_NUMBER_MARGIN);
+
+    this->setSelectionBackgroundColor(select_style->bg_color);
+    this->setSelectionForegroundColor(select_style->fg_color);
+
+    this->setFoldMarginColors(fold_margin_style->fg_color, fold_margin_style->bg_color);
+    this->setMarginsBackgroundColor(margins_style->bg_color);
+    this->setMarginsForegroundColor(margins_style->fg_color);
+
+    this->setCaretForegroundColor(caret_style->fg_color);
+    this->setCaretLineBackgroundColor(indent_style->fg_color);
+
+    this->setIndentationGuidesForegroundColor(indent_style->fg_color);
     this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, 0x00FF24);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, indent_style->fg_color.value());
     this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
     this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
-
-    delete f;
-    delete c;
 }
 
 int QsciScintillaqq::getTabIndex()
@@ -314,14 +332,13 @@ void QsciScintillaqq::forceUIUpdate()
 
 void QsciScintillaqq::autoSyntaxHighlight()
 {
-    QFont *f = MainWindow::instance()->systemMonospace();
     QFileInfo info(fileName());
 
-    // TODO. WHERE SHOULD I DELETE THE CREATED LEXER???
+    // DELETE THE OLD LEXER
+    if ( lexer() ) lexer()->deleteLater();
+
     QsciLexer* lex = MainWindow::instance()->getLexerFactory()->createLexer(info, this);
     if ( lex ) {
-        lex->setDefaultFont(*f);
-        lex->setFont(*f);
         setLexer(lex);
     }
 }

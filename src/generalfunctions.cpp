@@ -25,6 +25,7 @@
 #include <QProcess>
 #include <QDir>
 #include <QFile>
+#include <QDebug>
 #include <QApplication>
 #include <QTextDecoder>
 #include <QFile>
@@ -113,8 +114,10 @@ QString generalFunctions::getUserFilePath(QString relativePath)
 {
 #if defined(_WIN32)
     QString appData      = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-    QString userFilePath = QString("%1/%2/%3").arg(appData).arg(qApp->applicationName().toLower()).arg(relativePath);
+    QString userFilePath = QString("%1/%2").arg(appData).arg(relativePath);
     QString sysFilePath  = QString("%1/%2").arg(qApp->applicationDirPath()).arg(relativePath);
+
+    qDebug() << userFilePath;
 #else
     QString userFilePath = QString("%1/%2/%3/%4").arg(QDir::homePath()).arg(".config").arg(qApp->applicationName().toLower()).arg(relativePath);
     QString sysFilePath  = QString("/usr/share/%1/%2").arg(qApp->applicationName().toLower()).arg(relativePath);
