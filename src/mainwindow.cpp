@@ -268,18 +268,20 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
 void MainWindow::initLanguages()
 {
     QActionGroup*       actionGroup = new QActionGroup(this);
-    QStringList         list        = lexer_factory->languages();
+    QHash<QString,QString>         list        = lexer_factory->languages();
     QMap<QChar,QMenu*>  submenu;
 
     //Build all the actions
-    foreach(QString lang, list) {
-        QChar  letter = lang.at(0).toUpper();
+    QHashIterator<QString,QString> lang(list);
+    while(lang.hasNext()) {
+        lang.next();
+        QChar  letter = lang.key().at(0).toUpper();
         QMenu* current_letter = submenu.value(letter,0);
         if(!current_letter) {
             current_letter  = new QMenu(letter,this);
             submenu[letter] = current_letter;
         }
-        QAction* newLang = actionGroup->addAction(letter + lang.mid(1));
+        QAction* newLang = actionGroup->addAction(lang.key());
         current_letter->addAction(newLang);
         newLang->setCheckable(true);
         connect(newLang,SIGNAL(triggered()),this,SLOT(setLanguage()));
@@ -302,7 +304,7 @@ void MainWindow::setLanguage()
     QAction*         action = qobject_cast<QAction*>(sender());
     if(!action) return;
     if(!sci) return;
-    sci->setForcedLanguage(action->text());
+    sci->setForcedLanguage(lexer_factory->languages().value(action->text()));
 }
 
 /*

@@ -155,11 +155,11 @@ bool LexerFactory::parseLanguageDefinitions()
 }
 
 
-QStringList LexerFactory::languages()
+QHash<QString,QString> LexerFactory::languages()
 {
-    QStringList list;
-    foreach(ShrPtrLangDefinition lang, _languages) {
-        list.append((lang->name).toLower());
+    QHash<QString,QString> list;
+    foreach(ShrPtrStylerDefinition lang, stylers) {
+        list[lang->desc] = lang->name;
     }
     return list;
 }
