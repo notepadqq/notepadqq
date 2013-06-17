@@ -4,6 +4,7 @@ Notepadqq
 Dependencies
 ------------
    * QScintilla (libqscintilla2-8)
+   * libmagic-dev
 
 Bug Tracking
 ------------

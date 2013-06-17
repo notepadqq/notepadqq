@@ -29,6 +29,7 @@
 #include "frmsrchreplace.h"
 #include "searchengine.h"
 #include "docengine.h"
+#include "lexerfactory.h"
 #include <QSettings>
 #include <QLabel>
 #include <QSplitter>
@@ -94,6 +95,7 @@ public:
     void update_single_document_ui( QsciScintillaqq* sci );
     QFont* systemMonospace();
     void createStatusBar();
+    LexerFactory* getLexerFactory();
 
     //Singleton instance of main window class
     static MainWindow* instance();
@@ -116,6 +118,7 @@ private:
     searchengine *se;
     docengine    *de;
     QFont        *system_monospace;
+    LexerFactory *lexer_factory;
     static MainWindow* wMain;
     //void closeEvent(QCloseEvent *event);
     // QActionGroup *encodeGroup;

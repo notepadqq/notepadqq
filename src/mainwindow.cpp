@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     system_monospace = NULL;
+    lexer_factory    = new LexerFactory();
 
     settings = new QSettings();
     // "container" is the object that contains all the TabWidgets.
@@ -125,15 +126,12 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->actionText_Direction_RTL->setChecked(true);
     }
 
-    processCommandLineArgs(QApplication::arguments(), false);
+    //processCommandLineArgs(QApplication::arguments(), false);
 
     instanceServer = new QLocalServer(this);
     connect(instanceServer, SIGNAL(newConnection()), SLOT(_on_instanceServer_NewConnection()));
     instanceServer->removeServer(INSTANCESERVER_ID);
     instanceServer->listen(INSTANCESERVER_ID);
-
-    // Focus on the editor of the first tab
-    container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
 
     // Build the search dialog for later use
     searchDialog = new frmsrchreplace(this);
@@ -150,12 +148,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete lexer_factory;
     delete system_monospace;
     delete ui;
 }
 
 void MainWindow::init()
 {
+    if ( !lexer_factory->init() )
+        qDebug() << "cannot initialize lexer factory";
+
+    processCommandLineArgs(QApplication::arguments(), false);
+
+    // Focus on the editor of the first tab
+    container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
+
     // GET SYSTEM FONTS USING DCONF
     QString mono_font_name = generalFunctions::readDConfKey("org.gnome.desktop.interface", "monospace-font-name");
     QString app_font_name  = generalFunctions::readDConfKey("org.gnome.desktop.interface", "font-name");
@@ -899,7 +906,6 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
 void MainWindow::on_actionClone_to_Other_View_triggered()
 {
-    QWidget *cur_widget = container->focusQTabWidgetqq()->currentWidget();
     //QsciScintillaqq* focus_sci = getFocusedEditor();
     if(container->focusQTabWidgetqq() == container->QTabWidgetqqAt(0)) {
         if(container->count() < 2) {
@@ -957,6 +963,11 @@ void MainWindow::on_actionFind_Previous_triggered()
 QSettings* MainWindow::getSettings()
 {
     return settings;
+}
+
+LexerFactory* MainWindow::getLexerFactory()
+{
+    return lexer_factory;
 }
 
 void MainWindow::on_actionWord_wrap_triggered()

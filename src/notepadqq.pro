@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     frmsrchreplace.cpp \
     searchengine.cpp \
     docengine.cpp \
-    appwidesettings.cpp
+    appwidesettings.cpp \
+    lexerfactory.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
     searchengine.h \
     searchengine.h \
     docengine.h \
-    appwidesettings.h
+    appwidesettings.h \
+    lexerfactory.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -65,7 +67,9 @@ LIBS += -lqscintilla2
 OTHER_FILES += \
     qscintilla/include/Scintilla.iface \
     qscintilla/include/HFacer.py \
-    qscintilla/include/Face.py
+    qscintilla/include/Face.py \
+    syntax/stylers.xml \
+    syntax/langs.xml
 
 RESOURCES += \
     resources.qrc

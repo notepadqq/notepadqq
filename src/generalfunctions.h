@@ -35,6 +35,7 @@ public:
     static QString getFileMimeEncoding(QString file);
     static QString getFileType(QString file);
     static QString readDConfKey(QString schema, QString key);
+    static QString getUserFilePath(QString relativePath);
 private:
     static QString getFileInformation(QString file, int flags=(MAGIC_ERROR|MAGIC_CONTINUE));
 };
