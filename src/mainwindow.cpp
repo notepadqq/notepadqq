@@ -275,13 +275,13 @@ void MainWindow::initLanguages()
         QChar  letter = lang.at(0).toUpper();
         QMenu* current_letter = submenu.value(letter,0);
         if(!current_letter) {
-            current_letter  = new QMenu(QString(letter),this);
+            current_letter  = new QMenu(letter,this);
             submenu[letter] = current_letter;
         }
         QAction* newLang = actionGroup->addAction(lang);
         current_letter->addAction(newLang);
         newLang->setCheckable(true);
-        //connect(newLang,SIGNAL(triggered()),this,SLOT());
+        connect(newLang,SIGNAL(triggered()),this,SLOT(setLanguage()));
 
     }
 
@@ -291,6 +291,19 @@ void MainWindow::initLanguages()
         ui->menu_Language->addMenu(i.value());
     }
 }
+
+
+//Really need a better way of doing this outside of pulling button text so the menus can look a little a better cosmetically....
+//Probably QSignalMapper is the way to go here instead.
+void MainWindow::setLanguage()
+{
+    QsciScintillaqq* sci    = getFocusedEditor();
+    QAction*         action = qobject_cast<QAction*>(sender());
+    if(!action) return;
+    if(!sci) return;
+    sci->setForcedLanguage(action->text());
+}
+
 /*
 void MainWindow::setLanguage(QString lang)
 {
@@ -415,7 +428,7 @@ QsciScintillaqq* MainWindow::getFocusedEditor()
 int MainWindow::kindlyTabClose(QsciScintillaqq *sci)
 {
     int result = MainWindow::tabCloseResult_AlreadySaved;
-    QTabWidgetqq *_tabWidget = sci->getTabWidget();
+    QTabWidgetqq *_tabWidget = sci->tabWidget();
     int index = sci->getTabIndex();
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
@@ -489,7 +502,7 @@ int MainWindow::askIfWantToSave(QsciScintillaqq *sci, int reason)
 {
     QMessageBox msgBox;
     QString file;
-    QTabWidgetqq *tabWidget = sci->getTabWidget();
+    QTabWidgetqq *tabWidget = sci->tabWidget();
 
     if (sci->fileName() == "")
     {
@@ -560,7 +573,7 @@ int MainWindow::saveAs(QsciScintillaqq *sci,bool copy)
 QString MainWindow::getSaveDialogDefaultFileName(QsciScintillaqq *sci)
 {
     QString docFileName = sci->fileName();
-    QTabWidgetqq *tabWidget = sci->getTabWidget();
+    QTabWidgetqq *tabWidget = sci->tabWidget();
 
     if(docFileName == "") {
         return settings->value("lastSelectedDir", ".").toString() + "/" + tabWidget->tabText(sci->getTabIndex());
@@ -616,7 +629,7 @@ void MainWindow::on_action_Open_triggered()
 void MainWindow::on_actionReload_from_Disk_triggered()
 {
     QsciScintillaqq *sci = getFocusedEditor();
-    de->loadDocuments(QStringList(sci->fileName()),sci->getTabWidget(),true);
+    de->loadDocuments(QStringList(sci->fileName()),sci->tabWidget(),true);
 }
 
 void MainWindow::on_action_Undo_triggered()
@@ -789,7 +802,7 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absoluteFilePath());
     } else {
-        QApplication::clipboard()->setText(sci->getTabWidget()->tabText(sci->getTabIndex()));
+        QApplication::clipboard()->setText(sci->tabWidget()->tabText(sci->getTabIndex()));
     }
 }
 
@@ -800,7 +813,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).fileName());
     } else {
-        QApplication::clipboard()->setText(sci->getTabWidget()->tabText(sci->getTabIndex()));
+        QApplication::clipboard()->setText(sci->tabWidget()->tabText(sci->getTabIndex()));
     }
 }
 
