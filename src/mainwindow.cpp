@@ -157,6 +157,8 @@ void MainWindow::init()
 {
     if ( !lexer_factory->init() )
         qDebug() << "cannot initialize lexer factory";
+    else
+        initLanguages();
 
     processCommandLineArgs(QApplication::arguments(), false);
 
@@ -261,6 +263,39 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
         this->raise();
     }
 }
+
+void MainWindow::initLanguages()
+{
+    QActionGroup*       actionGroup = new QActionGroup(this);
+    QStringList         list = lexer_factory->languages();
+    QMap<QChar,QMenu*> submenu;
+
+    //Build all the actions
+    foreach(QString lang, list) {
+        QChar  letter = lang.at(0).toUpper();
+        QMenu* current_letter = submenu.value(letter,0);
+        if(!current_letter) {
+            current_letter  = new QMenu(QString(letter),this);
+            submenu[letter] = current_letter;
+        }
+        QAction* newLang = actionGroup->addAction(lang);
+        current_letter->addAction(newLang);
+        newLang->setCheckable(true);
+        //connect(newLang,SIGNAL(triggered()),this,SLOT());
+
+    }
+
+    QMapIterator<QChar,QMenu*> i(submenu);
+    while(i.hasNext()) {
+        i.next();
+        ui->menu_Language->addMenu(i.value());
+    }
+}
+/*
+void MainWindow::setLanguage(QString lang)
+{
+
+}*/
 
 void MainWindow::createStatusBar()
 {
@@ -1016,10 +1051,10 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
 
     QString fileType = generalFunctions::getFileType(sci->fileName());
     statusBar_fileFormat->setText(fileType);
-    if((sci->encoding == "UTF-8") && (!sci->BOM) ){
+    if((sci->encoding() == "UTF-8") && (!sci->BOM()) ){
         statusBar_textFormat->setText("ANSI as UTF-8");
     }else {
-        statusBar_textFormat->setText(sci->encoding);
+        statusBar_textFormat->setText(sci->encoding());
     }
 
     ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());

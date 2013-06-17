@@ -39,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -320,100 +320,6 @@
     <property name="title">
      <string>&amp;Language</string>
     </property>
-    <widget class="QMenu" name="menuB">
-     <property name="title">
-      <string>B</string>
-     </property>
-     <addaction name="actionBash"/>
-     <addaction name="actionBatch"/>
-    </widget>
-    <widget class="QMenu" name="menuC">
-     <property name="title">
-      <string>C</string>
-     </property>
-     <addaction name="actionCMake"/>
-     <addaction name="actionC_2"/>
-     <addaction name="actionC_3"/>
-     <addaction name="actionCSS"/>
-    </widget>
-    <widget class="QMenu" name="menuD">
-     <property name="title">
-      <string>D</string>
-     </property>
-     <addaction name="actionD_2"/>
-     <addaction name="actionDiff"/>
-    </widget>
-    <widget class="QMenu" name="menuF">
-     <property name="title">
-      <string>F</string>
-     </property>
-     <addaction name="actionFortran"/>
-     <addaction name="actionFortran77"/>
-    </widget>
-    <widget class="QMenu" name="menuJ">
-     <property name="title">
-      <string>J</string>
-     </property>
-     <addaction name="actionJava"/>
-     <addaction name="actionJavaScript"/>
-    </widget>
-    <widget class="QMenu" name="menuM">
-     <property name="title">
-      <string>M</string>
-     </property>
-     <addaction name="actionMakefile"/>
-     <addaction name="actionMatlab"/>
-    </widget>
-    <widget class="QMenu" name="menuP">
-     <property name="title">
-      <string>P</string>
-     </property>
-     <addaction name="actionPascal"/>
-     <addaction name="actionPerl"/>
-     <addaction name="actionPHP"/>
-     <addaction name="actionPostScript"/>
-     <addaction name="actionPOV"/>
-     <addaction name="actionProperties"/>
-     <addaction name="actionPython"/>
-    </widget>
-    <widget class="QMenu" name="menuS">
-     <property name="title">
-      <string>S</string>
-     </property>
-     <addaction name="actionSpice"/>
-     <addaction name="actionSQL"/>
-    </widget>
-    <widget class="QMenu" name="menuT">
-     <property name="title">
-      <string>T</string>
-     </property>
-     <addaction name="actionTCL"/>
-     <addaction name="actionTeX"/>
-    </widget>
-    <widget class="QMenu" name="menuV">
-     <property name="title">
-      <string>V</string>
-     </property>
-     <addaction name="actionVerilog"/>
-     <addaction name="actionVHDL"/>
-    </widget>
-    <addaction name="menuB"/>
-    <addaction name="menuC"/>
-    <addaction name="menuD"/>
-    <addaction name="menuF"/>
-    <addaction name="actionHTML"/>
-    <addaction name="actionIDL"/>
-    <addaction name="menuJ"/>
-    <addaction name="actionLua"/>
-    <addaction name="menuM"/>
-    <addaction name="actionOctave"/>
-    <addaction name="menuP"/>
-    <addaction name="actionRuby"/>
-    <addaction name="menuS"/>
-    <addaction name="menuT"/>
-    <addaction name="menuV"/>
-    <addaction name="actionXML"/>
-    <addaction name="actionYAML"/>
    </widget>
    <widget class="QMenu" name="menuSe_ttings">
     <property name="title">

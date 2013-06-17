@@ -32,7 +32,6 @@ private:
 
 private slots:
     void documentChanged(QString fileName);
-    bool errorSaveDocument(QFile *file);
 
 };
 
