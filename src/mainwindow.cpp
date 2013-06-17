@@ -271,7 +271,7 @@ void MainWindow::createStatusBar()
 
     label = new QLabel("File Format", this);
     label->setFrameShape(QFrame::StyledPanel);
-    label->setMinimumWidth(128);
+    label->setMinimumWidth(160);
     status->addWidget(label);
     statusBar_fileFormat = label;
 
@@ -298,7 +298,7 @@ void MainWindow::createStatusBar()
     label->setMinimumWidth(128);
     label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
-    statusBar_fileFormat = label;
+    statusBar_textFormat = label;
 
     label = new QLabel("INS",this);
     label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
@@ -573,10 +573,7 @@ void MainWindow::on_action_Open_triggered()
 {
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
-    // A patch for bug #760308
-    QWidget* foc = focusWidget();
     de->loadDocuments(fileNames, container->focusQTabWidgetqq());
-    foc->setFocus();
 
     update_single_document_ui(getFocusedEditor());
 }
@@ -914,7 +911,6 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
 void MainWindow::on_actionClone_to_Other_View_triggered()
 {
-    QWidget *cur_widget = container->focusQTabWidgetqq()->currentWidget();
     //QsciScintillaqq* focus_sci = getFocusedEditor();
     if(container->focusQTabWidgetqq() == container->QTabWidgetqqAt(0)) {
         if(container->count() < 2) {
@@ -988,12 +984,14 @@ void MainWindow::on_actionWord_wrap_triggered()
 
 void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
 {
+    if(!sci) {
+        return;
+    }
     QsciScintilla::EolMode eol = sci->guessEolMode();
     if(eol == -1) {
         eol = static_cast<QsciScintilla::EolMode>(
                     settings->value(widesettings::SETTING_EOL_MODE,QsciScintilla::EolUnix).toInt() );
     }
-
     ui->actionWindows_Format->setChecked( (eol == QsciScintilla::EolWindows ) ? true : false );
     ui->actionWindows_Format->setDisabled( (eol == QsciScintilla::EolWindows ) ? true : false );
     ui->actionUNIX_Format->setChecked( (eol == QsciScintilla::EolUnix ) ? true : false);
@@ -1015,7 +1013,16 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
         break;
 
     }
-    statusBar_fileFormat->setText("File Format");
+
+    QString fileType = generalFunctions::getFileType(sci->fileName());
+    statusBar_fileFormat->setText(fileType);
+    if((sci->encoding == "UTF-8") && (!sci->BOM) ){
+        statusBar_textFormat->setText("ANSI as UTF-8");
+    }else {
+        statusBar_textFormat->setText(sci->encoding);
+    }
+
+    ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
@@ -1034,6 +1041,7 @@ void MainWindow::on_actionShow_All_Characters_triggered()
     // APPLY TO CURRENT TAB
     QsciScintillaqq *sci = getFocusedEditor();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
+    update_single_document_ui(sci);
 }
 
 void MainWindow::on_actionWindows_Format_triggered()

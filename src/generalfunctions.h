@@ -25,17 +25,19 @@
 
 #include <QObject>
 #include <QString>
+#include <magic.h>
 
 class generalFunctions
 {
 public:
     generalFunctions();
-    static QString getFileMime(QString file);
-    static QString getFileEncoding(QString file);
+    static QString getFileMimeType(QString file);
+    static QString getFileMimeEncoding(QString file);
+    static QString getFileType(QString file);
     static QString readDConfKey(QString schema, QString key);
     static QString getUserFilePath(QString relativePath);
 private:
-    static QString getOutputFromFileMimeCmd(QString file, QString mimeArg);
+    static QString getFileInformation(QString file, int flags=(MAGIC_ERROR|MAGIC_CONTINUE));
 };
 
 #endif // GENERALFUNCTIONS_H

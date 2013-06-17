@@ -28,72 +28,52 @@
 #include <QDebug>
 #include <QApplication>
 #include <QTextDecoder>
+#include <QFile>
+#include <QDebug>
 #include <QDesktopServices>
-
 
 generalFunctions::generalFunctions()
 {
 
 }
 
-QString generalFunctions::getFileMime(QString file)
+QString generalFunctions::getFileMimeType(QString file)
 {
-    // Yeah, we suck at this
-    return getOutputFromFileMimeCmd(file, "--mime-type");
+    return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_TYPE));
 }
 
-QString generalFunctions::getFileEncoding(QString file)
+QString generalFunctions::getFileMimeEncoding(QString file)
 {
-    QString enc = getOutputFromFileMimeCmd(file, "--mime-encoding");
-    if(enc != "")
-    {
-        for(int i=0; i<QTextCodec::availableCodecs().count(); i++)
-        {
-            if(QTextCodec::availableCodecs().at(i).toLower() == enc.toLower())
-            {
-                return QTextCodec::availableCodecs().at(i);
+    return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));
+}
+
+QString generalFunctions::getFileType(QString file)
+{
+    return getFileInformation(file,(MAGIC_ERROR|MAGIC_RAW));
+}
+
+QString generalFunctions::getFileInformation(QString file, int flags)
+{
+    if((!(QFile(file).exists())) && (file == ""))return "";
+
+    magic_t myt = magic_open(flags);
+    magic_load(myt,NULL);
+    QString finfo = magic_file(myt,file.toStdString().c_str());
+    magic_close(myt);
+
+    //We go a different route for checking encoding
+    if((flags & MAGIC_MIME_ENCODING)) {
+        //Don't ever return a codec we don't support, will cause crashes.
+        foreach(QByteArray codec, QTextCodec::availableCodecs()){
+            if(codec.toUpper() == finfo.toUpper()) {
+                return codec;
             }
         }
+
+        return "UTF-8";
     }
 
-    // Codec not available
-    enc = "UTF-8";
-    return enc;
-}
-
-QString generalFunctions::getOutputFromFileMimeCmd(QString file, QString mimeArg)
-{
-    try {
-      QProcess *process = new QProcess();
-      QStringList *args = new QStringList();
-      args->append("--brief");
-      args->append(mimeArg);
-      args->append(file);
-      process->start("file", *args);
-      if(process->waitForStarted(2000))
-      {
-          process->closeWriteChannel();
-          process->waitForFinished(2000);
-          QByteArray qba = process->readAll();
-          QTextCodec *codec = QTextCodec::codecForLocale();
-          QTextDecoder *decoder = codec->makeDecoder();
-          QString result = decoder->toUnicode(qba);
-
-          delete args;
-          delete decoder;
-          delete process;
-
-          result = result.trimmed();
-          return result;
-      } else
-      {
-          return "";
-      }
-
-    }
-    catch (...) {
-       return "";
-    }
+    return finfo;
 }
 
 QString generalFunctions::readDConfKey(QString schema, QString key)
