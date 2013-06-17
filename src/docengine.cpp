@@ -60,7 +60,7 @@ bool docengine::write(QIODevice *io, QsciScintillaqq* sci)
 
 int docengine::saveDocument(QsciScintillaqq *sci, QString fileName, bool copy)
 {
-    QTabWidgetqq* tabWidget = sci->getTabWidget();
+    QTabWidgetqq* tabWidget = sci->tabWidget();
     QFile file(fileName);
     QFileInfo fi(file);
     bool retry = true;
