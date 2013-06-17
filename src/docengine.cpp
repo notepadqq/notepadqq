@@ -112,13 +112,16 @@ bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
 {
     if( !sci )                          return false;
     if(!io->open(QIODevice::ReadOnly))  return false;
-    QFileInfo fi(static_cast<QFile>(io));
-    QString readEncodedAs = generalFunctions::getFileEncoding(fi.absoluteFilePath());
+    QFile *file = static_cast<QFile*>(io);
+    QFileInfo fi(*file);
 
+    QString readEncodedAs = generalFunctions::getFileMimeEncoding(fi.absoluteFilePath());
+    qDebug() << readEncodedAs;
     QTextStream stream ( io );
     QString txt;
 
     stream.setCodec((encoding != "") ? encoding.toUtf8() : readEncodedAs.toUtf8());
+    stream.setCodec(readEncodedAs.toUtf8());
 
     txt = stream.readAll();
     io->close();
@@ -138,7 +141,6 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
 
         // Ok, now open our files
         for (int i = 0; i < fileNames.count(); i++) {
-
             QFile file(fileNames[i]);
             QFileInfo fi(fileNames[i]);
 
@@ -158,9 +160,7 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                 index = tabWidget->addEditorTab(true, fi.fileName());
             }
             QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
-
-            sci->encoding = generalFunctions::getFileEncoding(fi.absoluteFilePath());
-
+            sci->encoding = generalFunctions::getFileMimeEncoding(fi.absoluteFilePath());
             if (!read(&file, sci)) {
                 // Manage error
                 QMessageBox msgBox;
