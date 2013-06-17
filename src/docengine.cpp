@@ -42,10 +42,10 @@ bool docengine::write(QIODevice *io, QsciScintillaqq* sci)
     //Support for saving in all supported formats....
     int   _docLength = sci->length();
     char *_docBuffer = (char*)sci->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
-    QTextCodec *codec = QTextCodec::codecForName(sci->encoding.toUtf8());
+    QTextCodec *codec = QTextCodec::codecForName(sci->encoding().toUtf8());
     QByteArray string = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
-    if(sci->BOM)
+    if(sci->BOM())
     {
         stream.setGenerateByteOrderMark(true);
     }
@@ -116,7 +116,6 @@ bool docengine::read(QIODevice *io, QsciScintillaqq* sci, QString encoding)
     QFileInfo fi(*file);
 
     QString readEncodedAs = generalFunctions::getFileMimeEncoding(fi.absoluteFilePath());
-    qDebug() << readEncodedAs;
     QTextStream stream ( io );
     QString txt;
 
@@ -160,7 +159,7 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                 index = tabWidget->addEditorTab(true, fi.fileName());
             }
             QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
-            sci->encoding = generalFunctions::getFileMimeEncoding(fi.absoluteFilePath());
+            sci->setEncoding(generalFunctions::getFileMimeEncoding(fi.absoluteFilePath()));
             if (!read(&file, sci)) {
                 // Manage error
                 QMessageBox msgBox;
@@ -197,34 +196,14 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
             sci->autoSyntaxHighlight();
             addDocument(fi.absoluteFilePath());
 
-            // updateGui(index, tabWidget1);
-
             file.close();
 
             sci->setFocus(Qt::OtherFocusReason);
-            //tabWidget1->setFocus();
-            //tabWidget1->currentWidget()->setFocus();
         }
     }
     return true;
 }
 
-bool docengine::errorSaveDocument(QFile *file)
-{
-    QFileInfo fi(*file);
-    QMessageBox msgBox;
-    msgBox.setWindowTitle(MainWindow::instance()->windowTitle());
-    msgBox.setText(tr("Error trying to write to \"%1\"").arg(fi.fileName()));
-    msgBox.setDetailedText(file->errorString());
-    msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
-    msgBox.setDefaultButton(QMessageBox::Retry);
-    msgBox.setIcon(QMessageBox::Critical);
-    int ret = msgBox.exec();
-    if(ret == QMessageBox::Abort) {
-        return false;
-    }
-    return true;
-}
 
 void docengine::documentChanged(QString fileName)
 {

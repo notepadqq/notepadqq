@@ -83,10 +83,8 @@ public:
     void processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
     int askIfWantToSave(QsciScintillaqq *sci, int reason);
     int save(QsciScintillaqq *sci);
-//    int writeDocument(QsciScintillaqq *sci, QString filename);
     QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
     int saveAs(QsciScintillaqq *sci,bool copy=false);
-//    void openDocuments(QStringList fileNames, QTabWidgetqq *tabWidget);
     QSettings* getSettings();
     int kindlyTabClose(QsciScintillaqq *sci);
     void connect_tabWidget(QTabWidgetqq *tabWidget);
@@ -125,6 +123,7 @@ private:
     void closeEvent(QCloseEvent *event);
 
     void updateTypingMode(bool yes);
+    void initLanguages();
 
 private slots:
     void _on_text_changed();

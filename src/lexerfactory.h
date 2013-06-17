@@ -45,9 +45,10 @@ public:
     ShrPtrLangDefinition detectLanguage(QFileInfo info);
     QsciLexer*           createLexer(QFileInfo info,   QObject *parent = 0);
     QsciLexer*           createLexer(QString language, QObject *parent = 0);
+    QStringList          languages();
 private:
     QString langDefFile;
-    QList<ShrPtrLangDefinition>          languages;
+    QList<ShrPtrLangDefinition>          _languages;
     QHash<QString, ShrPtrLangDefinition> languages_by_name;
     QHash<QString, ShrPtrLangDefinition> language_by_extension;
 };

@@ -97,3 +97,4 @@ unix {
 }
 
 unix|win32: LIBS += -lmagic
+

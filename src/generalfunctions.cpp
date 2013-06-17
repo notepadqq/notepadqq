@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 
+
 generalFunctions::generalFunctions()
 {
 

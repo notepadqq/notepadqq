@@ -36,15 +36,14 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QChar>
-#include <magic.h>
 
 #include "userlexer.h"
 
 QsciScintillaqq::QsciScintillaqq(QWidget *parent) :
     QsciScintilla(parent)
 {
-    encoding = "UTF-8";
-    BOM = false;
+    _encoding = "UTF-8";
+    _BOM = false;
     this->setFileName("");
     connect(this, SIGNAL(SCN_UPDATEUI(int)), this, SIGNAL(updateUI()));
     connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineMargin()) );
@@ -66,11 +65,31 @@ void QsciScintillaqq::setFileName(QString filename)
     _fileName = filename;
 }
 
+QString QsciScintillaqq::encoding()
+{
+    return _encoding;
+}
+
+void QsciScintillaqq::setEncoding(QString enc)
+{
+    _encoding = enc;
+}
+
+bool QsciScintillaqq::BOM()
+{
+    return _BOM;
+}
+
+void QsciScintillaqq::setBOM(bool yes)
+{
+    _BOM = yes;
+}
+
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
     int   _docLength = this->length();
     char *_docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
-    QTextCodec *codec = QTextCodec::codecForName(this->encoding.toUtf8());
+    QTextCodec *codec = QTextCodec::codecForName(this->encoding().toUtf8());
     QByteArray a = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
     int _win = a.count("\r\n");
