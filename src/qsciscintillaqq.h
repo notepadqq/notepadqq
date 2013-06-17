@@ -40,16 +40,17 @@ class QsciScintillaqq : public QsciScintilla
 public:
     ~QsciScintillaqq();
     explicit QsciScintillaqq(QWidget *parent = 0);
-    QString encoding;
-    bool BOM;
+
     struct Sci_CharacterRange {
         long cpMin;
         long cpMax;
     };
+
     struct Sci_TextRange {
         struct Sci_CharacterRange chrg;
         char *lpstrText;
     };
+
     struct Sci_TextToFind {
         struct Sci_CharacterRange chrg;     // range to search
         char *lpstrText;                // the search pattern (zero terminated)
@@ -62,12 +63,25 @@ public:
     void autoSyntaxHighlight();
     void forceUIUpdate();
     void safeCopy();
+
+    QString fileName();
+    QString encoding();
+    bool    BOM();
+
+    void setFileName(QString filename);
+    void setEncoding(QString enc="UTF-8");
+    void    setBOM(bool yes=true);
+
 private:
     typedef QByteArray ScintillaString;
     QString _fileName;
+    QString _encoding;
+
+    bool _BOM;
+    int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
+
     void keyPressEvent(QKeyEvent *e);
     void keyReleaseEvent(QKeyEvent *e);
-    int oldSelectionLineFrom, oldSelectionIndexFrom, oldSelectionLineTo, oldSelectionIndexTo;
     void initialize();
 private slots:
     void wheelEvent(QWheelEvent * e);
@@ -76,9 +90,7 @@ signals:
     void keyReleased(QKeyEvent *e);
     void updateUI();
 public slots:
-    void setFileName(QString filename);
     void updateLineMargin();
-    QString fileName();
     bool overType();
     bool highlightTextRecurrence(int searchFlags, QString text, long searchFrom, long searchTo, int selector);
     QsciScintilla::EolMode guessEolMode();

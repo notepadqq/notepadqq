@@ -98,15 +98,17 @@ public:
     QsciLexer*             createLexer(QFileInfo info,   QObject *parent = 0);
     QsciLexer*             createLexer(QString language, QObject *parent = 0);
     ShrPtrStylerDefinition getGlobalStyler() const;
+    QStringList          languages();
 protected:
     bool parseLanguageDefinitions   ();
     bool parseColorSchemeDefinitions();
     QsciLexer* applyColorScheme(ShrPtrLangDefinition lang, QsciLexer* lex);
 
+
 private:
     QString langDefFile;
     QString stylersDefFile;
-    QList<ShrPtrLangDefinition>            languages;
+    QList<ShrPtrLangDefinition>            _languages;
     QHash<QString, ShrPtrLangDefinition>   languages_by_name;
     QHash<QString, ShrPtrLangDefinition>   language_by_extension;
     QList<ShrPtrStylerDefinition>          stylers;
