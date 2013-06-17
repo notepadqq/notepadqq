@@ -135,8 +135,12 @@ bool QsciScintillaqq::overType()
 void QsciScintillaqq::safeCopy()
 {
     QClipboard *clipboard = QApplication::clipboard();
-    int  contentLength = this->length()-1;
+    const int  contentLength = this->length()-1;
+#if (defined(__APPLE__) || (defined(_WIN32)))
+    char* stringData = new char[contentLength+1];
+#else
     char stringData[contentLength+1];
+#endif
     this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
     //Replace NUL byte characters with a space so it can be pasted into other places.
     for(int i=0;i<contentLength-1;i++) {
@@ -146,6 +150,9 @@ void QsciScintillaqq::safeCopy()
     }
     stringData[contentLength] = '\0';
     clipboard->setText(stringData);
+#if (defined(__APPLE__) || (defined(_WIN32)))
+    delete stringData;
+#endif
 }
 
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)

@@ -6,6 +6,7 @@
 #include <QHash>
 #include <QString>
 #include <QFileInfo>
+#include <QSharedPointer>
 
 // name="actionscript" ext="as mx" commentLine="//" commentStart="/*" commentEnd="*/"
 
@@ -15,7 +16,7 @@ struct KeywordCollection
 {
     QString     type;
     QStringList keywords;
-};
+}; typedef QSharedPointer<KeywordCollection> ShrPtrKeywordCollection;
 
 struct LangDefinition
 {
@@ -25,15 +26,15 @@ struct LangDefinition
     QString     comment_start;
     QString     comment_end;
 
-    QList<KeywordCollection>          keywords;
-    QHash<QString, KeywordCollection> keywords_by_class;
+    QList<ShrPtrKeywordCollection>          keywords;
+    QHash<QString, ShrPtrKeywordCollection> keywords_by_class;
 
     LangDefinition()
         : comment_line(QString::null), comment_start(QString::null), comment_end(QString::null)
     {
 
     }
-};
+}; typedef QSharedPointer<LangDefinition> ShrPtrLangDefinition;
 
 class LexerFactory
 {
@@ -41,14 +42,14 @@ public:
     LexerFactory();
     bool init();
 
-    LangDefinition detectLanguage(QFileInfo info);
-    QsciLexer*     createLexer(QFileInfo info,   QObject *parent = 0);
-    QsciLexer*     createLexer(QString language, QObject *parent = 0);
+    ShrPtrLangDefinition detectLanguage(QFileInfo info);
+    QsciLexer*           createLexer(QFileInfo info,   QObject *parent = 0);
+    QsciLexer*           createLexer(QString language, QObject *parent = 0);
 private:
     QString langDefFile;
-    QList<LangDefinition>          languages;
-    QHash<QString, LangDefinition> languages_by_name;
-    QHash<QString, LangDefinition> language_by_extension;
+    QList<ShrPtrLangDefinition>          languages;
+    QHash<QString, ShrPtrLangDefinition> languages_by_name;
+    QHash<QString, ShrPtrLangDefinition> language_by_extension;
 };
 
 #endif // LEXERFACTORY_H

@@ -79,43 +79,48 @@ bool LexerFactory::init()
     node = node.firstChildElement("Language");
     while(!node.isNull()) {
 
-        LangDefinition lang;
-        lang.name            = node.attributes().namedItem("name").nodeValue();
-        lang.file_extensions = read_attribute(node, "ext", "").split(" ", QString::SkipEmptyParts);
-        lang.comment_line    = read_attribute(node, "commentLine" , NULL);
-        lang.comment_start   = read_attribute(node, "commentStart", NULL);
-        lang.comment_end     = read_attribute(node, "commentEnd"  , NULL);
+        ShrPtrLangDefinition lang( new LangDefinition() );
+        lang->name            = node.attributes().namedItem("name").nodeValue();
+        lang->file_extensions = read_attribute(node, "ext", "").split(" ", QString::SkipEmptyParts);
+        lang->comment_line    = read_attribute(node, "commentLine" , NULL);
+        lang->comment_start   = read_attribute(node, "commentStart", NULL);
+        lang->comment_end     = read_attribute(node, "commentEnd"  , NULL);
         QDomNode keywords_node = node.firstChildElement("Keywords");
         while(!keywords_node.isNull()) {
-            KeywordCollection kw_class;
-            kw_class.type     = read_attribute   (keywords_node, "name", "");
-            kw_class.keywords = read_element_text(keywords_node, "").split(" ", QString::SkipEmptyParts);
+            ShrPtrKeywordCollection kw_class( new KeywordCollection() );
+            kw_class->type     = read_attribute   (keywords_node, "name", "");
+            kw_class->keywords = read_element_text(keywords_node, "").split(" ", QString::SkipEmptyParts);
             keywords_node     = keywords_node.nextSiblingElement("Keywords");
 
-            lang.keywords.append(kw_class);
-            lang.keywords_by_class.insert(kw_class.type, kw_class);
+            lang->keywords.append(kw_class);
+            lang->keywords_by_class.insert(kw_class->type, kw_class);
         }
         node = node.nextSiblingElement("Language");
         languages.append        (lang);
-        languages_by_name.insert(lang.name, lang);
+        languages_by_name.insert(lang->name, lang);
 
-        foreach(QString ext, lang.file_extensions) {
+        foreach(QString ext, lang->file_extensions) {
             language_by_extension.insert(ext, lang); // IF MORE LANGUAGES USES THE SAME EXTENSIONS ( should not! ) THE LAST WINS
         }
     }
     return true;
 }
 
-LangDefinition LexerFactory::detectLanguage(QFileInfo info)
+ShrPtrLangDefinition LexerFactory::detectLanguage(QFileInfo info)
 {
-    // GET COMPLETE FILE EXTENSIONS
+    // Basic extension-based heuristic
     QString ext = info.completeSuffix();
-    return language_by_extension.value(ext); // RETURNS DEFAULT IF NOT FOUND
+    // TODO: add more heuristic to detect languages
+    // e.g. file starting with "<?xml" ==> "xml"
+    return language_by_extension.value(ext); // RETURNS NULL POINTER IF NOT FOUND
 }
 
 QsciLexer* LexerFactory::createLexer(QFileInfo info, QObject *parent)
 {
-    return createLexer( detectLanguage(info).name, parent );
+    ShrPtrLangDefinition lang = detectLanguage(info);
+    if ( lang.isNull() )
+        return NULL;
+    return createLexer( lang->name, parent );
 }
 
 QsciLexer* LexerFactory::createLexer(QString lg, QObject* parent)
