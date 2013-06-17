@@ -26,7 +26,7 @@
 #include <Qsci/qscilexerperl.h>
 #include <Qsci/qscilexerpostscript.h>
 #include <Qsci/qscilexerpov.h>
-#include <Qsci/qscilexerproperties.h> /**/
+#include <Qsci/qscilexerproperties.h>
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qscilexerruby.h>
 #include <Qsci/qscilexerspice.h>
@@ -124,11 +124,13 @@ QsciLexer* LexerFactory::createLexer(QString lg, QObject* parent)
         return new QsciLexerBash(parent);
     if ( lg == "batch" )
         return new QsciLexerBatch(parent);
+    if ( lg == "c" ) // WHAT ABOUT THE "C" LEXER?
+        return new QsciLexerCPP(parent);
     if ( lg == "cmake" )
         return new QsciLexerCMake(parent);
     if ( lg == "cpp" )
         return new QsciLexerCPP(parent);
-    if ( lg == "csharp" )
+    if ( lg == "cs" )
         return new QsciLexerCSharp(parent);
     if ( lg == "css" )
         return new QsciLexerCSS(parent);
@@ -164,6 +166,8 @@ QsciLexer* LexerFactory::createLexer(QString lg, QObject* parent)
         return new QsciLexerProperties(parent);
     if ( lg == "python" )
         return new QsciLexerPython(parent);
+    if ( lg == "ruby" )
+        return new QsciLexerRuby(parent);
     if ( lg == "spice" )
         return new QsciLexerSpice(parent);
     if ( lg == "sql" )
