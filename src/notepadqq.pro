@@ -82,18 +82,15 @@ unix {
     # MAKE INSTALL
     INSTALLS += target \
         vfiles
-        #desktop \
-        #icon64
 
-    target.path = /usr/bin/
+    target.path = $$INSTALL_ROOT/bin/
     target.files += $$DESTDIR/$$TARGET
 
-    vfiles.path = /
-    vfiles.files += sys_files/*
-    #desktop.path = /usr/share/applications/
-    #desktop.files += $$SYS_FILES/usr/share/applications/notepadqq.desktop
-    #icon64.path = $$DATADIR/icons/hicolor/64x64/apps
-    #icon64.files += fsudoku.png
+    vfiles.path = $$INSTALL_ROOT/
+    vfiles.files += sys_files/usr/*
+    data.path  = $$INSTALL_ROOT/share/notepadqq
+    data.files = syntax/*.xml
+    INSTALLS += data
 }
 
 unix|win32: LIBS += -lmagic
