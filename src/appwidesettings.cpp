@@ -170,6 +170,8 @@ namespace widesettings {
         bool show_all_chars             = MainWindow::instance()->getSettings()->value(SETTING_SHOW_ALL_CHARS).toBool();
         bool show_end_of_line           = MainWindow::instance()->getSettings()->value(SETTING_SHOW_END_OF_LINE).toBool();
         bool show_white_space           = MainWindow::instance()->getSettings()->value(SETTING_SHOW_WHITE_SPACE).toBool();
+        bool show_wrap_symbol           = MainWindow::instance()->getSettings()->value(SETTING_WRAP_SYMBOL).toBool();
+        bool show_indent_guide          = MainWindow::instance()->getSettings()->value(SETTING_SHOW_INDENT_GUIDE).toBool();
 
         double zoom_level               = MainWindow::instance()->getSettings()->value(SETTING_ZOOM_LEVEL).toDouble();
 
@@ -177,6 +179,8 @@ namespace widesettings {
         apply_invisible_chars(show_all_chars, w);
         apply_end_of_line(show_end_of_line, w);
         apply_white_space(show_white_space, w);
+        apply_wrap_symbol(show_wrap_symbol, w);
+        apply_indent_guide(show_indent_guide, w);
         apply_zoom_level(zoom_level, w);
     }
 
