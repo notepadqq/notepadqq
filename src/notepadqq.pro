@@ -16,11 +16,13 @@ UI_DIR = ../build/build_data
 MOC_DIR = ../build/build_data
 OBJECTS_DIR = ../build/build_data
 
-CONFIG(debug, debug|release) {
-    DESTDIR = ../build/debug
-}
-CONFIG(release, debug|release) {
-    DESTDIR = ../build/release
+isEmpty(DESTDIR) {
+    CONFIG(debug, debug|release) {
+        DESTDIR = ../build/debug
+    }
+    CONFIG(release, debug|release) {
+        DESTDIR = ../build/release
+    }
 }
 
 win32 {
@@ -88,11 +90,11 @@ unix {
         PREFIX = /usr/local
     }
 
-    target.path = $$PREFIX/bin/
+    target.path = $$INSTALL_ROOT$$PREFIX/bin/
     target.files += $$DESTDIR/$$TARGET
-    vfiles.path = $$PREFIX/
+    vfiles.path = $$INSTALL_ROOT$$PREFIX/
     vfiles.files += sys_files/usr/*
-    data.path  = $$PREFIX/share/notepadqq
+    data.path  = $$INSTALL_ROOT$$PREFIX/share/notepadqq
     data.files = syntax/*.xml
 }
 
