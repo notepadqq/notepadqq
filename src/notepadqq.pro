@@ -16,11 +16,13 @@ UI_DIR = ../build/build_data
 MOC_DIR = ../build/build_data
 OBJECTS_DIR = ../build/build_data
 
-CONFIG(debug, debug|release) {
-    DESTDIR = ../build/debug
-}
-CONFIG(release, debug|release) {
-    DESTDIR = ../build/release
+isEmpty(DESTDIR) {
+    CONFIG(debug, debug|release) {
+        DESTDIR = ../build/debug
+    }
+    CONFIG(release, debug|release) {
+        DESTDIR = ../build/release
+    }
 }
 
 win32 {
@@ -81,16 +83,19 @@ TRANSLATIONS += L10n/notepadqq_en.ts \
 unix {
     # MAKE INSTALL
     INSTALLS += target \
-        vfiles
+        vfiles \
+        data
 
-    target.path = $$INSTALL_ROOT/bin/
+    isEmpty(PREFIX) {
+        PREFIX = /usr/local
+    }
+
+    target.path = $$INSTALL_ROOT$$PREFIX/bin/
     target.files += $$DESTDIR/$$TARGET
-
-    vfiles.path = $$INSTALL_ROOT/
+    vfiles.path = $$INSTALL_ROOT$$PREFIX/
     vfiles.files += sys_files/usr/*
-    data.path  = $$INSTALL_ROOT/share/notepadqq
+    data.path  = $$INSTALL_ROOT$$PREFIX/share/notepadqq
     data.files = syntax/*.xml
-    INSTALLS += data
 }
 
 unix|win32: LIBS += -lmagic
