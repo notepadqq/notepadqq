@@ -39,7 +39,6 @@ namespace widesettings {
 
     bool apply_end_of_line(bool v, QsciScintillaqq* w)
     {
-        qDebug() << v;
         MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_END_OF_LINE, v);
 
         if ( !w )                 return false;
