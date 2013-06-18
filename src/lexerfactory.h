@@ -98,7 +98,7 @@ public:
     QsciLexer*             createLexer(QFileInfo info,   QObject *parent = 0);
     QsciLexer*             createLexer(QString language, QObject *parent = 0);
     ShrPtrStylerDefinition getGlobalStyler() const;
-    QStringList          languages();
+    QHash<QString,QString> languages();
 protected:
     bool parseLanguageDefinitions   ();
     bool parseColorSchemeDefinitions();

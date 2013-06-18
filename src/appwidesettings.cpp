@@ -4,12 +4,16 @@
 #include <QDebug>
 
 namespace widesettings {
-    const char * SETTING_WRAP_MODE      = "wrap_mode";
-    const char * SETTING_SHOW_ALL_CHARS = "show_all_chars";
-    const char * SETTING_EOL_MODE       = "eol_mode";
-    const char * SETTING_ZOOM_LEVEL     = "zoom_level";
-    const char * SETTING_MONO_FONT_NAME = "mono_font_name";
-    const char * SETTING_MONO_FONT_SIZE = "mono_font_size";
+    const char * SETTING_WRAP_MODE         = "wrap_mode";
+    const char * SETTING_WRAP_SYMBOL       = "wrap_symbol";
+    const char * SETTING_SHOW_ALL_CHARS    = "show_all_chars";
+    const char * SETTING_SHOW_END_OF_LINE  = "show_eol";
+    const char * SETTING_SHOW_WHITE_SPACE  = "show_white_space";
+    const char * SETTING_SHOW_INDENT_GUIDE = "show_indent_guide";
+    const char * SETTING_EOL_MODE          = "eol_mode";
+    const char * SETTING_ZOOM_LEVEL        = "zoom_level";
+    const char * SETTING_MONO_FONT_NAME    = "mono_font_name";
+    const char * SETTING_MONO_FONT_SIZE    = "mono_font_size";
 
     bool apply_wrap_mode(QsciScintilla::WrapMode m, QsciScintillaqq* w)
     {
@@ -24,10 +28,52 @@ namespace widesettings {
     bool apply_invisible_chars(bool v, QsciScintillaqq* w)
     {
         MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_ALL_CHARS, v);
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_END_OF_LINE, v);
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_WHITE_SPACE, v);
 
         if ( !w )                 return false;
         w->setEolVisibility(v);
         w->setWhitespaceVisibility( v ? QsciScintillaqq::WsVisible : QsciScintillaqq::WsInvisible );
+        return true;
+    }
+
+    bool apply_end_of_line(bool v, QsciScintillaqq* w)
+    {
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_END_OF_LINE, v);
+
+        if ( !w )                 return false;
+        w->setEolVisibility(v);
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_ALL_CHARS,
+                                                       (w->eolVisibility() && w->whitespaceVisibility()) ? true : false);
+        return true;
+    }
+
+    bool apply_white_space(bool v, QsciScintillaqq* w)
+    {
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_WHITE_SPACE, v);
+
+        if ( !w )                 return false;
+        w->setWhitespaceVisibility( v ? QsciScintillaqq::WsVisible : QsciScintillaqq::WsInvisible );
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_ALL_CHARS,
+                                                       (w->eolVisibility() && w->whitespaceVisibility()) ? true : false);
+        return true;
+    }
+
+    bool apply_indent_guide(bool v, QsciScintillaqq* w)
+    {
+        MainWindow::instance()->getSettings()->setValue(SETTING_SHOW_INDENT_GUIDE, v);
+
+        if ( !w )                 return false;
+        w->setIndentationGuides(v);
+        return true;
+    }
+
+    bool apply_wrap_symbol(bool v, QsciScintillaqq* w)
+    {
+        MainWindow::instance()->getSettings()->setValue(SETTING_WRAP_SYMBOL, v);
+
+        if ( !w )                 return false;
+        w->setWrapVisualFlags(v ? QsciScintilla::WrapFlagByBorder: QsciScintilla::WrapFlagNone);
         return true;
     }
 
@@ -78,6 +124,34 @@ namespace widesettings {
         return apply_invisible_chars(!visible, w);
     }
 
+    bool toggle_end_of_line(QsciScintillaqq* w)
+    {
+        if ( !w ) return false;
+        bool visible = w->eolVisibility();
+        return apply_end_of_line(!visible, w);
+    }
+
+    bool toggle_white_space(QsciScintillaqq* w)
+    {
+        if( !w ) return false;
+        bool visible = (w->whitespaceVisibility() == QsciScintilla::WsVisible) ? true : false;
+        return apply_white_space(!visible, w);
+    }
+
+    bool toggle_indent_guide(QsciScintillaqq* w)
+    {
+        if ( !w ) return false;
+        bool visible = w->indentationGuides();
+        return apply_indent_guide(!visible, w);
+    }
+
+    bool toggle_wrap_symbol(QsciScintillaqq* w)
+    {
+        if ( !w ) return false;
+        bool visible = MainWindow::instance()->getSettings()->value(SETTING_WRAP_SYMBOL,false).toBool();
+        return apply_wrap_symbol(!visible, w);
+    }
+
     bool set_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq* w)
     {
         if ( !w ) return false;
@@ -93,10 +167,19 @@ namespace widesettings {
                     MainWindow::instance()->getSettings()->value(SETTING_WRAP_MODE).toInt() );
 
         bool show_all_chars             = MainWindow::instance()->getSettings()->value(SETTING_SHOW_ALL_CHARS).toBool();
+        bool show_end_of_line           = MainWindow::instance()->getSettings()->value(SETTING_SHOW_END_OF_LINE).toBool();
+        bool show_white_space           = MainWindow::instance()->getSettings()->value(SETTING_SHOW_WHITE_SPACE).toBool();
+        bool show_wrap_symbol           = MainWindow::instance()->getSettings()->value(SETTING_WRAP_SYMBOL).toBool();
+        bool show_indent_guide          = MainWindow::instance()->getSettings()->value(SETTING_SHOW_INDENT_GUIDE).toBool();
+
         double zoom_level               = MainWindow::instance()->getSettings()->value(SETTING_ZOOM_LEVEL).toDouble();
 
         apply_wrap_mode(m, w);
         apply_invisible_chars(show_all_chars, w);
+        apply_end_of_line(show_end_of_line, w);
+        apply_white_space(show_white_space, w);
+        apply_wrap_symbol(show_wrap_symbol, w);
+        apply_indent_guide(show_indent_guide, w);
         apply_zoom_level(zoom_level, w);
     }
 

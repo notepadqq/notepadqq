@@ -48,6 +48,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDateTime>
+#include <Qsci/qsciapis.h>
 
 MainWindow* MainWindow::wMain = 0;
 
@@ -267,18 +268,20 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
 void MainWindow::initLanguages()
 {
     QActionGroup*       actionGroup = new QActionGroup(this);
-    QStringList         list = lexer_factory->languages();
-    QMap<QChar,QMenu*> submenu;
+    QHash<QString,QString>         list        = lexer_factory->languages();
+    QMap<QChar,QMenu*>  submenu;
 
     //Build all the actions
-    foreach(QString lang, list) {
-        QChar  letter = lang.at(0).toUpper();
+    QHashIterator<QString,QString> lang(list);
+    while(lang.hasNext()) {
+        lang.next();
+        QChar  letter = lang.key().at(0).toUpper();
         QMenu* current_letter = submenu.value(letter,0);
         if(!current_letter) {
             current_letter  = new QMenu(letter,this);
             submenu[letter] = current_letter;
         }
-        QAction* newLang = actionGroup->addAction(lang);
+        QAction* newLang = actionGroup->addAction(lang.key());
         current_letter->addAction(newLang);
         newLang->setCheckable(true);
         connect(newLang,SIGNAL(triggered()),this,SLOT(setLanguage()));
@@ -301,7 +304,7 @@ void MainWindow::setLanguage()
     QAction*         action = qobject_cast<QAction*>(sender());
     if(!action) return;
     if(!sci) return;
-    sci->setForcedLanguage(action->text());
+    sci->setForcedLanguage(lexer_factory->languages().value(action->text()));
 }
 
 /*
@@ -358,13 +361,14 @@ void MainWindow::createStatusBar()
 
 void MainWindow::_on_editor_cursor_position_change(int line, int index)
 {
-    QsciScintillaqq *sci  = getFocusedEditor();
-    int lineFrom=0,indexFrom=0,lineTo=0,indexTo=0;
+    QsciScintillaqq*    sci = getFocusedEditor();
     int selectionCharacters = 0;
-    int selectionLines = 0;
+    int selectionLines      = 0;
+    int lineFrom = 0,indexFrom = 0, lineTo = 0, indexTo = 0;
+
 
     sci->getSelection(&lineFrom,&indexFrom,&lineTo,&indexTo);
-    selectionLines = std::abs(lineFrom-lineTo);
+    selectionLines      = std::abs(lineFrom-lineTo);
     selectionCharacters = selectionLines+std::abs(indexFrom-indexTo);
     if(selectionCharacters > 0)selectionLines++;
 
@@ -1071,6 +1075,12 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
     }
 
     ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
+    ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,true).toBool());
+    ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,true).toBool());
+    ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,true).toBool());
+    ui->actionShow_Indent_Guide->setChecked(settings->value(widesettings::SETTING_SHOW_INDENT_GUIDE,true).toBool());
+    ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,true).toBool());
+
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
@@ -1124,4 +1134,36 @@ void MainWindow::on_actionUPPERCASE_triggered()
 void MainWindow::on_actionLowercase_triggered()
 {
     getFocusedEditor()->SendScintilla(QsciScintilla::SCI_LOWERCASE);
+}
+
+void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_white_space(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_End_of_Line_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_end_of_line(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_Indent_Guide_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_indent_guide(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_Wrap_Symbol_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_wrap_symbol(sci) ) return;
+    update_single_document_ui(sci);
 }

@@ -155,11 +155,11 @@ bool LexerFactory::parseLanguageDefinitions()
 }
 
 
-QStringList LexerFactory::languages()
+QHash<QString,QString> LexerFactory::languages()
 {
-    QStringList list;
-    foreach(ShrPtrLangDefinition lang, _languages) {
-        list.append((lang->name).toLower());
+    QHash<QString,QString> list;
+    foreach(ShrPtrStylerDefinition lang, stylers) {
+        list[lang->desc] = lang->name;
     }
     return list;
 }
@@ -300,14 +300,7 @@ QsciLexer* LexerFactory::applyColorScheme(ShrPtrLangDefinition lang, QsciLexer* 
 
 QsciLexer* LexerFactory::createLexer(QFileInfo info, QObject *parent)
 {
-    QsciScintillaqq*     sci  = qobject_cast<QsciScintillaqq*>(parent);
-    ShrPtrLangDefinition lang;
-    if( (sci) && (!(sci->forcedLanguage().isEmpty()))){
-        lang = languages_by_name.value(sci->forcedLanguage());
-        qDebug() << sci->forcedLanguage();
-    }else {
-        lang = detectLanguage(info);
-    }
+    ShrPtrLangDefinition lang = detectLanguage(info);
     if ( lang.isNull() )
         return NULL;
     return applyColorScheme( lang, createLexer( lang->name, parent ) );

@@ -181,6 +181,10 @@ private slots:
     void on_actionReload_from_Disk_triggered();
     void on_actionUPPERCASE_triggered();
     void on_actionLowercase_triggered();
+    void on_actionShow_End_of_Line_triggered();
+    void on_actionShow_White_Space_and_TAB_triggered();
+    void on_actionShow_Indent_Guide_triggered();
+    void on_actionShow_Wrap_Symbol_triggered();
 
 public slots:
     void on_actionZoom_In_triggered();
