@@ -1075,6 +1075,12 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
     }
 
     ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
+    ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,true).toBool());
+    ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,true).toBool());
+    ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,true).toBool());
+    ui->actionShow_Indent_Guide->setChecked(settings->value(widesettings::SETTING_SHOW_INDENT_GUIDE,true).toBool());
+    ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,true).toBool());
+
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
@@ -1128,4 +1134,36 @@ void MainWindow::on_actionUPPERCASE_triggered()
 void MainWindow::on_actionLowercase_triggered()
 {
     getFocusedEditor()->SendScintilla(QsciScintilla::SCI_LOWERCASE);
+}
+
+void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_white_space(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_End_of_Line_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_end_of_line(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_Indent_Guide_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_indent_guide(sci) ) return;
+    update_single_document_ui(sci);
+}
+
+void MainWindow::on_actionShow_Wrap_Symbol_triggered()
+{
+    // APPLY TO CURRENT TAB
+    QsciScintillaqq *sci = getFocusedEditor();
+    if ( !sci || !widesettings::toggle_wrap_symbol(sci) ) return;
+    update_single_document_ui(sci);
 }
