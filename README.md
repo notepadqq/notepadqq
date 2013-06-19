@@ -12,13 +12,8 @@ To report any bug, use Launchpad: https://bugs.launchpad.net/notepadqq
 
 How to build
 ------------
-You can use Qt Creator to automatically build Notepadqq, and that's the recommended way.
-Alternatively, you can build Notepadqq from command line:
+Yu can build and install Notepadqq from command line:
 
-    notepadqq/src$ qmake-qt4 notepadqq.pro -r -spec linux-g++
+    notepadqq/src$ qmake-qt4 PREFIX=/usr notepadqq.pro -r -spec linux-g++
     notepadqq/src$ make
-    notepadqq/src$ make clean
-
-Compiled files will be available in notepadqq/build/
-    
-
+    notepadqq/src$ make install
