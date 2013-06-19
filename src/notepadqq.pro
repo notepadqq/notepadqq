@@ -55,7 +55,6 @@ HEADERS  += mainwindow.h \
     qtabwidgetscontainer.h \
     frmsrchreplace.h \
     searchengine.h \
-    searchengine.h \
     docengine.h \
     appwidesettings.h \
     lexerfactory.h

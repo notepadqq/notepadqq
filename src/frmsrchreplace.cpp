@@ -55,6 +55,7 @@ void frmsrchreplace::setNewSearch(bool isnew)
 
 void frmsrchreplace::closeEvent(QCloseEvent *e)
 {
+    MainWindow::instance()->clearSearchDialog();
     QDialog::closeEvent(e);
 }
 
@@ -95,7 +96,7 @@ void frmsrchreplace::buttonCountInstances_clicked()
 //Need a cleaner way to do this later
 void frmsrchreplace::buttonFindNext_clicked()
 {
-    QsciScintillaqq *sci = MainWindow::instance()->getFocusedEditor();
+    QsciScintillaqq *sci = MainWindow::instance()->focused_editor();
     updateParameters();
     se()->setContext(sci);
     se()->findString();
@@ -104,7 +105,7 @@ void frmsrchreplace::buttonFindNext_clicked()
 void frmsrchreplace::buttonReplace_clicked()
 {
     updateParameters();
-    se()->setContext(MainWindow::instance()->getFocusedEditor());
+    se()->setContext(MainWindow::instance()->focused_editor());
     se()->replace(ui->edt_replaceWith_r->text());
 }
 
@@ -126,7 +127,7 @@ void frmsrchreplace::buttonReplaceAll_clicked()
 
 void frmsrchreplace::updateParameters()
 {
-    QsciScintillaqq *sci = MainWindow::instance()->getFocusedEditor();
+    QsciScintillaqq *sci = MainWindow::instance()->focused_editor();
 
     se()->setCaseSensitive(ui->cb_optMatchCase->isChecked());
     se()->setWholeWord(ui->cb_optMatchWhole->isChecked());
