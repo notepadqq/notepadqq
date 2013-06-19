@@ -1,11 +1,14 @@
 #ifndef SEARCHENGINE_H
 #define SEARCHENGINE_H
 #include <QRegExp>
+#include <QObject>
 #include "qsciscintillaqq.h"
-class searchengine
+class searchengine : public QObject
 {
+    Q_OBJECT
 public:
-    searchengine(bool regexp=false, bool casesense=false, bool wholeword=false, bool wrap=true, bool forward=true);
+    searchengine(QObject *parent=0) : QObject(parent) {}
+    virtual ~searchengine() {}
 
     QString pattern();
 

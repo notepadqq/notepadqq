@@ -80,54 +80,56 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
-    void processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
-    int askIfWantToSave(QsciScintillaqq *sci, int reason);
-    int save(QsciScintillaqq *sci);
-    QString getSaveDialogDefaultFileName(QsciScintillaqq *sci);
-    int saveAs(QsciScintillaqq *sci,bool copy=false);
-    QSettings* getSettings();
-    int kindlyTabClose(QsciScintillaqq *sci);
-    void connect_tabWidget(QTabWidgetqq *tabWidget);
-    searchengine* getSearchEngine();
-    int fileAlreadyOpened(const QString & filepath);
-    void update_single_document_ui( QsciScintillaqq* sci );
-    QFont* systemMonospace();
-    void createStatusBar();
+    int           askIfWantToSave(QsciScintillaqq *sci, int reason);
+    int           save(QsciScintillaqq *sci);
+    int           saveAs(QsciScintillaqq *sci,bool copy=false);
+    int           kindlyTabClose(QsciScintillaqq *sci);
+    int           fileAlreadyOpened(const QString & filepath);
+
+    void          createStatusBar();
+    void          clearSearchDialog();
+    void          update_single_document_ui( QsciScintillaqq* sci );
+    void          connect_tabWidget(QTabWidgetqq *tabWidget);
+    void          processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
+
+    QFont*        systemMonospace();
+    QString       getSaveDialogDefaultFileName(QsciScintillaqq *sci);
+    QSettings*    getSettings();
+
     LexerFactory* getLexerFactory();
+    searchengine* getSearchEngine();
 
     //Singleton instance of main window class
     static MainWindow* instance();
 
-    QsciScintillaqq* getFocusedEditor();
+    QsciScintillaqq* focused_editor();
 
 private:
-    Ui::MainWindow *ui;
-    QSettings *settings;
-    QMenu *tabContextMenu;
-    QList<QAction *> tabContextMenuActions;
-    QLabel *statusBar_fileFormat;
-    QLabel *statusBar_lengthInfo;
-    QLabel *statusBar_selectionInfo;
-    QLabel *statusBar_EOLstyle;
-    QLabel *statusBar_textFormat;
-    QLabel *statusBar_overtypeNotify;
-    QLocalServer *instanceServer;
-    frmsrchreplace* searchDialog;
-    searchengine *se;
-    docengine    *de;
-    QFont        *system_monospace;
-    LexerFactory *lexer_factory;
     static MainWindow* wMain;
-    //void closeEvent(QCloseEvent *event);
-    // QActionGroup *encodeGroup;
-    void closeEvent(QCloseEvent *event);
+    Ui::MainWindow*    ui;
+    QLocalServer*      instanceServer;
+    QSettings*         settings;
 
-    void updateTypingMode(bool yes);
-    void initLanguages();
+    QFont*             system_monospace;
+    QLabel*            statusBar_fileFormat;
+    QLabel*            statusBar_lengthInfo;
+    QLabel*            statusBar_selectionInfo;
+    QLabel*            statusBar_EOLstyle;
+    QLabel*            statusBar_textFormat;
+    QLabel*            statusBar_overtypeNotify;
+    QList<QAction *>   tabContextMenuActions;
+    QMenu*             tabContextMenu;
 
+    frmsrchreplace*    form_search;
+
+    searchengine*      search_engine;
+    docengine*         document_engine;
+    LexerFactory*      lexer_factory;
+
+    void               closeEvent(QCloseEvent *event);
+    void               initialize_languages();
 
 private slots:
-    void _on_text_changed();
     int  _on_tab_close_requested(int index);
     void _on_tabWidget_customContextMenuRequested(QPoint pos);
     void _on_instanceServer_NewConnection();
@@ -137,9 +139,8 @@ private slots:
     void _on_sci_updateUI();
     void _apply_wide_settings_to_tab(int tab);
     void _on_editor_cursor_position_change(int line, int index);
-    void _on_editor_keyrelease(QKeyEvent* e);
-    void setLanguage();
-
+    void _on_editor_overtype_changed(bool overtype);
+    void _on_editor_language_set();
 
     void on_action_New_triggered();
     void on_actionSave_as_triggered();

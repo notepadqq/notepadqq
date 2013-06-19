@@ -67,13 +67,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(container);
     connect(container, SIGNAL(newQsciScintillaqqChildCreated(QsciScintillaqq*)), this, SLOT(_on_newQsciScintillaqqChildCreated(QsciScintillaqq*)));
 
-//    encodeGroup = new QActionGroup(ui->menuEncoding);
-//    ui->actionEncode_in_ANSI->setActionGroup(encodeGroup);
-//    ui->actionEncode_in_UTF_8_without_BOM->setActionGroup(encodeGroup);
-//    ui->actionEncode_in_UTF_8->setActionGroup(encodeGroup);
-//    ui->actionEncode_in_UCS_2_Little_Endian->setActionGroup(encodeGroup);
-//    ui->actionEncode_in_UCS_2_Big_Endian->setActionGroup(encodeGroup);
-
     // Let's assign icons to our actions
     ui->action_New->setIcon(QIcon::fromTheme("document-new", QIcon(ui->action_New->icon())));
     ui->action_Open->setIcon(QIcon::fromTheme("document-open", QIcon(ui->action_Open->icon())));
@@ -97,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionFind_Next->setIcon(QIcon::fromTheme("go-next",QIcon(ui->actionFind_Next->icon())));
     ui->actionFind_Previous->setIcon(QIcon::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
 
-
     // Context menu initialization
     tabContextMenu = new QMenu;
     QAction *separator = new QAction(this);
@@ -116,12 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
     tabContextMenu->addActions(tabContextMenuActions);
 
-    // Ok, now it's time to create or first tabWidget.
     QTabWidgetqq *firstTabWidget = new QTabWidgetqq(ui->centralWidget->parentWidget());
     container->addWidget(firstTabWidget);
-
-    //Build the status bar.
-    createStatusBar();
 
     if(this->layoutDirection() == Qt::RightToLeft) {
         ui->actionText_Direction_RTL->setChecked(true);
@@ -129,18 +117,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //processCommandLineArgs(QApplication::arguments(), false);
 
+    //Status bar creation
+    createStatusBar();
+
+    //Single instance management
     instanceServer = new QLocalServer(this);
     connect(instanceServer, SIGNAL(newConnection()), SLOT(_on_instanceServer_NewConnection()));
     instanceServer->removeServer(INSTANCESERVER_ID);
     instanceServer->listen(INSTANCESERVER_ID);
 
-    // Build the search dialog for later use
-    searchDialog = new frmsrchreplace(this);
-    searchDialog->hide();
-    se = new searchengine();
+    //Search Management
+    search_engine = new searchengine(this);
+    form_search = 0; // Just create the search dialog as needed
 
     //Document monitoring,saving,loading engine for centralized document management.
-    de = new docengine(this);
+    document_engine = new docengine(this);
 
     // The first document in the tabWidget was created by processCommandLineArgs()
     // Now we connect the corresponding signals to our slots.
@@ -150,6 +141,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete lexer_factory;
+    delete search_engine;
+    delete document_engine;
     delete system_monospace;
     delete ui;
 }
@@ -159,7 +152,7 @@ void MainWindow::init()
     if ( !lexer_factory->init() )
         qDebug() << "cannot initialize lexer factory";
     else
-        initLanguages();
+        initialize_languages();
 
     processCommandLineArgs(QApplication::arguments(), false);
 
@@ -253,7 +246,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
         {
             files.append(arguments.at(i));
         }
-        de->loadDocuments(files, container->focusQTabWidgetqq());
+        document_engine->loadDocuments(files, container->focusQTabWidgetqq());
         activateWindow = true;
     }
 
@@ -265,7 +258,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
     }
 }
 
-void MainWindow::initLanguages()
+void MainWindow::initialize_languages()
 {
     QActionGroup*       actionGroup = new QActionGroup(this);
     QHash<QString,QString>         list        = lexer_factory->languages();
@@ -284,7 +277,7 @@ void MainWindow::initLanguages()
         QAction* newLang = actionGroup->addAction(lang.key());
         current_letter->addAction(newLang);
         newLang->setCheckable(true);
-        connect(newLang,SIGNAL(triggered()),this,SLOT(setLanguage()));
+        connect(newLang,SIGNAL(triggered()),this,SLOT(_on_editor_language_set()));
 
     }
 
@@ -295,23 +288,14 @@ void MainWindow::initLanguages()
     }
 }
 
-
-//Really need a better way of doing this outside of pulling button text so the menus can look a little a better cosmetically....
-//Probably QSignalMapper is the way to go here instead.
-void MainWindow::setLanguage()
+void MainWindow::_on_editor_language_set()
 {
-    QsciScintillaqq* sci    = getFocusedEditor();
+    QsciScintillaqq* sci    = focused_editor();
     QAction*         action = qobject_cast<QAction*>(sender());
     if(!action) return;
     if(!sci) return;
     sci->setForcedLanguage(lexer_factory->languages().value(action->text()));
 }
-
-/*
-void MainWindow::setLanguage(QString lang)
-{
-
-}*/
 
 void MainWindow::createStatusBar()
 {
@@ -353,7 +337,7 @@ void MainWindow::createStatusBar()
 
     label = new QLabel("INS",this);
     label->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
-    label->setMinimumWidth(32);
+    label->setMinimumWidth(40);
     label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_overtypeNotify = label;
@@ -361,7 +345,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::_on_editor_cursor_position_change(int line, int index)
 {
-    QsciScintillaqq*    sci = getFocusedEditor();
+    QsciScintillaqq*    sci = focused_editor();
     int selectionCharacters = 0;
     int selectionLines      = 0;
     int lineFrom = 0,indexFrom = 0, lineTo = 0, indexTo = 0;
@@ -374,22 +358,6 @@ void MainWindow::_on_editor_cursor_position_change(int line, int index)
 
     statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").arg(line+1).arg(index+1).arg(selectionCharacters).arg(selectionLines));
 
-}
-
-void MainWindow::_on_editor_keyrelease(QKeyEvent* e)
-{
-    QsciScintillaqq* sci = qobject_cast<QsciScintillaqq*>(sender());
-    switch(e->key())
-    {
-    case Qt::Key_Insert:
-        updateTypingMode(sci->overType());
-        break;
-    }
-}
-
-void MainWindow::updateTypingMode(bool yes)
-{
-    statusBar_overtypeNotify->setText(yes ? "OVR" : "INS");
 }
 
 // Custom context menu for right-clicks on the tab title
@@ -416,13 +384,8 @@ void MainWindow::on_action_New_triggered()
     update_single_document_ui(sci);
 }
 
-void MainWindow::_on_text_changed()
-{
-
-}
-
 //Short-circuit function to get the currently active editor/scintilla widget
-QsciScintillaqq* MainWindow::getFocusedEditor()
+QsciScintillaqq* MainWindow::focused_editor()
 {
     QsciScintillaqq* sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
     if( !sci ) return 0;
@@ -494,7 +457,7 @@ int MainWindow::_on_tab_close_requested(int index)
         case MainWindow::tabCloseResult_Saved:
         case MainWindow::tabCloseResult_NotSaved:
         case MainWindow::tabCloseResult_AlreadySaved:
-            de->removeDocument(filePath);
+            document_engine->removeDocument(filePath);
             break;
         default:
             break;
@@ -557,7 +520,7 @@ int MainWindow::save(QsciScintillaqq *sci)
         // Call "save as"
         return saveAs(sci);
     } else {
-        return de->saveDocument(sci,sci->fileName());
+        return document_engine->saveDocument(sci,sci->fileName());
     }
 }
 
@@ -568,7 +531,7 @@ int MainWindow::saveAs(QsciScintillaqq *sci,bool copy)
     if (filename != "") {
         settings->setValue("lastSelectedDir", QFileInfo(filename).absolutePath());
         // Write
-        return de->saveDocument(sci,filename,copy);
+        return document_engine->saveDocument(sci,filename,copy);
     } else {
         return MainWindow::saveFileResult_Canceled;
     }
@@ -586,38 +549,19 @@ QString MainWindow::getSaveDialogDefaultFileName(QsciScintillaqq *sci)
     }
 }
 
-/**
-* Writes the document's text located at the specified index.
-*
-* @param index the index of the document
-* @param filename the file name to use
-* @param updateFileName if true, updates the file name associated with the respective tab. Tab title and tooltip are updated too.
-*
-* @return an integer value from enum MainWindow::saveFileResult.
-*/
-//int MainWindow::writeDocument(QsciScintillaqq *sci, QString filename)
-//{
-//    QTabWidgetqq *tabWidget = sci->getTabWidget();
-//    if(!de->saveDocument(sci,filename)) {
-//        return MainWindow::saveFileResult_Canceled;
-//    }
-
-//    return MainWindow::saveFileResult_Saved;
-//}
-
 void MainWindow::on_actionSave_as_triggered()
 {
-    saveAs(getFocusedEditor());
+    saveAs(focused_editor());
 }
 
 void MainWindow::on_actionSave_a_Copy_As_triggered()
 {
-    saveAs(getFocusedEditor(),true);
+    saveAs(focused_editor(),true);
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    save(getFocusedEditor());
+    save(focused_editor());
 }
 
 
@@ -625,51 +569,51 @@ void MainWindow::on_action_Open_triggered()
 {
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
-    de->loadDocuments(fileNames, container->focusQTabWidgetqq());
+    document_engine->loadDocuments(fileNames, container->focusQTabWidgetqq());
 
-    update_single_document_ui(getFocusedEditor());
+    update_single_document_ui(focused_editor());
 }
 
 void MainWindow::on_actionReload_from_Disk_triggered()
 {
-    QsciScintillaqq *sci = getFocusedEditor();
-    de->loadDocuments(QStringList(sci->fileName()),sci->tabWidget(),true);
+    QsciScintillaqq *sci = focused_editor();
+    document_engine->loadDocuments(QStringList(sci->fileName()),sci->tabWidget(),true);
 }
 
 void MainWindow::on_action_Undo_triggered()
 {
-    getFocusedEditor()->undo();
+    focused_editor()->undo();
 }
 
 void MainWindow::on_action_Redo_triggered()
 {
-    getFocusedEditor()->redo();
+    focused_editor()->redo();
 }
 
 void MainWindow::on_actionCu_t_triggered()
 {
-    getFocusedEditor()->safeCopy();
-    getFocusedEditor()->removeSelectedText();
+    focused_editor()->safeCopy();
+    focused_editor()->removeSelectedText();
 }
 
 void MainWindow::on_action_Copy_triggered()
 {
-    getFocusedEditor()->safeCopy();
+    focused_editor()->safeCopy();
 }
 
 void MainWindow::on_action_Paste_triggered()
 {
-    getFocusedEditor()->paste();
+    focused_editor()->paste();
 }
 
 void MainWindow::on_actionSelect_All_triggered()
 {
-    getFocusedEditor()->selectAll(true);
+    focused_editor()->selectAll(true);
 }
 
 void MainWindow::on_action_Delete_triggered()
 {
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     int lineFrom, indexFrom;
     sci->getCursorPosition(&lineFrom, &indexFrom);
 
@@ -688,7 +632,7 @@ void MainWindow::on_action_Delete_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    kindlyTabClose(getFocusedEditor());
+    kindlyTabClose(focused_editor());
 }
 
 void MainWindow::on_actionC_lose_All_triggered()
@@ -702,33 +646,29 @@ void MainWindow::on_actionC_lose_All_triggered()
             int result = kindlyTabClose(sci);
             if(result == MainWindow::tabCloseResult_Canceled)
             {
-                // Abort! Stop everything.
-                goto End;
+                return;
             }
         }
     }
-
-    End:
-        return;
 }
 
 void MainWindow::on_actionZoom_In_triggered()
 {
-    getFocusedEditor()->zoomIn();
-    double zoomLevel = static_cast<double>(getFocusedEditor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
-    widesettings::apply_zoom_level(zoomLevel, getFocusedEditor());
+    focused_editor()->zoomIn();
+    double zoomLevel = static_cast<double>(focused_editor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
+    widesettings::apply_zoom_level(zoomLevel, focused_editor());
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
-    getFocusedEditor()->zoomOut();
-    double zoomLevel = static_cast<double>(getFocusedEditor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
-    widesettings::apply_zoom_level(zoomLevel, getFocusedEditor());
+    focused_editor()->zoomOut();
+    double zoomLevel = static_cast<double>(focused_editor()->SendScintilla(QsciScintilla::SCI_GETZOOM));
+    widesettings::apply_zoom_level(zoomLevel, focused_editor());
 }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
-    widesettings::apply_zoom_level(0,getFocusedEditor());
+    widesettings::apply_zoom_level(0,focused_editor());
 }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()
@@ -776,32 +716,32 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_actionLaunch_in_Firefox_triggered()
 {
-    QProcess::startDetached("firefox", QStringList(getFocusedEditor()->fileName()));
+    QProcess::startDetached("firefox", QStringList(focused_editor()->fileName()));
 }
 
 void MainWindow::on_actionGet_php_help_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://php.net/" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://php.net/" + QUrl::toPercentEncoding(focused_editor()->selectedText())));
 }
 
 void MainWindow::on_actionLaunch_in_Chromium_triggered()
 {
-    QProcess::startDetached("chromium-browser", QStringList(getFocusedEditor()->fileName()));
+    QProcess::startDetached("chromium-browser", QStringList(focused_editor()->fileName()));
 }
 
 void MainWindow::on_actionGoogle_Search_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.google.com/search?q=" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://www.google.com/search?q=" + QUrl::toPercentEncoding(focused_editor()->selectedText())));
 }
 
 void MainWindow::on_actionWikipedia_Search_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(getFocusedEditor()->selectedText())));
+    QDesktopServices::openUrl(QUrl("http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=" + QUrl::toPercentEncoding(focused_editor()->selectedText())));
 }
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absoluteFilePath());
@@ -812,7 +752,7 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).fileName());
@@ -823,7 +763,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if(sci->fileName() != "")
     {
         QApplication::clipboard()->setText(QFileInfo(sci->fileName()).absolutePath());
@@ -884,8 +824,14 @@ void MainWindow::_on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci)
 {
     connect(sci, SIGNAL(copyAvailable(bool)), this, SLOT(_on_sci_copyAvailable(bool)));
     connect(sci, SIGNAL(SCN_UPDATEUI(int)), this, SLOT(_on_sci_updateUI()));
-    connect(sci,SIGNAL(cursorPositionChanged(int,int)),this,SLOT(_on_editor_cursor_position_change(int,int)));
-    connect(sci,SIGNAL(keyReleased(QKeyEvent*)),this,SLOT(_on_editor_keyrelease(QKeyEvent*)));
+    connect(sci, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(_on_editor_cursor_position_change(int,int)));
+    connect(sci, SIGNAL(keyReleased(QKeyEvent*)), this, SLOT(_on_editor_keyrelease(QKeyEvent*)));
+    connect(sci, SIGNAL(overtypeChanged(bool)), this, SLOT(_on_editor_overtype_changed(bool)));
+}
+
+void MainWindow::_on_editor_overtype_changed(bool overtype)
+{
+    statusBar_overtypeNotify->setText(overtype ? "OVR" : "INS");
 }
 
 void MainWindow::_on_sci_copyAvailable(bool yes)
@@ -936,7 +882,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
                     cur_sci->setFocus();
                     int result = kindlyTabClose(cur_sci);
                     if(result == MainWindow::tabCloseResult_Canceled) {
-                        goto Dengo;
+                        return;
                     }
                 }
             }
@@ -947,18 +893,13 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
                 QsciScintillaqq *cur_sci = cur_tabwidget->QSciScintillaqqAt(j);
                 int result = kindlyTabClose(cur_sci);
                 if(result == MainWindow::tabCloseResult_Canceled) {
-                    goto Dengo;
+                    return;
                 }
             }
 
             cur_tabwidget->deleteLater();
         }
     }
-
-    // Screw good practice. How bad can it be?
-    // http://xkcd.com/292/
-    Dengo:
-        return;
 }
 
 void MainWindow::on_actionClone_to_Other_View_triggered()
@@ -980,7 +921,16 @@ void MainWindow::on_actionClone_to_Other_View_triggered()
 
 void MainWindow::on_actionSearch_triggered()
 {
-    searchDialog->show();
+    if(!form_search) {
+        form_search = new frmsrchreplace(this);
+    }
+    form_search->show();
+}
+
+void MainWindow::clearSearchDialog()
+{
+    form_search->deleteLater();
+    form_search = 0;
 }
 
 void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
@@ -992,28 +942,28 @@ void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
 
 searchengine* MainWindow::getSearchEngine()
 {
-    return se;
+    return search_engine;
 }
 
 void MainWindow::on_actionFind_Next_triggered()
 {
-    if(se->getForward()) {
-        se->findString();
+    if(search_engine->getForward()) {
+        search_engine->findString();
     }else {
-        se->setForward(true);
-        se->setNewSearch(true);
-        se->findString();
+        search_engine->setForward(true);
+        search_engine->setNewSearch(true);
+        search_engine->findString();
     }
 }
 
 void MainWindow::on_actionFind_Previous_triggered()
 {
-    if(!se->getForward()) {
-        se->findString();
+    if(!search_engine->getForward()) {
+        search_engine->findString();
     }else {
-        se->setForward(false);
-        se->setNewSearch(true);
-        se->findString();
+        search_engine->setForward(false);
+        search_engine->setNewSearch(true);
+        search_engine->findString();
     }
 }
 
@@ -1030,7 +980,7 @@ LexerFactory* MainWindow::getLexerFactory()
 void MainWindow::on_actionWord_wrap_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_word_wrap(sci) ) return;
 }
 
@@ -1097,7 +1047,7 @@ void MainWindow::_apply_wide_settings_to_tab( int index )
 void MainWindow::on_actionShow_All_Characters_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1105,7 +1055,7 @@ void MainWindow::on_actionShow_All_Characters_triggered()
 void MainWindow::on_actionWindows_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolWindows, sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1113,7 +1063,7 @@ void MainWindow::on_actionWindows_Format_triggered()
 void MainWindow::on_actionMac_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolMac, sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1121,25 +1071,25 @@ void MainWindow::on_actionMac_Format_triggered()
 void MainWindow::on_actionUNIX_Format_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::set_eol_mode(QsciScintilla::EolUnix, sci) ) return;
     update_single_document_ui(sci);
 }
 
 void MainWindow::on_actionUPPERCASE_triggered()
 {
-    getFocusedEditor()->SendScintilla(QsciScintilla::SCI_UPPERCASE);
+    focused_editor()->SendScintilla(QsciScintilla::SCI_UPPERCASE);
 }
 
 void MainWindow::on_actionLowercase_triggered()
 {
-    getFocusedEditor()->SendScintilla(QsciScintilla::SCI_LOWERCASE);
+    focused_editor()->SendScintilla(QsciScintilla::SCI_LOWERCASE);
 }
 
 void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_white_space(sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1147,7 +1097,7 @@ void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
 void MainWindow::on_actionShow_End_of_Line_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_end_of_line(sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1155,7 +1105,7 @@ void MainWindow::on_actionShow_End_of_Line_triggered()
 void MainWindow::on_actionShow_Indent_Guide_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_indent_guide(sci) ) return;
     update_single_document_ui(sci);
 }
@@ -1163,7 +1113,7 @@ void MainWindow::on_actionShow_Indent_Guide_triggered()
 void MainWindow::on_actionShow_Wrap_Symbol_triggered()
 {
     // APPLY TO CURRENT TAB
-    QsciScintillaqq *sci = getFocusedEditor();
+    QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_wrap_symbol(sci) ) return;
     update_single_document_ui(sci);
 }

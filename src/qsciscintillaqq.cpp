@@ -115,10 +115,8 @@ QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 bool QsciScintillaqq::overType()
 {
     int ovr = SendScintilla(QsciScintillaBase::SCI_GETOVERTYPE);
-    if(ovr == 1)
-        return true;
-    else
-        return false;
+    if(ovr == 1) return true;
+    else return false;
 }
 
 void QsciScintillaqq::safeCopy()
@@ -157,6 +155,12 @@ void QsciScintillaqq::keyReleaseEvent(QKeyEvent *e)
         case Qt::Key_C:
             safeCopy();
             break;
+        }
+    }else {
+        switch(e->key())
+        {
+        case Qt::Key_Insert:
+            emit overtypeChanged(overType());
         }
     }
     emit keyReleased(e);
@@ -223,12 +227,6 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
  */
 void QsciScintillaqq::initialize()
 {
-    // Set font
-    //QFont *f = new QFont("Courier New", 10, -1, false);
-    //this->setFont(*f);
-    //QColor *c = new QColor("#000000"); // DB8B0B
-    //this->setColor(*c);
-
     QFont* system_font = MainWindow::instance()->systemMonospace();
     qDebug() << "system font: " << system_font->family() << " " << system_font->pointSize();
 
@@ -238,15 +236,6 @@ void QsciScintillaqq::initialize()
     this->setAutoIndent(true);
     this->setAutoCompletionThreshold(2);
     this->setUtf8(true);
-    //sci->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, 950);
-    //sci->SendScintilla(QsciScintilla::SCI_SETFOLDFLAGS, QsciScintilla::SC_FOLDFLAG_LINEBEFORE_CONTRACTED + QsciScintilla::SC_FOLDFLAG_LINEAFTER_CONTRACTED);
-
-    /*QsciAPIs apis(&lex);
-    apis.add("test");
-    apis.add("test123");
-    apis.add("foobar");
-    apis.prepare();
-    lex.setAPIs(&apis);*/
 
     // GLOBALS
     ShrPtrStylerDefinition glob_style = MainWindow::instance()->getLexerFactory()->getGlobalStyler();

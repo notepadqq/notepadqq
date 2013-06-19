@@ -1,16 +1,5 @@
 #include "searchengine.h"
 
-searchengine::searchengine(bool regexp, bool casesense, bool wholeword, bool wrap, bool forward)
-{
-    this->regexp = regexp;
-    this->casesense = casesense;
-    this->wholeword = wholeword;
-    this->wrap = wrap;
-    this->forward = forward;
-    this->newsearch = true;
-    this->context = 0;
-}
-
 QString searchengine::pattern()
 {
     return this->needle;
