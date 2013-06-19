@@ -95,6 +95,7 @@ signals:
     void    keyPressed(QKeyEvent *e);
     void    keyReleased(QKeyEvent *e);
     void    updateUI();
+    void    overtypeChanged(bool yes);
 
 public slots:
     void                   updateLineMargin();
