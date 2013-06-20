@@ -825,7 +825,6 @@ void MainWindow::_on_newQsciScintillaqqChildCreated(QsciScintillaqq *sci)
     connect(sci, SIGNAL(copyAvailable(bool)), this, SLOT(_on_sci_copyAvailable(bool)));
     connect(sci, SIGNAL(SCN_UPDATEUI(int)), this, SLOT(_on_sci_updateUI()));
     connect(sci, SIGNAL(cursorPositionChanged(int,int)), this, SLOT(_on_editor_cursor_position_change(int,int)));
-    connect(sci, SIGNAL(keyReleased(QKeyEvent*)), this, SLOT(_on_editor_keyrelease(QKeyEvent*)));
     connect(sci, SIGNAL(overtypeChanged(bool)), this, SLOT(_on_editor_overtype_changed(bool)));
 }
 
