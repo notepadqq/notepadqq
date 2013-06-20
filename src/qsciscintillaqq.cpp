@@ -87,6 +87,15 @@ void QsciScintillaqq::setBOM(bool yes)
     _BOM = yes;
 }
 
+//Get the number of characters in the current selection.
+int QsciScintillaqq::getSelectedTextCount()
+{
+    CharacterRange crange;
+    crange.cpMin = long(this->SendScintilla(SCI_GETSELECTIONSTART));
+    crange.cpMax = long(this->SendScintilla(SCI_GETSELECTIONEND));
+    return (crange.cpMax - crange.cpMin);
+}
+
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
     int   _docLength = this->length();
@@ -115,31 +124,23 @@ QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 bool QsciScintillaqq::overType()
 {
     int ovr = SendScintilla(QsciScintillaBase::SCI_GETOVERTYPE);
-    if(ovr == 1) return true;
-    else return false;
+    return (ovr==1);
 }
 
 void QsciScintillaqq::safeCopy()
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    const int  contentLength = this->length()-1;
-#if (defined(__APPLE__) || (defined(_WIN32)))
+    const int contentLength = this->getSelectedTextCount();
+
     char* stringData = new char[contentLength+1];
-#else
-    char stringData[contentLength+1];
-#endif
-    this->SendScintilla(SCI_GETSELTEXT,0,(void*)&stringData);
+    this->SendScintilla(SCI_GETSELTEXT,0,(void*)stringData);
     //Replace NUL byte characters with a space so it can be pasted into other places.
-    for(int i=0;i<contentLength-1;i++) {
-        if(stringData[i] == '\0') {
+    for(int i=0;i<contentLength;i++) {
+        if(stringData[i] == '\0')
             stringData[i] = ' ';
-        }
     }
     stringData[contentLength] = '\0';
-    clipboard->setText(stringData);
-#if (defined(__APPLE__) || (defined(_WIN32)))
-    delete stringData;
-#endif
+    QApplication::clipboard()->setText(stringData);
+    delete [] stringData;
 }
 
 void QsciScintillaqq::keyPressEvent(QKeyEvent *e)
