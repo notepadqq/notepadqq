@@ -322,6 +322,14 @@ QsciLexer* LexerFactory::createLexer(QFileInfo info, QObject *parent)
     return applyColorScheme( lang, createLexer( lang->name, parent ) );
 }
 
+QsciLexer* LexerFactory::createLexerByName(QString lg, QObject* parent)
+{
+    ShrPtrLangDefinition lang = languages_by_name.value(lg);
+    if ( lang.isNull() )
+        return NULL;
+    return applyColorScheme( lang, createLexer( lang->name, parent ) );
+}
+
 QsciLexer* LexerFactory::createLexer(QString lg, QObject* parent)
 {
     if ( lg == "bash" )

@@ -98,10 +98,10 @@ int QsciScintillaqq::getSelectedTextCount()
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
-    int   _docLength = this->length();
-    char *_docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
-    QTextCodec *codec = QTextCodec::codecForName(this->encoding().toUtf8());
-    QByteArray a = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
+    int             _docLength = this->length();
+    char*           _docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
+    QTextCodec*     codec      = QTextCodec::codecForName(this->encoding().toUtf8());
+    QByteArray      a          = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
     int _win = a.count("\r\n");
     int _mac = a.count('\r');
@@ -111,13 +111,11 @@ QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
         return static_cast<QsciScintilla::EolMode>(-1);
     }
     if(_win >= _mac && _win >= _unix)
-    {
         return QsciScintilla::EolWindows;
-    } else if(_mac > _win && _mac > _unix) {
+    else if(_mac > _win && _mac > _unix)
         return QsciScintilla::EolMac;
-    } else if(_unix > _win && _unix > _unix) {
+    else if(_unix > _win && _unix > _unix)
         return QsciScintilla::EolUnix;
-    }
     return QsciScintilla::EolUnix;
 }
 
@@ -130,10 +128,9 @@ bool QsciScintillaqq::overType()
 void QsciScintillaqq::safeCopy()
 {
     const int contentLength = this->getSelectedTextCount();
+    char*     stringData    = new char[contentLength+1];
 
-    char* stringData = new char[contentLength+1];
     this->SendScintilla(SCI_GETSELTEXT,0,(void*)stringData);
-    //Replace NUL byte characters with a space so it can be pasted into other places.
     for(int i=0;i<contentLength;i++) {
         if(stringData[i] == '\0')
             stringData[i] = ' ';
@@ -332,7 +329,7 @@ void QsciScintillaqq::autoSyntaxHighlight()
         QFileInfo info(fileName());
         lex = MainWindow::instance()->getLexerFactory()->createLexer( info, this);
     }else {
-        lex = MainWindow::instance()->getLexerFactory()->createLexer( _forcedLanguage, this);
+        lex = MainWindow::instance()->getLexerFactory()->createLexerByName( _forcedLanguage, this);
     }
     if ( lex ) {
         setLexer(lex);

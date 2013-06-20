@@ -96,6 +96,7 @@ public:
 
     ShrPtrLangDefinition   detectLanguage(QFileInfo info);
     QsciLexer*             createLexer(QFileInfo info,   QObject *parent = 0);
+    QsciLexer*             createLexerByName(QString lg, QObject* parent);
     QsciLexer*             createLexer(QString language, QObject *parent = 0);
     ShrPtrStylerDefinition getGlobalStyler() const;
     QHash<QString,QString> languages();

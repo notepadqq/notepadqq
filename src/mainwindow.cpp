@@ -154,6 +154,10 @@ void MainWindow::init()
     else
         initialize_languages();
 
+    //Apply setting values to UI
+    for(int s = Setting_FIRST;s != Setting_LAST;s++)
+        update_appwide_ui(static_cast<Setting>(s));
+
     processCommandLineArgs(QApplication::arguments(), false);
 
     // Focus on the editor of the first tab
@@ -234,7 +238,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
 
     if(arguments.count() <= 1)
     {
-        QTabWidgetqq *focusedTabWidget = container->focusQTabWidgetqq();
+        QTabWidgetqq *focusedTabWidget = focused_tabWidget();
         focusedTabWidget->addNewDocument();
         activateWindow = true;
     }
@@ -246,7 +250,7 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromExternal
         {
             files.append(arguments.at(i));
         }
-        document_engine->loadDocuments(files, container->focusQTabWidgetqq());
+        document_engine->loadDocuments(files, focused_tabWidget());
         activateWindow = true;
     }
 
@@ -375,7 +379,7 @@ void MainWindow::_on_tabWidget_customContextMenuRequested(QPoint pos)
 
 void MainWindow::on_action_New_triggered()
 {
-    QTabWidgetqq *focusedTabWidget = container->focusQTabWidgetqq();
+    QTabWidgetqq *focusedTabWidget = focused_tabWidget();
     int index = focusedTabWidget->addNewDocument();
     QsciScintillaqq* sci = focusedTabWidget->QSciScintillaqqAt(index);
     if( !sci ) return;
@@ -387,9 +391,16 @@ void MainWindow::on_action_New_triggered()
 //Short-circuit function to get the currently active editor/scintilla widget
 QsciScintillaqq* MainWindow::focused_editor()
 {
-    QsciScintillaqq* sci = container->focusQTabWidgetqq()->focusQSciScintillaqq();
-    if( !sci ) return 0;
-    return sci;
+    QsciScintillaqq* widget = focused_tabWidget()->focusQSciScintillaqq();
+    if( !widget ) return 0;
+    return widget;
+}
+
+QTabWidgetqq* MainWindow::focused_tabWidget()
+{
+    QTabWidgetqq* widget = container->focusQTabWidgetqq();
+    if( !widget ) return 0;
+    return widget;
 }
 
 int MainWindow::kindlyTabClose(QsciScintillaqq *sci)
@@ -569,9 +580,9 @@ void MainWindow::on_action_Open_triggered()
 {
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
-    document_engine->loadDocuments(fileNames, container->focusQTabWidgetqq());
-
+    document_engine->loadDocuments(fileNames, focused_tabWidget());
     update_single_document_ui(focused_editor());
+    focused_editor()->updateLineMargin();
 }
 
 void MainWindow::on_actionReload_from_Disk_triggered()
@@ -864,7 +875,7 @@ void MainWindow::on_actionE_xit_triggered()
 
 void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 {
-    QTabWidgetqq *keep_tabWidget = container->focusQTabWidgetqq();
+    QTabWidgetqq *keep_tabWidget = focused_tabWidget();
     QsciScintillaqq* keep_sci = keep_tabWidget->focusQSciScintillaqq();
 
     for(int i = container->count() - 1; i >= 0; i--) {
@@ -901,10 +912,38 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
     }
 }
 
+//Update UI elements for settings that apply across the board
+void MainWindow::update_appwide_ui(Setting setting)
+{
+    switch(setting) {
+    case Setting_ShowAllCharacters:
+        ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
+        break;
+    case Setting_WordWrap:
+        ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,true).toBool());
+        break;
+    case Setting_ShowEndOfLine:
+        ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,true).toBool());
+        break;
+    case Setting_ShowWhiteSpaceAndTab:
+        ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,true).toBool());
+        break;
+    case Setting_ShowIndentGuide:
+        ui->actionShow_Indent_Guide->setChecked(settings->value(widesettings::SETTING_SHOW_INDENT_GUIDE,true).toBool());
+        break;
+    case Setting_ShowWrapSymbol:
+        ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,true).toBool());
+        break;
+    default:
+        break;
+    }
+
+}
+
 void MainWindow::on_actionClone_to_Other_View_triggered()
 {
     //QsciScintillaqq* focus_sci = getFocusedEditor();
-    if(container->focusQTabWidgetqq() == container->QTabWidgetqqAt(0)) {
+    if(focused_tabWidget() == container->QTabWidgetqqAt(0)) {
         if(container->count() < 2) {
             QTabWidgetqq *tabWidget = container->addQTabWidgetqq();
             connect_tabWidget(tabWidget);
@@ -1017,19 +1056,10 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
 
     QString fileType = generalFunctions::getFileType(sci->fileName());
     statusBar_fileFormat->setText(fileType);
-    if((sci->encoding() == "UTF-8") && (!sci->BOM()) ){
+    if((sci->encoding() == "UTF-8") && (!sci->BOM()) )
         statusBar_textFormat->setText("ANSI as UTF-8");
-    }else {
-        statusBar_textFormat->setText(sci->encoding());
-    }
-
-    ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
-    ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,true).toBool());
-    ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,true).toBool());
-    ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,true).toBool());
-    ui->actionShow_Indent_Guide->setChecked(settings->value(widesettings::SETTING_SHOW_INDENT_GUIDE,true).toBool());
-    ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,true).toBool());
-
+    else
+        statusBar_textFormat->setText(sci->encoding());  
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )
@@ -1049,6 +1079,9 @@ void MainWindow::on_actionShow_All_Characters_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
     update_single_document_ui(sci);
+    update_appwide_ui(Setting_ShowEndOfLine);
+    update_appwide_ui(Setting_ShowWhiteSpaceAndTab);
+    update_appwide_ui(Setting_ShowAllCharacters);
 }
 
 void MainWindow::on_actionWindows_Format_triggered()
@@ -1091,6 +1124,7 @@ void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_white_space(sci) ) return;
     update_single_document_ui(sci);
+    update_appwide_ui(Setting_ShowAllCharacters);
 }
 
 void MainWindow::on_actionShow_End_of_Line_triggered()
@@ -1099,6 +1133,7 @@ void MainWindow::on_actionShow_End_of_Line_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_end_of_line(sci) ) return;
     update_single_document_ui(sci);
+    update_appwide_ui(Setting_ShowAllCharacters);
 }
 
 void MainWindow::on_actionShow_Indent_Guide_triggered()

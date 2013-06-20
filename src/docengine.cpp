@@ -153,11 +153,10 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                 }
             }
             int index = 0;
-            if(reload){
+            if(reload)
                 index = x;
-            }else {
+            else
                 index = tabWidget->addEditorTab(true, fi.fileName());
-            }
             QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
             sci->setEncoding(generalFunctions::getFileMimeEncoding(fi.absoluteFilePath()));
             if (!read(&file, sci)) {

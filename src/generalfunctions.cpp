@@ -72,9 +72,11 @@ QString generalFunctions::getFileInformation(QString file, int flags)
         }
 
         return "UTF-8";
+    }else if((flags & MAGIC_RAW)) {
+        return finfo.section(',',0,0);
+    }else {
+        return finfo;
     }
-
-    return finfo;
 }
 
 QString generalFunctions::readDConfKey(QString schema, QString key)

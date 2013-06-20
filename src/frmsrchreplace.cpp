@@ -29,7 +29,7 @@ frmsrchreplace::frmsrchreplace(QWidget *parent) :
     connect(ui->rb_srch_regexp,SIGNAL(toggled(bool)),this,SLOT(setNewSearch()));
     connect(ui->edt_findWhat,SIGNAL(textEdited(QString)),this,SLOT(setNewSearch()));
 
-
+    ui->edt_findWhat->setFocus();
     //Important variable to pass if search parameters are to change.
     newsearch = false;
 }

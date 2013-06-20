@@ -120,7 +120,7 @@ namespace widesettings {
     bool toggle_invisible_chars(QsciScintillaqq* w)
     {
         if ( !w ) return false;
-        bool visible = w->eolVisibility() || w->whitespaceVisibility();
+        bool visible = (w->eolVisibility() && w->whitespaceVisibility());
         return apply_invisible_chars(!visible, w);
     }
 
