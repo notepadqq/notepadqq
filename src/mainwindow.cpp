@@ -353,7 +353,7 @@ void MainWindow::_on_editor_cursor_position_change(int line, int index)
 
     sci->getSelection(&lineFrom,&indexFrom,&lineTo,&indexTo);
     selectionLines      = std::abs(lineFrom-lineTo);
-    selectionCharacters = selectionLines+std::abs(indexFrom-indexTo);
+    selectionCharacters = sci->getSelectedTextCount();
     if(selectionCharacters > 0)selectionLines++;
 
     statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").arg(line+1).arg(index+1).arg(selectionCharacters).arg(selectionLines));
