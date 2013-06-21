@@ -152,13 +152,14 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                     continue;
                 }
             }
-            int index = 0;
+            int index = 0,pos=0;
             if(reload){
                 index = x;
             }else {
                 index = tabWidget->addEditorTab(true, fi.fileName());
             }
             QsciScintillaqq* sci = tabWidget->QSciScintillaqqAt(index);
+            pos = sci->SendScintilla(QsciScintilla::SCI_GETCURRENTPOS);
             sci->setEncoding(generalFunctions::getFileMimeEncoding(fi.absoluteFilePath()));
             if (!read(&file, sci)) {
                 // Manage error
@@ -188,17 +189,19 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                 tabWidget->removeTab(0);
                 index--;
             }
-
-            sci->setFileName(fi.absoluteFilePath());
-            sci->setEolMode(sci->guessEolMode());
-            sci->setModified(false);
-            tabWidget->setTabToolTip(index, sci->fileName());
-            sci->autoSyntaxHighlight();
-            addDocument(fi.absoluteFilePath());
-
             file.close();
+            if(!reload) {
+                sci->setFileName(fi.absoluteFilePath());
+                sci->setEolMode(sci->guessEolMode());
+                tabWidget->setTabToolTip(index, sci->fileName());
+                sci->autoSyntaxHighlight();
+                addDocument(fi.absoluteFilePath());
+            }else {
+                sci->scrollCursorToCenter(pos);
+            }
 
             sci->setFocus(Qt::OtherFocusReason);
+            sci->setModified(false);
         }
     }
     return true;

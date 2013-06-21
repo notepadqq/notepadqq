@@ -90,18 +90,35 @@ void QsciScintillaqq::setBOM(bool yes)
 //Get the number of characters in the current selection.
 int QsciScintillaqq::getSelectedTextCount()
 {
-    CharacterRange crange;
-    crange.cpMin = long(this->SendScintilla(SCI_GETSELECTIONSTART));
-    crange.cpMax = long(this->SendScintilla(SCI_GETSELECTIONEND));
-    return (crange.cpMax - crange.cpMin);
+    CharacterRange range = getSelectionRange();
+    return (range.cpMax - range.cpMin);
+}
+
+void QsciScintillaqq::scrollCursorToCenter(int pos)
+{
+    SendScintilla(SCI_GOTOPOS,pos);
+    int line                     = SendScintilla(SCI_LINEFROMPOSITION,pos);
+    int firstVisibleDisplayLine  = SendScintilla(SCI_GETFIRSTVISIBLELINE);
+    int firstVisibleDocumentLine = SendScintilla(SCI_DOCLINEFROMVISIBLE, firstVisibleDisplayLine);
+    int nbLine                   = SendScintilla(SCI_LINESONSCREEN, firstVisibleDisplayLine);
+    int lastVisibleDocumentLine  = SendScintilla(SCI_DOCLINEFROMVISIBLE, firstVisibleDisplayLine + nbLine);
+
+    int middleLine;
+    if( line - firstVisibleDocumentLine < lastVisibleDocumentLine - line)
+        middleLine = firstVisibleDocumentLine + nbLine/2;
+    else
+        middleLine = lastVisibleDocumentLine - nbLine/2;
+
+    int nbLinesToScroll = line - middleLine;
+    scroll(0,nbLinesToScroll);
 }
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
 {
-    int   _docLength = this->length();
-    char *_docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
-    QTextCodec *codec = QTextCodec::codecForName(this->encoding().toUtf8());
-    QByteArray a = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
+    int             _docLength = this->length();
+    char*           _docBuffer = (char*)this->SendScintilla(QsciScintilla::SCI_GETCHARACTERPOINTER);
+    QTextCodec*     codec      = QTextCodec::codecForName(this->encoding().toUtf8());
+    QByteArray      a          = codec->fromUnicode(QString::fromUtf8(_docBuffer,_docLength));
 
     int _win = a.count("\r\n");
     int _mac = a.count('\r');
@@ -111,13 +128,11 @@ QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
         return static_cast<QsciScintilla::EolMode>(-1);
     }
     if(_win >= _mac && _win >= _unix)
-    {
         return QsciScintilla::EolWindows;
-    } else if(_mac > _win && _mac > _unix) {
+    else if(_mac > _win && _mac > _unix)
         return QsciScintilla::EolMac;
-    } else if(_unix > _win && _unix > _unix) {
+    else if(_unix > _win && _unix > _unix)
         return QsciScintilla::EolUnix;
-    }
     return QsciScintilla::EolUnix;
 }
 
@@ -130,10 +145,9 @@ bool QsciScintillaqq::overType()
 void QsciScintillaqq::safeCopy()
 {
     const int contentLength = this->getSelectedTextCount();
+    char*     stringData    = new char[contentLength+1];
 
-    char* stringData = new char[contentLength+1];
     this->SendScintilla(SCI_GETSELTEXT,0,(void*)stringData);
-    //Replace NUL byte characters with a space so it can be pasted into other places.
     for(int i=0;i<contentLength;i++) {
         if(stringData[i] == '\0')
             stringData[i] = ' ';
@@ -239,13 +253,24 @@ void QsciScintillaqq::initialize()
     this->setUtf8(true);
 
     // GLOBALS
+    applyGlobalStyles();
+
+    this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
+    this->setCaretLineVisible(true);
+
+    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
+    this->SendScintilla(SCI_SETYCARETPOLICY,QsciScintilla::CARET_SLOP);
+}
+
+
+void QsciScintillaqq::applyGlobalStyles()
+{
     ShrPtrStylerDefinition glob_style = MainWindow::instance()->getLexerFactory()->getGlobalStyler();
     ShrPtrWordsStyle       def_style  = glob_style->words_stylers_by_name.value(stylename::DEFAULT);
     this->setColor(def_style->fg_color);
     this->setPaper(def_style->bg_color);
-
-    this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
-    this->setCaretLineVisible(true);
 
     ShrPtrWordsStyle caret_style       = glob_style->words_stylers_by_name.value(stylename::CARET);
     ShrPtrWordsStyle indent_style      = glob_style->words_stylers_by_name.value(stylename::INDENT_GUIDELINE);
@@ -264,11 +289,10 @@ void QsciScintillaqq::initialize()
     this->setCaretLineBackgroundColor(indent_style->fg_color);
 
     this->setIndentationGuidesForegroundColor(indent_style->fg_color);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+
     this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, indent_style->fg_color.value());
-    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
 }
+
 
 int QsciScintillaqq::getTabIndex()
 {
@@ -307,7 +331,7 @@ QTabWidgetqq *QsciScintillaqq::tabWidget()
 */
 bool QsciScintillaqq::isNewEmptyDocument()
 {
-    if(this->text() == ""
+    if(this->length()==0
        && this->isModified() == false
        && this->fileName() == "" ) {
 
@@ -332,7 +356,7 @@ void QsciScintillaqq::autoSyntaxHighlight()
         QFileInfo info(fileName());
         lex = MainWindow::instance()->getLexerFactory()->createLexer( info, this);
     }else {
-        lex = MainWindow::instance()->getLexerFactory()->createLexer( _forcedLanguage, this);
+        lex = MainWindow::instance()->getLexerFactory()->createLexerByName( _forcedLanguage, this);
     }
     if ( lex ) {
         setLexer(lex);
@@ -353,4 +377,12 @@ void QsciScintillaqq::setForcedLanguage(QString language)
 //Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
+}
+
+QsciScintillaqq::CharacterRange QsciScintillaqq::getSelectionRange()
+{
+    CharacterRange crange;
+    crange.cpMin = SendScintilla(SCI_GETSELECTIONSTART);
+    crange.cpMax = SendScintilla(SCI_GETSELECTIONEND);
+    return crange;
 }

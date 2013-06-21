@@ -23,6 +23,8 @@ public:
     void setFileWatcherEnabled(bool yes);
     bool isFileWatcherEnabled();
 
+signals:
+    void documentLoaded(int index);
 private:
     QFileSystemWatcher* fw;
     bool read(QIODevice *io, QsciScintillaqq* sci, QString encoding="");

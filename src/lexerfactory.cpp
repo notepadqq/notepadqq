@@ -252,10 +252,26 @@ bool LexerFactory::init()
 ShrPtrLangDefinition LexerFactory::detectLanguage(QFileInfo info)
 {
     // Basic extension-based heuristic
-    QString ext = info.completeSuffix();
+    QString              name = info.fileName();
+    QString              ext  = info.completeSuffix();
+    ShrPtrLangDefinition ret  = language_by_extension.value(ext);
+
+    //Special case files
+    if(!(QString::compare(name, QObject::tr("CmakeLists.txt"),  Qt::CaseInsensitive)))
+        ret = languages_by_name.value("cmake");
+    else if((!QString::compare(name, QObject::tr("makefile"),   Qt::CaseInsensitive))||
+            (!QString::compare(name, QObject::tr("gnumakefile"),Qt::CaseInsensitive)))
+        ret = languages_by_name.value("makefile");
+    else if((!QString::compare(name, QObject::tr("SConstruct"), Qt::CaseInsensitive))||
+            (!QString::compare(name, QObject::tr("SConscript"), Qt::CaseInsensitive))||
+            (!QString::compare(name, QObject::tr("wscript"),    Qt::CaseInsensitive)))
+        ret = languages_by_name.value("python");
+    else if((!QString::compare(name, QObject::tr("Rakefile"),   Qt::CaseInsensitive)))
+        ret = languages_by_name.value("ruby");
+
     // TODO: add more heuristic to detect languages
     // e.g. file starting with "<?xml" ==> "xml"
-    return language_by_extension.value(ext); // RETURNS NULL POINTER IF NOT FOUND
+    return ret;
 }
 
 ShrPtrStylerDefinition LexerFactory::getGlobalStyler() const
@@ -301,6 +317,14 @@ QsciLexer* LexerFactory::applyColorScheme(ShrPtrLangDefinition lang, QsciLexer* 
 QsciLexer* LexerFactory::createLexer(QFileInfo info, QObject *parent)
 {
     ShrPtrLangDefinition lang = detectLanguage(info);
+    if ( lang.isNull() )
+        return NULL;
+    return applyColorScheme( lang, createLexer( lang->name, parent ) );
+}
+
+QsciLexer* LexerFactory::createLexerByName(QString lg, QObject* parent)
+{
+    ShrPtrLangDefinition lang = languages_by_name.value(lg);
     if ( lang.isNull() )
         return NULL;
     return applyColorScheme( lang, createLexer( lang->name, parent ) );

@@ -80,6 +80,17 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
+    enum Setting {
+        Setting_FIRST,
+        Setting_ShowAllCharacters,
+        Setting_WordWrap,
+        Setting_ShowEndOfLine,
+        Setting_ShowWhiteSpaceAndTab,
+        Setting_ShowIndentGuide,
+        Setting_ShowWrapSymbol,
+        Setting_LAST
+    };
+
     int           askIfWantToSave(QsciScintillaqq *sci, int reason);
     int           save(QsciScintillaqq *sci);
     int           saveAs(QsciScintillaqq *sci,bool copy=false);
@@ -89,6 +100,7 @@ public:
     void          createStatusBar();
     void          clearSearchDialog();
     void          update_single_document_ui( QsciScintillaqq* sci );
+    void          update_appwide_ui(Setting setting);
     void          connect_tabWidget(QTabWidgetqq *tabWidget);
     void          processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
 
@@ -102,7 +114,10 @@ public:
     //Singleton instance of main window class
     static MainWindow* instance();
 
+    //Quick access to certain pointers
     QsciScintillaqq* focused_editor();
+    QsciScintillaqq* editor_at_index(int i);
+    QTabWidgetqq*    focused_tabWidget();
 
 private:
     static MainWindow* wMain;
@@ -141,6 +156,7 @@ private slots:
     void _on_editor_cursor_position_change(int line, int index);
     void _on_editor_overtype_changed(bool overtype);
     void _on_editor_language_set();
+    void _on_editor_new(int index);
 
     void on_action_New_triggered();
     void on_actionSave_as_triggered();
