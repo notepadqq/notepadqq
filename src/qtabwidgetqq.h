@@ -42,7 +42,7 @@ public:
     QsciScintillaqq *QSciScintillaqqAt(int index);
     QTabWidgetsContainer *getTabWidgetsContainer();
 signals:
-
+    void documentAdded(int index);
 public slots:
     void on_text_changed();
     void on_modification_changed(bool m);

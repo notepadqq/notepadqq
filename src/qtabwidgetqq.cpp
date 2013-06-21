@@ -20,6 +20,7 @@
  *
  */
 
+#include "appwidesettings.h"
 #include "qtabwidgetqq.h"
 #include "qsciscintillaqq.h"
 #include "qtabwidgetscontainer.h"
@@ -75,48 +76,23 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
 
     connect(sci, SIGNAL(modificationChanged(bool)), this, SLOT(on_modification_changed(bool)));
 
-    /* TODO
-    connect(sci, SIGNAL(fileChanged(QString, QsciScintillaqq*)), SLOT(fileChanged(QString, QsciScintillaqq*)));
-    connect(sci, SIGNAL(textChanged()), SLOT(on_scintillaTextChanged()));
-    connect(sci, SIGNAL(selectionChanged()), SLOT(on_scintillaSelectionChanged()));
-    connect(sci, SIGNAL(cursorPositionChanged(int,int)), SLOT(on_scintillaCursorPositionChanged(int,int)));
-    connect(sci, SIGNAL(updateUI()), SLOT(on_scintillaUpdateUI()));
-    */
-
     layout->addWidget(sci);
     widget->setLayout(layout);
-    //this->setDocumentMode(true);
-
-
-    /* TODO
-    bool _showallchars = ui->actionShow_All_Characters->isChecked();
-    updateScintillaPropertiesForAllTabs();
-    if(_showallchars) {
-        ui->actionShow_All_Characters->setChecked(true);
-        on_actionShow_All_Characters_triggered();
-    }
-    */
 
     // Add the tab as last thing so we can use QSciScintillaqqAt method on currentTabChanged signal
     int index = this->addTab(widget, title);
-    if(setFocus) {
+    if(setFocus)
         this->setCurrentIndex(index);
-    }
     this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
 
 
     this->getTabWidgetsContainer()->_on_newQsciScintillaqqWidget(sci);
 
     sci->setFocus();
-    // sci->SendScintilla(QsciScintilla::SCI_SETFOCUS, true);
-    // sci->SendScintilla(QsciScintilla::SCI_GRABFOCUS);
-
-    // updateGui(index, tabWidget1); TODO
-
-    // Emettere segnale QsciScintillaqq_Created(QsciScintillaqq *sci)
 
     this->setUpdatesEnabled(true);
 
+    emit documentAdded(index);
     return index;
 }
 
