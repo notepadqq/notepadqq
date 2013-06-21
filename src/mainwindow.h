@@ -156,6 +156,7 @@ private slots:
     void _on_editor_cursor_position_change(int line, int index);
     void _on_editor_overtype_changed(bool overtype);
     void _on_editor_language_set();
+    void _on_editor_new(int index);
 
     void on_action_New_triggered();
     void on_actionSave_as_triggered();

@@ -57,11 +57,15 @@ public:
         struct CharacterRange chrgText; // returned as position of matching text
     };
 
-    int           getTabIndex();
-    bool          isNewEmptyDocument();
-    void          autoSyntaxHighlight();
-    void          forceUIUpdate();
-    void          safeCopy();
+    int            getTabIndex();
+    bool           isNewEmptyDocument();
+    void           autoSyntaxHighlight();
+    void           forceUIUpdate();
+    void           safeCopy();
+
+
+    void           scrollCursorToCenter(int pos);
+    CharacterRange getSelectionRange();
 
     QString       fileName();
     QString       encoding();

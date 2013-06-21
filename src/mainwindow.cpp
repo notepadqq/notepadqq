@@ -189,20 +189,6 @@ void MainWindow::init()
             qApp->setFont( system_font );
         }
     }
-
-    // APPLY WIDE SETTINGS TO ALL OPEN TABS
-    for ( int i = 0; i < container->count(); ++i ) {
-        QTabWidgetqq* tqq = qobject_cast<QTabWidgetqq*>( container->widget(i) );
-        if ( !tqq ) continue;
-        for ( int j = 0; j < tqq->count(); ++j ) {
-            QsciScintillaqq* sqq = tqq->QSciScintillaqqAt(j);
-            if ( !sqq ) continue;
-            widesettings::apply_settings(sqq);
-            widesettings::apply_single_document_settings(sqq);
-            update_single_document_ui(sqq);
-
-        }
-    }
 }
 
 MainWindow* MainWindow::instance()
@@ -379,13 +365,7 @@ void MainWindow::_on_tabWidget_customContextMenuRequested(QPoint pos)
 
 void MainWindow::on_action_New_triggered()
 {
-    QTabWidgetqq *focusedTabWidget = focused_tabWidget();
-    int index = focusedTabWidget->addNewDocument();
-    QsciScintillaqq* sci = focusedTabWidget->QSciScintillaqqAt(index);
-    if( !sci ) return;
-    widesettings::apply_settings(sci);
-    widesettings::apply_single_document_settings(sci);
-    update_single_document_ui(sci);
+    focused_tabWidget()->addNewDocument();
 }
 
 //Short-circuit function to get the currently active editor/scintilla widget
@@ -581,16 +561,12 @@ void MainWindow::on_action_Open_triggered()
     // Ask for file names...
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open"), settings->value("lastSelectedDir", ".").toString(), tr("All files (*)"), 0, 0);
     document_engine->loadDocuments(fileNames, focused_tabWidget());
-    update_single_document_ui(focused_editor());
-    focused_editor()->updateLineMargin();
 }
 
 void MainWindow::on_actionReload_from_Disk_triggered()
 {
     QsciScintillaqq *sci = focused_editor();
     document_engine->loadDocuments(QStringList(sci->fileName()),sci->tabWidget(),true);
-    update_single_document_ui(focused_editor());
-    focused_editor()->updateLineMargin();
 }
 
 void MainWindow::on_action_Undo_triggered()
@@ -846,6 +822,17 @@ void MainWindow::_on_editor_overtype_changed(bool overtype)
     statusBar_overtypeNotify->setText(overtype ? "OVR" : "INS");
 }
 
+void MainWindow::_on_editor_new(int index)
+{
+    QsciScintillaqq* sci = focused_tabWidget()->QSciScintillaqqAt(index);
+    if( !sci )
+        return;
+    widesettings::apply_settings(sci);
+    widesettings::apply_single_document_settings(sci);
+    update_single_document_ui(sci);
+    sci->setModified(false);
+}
+
 void MainWindow::_on_sci_copyAvailable(bool yes)
 {
     // TODO Call me on every tab switch!!
@@ -978,6 +965,7 @@ void MainWindow::connect_tabWidget(QTabWidgetqq *tabWidget)
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(_on_tab_close_requested(int)));
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(_on_tabWidget_customContextMenuRequested(QPoint)));
     connect(tabWidget, SIGNAL(currentChanged(int)), SLOT(_apply_wide_settings_to_tab(int)));
+    connect(tabWidget, SIGNAL(documentAdded(int)), this, SLOT(_on_editor_new(int)));
 }
 
 searchengine* MainWindow::getSearchEngine()
@@ -1061,7 +1049,9 @@ void MainWindow::update_single_document_ui( QsciScintillaqq* sci )
     if((sci->encoding() == "UTF-8") && (!sci->BOM()) )
         statusBar_textFormat->setText("ANSI as UTF-8");
     else
-        statusBar_textFormat->setText(sci->encoding());  
+        statusBar_textFormat->setText(sci->encoding());
+
+    sci->updateLineMargin();
 }
 
 void MainWindow::_apply_wide_settings_to_tab( int index )

@@ -20,6 +20,7 @@
  *
  */
 
+#include "appwidesettings.h"
 #include "qtabwidgetqq.h"
 #include "qsciscintillaqq.h"
 #include "qtabwidgetscontainer.h"
@@ -91,6 +92,7 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
 
     this->setUpdatesEnabled(true);
 
+    emit documentAdded(index);
     return index;
 }
 

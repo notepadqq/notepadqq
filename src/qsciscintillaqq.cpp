@@ -90,10 +90,27 @@ void QsciScintillaqq::setBOM(bool yes)
 //Get the number of characters in the current selection.
 int QsciScintillaqq::getSelectedTextCount()
 {
-    CharacterRange crange;
-    crange.cpMin = long(this->SendScintilla(SCI_GETSELECTIONSTART));
-    crange.cpMax = long(this->SendScintilla(SCI_GETSELECTIONEND));
-    return (crange.cpMax - crange.cpMin);
+    CharacterRange range = getSelectionRange();
+    return (range.cpMax - range.cpMin);
+}
+
+void QsciScintillaqq::scrollCursorToCenter(int pos)
+{
+    SendScintilla(SCI_GOTOPOS,pos);
+    int line                     = SendScintilla(SCI_LINEFROMPOSITION,pos);
+    int firstVisibleDisplayLine  = SendScintilla(SCI_GETFIRSTVISIBLELINE);
+    int firstVisibleDocumentLine = SendScintilla(SCI_DOCLINEFROMVISIBLE, firstVisibleDisplayLine);
+    int nbLine                   = SendScintilla(SCI_LINESONSCREEN, firstVisibleDisplayLine);
+    int lastVisibleDocumentLine  = SendScintilla(SCI_DOCLINEFROMVISIBLE, firstVisibleDisplayLine + nbLine);
+
+    int middleLine;
+    if( line - firstVisibleDocumentLine < lastVisibleDocumentLine - line)
+        middleLine = firstVisibleDocumentLine + nbLine/2;
+    else
+        middleLine = lastVisibleDocumentLine - nbLine/2;
+
+    int nbLinesToScroll = line - middleLine;
+    scroll(0,nbLinesToScroll);
 }
 
 QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
@@ -244,6 +261,7 @@ void QsciScintillaqq::initialize()
     this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
     this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
     this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
+    this->SendScintilla(SCI_SETYCARETPOLICY,QsciScintilla::CARET_SLOP);
 }
 
 
@@ -359,4 +377,12 @@ void QsciScintillaqq::setForcedLanguage(QString language)
 //Keeps the line margin readable at all times
 void QsciScintillaqq::updateLineMargin() {
     setMarginWidth(1,QString("00%1").arg(lines()));
+}
+
+QsciScintillaqq::CharacterRange QsciScintillaqq::getSelectionRange()
+{
+    CharacterRange crange;
+    crange.cpMin = SendScintilla(SCI_GETSELECTIONSTART);
+    crange.cpMax = SendScintilla(SCI_GETSELECTIONEND);
+    return crange;
 }
