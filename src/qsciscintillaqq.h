@@ -89,6 +89,8 @@ private:
     void    keyReleaseEvent(QKeyEvent *e);
     void    initialize();
 
+    void    applyGlobalStyles();
+
 private slots:
     void    wheelEvent(QWheelEvent * e);
 

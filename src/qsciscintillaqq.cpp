@@ -236,13 +236,23 @@ void QsciScintillaqq::initialize()
     this->setUtf8(true);
 
     // GLOBALS
+    applyGlobalStyles();
+
+    this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
+    this->setCaretLineVisible(true);
+
+    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
+}
+
+
+void QsciScintillaqq::applyGlobalStyles()
+{
     ShrPtrStylerDefinition glob_style = MainWindow::instance()->getLexerFactory()->getGlobalStyler();
     ShrPtrWordsStyle       def_style  = glob_style->words_stylers_by_name.value(stylename::DEFAULT);
     this->setColor(def_style->fg_color);
     this->setPaper(def_style->bg_color);
-
-    this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
-    this->setCaretLineVisible(true);
 
     ShrPtrWordsStyle caret_style       = glob_style->words_stylers_by_name.value(stylename::CARET);
     ShrPtrWordsStyle indent_style      = glob_style->words_stylers_by_name.value(stylename::INDENT_GUIDELINE);
@@ -261,11 +271,10 @@ void QsciScintillaqq::initialize()
     this->setCaretLineBackgroundColor(indent_style->fg_color);
 
     this->setIndentationGuidesForegroundColor(indent_style->fg_color);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+
     this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, indent_style->fg_color.value());
-    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
 }
+
 
 int QsciScintillaqq::getTabIndex()
 {
@@ -304,7 +313,7 @@ QTabWidgetqq *QsciScintillaqq::tabWidget()
 */
 bool QsciScintillaqq::isNewEmptyDocument()
 {
-    if(this->text() == ""
+    if(this->length()==0
        && this->isModified() == false
        && this->fileName() == "" ) {
 

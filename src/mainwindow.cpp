@@ -589,6 +589,8 @@ void MainWindow::on_actionReload_from_Disk_triggered()
 {
     QsciScintillaqq *sci = focused_editor();
     document_engine->loadDocuments(QStringList(sci->fileName()),sci->tabWidget(),true);
+    update_single_document_ui(focused_editor());
+    focused_editor()->updateLineMargin();
 }
 
 void MainWindow::on_action_Undo_triggered()

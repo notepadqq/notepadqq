@@ -188,12 +188,14 @@ bool docengine::loadDocuments(QStringList fileNames, QTabWidgetqq *tabWidget, bo
                 index--;
             }
 
-            sci->setFileName(fi.absoluteFilePath());
-            sci->setEolMode(sci->guessEolMode());
+            if(!reload) {
+                sci->setFileName(fi.absoluteFilePath());
+                sci->setEolMode(sci->guessEolMode());
+                tabWidget->setTabToolTip(index, sci->fileName());
+                sci->autoSyntaxHighlight();
+                addDocument(fi.absoluteFilePath());
+            }
             sci->setModified(false);
-            tabWidget->setTabToolTip(index, sci->fileName());
-            sci->autoSyntaxHighlight();
-            addDocument(fi.absoluteFilePath());
 
             file.close();
 
