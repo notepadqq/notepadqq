@@ -129,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Search Management
     search_engine = new searchengine(this);
     form_search = 0; // Just create the search dialog as needed
+    form_preferences = 0;
 
     //Document monitoring,saving,loading engine for centralized document management.
     document_engine = new docengine(this);
@@ -993,6 +994,13 @@ void MainWindow::on_actionFind_Previous_triggered()
         search_engine->setNewSearch(true);
         search_engine->findString();
     }
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    if(!form_preferences)
+        form_preferences = new frmpreferences(this);
+    form_preferences->show();
 }
 
 QSettings* MainWindow::getSettings()
