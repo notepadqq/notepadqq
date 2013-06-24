@@ -129,6 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Search Management
     search_engine = new searchengine(this);
     form_search = 0; // Just create the search dialog as needed
+    form_preferences = 0;
 
     //Document monitoring,saving,loading engine for centralized document management.
     document_engine = new docengine(this);
@@ -153,11 +154,7 @@ void MainWindow::init()
         qDebug() << "cannot initialize lexer factory";
     else
         initialize_languages();
-
-    //Apply setting values to UI
-    for(int s = Setting_FIRST;s != Setting_LAST;s++)
-        update_appwide_ui(static_cast<Setting>(s));
-
+    update_appwide_ui("ALL");
     processCommandLineArgs(QApplication::arguments(), false);
 
     // Focus on the editor of the first tab
@@ -902,31 +899,29 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 }
 
 //Update UI elements for settings that apply across the board
-void MainWindow::update_appwide_ui(Setting setting)
+void MainWindow::update_appwide_ui(const char* s)
 {
-    switch(setting) {
-    case Setting_ShowAllCharacters:
-        ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,true).toBool());
-        break;
-    case Setting_WordWrap:
-        ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,true).toBool());
-        break;
-    case Setting_ShowEndOfLine:
-        ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,true).toBool());
-        break;
-    case Setting_ShowWhiteSpaceAndTab:
-        ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,true).toBool());
-        break;
-    case Setting_ShowIndentGuide:
+    const char* ALL = "ALL";
+    if(s == widesettings::SETTING_SHOW_ALL_CHARS||s == ALL)
+        ui->actionShow_All_Characters->setChecked(settings->value(widesettings::SETTING_SHOW_ALL_CHARS,false).toBool());
+    if(s == widesettings::SETTING_WRAP_MODE||s == ALL)
+        ui->actionWord_wrap->setChecked(settings->value(widesettings::SETTING_WRAP_MODE,false).toBool());
+    if(s == widesettings::SETTING_SHOW_END_OF_LINE||s == ALL)
+        ui->actionShow_End_of_Line->setChecked(settings->value(widesettings::SETTING_SHOW_END_OF_LINE,false).toBool());
+    if(s == widesettings::SETTING_SHOW_WHITE_SPACE||s == ALL)
+        ui->actionShow_White_Space_and_TAB->setChecked(settings->value(widesettings::SETTING_SHOW_WHITE_SPACE,false).toBool());
+    if(s == widesettings::SETTING_SHOW_INDENT_GUIDE||s == ALL)
         ui->actionShow_Indent_Guide->setChecked(settings->value(widesettings::SETTING_SHOW_INDENT_GUIDE,true).toBool());
-        break;
-    case Setting_ShowWrapSymbol:
-        ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,true).toBool());
-        break;
-    default:
-        break;
-    }
-
+    if(s == widesettings::SETTING_WRAP_SYMBOL||s == ALL)
+        ui->actionShow_Wrap_Symbol->setChecked(settings->value(widesettings::SETTING_WRAP_SYMBOL,false).toBool());
+    if(s == widesettings::SETTING_TABBAR_HIDE||s == ALL)
+        container->setTabBarsHidden(settings->value(widesettings::SETTING_TABBAR_HIDE,false).toBool());
+    if(s == widesettings::SETTING_TABBAR_VERTICAL||s == widesettings::SETTING_TABBAR_REDUCE||s == ALL)
+        container->setTabBarsVertical(settings->value(widesettings::SETTING_TABBAR_VERTICAL,false).toBool());
+    if(s == widesettings::SETTING_TABBAR_MOVABLE||s == ALL)
+        container->setTabBarsMovable(settings->value(widesettings::SETTING_TABBAR_MOVABLE,true).toBool());
+    if(s == widesettings::SETTING_TABBAR_HIGHLIGHT||s == ALL)
+        container->setTabBarsHighlight(settings->value(widesettings::SETTING_TABBAR_HIGHLIGHT,true).toBool());
 }
 
 void MainWindow::on_actionClone_to_Other_View_triggered()
@@ -993,6 +988,13 @@ void MainWindow::on_actionFind_Previous_triggered()
         search_engine->setNewSearch(true);
         search_engine->findString();
     }
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    if(!form_preferences)
+        form_preferences = new frmpreferences(this);
+    form_preferences->show();
 }
 
 QSettings* MainWindow::getSettings()
@@ -1071,9 +1073,9 @@ void MainWindow::on_actionShow_All_Characters_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_invisible_chars(sci) ) return;
     update_single_document_ui(sci);
-    update_appwide_ui(Setting_ShowEndOfLine);
-    update_appwide_ui(Setting_ShowWhiteSpaceAndTab);
-    update_appwide_ui(Setting_ShowAllCharacters);
+    update_appwide_ui(widesettings::SETTING_SHOW_END_OF_LINE);
+    update_appwide_ui(widesettings::SETTING_SHOW_WHITE_SPACE);
+    update_appwide_ui(widesettings::SETTING_SHOW_ALL_CHARS);
 }
 
 void MainWindow::on_actionWindows_Format_triggered()
@@ -1116,7 +1118,7 @@ void MainWindow::on_actionShow_White_Space_and_TAB_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_white_space(sci) ) return;
     update_single_document_ui(sci);
-    update_appwide_ui(Setting_ShowAllCharacters);
+    update_appwide_ui(widesettings::SETTING_SHOW_ALL_CHARS);
 }
 
 void MainWindow::on_actionShow_End_of_Line_triggered()
@@ -1125,7 +1127,8 @@ void MainWindow::on_actionShow_End_of_Line_triggered()
     QsciScintillaqq *sci = focused_editor();
     if ( !sci || !widesettings::toggle_end_of_line(sci) ) return;
     update_single_document_ui(sci);
-    update_appwide_ui(Setting_ShowAllCharacters);
+    update_appwide_ui(widesettings::SETTING_SHOW_ALL_CHARS);
+
 }
 
 void MainWindow::on_actionShow_Indent_Guide_triggered()

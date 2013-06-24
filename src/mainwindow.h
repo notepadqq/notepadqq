@@ -27,6 +27,7 @@
 #include <Qsci/qsciscintilla.h>
 #include "qtabwidgetscontainer.h"
 #include "frmsrchreplace.h"
+#include "frmpreferences.h"
 #include "searchengine.h"
 #include "docengine.h"
 #include "lexerfactory.h"
@@ -100,7 +101,7 @@ public:
     void          createStatusBar();
     void          clearSearchDialog();
     void          update_single_document_ui( QsciScintillaqq* sci );
-    void          update_appwide_ui(Setting setting);
+    void          update_appwide_ui(const char* setting);
     void          connect_tabWidget(QTabWidgetqq *tabWidget);
     void          processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
 
@@ -136,6 +137,7 @@ private:
     QMenu*             tabContextMenu;
 
     frmsrchreplace*    form_search;
+    frmpreferences*    form_preferences;
 
     searchengine*      search_engine;
     docengine*         document_engine;
@@ -202,6 +204,7 @@ private slots:
     void on_actionShow_White_Space_and_TAB_triggered();
     void on_actionShow_Indent_Guide_triggered();
     void on_actionShow_Wrap_Symbol_triggered();
+    void on_actionPreferences_triggered();
 
 public slots:
     void on_actionZoom_In_triggered();

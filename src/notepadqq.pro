@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     searchengine.cpp \
     docengine.cpp \
     appwidesettings.cpp \
-    lexerfactory.cpp
+    lexerfactory.cpp \
+    frmpreferences.cpp
 
 HEADERS  += mainwindow.h \
     qsciscintillaqq.h \
@@ -57,11 +58,13 @@ HEADERS  += mainwindow.h \
     searchengine.h \
     docengine.h \
     appwidesettings.h \
-    lexerfactory.h
+    lexerfactory.h \
+    frmpreferences.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
-    frmsrchreplace.ui
+    frmsrchreplace.ui \
+    frmpreferences.ui
 
 LIBS += -lqscintilla2
 

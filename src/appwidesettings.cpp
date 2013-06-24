@@ -15,6 +15,54 @@ namespace widesettings {
     const char * SETTING_MONO_FONT_NAME    = "mono_font_name";
     const char * SETTING_MONO_FONT_SIZE    = "mono_font_size";
 
+    const char * SETTING_TABBAR_HIDE       = "tabbar/hide";
+    const char * SETTING_TABBAR_VERTICAL   = "tabbar/vertical";
+    const char * SETTING_TABBAR_MOVABLE    = "tabbar/movable";
+    const char * SETTING_TABBAR_REDUCE     = "tabbar/reduce";
+    const char * SETTING_TABBAR_HIGHLIGHT  = "tabbar/highlight";
+
+    bool apply_tabbar_highlight(bool on)
+    {
+        MainWindow* mwin = MainWindow::instance();
+        mwin->getSettings()->setValue(SETTING_TABBAR_HIGHLIGHT,on);
+        mwin->update_appwide_ui(SETTING_TABBAR_HIGHLIGHT);
+        return true;
+    }
+
+
+    bool apply_tabbar_hide(bool on)
+    {
+        MainWindow* mwin = MainWindow::instance();
+        mwin->getSettings()->setValue(SETTING_TABBAR_HIDE,on);
+        mwin->update_appwide_ui(SETTING_TABBAR_HIDE);
+        return true;
+    }
+
+    bool apply_tabbar_vertical(bool on)
+    {
+        MainWindow* mwin = MainWindow::instance();
+        mwin->getSettings()->setValue(SETTING_TABBAR_VERTICAL,on);
+        mwin->update_appwide_ui(SETTING_TABBAR_VERTICAL);
+        return true;
+    }
+
+    bool apply_tabbar_movable(bool on)
+    {
+        MainWindow* mwin = MainWindow::instance();
+        mwin->getSettings()->setValue(SETTING_TABBAR_MOVABLE,on);
+        mwin->update_appwide_ui(SETTING_TABBAR_MOVABLE);
+        return true;
+    }
+
+    bool apply_tabbar_reduce(bool on)
+    {
+        MainWindow* mwin = MainWindow::instance();
+        mwin->getSettings()->setValue(SETTING_TABBAR_REDUCE,on);
+        //This is actually updated in the same area when the stylesheet is set.
+        mwin->update_appwide_ui(SETTING_TABBAR_VERTICAL);
+        return true;
+    }
+
     bool apply_wrap_mode(QsciScintilla::WrapMode m, QsciScintillaqq* w)
     {
         MainWindow::instance()->getSettings()->setValue(SETTING_WRAP_MODE, m);

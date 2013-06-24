@@ -48,6 +48,40 @@ QTabWidgetqq *QTabWidgetsContainer::addQTabWidgetqq()
     return tabWidget;
 }
 
+void QTabWidgetsContainer::setTabBarsMovable( bool on )
+{
+    for(int i=0;i<count();i++) {
+        QTabWidgetqq* tabWidget = QTabWidgetqqAt(i);
+        tabWidget->setMovable( on );
+    }
+}
+
+void QTabWidgetsContainer::setTabBarsHighlight( bool on )
+{
+    for(int i=0;i<count();i++) {
+        QTabWidgetqq* tabWidget = QTabWidgetqqAt(i);
+        tabWidget->setTabBarHighlight( on );
+    }
+}
+
+void QTabWidgetsContainer::setTabBarsVertical( bool on )
+{
+    for(int i=0;i<count();i++) {
+        QTabWidgetqq* tabWidget = QTabWidgetqqAt(i);
+        tabWidget->setTabBarVertical( on );
+    }
+}
+
+
+void QTabWidgetsContainer::setTabBarsHidden( bool on )
+{
+    for(int i=0;i<count();i++) {
+        QTabWidgetqq* tabWidget = QTabWidgetqqAt(i);
+        tabWidget->setTabBarHidden( on );
+    }
+}
+
+
 // This method is called from QTabWidgetqq childs, with method QTabWidgetqq::addEditorTab()
 void QTabWidgetsContainer::_on_newQsciScintillaqqWidget(QsciScintillaqq *sci)
 {
