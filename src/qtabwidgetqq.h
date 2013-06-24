@@ -40,16 +40,15 @@ public:
     int addEditorTab(bool setFocus, QString title);
     QsciScintillaqq *focusQSciScintillaqq();
     QsciScintillaqq *QSciScintillaqqAt(int index);
+    void setTabBarHidden(bool yes);
+    void setTabBarVertical(bool yes);
+    void setTabBarHighlight(bool yes);
     QTabWidgetsContainer *getTabWidgetsContainer();
 signals:
     void documentAdded(int index);
 public slots:
     void on_text_changed();
     void on_modification_changed(bool m);
-
-private:
-    static int _newTabCount;
-
 };
 
 #endif // QTABWIDGETQQ_H

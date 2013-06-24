@@ -28,8 +28,8 @@
 #include "mainwindow.h"
 #include <QTabBar>
 #include <QVBoxLayout>
-
-int QTabWidgetqq::_newTabCount = 0;
+#include <QGraphicsEffect>
+#include <QApplication>
 
 QTabWidgetqq::QTabWidgetqq(QWidget *parent) :
     QTabWidget(parent)
@@ -38,10 +38,6 @@ QTabWidgetqq::QTabWidgetqq(QWidget *parent) :
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setDocumentMode(true);
     this->setTabsClosable(true);
-    this->setMovable(true);
-    //tabWidget1->setTabIcon(0, QIcon());
-    this->setStyleSheet("QTabBar::tab { height: 24px; }");
-    //tabWidget1->setIconSize(QSize(12,12));
 }
 
 int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
@@ -51,7 +47,8 @@ int QTabWidgetqq::getTabIndexAt(const QPoint &pos)
 
 int QTabWidgetqq::addNewDocument()
 {
-    return addEditorTab(true, tr("new") + " " + QString::number(++_newTabCount));
+    static int tabnumbah = 0;
+    return addEditorTab(true, tr("new") + " " + QString::number(++tabnumbah));
 }
 
 /**
@@ -93,6 +90,7 @@ int QTabWidgetqq::addEditorTab(bool setFocus, QString title)
     this->setUpdatesEnabled(true);
 
     emit documentAdded(index);
+
     return index;
 }
 
@@ -125,6 +123,34 @@ QTabWidgetsContainer *QTabWidgetqq::getTabWidgetsContainer()
 void QTabWidgetqq::on_text_changed()
 {
 
+}
+
+void QTabWidgetqq::setTabBarHidden(bool yes)
+{
+    tabBar()->setHidden(yes);
+}
+
+void QTabWidgetqq::setTabBarHighlight(bool yes)
+{
+    //Get colors from palette so it doesn't look fugly.
+    QPalette palette = tabBar()->palette();
+    palette.setColor(QPalette::Highlight,yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
+    tabBar()->setPalette(palette);
+}
+
+void QTabWidgetqq::setTabBarVertical(bool yes)
+{
+    QString prestyle = "";
+    int reduced = MainWindow::instance()->getSettings()->value(widesettings::SETTING_TABBAR_REDUCE,true).toBool() ? 24 : 30;
+    if(yes){
+        setTabPosition(QTabWidget::West);
+        prestyle.append(QString("QTabBar::tab{min-height:100px;width:%1;}").arg(reduced));
+    }else {
+        setTabPosition(QTabWidget::North);
+        prestyle.append(QString("QTabBar::tab{min-width:100px;height:%1;}").arg(reduced));
+    }
+    setStyleSheet(prestyle);
+    setTabBarHighlight(MainWindow::instance()->getSettings()->value(widesettings::SETTING_TABBAR_HIGHLIGHT,true).toBool());
 }
 
 void QTabWidgetqq::on_modification_changed(bool m)

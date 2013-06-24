@@ -15,6 +15,12 @@ namespace widesettings {
     extern const char * SETTING_EOL_MODE;
     extern const char * SETTING_ZOOM_LEVEL;
 
+    extern const char * SETTING_TABBAR_HIDE;
+    extern const char * SETTING_TABBAR_VERTICAL;
+    extern const char * SETTING_TABBAR_MOVABLE;
+    extern const char * SETTING_TABBAR_REDUCE;
+    extern const char * SETTING_TABBAR_HIGHLIGHT;
+
     bool apply_wrap_mode (QsciScintilla::WrapMode m, QsciScintillaqq * w);
     bool apply_invisible_chars(bool v, QsciScintillaqq* w);
     bool apply_end_of_line(bool v, QsciScintillaqq* w);
@@ -23,6 +29,12 @@ namespace widesettings {
     bool apply_wrap_symbol(bool v, QsciScintillaqq* w);
     bool apply_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq * w);
     bool apply_zoom_level(double m, QsciScintillaqq* w);
+
+    bool apply_tabbar_hide(bool on);
+    bool apply_tabbar_vertical(bool on);
+    bool apply_tabbar_movable(bool on);
+    bool apply_tabbar_reduce(bool on);
+    bool apply_tabbar_highlight(bool on);
 
     bool set_eol_mode(QsciScintilla::EolMode m, QsciScintillaqq * w);
     bool apply_monospace_font(QString family, int size, QsciScintillaqq* w);
