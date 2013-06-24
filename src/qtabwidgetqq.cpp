@@ -134,7 +134,7 @@ void QTabWidgetqq::setTabBarHighlight(bool yes)
 {
     //Get colors from palette so it doesn't look fugly.
     QPalette palette = tabBar()->palette();
-    palette.setColor(QPalette::Highlight,yes ? QApplication::palette().highlight().color() : palette.light().color());
+    palette.setColor(QPalette::Highlight,yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
     tabBar()->setPalette(palette);
 }
 
