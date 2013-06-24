@@ -101,7 +101,7 @@ public:
     void          createStatusBar();
     void          clearSearchDialog();
     void          update_single_document_ui( QsciScintillaqq* sci );
-    void          update_appwide_ui(Setting setting);
+    void          update_appwide_ui(const char* setting);
     void          connect_tabWidget(QTabWidgetqq *tabWidget);
     void          processCommandLineArgs(QStringList arguments, bool fromExternalMessage);
 

@@ -10,6 +10,12 @@
     <height>404</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -41,6 +47,9 @@
      <height>371</height>
     </rect>
    </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
    <property name="documentMode">
     <bool>false</bool>
    </property>
@@ -63,7 +72,7 @@
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
-     <widget class="QComboBox" name="localization_language">
+     <widget class="QComboBox" name="set_localization_language">
       <property name="geometry">
        <rect>
         <x>3</x>
@@ -177,6 +186,9 @@
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
         <widget class="QCheckBox" name="set_menu_hide">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
           <string>Hide (Use Alt or F10 key to toggle)</string>
          </property>
@@ -342,11 +354,6 @@
       </layout>
      </widget>
     </widget>
-   </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Tab 2</string>
-    </attribute>
    </widget>
   </widget>
  </widget>
