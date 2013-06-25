@@ -242,8 +242,6 @@ void QsciScintillaqq::wheelEvent(QWheelEvent * e)
  */
 void QsciScintillaqq::initialize()
 {
-    QFont* system_font = MainWindow::instance()->systemMonospace();
-    qDebug() << "system font: " << system_font->family() << " " << system_font->pointSize();
 
 
     this->setMarginLineNumbers(1, true);
@@ -258,15 +256,15 @@ void QsciScintillaqq::initialize()
     this->setBraceMatching(QsciScintillaqq::SloppyBraceMatch);
     this->setCaretLineVisible(true);
 
-    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
-    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
-    this->SendScintilla(SCI_SETYCARETPOLICY,QsciScintilla::CARET_SLOP);
 }
 
 
 void QsciScintillaqq::applyGlobalStyles()
 {
+    QFont* system_font = MainWindow::instance()->systemMonospace();
+    qDebug() << "system font: " << system_font->family() << " " << system_font->pointSize();
+    setFont(*system_font);
+
     ShrPtrStylerDefinition glob_style = MainWindow::instance()->getLexerFactory()->getGlobalStyler();
     ShrPtrWordsStyle       def_style  = glob_style->words_stylers_by_name.value(stylename::DEFAULT);
     this->setColor(def_style->fg_color);
@@ -284,13 +282,18 @@ void QsciScintillaqq::applyGlobalStyles()
     this->setFoldMarginColors(fold_margin_style->fg_color, fold_margin_style->bg_color);
     this->setMarginsBackgroundColor(margins_style->bg_color);
     this->setMarginsForegroundColor(margins_style->fg_color);
-
+    this->setMarginsFont(QFont(margins_style->font_name,margins_style->font_size));
     this->setCaretForegroundColor(caret_style->fg_color);
     this->setCaretLineBackgroundColor(indent_style->fg_color);
 
     this->setIndentationGuidesForegroundColor(indent_style->fg_color);
 
     this->SendScintilla(QsciScintilla::SCI_INDICSETFORE, SELECTOR_DefaultSelectionHighlight, indent_style->fg_color.value());
+
+    this->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, SELECTOR_DefaultSelectionHighlight, QsciScintilla::INDIC_ROUNDBOX);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETALPHA, SELECTOR_DefaultSelectionHighlight, 100);
+    this->SendScintilla(QsciScintilla::SCI_INDICSETUNDER, SELECTOR_DefaultSelectionHighlight, true);
+    this->SendScintilla(SCI_SETYCARETPOLICY,QsciScintilla::CARET_SLOP);
 }
 
 
@@ -372,6 +375,9 @@ void QsciScintillaqq::setForcedLanguage(QString language)
 {
     _forcedLanguage = language.toLower();
     autoSyntaxHighlight();
+
+    //Global styles always take precedence
+    applyGlobalStyles();
 }
 
 //Keeps the line margin readable at all times
