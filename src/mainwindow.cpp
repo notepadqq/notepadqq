@@ -155,10 +155,6 @@ void MainWindow::init()
     else
         initialize_languages();
     update_appwide_ui("ALL");
-    processCommandLineArgs(QApplication::arguments(), false);
-
-    // Focus on the editor of the first tab
-    container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
 
     // GET SYSTEM FONTS USING DCONF
     QString mono_font_name = generalFunctions::readDConfKey("org.gnome.desktop.interface", "monospace-font-name");
@@ -186,6 +182,11 @@ void MainWindow::init()
             qApp->setFont( system_font );
         }
     }
+
+    processCommandLineArgs(QApplication::arguments(), false);
+
+    // Focus on the editor of the first tab
+    container->QTabWidgetqqAt(0)->focusQSciScintillaqq()->setFocus();
 }
 
 MainWindow* MainWindow::instance()
