@@ -131,7 +131,7 @@ QsciScintilla::EolMode QsciScintillaqq::guessEolMode()
         return QsciScintilla::EolWindows;
     else if(_mac > _win && _mac > _unix)
         return QsciScintilla::EolMac;
-    else if(_unix > _win && _unix > _unix)
+    else if(_unix > _win && _unix > _mac)
         return QsciScintilla::EolUnix;
     return QsciScintilla::EolUnix;
 }
