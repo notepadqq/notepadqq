@@ -36,7 +36,7 @@
 // required for build: libgtk3.0-dev
 
 void processOtherInstances();
-int  numberOfFilesInArgs(QStringList arguments);
+int numberOfFilesInArgs(QStringList arguments);
 void setupSystemIconTheme();
 bool shouldStartApp(int argc, char *argv[]);
 
@@ -183,13 +183,18 @@ void displayHelp()
     printf("\n"
            "notepadqq    Notepad++ for Linux\n\n"
            "Text editor with support for multiple programming languages,\n"
-           "multiple encodings and pugin support.\n\n"
+           "multiple encodings and plugin support.\n\n"
+           "Usage:\n"
+           "  notepadqq\n"
+           "  notepadqq [-h|--help]\n"
+           "  notepadqq [-v|--version]\n"
+           "  notepadqq [file1 file2 ...]\n\n"
           );
 }
 
 void displayVersion()
 {
-    printf("notepadqq version 0.1\n");
+    printf("notepadqq version 0.13.0\n");
 }
 
 inline
