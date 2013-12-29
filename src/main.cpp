@@ -38,12 +38,17 @@
 void processOtherInstances();
 int numberOfFilesInArgs(QStringList arguments);
 void setupSystemIconTheme();
+bool shouldStartApp(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
+{ 
+    if (!shouldStartApp(argc, argv)) {
+      return 0;
+    }
+    
+    QApplication a(argc, argv);  
     a.processEvents();
-
+    
 #if defined(SINGLEINSTANCE_EXPERIMENTAL)
     /* Attach to an existing instance
      * only if there is at least
@@ -171,4 +176,47 @@ void setupSystemIconTheme()
 
         QIcon::setThemeName(icon_theme_name);
     }
+}
+
+void displayHelp()
+{
+    printf("\n"
+           "notepadqq    Notepad++ for Linux\n\n"
+           "Text editor with support for multiple programming languages,\n"
+           "multiple encodings and plugin support.\n\n"
+           "Usage:\n"
+           "  notepadqq\n"
+           "  notepadqq [-h|--help]\n"
+           "  notepadqq [-v|--version]\n"
+           "  notepadqq [file1 file2 ...]\n\n"
+          );
+}
+
+void displayVersion()
+{
+    printf("notepadqq version 0.13.0\n");
+}
+
+inline
+bool shouldStartApp(int argc, char* argv[])
+{
+#define MATCHES_OPT(str, short, long) \
+    strcmp(str, short)==0 || strcmp(str, long)==0
+    
+    if (argc > 1) {
+        const char* const firstArg = argv[1];
+        if (MATCHES_OPT(firstArg, "-h", "--help")) {
+          displayHelp();
+          return false;
+        }
+        
+        if (MATCHES_OPT(firstArg, "-v", "--version")) {
+          displayVersion();
+          return false;
+        }
+        
+    }
+    return true;
+    
+#undef MATCHES_OPT
 }
