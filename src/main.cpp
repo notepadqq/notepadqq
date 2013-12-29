@@ -38,7 +38,6 @@
 void processOtherInstances();
 int  numberOfFilesInArgs(QStringList arguments);
 void setupSystemIconTheme();
-
 bool shouldStartApp(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
