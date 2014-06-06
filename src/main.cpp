@@ -181,7 +181,7 @@ void setupSystemIconTheme()
 void displayHelp()
 {
     printf("\n"
-           "notepadqq    Notepad++ for Linux\n\n"
+           "notepadqq    a Notepad++ clone\n\n"
            "Text editor with support for multiple programming languages,\n"
            "multiple encodings and plugin support.\n\n"
            "Usage:\n"

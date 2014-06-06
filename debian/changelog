@@ -1,0 +1,47 @@
+notepadqq (0.20.0-1) trusty; urgency=low
+
+  * New version
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Fri, 06 Jun 2014 05:48:04 +0200
+
+notepadqq (0.13.11-1) precise; urgency=low
+
+  * Improved cross-platform behavior
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Sun, 03 Jun 2012 17:42:56 +0200
+
+notepadqq (0.13.10-1) maverick; urgency=low
+
+  * "Run" menu
+  * Improved selection highlight behavoir
+  * Icon updated
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Tue, 12 Apr 2011 17:13:45 +0200
+
+notepadqq (0.13.9-1) maverick; urgency=low
+
+  * Notepadqq now monitors for changed files
+  * Fixed a bug related to selection highlight
+  * Fixed a bug relative to text encodings
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Sun, 10 Apr 2011 17:39:42 +0200
+
+notepadqq (0.13.8-1) maverick; urgency=low
+
+  * Added support for mouse wheel zooming
+  * Improved DEB packages
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Tue, 05 Apr 2011 18:29:07 +0200
+
+notepadqq (0.13.7-1) maverick; urgency=low
+
+  * Software icons now are the system icons
+  * Improved the real-time highlight of selected words
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Wed, 30 Mar 2011 22:55:12 +0200
+
+notepadqq (0.13.6-2) maverick; urgency=low
+
+  * Initial release (Closes: #0)
+
+ -- Daniele Di Sarli <danieleds0@gmail.com>  Mon, 28 Mar 2011 23:59:00 +0200
