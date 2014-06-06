@@ -194,7 +194,7 @@ void displayHelp()
 
 void displayVersion()
 {
-    printf("notepadqq version 0.13.0\n");
+    printf(POINTVERSION "\n");
 }
 
 inline

@@ -1,16 +1,18 @@
-
 [Desktop Entry]
 Encoding=UTF-8
 Name=Notepadqq
+Name[de_DE]=Notepadqq
 Name[it_IT]=Notepadqq
 GenericName=Notepadqq source code editor
+GenericName[de_DE]=Notepadqq Quelltext-Editor
 GenericName[it_IT]=Editor di codice sorgente Notepadqq
 Comment=Edit source code files
+Comment[de_DE]=Quelltext bearbeiten
 Comment[it_IT]=Modifica codici sorgenti
 Exec=notepadqq
 Terminal=false
 Type=Application
 StartupNotify=false
 MimeType=text/plain;text/html;text/x-php;text/x-c;text/x-shellscript;
-Icon=/usr/share/icons/hicolor/scalable/apps/notepadqq.svg
+Icon=notepadqq
 Categories=Development;Utility;TextEditor;
