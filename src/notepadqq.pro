@@ -32,7 +32,7 @@ win32 {
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     qsciscintillaqq.cpp \
     frmabout.cpp \
     userlexer.cpp \
@@ -85,7 +85,7 @@ TRANSLATIONS += L10n/notepadqq_en.ts \
 unix {
     # MAKE INSTALL
     INSTALLS += target \
-        vfiles \
+        share \
         data
 
     isEmpty(PREFIX) {
@@ -94,8 +94,8 @@ unix {
 
     target.path = $$INSTALL_ROOT$$PREFIX/bin/
     target.files += $$DESTDIR/$$TARGET
-    vfiles.path = $$INSTALL_ROOT$$PREFIX/
-    vfiles.files += sys_files/usr/*
+    share.path = $$INSTALL_ROOT$$PREFIX/share
+    share.files += sys_files/*
     data.path  = $$INSTALL_ROOT$$PREFIX/share/notepadqq
     data.files = syntax/*.xml
 }

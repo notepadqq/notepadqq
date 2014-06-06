@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh ${@} --parallel
+
+override_dh_auto_build:
+	cd src/ && qmake-qt4 PREFIX=$(CURDIR)/debian/tmp/usr notepadqq.pro -r -spec linux-g++
+	cd src/ && $(MAKE)
+	lupdate -no-obsolete src/notepadqq.pro
+	lrelease src/notepadqq.pro
+
+override_dh_auto_install:
+	cd src/ && $(MAKE) install
+
