@@ -17,3 +17,5 @@ override_dh_clean:
 	dh_clean src/L10n/*.qm
 	rm -rf build/
 
+override_dh_builddeb:
+	dh_builddeb -- -Zxz -z9
