@@ -7,9 +7,7 @@ Build-Depends:
  libqt4-dev,
  qt4-qmake,
  libqscintilla2-dev,
- libmagic-dev,
- librsvg2-bin,
- imagemagick
+ libmagic-dev
 Standards-Version: 3.9.4
 Homepage: http://notepadqq.sourceforge.net
 Vcs-Git: git://github.com/notepadqq/notepadqq.git
