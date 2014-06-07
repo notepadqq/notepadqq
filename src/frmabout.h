@@ -23,7 +23,9 @@
 #ifndef FRMABOUT_H
 #define FRMABOUT_H
 
+#include <QDesktopServices>
 #include <QDialog>
+#include <QUrl>
 
 namespace Ui {
     class frmAbout;
@@ -42,6 +44,7 @@ private:
 
 private slots:
     void on_pushButton_clicked();
+    void on_lblUrl_linkActivated();
     void on_lblThanks_linkActivated();
 };
 

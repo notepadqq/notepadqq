@@ -32,7 +32,7 @@ frmAbout::frmAbout(QWidget *parent) :
 
     ui->lblVersion->setText("v" + VERSION);
     ui->lblCopyright->setText(COPYRIGHT);
-    ui->lblUrl->setText(URL);
+    ui->lblUrl->setText("<a href=\"" + URL + "\">" + URL + "</a>");
     ui->lblThanks->setText(ui->lblThanks->text().replace("{thanks to}", tr("thanks to...")));
 
     setFixedSize(this->width(), this->height());
@@ -42,6 +42,11 @@ frmAbout::frmAbout(QWidget *parent) :
 frmAbout::~frmAbout()
 {
     delete ui;
+}
+
+void frmAbout::on_lblUrl_linkActivated()
+{
+    QDesktopServices::openUrl(QUrl(URL, QUrl::TolerantMode));
 }
 
 void frmAbout::on_lblThanks_linkActivated()

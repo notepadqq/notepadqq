@@ -157,7 +157,7 @@ p, li { white-space: pre-wrap; }
        <string notr="true">QLabel {color: rgb(26, 26, 26);}</string>
       </property>
       <property name="text">
-       <string notr="true">http://notepadqq.sourceforge.net</string>
+       <string notr="true">&lt;a href=&quot;http://notepadqq.sourceforge.net/&quot;&gt;http://notepadqq.sourceforge.net/&lt;/a&gt;</string>
       </property>
       <property name="textInteractionFlags">
        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
