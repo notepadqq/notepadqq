@@ -35,23 +35,23 @@ const char* userLexer::language() const
         return "AsciiDoc";
 }
 
-QString userLexer::description(int style) const
+QString userLexer::description(int) const
 {
         return QString();
 }
 
-void userLexer::styleText(int start, int end)
+//void userLexer::styleText(int start, int end)
+void userLexer::styleText(int, int)
 {
     //editor()->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE,start, end, chars);
-
 }
 
-QColor userLexer::defaultColor(int style)
+QColor userLexer::defaultColor(int)
 {
         return QColor(0xe0, 0x0, 0x0);
 }
 
-QFont  userLexer::defaultFont(int style)
+QFont  userLexer::defaultFont(int)
 {
         return QFont("Courier New", 10);
 }

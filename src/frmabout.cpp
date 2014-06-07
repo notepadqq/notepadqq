@@ -44,7 +44,7 @@ frmAbout::~frmAbout()
     delete ui;
 }
 
-void frmAbout::on_lblThanks_linkActivated(QString link)
+void frmAbout::on_lblThanks_linkActivated()
 {
     ui->txtGpl->setText(tr("Thanks to:") + "\n\n" +
                         "Don HO (notepad++)\n" +

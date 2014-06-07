@@ -42,7 +42,7 @@ private:
 
 private slots:
     void on_pushButton_clicked();
-    void on_lblThanks_linkActivated(QString link);
+    void on_lblThanks_linkActivated();
 };
 
 #endif // FRMABOUT_H
