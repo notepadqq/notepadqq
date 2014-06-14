@@ -4,6 +4,11 @@
 *.kate-swp
 *.swp
 .DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.old
 
 notepadqq-build-desktop
 build

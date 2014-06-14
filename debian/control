@@ -5,12 +5,9 @@ Maintainer: Daniele Di Sarli <danieleds0@gmail.com>
 Build-Depends:
  debhelper (>= 9~),
  libqt4-dev,
- qt4-qmake,
  libqscintilla2-dev,
- libmagic-dev,
- librsvg2-bin,
- imagemagick
-Standards-Version: 3.9.4
+ libmagic-dev
+Standards-Version: 3.9.5
 Homepage: http://notepadqq.sourceforge.net
 Vcs-Git: git://github.com/notepadqq/notepadqq.git
 Vcs-Browser: https://github.com/notepadqq/notepadqq

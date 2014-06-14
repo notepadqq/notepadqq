@@ -122,7 +122,7 @@ QString generalFunctions::getUserFilePath(QString relativePath)
     qDebug() << userFilePath;
 #else
     QString userFilePath = QString("%1/%2/%3/%4").arg(QDir::homePath()).arg(".config").arg(qApp->applicationName().toLower()).arg(relativePath);
-    QString sysFilePath  = QString("/usr/share/%1/%2").arg(qApp->applicationName().toLower()).arg(relativePath);
+    QString sysFilePath  = QString("%1/../share/%2/%3").arg(qApp->applicationDirPath()).arg(qApp->applicationName().toLower()).arg(relativePath);
 #endif
     if ( QFile(userFilePath).exists() ) return userFilePath;
     return sysFilePath;
