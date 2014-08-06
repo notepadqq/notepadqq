@@ -1,9 +1,9 @@
 Source: notepadqq
-Section: devel
+Section: editors
 Priority: optional
 Maintainer: Daniele Di Sarli <danieleds0@gmail.com>
 Build-Depends:
- debhelper (>= 9~),
+ debhelper (>= 9),
  libqt4-dev,
  libqscintilla2-dev,
  libmagic-dev
