@@ -165,7 +165,9 @@ void setupSystemIconTheme()
     // THIS SHOULD BE OK ON MOST LINUX SYSTEMS
     QStringList icon_theme_paths;
     icon_theme_paths << QDir::home().absoluteFilePath(".icons/");
+    icon_theme_paths << QString("/usr/local/share/icons");
     icon_theme_paths << QString("/usr/share/icons");
+    icon_theme_paths << QString("%1/../share/icons").arg(qApp->applicationDirPath());
     QIcon::setThemeSearchPaths(icon_theme_paths);
 
     // USE DCONF TO GET THE CURRENT THEME NAME

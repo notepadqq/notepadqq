@@ -1157,7 +1157,7 @@
 <context>
     <name>QObject</name>
     <message utf8="true">
-        <location filename="../constants.h" line="38"/>
+        <location filename="../constants.h" line="39"/>
         <source>Copyright © 2010-2014, the Notepadqq team</source>
         <translation type="unfinished">Copyright © 2010-2011, il team Notepadqq {2010-2014,?}</translation>
     </message>
@@ -1246,7 +1246,7 @@
         <translation>ringraziamenti...</translation>
     </message>
     <message>
-        <location filename="../frmabout.cpp" line="49"/>
+        <location filename="../frmabout.cpp" line="54"/>
         <source>Thanks to:</source>
         <translation>Grazie a:</translation>
     </message>

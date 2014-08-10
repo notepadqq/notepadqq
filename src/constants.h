@@ -27,7 +27,8 @@
 #include <QString>
 #include <QDir>
 #include <QProcessEnvironment>
-#include <QCoreApplication>
+#include <QApplication>
+//#include <QCoreApplication>
 
 
 #define SINGLEINSTANCE_EXPERIMENTAL true // When true, enable the experimental function for the "single instance" system
@@ -43,9 +44,11 @@ inline QString ApplicationL10nDir() {
 #ifdef Q_OS_WIN1DOWS
     QString def = "NOT IMPLEMENTED";
 #else
-    QString def = "/usr/share/notepadqq/L10n";
+    //QString def = "/usr/share/notepadqq/L10n";
+    QString def = QString("%1/../share/%2/L10n").arg(qApp->applicationDirPath()).arg(qApp->applicationName().toLower());
 #endif
-    if(!QDir(def).exists()) def = QCoreApplication::applicationDirPath() + "/L10n";
+    //if(!QDir(def).exists()) def = QCoreApplication::applicationDirPath() + "/L10n";
+    if(!QDir(def).exists()) def = qApp->applicationDirPath() + "/L10n";
     return def;
 }
 

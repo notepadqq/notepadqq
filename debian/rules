@@ -4,17 +4,18 @@
 	dh ${@} --parallel
 
 override_dh_auto_build:
-	cd src/ && qmake-qt4 PREFIX=$(CURDIR)/debian/tmp/usr notepadqq.pro -r -spec linux-g++
-	cd src/ && $(MAKE)
 	lupdate -no-obsolete src/notepadqq.pro
-	lrelease src/notepadqq.pro
+	cd src && qmake-qt4 PREFIX=$(CURDIR)/debian/tmp/usr notepadqq.pro -r -spec linux-g++
+	cd src && $(MAKE)
 
 override_dh_auto_install:
-	cd src/ && $(MAKE) install
-	rm -f debian/tmp/usr/share/notepadqq/L10n/*
+	cd src && $(MAKE) install
+
+override_dh_install:
+	dh_install --list-missing -Xnotepadqq_en.qm
 
 override_dh_clean:
-	dh_clean src/L10n/*.qm
+	dh_clean
 	rm -rf build/
 
 override_dh_builddeb:

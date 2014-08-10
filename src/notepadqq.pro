@@ -79,7 +79,7 @@ RESOURCES += \
     resources.qrc
 
 TRANSLATIONS += L10n/notepadqq_en.ts \
-                L10n/notepadqq_it.ts \
+                L10n/notepadqq_it.ts
 
 
 unix {
