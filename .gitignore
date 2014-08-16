@@ -10,10 +10,6 @@ Thumbs.db
 *.bak
 *.old
 
-notepadqq-build-desktop
-build
-src/notepadqq.pro.user
-src/notepadqq.pro.user.*
-src/Makefile
-docs/html
-packages
+/build
+/src/ui/notepadqq.pro.user
+/src/ui/notepadqq.pro.user.*

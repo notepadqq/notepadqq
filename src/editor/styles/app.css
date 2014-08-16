@@ -1,0 +1,42 @@
+﻿html {
+	height: 100vh;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+}
+
+/*::-webkit-scrollbar {
+    width:  6px;
+    height: 6px;
+    background-color:transparent;
+}
+::-webkit-scrollbar-track {
+    background-color:transparent;
+    width: 6px;
+}
+::-webkit-scrollbar-track-piece  {
+    background-color: blue;
+}
+::-webkit-scrollbar-thumb {    
+    background-color: #d4dee8;
+    width: 6px;
+}*/
+
+.editor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+.editor > .CodeMirror {
+	height: 100%;
+	cursor: text;
+}
+
+.CodeMirror-gutters {
+	cursor: default;
+}
