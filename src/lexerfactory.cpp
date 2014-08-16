@@ -22,6 +22,8 @@
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qscilexerlua.h>
 #include <Qsci/qscilexermakefile.h>
+#include <Qsci/qscilexermatlab.h>
+#include <Qsci/qscilexeroctave.h>
 #include <Qsci/qscilexerpascal.h>
 #include <Qsci/qscilexerperl.h>
 #include <Qsci/qscilexerpostscript.h>
@@ -366,6 +368,10 @@ QsciLexer* LexerFactory::createLexer(QString lg, QObject* parent)
         return new QsciLexerLua(parent);
     if ( lg == "makefile" )
         return new QsciLexerMakefile(parent);
+    if ( lg == "matlab" )
+        return new QsciLexerMatlab(parent);
+    if ( lg == "octave" )
+        return new QsciLexerOctave(parent);
     if ( lg == "pascal" )
         return new QsciLexerPascal(parent);
     if ( lg == "perl" )
