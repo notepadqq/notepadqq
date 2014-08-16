@@ -18,10 +18,16 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
     return editor.isClean(generation);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
+    console.log("setting " + data);
+    editor.setOption("mode", data);
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         autofocus: true,
         lineNumbers: true,
+        mode: { name: "" },
     });
 
     generation = editor.changeGeneration(true);

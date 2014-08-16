@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QTextCodec>
 #include "include/mainwindow.h"
+#include "include/languages.h"
 #include <magic.h>
 
 DocEngine::DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent) :
@@ -109,7 +110,10 @@ bool DocEngine::loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget,
                 editor->setFileName(fi.absoluteFilePath());
                 //sci->setEolMode(sci->guessEolMode());
                 tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                //sci->autoSyntaxHighlight();
+                editor->sendMessage(
+                            "C_CMD_SET_LANGUAGE",
+                            Languages::detectLanguage(editor->fileName()));
+
                 //addDocument(fi.absoluteFilePath());
             } else {
                 //sci->scrollCursorToCenter(pos);
@@ -195,7 +199,10 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
         if ((outFileName != "") && (editor->fileName() != outFileName)) {
             //removeDocument(sci->fileName());
             editor->setFileName(outFileName);
-            //sci->autoSyntaxHighlight();
+            editor->sendMessage(
+                        "C_CMD_SET_LANGUAGE",
+                        Languages::detectLanguage(editor->fileName()));
+
             tabWidget->setTabToolTip(tab, editor->fileName());
             tabWidget->setTabText(tab, fi.fileName());
 
@@ -209,9 +216,19 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
     return MainWindow::saveFileResult_Saved;
 }
 
+QString DocEngine::getFileMimeType(QString file)
+{
+    return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_TYPE));
+}
+
 QString DocEngine::getFileMimeEncoding(QString file)
 {
     return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));
+}
+
+QString DocEngine::getFileType(QString file)
+{
+    return getFileInformation(file,(MAGIC_ERROR|MAGIC_RAW));
 }
 
 QString DocEngine::getFileInformation(QString file, int flags)
@@ -224,7 +241,7 @@ QString DocEngine::getFileInformation(QString file, int flags)
     magic_close(myt);
 
     //We go a different route for checking encoding
-    if((flags & MAGIC_MIME_ENCODING)) {
+    if ((flags & MAGIC_MIME_ENCODING)) {
         //Don't ever return a codec we don't support, will cause crashes.
         foreach(QByteArray codec, QTextCodec::availableCodecs()){
             if(codec.toUpper() == finfo.toUpper()) {
@@ -233,9 +250,9 @@ QString DocEngine::getFileInformation(QString file, int flags)
         }
 
         return "UTF-8";
-    }else if((flags & MAGIC_RAW)) {
-        return finfo.section(',',0,0);
-    }else {
+    } else if ((flags & MAGIC_RAW)) {
+        return finfo.section(',', 0, 0);
+    } else {
         return finfo;
     }
 }

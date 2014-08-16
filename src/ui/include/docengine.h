@@ -19,6 +19,11 @@ public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
     bool loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload);
 
+    static QString getFileMimeType(QString file);
+    static QString getFileMimeEncoding(QString file);
+    static QString getFileType(QString file);
+    static QString getFileInformation(QString file, int flags);
+
     /**
      * @brief Saves a document to the file system.
      * @param tabWidget
@@ -35,8 +40,6 @@ private:
     QSettings *settings;
     TopEditorContainer *topEditorContainer;
     bool read(QIODevice *io, Editor *editor, QString encoding);
-    QString getFileMimeEncoding(QString file);
-    QString getFileInformation(QString file, int flags);
     QPair<int, int> findOpenEditorByFileName(QString filename);
 
     bool write(QIODevice *io, Editor *editor);

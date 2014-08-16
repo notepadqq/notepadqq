@@ -36,13 +36,15 @@ SOURCES += main.cpp\
     topeditorcontainer.cpp \
     editortabwidget.cpp \
     editor.cpp \
-    docengine.cpp
+    docengine.cpp \
+    languages.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
     include/editortabwidget.h \
     include/editor.h \
-    include/docengine.h
+    include/docengine.h \
+    include/languages.h
 
 FORMS    += mainwindow.ui
 
@@ -51,6 +53,7 @@ RESOURCES += \
 
 
 ### EXTRA TARGETS ###
+# FIXME not working
 QMAKE_POST_LINK += (cd \"$$PWD\" && \
                     $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \
                     $${QMAKE_COPY_DIR} \"../editor\"/* \"$$DESTDIR/editor/\") # TODO remove unnecessary files
