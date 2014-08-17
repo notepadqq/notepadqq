@@ -5,6 +5,7 @@
 #include "topeditorcontainer.h"
 #include <QLabel>
 #include <QSettings>
+#include <QCloseEvent>
 #include "docengine.h"
 
 namespace Ui {
@@ -46,6 +47,7 @@ public:
     };
 
 private slots:
+    void refreshEditorUiInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -60,19 +62,14 @@ private slots:
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
     void on_cursorActivity();
-
     void on_action_Delete_triggered();
-    void refreshEditorUiInfo(Editor *editor);
-
     void on_actionSelect_All_triggered();
-
     void on_actionAbout_Notepadqq_triggered();
-
     void on_actionAbout_Qt_triggered();
-
     void on_action_Undo_triggered();
-
     void on_action_Redo_triggered();
+
+    void on_actionE_xit_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -91,10 +88,19 @@ private:
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
     int                 closeTab(EditorTabWidget *tabWidget, int tab);
+
+    /**
+     * @brief Save a document. If the document has not an associated path,
+     *        open a dialog to ask the user where to save the file.
+     * @param tabWidget
+     * @param tab
+     * @return
+     */
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QString             getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
+    void                closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H

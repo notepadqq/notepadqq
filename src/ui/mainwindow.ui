@@ -569,7 +569,7 @@
     <string>E&amp;xit</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Q</string>
+    <string>Alt+F4</string>
    </property>
   </action>
   <action name="action_Undo">

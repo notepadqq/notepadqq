@@ -457,3 +457,42 @@ void MainWindow::on_action_Redo_triggered()
 {
     currentEditor()->sendMessage("C_CMD_REDO");
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    int tabWidgetsCount = topEditorContainer->count();
+    for(int i = 0; i < tabWidgetsCount; i++) {
+        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(i);
+        int tabCount = tabWidget->count();
+
+        for(int j = 0; j < tabCount; j++) {
+            Editor *editor = tabWidget->editor(j);
+
+            if(editor->isClean() == false) {
+                tabWidget->setCurrentIndex(j);
+                editor->setFocus();
+
+                int ret = askIfWantToSave(tabWidget, j, askToSaveChangesReason_tabClosing);
+                if(ret == QMessageBox::Save) {
+                    if(save(tabWidget, j) == MainWindow::saveFileResult_Canceled)
+                    {
+                        // The user canceled the "save dialog". Let's stop the close event.
+                        event->ignore();
+                        break;
+                    }
+                } else if(ret == QMessageBox::Discard) {
+                    // Don't save
+                } else if(ret == QMessageBox::Cancel) {
+                    event->ignore();
+                    break;
+                }
+            }
+        }
+
+    }
+}
+
+void MainWindow::on_actionE_xit_triggered()
+{
+    this->close();
+}
