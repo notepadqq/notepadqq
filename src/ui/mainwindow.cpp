@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "include/editor.h"
 #include "include/editortabwidget.h"
+#include "include/frmabout.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -431,4 +432,18 @@ void MainWindow::on_action_Delete_triggered()
 void MainWindow::on_actionSelect_All_triggered()
 {
     currentEditor()->sendMessage("C_CMD_SELECT_ALL");
+}
+
+void MainWindow::on_actionAbout_Notepadqq_triggered()
+{
+    frmAbout *_about;
+    _about = new frmAbout(this);
+    _about->exec();
+
+    _about->deleteLater();
+}
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QApplication::aboutQt();
 }

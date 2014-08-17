@@ -37,16 +37,20 @@ SOURCES += main.cpp\
     editortabwidget.cpp \
     editor.cpp \
     docengine.cpp \
-    languages.cpp
+    languages.cpp \
+    frmabout.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
     include/editortabwidget.h \
     include/editor.h \
     include/docengine.h \
-    include/languages.h
+    include/languages.h \
+    include/frmabout.h \
+    include/constants.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    frmabout.ui
 
 RESOURCES += \
     resources.qrc
