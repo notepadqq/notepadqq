@@ -371,19 +371,19 @@ void MainWindow::on_action_Copy_triggered()
 {
     QVariant text = currentEditor()->sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
 
-    QApplication::clipboard()->setText(text.toStringList().join(""));
+    QApplication::clipboard()->setText(text.toStringList().join("\n"));
 }
 
 void MainWindow::on_action_Paste_triggered()
 {
-    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT",
+    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT",
                                  QApplication::clipboard()->text());
 }
 
 void MainWindow::on_actionCu_t_triggered()
 {
     ui->action_Copy->trigger();
-    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT", "");
+    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT", "");
 }
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
@@ -425,5 +425,5 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 void MainWindow::on_action_Delete_triggered()
 {
-    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT", "");
+    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT", "");
 }

@@ -27,8 +27,14 @@ UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, p
     return editor.getSelections("\n");
 });
 
-UiDriver.registerEventHandler("C_CMD_SET_SELECTION_TEXT", function(msg, data, prevReturn) {
-    return editor.replaceSelection(data);
+UiDriver.registerEventHandler("C_CMD_SET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
+    var dataLines = data.split("\n");
+    var selectedLines = editor.getSelections("\n");
+
+    if (dataLines.length == selectedLines.length)
+        editor.replaceSelections(dataLines);
+    else
+        editor.replaceSelection(data);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
