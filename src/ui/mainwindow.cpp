@@ -4,6 +4,7 @@
 #include "include/editortabwidget.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -71,6 +72,16 @@ MainWindow::MainWindow(QWidget *parent) :
             SIGNAL(tabCloseRequested(EditorTabWidget*,int)),
             this,
             SLOT(on_tabCloseRequested(EditorTabWidget*,int)));
+
+    connect(this->topEditorContainer,
+            SIGNAL(currentEditorChanged(EditorTabWidget*,int)),
+            this,
+            SLOT(on_currentEditorChanged(EditorTabWidget*,int)));
+
+    connect(this->topEditorContainer,
+            SIGNAL(editorAdded(EditorTabWidget*,int)),
+            this,
+            SLOT(on_editorAdded(EditorTabWidget*,int)));
 
     this->createStatusBar();
 
@@ -312,7 +323,8 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
                 0, 0);
 
     if (filename != "") {
-        settings->setValue("lastSelectedDir", QFileInfo(filename).absolutePath());
+        settings->setValue("lastSelectedDir",
+                           QFileInfo(filename).absolutePath());
         // Write
         return this->docEngine->saveDocument(tabWidget, tab, filename, copy);
     } else {
@@ -325,10 +337,16 @@ QString MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int
     QString docFileName = tabWidget->editor(tab)->fileName();
 
     if(docFileName == "") {
-        return settings->value("lastSelectedDir", ".").toString() + "/" + tabWidget->tabText(tab);
+        return settings->value("lastSelectedDir", ".").toString()
+                + "/" + tabWidget->tabText(tab);
     } else {
         return docFileName;
     }
+}
+
+Editor *MainWindow::currentEditor()
+{
+    return this->topEditorContainer->currentTabWidget()->currentEditor();
 }
 
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)
@@ -353,4 +371,52 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 {
     EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
     this->saveAs(tabW, tabW->currentIndex(), true);
+}
+
+void MainWindow::on_action_Copy_triggered()
+{
+    QVariant text = currentEditor()->sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
+
+    QApplication::clipboard()->setText(text.toStringList().join(""));
+}
+
+void MainWindow::on_action_Paste_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT",
+                                 QApplication::clipboard()->text());
+}
+
+void MainWindow::on_actionCu_t_triggered()
+{
+    ui->action_Copy->trigger();
+    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT", "");
+}
+
+void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
+{
+
+}
+
+void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
+{
+    Editor *editor = tabWidget->editor(tab);
+    connect(editor,
+            SIGNAL(cursorActivity()),
+            this,
+            SLOT(on_cursorActivity()));
+}
+
+void MainWindow::on_cursorActivity()
+{
+    Editor *editor = (Editor *)sender();
+
+    if(currentEditor() == editor) {
+        // Update status bar
+        int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
+        int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
+
+
+        //statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").arg(line+1).arg(index+1).arg(selectionCharacters).arg(selectionLines));
+    }
 }

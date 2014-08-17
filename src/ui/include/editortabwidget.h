@@ -32,6 +32,7 @@ private slots:
 
 signals:
     void gotFocus();
+    void editorAdded(int index);
 
 public slots:
     void setSavedIcon(int index, bool saved);

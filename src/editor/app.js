@@ -23,6 +23,22 @@ UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevRetu
     editor.setOption("mode", data);
 });
 
+UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
+    return editor.getSelections("\n");
+});
+
+UiDriver.registerEventHandler("C_CMD_SET_SELECTION_TEXT", function(msg, data, prevReturn) {
+    return editor.replaceSelection(data);
+});
+
+UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
+    return editor.getValue("\n").length;
+});
+
+UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevReturn) {
+    return editor.lineCount();
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         autofocus: true,
@@ -35,6 +51,10 @@ $(document).ready(function () {
     editor.on("change", function(instance, changeObj) {
         UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
         UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean());
+    });
+
+    editor.on("cursorActivity", function(instance, changeObj) {
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY");
     });
 
     UiDriver.sendMessage("J_EVT_READY", null);

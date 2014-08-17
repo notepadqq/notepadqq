@@ -48,17 +48,18 @@ public:
 private slots:
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
-
     void on_actionMove_to_Other_View_triggered();
-
     void on_action_Open_triggered();
     void on_tabCloseRequested(EditorTabWidget* tabWidget, int tab);
-
     void on_actionSave_triggered();
-
     void on_actionSave_as_triggered();
-
     void on_actionSave_a_Copy_As_triggered();
+    void on_action_Copy_triggered();
+    void on_action_Paste_triggered();
+    void on_actionCu_t_triggered();
+    void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
+    void on_editorAdded(EditorTabWidget* tabWidget, int tab);
+    void on_cursorActivity();
 
 private:
     Ui::MainWindow*     ui;
@@ -80,6 +81,7 @@ private:
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QString             getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
+    Editor*             currentEditor();
 };
 
 #endif // MAINWINDOW_H

@@ -78,11 +78,14 @@ signals:
 
     // Pre-interpreted messages:
     void contentChanged();
+    void cursorActivity();
     void cleanChanged(bool isClean);
 
 public slots:
     void sendMessage(QString msg, QVariant data);
+    void sendMessage(QString msg);
     QVariant sendMessageWithResult(QString msg, QVariant data);
+    QVariant sendMessageWithResult(QString msg);
 };
 
 #endif // EDITOR_H

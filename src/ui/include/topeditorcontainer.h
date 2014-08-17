@@ -22,10 +22,30 @@ private:
     EditorTabWidget *m_currentTabWidget;
 
 signals:
+    /**
+     * @brief Emitted when any of the tab widgets switch tab
+     * @param tabWidget
+     * @param tab
+     */
     void currentTabChanged(EditorTabWidget *tabWidget, int tab);
+
+    /**
+     * @brief Emitted when the focused tabWidget changes
+     * @param tabWidget
+     */
     void currentTabWidgetChanged(EditorTabWidget *tabWidget);
-    void customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
+
+    /**
+     * @brief Emitted when the focused editor changes, in any of
+     *        the tab widgets within this container.
+     * @param tabWidget
+     * @param tab
+     */
+    void currentEditorChanged(EditorTabWidget *tabWidget, int tab);
+
+    void customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tab);
     void tabCloseRequested(EditorTabWidget *tabWidget, int tab);
+    void editorAdded(EditorTabWidget *tabWidget, int tab);
 
 public slots:
 
@@ -34,6 +54,7 @@ private slots:
     void on_currentTabWidgetChanged();
     void on_customContextMenuRequested(QPoint point);
     void on_tabCloseRequested(int index);
+    void on_editorAdded(int tab);
 
 };
 

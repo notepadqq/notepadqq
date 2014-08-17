@@ -34,6 +34,8 @@ int EditorTabWidget::addEditorTab(bool setFocus, QString title)
 
     this->setUpdatesEnabled(true);
 
+    emit editorAdded(index);
+
     return index;
 }
 
@@ -56,6 +58,8 @@ int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, i
     this->setTabToolTip(index, tooltip);
 
     this->setUpdatesEnabled(true);
+
+    emit editorAdded(index);
 
     return index;
 }

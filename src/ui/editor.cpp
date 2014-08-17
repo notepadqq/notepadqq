@@ -58,6 +58,8 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
         emit contentChanged();
     else if(msg == "J_EVT_CLEAN_CHANGED")
         emit cleanChanged(data.toBool());
+    else if(msg == "J_EVT_CURSOR_ACTIVITY")
+        emit cursorActivity();
 }
 
 void Editor::setFocus()
@@ -101,10 +103,15 @@ void Editor::sendMessage(QString msg, QVariant data)
     this->sendMessageWithResult(msg, data);
 }
 
+void Editor::sendMessage(QString msg)
+{
+    this->sendMessage(msg, 0);
+}
+
 QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
 {
     while (!ready) {
-        // FIXME Avoid active wait
+        // FIXME Avoid active wait. Warn user if too much time passed.
     }
 
     QString funCall = "UiDriver.messageReceived('" +
@@ -113,4 +120,9 @@ QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
     this->jsToCppProxy->setMsgData(data);
 
     return this->webView->page()->mainFrame()->evaluateJavaScript(funCall);
+}
+
+QVariant Editor::sendMessageWithResult(QString msg)
+{
+    return this->sendMessageWithResult(msg, 0);
 }

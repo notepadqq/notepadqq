@@ -21,6 +21,7 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_customContextMenuRequested(QPoint)));
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tabCloseRequested(int)));
+    connect(tabWidget, SIGNAL(editorAdded(int)), this, SLOT(on_editorAdded(int)));
 
     return tabWidget;
 }
@@ -40,6 +41,7 @@ void TopEditorContainer::on_currentTabChanged(int index)
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
     this->m_currentTabWidget = tabWidget;
     emit this->currentTabChanged(tabWidget, index);
+    emit this->currentEditorChanged(tabWidget, index);
 }
 
 void TopEditorContainer::on_currentTabWidgetChanged()
@@ -49,6 +51,7 @@ void TopEditorContainer::on_currentTabWidgetChanged()
     if(m_currentTabWidget != tabWidget) {
         this->m_currentTabWidget = tabWidget;
         emit this->currentTabWidgetChanged(tabWidget);
+        emit this->currentEditorChanged(tabWidget, tabWidget->currentIndex());
     }
 }
 
@@ -73,4 +76,10 @@ void TopEditorContainer::on_tabCloseRequested(int index)
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
     this->m_currentTabWidget = tabWidget;
     emit this->tabCloseRequested(tabWidget, index);
+}
+
+void TopEditorContainer::on_editorAdded(int tab)
+{
+    EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
+    emit this->editorAdded(tabWidget, tab);
 }

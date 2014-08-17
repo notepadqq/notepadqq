@@ -53,10 +53,12 @@ RESOURCES += \
 
 
 ### EXTRA TARGETS ###
-# FIXME not working
+# FIXME Run even if nothing changed in the c++ code
 QMAKE_POST_LINK += (cd \"$$PWD\" && \
                     $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \
                     $${QMAKE_COPY_DIR} \"../editor\"/* \"$$DESTDIR/editor/\") # TODO remove unnecessary files
+
+QMAKE_DISTCLEAN += -r "$$DESTDIR/editor"
 
 
 ### INSTALL ###
