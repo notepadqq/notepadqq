@@ -1,9 +1,11 @@
 Notepadqq
 =========
 
+_Keep in mind that this is an experimental branch._
+
 Dependencies
 ------------
-   * QScintilla (libqscintilla2-11)
+   * Qt 5.3.1
    * libmagic-dev
 
 Bug Tracking
@@ -14,10 +16,7 @@ How to build
 ------------
 You can build and install Notepadqq from command line:
 
-    notepadqq/src$ qmake-qt4 PREFIX=/usr/local notepadqq.pro -r -spec linux-g++
-    notepadqq/src$ make
-    notepadqq/src$ make install
-
-You can also build a Debian package:
-
-    notepadqq$ dpkg-buildpackage -b -us -uc
+    notepadqq/src/ui$ qmake PREFIX=/usr/local notepadqq.pro -r -spec linux-g++
+    notepadqq/src/ui$ make
+    
+`make install` is not currently supported.
