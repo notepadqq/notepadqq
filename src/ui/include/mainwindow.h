@@ -64,6 +64,8 @@ private slots:
     void on_action_Delete_triggered();
     void refreshEditorUiInfo(Editor *editor);
 
+    void on_actionSelect_All_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* topEditorContainer;

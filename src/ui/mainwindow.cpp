@@ -427,3 +427,8 @@ void MainWindow::on_action_Delete_triggered()
 {
     currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT", "");
 }
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SELECT_ALL");
+}

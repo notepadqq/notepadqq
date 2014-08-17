@@ -50,6 +50,10 @@ UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn
     return [cur.line, cur.ch];
 });
 
+UiDriver.registerEventHandler("C_CMD_SELECT_ALL", function(msg, data, prevReturn) {
+    editor.execCommand("selectAll");
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         autofocus: true,
