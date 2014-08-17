@@ -8,10 +8,6 @@ Dependencies
    * Qt 5.3.1
    * libmagic-dev
 
-Bug Tracking
-------------
-To report any bug, use Launchpad: https://bugs.launchpad.net/notepadqq
-
 How to build
 ------------
 You can build and install Notepadqq from command line:
