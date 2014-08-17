@@ -54,6 +54,14 @@ UiDriver.registerEventHandler("C_CMD_SELECT_ALL", function(msg, data, prevReturn
     editor.execCommand("selectAll");
 });
 
+UiDriver.registerEventHandler("C_CMD_UNDO", function(msg, data, prevReturn) {
+    editor.undo();
+});
+
+UiDriver.registerEventHandler("C_CMD_REDO", function(msg, data, prevReturn) {
+    editor.redo();
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         autofocus: true,

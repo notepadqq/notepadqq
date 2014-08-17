@@ -11,17 +11,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 TARGET = notepadqq
 TEMPLATE = app
 
-RCC_DIR = ../../build/build_data
-UI_DIR = ../../build/build_data
-MOC_DIR = ../../build/build_data
-OBJECTS_DIR = ../../build/build_data
+RCC_DIR = ../../out/build_data
+UI_DIR = ../../out/build_data
+MOC_DIR = ../../out/build_data
+OBJECTS_DIR = ../../out/build_data
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../build/debug
+        DESTDIR = ../../out/debug
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../build/release
+        DESTDIR = ../../out/release
     }
 }
 

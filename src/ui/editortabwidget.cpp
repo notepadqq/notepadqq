@@ -2,6 +2,10 @@
 #include <QTabBar>
 #include <QApplication>
 
+#ifdef QT_DEBUG
+#include <QElapsedTimer>
+#endif
+
 EditorTabWidget::EditorTabWidget(QWidget *parent) :
     QTabWidget(parent)
 {
@@ -17,6 +21,11 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
 int EditorTabWidget::addEditorTab(bool setFocus, QString title)
 {
+#ifdef QT_DEBUG
+    QElapsedTimer __aet_timer;
+    __aet_timer.start();
+#endif
+
     this->setUpdatesEnabled(false);
 
     Editor *editor = new Editor(this);
@@ -35,6 +44,11 @@ int EditorTabWidget::addEditorTab(bool setFocus, QString title)
     this->setUpdatesEnabled(true);
 
     emit editorAdded(index);
+
+#ifdef QT_DEBUG
+    qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
+    qDebug() << "Tab opened in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec";
+#endif
 
     return index;
 }

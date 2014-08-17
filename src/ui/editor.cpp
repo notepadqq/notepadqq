@@ -8,11 +8,6 @@
 Editor::Editor(QWidget *parent) :
     QWidget(parent), m_fileName("")
 {
-
-#ifdef QT_DEBUG
-    QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-#endif
-
     this->jsToCppProxy = new JsToCppProxy();
     connect(this->jsToCppProxy,
             SIGNAL(messageReceived(QString,QVariant)),
@@ -27,6 +22,12 @@ Editor::Editor(QWidget *parent) :
     this->webView = new QWebView();
     this->webView->setUrl(QUrl("file://" + editorPath));
     this->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+
+    QWebSettings *pageSettings = this->webView->page()->settings();
+    #ifdef QT_DEBUG
+    pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    #endif
+    pageSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);

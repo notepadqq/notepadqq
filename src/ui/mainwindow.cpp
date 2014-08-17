@@ -447,3 +447,13 @@ void MainWindow::on_actionAbout_Qt_triggered()
 {
     QApplication::aboutQt();
 }
+
+void MainWindow::on_action_Undo_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_UNDO");
+}
+
+void MainWindow::on_action_Redo_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_REDO");
+}
