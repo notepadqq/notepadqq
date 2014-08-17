@@ -105,40 +105,34 @@ void MainWindow::createStatusBar()
     status->setFixedHeight(22);
 
     label = new QLabel("File Format", this);
-    label->setFrameShape(QFrame::StyledPanel);
     label->setMinimumWidth(160);
     status->addWidget(label);
     statusBar_fileFormat = label;
 
     label = new QLabel("Length : 0     Lines : 1", this);
-    label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_lengthInfo = label;
 
     label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0", this);
     label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_selectionInfo = label;
 
     label = new QLabel("EOL", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(128);
-    label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_EOLstyle = label;
 
     label = new QLabel("Encoding", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(128);
-    label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_textFormat = label;
 
     label = new QLabel("INS", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(40);
-    label->setFrameShape(QFrame::StyledPanel);
     status->addWidget(label);
     statusBar_overtypeNotify = label;
 }
@@ -394,7 +388,7 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
-
+    this->refreshEditorUiInfo(tabWidget->editor(tab));
 }
 
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
@@ -411,12 +405,25 @@ void MainWindow::on_cursorActivity()
     Editor *editor = (Editor *)sender();
 
     if(currentEditor() == editor) {
-        // Update status bar
-        int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
-        int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-        statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
-
-
-        //statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").arg(line+1).arg(index+1).arg(selectionCharacters).arg(selectionLines));
+        this->refreshEditorUiInfo(editor);
     }
+}
+
+void MainWindow::refreshEditorUiInfo(Editor *editor)
+{
+    // Update status bar
+    int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
+    int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+    statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
+
+    QList<QVariant> cursor = editor->sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+    statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
+                                     arg(cursor[0].toInt() + 1).
+                                     arg(cursor[1].toInt() + 1).
+                                     arg(0).arg(0));
+}
+
+void MainWindow::on_action_Delete_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_SELECTION_TEXT", "");
 }

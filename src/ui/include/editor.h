@@ -63,9 +63,6 @@ public:
 private:
     QWebView *webView;
     JsToCppProxy *jsToCppProxy;
-    bool ready;
-    QQueue<QString> outMessagesQueue;
-    QQueue<QVariant> outMessagesDataQueue;
     QString m_fileName;
     QString jsStringEscape(QString str);
 
@@ -80,6 +77,12 @@ signals:
     void contentChanged();
     void cursorActivity();
     void cleanChanged(bool isClean);
+
+    /**
+     * @brief The editor finished loading. There should be
+     *        no need to use this signal outside this class.
+     */
+    void editorReady();
 
 public slots:
     void sendMessage(QString msg, QVariant data);

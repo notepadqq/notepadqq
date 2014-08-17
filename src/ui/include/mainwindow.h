@@ -61,6 +61,9 @@ private slots:
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
     void on_cursorActivity();
 
+    void on_action_Delete_triggered();
+    void refreshEditorUiInfo(Editor *editor);
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* topEditorContainer;

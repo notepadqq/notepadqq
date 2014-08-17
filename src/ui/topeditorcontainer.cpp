@@ -14,12 +14,12 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
 
     // Detect tab switches
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(on_currentTabChanged(int)));
-    // Detect tabWidget switches
+    // Detect tabWidget switches // FIXME Doesn't work if the user changes
+    // tabWidget by clicking directly within one of the editors.
     connect(tabWidget, SIGNAL(gotFocus()), this, SLOT(on_currentTabWidgetChanged()));
     connect(tabWidget, SIGNAL(tabBarClicked(int)), this, SLOT(on_currentTabWidgetChanged()));
 
     connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_customContextMenuRequested(QPoint)));
-
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tabCloseRequested(int)));
     connect(tabWidget, SIGNAL(editorAdded(int)), this, SLOT(on_editorAdded(int)));
 

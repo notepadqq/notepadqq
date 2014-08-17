@@ -36,7 +36,7 @@
     </property>
    </layout>
   </widget>
-<widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -380,7 +380,6 @@
    <addaction name="menuRun"/>
    <addaction name="menu"/>
   </widget>
-  
   <widget class="QToolBar" name="mainToolBar">
    <property name="iconSize">
     <size>

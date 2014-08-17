@@ -6,7 +6,7 @@
 #include <QCoreApplication>
 
 Editor::Editor(QWidget *parent) :
-    QWidget(parent), ready(false), m_fileName("")
+    QWidget(parent), m_fileName("")
 {
 
 #ifdef QT_DEBUG
@@ -18,6 +18,9 @@ Editor::Editor(QWidget *parent) :
             SIGNAL(messageReceived(QString,QVariant)),
             this,
             SLOT(on_proxyMessageReceived(QString,QVariant)));
+
+    QEventLoop loop;
+    connect(this, SIGNAL(editorReady()), &loop, SLOT(quit()));
 
     QString editorPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + "editor/index.html");
 
@@ -31,6 +34,10 @@ Editor::Editor(QWidget *parent) :
     this->setLayout(layout);
 
     connect(this->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(on_javaScriptWindowObjectCleared()));
+
+
+    // Block until a J_EVT_READY message is received
+    loop.exec();
 }
 
 Editor::~Editor()
@@ -49,11 +56,7 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     emit messageReceived(msg, data);
 
     if(msg == "J_EVT_READY") {
-        this->ready = true;
-        while(!this->outMessagesQueue.isEmpty()) {
-            this->sendMessage(this->outMessagesQueue.dequeue(),
-                              this->outMessagesDataQueue.dequeue());
-        }
+        emit editorReady();
     } else if(msg == "J_EVT_CONTENT_CHANGED")
         emit contentChanged();
     else if(msg == "J_EVT_CLEAN_CHANGED")
@@ -94,12 +97,6 @@ QString Editor::jsStringEscape(QString str) {
 
 void Editor::sendMessage(QString msg, QVariant data)
 {
-    if (!ready) {
-        this->outMessagesQueue.enqueue(msg);
-        this->outMessagesDataQueue.enqueue(data);
-        return;
-    }
-
     this->sendMessageWithResult(msg, data);
 }
 
@@ -110,10 +107,6 @@ void Editor::sendMessage(QString msg)
 
 QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
 {
-    while (!ready) {
-        // FIXME Avoid active wait. Warn user if too much time passed.
-    }
-
     QString funCall = "UiDriver.messageReceived('" +
             jsStringEscape(msg) + "');";
 
