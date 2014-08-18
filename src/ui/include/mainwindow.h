@@ -101,6 +101,7 @@ private:
     QString             getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
     void                closeEvent(QCloseEvent *event);
+    void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
 };
 
 #endif // MAINWINDOW_H

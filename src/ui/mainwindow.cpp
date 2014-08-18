@@ -86,8 +86,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->createStatusBar();
 
-    // Open a new empty document
-    ui->action_New->trigger();
+
+
+    this->processCommandLineArgs(QApplication::arguments(), false);
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
@@ -136,6 +137,42 @@ void MainWindow::createStatusBar()
     label->setMinimumWidth(40);
     status->addWidget(label);
     statusBar_overtypeNotify = label;
+}
+
+void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherInstance)
+{
+    bool activateWindow = false;
+
+    if(arguments.count() <= 1)
+    {
+        // Open a new empty document
+        ui->action_New->trigger();
+        activateWindow = true;
+    }
+    else
+    {
+        // Open selected files
+        QStringList files;
+        for(int i = 1; i < arguments.count(); i++)
+        {
+            files.append(arguments.at(i));
+        }
+
+        EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
+        // Make sure we have a tabWidget: if not, create it.
+        if(tabW == 0) {
+            tabW = this->topEditorContainer->addTabWidget();
+        }
+        docEngine->loadDocuments(files, tabW, false);
+        activateWindow = true;
+    }
+
+    if(fromOtherInstance && activateWindow)
+    {
+        // Activate the window
+        this->activateWindow();
+        this->raise();
+    }
 }
 
 void MainWindow::on_action_New_triggered()
