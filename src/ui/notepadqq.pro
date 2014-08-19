@@ -55,12 +55,14 @@ RESOURCES += \
 
 
 ### EXTRA TARGETS ###
-# FIXME Run even if nothing changed in the c++ code
-QMAKE_POST_LINK += (cd \"$$PWD\" && \
-                    $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \
-                    $${QMAKE_COPY_DIR} \"../editor\"/* \"$$DESTDIR/editor/\") # TODO remove unnecessary files
-
-QMAKE_DISTCLEAN += -r "$$DESTDIR/editor"
+editortarget.target = editor
+editortarget.commands = (cd \"$$PWD\" && \
+                         $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \ # ensure /out/editor exists
+                         $${DEL_DIR} \"$$DESTDIR/editor\" && \ # delete /out/editor
+                         $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \ # create a new empty /out/editor
+                         $${QMAKE_COPY_DIR} \"../editor\"/* \"$$DESTDIR/editor/\") # TODO remove unnecessary files
+QMAKE_EXTRA_TARGETS += editortarget
+PRE_TARGETDEPS += editor
 
 
 ### INSTALL ###
