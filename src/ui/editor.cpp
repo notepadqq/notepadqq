@@ -1,4 +1,5 @@
 #include "include/editor.h"
+#include "include/constants.h"
 #include <QWebFrame>
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -17,7 +18,7 @@ Editor::Editor(QWidget *parent) :
     QEventLoop loop;
     connect(this, SIGNAL(editorReady()), &loop, SLOT(quit()));
 
-    QString editorPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + "editor/index.html");
+    QString editorPath = ApplicationEditorPath();
 
     this->webView = new QWebView();
     this->webView->setUrl(QUrl("file://" + editorPath));

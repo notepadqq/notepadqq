@@ -39,7 +39,7 @@ const QString COPYRIGHT = QObject::trUtf8("Copyright © 2010-2014, Daniele Di Sa
 const QString MEMBERS_URL = "https://github.com/notepadqq/notepadqq/network/members";
 
 
-inline QString ApplicationL10nDir() {
+/*inline QString ApplicationL10nDir() {
 #ifdef Q_OS_WIN1DOWS
     QString def = "NOT IMPLEMENTED";
 #else
@@ -49,17 +49,11 @@ inline QString ApplicationL10nDir() {
     //if(!QDir(def).exists()) def = QCoreApplication::applicationDirPath() + "/L10n";
     if(!QDir(def).exists()) def = qApp->applicationDirPath() + "/L10n";
     return def;
+}*/
+
+inline QString ApplicationEditorPath() {
+    QString def = QString("%1/../share/notepadqq/editor/index.html").arg(qApp->applicationDirPath());
+    return def;
 }
-
-
-
-
-
-/*** DON'T TOUCH ANYTHING AFTER HERE. You are likely to be eaten by a grue if you do. ***/
-const int SELECTOR_DefaultSelectionHighlight = 8;
-const QString INSTANCESERVER_ID = "notepadqq-{38fe96c0-030a-11e0-a976-0800200c9a66}"
-                                  + QProcessEnvironment::systemEnvironment().value("USER", "")
-                                  + QProcessEnvironment::systemEnvironment().value("USERNAME", "");
-
 
 #endif // CONSTANTS_H

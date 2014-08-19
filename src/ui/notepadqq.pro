@@ -14,14 +14,17 @@ UI_DIR = ../../out/build_data
 MOC_DIR = ../../out/build_data
 OBJECTS_DIR = ../../out/build_data
 
+unix: CMD_FULLDELETE = rm -rf
+
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug
+        DESTDIR = ../../out/debug/bin
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release
+        DESTDIR = ../../out/release/bin
     }
 }
+DATADIR = $$DESTDIR/../share
 
 win32 {
     LIBS += User32.lib
@@ -55,13 +58,15 @@ RESOURCES += \
 
 
 ### EXTRA TARGETS ###
-editortarget.target = editor
-editortarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \ # ensure /out/editor exists
-                         $${DEL_DIR} \"$$DESTDIR/editor\" && \ # delete /out/editor
-                         $${QMAKE_MKDIR} \"$$DESTDIR/editor\" && \ # create a new empty /out/editor
-                         $${QMAKE_COPY_DIR} \"../editor\"/* \"$$DESTDIR/editor/\") # TODO remove unnecessary files
-QMAKE_EXTRA_TARGETS += editortarget
+
+# Copy the editor in the "shared" folder
+editorTarget.target = editor
+editorTarget.commands = (cd \"$$PWD\" && \
+                         $${CMD_FULLDELETE} \"$$DATADIR/notepadqq\" && \
+                         $${QMAKE_MKDIR} \"$$DATADIR/notepadqq\" && \
+                         $${QMAKE_COPY_DIR} \"../editor\" \"$$DATADIR/notepadqq/editor\") # TODO remove unnecessary files
+
+QMAKE_EXTRA_TARGETS += editorTarget
 PRE_TARGETDEPS += editor
 
 
@@ -71,17 +76,40 @@ unix {
         PREFIX = /usr/local
     }
 
-    #target.path = $$INSTALL_ROOT$$PREFIX/bin/
-    #target.files += $$DESTDIR/$$TARGET
-    #share.path = $$INSTALL_ROOT$$PREFIX/share
-    #share.files += sys_files/*
-    #editor.path = $$INSTALL_ROOT$$PREFIX/share/notepadqq/editor
-    #editor.files += sys_files/*
-    #data.path  = $$INSTALL_ROOT$$PREFIX/share/notepadqq
-    #data.files = syntax/*.xml
+    INSTALLFILESDIR = ../../install_files
+
+    target.path = $$INSTALL_ROOT$$PREFIX/bin/
+    target.files += $$DESTDIR/$$TARGET
+
+    icon_h16.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/16x16/apps/
+    icon_h16.files += $$INSTALLFILESDIR/icons/hicolor/16x16/apps/notepadqq.png
+    icon_h24.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/24x24/apps/
+    icon_h24.files += $$INSTALLFILESDIR/icons/hicolor/24x24/apps/notepadqq.png
+    icon_h32.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/32x32/apps/
+    icon_h32.files += $$INSTALLFILESDIR/icons/hicolor/32x32/apps/notepadqq.png
+    icon_h48.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/48x48/apps/
+    icon_h48.files += $$INSTALLFILESDIR/icons/hicolor/48x48/apps/notepadqq.png
+    icon_h64.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/64x46/apps/
+    icon_h64.files += $$INSTALLFILESDIR/icons/hicolor/64x64/apps/notepadqq.png
+    icon_h96.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/96x96/apps/
+    icon_h96.files += $$INSTALLFILESDIR/icons/hicolor/96x96/apps/notepadqq.png
+    icon_h128.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/128x128/apps/
+    icon_h128.files += $$INSTALLFILESDIR/icons/hicolor/128x128/apps/notepadqq.png
+    icon_h256.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/256x256/apps/
+    icon_h256.files += $$INSTALLFILESDIR/icons/hicolor/256x256/apps/notepadqq.png
+    icon_h512.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/512x512/apps/
+    icon_h512.files += $$INSTALLFILESDIR/icons/hicolor/512x512/apps/notepadqq.png
+    icon_hscalable.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/
+    icon_hscalable.files += $$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.png
+
+    shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
+    shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
+
+    misc_data.path = $$INSTALL_ROOT$$PREFIX/share/
+    misc_data.files += $$DATADIR/notepadqq
 
     # MAKE INSTALL
-    #INSTALLS += target \
-    #    share \
-    #    data
+    INSTALLS += target \
+         icon_h16 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
+         shortcuts misc_data
 }
