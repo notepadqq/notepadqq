@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -189,7 +190,7 @@ void MainWindow::on_action_New_triggered()
     num++;
 }
 
-void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex) {
+void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget */*tabWidget*/, int /*tabIndex*/) {
     this->tabContextMenu->exec(point);
 }
 

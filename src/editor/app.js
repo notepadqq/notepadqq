@@ -67,6 +67,7 @@ $(document).ready(function () {
         autofocus: true,
         lineNumbers: true,
         mode: { name: "" },
+        highlightSelectionMatches: {style: "selectedHighlight"}
     });
 
     generation = editor.changeGeneration(true);

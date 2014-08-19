@@ -2,6 +2,7 @@
 #include "ui_frmabout.h"
 #include "include/constants.h"
 #include <QDesktopServices>
+#include <QUrl>
 
 frmAbout::frmAbout(QWidget *parent) :
     QDialog(parent),
@@ -25,7 +26,7 @@ frmAbout::~frmAbout()
 
 void frmAbout::on_lblContributors_linkActivated(const QString &link)
 {
-    QDesktopServices::openUrl(QUrl(MEMBERS_URL, QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl(link, QUrl::TolerantMode));
 }
 
 void frmAbout::on_pushButton_clicked()

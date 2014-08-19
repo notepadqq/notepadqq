@@ -40,3 +40,7 @@ body {
 .CodeMirror-gutters {
 	cursor: default;
 }
+
+.CodeMirror .cm-selectedHighlight {
+	background: #9bff9b;
+}

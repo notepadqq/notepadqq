@@ -11,7 +11,7 @@ Thumbs.db
 *.old
 
 /src/ui/Makefile
-build-notepadqq-Desktop-*
+build-notepadqq-Desktop*
 
 /out
 /src/ui/notepadqq.pro.user
