@@ -34,13 +34,24 @@ body {
 
 .editor > .CodeMirror {
 	height: 100%;
-	cursor: text;
+	/*cursor: text;*/
+    line-height: 1.3em;
 }
 
 .CodeMirror-gutters {
 	cursor: default;
 }
 
+/* Color of word highlight */
 .CodeMirror .cm-selectedHighlight {
 	background: #9bff9b;
+}
+
+/* Color of word highlight when the word is also selected */
+.CodeMirror .cm-selectedHighlight.CodeMirror-selectedtext {
+	background: #75d975;
+}
+
+.CodeMirror .CodeMirror-activeline-background {
+	background: #e8e8ff;
 }
