@@ -70,6 +70,8 @@ $(document).ready(function () {
         highlightSelectionMatches: {style: "selectedHighlight"},
         styleSelectedText: true,
         styleActiveLine: true,
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     });
 
     generation = editor.changeGeneration(true);
