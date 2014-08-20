@@ -10,9 +10,11 @@ Dependencies
 
 How to build
 ------------
-You can build and install Notepadqq from command line:
+You can build Notepadqq from command line:
 
     notepadqq/src/ui$ qmake PREFIX=/usr/local notepadqq.pro -r -spec linux-g++
     notepadqq/src/ui$ make
     
-`make install` is not currently supported.
+Then, if you want to install it, run
+
+    notepadqq/src/ui$ sudo make install
