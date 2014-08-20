@@ -10,7 +10,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), m_frmSearch(0)
 {
     // FIXME Set /usr/share/themes QIcon::setThemeSearchPaths();
 
@@ -533,4 +533,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_actionE_xit_triggered()
 {
     this->close();
+}
+
+void MainWindow::on_actionSearch_triggered()
+{
+    if(!m_frmSearch) {
+        m_frmSearch = new frmSearchReplace(this->topEditorContainer, this);
+    }
+    m_frmSearch->show();
 }

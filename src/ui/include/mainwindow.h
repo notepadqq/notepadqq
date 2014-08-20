@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include "docengine.h"
+#include "frmsearchreplace.h"
 
 namespace Ui {
 class MainWindow;
@@ -71,6 +72,8 @@ private slots:
 
     void on_actionE_xit_triggered();
 
+    void on_actionSearch_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* topEditorContainer;
@@ -84,6 +87,7 @@ private:
     QLabel*             statusBar_overtypeNotify;
     QSettings*          settings;
     DocEngine*          docEngine;
+    frmSearchReplace*   m_frmSearch;
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);

@@ -62,6 +62,39 @@ UiDriver.registerEventHandler("C_CMD_REDO", function(msg, data, prevReturn) {
     editor.redo();
 });
 
+/* Search with a specified regex. Automatically select the text when found.
+   The return value indicates whether a match was found. 
+   The return value is the array returned by the regex match method, in case you
+   want to extract matched groups.
+
+   data is an array. data[0] contains the regex string. data[1] is a boolean
+   (true if you want to search forward).
+*/
+UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
+    var forward = data[1];
+    var startPos;
+    
+    // Avoid getting stuck finding always the same text
+    if (forward)
+        startPos = editor.getCursor("to");
+    else
+        startPos = editor.getCursor("from");
+    
+    var searchCursor = editor.getSearchCursor(new RegExp(data[0]), startPos, false);
+
+    var ret = forward ? searchCursor.findNext() : searchCursor.findPrevious();
+    if (ret) {
+        if (forward)
+             editor.setSelection(searchCursor.from(), searchCursor.to()); 
+        else
+             editor.setSelection(searchCursor.to(), searchCursor.from());
+    }
+
+    return ret;
+});
+
+
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         autofocus: true,

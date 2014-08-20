@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     editor.cpp \
     docengine.cpp \
     languages.cpp \
-    frmabout.cpp
+    frmabout.cpp \
+    frmsearchreplace.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -48,10 +49,12 @@ HEADERS  += include/mainwindow.h \
     include/docengine.h \
     include/languages.h \
     include/frmabout.h \
-    include/constants.h
+    include/constants.h \
+    include/frmsearchreplace.h
 
 FORMS    += mainwindow.ui \
-    frmabout.ui
+    frmabout.ui \
+    frmsearchreplace.ui
 
 RESOURCES += \
     resources.qrc

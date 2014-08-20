@@ -44,12 +44,7 @@ body {
 
 /* Color of word highlight */
 .CodeMirror .cm-selectedHighlight {
-	background: #9bff9b;
-}
-
-/* Color of word highlight when the word is also selected */
-.CodeMirror .cm-selectedHighlight.CodeMirror-selectedtext {
-	background: #75d975;
+	background: rgba(0, 255, 0, 0.4); 
 }
 
 .CodeMirror .CodeMirror-activeline-background {
