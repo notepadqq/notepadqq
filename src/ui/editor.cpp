@@ -87,6 +87,25 @@ bool Editor::isClean()
     return this->sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
 }
 
+QMap<QString, QList<QString> > Editor::languages()
+{
+    QMap<QString, QVariant> modes = this->
+            sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
+
+    QMap<QString, QList<QString> > out = QMap<QString, QList<QString> >();
+    foreach (QString key, modes.keys()) {
+        QList<QVariant> raw_mimes = modes.value(key).toList();
+
+        QList<QString> mimes = QList<QString>();
+        for (int i = 0; i < raw_mimes.length(); i++)
+            mimes.append(raw_mimes.at(i).toString());
+
+        out.insert(key, mimes);
+    }
+
+    return out;
+}
+
 QString Editor::jsStringEscape(QString str) {
     return str.replace("\\", "\\\\")
             .replace("'", "\\'")

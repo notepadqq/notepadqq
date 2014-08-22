@@ -6,6 +6,8 @@
 
 QT       += core gui widgets webkitwidgets
 
+CONFIG += c++11
+
 TARGET = notepadqq
 TEMPLATE = app
 
@@ -40,7 +42,8 @@ SOURCES += main.cpp\
     docengine.cpp \
     languages.cpp \
     frmabout.cpp \
-    frmsearchreplace.cpp
+    frmsearchreplace.cpp \
+    frmsearchlanguage.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -50,11 +53,13 @@ HEADERS  += include/mainwindow.h \
     include/languages.h \
     include/frmabout.h \
     include/constants.h \
-    include/frmsearchreplace.h
+    include/frmsearchreplace.h \
+    include/frmsearchlanguage.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
-    frmsearchreplace.ui
+    frmsearchreplace.ui \
+    frmsearchlanguage.ui
 
 RESOURCES += \
     resources.qrc

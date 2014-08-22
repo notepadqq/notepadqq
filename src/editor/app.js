@@ -93,6 +93,31 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
     return ret;
 });
 
+UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevReturn) {
+    var invertedMap = {};
+    var mimes = CodeMirror.mimeModes;
+    
+    // Transform { text/css: 'css', text/x-css: 'css', text/php: { xxx: yy, name: 'php'}, ... }
+    // to { css: ['text/css', 'text/x-css'], php: ['text/php'], ... }
+
+    for (var mime in mimes) {
+        if(mimes.hasOwnProperty(mime)) {
+            // If mimes[mime] is an object insead of a string, use
+            // the 'name' field as key instead of the object itself
+            var key = mimes[mime].name || mimes[mime]
+
+            if (key != "null") { // Exclude text/plain
+
+                if (invertedMap[key] === undefined)
+                    invertedMap[key] = [];
+
+                invertedMap[key].push(mime);
+            }
+        }
+    }
+    
+    return invertedMap;
+});
 
 
 $(document).ready(function () {

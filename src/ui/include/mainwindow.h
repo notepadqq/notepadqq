@@ -74,6 +74,9 @@ private slots:
 
     void on_actionSearch_triggered();
 
+    void setLanguage(QString language);
+    void on_actionSearchLanguage_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* topEditorContainer;

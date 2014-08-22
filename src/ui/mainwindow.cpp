@@ -3,6 +3,7 @@
 #include "include/editor.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
+#include "include/frmsearchlanguage.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -90,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     this->processCommandLineArgs(QApplication::arguments(), false);
+
+    // TODO Add last 15 recent languages to Languages menu
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
@@ -190,7 +193,13 @@ void MainWindow::on_action_New_triggered()
     num++;
 }
 
-void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget */*tabWidget*/, int /*tabIndex*/) {
+void MainWindow::setLanguage(QString language)
+{
+    currentEditor()->sendMessage("C_CMD_SET_LANGUAGE", language);
+}
+
+void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget */*tabWidget*/, int /*tabIndex*/)
+{
     this->tabContextMenu->exec(point);
 }
 
@@ -541,4 +550,13 @@ void MainWindow::on_actionSearch_triggered()
         m_frmSearch = new frmSearchReplace(this->topEditorContainer, this);
     }
     m_frmSearch->show();
+}
+
+void MainWindow::on_actionSearchLanguage_triggered()
+{
+    frmSearchLanguage *_frm;
+    _frm = new frmSearchLanguage(currentEditor(), this);
+    _frm->exec();
+
+    _frm->deleteLater();
 }

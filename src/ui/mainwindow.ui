@@ -323,6 +323,10 @@
     <property name="title">
      <string>&amp;Language</string>
     </property>
+    <addaction name="actionAutomatic"/>
+    <addaction name="actionSearchLanguage"/>
+    <addaction name="separator"/>
+    <addaction name="actionPlain_text"/>
    </widget>
    <widget class="QMenu" name="menuSe_ttings">
     <property name="title">
@@ -1473,6 +1477,21 @@
    </property>
    <property name="shortcut">
     <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionPlain_text">
+   <property name="text">
+    <string>Plain text</string>
+   </property>
+  </action>
+  <action name="actionAutomatic">
+   <property name="text">
+    <string>Automatic</string>
+   </property>
+  </action>
+  <action name="actionSearchLanguage">
+   <property name="text">
+    <string>Search...</string>
    </property>
   </action>
  </widget>
