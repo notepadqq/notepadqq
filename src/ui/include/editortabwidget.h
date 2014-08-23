@@ -13,9 +13,14 @@ class EditorTabWidget : public QTabWidget
     Q_OBJECT
 public:
     explicit EditorTabWidget(QWidget *parent = 0);
-    Editor getTabDriver(int index);
     int addEditorTab(bool setFocus, QString title);
-    // Add a tab, cloning it from the specified source.
+    /**
+     * @brief Add a new document, moving it from another EditorTabWidget
+     * @param setFocus True to give focus to the new document
+     * @param source EditorTabWidget that contains the source document
+     * @param tabIndex Tab index, inside \p source, of the document
+     * @return Tab index of the new document inside this EditorTabWidget.
+     */
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
     int findOpenEditorByFileName(QString filename);
     Editor *editor(int index);

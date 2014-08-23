@@ -17,6 +17,8 @@ class DocEngine : public QObject
     Q_OBJECT
 public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
+
+    // FIXME Separate from reload
     bool loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload);
 
     static QString getFileMimeType(QString file);
@@ -26,8 +28,8 @@ public:
 
     /**
      * @brief Saves a document to the file system.
-     * @param tabWidget
-     * @param tab
+     * @param tabWidget tabWidget where the document is
+     * @param tab tab of the tabWidget that identifies the document
      * @param outFileName Where to save the file. If it's an empty string,
      *                    then the file name is the same as the current
      *                    file name of the document.

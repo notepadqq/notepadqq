@@ -23,13 +23,24 @@ private:
 
 public:
     /**
-     * @brief Set C++-to-JS message data
+     * @brief Set C++-to-JS message data. This method should
+     *        be called from the C++ part
      * @param data
      */
     void setMsgData(QVariant data) { msgData = data; }
+
+    /**
+     * @brief Get the message data set by setMsgData(). This
+     *        method should be called from the JavaScript part.
+     */
     Q_INVOKABLE QVariant getMsgData() { return msgData; }
 
 signals:
+    /**
+     * @brief A JavaScript message has been received.
+     * @param msg Message type
+     * @param data Message data
+     */
     void messageReceived(QString msg, QVariant data);
 };
 
@@ -53,8 +64,25 @@ class Editor : public QWidget
 public:
     explicit Editor(QWidget *parent = 0);
     ~Editor();
+
+    /**
+     * @brief Give focus to the editor, so that the user can start
+     *        typing. Note that calling won't automatically switch to
+     *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
+     *        and TopEditorContainer::setFocus() for that. (actually it's a bug)
+     */
     void setFocus();
+
+    /**
+     * @brief Set the file name associated with this editor
+     * @param filename full path of the file
+     */
     void setFileName(QString filename);
+
+    /**
+     * @brief Get the file name associated with this editor
+     * @return
+     */
     QString fileName();
 
     // Common messages:
