@@ -441,10 +441,8 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    connect(editor,
-            SIGNAL(cursorActivity()),
-            this,
-            SLOT(on_cursorActivity()));
+    connect(editor, &Editor::cursorActivity,
+            this, &MainWindow::on_cursorActivity);
 }
 
 void MainWindow::on_cursorActivity()

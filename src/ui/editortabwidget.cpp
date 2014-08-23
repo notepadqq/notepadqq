@@ -38,8 +38,8 @@ int EditorTabWidget::addEditorTab(bool setFocus, QString title)
 
     this->setSavedIcon(index, true);
 
-    //connect(editor, SIGNAL(contentChanged()), this, SLOT(on_contentChanged()));
-    connect(editor, SIGNAL(cleanChanged(bool)), this, SLOT(on_cleanChanged(bool)));
+    connect(editor, &Editor::cleanChanged,
+            this, &EditorTabWidget::on_cleanChanged);
 
     this->setUpdatesEnabled(true);
 
@@ -133,11 +133,6 @@ void EditorTabWidget::setTabBarVertical(bool yes)
     }
     setStyleSheet(prestyle);
     //setTabBarHighlight(MainWindow::instance()->getSettings()->value(widesettings::SETTING_TABBAR_HIGHLIGHT,true).toBool());
-}
-
-void EditorTabWidget::on_contentChanged()
-{
-
 }
 
 void EditorTabWidget::on_cleanChanged(bool isClean)

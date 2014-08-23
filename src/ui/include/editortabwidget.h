@@ -27,7 +27,6 @@ private:
     void setTabBarVertical(bool yes);
 
 private slots:
-    void on_contentChanged();
     void on_cleanChanged(bool isClean);
 
 signals:

@@ -13,15 +13,15 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
     this->addWidget(tabWidget);
 
     // Detect tab switches
-    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(on_currentTabChanged(int)));
+    connect(tabWidget, &EditorTabWidget::currentChanged, this, &TopEditorContainer::on_currentTabChanged);
     // Detect tabWidget switches // FIXME Doesn't work if the user changes
     // tabWidget by clicking directly within one of the editors.
-    connect(tabWidget, SIGNAL(gotFocus()), this, SLOT(on_currentTabWidgetChanged()));
-    connect(tabWidget, SIGNAL(tabBarClicked(int)), this, SLOT(on_currentTabWidgetChanged()));
+    connect(tabWidget, &EditorTabWidget::gotFocus, this, &TopEditorContainer::on_currentTabWidgetChanged);
+    connect(tabWidget, &EditorTabWidget::tabBarClicked, this, &TopEditorContainer::on_currentTabWidgetChanged);
 
-    connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(on_customContextMenuRequested(QPoint)));
-    connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(on_tabCloseRequested(int)));
-    connect(tabWidget, SIGNAL(editorAdded(int)), this, SLOT(on_editorAdded(int)));
+    connect(tabWidget, &EditorTabWidget::customContextMenuRequested, this, &TopEditorContainer::on_customContextMenuRequested);
+    connect(tabWidget, &EditorTabWidget::tabCloseRequested, this, &TopEditorContainer::on_tabCloseRequested);
+    connect(tabWidget, &EditorTabWidget::editorAdded, this, &TopEditorContainer::on_editorAdded);
 
     return tabWidget;
 }

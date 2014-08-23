@@ -11,12 +11,12 @@ Editor::Editor(QWidget *parent) :
 {
     this->jsToCppProxy = new JsToCppProxy();
     connect(this->jsToCppProxy,
-            SIGNAL(messageReceived(QString,QVariant)),
+            &JsToCppProxy::messageReceived,
             this,
-            SLOT(on_proxyMessageReceived(QString,QVariant)));
+            &Editor::on_proxyMessageReceived);
 
     QEventLoop loop;
-    connect(this, SIGNAL(editorReady()), &loop, SLOT(quit()));
+    connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
 
     QString editorPath = ApplicationEditorPath();
 
@@ -35,8 +35,10 @@ Editor::Editor(QWidget *parent) :
     layout->addWidget(this->webView);
     this->setLayout(layout);
 
-    connect(this->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(on_javaScriptWindowObjectCleared()));
-
+    connect(this->webView->page()->mainFrame(),
+            &QWebFrame::javaScriptWindowObjectCleared,
+            this,
+            &Editor::on_javaScriptWindowObjectCleared);
 
     // Block until a J_EVT_READY message is received
     loop.exec();
