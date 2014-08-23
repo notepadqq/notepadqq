@@ -110,9 +110,7 @@ bool DocEngine::loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget,
                 editor->setFileName(fi.absoluteFilePath());
                 //sci->setEolMode(sci->guessEolMode());
                 tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                editor->sendMessage(
-                            "C_CMD_SET_LANGUAGE",
-                            Languages::detectLanguage(editor->fileName()));
+                editor->setLanguage(Languages::detectLanguage(editor->fileName()));
 
                 //addDocument(fi.absoluteFilePath());
             } else {
@@ -199,9 +197,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
         if ((outFileName != "") && (editor->fileName() != outFileName)) {
             //removeDocument(sci->fileName());
             editor->setFileName(outFileName);
-            editor->sendMessage(
-                        "C_CMD_SET_LANGUAGE",
-                        Languages::detectLanguage(editor->fileName()));
+            editor->setLanguage(Languages::detectLanguage(editor->fileName()));
 
             tabWidget->setTabToolTip(tab, editor->fileName());
             tabWidget->setTabText(tab, fi.fileName());

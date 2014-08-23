@@ -60,6 +60,7 @@ public:
     // Common messages:
     bool isClean();
     QMap<QString, QList<QString> > languages();
+    void setLanguage(QString language);
 private:
     QWebView *webView;
     JsToCppProxy *jsToCppProxy;

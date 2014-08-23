@@ -17,9 +17,17 @@ class frmSearchLanguage : public QDialog
 public:
     explicit frmSearchLanguage(Editor *editor, QWidget *parent = 0);
     ~frmSearchLanguage();
+    QString selectedLanguage();
+    QString selectedMimeType();
 
 private slots:
     void on_txtFilter_textChanged(const QString &arg1);
+
+    void on_tabResults_doubleClicked(const QModelIndex &index);
+
+    void on_buttonBox_accepted();
+
+    void on_txtFilter_returnPressed();
 
 private:
     Ui::frmSearchLanguage *ui;

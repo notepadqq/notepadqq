@@ -106,6 +106,11 @@ QMap<QString, QList<QString> > Editor::languages()
     return out;
 }
 
+void Editor::setLanguage(QString language)
+{
+    sendMessage("C_CMD_SET_LANGUAGE", language);
+}
+
 QString Editor::jsStringEscape(QString str) {
     return str.replace("\\", "\\\\")
             .replace("'", "\\'")

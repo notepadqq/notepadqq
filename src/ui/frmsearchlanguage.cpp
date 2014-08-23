@@ -1,5 +1,6 @@
 #include "include/frmsearchlanguage.h"
 #include "ui_frmsearchlanguage.h"
+#include <QMessageBox>
 
 frmSearchLanguage::frmSearchLanguage(Editor *editor, QWidget *parent) :
     QDialog(parent),
@@ -80,6 +81,24 @@ QVariant frmSearchLanguage::LanguagesModel::headerData(int section, Qt::Orientat
     return QVariant();
 }
 
+QString frmSearchLanguage::selectedLanguage()
+{
+    QModelIndexList sel = ui->tabResults->selectionModel()->selectedRows(0);
+    if (sel.count() > 0) {
+        return sel.at(0).data().toString();
+    }
+    return QString();
+}
+
+QString frmSearchLanguage::selectedMimeType()
+{
+    QModelIndexList sel = ui->tabResults->selectionModel()->selectedRows(1);
+    if (sel.count() > 0) {
+        return sel.at(0).data().toString();
+    }
+    return QString();
+}
+
 frmSearchLanguage::~frmSearchLanguage()
 {
     delete m_filter;
@@ -91,4 +110,25 @@ frmSearchLanguage::~frmSearchLanguage()
 void frmSearchLanguage::on_txtFilter_textChanged(const QString &arg1)
 {
     m_filter->setFilterFixedString(arg1);
+    ui->tabResults->selectRow(0);
+}
+
+void frmSearchLanguage::on_tabResults_doubleClicked(const QModelIndex &/*index*/)
+{
+    if (ui->tabResults->selectionModel()->selectedRows().count() > 0)
+        this->accept();
+}
+
+void frmSearchLanguage::on_buttonBox_accepted()
+{
+    if (ui->tabResults->selectionModel()->selectedRows().count() > 0)
+        this->accept();
+    else
+        QMessageBox::information(this, tr("No language selected"),
+                                 tr("Please select a language to continue."));
+}
+
+void frmSearchLanguage::on_txtFilter_returnPressed()
+{
+    this->on_buttonBox_accepted();
 }

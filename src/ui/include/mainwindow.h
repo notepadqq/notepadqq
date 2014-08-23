@@ -74,7 +74,7 @@ private slots:
 
     void on_actionSearch_triggered();
 
-    void setLanguage(QString language);
+    void setCurrentEditorLanguage(QString language);
     void on_actionSearchLanguage_triggered();
 
 private:

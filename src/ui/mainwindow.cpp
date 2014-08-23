@@ -67,32 +67,31 @@ MainWindow::MainWindow(QWidget *parent) :
     tabContextMenu->addActions(tabContextMenuActions);
 
     connect(this->topEditorContainer,
-            SIGNAL(customTabContextMenuRequested(QPoint,EditorTabWidget*,int)),
+            &TopEditorContainer::customTabContextMenuRequested,
             this,
-            SLOT(on_customTabContextMenuRequested(QPoint,EditorTabWidget*,int)));
+            &MainWindow::on_customTabContextMenuRequested);
 
     connect(this->topEditorContainer,
-            SIGNAL(tabCloseRequested(EditorTabWidget*,int)),
+            &TopEditorContainer::tabCloseRequested,
             this,
-            SLOT(on_tabCloseRequested(EditorTabWidget*,int)));
+            &MainWindow::on_tabCloseRequested);
 
     connect(this->topEditorContainer,
-            SIGNAL(currentEditorChanged(EditorTabWidget*,int)),
+            &TopEditorContainer::currentEditorChanged,
             this,
-            SLOT(on_currentEditorChanged(EditorTabWidget*,int)));
+            &MainWindow::on_currentEditorChanged);
 
     connect(this->topEditorContainer,
-            SIGNAL(editorAdded(EditorTabWidget*,int)),
+            &TopEditorContainer::editorAdded,
             this,
-            SLOT(on_editorAdded(EditorTabWidget*,int)));
+            &MainWindow::on_editorAdded);
 
     this->createStatusBar();
 
 
-
     this->processCommandLineArgs(QApplication::arguments(), false);
 
-    // TODO Add last 15 recent languages to Languages menu
+    // TODO Add last 15 recent languages to Languages menu (connect to this->setCurrentEditorLanguage() slot)
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
@@ -193,9 +192,9 @@ void MainWindow::on_action_New_triggered()
     num++;
 }
 
-void MainWindow::setLanguage(QString language)
+void MainWindow::setCurrentEditorLanguage(QString language)
 {
-    currentEditor()->sendMessage("C_CMD_SET_LANGUAGE", language);
+    currentEditor()->setLanguage(language);
 }
 
 void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget */*tabWidget*/, int /*tabIndex*/)
@@ -556,7 +555,10 @@ void MainWindow::on_actionSearchLanguage_triggered()
 {
     frmSearchLanguage *_frm;
     _frm = new frmSearchLanguage(currentEditor(), this);
-    _frm->exec();
+    int result = _frm->exec();
+    if (result == QDialog::Accepted) {
+        this->setCurrentEditorLanguage(_frm->selectedMimeType());
+    }
 
     _frm->deleteLater();
 }
