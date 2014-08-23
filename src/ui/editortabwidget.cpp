@@ -21,25 +21,74 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
 int EditorTabWidget::addEditorTab(bool setFocus, QString title)
 {
+    return this->rawAddEditorTab(setFocus, title, 0, 0);
+}
+
+void EditorTabWidget::connectEditorSignals(Editor *editor)
+{
+    connect(editor, &Editor::cleanChanged,
+            this, &EditorTabWidget::on_cleanChanged);
+
+    connect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
+}
+
+void EditorTabWidget::disconnectEditorSignals(Editor *editor)
+{
+    disconnect(editor, &Editor::cleanChanged,
+               this, &EditorTabWidget::on_cleanChanged);
+
+    disconnect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
+}
+
+int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
+{
+    return this->rawAddEditorTab(setFocus, QString(), source, tabIndex);
+}
+
+int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex)
+{
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
     __aet_timer.start();
 #endif
 
+    bool create = (source == 0);
+
     this->setUpdatesEnabled(false);
 
-    Editor *editor = new Editor(this);
+    Editor *editor;
 
-    int index = this->addTab(editor, title);
+    QString oldText;
+    QIcon oldIcon;
+    QString oldTooltip;
+
+    if (create) {
+        editor = new Editor(this);
+    } else {
+        editor = (Editor *)source->widget(sourceTabIndex);
+
+        oldText = source->tabText(sourceTabIndex);
+        oldIcon = source->tabIcon(sourceTabIndex);
+        oldTooltip = source->tabToolTip(sourceTabIndex);
+    }
+
+    int index = this->addTab(editor, create ? title : oldText);
+    if (!create) {
+        source->disconnectEditorSignals(editor);
+    }
+    this->connectEditorSignals(editor);
+
     if(setFocus) {
         this->setCurrentIndex(index);
         editor->setFocus();
     }
 
-    this->setSavedIcon(index, true);
-
-    connect(editor, &Editor::cleanChanged,
-            this, &EditorTabWidget::on_cleanChanged);
+    if (create) {
+        this->setSavedIcon(index, true);
+    } else {
+        this->setTabIcon(index, oldIcon);
+        this->setTabToolTip(index, oldTooltip);
+    }
 
     this->setUpdatesEnabled(true);
 
@@ -47,33 +96,8 @@ int EditorTabWidget::addEditorTab(bool setFocus, QString title)
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
-    qDebug() << "Tab opened in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec";
+    qDebug() << QString("Tab opened in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
-
-    return index;
-}
-
-int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
-{
-    this->setUpdatesEnabled(false);
-
-    Editor *editor = (Editor *)source->widget(tabIndex);
-    QString text = source->tabText(tabIndex);
-    QIcon icon = source->tabIcon(tabIndex);
-    QString tooltip = source->tabToolTip(tabIndex);
-
-    int index = this->addTab(editor, text);
-    if(setFocus) {
-        this->setCurrentIndex(index);
-        editor->setFocus();
-    }
-
-    this->setTabIcon(index, icon);
-    this->setTabToolTip(index, tooltip);
-
-    this->setUpdatesEnabled(true);
-
-    emit editorAdded(index);
 
     return index;
 }

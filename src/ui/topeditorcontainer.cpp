@@ -14,8 +14,6 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
 
     // Detect tab switches
     connect(tabWidget, &EditorTabWidget::currentChanged, this, &TopEditorContainer::on_currentTabChanged);
-    // Detect tabWidget switches // FIXME Doesn't work if the user changes
-    // tabWidget by clicking directly within one of the editors.
     connect(tabWidget, &EditorTabWidget::gotFocus, this, &TopEditorContainer::on_currentTabWidgetChanged);
     connect(tabWidget, &EditorTabWidget::tabBarClicked, this, &TopEditorContainer::on_currentTabWidgetChanged);
 
@@ -62,6 +60,7 @@ void TopEditorContainer::on_customContextMenuRequested(QPoint point)
 
     if(index != -1)
     {
+        tabWidget->setFocus();
         tabWidget->setCurrentIndex(index);
 
         emit this->customTabContextMenuRequested(

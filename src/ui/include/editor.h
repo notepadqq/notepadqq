@@ -61,6 +61,7 @@ public:
     bool isClean();
     QMap<QString, QList<QString> > languages();
     void setLanguage(QString language);
+    QString value();
 private:
     QWebView *webView;
     JsToCppProxy *jsToCppProxy;
@@ -73,6 +74,8 @@ private slots:
 
 signals:
     void messageReceived(QString msg, QVariant data);
+
+    void gotFocus();
 
     // Pre-interpreted messages:
     void contentChanged();

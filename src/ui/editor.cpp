@@ -59,14 +59,16 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 {
     emit messageReceived(msg, data);
 
-    if(msg == "J_EVT_READY") {
+    if(msg == "J_EVT_READY")
         emit editorReady();
-    } else if(msg == "J_EVT_CONTENT_CHANGED")
+    else if(msg == "J_EVT_CONTENT_CHANGED")
         emit contentChanged();
     else if(msg == "J_EVT_CLEAN_CHANGED")
         emit cleanChanged(data.toBool());
     else if(msg == "J_EVT_CURSOR_ACTIVITY")
         emit cursorActivity();
+    else if(msg == "J_EVT_GOT_FOCUS")
+        emit gotFocus();
 }
 
 void Editor::setFocus()
@@ -111,6 +113,11 @@ QMap<QString, QList<QString> > Editor::languages()
 void Editor::setLanguage(QString language)
 {
     sendMessage("C_CMD_SET_LANGUAGE", language);
+}
+
+QString Editor::value()
+{
+    return sendMessageWithResult("C_FUN_GET_VALUE").toString();
 }
 
 QString Editor::jsStringEscape(QString str) {

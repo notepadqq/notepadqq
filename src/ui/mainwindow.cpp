@@ -205,7 +205,7 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
     EditorTabWidget *curTabWidget = this->topEditorContainer->currentTabWidget();
-    EditorTabWidget *newTabWidget;
+    EditorTabWidget *destTabWidget;
 
     if(this->topEditorContainer->count() >= 2) {
         int viewId = 1;
@@ -213,13 +213,13 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
             viewId = 0;
         }
 
-        newTabWidget = (EditorTabWidget *)this->topEditorContainer->widget(viewId);
+        destTabWidget = (EditorTabWidget *)this->topEditorContainer->widget(viewId);
 
     } else {
-        newTabWidget = this->topEditorContainer->addTabWidget();
+        destTabWidget = this->topEditorContainer->addTabWidget();
     }
 
-    newTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
+    destTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
 
     this->removeTabWidgetIfEmpty(curTabWidget);
 }
@@ -456,16 +456,18 @@ void MainWindow::on_cursorActivity()
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
-    // Update status bar
-    int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
-    int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-    statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
+    if (editor != 0) {
+        // Update status bar
+        int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
+        int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
 
-    QList<QVariant> cursor = editor->sendMessageWithResult("C_FUN_GET_CURSOR").toList();
-    statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
-                                     arg(cursor[0].toInt() + 1).
-                                     arg(cursor[1].toInt() + 1).
-                                     arg(0).arg(0));
+        QList<QVariant> cursor = editor->sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
+                                         arg(cursor[0].toInt() + 1).
+                                         arg(cursor[1].toInt() + 1).
+                                         arg(0).arg(0));
+    }
 }
 
 void MainWindow::on_action_Delete_triggered()

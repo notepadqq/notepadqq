@@ -143,7 +143,7 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
     QTextStream stream(io);
 
     //Support for saving in all supported formats....
-    QString string = editor->sendMessageWithResult("C_FUN_GET_VALUE").toString();
+    QString string = editor->value();
     QTextCodec *codec = QTextCodec::codecForName("utf8");//(sci->encoding().toUtf8()); //FIXME
     QByteArray data = codec->fromUnicode(string);
 
