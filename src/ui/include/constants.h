@@ -52,7 +52,7 @@ const QString MEMBERS_URL = "https://github.com/notepadqq/notepadqq/network/memb
 }*/
 
 inline QString ApplicationEditorPath() {
-    QString def = QString("%1/../share/notepadqq/editor/index.html").arg(qApp->applicationDirPath());
+    QString def = QString("%1/editor/index.html").arg(qApp->applicationDirPath());
     return def;
 }
 

@@ -16,18 +16,24 @@ UI_DIR = ../../out/build_data
 MOC_DIR = ../../out/build_data
 OBJECTS_DIR = ../../out/build_data
 
+# If DEPLOY=true, clear "rpath" so that we can specify Qt lib path via LD_LIBRARY_PATH
+equals(DEPLOY, true) {
+    QMAKE_RPATH=
+}
+
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug/bin
+        DESTDIR = ../../out/debug
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release/bin
+        DESTDIR = ../../out/release
     }
 }
-DATADIR = $$DESTDIR/../share
+
+INSTALLFILESDIR = ../../support_files
 
 win32 {
     LIBS += User32.lib
@@ -74,23 +80,32 @@ RESOURCES += \
 # Copy the editor in the "shared" folder
 editorTarget.target = editor
 editorTarget.commands = (cd \"$$PWD\" && \
-                         $${CMD_FULLDELETE} \"$$DATADIR/notepadqq\" && \
-                         $${QMAKE_MKDIR} \"$$DATADIR/notepadqq\" && \
-                         $${QMAKE_COPY_DIR} \"../editor\" \"$$DATADIR/notepadqq/editor\") # TODO remove unnecessary files
+                         $${CMD_FULLDELETE} \"$$DESTDIR/editor\" && \
+                         $${QMAKE_COPY_DIR} \"../editor\" \"$$DESTDIR/editor\") # TODO remove unnecessary files
 
-QMAKE_EXTRA_TARGETS += editorTarget
-PRE_TARGETDEPS += editor
+launchTarget.target = launch
+launchTarget.commands = (cd \"$$PWD\" && \
+                         $${QMAKE_MKDIR} \"$$DESTDIR/bin/\" && \
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/bin/\")
 
+QMAKE_EXTRA_TARGETS += editorTarget launchTarget
+PRE_TARGETDEPS += editor launch
+
+unix {
+    # Set launch script permissions execute permission
+    permissionsTarget.target = permissions
+    permissionsTarget.commands = (chmod +x \"$$INSTALLFILESDIR/launch/notepadqq\")
+    QMAKE_EXTRA_TARGETS += permissionsTarget
+    PRE_TARGETDEPS += permissions
+}
 
 ### INSTALL ###
 unix {
     isEmpty(PREFIX) {
-        PREFIX = /usr/local
+        PREFIX = /opt/notepadqq
     }
 
-    INSTALLFILESDIR = ../../install_files
-
-    target.path = $$INSTALL_ROOT$$PREFIX/bin/
+    target.path = $$INSTALL_ROOT$$PREFIX/
     target.files += $$DESTDIR/$$TARGET
 
     icon_h16.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/16x16/apps/
@@ -117,11 +132,13 @@ unix {
     shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
     shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
 
-    misc_data.path = $$INSTALL_ROOT$$PREFIX/share/
-    misc_data.files += $$DATADIR/notepadqq
+    misc_data.path = $$INSTALL_ROOT$$PREFIX/
+    misc_data.files += $$DESTDIR/editor
 
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
-         shortcuts misc_data
+         shortcuts misc_data \
+
+
 }
