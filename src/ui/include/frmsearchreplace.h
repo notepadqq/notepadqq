@@ -1,7 +1,7 @@
 #ifndef FRMSEARCHREPLACE_H
 #define FRMSEARCHREPLACE_H
 
-#include "include/topeditorcontainer.h"
+#include "topeditorcontainer.h"
 #include <QDialog>
 
 namespace Ui {

@@ -2,7 +2,7 @@
 #define TOPEDITORCONTAINER_H
 
 #include <QSplitter>
-#include <include/editortabwidget.h>
+#include "editortabwidget.h"
 
 /**
  * @brief Contains one or more EditorTabWidgets. This class

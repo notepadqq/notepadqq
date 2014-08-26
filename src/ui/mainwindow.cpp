@@ -197,7 +197,7 @@ void MainWindow::setCurrentEditorLanguage(QString language)
     currentEditor()->setLanguage(language);
 }
 
-void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget */*tabWidget*/, int /*tabIndex*/)
+void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget * /*tabWidget*/, int /*tabIndex*/)
 {
     this->tabContextMenu->exec(point);
 }

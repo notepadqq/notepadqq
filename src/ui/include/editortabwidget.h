@@ -2,7 +2,7 @@
 #define EDITORTABWIDGET_H
 
 #include <QTabWidget>
-#include <include/editor.h>
+#include "editor.h"
 
 /**
  * @brief A TabWidget used to allow the user to switch between

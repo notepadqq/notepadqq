@@ -17,6 +17,7 @@ MOC_DIR = ../../out/build_data
 OBJECTS_DIR = ../../out/build_data
 
 unix: CMD_FULLDELETE = rm -rf
+win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
@@ -30,9 +31,12 @@ DATADIR = $$DESTDIR/../share
 
 win32 {
     LIBS += User32.lib
+    #LIBS += -L"$$PWD/3rdparty/libs/magic/" -lmagic
 }
 
-unix|win32: LIBS += -lmagic
+unix {
+    LIBS += -lmagic
+}
 
 SOURCES += main.cpp\
     mainwindow.cpp \
