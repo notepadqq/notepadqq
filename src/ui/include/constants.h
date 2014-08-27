@@ -25,7 +25,8 @@
 
 #include <QObject>
 #include <QString>
-#include <QDir>
+//#include <QDir>
+#include <QFile>
 #include <QProcessEnvironment>
 #include <QApplication>
 
@@ -53,6 +54,7 @@ const QString MEMBERS_URL = "https://github.com/notepadqq/notepadqq/network/memb
 
 inline QString ApplicationEditorPath() {
     QString def = QString("%1/editor/index.html").arg(qApp->applicationDirPath());
+    if(!QFile(def).exists()) def = QString("%1/../share/%2/editor/index.html").arg(qApp->applicationDirPath()).arg(qApp->applicationName().toLower());
     return def;
 }
 
