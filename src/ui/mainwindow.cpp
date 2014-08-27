@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QUrl>
+#include <QMimeData>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -87,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainWindow::on_editorAdded);
 
     this->createStatusBar();
+
+    this->setAcceptDrops(true);
 
 
     this->processCommandLineArgs(QApplication::arguments(), false);
@@ -175,6 +178,27 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
         // Activate the window
         this->activateWindow();
         this->raise();
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (e->mimeData()->hasUrls()) {
+        e->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *e)
+{
+    QStringList fileNames;
+    foreach (const QUrl &url, e->mimeData()->urls()) {
+        fileNames.append(url.toLocalFile());
+    }
+
+    if (!fileNames.empty()) {
+        this->docEngine->loadDocuments(fileNames,
+                                       this->topEditorContainer->currentTabWidget(),
+                                       false);
     }
 }
 

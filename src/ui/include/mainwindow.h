@@ -109,6 +109,8 @@ private:
     Editor*             currentEditor();
     void                closeEvent(QCloseEvent *event);
     void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
+    void                dragEnterEvent(QDragEnterEvent *e);
+    void                dropEvent(QDropEvent *e);
 };
 
 #endif // MAINWINDOW_H

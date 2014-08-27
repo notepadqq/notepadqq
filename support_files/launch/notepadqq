@@ -1,3 +1,7 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=.
-../notepadqq $*
+cd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd -P`
+cd - > /dev/null
+
+export LD_LIBRARY_PATH="$SCRIPTPATH"/../libs/qt:"$SCRIPTPATH"/../libs
+"$SCRIPTPATH"/../notepadqq "$@"
