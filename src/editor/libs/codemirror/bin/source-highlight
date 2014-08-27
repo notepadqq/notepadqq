@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/js
 
 // Simple command-line code highlighting tool. Reads code from stdin,
 // spits html to stdout. For example:

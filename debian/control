@@ -16,7 +16,8 @@ Architecture: any
 Depends:
    ${shlibs:Depends},
    ${misc:Depends},
-   libjs-jquery
+   libjs-jquery,
+   nodejs
 Description: Notepad++ clone for Linux
  Text editor with support for multiple programming
  languages, multiple encodings and plugin support.
