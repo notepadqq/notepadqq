@@ -1,0 +1,3 @@
+/usr/share
+out/release/editor         /usr/share/notepadqq
+out/release/notepadqq      /usr/lib/notepadqq

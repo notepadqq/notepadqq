@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+
+%:
+	dh ${@} --parallel
+
+override_dh_auto_clean:
+	dh_auto_clean -Dsrc/ui
+	rm -rf out
+
+override_dh_auto_configure:
+	dh_auto_configure -v -Dsrc/ui
+
+override_dh_auto_build:
+	dh_auto_build -Dsrc/ui
+
+override_dh_auto_install:
+	dh_auto_install -Dsrc/ui --destdir=$(CURDIR)/debian/tmp
+
+override_dh_install:
+	dh_install -XLICENSE
+
+override_dh_builddeb:
+	dh_builddeb -- -Zxz -z9
