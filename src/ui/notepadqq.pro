@@ -116,7 +116,7 @@ unix {
     icon_h32.files += $$INSTALLFILESDIR/icons/hicolor/32x32/apps/notepadqq.png
     icon_h48.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/48x48/apps/
     icon_h48.files += $$INSTALLFILESDIR/icons/hicolor/48x48/apps/notepadqq.png
-    icon_h64.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/64x46/apps/
+    icon_h64.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/64x64/apps/
     icon_h64.files += $$INSTALLFILESDIR/icons/hicolor/64x64/apps/notepadqq.png
     icon_h96.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/96x96/apps/
     icon_h96.files += $$INSTALLFILESDIR/icons/hicolor/96x96/apps/notepadqq.png
@@ -127,7 +127,7 @@ unix {
     icon_h512.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/512x512/apps/
     icon_h512.files += $$INSTALLFILESDIR/icons/hicolor/512x512/apps/notepadqq.png
     icon_hscalable.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/
-    icon_hscalable.files += $$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.png
+    icon_hscalable.files += $$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg
 
     shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
     shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
