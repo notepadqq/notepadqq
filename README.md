@@ -31,6 +31,6 @@ by following the above steps, then run
 
 Debian package
 --------------
-To build a Debian package:
+To build a binary Debian package for your local use:
 
     notepadqq$ dpkg-buildpackage -b -us -uc
