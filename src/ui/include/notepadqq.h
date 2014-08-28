@@ -38,8 +38,6 @@ public:
     static const QString membersUrl;
     static QString copyright();
     static QString editorPath();
-private:
-    static QString m_cachedEditorPath;
 };
 
 #endif // NOTEPADQQ_H

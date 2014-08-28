@@ -26,10 +26,10 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug
+        DESTDIR = ../../out/debug/appdata
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release
+        DESTDIR = ../../out/release/appdata
     }
 }
 
@@ -86,8 +86,8 @@ editorTarget.commands = (cd \"$$PWD\" && \
 
 launchTarget.target = launch
 launchTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$DESTDIR/bin/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/bin/\")
+                         $${QMAKE_MKDIR} \"$$DESTDIR/../bin/\" && \
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/../bin/\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += editor launch
