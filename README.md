@@ -31,4 +31,5 @@ by following the above steps, then run
 Debian package
 --------------
 To build a Debian package:
+
     notepadqq$ dpkg-buildpackage -b -us -uc
