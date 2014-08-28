@@ -1,6 +1,0 @@
-# /usr/bin/js is provided by the nodejs package,
-# which will be installed as a dependency
-notepadqq: unusual-interpreter usr/share/notepadqq/editor/libs/codemirror/bin/compress #!/usr/bin/js
-notepadqq: unusual-interpreter usr/share/notepadqq/editor/libs/codemirror/bin/lint #!/usr/bin/js
-notepadqq: unusual-interpreter usr/share/notepadqq/editor/libs/codemirror/bin/release #!/usr/bin/js
-notepadqq: unusual-interpreter usr/share/notepadqq/editor/libs/codemirror/bin/source-highlight #!/usr/bin/js
