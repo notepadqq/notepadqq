@@ -1,5 +1,5 @@
 #include "include/mainwindow.h"
-#include "include/constants.h"
+#include "include/notepadqq.h"
 #include <QFile>
 #include <QApplication>
 
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QFile file(ApplicationEditorPath());
+    QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {
         qCritical() << "Can't open file: " + file.fileName();
         return EXIT_FAILURE;
@@ -45,7 +45,7 @@ void displayHelp()
 
 void displayVersion()
 {
-    printf(POINTVERSION "\n");
+    printf("%s\n", Notepadqq::version.toStdString().c_str());
 }
 
 inline

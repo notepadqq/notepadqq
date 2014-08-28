@@ -1,5 +1,5 @@
 #include "include/editor.h"
-#include "include/constants.h"
+#include "include/notepadqq.h"
 #include <QWebFrame>
 #include <QVBoxLayout>
 #include <QMessageBox>
@@ -18,10 +18,8 @@ Editor::Editor(QWidget *parent) :
     QEventLoop loop;
     connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
 
-    QString editorPath = ApplicationEditorPath();
-
     this->webView = new QWebView();
-    this->webView->setUrl(QUrl("file://" + editorPath));
+    this->webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
     this->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
     QWebSettings *pageSettings = this->webView->page()->settings();

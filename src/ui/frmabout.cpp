@@ -1,6 +1,6 @@
 #include "include/frmabout.h"
 #include "ui_frmabout.h"
-#include "include/constants.h"
+#include "include/notepadqq.h"
 #include <QDesktopServices>
 #include <QUrl>
 
@@ -10,10 +10,10 @@ frmAbout::frmAbout(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->lblVersion->setText("v" + VERSION);
-    ui->lblCopyright->setText(COPYRIGHT);
+    ui->lblVersion->setText("v" + Notepadqq::version);
+    ui->lblCopyright->setText(Notepadqq::copyright());
 
-    ui->lblContributors->setText(tr("Authors:") + " <a href=\"" + MEMBERS_URL + "\"><span style=\"text-decoration: underline; color:#0000ff;\">" + tr("GitHub Contributors") + "</span></a>");
+    ui->lblContributors->setText(tr("Authors:") + " <a href=\"" + Notepadqq::membersUrl + "\"><span style=\"text-decoration: underline; color:#0000ff;\">" + tr("GitHub Contributors") + "</span></a>");
 
     setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);

@@ -53,7 +53,8 @@ SOURCES += main.cpp\
     languages.cpp \
     frmabout.cpp \
     frmsearchreplace.cpp \
-    frmsearchlanguage.cpp
+    frmsearchlanguage.cpp \
+    notepadqq.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -62,9 +63,9 @@ HEADERS  += include/mainwindow.h \
     include/docengine.h \
     include/languages.h \
     include/frmabout.h \
-    include/constants.h \
     include/frmsearchreplace.h \
-    include/frmsearchlanguage.h
+    include/frmsearchlanguage.h \
+    include/notepadqq.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
