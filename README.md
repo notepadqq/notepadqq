@@ -27,3 +27,8 @@ You can run notepadqq from its build output folder. If however you want to insta
 by following the above steps, then run
 
     notepadqq/src/ui$ sudo make install
+
+Debian package
+--------------
+To build a Debian package:
+    notepadqq$ dpkg-buildpackage -b -us -uc
