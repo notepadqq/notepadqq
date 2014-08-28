@@ -3,6 +3,7 @@
 
 #include <QSplitter>
 #include "editortabwidget.h"
+#include "editor.h"
 
 /**
  * @brief Contains one or more EditorTabWidgets. This class
@@ -17,6 +18,13 @@ public:
     EditorTabWidget *addTabWidget();
     EditorTabWidget *tabWidget(int index);
     EditorTabWidget *currentTabWidget();
+
+    /**
+     * @brief Returns the EditorTabWidget that contains a particular Editor
+     * @param editor
+     * @return EditorTabWidget. Returns 0 if not found.
+     */
+    EditorTabWidget *tabWidgetFromEditor(Editor *editor);
 
 private:
     EditorTabWidget *m_currentTabWidget;

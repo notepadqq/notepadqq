@@ -586,3 +586,38 @@ void MainWindow::on_actionSearchLanguage_triggered()
 
     _frm->deleteLater();
 }
+
+void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
+{
+    Editor *editor = currentEditor();
+    if(currentEditor()->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).absoluteFilePath());
+    } else {
+        EditorTabWidget *tabWidget = topEditorContainer->currentTabWidget();
+        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+    }
+}
+
+void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
+{
+    Editor *editor = currentEditor();
+    if(currentEditor()->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).fileName());
+    } else {
+        EditorTabWidget *tabWidget = topEditorContainer->currentTabWidget();
+        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+    }
+}
+
+void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
+{
+    Editor *editor = currentEditor();
+    if(currentEditor()->fileName() != "")
+    {
+        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).absolutePath());
+    } else {
+        QApplication::clipboard()->setText("");
+    }
+}

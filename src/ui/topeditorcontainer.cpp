@@ -34,6 +34,15 @@ EditorTabWidget *TopEditorContainer::currentTabWidget()
     return this->m_currentTabWidget;
 }
 
+EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
+{
+    for (int i = 0; i < this->count(); i++) {
+        if (this->tabWidget(i)->indexOf(editor) > -1)
+            return this->tabWidget(i);
+    }
+    return 0;
+}
+
 void TopEditorContainer::on_currentTabChanged(int index)
 {
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();

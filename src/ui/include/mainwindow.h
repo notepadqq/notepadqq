@@ -77,6 +77,12 @@ private slots:
     void setCurrentEditorLanguage(QString language);
     void on_actionSearchLanguage_triggered();
 
+    void on_actionCurrent_Full_File_path_to_Clipboard_triggered();
+
+    void on_actionCurrent_Filename_to_Clipboard_triggered();
+
+    void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* topEditorContainer;
