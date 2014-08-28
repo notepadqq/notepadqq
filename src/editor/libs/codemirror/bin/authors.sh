@@ -1,3 +1,4 @@
+#!/bin/sh
 # Combine existing list of authors with everyone known in git, sort, add header.
 tail --lines=+3 AUTHORS > AUTHORS.tmp
 git log --format='%aN' >> AUTHORS.tmp

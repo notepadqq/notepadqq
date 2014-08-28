@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/js
 
 var lint = require("../test/lint/lint"),
     path = require("path");
