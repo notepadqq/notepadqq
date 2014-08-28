@@ -1,9 +1,13 @@
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
+#include <QObject>
 #include <QFile>
+#include <QDir>
 #include <QApplication>
+#include <QMessageBox>
 
 bool shouldStartApp(int argc, char *argv[]);
+void checkQtVersion(MainWindow *w);
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +30,37 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+    checkQtVersion(&w);
+
     return a.exec();
+}
+
+void checkQtVersion(MainWindow *w)
+{
+    QString runtimeVersion = qVersion();
+    if (runtimeVersion.startsWith("5.0") ||
+            runtimeVersion.startsWith("5.1") ||
+            runtimeVersion.startsWith("5.2")) {
+
+        QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
+
+        QMessageBox msgBox(w);
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
+        msgBox.setInformativeText("<html><body>"
+            "<p>" + QObject::tr("Notepadqq will try to do its best, but some things might not work properly.") + "</p>" +
+            QObject::tr(
+                "Install a newer Qt version (&ge; %1) from the official repositories "
+                "of your distribution.<br><br>"
+                "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.").
+                      arg("5.3").
+                      arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
+                      arg("<nobr>" + dir + "</nobr>") +
+            "</body></html>");
+
+        msgBox.exec();
+    }
 }
 
 void displayHelp()

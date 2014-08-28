@@ -3,11 +3,18 @@ cd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 cd - > /dev/null
 
+if [ `getconf LONG_BIT` = "64" ]
+then
+    PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc_64/lib
+else
+    PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc_32/lib
+fi
+
+export LD_LIBRARY_PATH="$PERSONAL_QT_LIB_PATH"
+
 if [ -f "$SCRIPTPATH"/../appdata/notepadqq ];
 then
-    export LD_LIBRARY_PATH="$SCRIPTPATH"/../appdata/libs/qt:"$SCRIPTPATH"/../appdata/libs
     "$SCRIPTPATH"/../appdata/notepadqq "$@"
 else
-    export LD_LIBRARY_PATH="$SCRIPTPATH"/../share/notepadqq/libs/qt:"$SCRIPTPATH"/../share/notepadqq/libs
     "$SCRIPTPATH"/../share/notepadqq/notepadqq "$@"
 fi
