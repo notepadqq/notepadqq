@@ -70,7 +70,7 @@ UiDriver.registerEventHandler("C_CMD_REDO", function(msg, data, prevReturn) {
    data is an array. data[0] contains the regex string. data[1] is a boolean
    (true if you want to search forward).
 */
-UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
+function Search(data) {
     var forward = data[1];
     var startPos;
     
@@ -80,6 +80,8 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
     else
         startPos = editor.getCursor("from");
     
+    // We get a new cursor every time, because the user could have moved within
+    // the editor and we want to start searching from the new position.
     var searchCursor = editor.getSearchCursor(new RegExp(data[0]), startPos, false);
 
     var ret = forward ? searchCursor.findNext() : searchCursor.findPrevious();
@@ -91,6 +93,63 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
     }
 
     return ret;
+}
+UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
+    return Search(data);
+});
+
+/* Replace the currently selected text, then search with a specified regex (calls C_FUN_SEARCH)
+
+   The return value indicates whether a match was found. 
+   The return value is the array returned by the regex match method, in case you
+   want to extract matched groups.
+
+   data[0]: contains the regex string
+   data[1]: string to use as replacement
+   data[2]: true if you want to search forward, false if backwards
+*/
+UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
+	if (editor.somethingSelected()) {
+		// Replace
+		editor.replaceSelection(data[1]);
+	}
+	
+	// Find next/prev
+	return Search([data[0], data[2]]);
+});
+
+UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) { 
+    var dataLines = data[1].split("\n");
+    
+    var searchCursor = editor.getSearchCursor(new RegExp(data[0]), undefined, false);
+    
+    var count = 0;
+    
+    while (searchCursor.findNext()) {
+    	count++;
+    	
+		// Replace
+		searchCursor.replace(data[1]);
+    }
+
+    return count;
+});
+
+UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, prevReturn) { 
+	var searchCursor = editor.getSearchCursor(new RegExp(data[0]), undefined, false);
+    
+    var count = 0;
+    var selections = [];
+    
+    while (searchCursor.findNext()) {
+    	count++;
+    	
+    	selections.push({anchor: searchCursor.from(), head: searchCursor.to()});
+    }
+    
+    editor.setSelections(selections);
+
+    return count;
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevReturn) {
@@ -125,7 +184,7 @@ $(document).ready(function () {
         autofocus: true,
         lineNumbers: true,
         mode: { name: "" },
-        highlightSelectionMatches: {style: "selectedHighlight"},
+        highlightSelectionMatches: {style: "selectedHighlight"}, // FIXME Highlight ONLY IF the selection is a word. Could require a patch to the match-highlighter plugin
         styleSelectedText: true,
         styleActiveLine: true,
         foldGutter: true,

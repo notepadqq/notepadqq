@@ -38,6 +38,10 @@ Editor::Editor(QWidget *parent) :
             this,
             &Editor::on_javaScriptWindowObjectCleared);
 
+    // TODO Display a message if a javascript error gets triggered.
+    // Right now, if there's an error in the javascript code, we
+    // get stuck waiting a J_EVT_READY that will never come.
+
     // Block until a J_EVT_READY message is received
     loop.exec();
 }

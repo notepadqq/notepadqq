@@ -570,7 +570,7 @@ void MainWindow::on_actionE_xit_triggered()
 void MainWindow::on_actionSearch_triggered()
 {
     if(!m_frmSearch) {
-        m_frmSearch = new frmSearchReplace(this->topEditorContainer, this);
+        m_frmSearch = new frmSearchReplace(this->topEditorContainer, frmSearchReplace::TabSearch, this);
     }
     m_frmSearch->show();
 }
