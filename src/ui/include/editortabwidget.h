@@ -29,7 +29,6 @@ public:
 private:
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
-    void setTabBarVertical(bool yes);
     void connectEditorSignals(Editor *editor);
     void disconnectEditorSignals(Editor *editor);
     int rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex);

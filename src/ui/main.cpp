@@ -17,6 +17,9 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
+    QCoreApplication::setOrganizationName("Notepadqq");
+    QCoreApplication::setApplicationName("Notepadqq");
+
     QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {
         qCritical() << "Can't open file: " + file.fileName();

@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     frmabout.cpp \
     frmsearchreplace.cpp \
     frmsearchlanguage.cpp \
-    notepadqq.cpp
+    notepadqq.cpp \
+    frmpreferences.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -65,12 +66,14 @@ HEADERS  += include/mainwindow.h \
     include/frmabout.h \
     include/frmsearchreplace.h \
     include/frmsearchlanguage.h \
-    include/notepadqq.h
+    include/notepadqq.h \
+    include/frmpreferences.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
-    frmsearchlanguage.ui
+    frmsearchlanguage.ui \
+    frmpreferences.ui
 
 RESOURCES += \
     resources.qrc

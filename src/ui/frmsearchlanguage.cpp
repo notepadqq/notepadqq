@@ -43,12 +43,12 @@ frmSearchLanguage::LanguagesModel::~LanguagesModel()
 
 }
 
-int frmSearchLanguage::LanguagesModel::rowCount(const QModelIndex &parent) const
+int frmSearchLanguage::LanguagesModel::rowCount(const QModelIndex & /*parent*/) const
 {
     return m_languagesList.count();
 }
 
-int frmSearchLanguage::LanguagesModel::columnCount(const QModelIndex &parent) const
+int frmSearchLanguage::LanguagesModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return 2;
 }

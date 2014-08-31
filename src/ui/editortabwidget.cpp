@@ -16,7 +16,9 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
-    this->setTabBarVertical(false);
+
+    QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
+    setStyleSheet(style);
 }
 
 int EditorTabWidget::addEditorTab(bool setFocus, QString title)
@@ -142,21 +144,6 @@ void EditorTabWidget::setTabBarHighlight(bool yes)
     QPalette palette = tabBar()->palette();
     palette.setColor(QPalette::Highlight,yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
     tabBar()->setPalette(palette);
-}
-
-void EditorTabWidget::setTabBarVertical(bool yes)
-{
-    QString prestyle = "";
-    int reduced = 24;//MainWindow::instance()->getSettings()->value(widesettings::SETTING_TABBAR_REDUCE,true).toBool() ? 24 : 30;
-    if (yes) {
-        setTabPosition(QTabWidget::West);
-        prestyle.append(QString("QTabBar::tab{min-height:100px;width:%1;}").arg(reduced));
-    } else {
-        setTabPosition(QTabWidget::North);
-        prestyle.append(QString("QTabBar::tab{min-width:100px;height:%1;}").arg(reduced));
-    }
-    setStyleSheet(prestyle);
-    //setTabBarHighlight(MainWindow::instance()->getSettings()->value(widesettings::SETTING_TABBAR_HIGHLIGHT,true).toBool());
 }
 
 void EditorTabWidget::on_cleanChanged(bool isClean)

@@ -69,19 +69,16 @@ private slots:
     void on_actionAbout_Qt_triggered();
     void on_action_Undo_triggered();
     void on_action_Redo_triggered();
-
     void on_actionE_xit_triggered();
-
     void on_actionSearch_triggered();
-
     void setCurrentEditorLanguage(QString language);
     void on_actionSearchLanguage_triggered();
-
     void on_actionCurrent_Full_File_path_to_Clipboard_triggered();
-
     void on_actionCurrent_Filename_to_Clipboard_triggered();
-
     void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
+    void on_actionPreferences_triggered();
+    void on_actionClose_triggered();
+    void on_actionC_lose_All_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -100,6 +97,24 @@ private:
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
+
+    /**
+     * @brief Removes the specified tab. Doesn't remove the tab if it's the
+     *        last tab, it's empty, in an unmodified state and it's not
+     *        associated with a file name.
+     *        If the document inside the tab is in a modified state, asks
+     *        the user to save the changes.
+     *        In addition, it ensures that the window won't remain without
+     *        any tab opened, and that there won't be any empty EditorTabWidget
+     * @param tabWidget
+     * @param tab
+     * @param remove Set this to false if you want to manually remove the tab from
+     *               the tabWidget.
+     * @param force Set this to true to close the tab without ever asking the user
+     *              to save changes.
+     * @return tabCloseResult
+     */
+    int                 closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool force);
     int                 closeTab(EditorTabWidget *tabWidget, int tab);
 
     /**

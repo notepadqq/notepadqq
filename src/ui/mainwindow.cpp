@@ -4,6 +4,7 @@
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmsearchlanguage.h"
+#include "include/frmpreferences.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
     this->settings = new QSettings();
 
     this->topEditorContainer = new TopEditorContainer(this);
@@ -308,20 +310,21 @@ int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
     return msgBox.standardButton(msgBox.clickedButton());
 }
 
-int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab)
+int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool force)
 {
     int result = MainWindow::tabCloseResult_AlreadySaved;
     Editor *editor = (Editor *)tabWidget->widget(tab);
 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
-    if (!(tabWidget->count() == 1
+    if (! (topEditorContainer->count() == 1 && tabWidget->count() == 1
          && editor->fileName() == "" && editor->isClean())) {
 
-        if(!editor->isClean()) {
+        if(!force && !editor->isClean()) {
             tabWidget->setCurrentIndex(tab);
             int ret = askIfWantToSave(tabWidget, tab, askToSaveChangesReason_tabClosing);
             if(ret == QMessageBox::Save) {
+                // Save
                 int saveResult = save(tabWidget, tab);
                 if(saveResult == MainWindow::saveFileResult_Canceled)
                 {
@@ -329,23 +332,30 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab)
                     result = MainWindow::tabCloseResult_Canceled;
                 } else if(saveResult == MainWindow::saveFileResult_Saved)
                 {
-                    tabWidget->removeTab(tab);
+                    if (remove) tabWidget->removeTab(tab);
                     result = MainWindow::tabCloseResult_Saved;
                 }
             } else if(ret == QMessageBox::Discard) {
-                // Don't save
-                tabWidget->removeTab(tab);
+                // Don't save and close
+                if (remove) tabWidget->removeTab(tab);
                 result = MainWindow::tabCloseResult_NotSaved;
             } else if(ret == QMessageBox::Cancel) {
-                // Don't save and don't close
+                // Don't save and cancel closing
                 result = MainWindow::tabCloseResult_Canceled;
             }
         } else {
             // The tab is already saved: we can remove it safely.
-            tabWidget->removeTab(tab);
+            if (remove) tabWidget->removeTab(tab);
             result = MainWindow::tabCloseResult_AlreadySaved;
         }
+
+        // Ensure the focus is still on this tabWidget
+        if (tabWidget->count() > 0) {
+            tabWidget->currentEditor()->setFocus();
+        }
     }
+
+    // FIXME Remove document monitoring
 
     if(tabWidget->count() == 0) {
         /* Not so good... 0 tabs opened is a bad idea. So, if there are more
@@ -362,6 +372,11 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab)
 
 
     return result;
+}
+
+int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab)
+{
+    return this->closeTab(tabWidget, tab, true, false);
 }
 
 int MainWindow::save(EditorTabWidget *tabWidget, int tab)
@@ -417,7 +432,6 @@ Editor *MainWindow::currentEditor()
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)
 {
     this->closeTab(tabWidget, tab);
-    // FIXME Remove document monitoring
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -536,29 +550,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
         int tabCount = tabWidget->count();
 
         for(int j = 0; j < tabCount; j++) {
-            Editor *editor = tabWidget->editor(j);
-
-            if(editor->isClean() == false) {
-                tabWidget->setCurrentIndex(j);
-                editor->setFocus();
-
-                int ret = askIfWantToSave(tabWidget, j, askToSaveChangesReason_tabClosing);
-                if(ret == QMessageBox::Save) {
-                    if(save(tabWidget, j) == MainWindow::saveFileResult_Canceled)
-                    {
-                        // The user canceled the "save dialog". Let's stop the close event.
-                        event->ignore();
-                        break;
-                    }
-                } else if(ret == QMessageBox::Discard) {
-                    // Don't save
-                } else if(ret == QMessageBox::Cancel) {
-                    event->ignore();
-                    break;
-                }
+            int closeResult = this->closeTab(tabWidget, j, false, false);
+            if (closeResult == MainWindow::tabCloseResult_Canceled) {
+                // Cancel all
+                event->ignore();
+                return;
             }
         }
-
     }
 }
 
@@ -620,4 +618,58 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
     } else {
         QApplication::clipboard()->setText("");
     }
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    frmPreferences *_pref;
+    _pref = new frmPreferences(this);
+    _pref->exec();
+
+    _pref->deleteLater();
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+    this->closeTab(this->topEditorContainer->currentTabWidget(),
+                   this->topEditorContainer->currentTabWidget()->currentIndex());
+}
+
+void MainWindow::on_actionC_lose_All_triggered()
+{
+    // Save what needs to be saved, check if user wants to cancel the closing
+    int tabWidgetsCount = topEditorContainer->count();
+    for(int i = 0; i < tabWidgetsCount; i++) {
+        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(i);
+        int tabCount = tabWidget->count();
+
+        for(int j = 0; j < tabCount; j++) {
+            int closeResult = this->closeTab(tabWidget, j, false, false);
+            if (closeResult == MainWindow::tabCloseResult_Canceled)
+                return; // Cancel all
+
+        }
+    }
+
+
+    // Actually remove the tabs
+    do {
+        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(0);
+
+        do {
+            int oldCount = tabWidget->count();
+
+            this->closeTab(tabWidget, 0, true, true);
+
+            if (oldCount == 1 && tabWidget->count() == 1) {
+                // We removed the last tab, and a new one has been created.
+                // So we're done.
+                return;
+            }
+
+        } while (tabWidget->count() > 0);
+
+    } while (1);
+
+
 }
