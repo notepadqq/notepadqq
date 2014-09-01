@@ -741,3 +741,14 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
         }
     }
 }
+
+void MainWindow::on_actionReplace_triggered()
+{
+    if(!m_frmSearchReplace) {
+        m_frmSearchReplace = new frmSearchReplace(
+                            m_topEditorContainer,
+                            frmSearchReplace::TabReplace,
+                            this);
+    }
+    m_frmSearchReplace->show();
+}

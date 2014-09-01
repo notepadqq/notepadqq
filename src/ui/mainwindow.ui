@@ -127,6 +127,7 @@
      <string>&amp;Search</string>
     </property>
     <addaction name="actionSearch"/>
+    <addaction name="actionReplace"/>
     <addaction name="separator"/>
     <addaction name="actionFind_Next"/>
     <addaction name="actionFind_Previous"/>
@@ -1492,6 +1493,14 @@
   <action name="actionSearchLanguage">
    <property name="text">
     <string>Search...</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="text">
+    <string>Replace...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>

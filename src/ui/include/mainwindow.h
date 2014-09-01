@@ -80,6 +80,8 @@ private slots:
     void on_actionClose_triggered();
     void on_actionC_lose_All_triggered();
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+    void on_actionReplace_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* m_topEditorContainer;
