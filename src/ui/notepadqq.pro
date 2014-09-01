@@ -8,7 +8,7 @@ QT       += core gui widgets webkitwidgets
 
 CONFIG += c++11
 
-TARGET = notepadqq
+TARGET = notepadqq-bin
 TEMPLATE = app
 
 RCC_DIR = ../../out/build_data
@@ -26,12 +26,14 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug/appdata
+        DESTDIR = ../../out/debug/bin
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release/appdata
+        DESTDIR = ../../out/release/bin
     }
 }
+
+APPDATADIR = $$DESTDIR/../appdata
 
 INSTALLFILESDIR = ../../support_files
 
@@ -84,13 +86,14 @@ RESOURCES += \
 # Copy the editor in the "shared" folder
 editorTarget.target = editor
 editorTarget.commands = (cd \"$$PWD\" && \
-                         $${CMD_FULLDELETE} \"$$DESTDIR/editor\" && \
-                         $${QMAKE_COPY_DIR} \"../editor\" \"$$DESTDIR/editor\") # TODO remove unnecessary files
+                         $${CMD_FULLDELETE} \"$$APPDATADIR/editor\" && \
+                         $${QMAKE_MKDIR} \"$$APPDATADIR/editor/\" && \
+                         $${QMAKE_COPY_DIR} \"../editor\" \"$$APPDATADIR/editor\") # TODO remove unnecessary files
 
 launchTarget.target = launch
 launchTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$DESTDIR/../bin/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/../bin/\")
+                         $${QMAKE_MKDIR} \"$$DESTDIR/\" && \
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += editor launch
@@ -106,10 +109,10 @@ unix {
 ### INSTALL ###
 unix {
     isEmpty(PREFIX) {
-        PREFIX = /opt/notepadqq
+        PREFIX = /usr/local
     }
 
-    target.path = $$INSTALL_ROOT$$PREFIX/
+    target.path = $$INSTALL_ROOT$$PREFIX/bin/
     target.files += $$DESTDIR/$$TARGET
 
     icon_h16.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/16x16/apps/
@@ -133,16 +136,19 @@ unix {
     icon_hscalable.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/
     icon_hscalable.files += $$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg
 
+    misc_data.path = $$INSTALL_ROOT$$PREFIX/share/notepadqq/
+    misc_data.files += $$APPDATADIR/editor
+
+    launch.path = $$INSTALL_ROOT$$PREFIX/bin/
+    launch.files += $$DESTDIR/notepadqq
+
     shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
     shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
-
-    misc_data.path = $$INSTALL_ROOT$$PREFIX/
-    misc_data.files += $$DESTDIR/editor
 
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
-         shortcuts misc_data \
+         misc_data launch shortcuts \
 
 
 }

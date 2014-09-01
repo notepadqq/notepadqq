@@ -12,9 +12,4 @@ fi
 
 export LD_LIBRARY_PATH="$PERSONAL_QT_LIB_PATH"
 
-if [ -f "$SCRIPTPATH"/../appdata/notepadqq ];
-then
-    "$SCRIPTPATH"/../appdata/notepadqq "$@"
-else
-    "$SCRIPTPATH"/../share/notepadqq/notepadqq "$@"
-fi
+"$SCRIPTPATH"/notepadqq "$@"
