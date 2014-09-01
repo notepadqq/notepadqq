@@ -44,7 +44,7 @@
     if (this.style == null) this.style = DEFAULT_TOKEN_STYLE;
     if (this.minChars == null) this.minChars = DEFAULT_MIN_CHARS;
     if (this.delay == null) this.delay = DEFAULT_DELAY;
-    if (this.wordsOnly == null) this.delay = DEFAULT_WORDS_ONLY;
+    if (this.wordsOnly == null) this.wordsOnly = DEFAULT_WORDS_ONLY;
     this.overlay = this.timeout = null;
   }
 
@@ -102,7 +102,7 @@
             var chr = cm.getRange(pos, from);
             if (chr.match(/\W/) === null) return false;
         }
-        if (to.ch < cm.getLine(from.line).length - 1) {
+        if (to.ch < cm.getLine(from.line).length) {
             var pos = {line: to.line, ch: to.ch + 1};
             var chr = cm.getRange(to, pos);
             if (chr.match(/\W/) === null) return false;
