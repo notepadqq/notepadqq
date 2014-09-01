@@ -184,7 +184,7 @@ $(document).ready(function () {
         autofocus: true,
         lineNumbers: true,
         mode: { name: "" },
-        highlightSelectionMatches: {style: "selectedHighlight"}, // FIXME Highlight ONLY IF the selection is a word. Could require a patch to the match-highlighter plugin
+        highlightSelectionMatches: {style: "selectedHighlight", wordsOnly: true, delay: 25},
         styleSelectedText: true,
         styleActiveLine: true,
         foldGutter: true,

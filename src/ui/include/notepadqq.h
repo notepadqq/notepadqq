@@ -29,7 +29,7 @@
 #include <QProcessEnvironment>
 #include <QApplication>
 
-#define POINTVERSION "0.30.2" // major.minor.revision
+#define POINTVERSION "0.30.3" // major.minor.revision
 
 class Notepadqq
 {

@@ -10,7 +10,7 @@ QString Notepadqq::copyright()
 
 QString Notepadqq::editorPath()
 {
-    QString def = QString("%1/editor/index.html").
+    QString def = QString("%1/../appdata/editor/index.html").
             arg(qApp->applicationDirPath());
 
     if(!QFile(def).exists())
