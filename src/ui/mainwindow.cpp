@@ -13,19 +13,20 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), m_frmSearch(0)
+    ui(new Ui::MainWindow),
+    m_topEditorContainer(new TopEditorContainer(this))
 {
     // FIXME Set /usr/share/themes QIcon::setThemeSearchPaths();
 
     ui->setupUi(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
-    this->settings = new QSettings();
+    m_settings = new QSettings();
 
-    this->topEditorContainer = new TopEditorContainer(this);
-    this->setCentralWidget(this->topEditorContainer);
+    setCentralWidget(m_topEditorContainer);
 
-    docEngine = new DocEngine(settings, topEditorContainer);
+    m_docEngine = new DocEngine(m_settings, m_topEditorContainer);
+    connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
 
     // Assign (where possible) system theme icons to our actions.
     // If a system icon doesn't exist, fallback on the already assigned icon.
@@ -52,49 +53,49 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionFind_Previous->setIcon(QIcon::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
 
     // Context menu initialization
-    tabContextMenu = new QMenu;
+    m_tabContextMenu = new QMenu;
     QAction *separator = new QAction(this);
     separator->setSeparator(true);
-    tabContextMenuActions.append(ui->actionClose);
-    tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
-    tabContextMenuActions.append(ui->actionSave);
-    tabContextMenuActions.append(ui->actionSave_as);
-    tabContextMenuActions.append(ui->actionRename);
-    tabContextMenuActions.append(ui->actionDelete_from_Disk);
-    tabContextMenuActions.append(ui->actionPrint);
-    tabContextMenuActions.append(separator);
-    tabContextMenuActions.append(ui->actionMove_to_Other_View);
-    tabContextMenuActions.append(ui->actionClone_to_Other_View);
-    tabContextMenuActions.append(ui->actionMove_to_New_Instance);
-    tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
-    tabContextMenu->addActions(tabContextMenuActions);
+    m_tabContextMenuActions.append(ui->actionClose);
+    m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
+    m_tabContextMenuActions.append(ui->actionSave);
+    m_tabContextMenuActions.append(ui->actionSave_as);
+    m_tabContextMenuActions.append(ui->actionRename);
+    m_tabContextMenuActions.append(ui->actionDelete_from_Disk);
+    m_tabContextMenuActions.append(ui->actionPrint);
+    m_tabContextMenuActions.append(separator);
+    m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
+    m_tabContextMenuActions.append(ui->actionClone_to_Other_View);
+    m_tabContextMenuActions.append(ui->actionMove_to_New_Instance);
+    m_tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
+    m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    connect(this->topEditorContainer,
+    connect(m_topEditorContainer,
             &TopEditorContainer::customTabContextMenuRequested,
             this,
             &MainWindow::on_customTabContextMenuRequested);
 
-    connect(this->topEditorContainer,
+    connect(m_topEditorContainer,
             &TopEditorContainer::tabCloseRequested,
             this,
             &MainWindow::on_tabCloseRequested);
 
-    connect(this->topEditorContainer,
+    connect(m_topEditorContainer,
             &TopEditorContainer::currentEditorChanged,
             this,
             &MainWindow::on_currentEditorChanged);
 
-    connect(this->topEditorContainer,
+    connect(m_topEditorContainer,
             &TopEditorContainer::editorAdded,
             this,
             &MainWindow::on_editorAdded);
 
-    this->createStatusBar();
+    createStatusBar();
 
-    this->setAcceptDrops(true);
+    setAcceptDrops(true);
 
 
-    this->processCommandLineArgs(QApplication::arguments(), false);
+    processCommandLineArgs(QApplication::arguments(), false);
 
     // TODO Add last 15 recent languages to Languages menu (connect to this->setCurrentEditorLanguage() slot)
 
@@ -109,7 +110,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createStatusBar()
 {
-    QStatusBar* status = this->statusBar();
+    QStatusBar* status = statusBar();
     QLabel* label;
 
     status->setFixedHeight(22);
@@ -117,45 +118,45 @@ void MainWindow::createStatusBar()
     label = new QLabel("File Format", this);
     label->setMinimumWidth(160);
     status->addWidget(label);
-    statusBar_fileFormat = label;
+    m_statusBar_fileFormat = label;
 
     label = new QLabel("Length : 0     Lines : 1", this);
     status->addWidget(label);
-    statusBar_lengthInfo = label;
+    m_statusBar_lengthInfo = label;
 
     label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0", this);
     label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     status->addWidget(label);
-    statusBar_selectionInfo = label;
+    m_statusBar_selectionInfo = label;
 
     label = new QLabel("EOL", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(128);
     status->addWidget(label);
-    statusBar_EOLstyle = label;
+    m_statusBar_EOLstyle = label;
 
     label = new QLabel("Encoding", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(128);
     status->addWidget(label);
-    statusBar_textFormat = label;
+    m_statusBar_textFormat = label;
 
     label = new QLabel("INS", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
     label->setMinimumWidth(40);
     status->addWidget(label);
-    statusBar_overtypeNotify = label;
+    m_statusBar_overtypeNotify = label;
 }
 
 void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherInstance)
 {
-    bool activateWindow = false;
+    bool activateWnd = false;
 
     if(arguments.count() <= 1)
     {
         // Open a new empty document
         ui->action_New->trigger();
-        activateWindow = true;
+        activateWnd = true;
     }
     else
     {
@@ -166,20 +167,20 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
             files.append(arguments.at(i));
         }
 
-        EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
+        EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
         // Make sure we have a tabWidget: if not, create it.
         if(tabW == 0) {
-            tabW = this->topEditorContainer->addTabWidget();
+            tabW = m_topEditorContainer->addTabWidget();
         }
-        docEngine->loadDocuments(files, tabW, false);
-        activateWindow = true;
+        m_docEngine->loadDocuments(files, tabW, false);
+        activateWnd = true;
     }
 
-    if(fromOtherInstance && activateWindow)
+    if(fromOtherInstance && activateWnd)
     {
         // Activate the window
-        this->activateWindow();
-        this->raise();
+        activateWindow();
+        raise();
     }
 }
 
@@ -198,20 +199,20 @@ void MainWindow::dropEvent(QDropEvent *e)
     }
 
     if (!fileNames.empty()) {
-        this->docEngine->loadDocuments(fileNames,
-                                       this->topEditorContainer->currentTabWidget(),
-                                       false);
+        m_docEngine->loadDocuments(fileNames,
+                                   m_topEditorContainer->currentTabWidget(),
+                                   false);
     }
 }
 
 void MainWindow::on_action_New_triggered()
 {
     static int num = 1; // FIXME maybe find smarter way
-    EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
     // Make sure we have a tabWidget: if not, create it.
     if(tabW == 0) {
-        tabW = this->topEditorContainer->addTabWidget();
+        tabW = m_topEditorContainer->addTabWidget();
     }
 
     tabW->addEditorTab(true, tr("new %1").arg(num));
@@ -225,29 +226,29 @@ void MainWindow::setCurrentEditorLanguage(QString language)
 
 void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget * /*tabWidget*/, int /*tabIndex*/)
 {
-    this->tabContextMenu->exec(point);
+    m_tabContextMenu->exec(point);
 }
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
-    EditorTabWidget *curTabWidget = this->topEditorContainer->currentTabWidget();
+    EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
     EditorTabWidget *destTabWidget;
 
-    if(this->topEditorContainer->count() >= 2) {
+    if(m_topEditorContainer->count() >= 2) {
         int viewId = 1;
-        if(this->topEditorContainer->widget(1) == curTabWidget) {
+        if(m_topEditorContainer->widget(1) == curTabWidget) {
             viewId = 0;
         }
 
-        destTabWidget = (EditorTabWidget *)this->topEditorContainer->widget(viewId);
+        destTabWidget = (EditorTabWidget *)m_topEditorContainer->widget(viewId);
 
     } else {
-        destTabWidget = this->topEditorContainer->addTabWidget();
+        destTabWidget = m_topEditorContainer->addTabWidget();
     }
 
     destTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
 
-    this->removeTabWidgetIfEmpty(curTabWidget);
+    removeTabWidgetIfEmpty(curTabWidget);
 }
 
 void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
@@ -261,13 +262,13 @@ void MainWindow::on_action_Open_triggered()
     QStringList fileNames = QFileDialog::getOpenFileNames(
                 this,
                 tr("Open"),
-                settings->value("lastSelectedDir", ".").toString(),
+                m_settings->value("lastSelectedDir", ".").toString(),
                 tr("All files (*)"),
                 0, 0);
 
-    this->docEngine->loadDocuments(fileNames,
-                                   this->topEditorContainer->currentTabWidget(),
-                                   false);
+    m_docEngine->loadDocuments(fileNames,
+                               m_topEditorContainer->currentTabWidget(),
+                               false);
 }
 
 int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
@@ -317,7 +318,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
-    if (! (topEditorContainer->count() == 1 && tabWidget->count() == 1
+    if (! (m_topEditorContainer->count() == 1 && tabWidget->count() == 1
          && editor->fileName() == "" && editor->isClean())) {
 
         if(!force && !editor->isClean()) {
@@ -332,12 +333,12 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
                     result = MainWindow::tabCloseResult_Canceled;
                 } else if(saveResult == MainWindow::saveFileResult_Saved)
                 {
-                    if (remove) tabWidget->removeTab(tab);
+                    if (remove) m_docEngine->closeDocument(tabWidget, tab);
                     result = MainWindow::tabCloseResult_Saved;
                 }
             } else if(ret == QMessageBox::Discard) {
                 // Don't save and close
-                if (remove) tabWidget->removeTab(tab);
+                if (remove) m_docEngine->closeDocument(tabWidget, tab);
                 result = MainWindow::tabCloseResult_NotSaved;
             } else if(ret == QMessageBox::Cancel) {
                 // Don't save and cancel closing
@@ -345,7 +346,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
             }
         } else {
             // The tab is already saved: we can remove it safely.
-            if (remove) tabWidget->removeTab(tab);
+            if (remove) m_docEngine->closeDocument(tabWidget, tab);
             result = MainWindow::tabCloseResult_AlreadySaved;
         }
 
@@ -355,16 +356,14 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
         }
     }
 
-    // FIXME Remove document monitoring
-
     if(tabWidget->count() == 0) {
         /* Not so good... 0 tabs opened is a bad idea. So, if there are more
          * than one TabWidgets opened (split-screen) then we completely
          * remove this one. Otherwise, we add a new empty tab.
         */
-        if(topEditorContainer->count() > 1) {
+        if(m_topEditorContainer->count() > 1) {
             tabWidget->deleteLater();
-            topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
+            m_topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
         } else {
             ui->action_New->trigger();
         }
@@ -376,7 +375,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
 
 int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab)
 {
-    return this->closeTab(tabWidget, tab, true, false);
+    return closeTab(tabWidget, tab, true, false);
 }
 
 int MainWindow::save(EditorTabWidget *tabWidget, int tab)
@@ -387,8 +386,30 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
     {
         // Call "save as"
         return saveAs(tabWidget, tab, false);
+
     } else {
-        return this->docEngine->saveDocument(tabWidget, tab, editor->fileName());
+        // If the file has changed outside the editor, ask
+        // the user if he want to save it.
+        QFile file(editor->fileName());
+        if (editor->fileOnDiskChanged() && file.exists()) {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(QCoreApplication::applicationName());
+            msgBox.setIcon(QMessageBox::Warning);
+            msgBox.setText("<h3>" +
+                           tr("The file on disk has changed since the last "
+                              "read.\nDo you want to save it anyway?") +
+                           "</h3>");
+            msgBox.setInformativeText(tr("Saving the file might cause "
+                                         "loss of external data."));
+            msgBox.setStandardButtons(QMessageBox::Save |
+                                      QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Cancel);
+            int ret = msgBox.exec();
+            if (ret == QMessageBox::Cancel)
+                return MainWindow::saveFileResult_Canceled;
+        }
+
+        return m_docEngine->saveDocument(tabWidget, tab, editor->fileName());
     }
 }
 
@@ -396,17 +417,17 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
 {
     // Ask for a file name
     QString filename = QFileDialog::getSaveFileName(
-                0,
+                this,
                 tr("Save as"),
                 getSaveDialogDefaultFileName(tabWidget, tab),
                 tr("Any file (*)"),
                 0, 0);
 
     if (filename != "") {
-        settings->setValue("lastSelectedDir",
+        m_settings->setValue("lastSelectedDir",
                            QFileInfo(filename).absolutePath());
         // Write
-        return this->docEngine->saveDocument(tabWidget, tab, filename, copy);
+        return m_docEngine->saveDocument(tabWidget, tab, filename, copy);
     } else {
         return MainWindow::saveFileResult_Canceled;
     }
@@ -417,7 +438,7 @@ QString MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int
     QString docFileName = tabWidget->editor(tab)->fileName();
 
     if(docFileName == "") {
-        return settings->value("lastSelectedDir", ".").toString()
+        return m_settings->value("lastSelectedDir", ".").toString()
                 + "/" + tabWidget->tabText(tab);
     } else {
         return docFileName;
@@ -426,30 +447,30 @@ QString MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int
 
 Editor *MainWindow::currentEditor()
 {
-    return this->topEditorContainer->currentTabWidget()->currentEditor();
+    return m_topEditorContainer->currentTabWidget()->currentEditor();
 }
 
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)
 {
-    this->closeTab(tabWidget, tab);
+    closeTab(tabWidget, tab);
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
-    this->save(tabW, tabW->currentIndex());
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    save(tabW, tabW->currentIndex());
 }
 
 void MainWindow::on_actionSave_as_triggered()
 {
-    EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
-    this->saveAs(tabW, tabW->currentIndex(), false);
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    saveAs(tabW, tabW->currentIndex(), false);
 }
 
 void MainWindow::on_actionSave_a_Copy_As_triggered()
 {
-    EditorTabWidget *tabW = this->topEditorContainer->currentTabWidget();
-    this->saveAs(tabW, tabW->currentIndex(), true);
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    saveAs(tabW, tabW->currentIndex(), true);
 }
 
 void MainWindow::on_action_Copy_triggered()
@@ -473,7 +494,7 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
-    this->refreshEditorUiInfo(tabWidget->editor(tab));
+    refreshEditorUiInfo(tabWidget->editor(tab));
 }
 
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
@@ -488,7 +509,7 @@ void MainWindow::on_cursorActivity()
     Editor *editor = (Editor *)sender();
 
     if(currentEditor() == editor) {
-        this->refreshEditorUiInfo(editor);
+        refreshEditorUiInfo(editor);
     }
 }
 
@@ -498,10 +519,10 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         // Update status bar
         int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
         int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-        statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
+        m_statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
 
         QList<QVariant> cursor = editor->sendMessageWithResult("C_FUN_GET_CURSOR").toList();
-        statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
+        m_statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
                                          arg(cursor[0].toInt() + 1).
                                          arg(cursor[1].toInt() + 1).
                                          arg(0).arg(0));
@@ -544,13 +565,13 @@ void MainWindow::on_action_Redo_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    int tabWidgetsCount = topEditorContainer->count();
+    int tabWidgetsCount = m_topEditorContainer->count();
     for(int i = 0; i < tabWidgetsCount; i++) {
-        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(i);
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
         int tabCount = tabWidget->count();
 
         for(int j = 0; j < tabCount; j++) {
-            int closeResult = this->closeTab(tabWidget, j, false, false);
+            int closeResult = closeTab(tabWidget, j, false, false);
             if (closeResult == MainWindow::tabCloseResult_Canceled) {
                 // Cancel all
                 event->ignore();
@@ -562,15 +583,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_actionE_xit_triggered()
 {
-    this->close();
+    close();
 }
 
 void MainWindow::on_actionSearch_triggered()
 {
-    if(!m_frmSearch) {
-        m_frmSearch = new frmSearchReplace(this->topEditorContainer, frmSearchReplace::TabSearch, this);
+    if(!m_frmSearchReplace) {
+        m_frmSearchReplace = new frmSearchReplace(
+                            m_topEditorContainer,
+                            frmSearchReplace::TabSearch,
+                            this);
     }
-    m_frmSearch->show();
+    m_frmSearchReplace->show();
 }
 
 void MainWindow::on_actionSearchLanguage_triggered()
@@ -579,7 +603,7 @@ void MainWindow::on_actionSearchLanguage_triggered()
     _frm = new frmSearchLanguage(currentEditor(), this);
     int result = _frm->exec();
     if (result == QDialog::Accepted) {
-        this->setCurrentEditorLanguage(_frm->selectedMimeType());
+        setCurrentEditorLanguage(_frm->selectedMimeType());
     }
 
     _frm->deleteLater();
@@ -592,7 +616,7 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
     {
         QApplication::clipboard()->setText(QFileInfo(editor->fileName()).absoluteFilePath());
     } else {
-        EditorTabWidget *tabWidget = topEditorContainer->currentTabWidget();
+        EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     }
 }
@@ -604,7 +628,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
     {
         QApplication::clipboard()->setText(QFileInfo(editor->fileName()).fileName());
     } else {
-        EditorTabWidget *tabWidget = topEditorContainer->currentTabWidget();
+        EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     }
 }
@@ -631,20 +655,20 @@ void MainWindow::on_actionPreferences_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    this->closeTab(this->topEditorContainer->currentTabWidget(),
-                   this->topEditorContainer->currentTabWidget()->currentIndex());
+    closeTab(m_topEditorContainer->currentTabWidget(),
+             m_topEditorContainer->currentTabWidget()->currentIndex());
 }
 
 void MainWindow::on_actionC_lose_All_triggered()
 {
     // Save what needs to be saved, check if user wants to cancel the closing
-    int tabWidgetsCount = topEditorContainer->count();
+    int tabWidgetsCount = m_topEditorContainer->count();
     for(int i = 0; i < tabWidgetsCount; i++) {
-        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(i);
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
         int tabCount = tabWidget->count();
 
         for(int j = 0; j < tabCount; j++) {
-            int closeResult = this->closeTab(tabWidget, j, false, false);
+            int closeResult = closeTab(tabWidget, j, false, false);
             if (closeResult == MainWindow::tabCloseResult_Canceled)
                 return; // Cancel all
 
@@ -654,12 +678,12 @@ void MainWindow::on_actionC_lose_All_triggered()
 
     // Actually remove the tabs
     do {
-        EditorTabWidget *tabWidget = topEditorContainer->tabWidget(0);
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(0);
 
         do {
             int oldCount = tabWidget->count();
 
-            this->closeTab(tabWidget, 0, true, true);
+            closeTab(tabWidget, 0, true, true);
 
             if (oldCount == 1 && tabWidget->count() == 1) {
                 // We removed the last tab, and a new one has been created.
@@ -672,4 +696,48 @@ void MainWindow::on_actionC_lose_All_triggered()
     } while (1);
 
 
+}
+
+void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed)
+{
+    Editor *editor = tabWidget->editor(tab);
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setStandardButtons(QMessageBox::Yes |
+                              QMessageBox::No |
+                              QMessageBox::Close);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+
+    if (removed) {
+        // TODO Better looking msgbox
+        msgBox.setText(tr("The file \"%1\" has been removed from the "
+                          "file system. Would you like to save it now?")
+                       .arg(editor->fileName()));
+
+        int ret = msgBox.exec();
+
+        if (ret == QMessageBox::Close) {
+            closeTab(tabWidget, tab);
+        } else if (ret == QMessageBox::Yes) {
+            save(tabWidget, tab);
+        }
+
+    } else {
+        // TODO Better looking msgbox
+        msgBox.setText(tr("The file \"%1\" has been changed outside of "
+                          "the editor. Would you like to reload it?")
+                       .arg(editor->fileName()));
+
+        int ret = msgBox.exec();
+
+        if (ret == QMessageBox::Close) {
+            closeTab(tabWidget, tab);
+        } else if (ret == QMessageBox::Yes) {
+            m_docEngine->loadDocuments(QStringList(editor->fileName()),
+                                       tabWidget,
+                                       true);
+        }
+    }
 }

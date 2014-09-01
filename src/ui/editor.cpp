@@ -7,10 +7,10 @@
 #include <QCoreApplication>
 
 Editor::Editor(QWidget *parent) :
-    QWidget(parent), m_fileName("")
+    QWidget(parent)
 {
-    this->jsToCppProxy = new JsToCppProxy();
-    connect(this->jsToCppProxy,
+    m_jsToCppProxy = new JsToCppProxy();
+    connect(m_jsToCppProxy,
             &JsToCppProxy::messageReceived,
             this,
             &Editor::on_proxyMessageReceived);
@@ -18,11 +18,11 @@ Editor::Editor(QWidget *parent) :
     QEventLoop loop;
     connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
 
-    this->webView = new QWebView();
-    this->webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
-    this->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    m_webView = new QWebView();
+    m_webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
+    m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-    QWebSettings *pageSettings = this->webView->page()->settings();
+    QWebSettings *pageSettings = m_webView->page()->settings();
     #ifdef QT_DEBUG
     pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     #endif
@@ -30,10 +30,10 @@ Editor::Editor(QWidget *parent) :
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(this->webView);
-    this->setLayout(layout);
+    layout->addWidget(m_webView);
+    setLayout(layout);
 
-    connect(this->webView->page()->mainFrame(),
+    connect(m_webView->page()->mainFrame(),
             &QWebFrame::javaScriptWindowObjectCleared,
             this,
             &Editor::on_javaScriptWindowObjectCleared);
@@ -48,13 +48,14 @@ Editor::Editor(QWidget *parent) :
 
 Editor::~Editor()
 {
-    delete webView;
-    delete jsToCppProxy;
+    delete m_webView;
+    delete m_jsToCppProxy;
 }
 
 void Editor::on_javaScriptWindowObjectCleared()
 {
-    this->webView->page()->mainFrame()->addToJavaScriptWindowObject("cpp_ui_driver", this->jsToCppProxy);
+    m_webView->page()->mainFrame()->
+            addToJavaScriptWindowObject("cpp_ui_driver", m_jsToCppProxy);
 }
 
 void Editor::on_proxyMessageReceived(QString msg, QVariant data)
@@ -75,7 +76,7 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 
 void Editor::setFocus()
 {
-    this->webView->setFocus();
+    m_webView->setFocus();
 }
 
 void Editor::setFileName(QString filename)
@@ -90,12 +91,12 @@ QString Editor::fileName()
 
 bool Editor::isClean()
 {
-    return this->sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
+    return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
 }
 
 QMap<QString, QList<QString> > Editor::languages()
 {
-    QMap<QString, QVariant> modes = this->
+    QMap<QString, QVariant> modes =
             sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
 
     QMap<QString, QList<QString> > out = QMap<QString, QList<QString> >();
@@ -121,6 +122,16 @@ QString Editor::value()
 {
     return sendMessageWithResult("C_FUN_GET_VALUE").toString();
 }
+bool Editor::fileOnDiskChanged() const
+{
+    return m_fileOnDiskChanged;
+}
+
+void Editor::setFileOnDiskChanged(bool fileOnDiskChanged)
+{
+    m_fileOnDiskChanged = fileOnDiskChanged;
+}
+
 
 QString Editor::jsStringEscape(QString str) {
     return str.replace("\\", "\\\\")
@@ -134,12 +145,12 @@ QString Editor::jsStringEscape(QString str) {
 
 void Editor::sendMessage(QString msg, QVariant data)
 {
-    this->sendMessageWithResult(msg, data);
+    sendMessageWithResult(msg, data);
 }
 
 void Editor::sendMessage(QString msg)
 {
-    this->sendMessage(msg, 0);
+    sendMessage(msg, 0);
 }
 
 QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
@@ -147,12 +158,12 @@ QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
     QString funCall = "UiDriver.messageReceived('" +
             jsStringEscape(msg) + "');";
 
-    this->jsToCppProxy->setMsgData(data);
+    m_jsToCppProxy->setMsgData(data);
 
-    return this->webView->page()->mainFrame()->evaluateJavaScript(funCall);
+    return m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
 }
 
 QVariant Editor::sendMessageWithResult(QString msg)
 {
-    return this->sendMessageWithResult(msg, 0);
+    return sendMessageWithResult(msg, 0);
 }

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QSettings>
+#include <QFileSystemWatcher>
+#include <QFile>
 #include "editortabwidget.h"
 #include "topeditorcontainer.h"
 
@@ -17,6 +19,7 @@ class DocEngine : public QObject
     Q_OBJECT
 public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
+    ~DocEngine();
 
     // FIXME Separate from reload
     bool loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload);
@@ -38,17 +41,25 @@ public:
      * @return A MainWindow::saveFileResult.
      */
     int saveDocument(EditorTabWidget *tabWidget, int tab, QString outFileName = "", bool copy = false);
-private:
-    QSettings *settings;
-    TopEditorContainer *topEditorContainer;
-    bool read(QIODevice *io, Editor *editor, QString encoding);
-    QPair<int, int> findOpenEditorByFileName(QString filename);
 
+    void closeDocument(EditorTabWidget *tabWidget, int tab);
+
+private:
+    QSettings *m_settings;
+    TopEditorContainer *m_topEditorContainer;
+    QFileSystemWatcher *m_fsWatcher;
+    bool read(QFile *file, Editor *editor, QString encoding);
+    QPair<int, int> findOpenEditorByFileName(QString filename);
     bool write(QIODevice *io, Editor *editor);
+    void monitorDocument(const QString &fileName);
+    void unmonitorDocument(const QString &fileName);
 signals:
+    void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
 
 public slots:
 
+private slots:
+    void documentChanged(QString fileName);
 };
 
 #endif // DOCENGINE_H

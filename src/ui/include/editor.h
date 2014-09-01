@@ -19,7 +19,7 @@ class JsToCppProxy : public QObject
     Q_OBJECT
 
 private:
-    QVariant msgData;
+    QVariant m_msgData;
 
 public:
     /**
@@ -27,13 +27,13 @@ public:
      *        be called from the C++ part
      * @param data
      */
-    void setMsgData(QVariant data) { msgData = data; }
+    void setMsgData(QVariant data) { m_msgData = data; }
 
     /**
      * @brief Get the message data set by setMsgData(). This
      *        method should be called from the JavaScript part.
      */
-    Q_INVOKABLE QVariant getMsgData() { return msgData; }
+    Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
 
 signals:
     /**
@@ -90,10 +90,14 @@ public:
     QMap<QString, QList<QString> > languages();
     void setLanguage(QString language);
     QString value();
+    bool fileOnDiskChanged() const;
+    void setFileOnDiskChanged(bool fileOnDiskChanged);
+
 private:
-    QWebView *webView;
-    JsToCppProxy *jsToCppProxy;
-    QString m_fileName;
+    QWebView *m_webView;
+    JsToCppProxy *m_jsToCppProxy;
+    QString m_fileName = "";
+    bool m_fileOnDiskChanged = false;
     QString jsStringEscape(QString str);
 
 private slots:

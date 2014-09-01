@@ -4,13 +4,13 @@
 TopEditorContainer::TopEditorContainer(QWidget *parent) :
     QSplitter(parent), m_currentTabWidget(0)
 {
-    this->setOrientation(Qt::Horizontal);
+    setOrientation(Qt::Horizontal);
 }
 
 EditorTabWidget *TopEditorContainer::addTabWidget()
 {
     EditorTabWidget *tabWidget = new EditorTabWidget(this);
-    this->addWidget(tabWidget);
+    addWidget(tabWidget);
 
     // Detect tab switches
     connect(tabWidget, &EditorTabWidget::currentChanged, this, &TopEditorContainer::on_currentTabChanged);
@@ -26,19 +26,19 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
 
 EditorTabWidget *TopEditorContainer::tabWidget(int index)
 {
-    return (EditorTabWidget *)this->widget(index);
+    return (EditorTabWidget *)widget(index);
 }
 
 EditorTabWidget *TopEditorContainer::currentTabWidget()
 {
-    return this->m_currentTabWidget;
+    return m_currentTabWidget;
 }
 
 EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
 {
-    for (int i = 0; i < this->count(); i++) {
-        if (this->tabWidget(i)->indexOf(editor) > -1)
-            return this->tabWidget(i);
+    for (int i = 0; i < count(); i++) {
+        if (tabWidget(i)->indexOf(editor) > -1)
+            return tabWidget(i);
     }
     return 0;
 }
@@ -46,9 +46,9 @@ EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
 void TopEditorContainer::on_currentTabChanged(int index)
 {
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
-    this->m_currentTabWidget = tabWidget;
-    emit this->currentTabChanged(tabWidget, index);
-    emit this->currentEditorChanged(tabWidget, index);
+    m_currentTabWidget = tabWidget;
+    emit currentTabChanged(tabWidget, index);
+    emit currentEditorChanged(tabWidget, index);
 }
 
 void TopEditorContainer::on_currentTabWidgetChanged()
@@ -56,9 +56,9 @@ void TopEditorContainer::on_currentTabWidgetChanged()
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
 
     if(m_currentTabWidget != tabWidget) {
-        this->m_currentTabWidget = tabWidget;
-        emit this->currentTabWidgetChanged(tabWidget);
-        emit this->currentEditorChanged(tabWidget, tabWidget->currentIndex());
+        m_currentTabWidget = tabWidget;
+        emit currentTabWidgetChanged(tabWidget);
+        emit currentEditorChanged(tabWidget, tabWidget->currentIndex());
     }
 }
 
@@ -72,22 +72,22 @@ void TopEditorContainer::on_customContextMenuRequested(QPoint point)
         tabWidget->setFocus();
         tabWidget->setCurrentIndex(index);
 
-        emit this->customTabContextMenuRequested(
-                    tabWidget->mapToGlobal(point),
-                    tabWidget,
-                    index);
+        emit customTabContextMenuRequested(
+                 tabWidget->mapToGlobal(point),
+                 tabWidget,
+                 index);
     }
 }
 
 void TopEditorContainer::on_tabCloseRequested(int index)
 {
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
-    this->m_currentTabWidget = tabWidget;
-    emit this->tabCloseRequested(tabWidget, index);
+    m_currentTabWidget = tabWidget;
+    emit tabCloseRequested(tabWidget, index);
 }
 
 void TopEditorContainer::on_editorAdded(int tab)
 {
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
-    emit this->editorAdded(tabWidget, tab);
+    emit editorAdded(tabWidget, tab);
 }

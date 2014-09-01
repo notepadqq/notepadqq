@@ -79,21 +79,21 @@ private slots:
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
     void on_actionC_lose_All_triggered();
-
+    void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
 private:
     Ui::MainWindow*     ui;
-    TopEditorContainer* topEditorContainer;
-    QMenu*              tabContextMenu;
-    QList<QAction *>    tabContextMenuActions;
-    QLabel*             statusBar_fileFormat;
-    QLabel*             statusBar_lengthInfo;
-    QLabel*             statusBar_selectionInfo;
-    QLabel*             statusBar_EOLstyle;
-    QLabel*             statusBar_textFormat;
-    QLabel*             statusBar_overtypeNotify;
-    QSettings*          settings;
-    DocEngine*          docEngine;
-    frmSearchReplace*   m_frmSearch;
+    TopEditorContainer* m_topEditorContainer;
+    DocEngine*          m_docEngine;
+    QMenu*              m_tabContextMenu;
+    QList<QAction *>    m_tabContextMenuActions;
+    QLabel*             m_statusBar_fileFormat;
+    QLabel*             m_statusBar_lengthInfo;
+    QLabel*             m_statusBar_selectionInfo;
+    QLabel*             m_statusBar_EOLstyle;
+    QLabel*             m_statusBar_textFormat;
+    QLabel*             m_statusBar_overtypeNotify;
+    QSettings*          m_settings;
+    frmSearchReplace*   m_frmSearchReplace = 0;
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
