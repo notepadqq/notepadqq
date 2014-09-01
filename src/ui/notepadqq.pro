@@ -87,7 +87,7 @@ RESOURCES += \
 editorTarget.target = editor
 editorTarget.commands = (cd \"$$PWD\" && \
                          $${CMD_FULLDELETE} \"$$APPDATADIR/editor\" && \
-                         $${QMAKE_MKDIR} \"$$APPDATADIR/editor/\" && \
+                         $${QMAKE_MKDIR} \"$$APPDATADIR/\" && \
                          $${QMAKE_COPY_DIR} \"../editor\" \"$$APPDATADIR/editor\") # TODO remove unnecessary files
 
 launchTarget.target = launch
