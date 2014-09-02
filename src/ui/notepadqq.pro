@@ -55,7 +55,6 @@ SOURCES += main.cpp\
     languages.cpp \
     frmabout.cpp \
     frmsearchreplace.cpp \
-    frmsearchlanguage.cpp \
     notepadqq.cpp \
     frmpreferences.cpp
 
@@ -67,7 +66,6 @@ HEADERS  += include/mainwindow.h \
     include/languages.h \
     include/frmabout.h \
     include/frmsearchreplace.h \
-    include/frmsearchlanguage.h \
     include/notepadqq.h \
     include/frmpreferences.h
 

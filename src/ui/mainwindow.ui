@@ -325,9 +325,8 @@
      <string>&amp;Language</string>
     </property>
     <addaction name="actionAutomatic"/>
-    <addaction name="actionSearchLanguage"/>
-    <addaction name="separator"/>
     <addaction name="actionPlain_text"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuSe_ttings">
     <property name="title">

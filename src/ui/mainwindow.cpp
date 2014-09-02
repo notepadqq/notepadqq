@@ -3,7 +3,6 @@
 #include "include/editor.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
-#include "include/frmsearchlanguage.h"
 #include "include/frmpreferences.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -97,7 +96,35 @@ MainWindow::MainWindow(QWidget *parent) :
 
     processCommandLineArgs(QApplication::arguments(), false);
 
-    // TODO Add last 15 recent languages to Languages menu (connect to this->setCurrentEditorLanguage() slot)
+
+    QList<QMap<QString, QString>> langs = currentEditor()->languages();
+    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
+
+    //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
+    QMap<QChar, QMenu*> menuInitials;
+    for (int i = 0; i < langs.length(); i++) {
+        const QMap<QString, QString> &map = langs.at(i);
+
+        QString name = map.value("name", "?");
+        if (name.length() == 0) name = "?";
+        QChar letter = name.at(0).toUpper();
+
+        QMenu *letterMenu;
+        if (menuInitials.contains(letter)) {
+            letterMenu = menuInitials.value(letter, 0);
+        } else {
+            letterMenu = new QMenu(letter);
+            menuInitials.insert(letter, letterMenu);
+            ui->menu_Language->insertMenu(0, letterMenu);
+        }
+
+        QString mime = map.value("mime", "");
+        QAction *action = new QAction(map.value("name"), 0);
+        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
+            currentEditor()->setLanguage(mime);
+        });
+        letterMenu->insertAction(0, action);
+    }
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
@@ -597,18 +624,6 @@ void MainWindow::on_actionSearch_triggered()
     m_frmSearchReplace->show();
 }
 
-void MainWindow::on_actionSearchLanguage_triggered()
-{
-    frmSearchLanguage *_frm;
-    _frm = new frmSearchLanguage(currentEditor(), this);
-    int result = _frm->exec();
-    if (result == QDialog::Accepted) {
-        setCurrentEditorLanguage(_frm->selectedMimeType());
-    }
-
-    _frm->deleteLater();
-}
-
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
@@ -751,4 +766,9 @@ void MainWindow::on_actionReplace_triggered()
                             this);
     }
     m_frmSearchReplace->show();
+}
+
+void MainWindow::on_actionPlain_text_triggered()
+{
+    currentEditor()->setLanguage("");
 }

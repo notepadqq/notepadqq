@@ -72,7 +72,6 @@ private slots:
     void on_actionE_xit_triggered();
     void on_actionSearch_triggered();
     void setCurrentEditorLanguage(QString language);
-    void on_actionSearchLanguage_triggered();
     void on_actionCurrent_Full_File_path_to_Clipboard_triggered();
     void on_actionCurrent_Filename_to_Clipboard_triggered();
     void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
@@ -81,6 +80,8 @@ private slots:
     void on_actionC_lose_All_triggered();
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
+
+    void on_actionPlain_text_triggered();
 
 private:
     Ui::MainWindow*     ui;

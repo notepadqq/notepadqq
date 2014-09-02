@@ -87,11 +87,17 @@ public:
 
     // Common messages:
     bool isClean();
-    QMap<QString, QList<QString> > languages();
+    QList<QMap<QString, QString> > languages();
     void setLanguage(QString language);
     QString value();
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);
+
+    struct LanguageGreater {
+        inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
+            return v1.value("name") < v2.value("name");
+        }
+    };
 
 private:
     QWebView *m_webView;

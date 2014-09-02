@@ -94,20 +94,20 @@ bool Editor::isClean()
     return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
 }
 
-QMap<QString, QList<QString> > Editor::languages()
+QList<QMap<QString, QString>> Editor::languages()
 {
-    QMap<QString, QVariant> modes =
-            sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
+    QList<QVariant> modes =
+            sendMessageWithResult("C_FUN_GET_LANGUAGES").toList();
 
-    QMap<QString, QList<QString> > out = QMap<QString, QList<QString> >();
-    foreach (QString key, modes.keys()) {
-        QList<QVariant> raw_mimes = modes.value(key).toList();
+    QList<QMap<QString, QString>> out;
 
-        QList<QString> mimes = QList<QString>();
-        for (int i = 0; i < raw_mimes.length(); i++)
-            mimes.append(raw_mimes.at(i).toString());
-
-        out.insert(key, mimes);
+    foreach (const QVariant &raw_mode, modes) {
+        QMap<QString, QVariant> mode = raw_mode.toMap();
+        QMap<QString, QString> newMode;
+        newMode.insert("name", mode.value("name").toString());
+        newMode.insert("mime", mode.value("mime").toString());
+        newMode.insert("mode", mode.value("mode").toString());
+        out.append(newMode);
     }
 
     return out;
