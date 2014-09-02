@@ -76,9 +76,10 @@ public:
      *        You might want to call this method e.g. as soon as the application
      *        starts (so that an Editor is ready as soon as it gets required),
      *        or when the application is idle.
+     * @param howMany specifies how many Editors to add
      * @return
      */
-    static void addEditorToBuffer();
+    static void addEditorToBuffer(int howMany = 1);
 
     /**
      * @brief Give focus to the editor, so that the user can start

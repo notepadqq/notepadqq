@@ -50,17 +50,22 @@ Editor::~Editor()
 
 Editor *Editor::getNewEditor()
 {
-    m_editorBuffer.enqueue(new Editor());
-
-    if (m_editorBuffer.length() <= 1)
+    if (m_editorBuffer.length() == 0) {
+        m_editorBuffer.enqueue(new Editor());
         return new Editor();
-    else
+
+    } else if (m_editorBuffer.length() == 1) {
+        m_editorBuffer.enqueue(new Editor());
+        return m_editorBuffer.dequeue();
+
+    } else
         return m_editorBuffer.dequeue();
 }
 
-void Editor::addEditorToBuffer()
+void Editor::addEditorToBuffer(int howMany)
 {
-    m_editorBuffer.enqueue(new Editor());
+    for (int i = 0; i < howMany; i++)
+        m_editorBuffer.enqueue(new Editor());
 }
 
 void Editor::waitAsyncLoad()
