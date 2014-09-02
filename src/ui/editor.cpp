@@ -4,7 +4,9 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QDir>
-#include <QCoreApplication>
+#include <QEventLoop>
+
+QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
 Editor::Editor(QWidget *parent) :
     QWidget(parent)
@@ -14,9 +16,6 @@ Editor::Editor(QWidget *parent) :
             &JsToCppProxy::messageReceived,
             this,
             &Editor::on_proxyMessageReceived);
-
-    QEventLoop loop;
-    connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
 
     m_webView = new QWebView();
     m_webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
@@ -41,15 +40,37 @@ Editor::Editor(QWidget *parent) :
     // TODO Display a message if a javascript error gets triggered.
     // Right now, if there's an error in the javascript code, we
     // get stuck waiting a J_EVT_READY that will never come.
-
-    // Block until a J_EVT_READY message is received
-    loop.exec();
 }
 
 Editor::~Editor()
 {
     delete m_webView;
     delete m_jsToCppProxy;
+}
+
+Editor *Editor::getNewEditor()
+{
+    m_editorBuffer.enqueue(new Editor());
+
+    if (m_editorBuffer.length() <= 1)
+        return new Editor();
+    else
+        return m_editorBuffer.dequeue();
+}
+
+void Editor::addEditorToBuffer()
+{
+    m_editorBuffer.enqueue(new Editor());
+}
+
+void Editor::waitAsyncLoad()
+{
+    if (!m_loaded) {
+        QEventLoop loop;
+        connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
+        // Block until a J_EVT_READY message is received
+        loop.exec();
+    }
 }
 
 void Editor::on_javaScriptWindowObjectCleared()
@@ -62,9 +83,10 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 {
     emit messageReceived(msg, data);
 
-    if(msg == "J_EVT_READY")
+    if(msg == "J_EVT_READY") {
+        m_loaded = true;
         emit editorReady();
-    else if(msg == "J_EVT_CONTENT_CHANGED")
+    } else if(msg == "J_EVT_CONTENT_CHANGED")
         emit contentChanged();
     else if(msg == "J_EVT_CLEAN_CHANGED")
         emit cleanChanged(data.toBool());
@@ -141,7 +163,6 @@ void Editor::setFileOnDiskChanged(bool fileOnDiskChanged)
     m_fileOnDiskChanged = fileOnDiskChanged;
 }
 
-
 QString Editor::jsStringEscape(QString str) {
     return str.replace("\\", "\\\\")
             .replace("'", "\\'")
@@ -164,6 +185,8 @@ void Editor::sendMessage(QString msg)
 
 QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
 {
+    waitAsyncLoad();
+
     QString funCall = "UiDriver.messageReceived('" +
             jsStringEscape(msg) + "');";
 

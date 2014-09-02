@@ -1,5 +1,6 @@
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
+#include "include/editor.h"
 #include <QObject>
 #include <QFile>
 #include <QDir>
@@ -30,6 +31,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
+
+    Editor::addEditorToBuffer();
 
     QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {

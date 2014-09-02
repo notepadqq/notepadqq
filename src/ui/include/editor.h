@@ -66,6 +66,21 @@ public:
     ~Editor();
 
     /**
+     * @brief Efficiently returns a new Editor object from an internal buffer.
+     * @return
+     */
+    static Editor *getNewEditor();
+
+    /**
+     * @brief Adds a new Editor to the internal buffer used by getNewEditor().
+     *        You might want to call this method e.g. as soon as the application
+     *        starts (so that an Editor is ready as soon as it gets required),
+     *        or when the application is idle.
+     * @return
+     */
+    static void addEditorToBuffer();
+
+    /**
      * @brief Give focus to the editor, so that the user can start
      *        typing. Note that calling won't automatically switch to
      *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
@@ -105,6 +120,10 @@ private:
     JsToCppProxy *m_jsToCppProxy;
     QString m_fileName = "";
     bool m_fileOnDiskChanged = false;
+    bool m_loaded = false;
+    static QQueue<Editor*> m_editorBuffer;
+
+    inline void waitAsyncLoad();
     QString jsStringEscape(QString str);
 
 private slots:
