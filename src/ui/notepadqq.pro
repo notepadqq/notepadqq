@@ -21,6 +21,10 @@ equals(DEPLOY, true) {
     QMAKE_RPATH=
 }
 
+!equals(CHECK_QT5_VERSION, false) {
+    DEFINES += CHECK_QT5_VERSION
+}
+
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q
 
