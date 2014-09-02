@@ -96,17 +96,21 @@ bool Editor::isClean()
 
 QList<QMap<QString, QString>> Editor::languages()
 {
-    QList<QVariant> modes =
-            sendMessageWithResult("C_FUN_GET_LANGUAGES").toList();
+    QMap<QString, QVariant> languages =
+            sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
 
     QList<QMap<QString, QString>> out;
 
-    foreach (const QVariant &raw_mode, modes) {
-        QMap<QString, QVariant> mode = raw_mode.toMap();
+    QMap<QString, QVariant>::iterator lang;
+    for (lang = languages.begin(); lang != languages.end(); ++lang) {
+        QMap<QString, QVariant> mode = lang.value().toMap();
+
         QMap<QString, QString> newMode;
+        newMode.insert("id", lang.key());
         newMode.insert("name", mode.value("name").toString());
         newMode.insert("mime", mode.value("mime").toString());
         newMode.insert("mode", mode.value("mode").toString());
+
         out.append(newMode);
     }
 
@@ -116,6 +120,11 @@ QList<QMap<QString, QString>> Editor::languages()
 void Editor::setLanguage(QString language)
 {
     sendMessage("C_CMD_SET_LANGUAGE", language);
+}
+
+void Editor::setLanguageFromFileName()
+{
+    sendMessage("C_FUN_SET_LANGUAGE_FROM_FILENAME", fileName());
 }
 
 QString Editor::value()

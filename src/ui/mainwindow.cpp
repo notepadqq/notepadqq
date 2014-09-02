@@ -176,10 +176,10 @@ void MainWindow::setupLanguagesMenu()
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QString mime = map.value("mime", "");
+        QString langId = map.value("id", "");
         QAction *action = new QAction(map.value("name"), 0);
         connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
-            currentEditor()->setLanguage(mime);
+            currentEditor()->setLanguage(langId);
         });
         letterMenu->insertAction(0, action);
     }

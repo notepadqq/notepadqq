@@ -89,6 +89,7 @@ public:
     bool isClean();
     QList<QMap<QString, QString> > languages();
     void setLanguage(QString language);
+    void setLanguageFromFileName();
     QString value();
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);

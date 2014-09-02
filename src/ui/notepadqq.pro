@@ -52,7 +52,6 @@ SOURCES += main.cpp\
     editortabwidget.cpp \
     editor.cpp \
     docengine.cpp \
-    languages.cpp \
     frmabout.cpp \
     frmsearchreplace.cpp \
     notepadqq.cpp \
@@ -63,7 +62,6 @@ HEADERS  += include/mainwindow.h \
     include/editortabwidget.h \
     include/editor.h \
     include/docengine.h \
-    include/languages.h \
     include/frmabout.h \
     include/frmsearchreplace.h \
     include/notepadqq.h \

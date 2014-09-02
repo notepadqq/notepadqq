@@ -4,7 +4,6 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 #include "include/mainwindow.h"
-#include "include/languages.h"
 #include <magic.h>
 
 DocEngine::DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent) :
@@ -116,7 +115,7 @@ bool DocEngine::loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget,
                 editor->setFileName(fi.absoluteFilePath());
                 //sci->setEolMode(sci->guessEolMode());
                 tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                editor->setLanguage(Languages::detectLanguage(editor->fileName()));
+                editor->setLanguageFromFileName();
             } else {
                 //sci->scrollCursorToCenter(pos);
                 editor->setFileOnDiskChanged(false);
@@ -225,7 +224,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
     if (!copy) {
         if (editor->fileName() != outFileName) {
             editor->setFileName(outFileName);
-            editor->setLanguage(Languages::detectLanguage(editor->fileName()));
+            editor->setLanguageFromFileName();
 
             tabWidget->setTabToolTip(tab, editor->fileName());
             tabWidget->setTabText(tab, fi.fileName());
@@ -264,19 +263,9 @@ void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
     tabWidget->removeTab(tab);
 }
 
-QString DocEngine::getFileMimeType(QString file)
-{
-    return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_TYPE));
-}
-
 QString DocEngine::getFileMimeEncoding(QString file)
 {
     return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));
-}
-
-QString DocEngine::getFileType(QString file)
-{
-    return getFileInformation(file,(MAGIC_ERROR|MAGIC_RAW));
 }
 
 QString DocEngine::getFileInformation(QString file, int flags)

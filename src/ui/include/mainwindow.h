@@ -80,7 +80,6 @@ private slots:
     void on_actionC_lose_All_triggered();
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
-
     void on_actionPlain_text_triggered();
 
 private:

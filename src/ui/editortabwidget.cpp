@@ -140,9 +140,9 @@ void EditorTabWidget::setTabBarHidden(bool yes)
 
 void EditorTabWidget::setTabBarHighlight(bool yes)
 {
-    //Get colors from palette so it doesn't look fugly.
+    // Get colors from palette so it doesn't look fugly.
     QPalette palette = tabBar()->palette();
-    palette.setColor(QPalette::Highlight,yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
+    palette.setColor(QPalette::Highlight, yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
     tabBar()->setPalette(palette);
 }
 

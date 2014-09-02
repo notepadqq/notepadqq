@@ -24,9 +24,7 @@ public:
     // FIXME Separate from reload
     bool loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload);
 
-    static QString getFileMimeType(QString file);
     static QString getFileMimeEncoding(QString file);
-    static QString getFileType(QString file);
     static QString getFileInformation(QString file, int flags);
 
     /**

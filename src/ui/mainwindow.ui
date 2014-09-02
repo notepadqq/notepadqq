@@ -324,7 +324,6 @@
     <property name="title">
      <string>&amp;Language</string>
     </property>
-    <addaction name="actionAutomatic"/>
     <addaction name="actionPlain_text"/>
     <addaction name="separator"/>
    </widget>

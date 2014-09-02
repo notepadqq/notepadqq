@@ -6,7 +6,10 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QSettings>
+
+#ifdef QT_DEBUG
 #include <QElapsedTimer>
+#endif
 
 bool shouldStartApp(int argc, char *argv[]);
 void checkQtVersion(MainWindow *w);

@@ -19,8 +19,18 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
-    console.log("setting " + data);
-    editor.setOption("mode", data);
+    if (data != "") {
+        var lang = Languages.languages[data]
+        Languages.setLanguage(editor, lang);
+    } else {
+        Languages.setLanguage(editor, "unknown");
+    }
+});
+
+UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, data, prevReturn) {
+    var lang = Languages.languageByFileName(data);
+    Languages.setLanguage(editor, lang);
+    return lang;
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
@@ -153,7 +163,7 @@ UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, pre
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevReturn) {
-    return CodeMirror.modeInfo;
+    return Languages.languages;
 });
 
 
