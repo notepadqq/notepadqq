@@ -93,38 +93,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setAcceptDrops(true);
 
-
     processCommandLineArgs(QApplication::arguments(), false);
 
+    setupLanguagesMenu();
 
-    QList<QMap<QString, QString>> langs = currentEditor()->languages();
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
-    QMap<QChar, QMenu*> menuInitials;
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-
-        QString name = map.value("name", "?");
-        if (name.length() == 0) name = "?";
-        QChar letter = name.at(0).toUpper();
-
-        QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
-            letterMenu = menuInitials.value(letter, 0);
-        } else {
-            letterMenu = new QMenu(letter);
-            menuInitials.insert(letter, letterMenu);
-            ui->menu_Language->insertMenu(0, letterMenu);
-        }
-
-        QString mime = map.value("mime", "");
-        QAction *action = new QAction(map.value("name"), 0);
-        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
-            currentEditor()->setLanguage(mime);
-        });
-        letterMenu->insertAction(0, action);
-    }
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
@@ -173,6 +145,44 @@ void MainWindow::createStatusBar()
     label->setMinimumWidth(40);
     status->addWidget(label);
     m_statusBar_overtypeNotify = label;
+}
+
+void MainWindow::setupLanguagesMenu()
+{
+    Editor *editor = currentEditor();
+    if (editor == 0) {
+        qDebug() << "currentEditor is null";
+        throw;
+    }
+
+    QList<QMap<QString, QString>> langs = editor->languages();
+    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
+
+    //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
+    QMap<QChar, QMenu*> menuInitials;
+    for (int i = 0; i < langs.length(); i++) {
+        const QMap<QString, QString> &map = langs.at(i);
+
+        QString name = map.value("name", "?");
+        if (name.length() == 0) name = "?";
+        QChar letter = name.at(0).toUpper();
+
+        QMenu *letterMenu;
+        if (menuInitials.contains(letter)) {
+            letterMenu = menuInitials.value(letter, 0);
+        } else {
+            letterMenu = new QMenu(letter);
+            menuInitials.insert(letter, letterMenu);
+            ui->menu_Language->insertMenu(0, letterMenu);
+        }
+
+        QString mime = map.value("mime", "");
+        QAction *action = new QAction(map.value("name"), 0);
+        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
+            currentEditor()->setLanguage(mime);
+        });
+        letterMenu->insertAction(0, action);
+    }
 }
 
 void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherInstance)

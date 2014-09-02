@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QMessageBox>
+#include <QSettings>
 #include <QElapsedTimer>
 
 bool shouldStartApp(int argc, char *argv[]);
@@ -15,6 +16,7 @@ int main(int argc, char *argv[])
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
     __aet_timer.start();
+    qDebug() << "Start-time benchmark started.";
 #endif
 
     if (!shouldStartApp(argc, argv)) {
@@ -44,7 +46,9 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    checkQtVersion(&w);
+    QSettings *settings = new QSettings();
+    if (settings->value("checkQtVersionAtStartup", true).toBool())
+        checkQtVersion(&w);
 
     return a.exec();
 }

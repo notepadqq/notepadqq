@@ -18,6 +18,8 @@ public:
 
 private slots:
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_buttonBox_accepted();
+    void on_buttonBox_rejected();
 
 private:
     Ui::frmPreferences *ui;

@@ -8,8 +8,9 @@ frmPreferences::frmPreferences(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //ui->treeWidget->add
     QSettings s;
+
+    ui->chkCheckQtVersionAtStartup->setChecked(s.value("checkQtVersionAtStartup", true).toBool());
 }
 
 frmPreferences::~frmPreferences()
@@ -24,4 +25,17 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
     if (index != -1) {
         ui->stackedWidget->setCurrentIndex(index);
     }
+}
+
+void frmPreferences::on_buttonBox_accepted()
+{
+    QSettings s;
+    s.setValue("checkQtVersionAtStartup", ui->chkCheckQtVersionAtStartup->isChecked());
+
+    accept();
+}
+
+void frmPreferences::on_buttonBox_rejected()
+{
+    reject();
 }
