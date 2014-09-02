@@ -8,7 +8,9 @@
 #include <QElapsedTimer>
 
 bool shouldStartApp(int argc, char *argv[]);
+#ifdef CHECK_QT5_VERSION
 void checkQtVersion(MainWindow *w);
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -44,11 +46,14 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
+#ifdef CHECK_QT5_VERSION
     checkQtVersion(&w);
+#endif
 
     return a.exec();
 }
 
+#ifdef CHECK_QT5_VERSION
 void checkQtVersion(MainWindow *w)
 {
     QString runtimeVersion = qVersion();
@@ -76,6 +81,7 @@ void checkQtVersion(MainWindow *w)
         msgBox.exec();
     }
 }
+#endif
 
 void displayHelp()
 {
