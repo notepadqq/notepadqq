@@ -672,7 +672,7 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 void MainWindow::on_actionPreferences_triggered()
 {
     frmPreferences *_pref;
-    _pref = new frmPreferences(this);
+    _pref = new frmPreferences(m_topEditorContainer, this);
     _pref->exec();
 
     _pref->deleteLater();

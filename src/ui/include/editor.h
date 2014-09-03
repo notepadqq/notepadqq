@@ -112,7 +112,7 @@ public:
 
     struct LanguageGreater {
         inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
-            return v1.value("name") < v2.value("name");
+            return v1.value("name").toLower() < v2.value("name").toLower();
         }
     };
 
