@@ -19,6 +19,12 @@ Editor::Editor(QWidget *parent) :
 
     m_webView = new QWebView();
     m_webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
+
+    // To load the page in the background (http://stackoverflow.com/a/10520029):
+    // (however, no noticeable improvement here on an i5, september 2014)
+    //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
+    //m_webView->setContent(content.toUtf8());
+
     m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
     QWebSettings *pageSettings = m_webView->page()->settings();
