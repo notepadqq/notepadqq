@@ -1,0 +1,58 @@
+﻿html {
+	height: 100vh;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+}
+
+/*::-webkit-scrollbar {
+    width:  6px;
+    height: 6px;
+    background-color:transparent;
+}
+::-webkit-scrollbar-track {
+    background-color:transparent;
+    width: 6px;
+}
+::-webkit-scrollbar-track-piece  {
+    background-color: blue;
+}
+::-webkit-scrollbar-thumb {    
+    background-color: #d4dee8;
+    width: 6px;
+}*/
+
+.editor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+.editor > .CodeMirror {
+	height: 100%;
+	/*cursor: text;*/
+    line-height: 1.3em;
+}
+
+.CodeMirror-gutters {
+	cursor: default;
+}
+
+/* Color of word highlight */
+.CodeMirror .cm-selectedHighlight {
+	background: rgba(0, 255, 0, 0.4); 
+}
+
+.CodeMirror .CodeMirror-activeline-background {
+	background: #e8e8ff;
+}
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+    font-weight: bold;
+    color: white;
+    background-color: rgba(100, 100, 100, 0.4);
+}
