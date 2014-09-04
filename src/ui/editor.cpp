@@ -106,6 +106,11 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
         emit cursorActivity();
     else if(msg == "J_EVT_GOT_FOCUS")
         emit gotFocus();
+    else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
+        QVariantMap map = data.toMap();
+        emit currentLanguageChanged(map.value("id").toString(),
+                                    map.value("name").toString());
+    }
 }
 
 void Editor::setFocus()

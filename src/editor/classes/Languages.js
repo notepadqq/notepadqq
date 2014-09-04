@@ -1,7 +1,9 @@
 var Languages = new function() {
 
+    var m_currentLanguage = "";
+
     this.languages = {
-        "unknown": {
+        "": {
             name: "Text",
             mode: "null",
             mime: "text/plain",
@@ -212,7 +214,7 @@ var Languages = new function() {
                 if (lang.fileExtensions !== undefined) {
                     for (var i = 0; i < lang.fileExtensions.length; i++) {
                         if (endsWith(filename.toLowerCase(), "." + lang.fileExtensions[i].toLowerCase()))
-                            return lang;
+                            return id;
                     }
                 }
                 
@@ -220,20 +222,28 @@ var Languages = new function() {
                 if (lang.fileNames !== undefined) {
                     for (var i = 0; i < lang.fileNames.length; i++) {
                         if (filename === lang.fileNames[i] || endsWith(filename, "/" + lang.fileNames[i]) || endsWith(filename, "\\" + lang.fileNames[i]))
-                            return lang;
+                            return id;
                     }
                 }
             }
         }
 
-        return this.languages["unknown"];
+        return "";
     }
     
-    this.setLanguage = function(editor, language) {
-        if (language.mime !== undefined && language.mime !== null && language.mime !== "")
-            editor.setOption("mode", language.mime);
+    this.setLanguage = function(editor, languageId) {
+        var lang = this.languages[languageId];
+        if (lang.mime !== undefined && lang.mime !== null && lang.mime !== "")
+            editor.setOption("mode", lang.mime);
         else
-            editor.setOption("mode", language.mode);
+            editor.setOption("mode", lang.mode);
+            
+        m_currentLanguage = languageId;
+        UiDriver.sendMessage("J_EVT_CURRENT_LANGUAGE_CHANGED", {id: languageId, name: lang.name});
+    }
+    
+    this.currentLanguage = function() {
+        return m_currentLanguage;
     }
     
     function endsWith(str, suffix) {

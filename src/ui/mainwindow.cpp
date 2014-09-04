@@ -531,26 +531,37 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
-    refreshEditorUiInfo(tabWidget->editor(tab));
+    Editor *editor = tabWidget->editor(tab);
+    refreshEditorUiInfo(editor);
+    refreshEditorUiCursorInfo(editor);
 }
 
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    connect(editor, &Editor::cursorActivity,
-            this, &MainWindow::on_cursorActivity);
+    connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
 }
 
 void MainWindow::on_cursorActivity()
 {
     Editor *editor = (Editor *)sender();
 
-    if(currentEditor() == editor) {
+    if (currentEditor() == editor) {
+        refreshEditorUiCursorInfo(editor);
+    }
+}
+
+void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
+{
+    Editor *editor = (Editor *)sender();
+
+    if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
     }
 }
 
-void MainWindow::refreshEditorUiInfo(Editor *editor)
+void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 {
     if (editor != 0) {
         // Update status bar
@@ -564,6 +575,13 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                          arg(cursor[1].toInt() + 1).
                                          arg(0).arg(0));
     }
+}
+
+void MainWindow::refreshEditorUiInfo(Editor *editor)
+{
+    QVariantMap data = editor->sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+    QString name = data.value("lang").toMap().value("name").toString();
+    m_statusBar_fileFormat->setText(name);
 }
 
 void MainWindow::on_action_Delete_triggered()

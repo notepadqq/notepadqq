@@ -149,6 +149,8 @@ signals:
      */
     void editorReady();
 
+    void currentLanguageChanged(QString id, QString name);
+
 public slots:
     void sendMessage(QString msg, QVariant data);
     void sendMessage(QString msg);

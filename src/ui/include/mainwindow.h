@@ -53,6 +53,7 @@ protected:
     void dropEvent(QDropEvent *e);
 private slots:
     void refreshEditorUiInfo(Editor *editor);
+    void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -85,7 +86,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-
+    void on_currentLanguageChanged(QString id, QString name);
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* m_topEditorContainer;
