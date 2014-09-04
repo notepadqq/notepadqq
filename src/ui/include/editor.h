@@ -71,6 +71,12 @@ public:
      */
     static Editor *getNewEditor();
 
+    struct LanguageGreater {
+        inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
+            return v1.value("name").toLower() < v2.value("name").toLower();
+        }
+    };
+
     /**
      * @brief Adds a new Editor to the internal buffer used by getNewEditor().
      *        You might want to call this method e.g. as soon as the application
@@ -101,21 +107,17 @@ public:
      */
     QString fileName();
 
-    // Common messages:
-    bool isClean();
-    QList<QMap<QString, QString> > languages();
-    void setLanguage(QString language);
-    void setLanguageFromFileName();
-    QString value();
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);
 
-    struct LanguageGreater {
-        inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
-            return v1.value("name").toLower() < v2.value("name").toLower();
-        }
-    };
-
+    // Lower-level message wrappers:
+    bool isClean();
+    QList<QMap<QString, QString> > languages();
+    void setLanguage(QString language);
+    QString setLanguageFromFileName();
+    QString value();
+    void setIndentationMode(bool useTabs, int size);
+    void setIndentationMode(QString language);
 private:
     QWebView *m_webView;
     JsToCppProxy *m_jsToCppProxy;

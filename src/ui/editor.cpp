@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
+#include <QSettings>
 
 QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
@@ -153,11 +154,37 @@ QList<QMap<QString, QString>> Editor::languages()
 void Editor::setLanguage(QString language)
 {
     sendMessage("C_CMD_SET_LANGUAGE", language);
+    setIndentationMode(language);
 }
 
-void Editor::setLanguageFromFileName()
+QString Editor::setLanguageFromFileName()
 {
-    sendMessage("C_FUN_SET_LANGUAGE_FROM_FILENAME", fileName());
+    QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
+                                         fileName()).toString();
+
+    setIndentationMode(lang);
+
+    return lang;
+}
+
+void Editor::setIndentationMode(QString language)
+{
+    QSettings s;
+    QString keyPrefix = "Languages/" + language + "/";
+
+    if (s.value(keyPrefix + "useDefaultSettings", true).toBool())
+        keyPrefix = "Languages/";
+
+    setIndentationMode(!s.value(keyPrefix + "indentWithSpaces", false).toBool(),
+                       s.value(keyPrefix + "tabSize", 4).toInt());
+}
+
+void Editor::setIndentationMode(bool useTabs, int size)
+{
+    QMap<QString, QVariant> data;
+    data.insert("useTabs", useTabs);
+    data.insert("size", size);
+    sendMessage("C_CMD_SET_INDENTATION_MODE", data);
 }
 
 QString Editor::value()

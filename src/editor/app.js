@@ -33,6 +33,13 @@ UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, 
     return lang;
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {
+    editor.options.indentWithTabs = data.useTabs;
+    editor.options.indentUnit = data.useTabs;
+    editor.options.tabSize = data.size;
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
     return editor.getSelections("\n");
 });
@@ -177,6 +184,30 @@ $(document).ready(function () {
         styleActiveLine: true,
         foldGutter: true,
         gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+        indentWithTabs: true,
+        indentUnit: 4,
+        tabSize: 4
+    });
+    
+    editor.addKeyMap({
+        "Tab": function (cm) {
+            if (cm.somethingSelected()) {
+                var sel = editor.getSelection("\n");
+                // Indent only if there are multiple lines selected, or if the selection spans a full line
+                if (sel.length > 0 && (sel.indexOf("\n") > -1 || sel.length === cm.getLine(cm.getCursor().line).length)) {
+                    cm.indentSelection("add");
+                    return;
+                }
+            }
+
+            if (cm.options.indentWithTabs)
+                cm.execCommand("insertTab");
+            else
+                cm.execCommand("insertSoftTab");
+        },
+        "Shift-Tab": function (cm) {
+            cm.indentSelection("subtract");
+        }
     });
 
     generation = editor.changeGeneration(true);
