@@ -186,7 +186,8 @@ $(document).ready(function () {
         gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         indentWithTabs: true,
         indentUnit: 4,
-        tabSize: 4
+        tabSize: 4,
+        matchBrackets: true
     });
     
     editor.addKeyMap({

@@ -47,6 +47,10 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
+protected:
+    void closeEvent(QCloseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
 private slots:
     void refreshEditorUiInfo(Editor *editor);
     void on_action_New_triggered();
@@ -130,10 +134,7 @@ private:
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QString             getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
-    void                closeEvent(QCloseEvent *event);
     void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
-    void                dragEnterEvent(QDragEnterEvent *e);
-    void                dropEvent(QDropEvent *e);
     void                setupLanguagesMenu();
 };
 

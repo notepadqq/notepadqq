@@ -50,3 +50,10 @@ body {
 .CodeMirror .CodeMirror-activeline-background {
 	background: #e8e8ff;
 }
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+    font-weight: bold;
+    color: #0000ff;
+    /*color: white;
+    background-color: rgba(190, 190, 190, 0.4);*/
+}
