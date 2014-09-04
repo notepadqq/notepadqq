@@ -1,8 +1,6 @@
 Notepadqq
 =========
 
-_Keep in mind that this is an experimental branch._
-
 Build dependencies
 ------------------
    * Qt 5.3.1
