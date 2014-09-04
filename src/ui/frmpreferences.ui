@@ -40,11 +40,6 @@
    </item>
    <item>
     <property name="text">
-     <string>Editor</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
      <string>Languages</string>
     </property>
    </item>
@@ -59,7 +54,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="page">
     <widget class="QCheckBox" name="chkCheckQtVersionAtStartup">
@@ -76,7 +71,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="page_3"/>
    <widget class="QWidget" name="page_2">
     <widget class="QCheckBox" name="chkLanguages_useDefaultSettings">
      <property name="geometry">
