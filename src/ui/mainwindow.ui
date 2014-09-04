@@ -94,13 +94,6 @@
      <addaction name="actionCurrent_Filename_to_Clipboard"/>
      <addaction name="actionCurrent_Directory_Path_to_Clipboard"/>
     </widget>
-    <widget class="QMenu" name="menuIndent">
-     <property name="title">
-      <string>Indent</string>
-     </property>
-     <addaction name="actionIncrease_Line_Indent"/>
-     <addaction name="actionDecrease_Line_Indent"/>
-    </widget>
     <widget class="QMenu" name="menuConvert_Case_to">
      <property name="title">
       <string>Convert Case to</string>
@@ -118,7 +111,6 @@
     <addaction name="actionSelect_All"/>
     <addaction name="separator"/>
     <addaction name="menuCopy_to_Clipboard"/>
-    <addaction name="menuIndent"/>
     <addaction name="menuConvert_Case_to"/>
     <addaction name="menuEOL_Conversion"/>
    </widget>
@@ -771,22 +763,6 @@
   <action name="actionCurrent_Directory_Path_to_Clipboard">
    <property name="text">
     <string>Current Directory Path to Clipboard</string>
-   </property>
-  </action>
-  <action name="actionIncrease_Line_Indent">
-   <property name="text">
-    <string>Increase Line Indent</string>
-   </property>
-   <property name="shortcut">
-    <string>Tab</string>
-   </property>
-  </action>
-  <action name="actionDecrease_Line_Indent">
-   <property name="text">
-    <string>Decrease Line Indent</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+Tab</string>
    </property>
   </action>
   <action name="actionZoom_In">

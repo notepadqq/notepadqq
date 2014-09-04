@@ -35,7 +35,7 @@ UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, 
 
 UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {
     editor.options.indentWithTabs = data.useTabs;
-    editor.options.indentUnit = data.useTabs;
+    editor.options.indentUnit = data.size;
     editor.options.tabSize = data.size;
     editor.refresh();
 });
