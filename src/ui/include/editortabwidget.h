@@ -36,10 +36,19 @@ private:
     void setTabBarHighlight(bool yes);
     void connectEditorSignals(Editor *editor);
     void disconnectEditorSignals(Editor *editor);
+
+    /**
+     * @brief Add a new Editor tab (or transfer it from another EditorTabWidget)
+     * @param setFocus True if you want to give focus to the new tab
+     * @param title Title of the new tab. It's not used if a tab transfer is occurring
+     * @param source Container of the tab to transfer. Set it to 0 to create a new tab.
+     * @param sourceTabIndex Tab index, within @param source, of the tab to transfer
+     * @return Index of the tab
+     */
     int rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex);
 private slots:
-    void on_cleanChanged(bool isClean);
-
+    void on_cleanChanged(bool isClean); 
+    void on_editorMouseWheel(QWheelEvent *ev);
 signals:
     void gotFocus();
     void editorAdded(int index);

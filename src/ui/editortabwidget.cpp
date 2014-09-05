@@ -32,6 +32,9 @@ void EditorTabWidget::connectEditorSignals(Editor *editor)
             this, &EditorTabWidget::on_cleanChanged);
 
     connect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
+
+    connect(editor, &Editor::mouseWheel,
+            this, &EditorTabWidget::on_editorMouseWheel);
 }
 
 void EditorTabWidget::disconnectEditorSignals(Editor *editor)
@@ -40,6 +43,9 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
                this, &EditorTabWidget::on_cleanChanged);
 
     disconnect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
+
+    disconnect(editor, &Editor::mouseWheel,
+               this, &EditorTabWidget::on_editorMouseWheel);
 }
 
 int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
@@ -47,6 +53,12 @@ int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, i
     return this->rawAddEditorTab(setFocus, QString(), source, tabIndex);
 }
 
+/**
+ * @brief Do NOT directly connect to Editor signals within this method,
+ *        or they'll remain attached to this EditorTabWidget whenever the
+ *        tab gets moved to another container. Use connectEditorSignals()
+ *        and disconnectEditorSignals() methods instead.
+ */
 int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex)
 {
 #ifdef QT_DEBUG
@@ -92,11 +104,6 @@ int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidg
         this->setTabIcon(index, oldIcon);
         this->setTabToolTip(index, oldTooltip);
     }
-
-    // Events
-    connect(editor, &Editor::mouseWheel, this, [=](QWheelEvent *ev) {
-        emit editorMouseWheel(index, ev);
-    });
 
     // Common setup
     editor->setZoomFactor(m_zoomFactor);
@@ -174,4 +181,10 @@ void EditorTabWidget::on_cleanChanged(bool isClean)
     int index = this->indexOf((QWidget *)sender());
     if(index >= 0)
         this->setSavedIcon(index, isClean);
+}
+
+void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
+{
+    Editor *editor = (Editor *)sender();
+    emit editorMouseWheel(indexOf(editor), ev);
 }

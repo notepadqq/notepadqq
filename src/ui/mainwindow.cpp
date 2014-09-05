@@ -815,11 +815,12 @@ void MainWindow::on_actionZoom_Out_triggered()
 
 void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
 {
-    qreal curZoom = currentEditor()->zoomFactor();
-    qreal diff = ev->delta() / 120;
-    diff /= 10;
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+        qreal curZoom = tabWidget->editor(tab)->zoomFactor();
+        qreal diff = ev->delta() / 120;
+        diff /= 10;
 
-    // Increment/Decrement zoom factor by 0.1 at each step.
-    tabWidget->setZoomFactor(curZoom + diff);
-    qDebug() << currentEditor()->zoomFactor();
+        // Increment/Decrement zoom factor by 0.1 at each step.
+        tabWidget->setZoomFactor(curZoom + diff);
+    }
 }
