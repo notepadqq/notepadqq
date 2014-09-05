@@ -20,6 +20,9 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
     connect(tabWidget, &EditorTabWidget::customContextMenuRequested, this, &TopEditorContainer::on_customContextMenuRequested);
     connect(tabWidget, &EditorTabWidget::tabCloseRequested, this, &TopEditorContainer::on_tabCloseRequested);
     connect(tabWidget, &EditorTabWidget::editorAdded, this, &TopEditorContainer::on_editorAdded);
+    connect(tabWidget, &EditorTabWidget::editorMouseWheel, this, [=](int tab, QWheelEvent *ev) {
+        emit editorMouseWheel(tabWidget, tab, ev);
+    });
 
     return tabWidget;
 }

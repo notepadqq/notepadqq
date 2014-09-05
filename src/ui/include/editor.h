@@ -1,10 +1,11 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "include/customqwebview.h"
 #include <QObject>
 #include <QVariant>
-#include <QWebView>
 #include <QQueue>
+#include <QWheelEvent>
 
 /**
  * @brief An Object injectable into the javascript page, that allows
@@ -105,7 +106,7 @@ public:
      * @brief Get the file name associated with this editor
      * @return
      */
-    QString fileName();
+    QString fileName() const;
 
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);
@@ -118,8 +119,10 @@ public:
     QString value();
     void setIndentationMode(bool useTabs, int size);
     void setIndentationMode(QString language);
+    qreal zoomFactor() const;
+    void setZoomFactor(const qreal &factor);
 private:
-    QWebView *m_webView;
+    CustomQWebView *m_webView;
     JsToCppProxy *m_jsToCppProxy;
     QString m_fileName = "";
     bool m_fileOnDiskChanged = false;
@@ -135,8 +138,8 @@ private slots:
 
 signals:
     void messageReceived(QString msg, QVariant data);
-
     void gotFocus();
+    void mouseWheel(QWheelEvent *ev);
 
     // Pre-interpreted messages:
     void contentChanged();

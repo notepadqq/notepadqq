@@ -2,6 +2,7 @@
 #define EDITORTABWIDGET_H
 
 #include <QTabWidget>
+#include <QWheelEvent>
 #include "editor.h"
 
 /**
@@ -26,7 +27,11 @@ public:
     Editor *editor(int index);
     Editor *currentEditor();
 
+    qreal zoomFactor() const;
+    void setZoomFactor(const qreal &zoomFactor);
+
 private:
+    qreal m_zoomFactor = 1;
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
     void connectEditorSignals(Editor *editor);
@@ -38,6 +43,7 @@ private slots:
 signals:
     void gotFocus();
     void editorAdded(int index);
+    void editorMouseWheel(int tab, QWheelEvent *ev);
 
 public slots:
     void setSavedIcon(int index, bool saved);

@@ -69,25 +69,20 @@ MainWindow::MainWindow(QWidget *parent) :
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    connect(m_topEditorContainer,
-            &TopEditorContainer::customTabContextMenuRequested,
-            this,
-            &MainWindow::on_customTabContextMenuRequested);
+    connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
+            this, &MainWindow::on_customTabContextMenuRequested);
 
-    connect(m_topEditorContainer,
-            &TopEditorContainer::tabCloseRequested,
-            this,
-            &MainWindow::on_tabCloseRequested);
+    connect(m_topEditorContainer, &TopEditorContainer::tabCloseRequested,
+            this, &MainWindow::on_tabCloseRequested);
 
-    connect(m_topEditorContainer,
-            &TopEditorContainer::currentEditorChanged,
-            this,
-            &MainWindow::on_currentEditorChanged);
+    connect(m_topEditorContainer, &TopEditorContainer::currentEditorChanged,
+            this, &MainWindow::on_currentEditorChanged);
 
-    connect(m_topEditorContainer,
-            &TopEditorContainer::editorAdded,
-            this,
-            &MainWindow::on_editorAdded);
+    connect(m_topEditorContainer, &TopEditorContainer::editorAdded,
+            this, &MainWindow::on_editorAdded);
+
+    connect(m_topEditorContainer, &TopEditorContainer::editorMouseWheel,
+            this, &MainWindow::on_editorMouseWheel);
 
     createStatusBar();
 
@@ -799,4 +794,32 @@ void MainWindow::on_actionReplace_triggered()
 void MainWindow::on_actionPlain_text_triggered()
 {
     currentEditor()->setLanguage("");
+}
+
+void MainWindow::on_actionRestore_Default_Zoom_triggered()
+{
+    m_topEditorContainer->currentTabWidget()->setZoomFactor(1);
+}
+
+void MainWindow::on_actionZoom_In_triggered()
+{
+    qreal curZoom = currentEditor()->zoomFactor();
+    m_topEditorContainer->currentTabWidget()->setZoomFactor(curZoom + 0.25);
+}
+
+void MainWindow::on_actionZoom_Out_triggered()
+{
+    qreal curZoom = currentEditor()->zoomFactor();
+    m_topEditorContainer->currentTabWidget()->setZoomFactor(curZoom - 0.25);
+}
+
+void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
+{
+    qreal curZoom = currentEditor()->zoomFactor();
+    qreal diff = ev->delta() / 120;
+    diff /= 10;
+
+    // Increment/Decrement zoom factor by 0.1 at each step.
+    tabWidget->setZoomFactor(curZoom + diff);
+    qDebug() << currentEditor()->zoomFactor();
 }

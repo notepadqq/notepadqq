@@ -93,6 +93,14 @@ int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidg
         this->setTabToolTip(index, oldTooltip);
     }
 
+    // Events
+    connect(editor, &Editor::mouseWheel, this, [=](QWheelEvent *ev) {
+        emit editorMouseWheel(index, ev);
+    });
+
+    // Common setup
+    editor->setZoomFactor(m_zoomFactor);
+
     this->setUpdatesEnabled(true);
 
     emit editorAdded(index);
@@ -125,6 +133,20 @@ Editor *EditorTabWidget::currentEditor()
 {
     return (Editor *)this->currentWidget();
 }
+qreal EditorTabWidget::zoomFactor() const
+{
+    return m_zoomFactor;
+}
+
+void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
+{
+    m_zoomFactor = zoomFactor;
+
+    for (int i = 0; i < count(); i++) {
+        editor(i)->setZoomFactor(zoomFactor);
+    }
+}
+
 
 void EditorTabWidget::setSavedIcon(int index, bool saved)
 {

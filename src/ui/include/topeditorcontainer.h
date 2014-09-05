@@ -2,6 +2,7 @@
 #define TOPEDITORCONTAINER_H
 
 #include <QSplitter>
+#include <QWheelEvent>
 #include "editortabwidget.h"
 #include "editor.h"
 
@@ -54,6 +55,7 @@ signals:
     void customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tab);
     void tabCloseRequested(EditorTabWidget *tabWidget, int tab);
     void editorAdded(EditorTabWidget *tabWidget, int tab);
+    void editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev);
 
 public slots:
 

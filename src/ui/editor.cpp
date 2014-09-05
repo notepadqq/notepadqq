@@ -18,7 +18,7 @@ Editor::Editor(QWidget *parent) :
             this,
             &Editor::on_proxyMessageReceived);
 
-    m_webView = new QWebView();
+    m_webView = new CustomQWebView();
     m_webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
 
     // To load the page in the background (http://stackoverflow.com/a/10520029):
@@ -43,6 +43,8 @@ Editor::Editor(QWidget *parent) :
             &QWebFrame::javaScriptWindowObjectCleared,
             this,
             &Editor::on_javaScriptWindowObjectCleared);
+
+    connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
 
     // TODO Display a message if a javascript error gets triggered.
     // Right now, if there's an error in the javascript code, we
@@ -123,7 +125,7 @@ void Editor::setFileName(QString filename)
     m_fileName = filename;
 }
 
-QString Editor::fileName()
+QString Editor::fileName() const
 {
     return m_fileName;
 }
@@ -196,6 +198,7 @@ QString Editor::value()
 {
     return sendMessageWithResult("C_FUN_GET_VALUE").toString();
 }
+
 bool Editor::fileOnDiskChanged() const
 {
     return m_fileOnDiskChanged;
@@ -241,4 +244,18 @@ QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
 QVariant Editor::sendMessageWithResult(QString msg)
 {
     return sendMessageWithResult(msg, 0);
+}
+
+void Editor::setZoomFactor(const qreal &factor)
+{
+    qreal normFact = factor;
+    if (normFact > 14) normFact = 14;
+    else if (normFact < 0.10) normFact = 0.10;
+
+    m_webView->setZoomFactor(normFact);
+}
+
+qreal Editor::zoomFactor() const
+{
+    return m_webView->zoomFactor();
 }
