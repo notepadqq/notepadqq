@@ -16,10 +16,8 @@ UI_DIR = ../../out/build_data
 MOC_DIR = ../../out/build_data
 OBJECTS_DIR = ../../out/build_data
 
-# If DEPLOY=true, clear "rpath" so that we can specify Qt lib path via LD_LIBRARY_PATH
-equals(DEPLOY, true) {
-    QMAKE_RPATH=
-}
+# clear "rpath" so that we can override Qt lib path via LD_LIBRARY_PATH
+QMAKE_RPATH=
 
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q

@@ -11,14 +11,10 @@ How to build
 ------------
 You can build Notepadqq from command line:
 
-    notepadqq/src/ui$ qmake PREFIX=/opt/notepadqq DEPLOY=false notepadqq.pro -r -spec linux-g++
+    notepadqq/src/ui$ qmake PREFIX=/opt/notepadqq notepadqq.pro -r -spec linux-g++
     notepadqq/src/ui$ make
     
 Make sure you're using qmake from Qt 5.3.1 (`qmake -v`). If not, you might need to specify its full path.
-
-`DEPLOY=false` will hard-link notepadqq to your local Qt libraries. If you want to deploy notepadqq to
-different machines (e.g. if you're building a Linux package), you need to run qmake with `DEPLOY=true` and
-then copy the needed Qt libraries within the same folder as the notepadqq binary file (find them with `ldd notepadqq|grep libQt`.
 
 Install
 -------
