@@ -399,15 +399,8 @@ var Languages = new function() {
         "php": {
             name: "PHP",
             mode: "php",
-            mime: "application/x-php",
-            fileExtensions: ["php", "php3", "php4", "php5"]
-        },
-
-        "phtml": {
-            name: "PHP (HTML)",
-            mode: "php",
             mime: "application/x-httpd-php",
-            fileExtensions: ["phtm", "phtml", "ctp"]
+            fileExtensions: ["php", "php3", "php4", "php5", "phtm", "phtml", "ctp"]
         },
 
         "pig": {
@@ -583,7 +576,7 @@ var Languages = new function() {
             name: "SystemVerilog",
             mode: "verilog",
             mime: "text/x-systemverilog",
-            fileExtensions: ["v"]
+            fileExtensions: ["sv"]
         },
 
         "tcl": {
@@ -646,7 +639,7 @@ var Languages = new function() {
             name: "Verilog",
             mode: "verilog",
             mime: "text/x-verilog",
-            fileExtensions: []
+            fileExtensions: ["v"]
         },
 
         "xml": {
