@@ -13,7 +13,7 @@ frmAbout::frmAbout(QWidget *parent) :
     ui->lblVersion->setText("v" + Notepadqq::version);
     ui->lblCopyright->setText(Notepadqq::copyright());
 
-    ui->lblContributors->setText(tr("Authors:") + " <a href=\"" + Notepadqq::membersUrl + "\"><span style=\"text-decoration: underline; color:#0000ff;\">" + tr("GitHub Contributors") + "</span></a>");
+    ui->lblContributors->setText(tr("Authors:") + " <a href=\"" + Notepadqq::contributorsUrl + "\"><span style=\"text-decoration: underline; color:#0000ff;\">" + tr("GitHub Contributors") + "</span></a>");
 
     setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);

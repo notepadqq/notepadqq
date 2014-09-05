@@ -1,7 +1,7 @@
 #include "include/notepadqq.h"
 
 const QString Notepadqq::version = POINTVERSION;
-const QString Notepadqq::membersUrl = "https://github.com/notepadqq/notepadqq/network/members";
+const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 
 QString Notepadqq::copyright()
 {

@@ -35,7 +35,7 @@ class Notepadqq
 {
 public:
     static const QString version;
-    static const QString membersUrl;
+    static const QString contributorsUrl;
     static QString copyright();
     static QString editorPath();
 };
