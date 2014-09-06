@@ -71,7 +71,7 @@ Editor *Editor::getNewEditor()
         return m_editorBuffer.dequeue();
 }
 
-void Editor::addEditorToBuffer(int howMany)
+void Editor::addEditorToBuffer(const int howMany)
 {
     for (int i = 0; i < howMany; i++)
         m_editorBuffer.enqueue(new Editor());
@@ -120,7 +120,7 @@ void Editor::setFocus()
     m_webView->setFocus();
 }
 
-void Editor::setFileName(QString filename)
+void Editor::setFileName(const QString &filename)
 {
     m_fileName = filename;
 }
@@ -158,7 +158,7 @@ QList<QMap<QString, QString>> Editor::languages()
     return out;
 }
 
-void Editor::setLanguage(QString language)
+void Editor::setLanguage(const QString &language)
 {
     sendMessage("C_CMD_SET_LANGUAGE", language);
     setIndentationMode(language);
@@ -209,7 +209,7 @@ void Editor::setFileOnDiskChanged(bool fileOnDiskChanged)
     m_fileOnDiskChanged = fileOnDiskChanged;
 }
 
-QString Editor::jsStringEscape(QString str) {
+QString Editor::jsStringEscape(QString str) const {
     return str.replace("\\", "\\\\")
             .replace("'", "\\'")
             .replace("\"", "\\\"")
@@ -219,17 +219,17 @@ QString Editor::jsStringEscape(QString str) {
             .replace("\b", "\\b");
 }
 
-void Editor::sendMessage(QString msg, QVariant data)
+void Editor::sendMessage(const QString &msg, const QVariant &data)
 {
     sendMessageWithResult(msg, data);
 }
 
-void Editor::sendMessage(QString msg)
+void Editor::sendMessage(const QString &msg)
 {
     sendMessage(msg, 0);
 }
 
-QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
+QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
 {
     waitAsyncLoad();
 
@@ -241,7 +241,7 @@ QVariant Editor::sendMessageWithResult(QString msg, QVariant data)
     return m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
 }
 
-QVariant Editor::sendMessageWithResult(QString msg)
+QVariant Editor::sendMessageWithResult(const QString &msg)
 {
     return sendMessageWithResult(msg, 0);
 }

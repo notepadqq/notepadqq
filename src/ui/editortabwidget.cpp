@@ -21,7 +21,7 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     setStyleSheet(style);
 }
 
-int EditorTabWidget::addEditorTab(bool setFocus, QString title)
+int EditorTabWidget::addEditorTab(bool setFocus, const QString &title)
 {
     return this->rawAddEditorTab(setFocus, title, 0, 0);
 }
@@ -59,7 +59,7 @@ int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, i
  *        tab gets moved to another container. Use connectEditorSignals()
  *        and disconnectEditorSignals() methods instead.
  */
-int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex)
+int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, EditorTabWidget *source, const int sourceTabIndex)
 {
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
@@ -87,6 +87,7 @@ int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidg
         oldTooltip = source->tabToolTip(sourceTabIndex);
     }
 
+    // FIXME Segfault when moving the last tab of a tabwidget to another tabwidget
     int index = this->addTab(editor, create ? title : oldText);
     if (!create) {
         source->disconnectEditorSignals(editor);
@@ -120,7 +121,7 @@ int EditorTabWidget::rawAddEditorTab(bool setFocus, QString title, EditorTabWidg
     return index;
 }
 
-int EditorTabWidget::findOpenEditorByFileName(QString filename)
+int EditorTabWidget::findOpenEditorByFileName(const QString &filename)
 {
     for (int i = 0; i < this->count(); i++) {
         Editor *editor = (Editor *)this->widget(i);

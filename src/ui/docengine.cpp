@@ -46,7 +46,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     return true;
 }
 
-bool DocEngine::loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload)
+bool DocEngine::loadDocuments(const QStringList &fileNames, EditorTabWidget *tabWidget, const bool reload)
 {
     if(!fileNames.empty()) {
         m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0]).absolutePath());
@@ -263,12 +263,12 @@ void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
     tabWidget->removeTab(tab);
 }
 
-QString DocEngine::getFileMimeEncoding(QString file)
+QString DocEngine::getFileMimeEncoding(const QString &file)
 {
     return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));
 }
 
-QString DocEngine::getFileInformation(QString file, int flags)
+QString DocEngine::getFileInformation(const QString &file, const int flags)
 {
     if((!(QFile(file).exists())) && (file == "")) return "";
 

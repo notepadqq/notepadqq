@@ -14,7 +14,7 @@ class EditorTabWidget : public QTabWidget
     Q_OBJECT
 public:
     explicit EditorTabWidget(QWidget *parent = 0);
-    int addEditorTab(bool setFocus, QString title);
+    int addEditorTab(bool setFocus, const QString &title);
     /**
      * @brief Add a new document, moving it from another EditorTabWidget
      * @param setFocus True to give focus to the new document
@@ -23,7 +23,7 @@ public:
      * @return Tab index of the new document inside this EditorTabWidget.
      */
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
-    int findOpenEditorByFileName(QString filename);
+    int findOpenEditorByFileName(const QString &filename);
     Editor *editor(int index);
     Editor *currentEditor();
 
@@ -45,7 +45,7 @@ private:
      * @param sourceTabIndex Tab index, within @param source, of the tab to transfer
      * @return Index of the tab
      */
-    int rawAddEditorTab(bool setFocus, QString title, EditorTabWidget *source, int sourceTabIndex);
+    int rawAddEditorTab(const bool setFocus, const QString &title, EditorTabWidget *source, const int sourceTabIndex);
 private slots:
     void on_cleanChanged(bool isClean); 
     void on_editorMouseWheel(QWheelEvent *ev);

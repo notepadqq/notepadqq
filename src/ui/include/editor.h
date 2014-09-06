@@ -86,7 +86,7 @@ public:
      * @param howMany specifies how many Editors to add
      * @return
      */
-    static void addEditorToBuffer(int howMany = 1);
+    static void addEditorToBuffer(const int howMany = 1);
 
     /**
      * @brief Give focus to the editor, so that the user can start
@@ -100,7 +100,7 @@ public:
      * @brief Set the file name associated with this editor
      * @param filename full path of the file
      */
-    void setFileName(QString filename);
+    void setFileName(const QString &filename);
 
     /**
      * @brief Get the file name associated with this editor
@@ -114,7 +114,7 @@ public:
     // Lower-level message wrappers:
     bool isClean();
     QList<QMap<QString, QString> > languages();
-    void setLanguage(QString language);
+    void setLanguage(const QString &language);
     QString setLanguageFromFileName();
     QString value();
     void setIndentationMode(bool useTabs, int size);
@@ -130,7 +130,7 @@ private:
     static QQueue<Editor*> m_editorBuffer;
 
     inline void waitAsyncLoad();
-    QString jsStringEscape(QString str);
+    QString jsStringEscape(QString str) const;
 
 private slots:
     void on_javaScriptWindowObjectCleared();
@@ -155,10 +155,10 @@ signals:
     void currentLanguageChanged(QString id, QString name);
 
 public slots:
-    void sendMessage(QString msg, QVariant data);
-    void sendMessage(QString msg);
-    QVariant sendMessageWithResult(QString msg, QVariant data);
-    QVariant sendMessageWithResult(QString msg);
+    void sendMessage(const QString &msg, const QVariant &data);
+    void sendMessage(const QString &msg);
+    QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
+    QVariant sendMessageWithResult(const QString &msg);
 };
 
 #endif // EDITOR_H

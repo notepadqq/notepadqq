@@ -22,10 +22,10 @@ public:
     ~DocEngine();
 
     // FIXME Separate from reload
-    bool loadDocuments(QStringList fileNames, EditorTabWidget *tabWidget, bool reload);
+    bool loadDocuments(const QStringList &fileNames, EditorTabWidget *tabWidget, const bool reload);
 
-    static QString getFileMimeEncoding(QString file);
-    static QString getFileInformation(QString file, int flags);
+    static QString getFileMimeEncoding(const QString &file);
+    static QString getFileInformation(const QString &file, const int flags);
 
     /**
      * @brief Saves a document to the file system.
