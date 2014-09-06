@@ -111,6 +111,12 @@ public:
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);
 
+    enum selectMode {
+         selectMode_cursorBefore,
+         selectMode_cursorAfter,
+         selectMode_selected
+    };
+
     // Lower-level message wrappers:
     bool isClean();
     QList<QMap<QString, QString> > languages();
@@ -121,6 +127,8 @@ public:
     void setIndentationMode(QString language);
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &factor);
+    void setSelectionsText(const QStringList &texts, selectMode mode);
+    void setSelectionsText(const QStringList &texts);
 private:
     CustomQWebView *m_webView;
     JsToCppProxy *m_jsToCppProxy;
@@ -145,6 +153,7 @@ signals:
     void contentChanged();
     void cursorActivity();
     void cleanChanged(bool isClean);
+    void fileNameChanged(const QString &oldFileName, const QString &newFileName);
 
     /**
      * @brief The editor finished loading. There should be

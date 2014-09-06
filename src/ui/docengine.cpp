@@ -194,7 +194,6 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
         outFileName = editor->fileName();
 
     QFile file(outFileName);
-    QFileInfo fi(file);
 
     do
     {
@@ -225,10 +224,6 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFile
         if (editor->fileName() != outFileName) {
             editor->setFileName(outFileName);
             editor->setLanguageFromFileName();
-
-            tabWidget->setTabToolTip(tab, editor->fileName());
-            tabWidget->setTabText(tab, fi.fileName());
-
         }
         editor->sendMessage("C_CMD_MARK_CLEAN", 0);
         editor->setFileOnDiskChanged(false);

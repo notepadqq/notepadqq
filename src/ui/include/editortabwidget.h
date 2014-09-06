@@ -49,6 +49,7 @@ private:
 private slots:
     void on_cleanChanged(bool isClean); 
     void on_editorMouseWheel(QWheelEvent *ev);
+    void on_fileNameChanged(const QString &, const QString &newFileName);
 signals:
     void gotFocus();
     void editorAdded(int index);

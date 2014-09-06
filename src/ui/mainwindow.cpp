@@ -514,14 +514,17 @@ void MainWindow::on_action_Copy_triggered()
 
 void MainWindow::on_action_Paste_triggered()
 {
-    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT",
-                                 QApplication::clipboard()->text());
+    // Normalize foreign text format
+    QString text = QApplication::clipboard()->text()
+            .replace(QRegExp("\n|\r\n|\r"), "\n");
+
+    currentEditor()->setSelectionsText(text.split("\n"));
 }
 
 void MainWindow::on_actionCu_t_triggered()
 {
     ui->action_Copy->trigger();
-    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT", "");
+    currentEditor()->setSelectionsText(QStringList(""));
 }
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
@@ -583,7 +586,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 void MainWindow::on_action_Delete_triggered()
 {
-    currentEditor()->sendMessage("C_CMD_SET_SELECTIONS_TEXT", "");
+    currentEditor()->setSelectionsText(QStringList(""));
 }
 
 void MainWindow::on_actionSelect_All_triggered()
@@ -825,4 +828,30 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
         // Increment/Decrement zoom factor by 0.1 at each step.
         tabWidget->setZoomFactor(curZoom + diff);
     }
+}
+
+void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
+{
+    Editor *editor = currentEditor();
+    QStringList sel = editor->sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").toStringList();
+
+    for (int i = 0; i < sel.length(); i++) {
+        sel.replace(i, func(sel.at(i)));
+    }
+
+    editor->setSelectionsText(sel, Editor::selectMode_selected);
+}
+
+void MainWindow::on_actionUPPERCASE_triggered()
+{
+    transformSelectedText([](const QString &str) {
+        return str.toUpper();
+    });
+}
+
+void MainWindow::on_actionLowercase_triggered()
+{
+    transformSelectedText([](const QString &str) {
+        return str.toLower();
+    });
 }

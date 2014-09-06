@@ -1,6 +1,7 @@
 #include "include/editortabwidget.h"
 #include <QTabBar>
 #include <QApplication>
+#include <QFileInfo>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -35,6 +36,9 @@ void EditorTabWidget::connectEditorSignals(Editor *editor)
 
     connect(editor, &Editor::mouseWheel,
             this, &EditorTabWidget::on_editorMouseWheel);
+
+    connect(editor, &Editor::fileNameChanged,
+            this, &EditorTabWidget::on_fileNameChanged);
 }
 
 void EditorTabWidget::disconnectEditorSignals(Editor *editor)
@@ -46,6 +50,9 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
 
     disconnect(editor, &Editor::mouseWheel,
                this, &EditorTabWidget::on_editorMouseWheel);
+
+    disconnect(editor, &Editor::fileNameChanged,
+               this, &EditorTabWidget::on_fileNameChanged);
 }
 
 int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
@@ -178,13 +185,23 @@ void EditorTabWidget::setTabBarHighlight(bool yes)
 
 void EditorTabWidget::on_cleanChanged(bool isClean)
 {
-    int index = this->indexOf((QWidget *)sender());
+    int index = indexOf((QWidget *)sender());
     if(index >= 0)
-        this->setSavedIcon(index, isClean);
+        setSavedIcon(index, isClean);
 }
 
 void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
 {
     Editor *editor = (Editor *)sender();
     emit editorMouseWheel(indexOf(editor), ev);
+}
+
+void EditorTabWidget::on_fileNameChanged(const QString & /*oldFileName*/, const QString &newFileName)
+{
+    Editor *editor = (Editor *)sender();
+    QFileInfo fi(newFileName);
+    int index = indexOf(editor);
+
+    setTabText(index, fi.fileName());
+    setTabToolTip(index, fi.absoluteFilePath());
 }

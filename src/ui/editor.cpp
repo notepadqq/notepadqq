@@ -122,7 +122,9 @@ void Editor::setFocus()
 
 void Editor::setFileName(const QString &filename)
 {
+    QString old = m_fileName;
     m_fileName = filename;
+    emit fileNameChanged(old, m_fileName);
 }
 
 QString Editor::fileName() const
@@ -258,4 +260,26 @@ void Editor::setZoomFactor(const qreal &factor)
 qreal Editor::zoomFactor() const
 {
     return m_webView->zoomFactor();
+}
+
+void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
+{
+    QString modeStr = "";
+    if (mode == selectMode_cursorAfter)
+        modeStr = "after";
+    else if (mode == selectMode_cursorBefore)
+        modeStr = "before";
+    else
+        modeStr = "selected";
+
+    QVariantMap data;
+    data.insert("text", texts);
+    data.insert("select", modeStr);
+
+    sendMessage("C_CMD_SET_SELECTIONS_TEXT", data);
+}
+
+void Editor::setSelectionsText(const QStringList &texts)
+{
+    setSelectionsText(texts, selectMode_cursorAfter);
 }

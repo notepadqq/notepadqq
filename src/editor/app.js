@@ -28,7 +28,7 @@ UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, 
     return lang;
 });
 
-/** Returns the id of the current language, and its data */
+/* Returns the id of the current language, and its data */
 UiDriver.registerEventHandler("C_FUN_GET_CURRENT_LANGUAGE", function(msg, data, prevReturn) {
     var langId = Languages.currentLanguage(editor);
     return {id: langId, lang: Languages.languages[langId]};
@@ -45,14 +45,30 @@ UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, p
     return editor.getSelections("\n");
 });
 
+/* Replace the current selection with the provided array of strings.
+   If the length of the array doesn't match the number of the current selections,
+   the array will be joined by a newline and every selection will be replaced with the
+   content of the joined string.
+   
+   data: {
+        text: array of strings
+        select: string used to specify where to place the cursor after the
+                selection has been replaced. Possible values are "before",
+                "after", or "selected".
+   }
+*/
 UiDriver.registerEventHandler("C_CMD_SET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
-    var dataLines = data.split("\n");
+    var dataSelections = data.text;
     var selectedLines = editor.getSelections("\n");
+    
+    var selectMode = undefined;
+    if (data.select === "before") selectMode = "start";
+    else if (data.select === "selected") selectMode = "around";
 
-    if (dataLines.length == selectedLines.length)
-        editor.replaceSelections(dataLines);
+    if (dataSelections.length == selectedLines.length)
+        editor.replaceSelections(dataSelections, selectMode);
     else
-        editor.replaceSelection(data);
+        editor.replaceSelection(dataSelections.join("\n"), selectMode);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
