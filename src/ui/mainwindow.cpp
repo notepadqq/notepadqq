@@ -526,9 +526,11 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
-    Editor *editor = tabWidget->editor(tab);
-    refreshEditorUiInfo(editor);
-    refreshEditorUiCursorInfo(editor);
+    if (tab != -1) {
+        Editor *editor = tabWidget->editor(tab);
+        refreshEditorUiInfo(editor);
+        refreshEditorUiCursorInfo(editor);
+    }
 }
 
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)

@@ -87,7 +87,6 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
         oldTooltip = source->tabToolTip(sourceTabIndex);
     }
 
-    // FIXME Segfault when moving the last tab of a tabwidget to another tabwidget
     int index = this->addTab(editor, create ? title : oldText);
     if (!create) {
         source->disconnectEditorSignals(editor);
