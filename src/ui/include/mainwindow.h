@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include "docengine.h"
 #include "frmsearchreplace.h"
+#include <functional>
 
 namespace Ui {
 class MainWindow;
