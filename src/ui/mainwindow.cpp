@@ -121,9 +121,8 @@ void MainWindow::createStatusBar()
     frame->setFrameStyle(QFrame::NoFrame);
     frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    QHBoxLayout *layout = new QHBoxLayout(frame);
     layout->setContentsMargins(0, 0, 0, 0);
-    frame->setLayout(layout);
 
     scrollArea->setWidget(frame);
     scrollArea->setWidgetResizable(true);
