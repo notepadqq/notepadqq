@@ -1,4 +1,5 @@
 #include "include/notepadqq.h"
+#include <QFileInfo>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
@@ -19,4 +20,18 @@ QString Notepadqq::editorPath()
                 arg(qApp->applicationName().toLower());
 
     return def;
+}
+
+QString Notepadqq::fileNameFromUrl(const QUrl &url)
+{
+    return QFileInfo(url.toDisplayString(
+                         QUrl::RemoveScheme |
+                         QUrl::RemovePassword |
+                         QUrl::RemoveUserInfo |
+                         QUrl::RemovePort |
+                         QUrl::RemoveAuthority |
+                         QUrl::RemoveQuery |
+                         QUrl::RemoveFragment |
+                         QUrl::PreferLocalFile )
+                     ).fileName();
 }

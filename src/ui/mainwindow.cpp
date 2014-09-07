@@ -4,6 +4,7 @@
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"
+#include "include/notepadqq.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -628,9 +629,47 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
+    // Update current language in statusbar
     QVariantMap data = editor->sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
     QString name = data.value("lang").toMap().value("name").toString();
     m_statusBar_fileFormat->setText(name);
+
+
+    // Update MainWindow title
+    if (editor->fileName().isEmpty()) {
+        setWindowTitle(QApplication::applicationName()); // Fallback
+
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
+        if (tabWidget != 0) {
+            int tab = tabWidget->indexOf(editor);
+            if (tab != -1) {
+                setWindowTitle(QString("%1 - %2")
+                               .arg(tabWidget->tabText(tab))
+                               .arg(QApplication::applicationName()));
+            }
+        }
+
+    } else {
+        QUrl url = editor->fileName();
+
+        QString path = url.toDisplayString(QUrl::RemovePassword |
+                                           QUrl::RemoveUserInfo |
+                                           QUrl::RemovePort |
+                                           QUrl::RemoveAuthority |
+                                           QUrl::RemoveQuery |
+                                           QUrl::RemoveFragment |
+                                           QUrl::PreferLocalFile |
+                                           QUrl::RemoveFilename |
+                                           QUrl::NormalizePathSegments |
+                                           QUrl::StripTrailingSlash
+                                           );
+
+        setWindowTitle(QString("%1 (%2) - %3")
+                       .arg(Notepadqq::fileNameFromUrl(editor->fileName()))
+                       .arg(path)
+                       .arg(QApplication::applicationName()));
+
+    }
 }
 
 void MainWindow::on_action_Delete_triggered()
@@ -730,16 +769,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     } else {
-        QApplication::clipboard()->setText(
-                    QFileInfo(editor->fileName().toDisplayString(QUrl::RemoveScheme |
-                                                                 QUrl::RemovePassword |
-                                                                 QUrl::RemoveUserInfo |
-                                                                 QUrl::RemovePort |
-                                                                 QUrl::RemoveAuthority |
-                                                                 QUrl::RemoveQuery |
-                                                                 QUrl::RemoveFragment |
-                                                                 QUrl::PreferLocalFile
-                                                                 )).fileName());
+        QApplication::clipboard()->setText(Notepadqq::fileNameFromUrl(editor->fileName()));
     }
 }
 
@@ -751,8 +781,7 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
         QApplication::clipboard()->setText("");
     } else {
         QApplication::clipboard()->setText(
-                    editor->fileName().toDisplayString(QUrl::RemoveScheme |
-                                                       QUrl::RemovePassword |
+                    editor->fileName().toDisplayString(QUrl::RemovePassword |
                                                        QUrl::RemoveUserInfo |
                                                        QUrl::RemovePort |
                                                        QUrl::RemoveAuthority |

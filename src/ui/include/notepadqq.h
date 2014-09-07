@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QProcessEnvironment>
 #include <QApplication>
+#include <QUrl>
 
 #define POINTVERSION "0.32.0" // major.minor.revision
 
@@ -38,6 +39,7 @@ public:
     static const QString contributorsUrl;
     static QString copyright();
     static QString editorPath();
+    static QString fileNameFromUrl(const QUrl &url);
 };
 
 #endif // NOTEPADQQ_H
