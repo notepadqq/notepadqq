@@ -94,6 +94,7 @@ private slots:
     void on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev);
     void on_actionUPPERCASE_triggered();
     void on_actionLowercase_triggered();
+    void on_actionClose_All_BUT_Current_Document_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -141,7 +142,7 @@ private:
      */
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
-    QUrl getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
+    QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
     void                openCommandLineProvidedUrls();
     void                setupLanguagesMenu();

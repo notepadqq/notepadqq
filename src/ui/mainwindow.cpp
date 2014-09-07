@@ -436,7 +436,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
          * remove this one. Otherwise, we add a new empty tab.
         */
         if(m_topEditorContainer->count() > 1) {
-            tabWidget->deleteLater();
+            delete tabWidget;
             m_topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
         } else {
             ui->action_New->trigger();
@@ -806,41 +806,25 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionC_lose_All_triggered()
 {
+    bool canceled = false;
+
     // Save what needs to be saved, check if user wants to cancel the closing
-    int tabWidgetsCount = m_topEditorContainer->count();
-    for(int i = 0; i < tabWidgetsCount; i++) {
-        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
-        int tabCount = tabWidget->count();
-
-        for(int j = 0; j < tabCount; j++) {
-            int closeResult = closeTab(tabWidget, j, false, false);
-            if (closeResult == MainWindow::tabCloseResult_Canceled)
-                return; // Cancel all
-
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor */*editor*/) {
+        int closeResult = closeTab(tabWidget, editorId, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            canceled = true;
+            return false; // Cancel all
+        } else {
+            return true;
         }
+    });
+
+    if (!canceled) {
+        m_topEditorContainer->forEachEditor(true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor */*editor*/) {
+            closeTab(tabWidget, editorId, true, true);
+            return true;
+        });
     }
-
-
-    // Actually remove the tabs
-    do {
-        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(0);
-
-        do {
-            int oldCount = tabWidget->count();
-
-            closeTab(tabWidget, 0, true, true);
-
-            if (oldCount == 1 && tabWidget->count() == 1) {
-                // We removed the last tab, and a new one has been created.
-                // So we're done.
-                return;
-            }
-
-        } while (tabWidget->count() > 0);
-
-    } while (1);
-
-
 }
 
 void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed)
@@ -956,4 +940,35 @@ void MainWindow::on_actionLowercase_triggered()
     transformSelectedText([](const QString &str) {
         return str.toLower();
     });
+}
+
+void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
+{
+    Editor *keepOpen = currentEditor();
+    bool canceled = false;
+
+    // Save what needs to be saved, check if user wants to cancel the closing
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+        if (keepOpen == editor)
+            return true;
+
+        int closeResult = closeTab(tabWidget, editorId, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            canceled = true;
+            return false; // Cancel all
+        } else {
+            return true;
+        }
+    });
+
+    if (!canceled) {
+        m_topEditorContainer->forEachEditor(true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+            if (keepOpen == editor)
+                return true;
+
+            closeTab(tabWidget, editorId, true, true);
+            return true;
+        });
+    }
+
 }

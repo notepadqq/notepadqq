@@ -5,6 +5,7 @@
 #include <QWheelEvent>
 #include "editortabwidget.h"
 #include "editor.h"
+#include <functional>
 
 /**
  * @brief Contains one or more EditorTabWidgets. This class
@@ -27,6 +28,16 @@ public:
      */
     EditorTabWidget *tabWidgetFromEditor(Editor *editor);
 
+    /**
+     * @brief Executes the specified function for each editor in this container.
+     * @param backwardIndexes True if you want to get the items in the reverse order
+     *                        (useful for example if you're deleting the items
+     *                         while iterating over them).
+     * @param callback Callback function. It should return true to continue,
+     *                 false to break the loop.
+     */
+    void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
+    void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
 private:
     EditorTabWidget *m_currentTabWidget;
 

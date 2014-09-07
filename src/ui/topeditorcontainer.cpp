@@ -94,3 +94,30 @@ void TopEditorContainer::on_editorAdded(int tab)
     EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
     emit editorAdded(tabWidget, tab);
 }
+
+void TopEditorContainer::forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback)
+{
+    forEachEditor(false, callback);
+}
+
+void TopEditorContainer::forEachEditor(bool backwardIndexes,
+                                       std::function<bool (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor)> callback)
+{
+    if (backwardIndexes) {
+        for (int i = count() - 1; i >= 0; i--) {
+            EditorTabWidget *tabW = tabWidget(i);
+            for (int j = tabW->count() - 1; j >= 0; j--) {
+                bool ret = callback(i, j, tabW, tabW->editor(j));
+                if (ret == false) return;
+            }
+        }
+    } else {
+        for (int i = 0; i < count(); i++) {
+            EditorTabWidget *tabW = tabWidget(i);
+            for (int j = 0; j < tabW->count(); j++) {
+                bool ret = callback(i, j, tabW, tabW->editor(j));
+                if (ret == false) return;
+            }
+        }
+    }
+}
