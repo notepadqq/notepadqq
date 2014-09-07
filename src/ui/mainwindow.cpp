@@ -248,8 +248,6 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
             tabW = m_topEditorContainer->addTabWidget();
         }
 
-        // FIXME Allow to load an unexistent document with a provided filename
-
         m_docEngine->loadDocuments(files, tabW, false);
         activateWnd = true;
     }

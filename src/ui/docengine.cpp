@@ -62,7 +62,6 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
         {
             if (fileNames[i].isLocalFile()) {
                 QString localFileName = fileNames[i].toLocalFile();
-                QFile file(localFileName);
                 QFileInfo fi(localFileName);
 
                 QPair<int, int> openPos = findOpenEditorByUrl(fileNames[i]);
@@ -88,26 +87,29 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 Editor* editor = (Editor *)tabWidget->widget(tabIndex);
 
-                if (!read(&file, editor, "UTF-8")) {
-                    // Manage error
-                    QMessageBox msgBox;
-                    msgBox.setWindowTitle(QCoreApplication::applicationName());
-                    msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
-                    msgBox.setDetailedText(file.errorString());
-                    msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
-                    msgBox.setDefaultButton(QMessageBox::Retry);
-                    msgBox.setIcon(QMessageBox::Critical);
-                    int ret = msgBox.exec();
-                    if(ret == QMessageBox::Abort) {
-                        tabWidget->removeTab(tabIndex);
-                        break;
-                    } else if(ret == QMessageBox::Retry) {
-                        tabWidget->removeTab(tabIndex);
-                        i--;
-                        continue;
-                    } else if(ret == QMessageBox::Ignore) {
-                        tabWidget->removeTab(tabIndex);
-                        continue;
+                QFile file(localFileName);
+                if (file.exists()) {
+                    if (!read(&file, editor, "UTF-8")) {
+                        // Manage error
+                        QMessageBox msgBox;
+                        msgBox.setWindowTitle(QCoreApplication::applicationName());
+                        msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
+                        msgBox.setDetailedText(file.errorString());
+                        msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
+                        msgBox.setDefaultButton(QMessageBox::Retry);
+                        msgBox.setIcon(QMessageBox::Critical);
+                        int ret = msgBox.exec();
+                        if(ret == QMessageBox::Abort) {
+                            tabWidget->removeTab(tabIndex);
+                            break;
+                        } else if(ret == QMessageBox::Retry) {
+                            tabWidget->removeTab(tabIndex);
+                            i--;
+                            continue;
+                        } else if(ret == QMessageBox::Ignore) {
+                            tabWidget->removeTab(tabIndex);
+                            continue;
+                        }
                     }
                 }
 
