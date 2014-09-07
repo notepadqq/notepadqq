@@ -109,7 +109,6 @@ void MainWindow::createStatusBar()
 {
     QStatusBar *status = statusBar();
     status->setStyleSheet("QStatusBar::item { border: none; }; ");
-    status->setSizeGripEnabled(false);
     status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     QScrollArea *scrollArea = new QScrollArea(this);
