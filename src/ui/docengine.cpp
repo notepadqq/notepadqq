@@ -41,6 +41,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     file->close();
 
     editor->sendMessage("C_CMD_SET_VALUE", txt);
+    editor->sendMessage("C_CMD_CLEAR_HISTORY");
     editor->sendMessage("C_CMD_MARK_CLEAN");
 
     return true;

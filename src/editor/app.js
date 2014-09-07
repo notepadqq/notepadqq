@@ -1,5 +1,5 @@
 var editor;
-var generation;
+var changeGeneration;
 
 UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn) {
     editor.setValue(data);
@@ -10,12 +10,12 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
-    generation = editor.changeGeneration(true);
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean(generation));
+    changeGeneration = editor.changeGeneration(true);
+    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
-    return editor.isClean(generation);
+    return editor.isClean(changeGeneration);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
@@ -94,6 +94,10 @@ UiDriver.registerEventHandler("C_CMD_UNDO", function(msg, data, prevReturn) {
 
 UiDriver.registerEventHandler("C_CMD_REDO", function(msg, data, prevReturn) {
     editor.redo();
+});
+
+UiDriver.registerEventHandler("C_CMD_CLEAR_HISTORY", function(msg, data, prevReturn) {
+    editor.clearHistory();
 });
 
 /* Search with a specified regex. Automatically select the text when found.
@@ -228,11 +232,11 @@ $(document).ready(function () {
         }
     });
 
-    generation = editor.changeGeneration(true);
+    changeGeneration = editor.changeGeneration(true);
 
     editor.on("change", function(instance, changeObj) {
         UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
-        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean());
+        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean(changeGeneration));
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
