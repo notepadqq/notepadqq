@@ -9,6 +9,8 @@
 #include <QClipboard>
 #include <QUrl>
 #include <QMimeData>
+#include <QScrollArea>
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -104,42 +106,69 @@ MainWindow::~MainWindow()
 
 void MainWindow::createStatusBar()
 {
-    QStatusBar* status = statusBar();
-    QLabel* label;
+    QStatusBar *status = statusBar();
+    status->setStyleSheet("QStatusBar::item { border: none; }; ");
+    status->setSizeGripEnabled(false);
+    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    status->setFixedHeight(22);
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setFrameStyle(QScrollArea::NoFrame);
+    scrollArea->setAlignment(Qt::AlignCenter);
+    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    label = new QLabel("File Format", this);
+    QFrame *frame = new QFrame();
+    frame->setFrameStyle(QFrame::NoFrame);
+    frame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    frame->setLayout(layout);
+
+    scrollArea->setWidget(frame);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
+    scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+
+
+    QLabel *label;
+
+    label = new QLabel("File Format");
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(160);
-    status->addWidget(label);
+    layout->addWidget(label);
     m_statusBar_fileFormat = label;
 
-    label = new QLabel("Length : 0     Lines : 1", this);
-    status->addWidget(label);
+    label = new QLabel("Length : 0     Lines : 1");
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    layout->addWidget(label);
     m_statusBar_lengthInfo = label;
 
-    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    status->addWidget(label);
+    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0");
+    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    layout->addWidget(label);
     m_statusBar_selectionInfo = label;
 
-    label = new QLabel("EOL", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    label = new QLabel("EOL");
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(128);
-    status->addWidget(label);
+    layout->addWidget(label);
     m_statusBar_EOLstyle = label;
 
-    label = new QLabel("Encoding", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    label = new QLabel("Encoding");
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(128);
-    status->addWidget(label);
+    layout->addWidget(label);
     m_statusBar_textFormat = label;
 
-    label = new QLabel("INS", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    label = new QLabel("INS");
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(40);
-    status->addWidget(label);
+    layout->addWidget(label);
     m_statusBar_overtypeNotify = label;
+
+    status->addWidget(scrollArea, 1);
+
+    scrollArea->setFixedHeight(frame->height());
 }
 
 void MainWindow::setupLanguagesMenu()

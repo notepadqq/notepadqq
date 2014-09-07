@@ -41,9 +41,6 @@ int main(int argc, char *argv[])
     }
     file.close();
 
-    // Remove ugly borders from statusbar
-    //a.setStyleSheet("QStatusBar::item { border: none; }; ");
-
     MainWindow w;
     w.show();
 
