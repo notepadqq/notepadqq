@@ -114,11 +114,11 @@ void MainWindow::createStatusBar()
     QScrollArea *scrollArea = new QScrollArea();
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
-    scrollArea->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     QFrame *frame = new QFrame();
     frame->setFrameStyle(QFrame::NoFrame);
-    frame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
@@ -166,8 +166,8 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_overtypeNotify = label;
 
-    status->addWidget(scrollArea, 1);
 
+    status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
 }
 
