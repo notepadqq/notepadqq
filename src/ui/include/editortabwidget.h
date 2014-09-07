@@ -23,7 +23,7 @@ public:
      * @return Tab index of the new document inside this EditorTabWidget.
      */
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
-    int findOpenEditorByFileName(const QString &filename);
+    int findOpenEditorByUrl(const QUrl &filename);
     Editor *editor(int index);
     Editor *currentEditor();
 
@@ -49,7 +49,7 @@ private:
 private slots:
     void on_cleanChanged(bool isClean); 
     void on_editorMouseWheel(QWheelEvent *ev);
-    void on_fileNameChanged(const QString &, const QString &newFileName);
+    void on_fileNameChanged(const QUrl &, const QUrl &newFileName);
 signals:
     void gotFocus();
     void editorAdded(int index);

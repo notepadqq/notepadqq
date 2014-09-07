@@ -141,7 +141,7 @@ private:
      */
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
-    QString             getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
+    QUrl getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
     void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
     void                setupLanguagesMenu();

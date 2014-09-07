@@ -120,14 +120,25 @@ void Editor::setFocus()
     m_webView->setFocus();
 }
 
-void Editor::setFileName(const QString &filename)
+/**
+ * Automatically converts local relative file names to absolute ones.
+ */
+void Editor::setFileName(const QUrl &filename)
 {
-    QString old = m_fileName;
-    m_fileName = filename;
-    emit fileNameChanged(old, m_fileName);
+    QUrl old = m_fileName;
+    QUrl newUrl = filename;
+
+    if (newUrl.isLocalFile())
+        newUrl = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
+
+    m_fileName = newUrl;
+    emit fileNameChanged(old, newUrl);
 }
 
-QString Editor::fileName() const
+/**
+ * Always returns an absolute url.
+ */
+QUrl Editor::fileName() const
 {
     return m_fileName;
 }
@@ -169,7 +180,7 @@ void Editor::setLanguage(const QString &language)
 QString Editor::setLanguageFromFileName()
 {
     QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                         fileName()).toString();
+                                         fileName().toString()).toString();
 
     setIndentationMode(lang);
 

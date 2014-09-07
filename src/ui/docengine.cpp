@@ -46,94 +46,112 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     return true;
 }
 
-bool DocEngine::loadDocuments(const QStringList &fileNames, EditorTabWidget *tabWidget, const bool reload)
+bool DocEngine::loadDocuments(const QUrl &fileName, EditorTabWidget *tabWidget, const bool reload)
+{
+    QList<QUrl> files;
+    files.append(fileName);
+    return loadDocuments(files, tabWidget, reload);
+}
+
+bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload)
 {
     if(!fileNames.empty()) {
-        m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0]).absolutePath());
+        m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
 
-        for (int i = 0; i < fileNames.count(); i++) {
-            QFile file(fileNames[i]);
-            QFileInfo fi(fileNames[i]);
+        for (int i = 0; i < fileNames.count(); i++)
+        {
+            if (fileNames[i].isLocalFile()) {
+                QString localFileName = fileNames[i].toLocalFile();
+                QFile file(localFileName);
+                QFileInfo fi(localFileName);
 
-            QPair<int, int> openPos = findOpenEditorByFileName(fi.absoluteFilePath());
-            if(!reload) {
-                if (openPos.first > -1 ) {
-                    if(fileNames.count() == 1) {
-                        EditorTabWidget *tabW =
-                                (EditorTabWidget *)m_topEditorContainer->widget(openPos.first);
+                QPair<int, int> openPos = findOpenEditorByUrl(fileNames[i]);
+                if(!reload) {
+                    if (openPos.first > -1 ) {
+                        if(fileNames.count() == 1) {
+                            EditorTabWidget *tabW =
+                                    (EditorTabWidget *)m_topEditorContainer->widget(openPos.first);
 
-                        tabW->setCurrentIndex(openPos.second);
+                            tabW->setCurrentIndex(openPos.second);
+                        }
+                        continue;
                     }
-                    continue;
                 }
-            }
 
-            int tabIndex = 0;
-            if (reload) {
-                tabWidget = (EditorTabWidget *)m_topEditorContainer->widget(openPos.first);
-                tabIndex = openPos.second;
+                int tabIndex = 0;
+                if (reload) {
+                    tabWidget = (EditorTabWidget *)m_topEditorContainer->widget(openPos.first);
+                    tabIndex = openPos.second;
+                } else {
+                    tabIndex = tabWidget->addEditorTab(true, fi.fileName());
+                }
+
+                Editor* editor = (Editor *)tabWidget->widget(tabIndex);
+
+                if (!read(&file, editor, "UTF-8")) {
+                    // Manage error
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle(QCoreApplication::applicationName());
+                    msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
+                    msgBox.setDetailedText(file.errorString());
+                    msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
+                    msgBox.setDefaultButton(QMessageBox::Retry);
+                    msgBox.setIcon(QMessageBox::Critical);
+                    int ret = msgBox.exec();
+                    if(ret == QMessageBox::Abort) {
+                        tabWidget->removeTab(tabIndex);
+                        break;
+                    } else if(ret == QMessageBox::Retry) {
+                        tabWidget->removeTab(tabIndex);
+                        i--;
+                        continue;
+                    } else if(ret == QMessageBox::Ignore) {
+                        tabWidget->removeTab(tabIndex);
+                        continue;
+                    }
+                }
+
+                // If there was only a new empty tab opened, remove it
+                if (tabWidget->count() == 2) {
+                    Editor * victim = (Editor *)tabWidget->widget(0);
+                    if (victim->fileName().isEmpty() && victim->isClean()) {
+                        tabWidget->removeTab(0);
+                        tabIndex--;
+                    }
+                }
+
+                file.close();
+                if (!reload) {
+                    editor->setFileName(fileNames[i]);
+                    //sci->setEolMode(sci->guessEolMode());
+                    tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
+                    editor->setLanguageFromFileName();
+                } else {
+                    //sci->scrollCursorToCenter(pos);
+                    editor->setFileOnDiskChanged(false);
+                }
+
+                monitorDocument(editor->fileName().toLocalFile());
+
+                editor->setFocus();
+
             } else {
-                tabIndex = tabWidget->addEditorTab(true, fi.fileName());
-            }
-
-            Editor* editor = (Editor *)tabWidget->widget(tabIndex);
-
-            if (!read(&file, editor, "UTF-8")) {
-                // Manage error
+                // TODO Better looking msgbox
                 QMessageBox msgBox;
                 msgBox.setWindowTitle(QCoreApplication::applicationName());
-                msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
-                msgBox.setDetailedText(file.errorString());
-                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
-                msgBox.setDefaultButton(QMessageBox::Retry);
-                msgBox.setIcon(QMessageBox::Critical);
-                int ret = msgBox.exec();
-                if(ret == QMessageBox::Abort) {
-                    tabWidget->removeTab(tabIndex);
-                    break;
-                } else if(ret == QMessageBox::Retry) {
-                    tabWidget->removeTab(tabIndex);
-                    i--;
-                    continue;
-                } else if(ret == QMessageBox::Ignore) {
-                    tabWidget->removeTab(tabIndex);
-                    continue;
-                }
+                msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(fileNames[i].toDisplayString()));
+                msgBox.exec();
             }
-
-            // If there was only a new empty tab opened, remove it
-            if (tabWidget->count() == 2) {
-                Editor * victim = (Editor *)tabWidget->widget(0);
-                if (victim->fileName() == "" && victim->isClean()) {
-                    tabWidget->removeTab(0);
-                    tabIndex--;
-                }
-            }
-
-            file.close();
-            if (!reload) {
-                editor->setFileName(fi.absoluteFilePath());
-                //sci->setEolMode(sci->guessEolMode());
-                tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                editor->setLanguageFromFileName();
-            } else {
-                //sci->scrollCursorToCenter(pos);
-                editor->setFileOnDiskChanged(false);
-            }
-
-            monitorDocument(editor->fileName());
-
-            editor->setFocus();
         }
     }
     return true;
 }
 
-QPair<int, int> DocEngine::findOpenEditorByFileName(QString filename)
+QPair<int, int> DocEngine::findOpenEditorByUrl(QUrl filename)
 {
     for (int i = 0; i < m_topEditorContainer->count(); i++) {
         EditorTabWidget *tabW = (EditorTabWidget *)m_topEditorContainer->widget(i);
-        int id = tabW->findOpenEditorByFileName(filename);
+        int id = tabW->findOpenEditorByUrl(filename);
         if (id > -1)
             return QPair<int, int>(i, id);
     }
@@ -169,7 +187,7 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
 void DocEngine::monitorDocument(const QString &fileName)
 {
     if(m_fsWatcher &&
-            fileName != "" &&
+            !fileName.isEmpty() &&
             !m_fsWatcher->files().contains(fileName)) {
 
         m_fsWatcher->addPath(fileName);
@@ -178,69 +196,80 @@ void DocEngine::monitorDocument(const QString &fileName)
 
 void DocEngine::unmonitorDocument(const QString &fileName)
 {
-    if(m_fsWatcher && fileName != "") {
+    if(m_fsWatcher && !fileName.isEmpty()) {
         m_fsWatcher->removePath(fileName);
     }
 }
 
-int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QString outFileName, bool copy)
+int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName, bool copy)
 {
     Editor *editor = tabWidget->editor(tab);
 
     if (!copy)
-        unmonitorDocument(editor->fileName());
+        unmonitorDocument(editor->fileName().toLocalFile());
 
-    if (outFileName.isEmpty() || outFileName.isNull())
+    if (outFileName.isEmpty())
         outFileName = editor->fileName();
 
-    QFile file(outFileName);
+    if (outFileName.isLocalFile()) {
+        QFile file(outFileName.toLocalFile());
 
-    do
-    {
-        if (write(&file, editor)) {
-            break;
-        } else {
-            // Handle error
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
-            msgBox.setDetailedText(file.errorString());
-            msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
-            msgBox.setDefaultButton(QMessageBox::Retry);
-            msgBox.setIcon(QMessageBox::Critical);
-            int ret = msgBox.exec();
-            if(ret == QMessageBox::Abort) {
-                monitorDocument(editor->fileName());
-                return MainWindow::saveFileResult_Canceled;
-            } else if(ret == QMessageBox::Retry) {
-                continue;
+        do
+        {
+            if (write(&file, editor)) {
+                break;
+            } else {
+                // Handle error
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(QCoreApplication::applicationName());
+                msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
+                msgBox.setDetailedText(file.errorString());
+                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+                msgBox.setDefaultButton(QMessageBox::Retry);
+                msgBox.setIcon(QMessageBox::Critical);
+                int ret = msgBox.exec();
+                if(ret == QMessageBox::Abort) {
+                    monitorDocument(editor->fileName().toLocalFile());
+                    return MainWindow::saveFileResult_Canceled;
+                } else if(ret == QMessageBox::Retry) {
+                    continue;
+                }
             }
+
+        } while (1);
+
+        // Update the file name if necessary.
+        if (!copy) {
+            if (editor->fileName() != outFileName) {
+                editor->setFileName(outFileName);
+                editor->setLanguageFromFileName();
+            }
+            editor->sendMessage("C_CMD_MARK_CLEAN", 0);
+            editor->setFileOnDiskChanged(false);
         }
 
-    } while (1);
+        file.close();
 
-    // Update the file name if necessary.
-    if (!copy) {
-        if (editor->fileName() != outFileName) {
-            editor->setFileName(outFileName);
-            editor->setLanguageFromFileName();
-        }
-        editor->sendMessage("C_CMD_MARK_CLEAN", 0);
-        editor->setFileOnDiskChanged(false);
+        monitorDocument(editor->fileName().toLocalFile());
+
+        return MainWindow::saveFileResult_Saved;
+
+    } else {
+        // FIXME ERROR
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(outFileName.toDisplayString()));
+        msgBox.exec();
+
+        return MainWindow::saveFileResult_Canceled;
     }
-
-    file.close();
-
-    monitorDocument(editor->fileName());
-
-    return MainWindow::saveFileResult_Saved;
 }
 
 void DocEngine::documentChanged(QString fileName)
 {
     unmonitorDocument(fileName);
 
-    QPair<int, int> pos = findOpenEditorByFileName(fileName);
+    QPair<int, int> pos = findOpenEditorByUrl(QUrl::fromLocalFile(fileName));
     if (pos.first != -1) {
         QFile file(fileName);
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(pos.first);
@@ -254,7 +283,7 @@ void DocEngine::documentChanged(QString fileName)
 void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    unmonitorDocument(editor->fileName());
+    unmonitorDocument(editor->fileName().toLocalFile());
     tabWidget->removeTab(tab);
 }
 

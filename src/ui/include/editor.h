@@ -100,13 +100,13 @@ public:
      * @brief Set the file name associated with this editor
      * @param filename full path of the file
      */
-    void setFileName(const QString &filename);
+    void setFileName(const QUrl &filename);
 
     /**
      * @brief Get the file name associated with this editor
      * @return
      */
-    QString fileName() const;
+    QUrl fileName() const;
 
     bool fileOnDiskChanged() const;
     void setFileOnDiskChanged(bool fileOnDiskChanged);
@@ -132,7 +132,7 @@ public:
 private:
     CustomQWebView *m_webView;
     JsToCppProxy *m_jsToCppProxy;
-    QString m_fileName = "";
+    QUrl m_fileName = QUrl();
     bool m_fileOnDiskChanged = false;
     bool m_loaded = false;
     static QQueue<Editor*> m_editorBuffer;
@@ -153,7 +153,7 @@ signals:
     void contentChanged();
     void cursorActivity();
     void cleanChanged(bool isClean);
-    void fileNameChanged(const QString &oldFileName, const QString &newFileName);
+    void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
 
     /**
      * @brief The editor finished loading. There should be

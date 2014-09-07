@@ -127,8 +127,12 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     return index;
 }
 
-int EditorTabWidget::findOpenEditorByFileName(const QString &filename)
+int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
 {
+    QUrl absFileName = filename;
+    if (absFileName.isLocalFile())
+        absFileName = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
+
     for (int i = 0; i < this->count(); i++) {
         Editor *editor = (Editor *)this->widget(i);
         if (editor->fileName() == filename)
@@ -196,12 +200,24 @@ void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
     emit editorMouseWheel(indexOf(editor), ev);
 }
 
-void EditorTabWidget::on_fileNameChanged(const QString & /*oldFileName*/, const QString &newFileName)
+void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
 {
     Editor *editor = (Editor *)sender();
-    QFileInfo fi(newFileName);
     int index = indexOf(editor);
 
-    setTabText(index, fi.fileName());
-    setTabToolTip(index, fi.absoluteFilePath());
+    QString fileName = QFileInfo(newFileName.toDisplayString(QUrl::RemoveScheme |
+                                                   QUrl::RemovePassword |
+                                                   QUrl::RemoveUserInfo |
+                                                   QUrl::RemovePort |
+                                                   QUrl::RemoveAuthority |
+                                                   QUrl::RemoveQuery |
+                                                   QUrl::RemoveFragment |
+                                                   QUrl::PreferLocalFile
+                                                   )).fileName();
+
+    QString fullFileName = newFileName.toDisplayString(QUrl::PreferLocalFile |
+                                                       QUrl::RemovePassword);
+
+    setTabText(index, fileName);
+    setTabToolTip(index, fullFileName);
 }

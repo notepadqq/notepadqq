@@ -231,10 +231,10 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
     else
     {
         // Open selected files
-        QStringList files;
+        QList<QUrl> files;
         for(int i = 1; i < arguments.count(); i++)
         {
-            files.append(arguments.at(i));
+            files.append(QUrl::fromLocalFile(arguments.at(i)));
         }
 
         EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
@@ -267,9 +267,9 @@ void MainWindow::dropEvent(QDropEvent *e)
 {
     QMainWindow::dropEvent(e);
 
-    QStringList fileNames;
+    QList<QUrl> fileNames;
     foreach (const QUrl &url, e->mimeData()->urls()) {
-        fileNames.append(url.toLocalFile());
+        fileNames.append(url);
     }
 
     if (!fileNames.empty()) {
@@ -333,31 +333,28 @@ void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
 
 void MainWindow::on_action_Open_triggered()
 {
-    QStringList fileNames = QFileDialog::getOpenFileNames(
+    QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
                 this,
                 tr("Open"),
-                m_settings->value("lastSelectedDir", ".").toString(),
+                QUrl::fromLocalFile(m_settings->value("lastSelectedDir", ".").toString()),
                 tr("All files (*)"),
                 0, 0);
 
-    m_docEngine->loadDocuments(fileNames,
-                               m_topEditorContainer->currentTabWidget(),
-                               false);
+    if (!fileNames.empty()) {
+        m_docEngine->loadDocuments(fileNames,
+                                   m_topEditorContainer->currentTabWidget(),
+                                   false);
+
+        m_settings->setValue("lastSelectedDir",
+                             QFileInfo(fileNames[0].toLocalFile()).absolutePath());
+    }
 }
 
 int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
 {
     QMessageBox msgBox;
-    QString name;
+    QString name = tabWidget->tabText(tab).toHtmlEscaped();
 
-    Editor *editor = (Editor *)tabWidget->widget(tab);
-
-    if (editor->fileName() == "")
-    {
-        name = tabWidget->tabText(tab).toHtmlEscaped();
-    } else {
-        name = QFileInfo(editor->fileName()).fileName().toHtmlEscaped();
-    }
     msgBox.setWindowTitle(QCoreApplication::applicationName());
 
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
@@ -393,7 +390,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
     if (! (m_topEditorContainer->count() == 1 && tabWidget->count() == 1
-         && editor->fileName() == "" && editor->isClean())) {
+         && editor->fileName().isEmpty() && editor->isClean())) {
 
         if(!force && !editor->isClean()) {
             tabWidget->setCurrentIndex(tab);
@@ -456,7 +453,7 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
 
-    if(editor->fileName() == "")
+    if (editor->fileName().isEmpty())
     {
         // Call "save as"
         return saveAs(tabWidget, tab, false);
@@ -464,8 +461,11 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
     } else {
         // If the file has changed outside the editor, ask
         // the user if he want to save it.
-        QFile file(editor->fileName());
-        if (editor->fileOnDiskChanged() && file.exists()) {
+        bool fileOverwrite = false;
+        if (editor->fileName().isLocalFile())
+            fileOverwrite = QFile(editor->fileName().toLocalFile()).exists();
+
+        if (editor->fileOnDiskChanged() && fileOverwrite) {
             QMessageBox msgBox;
             msgBox.setWindowTitle(QCoreApplication::applicationName());
             msgBox.setIcon(QMessageBox::Warning);
@@ -493,7 +493,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
     QString filename = QFileDialog::getSaveFileName(
                 this,
                 tr("Save as"),
-                getSaveDialogDefaultFileName(tabWidget, tab),
+                getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
                 tr("Any file (*)"),
                 0, 0);
 
@@ -501,19 +501,19 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
         m_settings->setValue("lastSelectedDir",
                            QFileInfo(filename).absolutePath());
         // Write
-        return m_docEngine->saveDocument(tabWidget, tab, filename, copy);
+        return m_docEngine->saveDocument(tabWidget, tab, QUrl::fromLocalFile(filename), copy);
     } else {
         return MainWindow::saveFileResult_Canceled;
     }
 }
 
-QString MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab)
+QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab)
 {
-    QString docFileName = tabWidget->editor(tab)->fileName();
+    QUrl docFileName = tabWidget->editor(tab)->fileName();
 
-    if(docFileName == "") {
-        return m_settings->value("lastSelectedDir", ".").toString()
-                + "/" + tabWidget->tabText(tab);
+    if(docFileName.isEmpty()) {
+        return QUrl(m_settings->value("lastSelectedDir", ".").toString()
+                + "/" + tabWidget->tabText(tab));
     } else {
         return docFileName;
     }
@@ -704,35 +704,57 @@ void MainWindow::on_actionSearch_triggered()
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if(currentEditor()->fileName() != "")
+    if (currentEditor()->fileName().isEmpty())
     {
-        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).absoluteFilePath());
-    } else {
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+    } else {
+        QApplication::clipboard()->setText(
+                    editor->fileName().toDisplayString(QUrl::PreferLocalFile |
+                                                       QUrl::RemovePassword));
     }
 }
 
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if(currentEditor()->fileName() != "")
+    if (currentEditor()->fileName().isEmpty())
     {
-        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).fileName());
-    } else {
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+    } else {
+        QApplication::clipboard()->setText(
+                    QFileInfo(editor->fileName().toDisplayString(QUrl::RemoveScheme |
+                                                                 QUrl::RemovePassword |
+                                                                 QUrl::RemoveUserInfo |
+                                                                 QUrl::RemovePort |
+                                                                 QUrl::RemoveAuthority |
+                                                                 QUrl::RemoveQuery |
+                                                                 QUrl::RemoveFragment |
+                                                                 QUrl::PreferLocalFile
+                                                                 )).fileName());
     }
 }
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if(currentEditor()->fileName() != "")
+    if(currentEditor()->fileName().isEmpty())
     {
-        QApplication::clipboard()->setText(QFileInfo(editor->fileName()).absolutePath());
-    } else {
         QApplication::clipboard()->setText("");
+    } else {
+        QApplication::clipboard()->setText(
+                    editor->fileName().toDisplayString(QUrl::RemoveScheme |
+                                                       QUrl::RemovePassword |
+                                                       QUrl::RemoveUserInfo |
+                                                       QUrl::RemovePort |
+                                                       QUrl::RemoveAuthority |
+                                                       QUrl::RemoveQuery |
+                                                       QUrl::RemoveFragment |
+                                                       QUrl::PreferLocalFile |
+                                                       QUrl::RemoveFilename |
+                                                       QUrl::NormalizePathSegments
+                                                       ));
     }
 }
 
@@ -806,7 +828,7 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
         // TODO Better looking msgbox
         msgBox.setText(tr("The file \"%1\" has been removed from the "
                           "file system. Would you like to save it now?")
-                       .arg(editor->fileName()));
+                       .arg(editor->fileName().toDisplayString(QUrl::PreferLocalFile)));
 
         int ret = msgBox.exec();
 
@@ -820,14 +842,14 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
         // TODO Better looking msgbox
         msgBox.setText(tr("The file \"%1\" has been changed outside of "
                           "the editor. Would you like to reload it?")
-                       .arg(editor->fileName()));
+                       .arg(editor->fileName().toDisplayString(QUrl::PreferLocalFile)));
 
         int ret = msgBox.exec();
 
         if (ret == QMessageBox::Close) {
             closeTab(tabWidget, tab);
         } else if (ret == QMessageBox::Yes) {
-            m_docEngine->loadDocuments(QStringList(editor->fileName()),
+            m_docEngine->loadDocuments(editor->fileName(),
                                        tabWidget,
                                        true);
         }
