@@ -92,6 +92,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     processCommandLineArgs(QApplication::arguments(), false);
 
+    restoreWindowSettings();
+
     setupLanguagesMenu();
 
 
@@ -103,6 +105,14 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete m_docEngine;
+}
+
+void MainWindow::restoreWindowSettings()
+{
+    m_settings->beginGroup("MainWindow");
+    restoreGeometry(m_settings->value("geometry").toByteArray());
+    restoreState(m_settings->value("windowState").toByteArray());
+    m_settings->endGroup();
 }
 
 void MainWindow::createStatusBar()
@@ -246,6 +256,8 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
+    QMainWindow::dragEnterEvent(e);
+
     if (e->mimeData()->hasUrls()) {
         e->acceptProposedAction();
     }
@@ -253,6 +265,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 
 void MainWindow::dropEvent(QDropEvent *e)
 {
+    QMainWindow::dropEvent(e);
+
     QStringList fileNames;
     foreach (const QUrl &url, e->mimeData()->urls()) {
         fileNames.append(url.toLocalFile());
@@ -648,6 +662,8 @@ void MainWindow::on_action_Redo_triggered()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    QMainWindow::closeEvent(event);
+
     int tabWidgetsCount = m_topEditorContainer->count();
     for(int i = 0; i < tabWidgetsCount; i++) {
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
@@ -662,6 +678,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
             }
         }
     }
+
+    m_settings->beginGroup("MainWindow");
+    m_settings->setValue("geometry", saveGeometry());
+    m_settings->setValue("windowState", saveState());
+    m_settings->endGroup();
 }
 
 void MainWindow::on_actionE_xit_triggered()

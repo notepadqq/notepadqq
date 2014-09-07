@@ -93,7 +93,6 @@ private slots:
     void on_actionZoom_Out_triggered();
     void on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev);
     void on_actionUPPERCASE_triggered();
-
     void on_actionLowercase_triggered();
 
 private:
@@ -147,6 +146,7 @@ private:
     void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
+    void                restoreWindowSettings();
 };
 
 #endif // MAINWINDOW_H
