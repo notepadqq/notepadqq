@@ -234,7 +234,11 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
         QList<QUrl> files;
         for(int i = 1; i < arguments.count(); i++)
         {
-            files.append(QUrl::fromLocalFile(arguments.at(i)));
+            QUrl f = QUrl(arguments.at(i));
+            if (f.isRelative())
+                files.append(QUrl::fromLocalFile(arguments.at(i)));
+            else
+                files.append(f);
         }
 
         EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
@@ -242,6 +246,9 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
         if(tabW == 0) {
             tabW = m_topEditorContainer->addTabWidget();
         }
+
+        // FIXME Allow to load an unexistent document with a provided filename
+
         m_docEngine->loadDocuments(files, tabW, false);
         activateWnd = true;
     }
