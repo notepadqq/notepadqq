@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
-    m_settings = new QSettings();
+    m_settings = new QSettings(this);
 
     setCentralWidget(m_topEditorContainer);
 
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionFind_Previous->setIcon(QIcon::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
 
     // Context menu initialization
-    m_tabContextMenu = new QMenu;
+    m_tabContextMenu = new QMenu(this);
     QAction *separator = new QAction(this);
     separator->setSeparator(true);
     m_tabContextMenuActions.append(ui->actionClose);
@@ -102,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_docEngine;
 }
 
 void MainWindow::createStatusBar()
@@ -111,16 +112,16 @@ void MainWindow::createStatusBar()
     status->setSizeGripEnabled(false);
     status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    QScrollArea *scrollArea = new QScrollArea();
+    QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    QFrame *frame = new QFrame();
+    QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::NoFrame);
     frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    QHBoxLayout *layout = new QHBoxLayout();
+    QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     frame->setLayout(layout);
 
@@ -132,35 +133,35 @@ void MainWindow::createStatusBar()
 
     QLabel *label;
 
-    label = new QLabel("File Format");
+    label = new QLabel("File Format", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(160);
     layout->addWidget(label);
     m_statusBar_fileFormat = label;
 
-    label = new QLabel("Length : 0     Lines : 1");
+    label = new QLabel("Length : 0     Lines : 1", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     layout->addWidget(label);
     m_statusBar_lengthInfo = label;
 
-    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0");
+    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0", this);
     label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     layout->addWidget(label);
     m_statusBar_selectionInfo = label;
 
-    label = new QLabel("EOL");
+    label = new QLabel("EOL", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(128);
     layout->addWidget(label);
     m_statusBar_EOLstyle = label;
 
-    label = new QLabel("Encoding");
+    label = new QLabel("Encoding", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(128);
     layout->addWidget(label);
     m_statusBar_textFormat = label;
 
-    label = new QLabel("INS");
+    label = new QLabel("INS", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(40);
     layout->addWidget(label);
@@ -195,13 +196,13 @@ void MainWindow::setupLanguagesMenu()
         if (menuInitials.contains(letter)) {
             letterMenu = menuInitials.value(letter, 0);
         } else {
-            letterMenu = new QMenu(letter);
+            letterMenu = new QMenu(letter, this);
             menuInitials.insert(letter, letterMenu);
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
         QString langId = map.value("id", "");
-        QAction *action = new QAction(map.value("name"), 0);
+        QAction *action = new QAction(map.value("name"), this);
         connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
             currentEditor()->setLanguage(langId);
         });
