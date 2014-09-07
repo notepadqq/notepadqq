@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setAcceptDrops(true);
 
-    processCommandLineArgs(QApplication::arguments(), false);
+    openCommandLineProvidedUrls();
 
     restoreWindowSettings();
 
@@ -219,25 +219,26 @@ void MainWindow::setupLanguagesMenu()
     }
 }
 
-void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherInstance)
+void MainWindow::openCommandLineProvidedUrls()
 {
-    bool activateWnd = false;
+    QCommandLineParser *parser = Notepadqq::commandLineParameters();
 
-    if(arguments.count() <= 1)
+    QStringList rawUrls = parser->positionalArguments();
+
+    if (rawUrls.count() < 1)
     {
         // Open a new empty document
         ui->action_New->trigger();
-        activateWnd = true;
     }
     else
     {
         // Open selected files
         QList<QUrl> files;
-        for(int i = 1; i < arguments.count(); i++)
+        for(int i = 0; i < rawUrls.count(); i++)
         {
-            QUrl f = QUrl(arguments.at(i));
+            QUrl f = QUrl(rawUrls.at(i));
             if (f.isRelative())
-                files.append(QUrl::fromLocalFile(arguments.at(i)));
+                files.append(QUrl::fromLocalFile(rawUrls.at(i)));
             else
                 files.append(f);
         }
@@ -249,15 +250,11 @@ void MainWindow::processCommandLineArgs(QStringList arguments, bool fromOtherIns
         }
 
         m_docEngine->loadDocuments(files, tabW, false);
-        activateWnd = true;
     }
 
-    if(fromOtherInstance && activateWnd)
-    {
-        // Activate the window
-        activateWindow();
-        raise();
-    }
+    // Activate the window
+    activateWindow();
+    raise();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)

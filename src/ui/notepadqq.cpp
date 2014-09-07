@@ -3,6 +3,7 @@
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
+QCommandLineParser *Notepadqq::m_commandLineParameters = 0;
 
 QString Notepadqq::copyright()
 {
@@ -34,4 +35,33 @@ QString Notepadqq::fileNameFromUrl(const QUrl &url)
                          QUrl::RemoveFragment |
                          QUrl::PreferLocalFile )
                      ).fileName();
+}
+
+void Notepadqq::parseCommandLineParameters()
+{
+    if (m_commandLineParameters != 0)
+        return;
+
+    QCommandLineParser *parser = new QCommandLineParser();
+    parser->setApplicationDescription("Text editor for developers");
+    parser->addHelpOption();
+    parser->addVersionOption();
+
+    /*QCommandLineOption newDocumentOption("new-document",
+                                         QObject::tr("Create a new document in an existing instance of %1.")
+                                         .arg(QCoreApplication::applicationName()));
+    parser.addOption(newDocumentOption);*/
+
+    parser->addPositionalArgument("urls",
+                                 QObject::tr("Files to open."),
+                                 "[urls...]");
+
+    parser->process(QCoreApplication::arguments());
+
+    m_commandLineParameters = parser;
+}
+
+QCommandLineParser *Notepadqq::commandLineParameters()
+{
+    return m_commandLineParameters;
 }

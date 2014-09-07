@@ -7,12 +7,12 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QSettings>
+#include <QCommandLineParser>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
 #endif
 
-bool shouldStartApp(int argc, char *argv[]);
 void checkQtVersion(MainWindow *w);
 
 int main(int argc, char *argv[])
@@ -23,14 +23,13 @@ int main(int argc, char *argv[])
     qDebug() << "Start-time benchmark started.";
 #endif
 
-    if (!shouldStartApp(argc, argv)) {
-      return 0;
-    }
-
     QApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
+    QCoreApplication::setApplicationVersion(Notepadqq::version);
+
+    Notepadqq::parseCommandLineParameters();
 
     Editor::addEditorToBuffer();
 
@@ -101,28 +100,4 @@ void displayHelp()
 void displayVersion()
 {
     printf("%s\n", Notepadqq::version.toStdString().c_str());
-}
-
-inline
-bool shouldStartApp(int argc, char* argv[])
-{
-#define MATCHES_OPT(str, short, long) \
-    strcmp(str, short)==0 || strcmp(str, long)==0
-
-    if (argc > 1) {
-        const char* const firstArg = argv[1];
-        if (MATCHES_OPT(firstArg, "-h", "--help")) {
-          displayHelp();
-          return false;
-        }
-
-        if (MATCHES_OPT(firstArg, "-v", "--version")) {
-          displayVersion();
-          return false;
-        }
-
-    }
-    return true;
-
-#undef MATCHES_OPT
 }

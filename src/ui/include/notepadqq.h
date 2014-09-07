@@ -29,6 +29,7 @@
 #include <QProcessEnvironment>
 #include <QApplication>
 #include <QUrl>
+#include <QCommandLineParser>
 
 #define POINTVERSION "0.32.0" // major.minor.revision
 
@@ -40,6 +41,11 @@ public:
     static QString copyright();
     static QString editorPath();
     static QString fileNameFromUrl(const QUrl &url);
+    static void parseCommandLineParameters();
+    static QCommandLineParser *commandLineParameters();
+
+private:
+    static QCommandLineParser *m_commandLineParameters;
 };
 
 #endif // NOTEPADQQ_H

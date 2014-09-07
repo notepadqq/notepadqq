@@ -10,7 +10,7 @@ frmAbout::frmAbout(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->lblVersion->setText("v" + Notepadqq::version);
+    ui->lblVersion->setText("v" + QApplication::applicationVersion());
     ui->lblCopyright->setText(Notepadqq::copyright());
 
     ui->lblContributors->setText(tr("Authors:") + " <a href=\"" + Notepadqq::contributorsUrl + "\"><span style=\"text-decoration: underline; color:#0000ff;\">" + tr("GitHub Contributors") + "</span></a>");

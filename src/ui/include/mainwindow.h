@@ -143,7 +143,7 @@ private:
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
-    void                processCommandLineArgs(QStringList arguments, bool fromOtherInstance);
+    void                openCommandLineProvidedUrls();
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();
