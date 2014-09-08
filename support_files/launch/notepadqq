@@ -12,4 +12,4 @@ fi
 
 export LD_LIBRARY_PATH="$PERSONAL_QT_LIB_PATH"
 
-"$SCRIPTPATH"/notepadqq-bin "$@"
+exec "$SCRIPTPATH"/notepadqq-bin "$@"
