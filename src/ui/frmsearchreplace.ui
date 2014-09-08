@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Search</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/notepadqq.svg</normaloff>:/icons/icons/notepadqq.svg</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
     <number>3</number>
@@ -257,6 +261,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

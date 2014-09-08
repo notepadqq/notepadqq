@@ -38,6 +38,7 @@ class Notepadqq
 public:
     static const QString version;
     static const QString contributorsUrl;
+    static const QString website;
     static QString copyright();
     static QString editorPath();
     static QString fileNameFromUrl(const QUrl &url);

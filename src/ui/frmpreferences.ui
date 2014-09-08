@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/notepadqq.svg</normaloff>:/icons/icons/notepadqq.svg</iconset>
+  </property>
   <widget class="QTreeWidget" name="treeWidget">
    <property name="geometry">
     <rect>
@@ -169,6 +173,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

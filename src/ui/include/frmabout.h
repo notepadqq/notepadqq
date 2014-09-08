@@ -20,6 +20,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnLicense_clicked();
+
 private:
     Ui::frmAbout *ui;
 };
