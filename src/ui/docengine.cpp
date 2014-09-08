@@ -290,6 +290,18 @@ void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
     tabWidget->removeTab(tab);
 }
 
+QPair<QString, QTextCodec *> DocEngine::decodeText(QByteArray contents)
+{
+    QTextCodec::ConverterState state;
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+    const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+    if (state.invalidChars > 0) {
+        qDebug() << "Not a valid UTF-8 sequence.";
+    }
+
+    return QPair<QString, QTextCodec *>(text, codec);
+}
+
 QString DocEngine::getFileMimeEncoding(const QString &file)
 {
     return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));

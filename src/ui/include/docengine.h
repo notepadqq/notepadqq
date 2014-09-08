@@ -53,6 +53,7 @@ private:
     bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
+    QPair<QString, QTextCodec *> decodeText(QByteArray contents);
 signals:
     void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
 
