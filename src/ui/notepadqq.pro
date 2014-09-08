@@ -83,19 +83,19 @@ RESOURCES += \
 ### EXTRA TARGETS ###
 
 # Copy the editor in the "shared" folder
-editorTarget.target = editor
+editorTarget.target = make_editor
 editorTarget.commands = (cd \"$$PWD\" && \
                          $${CMD_FULLDELETE} \"$$APPDATADIR/editor\" && \
                          $${QMAKE_MKDIR} \"$$APPDATADIR/\" && \
                          $${QMAKE_COPY_DIR} \"../editor\" \"$$APPDATADIR/editor\") # TODO remove unnecessary files
 
-launchTarget.target = launch
+launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_MKDIR} \"$$DESTDIR/\" && \
                          $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
-PRE_TARGETDEPS += editor launch
+PRE_TARGETDEPS += make_editor make_launch
 
 unix {
     # Set launch script permissions execute permission
@@ -135,11 +135,13 @@ unix {
     icon_hscalable.path = $$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/
     icon_hscalable.files += $$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg
 
+    system($${QMAKE_MKDIR} $$APPDATADIR/editor)    # Make sure that the folder exists, otherwise qmake won't create the install rule
     misc_data.path = $$INSTALL_ROOT$$PREFIX/share/notepadqq/
     misc_data.files += $$APPDATADIR/editor
 
     launch.path = $$INSTALL_ROOT$$PREFIX/bin/
     launch.files += $$DESTDIR/notepadqq
+    launch.CONFIG = no_check_exist     # Create the install rule even if the file doesn't exists when qmake is run
 
     shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
     shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
