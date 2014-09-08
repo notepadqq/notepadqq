@@ -333,6 +333,14 @@ var Languages = new function() {
             fileExtensions: ["lua"]
         },
 
+        "makefile": {
+            name: "Makefile",
+            mode: "makefile",
+            mime: "text/x-makefile",
+            fileExtensions: ["mak", "make", "mk", "mke", "mkg", "am"],
+            fileNames: ["Makefile", "Makefile.in", "GMakefile", "rules"]
+        },
+
         "markdown-github": {
             name: "Markdown (GitHub-flavour)",
             mode: "markdown",
