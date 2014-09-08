@@ -98,9 +98,9 @@ QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += make_editor make_launch
 
 unix {
-    # Set launch script permissions execute permission
+    # Set launch script permissions
     permissionsTarget.target = permissions
-    permissionsTarget.commands = (chmod +x \"$$INSTALLFILESDIR/launch/notepadqq\")
+    permissionsTarget.commands = (chmod 755 \"$$INSTALLFILESDIR/launch/notepadqq\")
     QMAKE_EXTRA_TARGETS += permissionsTarget
     PRE_TARGETDEPS += permissions
 }
@@ -146,10 +146,15 @@ unix {
     shortcuts.path = $$INSTALL_ROOT$$PREFIX/share/applications/
     shortcuts.files += $$INSTALLFILESDIR/shortcuts/notepadqq.desktop
 
+    # Dummy target used to fix permissions at the end of the install
+    set_permissions.path = $$INSTALL_ROOT$$PREFIX/bin/  # A random path. Without one, qmake refuses to create the rule.
+    unix:set_permissions.extra = chmod 755 "$$INSTALL_ROOT$$PREFIX/bin/notepadqq"
+
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
          misc_data launch shortcuts \
+         set_permissions
 
 
 }
