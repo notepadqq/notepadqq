@@ -21,15 +21,13 @@ CodeMirror.defineMode('makefile', function() {
     }
   };
 
-  define('string', 'include ifeq else endif');
-
   function tokenBase(stream, state) {
     if (stream.eatSpace()) return null;
 
     var sol = stream.sol();
     var ch = stream.next();
 
-    if (ch === '@') { return "def"; }
+    if (ch === '@') { return "atom"; }
     if (ch === '#') {
       if (sol && stream.eat('!')) {
         stream.skipToEnd();
@@ -38,16 +36,28 @@ CodeMirror.defineMode('makefile', function() {
       stream.skipToEnd();
       return 'comment';
     }
-    if (ch === '$') {
+    if (ch === '$' && stream.eat('(')) {
       state.tokens.unshift(tokenDollar);
       return tokenize(stream, state);
     }
-    if (stream.match(/^[\w]+:/)) { return "def"; }
-    if (stream.match(/^[\w]+ +=/)) { return "def"; }
+    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "quote"; }
+    if (ch === '$' && stream.eat('@')) { return "quote"; }
+    if (ch === '$' && stream.eat('<')) { return "quote"; }
+    if (ch === '$' && stream.eat('^')) { return "quote"; }
+
+    if (ch === 'i' && stream.match('feq ')) {
+      stream.skipToEnd();
+      return "meta";
+    }
+    if (ch === 'e' && stream.match('lse')) { return "meta"; }
+    if (ch === 'e' && stream.match('ndif')) { return "meta"; }
+    if (ch === 'i' && stream.match('nclude ')) { return "string"; }
+
+    if (stream.match(/^[\w.]+:/)) { return "def"; }
 
     stream.eatWhile(/[\w-]/);
     var cur = stream.current();
-    if (stream.peek() === '=' && /\w+/.test(cur)) return 'def';
+    //if (stream.peek() === '=' && /\w+/.test(cur)) return 'def';
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
 
@@ -59,18 +69,11 @@ CodeMirror.defineMode('makefile', function() {
           end = true;
           break;
         }
-        if (next === '$' && !escaped && quote !== '\'') {
-          escaped = true;
-          stream.backUp(1);
-          state.tokens.unshift(tokenDollar);
-          break;
-        }
-        //escaped = !escaped && next === '\\';
       }
       if (end || !escaped) {
         state.tokens.shift();
       }
-      return (quote === '`' || quote === ')' ? 'quote' : 'string');
+      return (quote === ')' ? 'quote' : 'string');
     };
   };
 
