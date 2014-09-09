@@ -59,6 +59,13 @@ private:
     void unmonitorDocument(const QString &fileName);
     QPair<QString, QTextCodec *> decodeText(QByteArray contents);
 signals:
+    /**
+     * @brief The monitored file has changed. Remember to call
+     *        monitorDocument() again if you want to keep monitoring it.
+     * @param tabWidget
+     * @param tab
+     * @param removed
+     */
     void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
 
 public slots:
