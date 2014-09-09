@@ -44,6 +44,10 @@ public:
 
     void closeDocument(EditorTabWidget *tabWidget, int tab);
 
+    void monitorDocument(Editor *editor);
+    void unmonitorDocument(Editor *editor);
+    bool isMonitored(Editor *editor);
+
 private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;

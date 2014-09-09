@@ -134,7 +134,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     editor->setFileOnDiskChanged(false);
                 }
 
-                monitorDocument(editor->fileName().toLocalFile());
+                monitorDocument(editor);
 
                 editor->setFocus();
 
@@ -209,7 +209,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
     Editor *editor = tabWidget->editor(tab);
 
     if (!copy)
-        unmonitorDocument(editor->fileName().toLocalFile());
+        unmonitorDocument(editor);
 
     if (outFileName.isEmpty())
         outFileName = editor->fileName();
@@ -232,7 +232,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
                 if(ret == QMessageBox::Abort) {
-                    monitorDocument(editor->fileName().toLocalFile());
+                    monitorDocument(editor);
                     return MainWindow::saveFileResult_Canceled;
                 } else if(ret == QMessageBox::Retry) {
                     continue;
@@ -253,7 +253,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         file.close();
 
-        monitorDocument(editor->fileName().toLocalFile());
+        monitorDocument(editor);
 
         return MainWindow::saveFileResult_Saved;
 
@@ -286,8 +286,23 @@ void DocEngine::documentChanged(QString fileName)
 void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    unmonitorDocument(editor->fileName().toLocalFile());
+    unmonitorDocument(editor);
     tabWidget->removeTab(tab);
+}
+
+void DocEngine::monitorDocument(Editor *editor)
+{
+    monitorDocument(editor->fileName().toLocalFile());
+}
+
+void DocEngine::unmonitorDocument(Editor *editor)
+{
+    unmonitorDocument(editor->fileName().toLocalFile());
+}
+
+bool DocEngine::isMonitored(Editor *editor)
+{
+    return m_fsWatcher->files().contains(editor->fileName().toLocalFile());
 }
 
 QPair<QString, QTextCodec *> DocEngine::decodeText(QByteArray contents)

@@ -514,8 +514,8 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
 {
     QUrl docFileName = tabWidget->editor(tab)->fileName();
 
-    if(docFileName.isEmpty()) {
-        return QUrl(m_settings->value("lastSelectedDir", ".").toString()
+    if (docFileName.isEmpty()) {
+        return QUrl::fromLocalFile(m_settings->value("lastSelectedDir", ".").toString()
                 + "/" + tabWidget->tabText(tab));
     } else {
         return docFileName;
@@ -971,4 +971,27 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
         });
     }
 
+}
+
+void MainWindow::on_actionSave_All_triggered()
+{
+    // FIXME Unexpected behavior if a tab gets closed (or added) while
+    // we're iterating.
+    // For example:
+    //    1. We're waiting for user input on the SaveFileDialog
+    //    2. One of the opened files gets changed on the file system
+    //    3. The user is informed with a MessageBox, and choses to close
+    //       that tab
+    //    4. Now our forEach is not reliable AT ALL. All the indexes will
+    //       be shifted by one.
+    // Fix by replacing the messagebox with a widget in the mainwindow.
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+        if (editor->isClean()) {
+            return true;
+        } else {
+            tabWidget->setCurrentIndex(editorId);
+            int result = save(tabWidget, editorId);
+            return (result != saveFileResult_Canceled);
+        }
+    });
 }

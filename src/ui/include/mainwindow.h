@@ -96,6 +96,8 @@ private slots:
     void on_actionLowercase_triggered();
     void on_actionClose_All_BUT_Current_Document_triggered();
 
+    void on_actionSave_All_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* m_topEditorContainer;
@@ -138,7 +140,7 @@ private:
      *        open a dialog to ask the user where to save the file.
      * @param tabWidget
      * @param tab
-     * @return
+     * @return a saveFileResult
      */
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
