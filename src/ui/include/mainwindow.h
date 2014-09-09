@@ -150,6 +150,7 @@ private:
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();
+    void                loadIcons();
 };
 
 #endif // MAINWINDOW_H

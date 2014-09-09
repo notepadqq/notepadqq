@@ -1,4 +1,5 @@
 #include "include/editortabwidget.h"
+#include "include/iconprovider.h"
 #include <QTabBar>
 #include <QApplication>
 #include <QFileInfo>
@@ -168,10 +169,10 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
 
 void EditorTabWidget::setSavedIcon(int index, bool saved)
 {
-    if(saved)
-        this->setTabIcon(index, QIcon(":/icons/icons/saved.png"));
+    if (saved)
+        this->setTabIcon(index, IconProvider::fromTheme("notepadqq-document-saved"));
     else
-        this->setTabIcon(index, QIcon(":/icons/icons/unsaved.png"));
+        this->setTabIcon(index, IconProvider::fromTheme("notepadqq-document-unsaved"));
 }
 
 void EditorTabWidget::setTabBarHidden(bool yes)

@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     frmsearchreplace.cpp \
     notepadqq.cpp \
     frmpreferences.cpp \
-    customqwebview.cpp
+    customqwebview.cpp \
+    iconprovider.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -68,12 +69,12 @@ HEADERS  += include/mainwindow.h \
     include/frmsearchreplace.h \
     include/notepadqq.h \
     include/frmpreferences.h \
-    include/customqwebview.h
+    include/customqwebview.h \
+    include/iconprovider.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
-    frmsearchlanguage.ui \
     frmpreferences.ui
 
 RESOURCES += \

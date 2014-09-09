@@ -1,0 +1,13 @@
+[Icon Theme]
+Name=default
+Comment=Default theme for notepadqq
+Inherits=default
+Directories=16x16,scalable
+ 
+[16x16]
+Size=16
+Type=Fixed
+
+[scalable]
+Size=16
+Type=Scalable

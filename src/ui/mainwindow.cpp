@@ -5,6 +5,7 @@
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"
 #include "include/notepadqq.h"
+#include "include/iconprovider.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -30,29 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_docEngine = new DocEngine(m_settings, m_topEditorContainer);
     connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
 
-    // Assign (where possible) system theme icons to our actions.
-    // If a system icon doesn't exist, fallback on the already assigned icon.
-    ui->action_New->setIcon(QIcon::fromTheme("document-new", QIcon(ui->action_New->icon())));
-    ui->action_Open->setIcon(QIcon::fromTheme("document-open", QIcon(ui->action_Open->icon())));
-    ui->actionSave->setIcon(QIcon::fromTheme("document-save", QIcon(ui->actionSave->icon())));
-    ui->actionSave_All->setIcon(QIcon::fromTheme("document-save-all", QIcon(ui->actionSave_All->icon())));
-    ui->actionPrint_Now->setIcon(QIcon::fromTheme("document-print", QIcon(ui->actionPrint_Now->icon())));
-    ui->actionCu_t->setIcon(QIcon::fromTheme("edit-cut", QIcon(ui->actionCu_t->icon())));
-    ui->action_Copy->setIcon(QIcon::fromTheme("edit-copy", QIcon(ui->action_Copy->icon())));
-    ui->action_Paste->setIcon(QIcon::fromTheme("edit-paste", QIcon(ui->action_Paste->icon())));
-    ui->action_Undo->setIcon(QIcon::fromTheme("edit-undo", QIcon(ui->action_Undo->icon())));
-    ui->action_Redo->setIcon(QIcon::fromTheme("edit-redo", QIcon(ui->action_Redo->icon())));
-    ui->actionZoom_In->setIcon(QIcon::fromTheme("zoom-in", QIcon(ui->actionZoom_In->icon())));
-    ui->actionZoom_Out->setIcon(QIcon::fromTheme("zoom-out", QIcon(ui->actionZoom_Out->icon())));
-    ui->actionRestore_Default_Zoom->setIcon(QIcon::fromTheme("zoom-original", QIcon(ui->actionRestore_Default_Zoom->icon())));
-    ui->action_Start_Recording->setIcon(QIcon::fromTheme("media-record", QIcon(ui->action_Start_Recording->icon())));
-    ui->action_Stop_Recording->setIcon(QIcon::fromTheme("media-playback-stop", QIcon(ui->action_Stop_Recording->icon())));
-    ui->action_Playback->setIcon(QIcon::fromTheme("media-playback-start", QIcon(ui->action_Playback->icon())));
-    ui->actionRun_a_Macro_Multiple_Times->setIcon(QIcon::fromTheme("media-seek-forward", QIcon(ui->actionRun_a_Macro_Multiple_Times->icon())));
-    ui->actionPreferences->setIcon(QIcon::fromTheme("preferences-other", QIcon(ui->actionPreferences->icon())));
-    ui->actionSearch->setIcon(QIcon::fromTheme("edit-find",QIcon(ui->actionSearch->icon())));
-    ui->actionFind_Next->setIcon(QIcon::fromTheme("go-next",QIcon(ui->actionFind_Next->icon())));
-    ui->actionFind_Previous->setIcon(QIcon::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
+    loadIcons();
 
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
@@ -114,6 +93,43 @@ void MainWindow::restoreWindowSettings()
     restoreGeometry(m_settings->value("geometry").toByteArray());
     restoreState(m_settings->value("windowState").toByteArray());
     m_settings->endGroup();
+}
+
+void MainWindow::loadIcons()
+{
+    // To test fallback icons:
+    // QIcon::setThemeSearchPaths(QStringList(""));
+
+    // Assign (where possible) system theme icons to our actions.
+    // If a system icon doesn't exist, fallback on the already assigned icon.
+    ui->action_New->setIcon(IconProvider::fromTheme("document-new"));
+    ui->action_Open->setIcon(IconProvider::fromTheme("document-open"));
+    ui->actionSave->setIcon(IconProvider::fromTheme("document-save"));
+    ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as"));
+    ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all"));
+    ui->actionClose->setIcon(IconProvider::fromTheme("notepadqq-document-close"));
+    ui->actionC_lose_All->setIcon(IconProvider::fromTheme("notepadqq-document-close-all"));
+    ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print"));
+    ui->actionCu_t->setIcon(IconProvider::fromTheme("edit-cut"));
+    ui->action_Copy->setIcon(IconProvider::fromTheme("edit-copy"));
+    ui->action_Paste->setIcon(IconProvider::fromTheme("edit-paste"));
+    ui->action_Undo->setIcon(IconProvider::fromTheme("edit-undo"));
+    ui->action_Redo->setIcon(IconProvider::fromTheme("edit-redo"));
+    ui->actionZoom_In->setIcon(IconProvider::fromTheme("zoom-in"));
+    ui->actionZoom_Out->setIcon(IconProvider::fromTheme("zoom-out"));
+    ui->actionRestore_Default_Zoom->setIcon(IconProvider::fromTheme("zoom-original"));
+    ui->action_Start_Recording->setIcon(IconProvider::fromTheme("media-record"));
+    ui->action_Stop_Recording->setIcon(IconProvider::fromTheme("media-playback-stop"));
+    ui->action_Playback->setIcon(IconProvider::fromTheme("media-playback-start"));
+    ui->actionRun_a_Macro_Multiple_Times->setIcon(IconProvider::fromTheme("media-seek-forward"));
+    ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("notepadqq-save-macro"));
+    ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
+    ui->actionSearch->setIcon(IconProvider::fromTheme("edit-find"));
+    ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("notepadqq-show-special-chars"));
+    ui->actionWord_wrap->setIcon(IconProvider::fromTheme("notepadqq-word-wrap"));
+
+    //ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next",QIcon(ui->actionFind_Next->icon())));
+    //ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
 }
 
 void MainWindow::createStatusBar()
@@ -377,7 +393,7 @@ int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
     msgBox.setDefaultButton(QMessageBox::Save);
     msgBox.setEscapeButton(QMessageBox::Cancel);
 
-    QPixmap img = QIcon::fromTheme("document-save", QIcon(ui->actionSave->icon())).pixmap(64,64).scaled(64,64,Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap img = IconProvider::fromTheme("document-save").pixmap(64,64).scaled(64,64,Qt::KeepAspectRatio, Qt::SmoothTransformation);
     msgBox.setIconPixmap(img);
 
     msgBox.exec();

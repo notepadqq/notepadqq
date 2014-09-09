@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/icons/icons/notepadqq.svg</normaloff>:/icons/icons/notepadqq.svg</iconset>
+    <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QDialog { background-color: rgb(255, 255, 255); }</string>
@@ -121,7 +121,7 @@
     <string notr="true"/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resources.qrc">:/icons/icons/notepadqq.svg</pixmap>
+    <pixmap resource="resources.qrc">:/icons/default/scalable/notepadqq.svg</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -168,15 +168,6 @@
     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
    </property>
   </widget>
-  <zorder>pushButton</zorder>
-  <zorder>lblCopyright</zorder>
-  <zorder>lblVersion</zorder>
-  <zorder>lblName</zorder>
-  <zorder>lblContributors</zorder>
-  <zorder>btnLicense</zorder>
-  <zorder>label</zorder>
-  <zorder>lblWebsite</zorder>
-  <zorder>lblContributors</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>

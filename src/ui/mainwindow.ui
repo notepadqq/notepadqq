@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/icons/icons/notepadqq.svg</normaloff>:/icons/icons/notepadqq.svg</iconset>
+    <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="documentMode">
    <bool>true</bool>
@@ -418,10 +418,6 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Open">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/fileopen.png</normaloff>:/icons/icons/fileopen.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Open...</string>
    </property>
@@ -430,10 +426,6 @@
    </property>
   </action>
   <action name="action_New">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/filenew.png</normaloff>:/icons/icons/filenew.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;New</string>
    </property>
@@ -447,10 +439,6 @@
    </property>
   </action>
   <action name="actionSave">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/filesave.png</normaloff>:/icons/icons/filesave.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
@@ -475,10 +463,6 @@
    </property>
   </action>
   <action name="actionSave_All">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/save_all.png</normaloff>:/icons/icons/save_all.png</iconset>
-   </property>
    <property name="text">
     <string>Sav&amp;e All</string>
    </property>
@@ -492,10 +476,6 @@
    </property>
   </action>
   <action name="actionClose">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/fileclose.png</normaloff>:/icons/icons/fileclose.png</iconset>
-   </property>
    <property name="text">
     <string>Close</string>
    </property>
@@ -504,10 +484,6 @@
    </property>
   </action>
   <action name="actionC_lose_All">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/close_all.png</normaloff>:/icons/icons/close_all.png</iconset>
-   </property>
    <property name="text">
     <string>C&amp;lose All</string>
    </property>
@@ -541,10 +517,6 @@
    </property>
   </action>
   <action name="actionPrint_Now">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/printer.png</normaloff>:/icons/icons/printer.png</iconset>
-   </property>
    <property name="text">
     <string>Print Now</string>
    </property>
@@ -568,10 +540,6 @@
    </property>
   </action>
   <action name="action_Undo">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/undo.png</normaloff>:/icons/icons/undo.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Undo</string>
    </property>
@@ -580,10 +548,6 @@
    </property>
   </action>
   <action name="action_Redo">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/redo.png</normaloff>:/icons/icons/redo.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Redo</string>
    </property>
@@ -592,10 +556,6 @@
    </property>
   </action>
   <action name="actionCu_t">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/editcut.png</normaloff>:/icons/icons/editcut.png</iconset>
-   </property>
    <property name="text">
     <string>Cu&amp;t</string>
    </property>
@@ -604,10 +564,6 @@
    </property>
   </action>
   <action name="action_Copy">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/editcopy.png</normaloff>:/icons/icons/editcopy.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Copy</string>
    </property>
@@ -616,10 +572,6 @@
    </property>
   </action>
   <action name="action_Paste">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/editpaste.png</normaloff>:/icons/icons/editpaste.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Paste</string>
    </property>
@@ -703,10 +655,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/all_chars.png</normaloff>:/icons/icons/all_chars.png</iconset>
-   </property>
    <property name="text">
     <string>Show All Characters</string>
    </property>
@@ -733,10 +681,6 @@
   <action name="actionWord_wrap">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/multirow.png</normaloff>:/icons/icons/multirow.png</iconset>
    </property>
    <property name="text">
     <string>Word wrap</string>
@@ -766,10 +710,6 @@
    </property>
   </action>
   <action name="actionZoom_In">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/viewmag+.png</normaloff>:/icons/icons/viewmag+.png</iconset>
-   </property>
    <property name="text">
     <string>Zoom &amp;In</string>
    </property>
@@ -778,10 +718,6 @@
    </property>
   </action>
   <action name="actionZoom_Out">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/viewmag-.png</normaloff>:/icons/icons/viewmag-.png</iconset>
-   </property>
    <property name="text">
     <string>Zoom &amp;Out</string>
    </property>
@@ -790,10 +726,6 @@
    </property>
   </action>
   <action name="actionRestore_Default_Zoom">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/viewmag1.png</normaloff>:/icons/icons/viewmag1.png</iconset>
-   </property>
    <property name="text">
     <string>Restore Default Zoom</string>
    </property>
@@ -822,10 +754,6 @@
    </property>
   </action>
   <action name="action_Start_Recording">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/mix_record.png</normaloff>:/icons/icons/mix_record.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Start Recording</string>
    </property>
@@ -833,10 +761,6 @@
   <action name="action_Stop_Recording">
    <property name="enabled">
     <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/player_stop.png</normaloff>:/icons/icons/player_stop.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Stop Recording</string>
@@ -846,10 +770,6 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/player_play.png</normaloff>:/icons/icons/player_play.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Playback</string>
    </property>
@@ -858,19 +778,11 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/savemacro.png</normaloff>:/icons/icons/savemacro.png</iconset>
-   </property>
    <property name="text">
     <string>Save Currently Recorded Macro</string>
    </property>
   </action>
   <action name="actionRun_a_Macro_Multiple_Times">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/player_fwd.png</normaloff>:/icons/icons/player_fwd.png</iconset>
-   </property>
    <property name="text">
     <string>Run a Macro Multiple Times...</string>
    </property>
@@ -1236,191 +1148,12 @@
     <string>Modify Shortcut / Delete Command...</string>
    </property>
   </action>
-  <action name="actionBash">
-   <property name="text">
-    <string>Bash</string>
-   </property>
-  </action>
-  <action name="actionBatch">
-   <property name="text">
-    <string>Batch (MS-DOS)</string>
-   </property>
-  </action>
-  <action name="actionCMake">
-   <property name="text">
-    <string>CMake</string>
-   </property>
-  </action>
-  <action name="actionC_2">
-   <property name="text">
-    <string>C++</string>
-   </property>
-  </action>
-  <action name="actionC_3">
-   <property name="text">
-    <string>C#</string>
-   </property>
-  </action>
-  <action name="actionCSS">
-   <property name="text">
-    <string>CSS</string>
-   </property>
-  </action>
-  <action name="actionD_2">
-   <property name="text">
-    <string>D</string>
-   </property>
-  </action>
-  <action name="actionDiff">
-   <property name="text">
-    <string>Diff</string>
-   </property>
-  </action>
-  <action name="actionFortran">
-   <property name="text">
-    <string>Fortran</string>
-   </property>
-  </action>
-  <action name="actionFortran77">
-   <property name="text">
-    <string>Fortran77</string>
-   </property>
-  </action>
-  <action name="actionHTML">
-   <property name="text">
-    <string>HTML</string>
-   </property>
-  </action>
-  <action name="actionIDL">
-   <property name="text">
-    <string>IDL</string>
-   </property>
-  </action>
-  <action name="actionJava">
-   <property name="text">
-    <string>Java</string>
-   </property>
-  </action>
-  <action name="actionJavaScript">
-   <property name="text">
-    <string>JavaScript</string>
-   </property>
-  </action>
-  <action name="actionLua">
-   <property name="text">
-    <string>Lua</string>
-   </property>
-  </action>
-  <action name="actionMakefile">
-   <property name="text">
-    <string>Makefile</string>
-   </property>
-  </action>
-  <action name="actionMatlab">
-   <property name="text">
-    <string>Matlab</string>
-   </property>
-  </action>
-  <action name="actionOctave">
-   <property name="text">
-    <string>Octave</string>
-   </property>
-  </action>
-  <action name="actionPascal">
-   <property name="text">
-    <string>Pascal</string>
-   </property>
-  </action>
-  <action name="actionPerl">
-   <property name="text">
-    <string>Perl</string>
-   </property>
-  </action>
-  <action name="actionPostScript">
-   <property name="text">
-    <string>PostScript</string>
-   </property>
-  </action>
-  <action name="actionPOV">
-   <property name="text">
-    <string>POV</string>
-   </property>
-  </action>
-  <action name="actionProperties">
-   <property name="text">
-    <string>Properties</string>
-   </property>
-  </action>
-  <action name="actionPython">
-   <property name="text">
-    <string>Python</string>
-   </property>
-  </action>
-  <action name="actionRuby">
-   <property name="text">
-    <string>Ruby</string>
-   </property>
-  </action>
-  <action name="actionSpice">
-   <property name="text">
-    <string>Spice</string>
-   </property>
-  </action>
-  <action name="actionSQL">
-   <property name="text">
-    <string>SQL</string>
-   </property>
-  </action>
-  <action name="actionTCL">
-   <property name="text">
-    <string>TCL</string>
-   </property>
-  </action>
-  <action name="actionTeX">
-   <property name="text">
-    <string>TeX</string>
-   </property>
-  </action>
-  <action name="actionVerilog">
-   <property name="text">
-    <string>Verilog</string>
-   </property>
-  </action>
-  <action name="actionVHDL">
-   <property name="text">
-    <string>VHDL</string>
-   </property>
-  </action>
-  <action name="actionXML">
-   <property name="text">
-    <string>XML</string>
-   </property>
-  </action>
-  <action name="actionYAML">
-   <property name="text">
-    <string>YAML</string>
-   </property>
-  </action>
-  <action name="actionPHP">
-   <property name="text">
-    <string>PHP</string>
-   </property>
-  </action>
   <action name="actionPreferences">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/icons/icons/preferences.png</normaloff>:/icons/icons/preferences.png</iconset>
-   </property>
    <property name="text">
     <string>Preferences...</string>
    </property>
   </action>
   <action name="actionSearch">
-   <property name="icon">
-    <iconset theme="edit-find">
-     <normaloff/>
-    </iconset>
-   </property>
    <property name="text">
     <string>&amp;Find...</string>
    </property>
@@ -1429,11 +1162,6 @@
    </property>
   </action>
   <action name="actionFind_Next">
-   <property name="icon">
-    <iconset theme="go-next">
-     <normaloff/>
-    </iconset>
-   </property>
    <property name="text">
     <string>Find &amp;Next</string>
    </property>
@@ -1442,11 +1170,6 @@
    </property>
   </action>
   <action name="actionFind_Previous">
-   <property name="icon">
-    <iconset theme="go-previous">
-     <normaloff/>
-    </iconset>
-   </property>
    <property name="text">
     <string>Find &amp;Previous</string>
    </property>
