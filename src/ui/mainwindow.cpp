@@ -352,10 +352,14 @@ void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
 
 void MainWindow::on_action_Open_triggered()
 {
+    QUrl defaultUrl = currentEditor()->fileName();
+    if (defaultUrl.isEmpty())
+            defaultUrl = QUrl::fromLocalFile(m_settings->value("lastSelectedDir", ".").toString());
+
     QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
                 this,
                 tr("Open"),
-                QUrl::fromLocalFile(m_settings->value("lastSelectedDir", ".").toString()),
+                defaultUrl,
                 tr("All files (*)"),
                 0, 0);
 
