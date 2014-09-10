@@ -654,7 +654,7 @@ var Languages = new function() {
             name: "XML",
             mode: "xml",
             mime: "application/xml",
-            fileExtensions: ["xml", "svg", "wxs", "wxl", "wsdl", "rss", "atom", "rdf", "xslt", "xsl", "xul", "xbl", "mathml", "config", "plist", "xaml"]
+            fileExtensions: ["xml", "svg", "wxs", "wxl", "wsdl", "rss", "atom", "rdf", "xslt", "xsl", "xul", "xbl", "mathml", "config", "plist", "xaml", "qrc"]
         },
 
         "xquery": {
