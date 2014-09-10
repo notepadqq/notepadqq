@@ -149,7 +149,7 @@ unix {
 
     # Dummy target used to fix permissions at the end of the install
     set_permissions.path = $$INSTALL_ROOT$$PREFIX/bin/  # A random path. Without one, qmake refuses to create the rule.
-    unix:set_permissions.extra = chmod 755 "$$INSTALL_ROOT$$PREFIX/bin/notepadqq"
+    unix:set_permissions.extra = chmod 755 \"$$INSTALL_ROOT$$PREFIX/bin/notepadqq\"
 
     # MAKE INSTALL
     INSTALLS += target \
