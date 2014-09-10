@@ -28,6 +28,32 @@ CodeMirror.defineMode('makefile', function() {
     var ch = stream.next();
     var cur = stream.current();
 
+    // ifeq, ifneq
+    if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
+      stream.skipToEnd();
+      return "bracket";
+    }
+    // else, endif
+    if (ch === 'e' && (stream.match('lse') || stream.match('ndif')) && stream.eol()) { return "bracket"; }
+    // include
+    if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
+    // makros
+    if (sol && (stream.match(/^[\w]+[\s]+/) || stream.match(/^[\w]+/)) &&
+       (stream.peek() === '?' || stream.peek() === '=')) { return "variable-2"; }
+
+    // Makefile targets
+    if (sol && stream.eat(':')) {
+      if (stream.eat('=')) {
+        return "variable-2";
+      } else {
+        return "header";
+      }
+    }
+    else if (sol && ch === '$' && stream.match(/^\(+[\w]+\)+/) && stream.eat(':')) { return "header"; }
+    else if (sol && stream.match(/^\$+\(+[\w]+\)+/) && stream.eat(':')) { return "header"; }
+    else if (sol && stream.match(/^(.)+[\w]+:+ /)) { return "header"; }
+    else if (sol && stream.match(/^(.)+[\w]+:/) && stream.eol()) { return "header"; }
+
     if (ch === '@') { return "atom"; }
     if (ch === '*') { return "quote"; }
     if (ch === '\\' && stream.eol()) { return "comment"; }
@@ -63,18 +89,6 @@ CodeMirror.defineMode('makefile', function() {
       return tokenize(stream, state);
     }
     */
-
-    if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
-      stream.skipToEnd();
-      return "bracket";
-    }
-    if (ch === 'e' && (stream.match('lse') || stream.match('ndif')) && stream.eol()) { return "bracket"; }
-    if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
-
-    if (sol && stream.match(/^[\w]+[\s]+/) && stream.peek() === '=') { return "variable-2"; }
-    if (sol && (stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/))) { return "header"; }
-    else if (sol && stream.match(/^\w+/) && stream.peek() === '=') { return "variable-2"; }
-
     stream.eatWhile(/[\w-]/);
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
