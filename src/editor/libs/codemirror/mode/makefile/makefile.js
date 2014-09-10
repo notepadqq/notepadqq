@@ -26,17 +26,26 @@ CodeMirror.defineMode('makefile', function() {
 
     var sol = stream.sol();
     var ch = stream.next();
+    var cur = stream.current();
 
-    if (ch === '%' && stream.eat(':')) { return "def"; }
     if (ch === '@') { return "atom"; }
+    if (ch === '*') { return "quote"; }
+    if (ch === '\\' && stream.eol()) { return "comment"; }
     if (ch === '#') {
       if (sol && stream.eat('!')) {
         stream.skipToEnd();
         return 'meta'; // 'comment'?
       }
       stream.skipToEnd();
-      return 'comment';
+      return 'tag';
     }
+    if (ch === '%') {
+        if (sol && stream.eat(':')) {
+        return 'header';
+      }
+      return 'atom';
+    }
+
     if (ch === '$' && stream.eat('(')) {
       state.tokens.unshift(tokenDollar);
       return tokenize(stream, state);
@@ -45,26 +54,27 @@ CodeMirror.defineMode('makefile', function() {
       state.tokens.unshift(tokenDollarB);
       return tokenize(stream, state);
     }
-    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "quote"; }
+    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "variable-2"; }
     if (ch === '$' && (stream.eat('@') || stream.eat('<') || stream.eat('^'))) { return "quote"; }
 
+    /*
     if (ch === '\'' || ch === '"' || ch === '`') {
       state.tokens.unshift(tokenString(ch));
       return tokenize(stream, state);
     }
+    */
 
     if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
       stream.skipToEnd();
-      return "meta";
+      return "bracket";
     }
-    if (ch === 'e' && (stream.match('lse') || stream.match('ndif'))) { return "meta"; }
-    if (ch === 'i' && stream.match('nclude ')) { return "string"; }
+    if (ch === 'e' && (stream.match('lse') || stream.match('ndif')) && stream.eol()) { return "bracket"; }
+    if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
 
-    if (stream.match(/^[\w]+[\s]+/) && (stream.peek() === '=')) { return "def"; }
-    if (stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/)) { return "def"; }
+    if (sol && stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/)) { return "header"; }
+    if (sol && stream.match(/^[\w]+[\s]*/) && (stream.peek() === '=')) { return "variable-2"; }
 
     stream.eatWhile(/[\w-]/);
-    var cur = stream.current();
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
 
@@ -80,7 +90,7 @@ CodeMirror.defineMode('makefile', function() {
       if (end || !escaped) {
         state.tokens.shift();
       }
-      return ((quote === ')' || quote === '}') ? 'quote' : 'string');
+      return ((quote === ')' || quote === '}') ? 'variable-2' : 'string');
     };
   };
 
