@@ -13,7 +13,7 @@
 		<file alias="16x16/document-save-all.png">icons/default/16x16/document-save-all.png</file>
 		<file alias="16x16/document-save-as.png">icons/default/16x16/document-save-as.png</file>
 		<file alias="16x16/edit-copy.png">icons/default/16x16/edit-copy.png</file>
-        <file alias="16x16/edit-cut.png">icons/default/16x16/edit-cut.png</file>
+		<file alias="16x16/edit-cut.png">icons/default/16x16/edit-cut.png</file>
 		<file alias="16x16/edit-find.png">icons/default/16x16/edit-find.png</file>
 		<file alias="16x16/edit-paste.png">icons/default/16x16/edit-paste.png</file>
 		<file alias="16x16/edit-redo.png">icons/default/16x16/edit-redo.png</file>
@@ -33,7 +33,7 @@
 		<file alias="16x16/preferences-other.png">icons/default/16x16/preferences-other.png</file>
 		<file alias="16x16/zoom-in.png">icons/default/16x16/zoom-in.png</file>
 		<file alias="16x16/zoom-original.png">icons/default/16x16/zoom-original.png</file>
-        <file alias="16x16/zoom-out.png">icons/default/16x16/zoom-out.png</file>
+		<file alias="16x16/zoom-out.png">icons/default/16x16/zoom-out.png</file>
         
     </qresource>
 </RCC>

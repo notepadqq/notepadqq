@@ -2,10 +2,18 @@
 Name=default
 Comment=Default theme for notepadqq
 Inherits=default
-Directories=16x16,scalable
+Directories=16x16,64x64,128x128,scalable
  
 [16x16]
 Size=16
+Type=Fixed
+
+[64x64]
+Size=64
+Type=Fixed
+
+[128x128]
+Size=128
 Type=Fixed
 
 [scalable]
