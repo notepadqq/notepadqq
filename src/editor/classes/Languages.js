@@ -422,7 +422,7 @@ var Languages = new function() {
             name: "Properties files",
             mode: "properties",
             mime: "text/x-properties",
-            fileExtensions: ["properties"]
+            fileExtensions: ["properties", "desktop", "theme"]
         },
 
         "python": {
