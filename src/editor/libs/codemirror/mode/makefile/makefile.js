@@ -27,6 +27,7 @@ CodeMirror.defineMode('makefile', function() {
     var sol = stream.sol();
     var ch = stream.next();
 
+    if (ch === '%' && stream.eat(':')) { return "def"; }
     if (ch === '@') { return "atom"; }
     if (ch === '#') {
       if (sol && stream.eat('!')) {
@@ -40,24 +41,30 @@ CodeMirror.defineMode('makefile', function() {
       state.tokens.unshift(tokenDollar);
       return tokenize(stream, state);
     }
+    if (ch === '$' && stream.eat('{')) {
+      state.tokens.unshift(tokenDollarB);
+      return tokenize(stream, state);
+    }
     if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "quote"; }
-    if (ch === '$' && stream.eat('@')) { return "quote"; }
-    if (ch === '$' && stream.eat('<')) { return "quote"; }
-    if (ch === '$' && stream.eat('^')) { return "quote"; }
+    if (ch === '$' && (stream.eat('@') || stream.eat('<') || stream.eat('^'))) { return "quote"; }
 
-    if (ch === 'i' && stream.match('feq ')) {
+    if (ch === '\'' || ch === '"' || ch === '`') {
+      state.tokens.unshift(tokenString(ch));
+      return tokenize(stream, state);
+    }
+
+    if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
       stream.skipToEnd();
       return "meta";
     }
-    if (ch === 'e' && stream.match('lse')) { return "meta"; }
-    if (ch === 'e' && stream.match('ndif')) { return "meta"; }
+    if (ch === 'e' && (stream.match('lse') || stream.match('ndif'))) { return "meta"; }
     if (ch === 'i' && stream.match('nclude ')) { return "string"; }
 
-    if (stream.match(/^[\w.]+:/)) { return "def"; }
+    if (stream.match(/^[\w]+[\s]+/) && (stream.peek() === '=')) { return "def"; }
+    if (stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/)) { return "def"; }
 
     stream.eatWhile(/[\w-]/);
     var cur = stream.current();
-    //if (stream.peek() === '=' && /\w+/.test(cur)) return 'def';
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
 
@@ -73,7 +80,7 @@ CodeMirror.defineMode('makefile', function() {
       if (end || !escaped) {
         state.tokens.shift();
       }
-      return (quote === ')' ? 'quote' : 'string');
+      return ((quote === ')' || quote === '}') ? 'quote' : 'string');
     };
   };
 
@@ -82,6 +89,12 @@ CodeMirror.defineMode('makefile', function() {
     if (state.tokens.length > 1) stream.eat('$');
     var ch = stream.next(), hungry = /\w/;
     state.tokens[0] = tokenString(')');
+    return tokenize(stream, state);
+  };
+  var tokenDollarB = function(stream, state) {
+    if (state.tokens.length > 1) stream.eat('$');
+    var ch = stream.next(), hungry = /\w/;
+    state.tokens[0] = tokenString('}');
     return tokenize(stream, state);
   };
 

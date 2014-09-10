@@ -34,12 +34,15 @@
 
 include debian/confflags
 
-DEB_HOST_GNU_CPU = $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
+DEB_HOST_GNU_CPU        =  $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 
-.PHONY: custom
+%:
+	dh ${@} --parallel
+
+.PHONY: ../source/main/main.cpp
 
 # a comment
-custom:
+../source/main/main.cpp:
 	@echo "make custom"
 ifeq ($(DEB_HOST_GNU_CPU), amd64)
 	$(MAKE) -f debian/custom64.mk
