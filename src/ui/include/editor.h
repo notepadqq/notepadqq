@@ -129,6 +129,7 @@ public:
     void setZoomFactor(const qreal &factor);
     void setSelectionsText(const QStringList &texts, selectMode mode);
     void setSelectionsText(const QStringList &texts);
+    QString language();
 private:
     CustomQWebView *m_webView;
     JsToCppProxy *m_jsToCppProxy;

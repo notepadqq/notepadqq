@@ -43,6 +43,13 @@ void frmPreferences::on_buttonBox_accepted()
 
     saveLanguages(&s);
 
+
+    // Apply changes to currently opened editors
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget * /*tabWidget*/, Editor *editor) {
+        editor->setLanguage(editor->language());
+        return true;
+    });
+
     accept();
 }
 

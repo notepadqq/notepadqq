@@ -171,6 +171,12 @@ QList<QMap<QString, QString>> Editor::languages()
     return out;
 }
 
+QString Editor::language()
+{
+    QVariantMap data = sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+    return data.value("id").toString();
+}
+
 void Editor::setLanguage(const QString &language)
 {
     sendMessage("C_CMD_SET_LANGUAGE", language);
