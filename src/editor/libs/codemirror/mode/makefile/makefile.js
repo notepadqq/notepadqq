@@ -46,6 +46,7 @@ CodeMirror.defineMode('makefile', function() {
       return 'atom';
     }
 
+    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "variable-2"; }
     if (ch === '$' && stream.eat('(')) {
       state.tokens.unshift(tokenDollar);
       return tokenize(stream, state);
@@ -54,7 +55,6 @@ CodeMirror.defineMode('makefile', function() {
       state.tokens.unshift(tokenDollarB);
       return tokenize(stream, state);
     }
-    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "variable-2"; }
     if (ch === '$' && (stream.eat('@') || stream.eat('<') || stream.eat('^'))) { return "quote"; }
 
     /*
@@ -71,8 +71,9 @@ CodeMirror.defineMode('makefile', function() {
     if (ch === 'e' && (stream.match('lse') || stream.match('ndif')) && stream.eol()) { return "bracket"; }
     if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
 
-    if (sol && stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/)) { return "header"; }
-    if (sol && stream.match(/^[\w]+[\s]*/) && (stream.peek() === '=')) { return "variable-2"; }
+    if (sol && stream.match(/^[\w]+[\s]+/) && stream.peek() === '=') { return "variable-2"; }
+    if (sol && (stream.match(/^(.)+\w.+:/) || stream.match(/^\w.+:/))) { return "header"; }
+    else if (sol && stream.match(/^\w+/) && stream.peek() === '=') { return "variable-2"; }
 
     stream.eatWhile(/[\w-]/);
     return words.hasOwnProperty(cur) ? words[cur] : null;
