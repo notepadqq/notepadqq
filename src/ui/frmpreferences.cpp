@@ -1,5 +1,5 @@
 #include "include/frmpreferences.h"
-#include "include/editor.h"
+#include "include/EditorNS/editor.h"
 #include "ui_frmpreferences.h"
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :

@@ -1,11 +1,13 @@
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "include/editor.h"
+#include "include/EditorNS/editor.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"
 #include "include/notepadqq.h"
 #include "include/iconprovider.h"
+#include "include/EditorNS/bannerfilechanged.h"
+#include "include/EditorNS/bannerfileremoved.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -75,6 +77,10 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreWindowSettings();
 
     setupLanguagesMenu();
+
+
+
+
 
 
     // DEBUG: Add a second tabWidget
@@ -851,43 +857,38 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 {
     Editor *editor = tabWidget->editor(tab);
 
-    QMessageBox msgBox(this);
-    msgBox.setWindowTitle(QCoreApplication::applicationName());
-    msgBox.setIcon(QMessageBox::Warning);
-    msgBox.setStandardButtons(QMessageBox::Yes |
-                              QMessageBox::No |
-                              QMessageBox::Close);
-    msgBox.setDefaultButton(QMessageBox::Yes);
-
     if (removed) {
-        // TODO Better looking msgbox
-        msgBox.setText(tr("The file \"%1\" has been removed from the "
-                          "file system. Would you like to save it now?")
-                       .arg(editor->fileName().toDisplayString(QUrl::PreferLocalFile)));
+        BannerFileRemoved *banner = new BannerFileRemoved(this);
+        editor->insertBanner(banner);
 
-        int ret = msgBox.exec();
+        connect(banner, &BannerFileRemoved::ignore, this, [=]() {
+            editor->removeBanner(banner);
+            delete banner;
+        });
 
-        if (ret == QMessageBox::Close) {
-            closeTab(tabWidget, tab);
-        } else if (ret == QMessageBox::Yes) {
+        connect(banner, &BannerFileRemoved::save, this, [=]() {
+            editor->removeBanner(banner);
+            delete banner;
             save(tabWidget, tab);
-        }
+        });
 
     } else {
-        // TODO Better looking msgbox
-        msgBox.setText(tr("The file \"%1\" has been changed outside of "
-                          "the editor. Would you like to reload it?")
-                       .arg(editor->fileName().toDisplayString(QUrl::PreferLocalFile)));
+        BannerFileChanged *banner = new BannerFileChanged(this);
+        editor->insertBanner(banner);
 
-        int ret = msgBox.exec();
+        connect(banner, &BannerFileChanged::ignore, this, [=]() {
+            editor->removeBanner(banner);
+            delete banner;
+            // FIXME Set editor as clean
+        });
 
-        if (ret == QMessageBox::Close) {
-            closeTab(tabWidget, tab);
-        } else if (ret == QMessageBox::Yes) {
+        connect(banner, &BannerFileChanged::reload, this, [=]() {
+            editor->removeBanner(banner);
+            delete banner;
             m_docEngine->loadDocuments(editor->fileName(),
                                        tabWidget,
                                        true);
-        }
+        });
     }
 }
 
@@ -995,16 +996,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
 void MainWindow::on_actionSave_All_triggered()
 {
-    // FIXME Unexpected behavior if a tab gets closed (or added) while
-    // we're iterating.
-    // For example:
-    //    1. We're waiting for user input on the SaveFileDialog
-    //    2. One of the opened files gets changed on the file system
-    //    3. The user is informed with a MessageBox, and choses to close
-    //       that tab
-    //    4. Now our forEach is not reliable AT ALL. All the indexes will
-    //       be shifted by one.
-    // Fix by replacing the messagebox with a widget in the mainwindow.
+    // No tab must get closed (or added) while we're iterating!!
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
         if (editor->isClean()) {
             return true;

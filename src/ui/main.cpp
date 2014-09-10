@@ -1,6 +1,6 @@
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
-#include "include/editor.h"
+#include "include/EditorNS/editor.h"
 #include <QObject>
 #include <QFile>
 #include <QDir>

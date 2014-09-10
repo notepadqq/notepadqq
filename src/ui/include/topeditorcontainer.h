@@ -4,7 +4,7 @@
 #include <QSplitter>
 #include <QWheelEvent>
 #include "editortabwidget.h"
-#include "editor.h"
+#include "EditorNS/editor.h"
 #include <functional>
 
 /**

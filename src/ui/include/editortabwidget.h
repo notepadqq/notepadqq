@@ -3,7 +3,9 @@
 
 #include <QTabWidget>
 #include <QWheelEvent>
-#include "editor.h"
+#include "EditorNS/editor.h"
+
+using namespace EditorNS;
 
 /**
  * @brief A TabWidget used to allow the user to switch between

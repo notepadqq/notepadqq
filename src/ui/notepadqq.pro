@@ -51,26 +51,32 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     topeditorcontainer.cpp \
     editortabwidget.cpp \
-    editor.cpp \
     docengine.cpp \
     frmabout.cpp \
     frmsearchreplace.cpp \
     notepadqq.cpp \
     frmpreferences.cpp \
     customqwebview.cpp \
-    iconprovider.cpp
+    iconprovider.cpp \
+    EditorNS/editor.cpp \
+    EditorNS/bannerfilechanged.cpp \
+    EditorNS/bannerbasicmessage.cpp \
+    EditorNS/bannerfileremoved.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
     include/editortabwidget.h \
-    include/editor.h \
     include/docengine.h \
     include/frmabout.h \
     include/frmsearchreplace.h \
     include/notepadqq.h \
     include/frmpreferences.h \
     include/customqwebview.h \
-    include/iconprovider.h
+    include/iconprovider.h \
+    include/EditorNS/editor.h \
+    include/EditorNS/bannerfilechanged.h \
+    include/EditorNS/bannerbasicmessage.h \
+    include/EditorNS/bannerfileremoved.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
