@@ -371,7 +371,7 @@ void MainWindow::on_action_Open_triggered()
 
 int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
 {
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     QString name = tabWidget->tabText(tab).toHtmlEscaped();
 
     msgBox.setWindowTitle(QCoreApplication::applicationName());
@@ -485,7 +485,7 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
             fileOverwrite = QFile(editor->fileName().toLocalFile()).exists();
 
         if (editor->fileOnDiskChanged() && fileOverwrite) {
-            QMessageBox msgBox;
+            QMessageBox msgBox(this);
             msgBox.setWindowTitle(QCoreApplication::applicationName());
             msgBox.setIcon(QMessageBox::Warning);
             msgBox.setText("<h3>" +
@@ -847,7 +847,7 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 {
     Editor *editor = tabWidget->editor(tab);
 
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     msgBox.setWindowTitle(QCoreApplication::applicationName());
     msgBox.setIcon(QMessageBox::Warning);
     msgBox.setStandardButtons(QMessageBox::Yes |
