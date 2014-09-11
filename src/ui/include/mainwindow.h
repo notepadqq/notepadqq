@@ -99,7 +99,6 @@ private slots:
     void on_bannerRemoved(QWidget *banner);
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
-
     void on_actionReload_from_Disk_triggered();
 
 private:

@@ -4,7 +4,7 @@
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
-QCommandLineParser *Notepadqq::m_commandLineParameters = 0;
+QCommandLineParser *Notepadqq::m_commandLineParameters = nullptr;
 
 QString Notepadqq::copyright()
 {
