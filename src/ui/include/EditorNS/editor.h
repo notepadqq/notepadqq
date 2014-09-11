@@ -125,6 +125,7 @@ namespace EditorNS
 
         void insertBanner(QWidget *banner);
         void removeBanner(QWidget *banner);
+        void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
         bool isClean();
@@ -159,6 +160,7 @@ namespace EditorNS
         void messageReceived(QString msg, QVariant data);
         void gotFocus();
         void mouseWheel(QWheelEvent *ev);
+        void bannerRemoved(QWidget *banner);
 
         // Pre-interpreted messages:
         void contentChanged();

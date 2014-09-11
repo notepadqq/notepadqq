@@ -311,7 +311,18 @@ namespace EditorNS
 
     void Editor::removeBanner(QWidget *banner)
     {
-        m_layout->removeWidget(banner);
+        if (banner != m_webView && m_layout->indexOf(banner) >= 0) {
+            m_layout->removeWidget(banner);
+            emit bannerRemoved(banner);
+        }
+    }
+
+    void Editor::removeBanner(QString objectName)
+    {
+        QList<QWidget *> list = findChildren<QWidget *>(objectName);
+        for (int i = 0; i < list.length(); i++) {
+            removeBanner(list[i]);
+        }
     }
 
 }

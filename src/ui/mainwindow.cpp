@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_docEngine = new DocEngine(m_settings, m_topEditorContainer);
     connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
+    connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
+    connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
 
     loadIcons();
 
@@ -271,7 +273,7 @@ void MainWindow::openCommandLineProvidedUrls()
             tabW = m_topEditorContainer->addTabWidget();
         }
 
-        m_docEngine->loadDocuments(files, tabW, false);
+        m_docEngine->loadDocuments(files, tabW);
     }
 
     // Activate the window
@@ -299,8 +301,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
     if (!fileNames.empty()) {
         m_docEngine->loadDocuments(fileNames,
-                                   m_topEditorContainer->currentTabWidget(),
-                                   false);
+                                   m_topEditorContainer->currentTabWidget());
     }
 }
 
@@ -371,8 +372,7 @@ void MainWindow::on_action_Open_triggered()
 
     if (!fileNames.empty()) {
         m_docEngine->loadDocuments(fileNames,
-                                   m_topEditorContainer->currentTabWidget(),
-                                   false);
+                                   m_topEditorContainer->currentTabWidget());
 
         m_settings->setValue("lastSelectedDir",
                              QFileInfo(fileNames[0].toLocalFile()).absolutePath());
@@ -612,6 +612,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     Editor *editor = tabWidget->editor(tab);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
 }
 
 void MainWindow::on_cursorActivity()
@@ -859,35 +860,30 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
     if (removed) {
         BannerFileRemoved *banner = new BannerFileRemoved(this);
+        banner->setObjectName("fileremoved");
         editor->insertBanner(banner);
 
         connect(banner, &BannerFileRemoved::ignore, this, [=]() {
             editor->removeBanner(banner);
-            delete banner;
         });
 
         connect(banner, &BannerFileRemoved::save, this, [=]() {
-            editor->removeBanner(banner);
-            delete banner;
             save(tabWidget, tab);
         });
 
     } else {
         BannerFileChanged *banner = new BannerFileChanged(this);
+        banner->setObjectName("filechanged");
         editor->insertBanner(banner);
 
         connect(banner, &BannerFileChanged::ignore, this, [=]() {
             editor->removeBanner(banner);
-            delete banner;
             // FIXME Set editor as clean
         });
 
         connect(banner, &BannerFileChanged::reload, this, [=]() {
             editor->removeBanner(banner);
-            delete banner;
-            m_docEngine->loadDocuments(editor->fileName(),
-                                       tabWidget,
-                                       true);
+            m_docEngine->reloadDocument(tabWidget, tab);
         });
     }
 }
@@ -1006,4 +1002,30 @@ void MainWindow::on_actionSave_All_triggered()
             return (result != saveFileResult_Canceled);
         }
     });
+}
+
+void MainWindow::on_bannerRemoved(QWidget *banner)
+{
+    delete banner;
+}
+
+void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
+{
+    Editor *editor = tabWidget->editor(tab);
+    editor->removeBanner("filechanged");
+    editor->removeBanner("fileremoved");
+}
+
+void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
+{
+    Editor *editor = tabWidget->editor(tab);
+    editor->removeBanner("filechanged");
+    editor->removeBanner("fileremoved");
+}
+
+void MainWindow::on_actionReload_from_Disk_triggered()
+{
+    EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
+    m_docEngine->reloadDocument(tabWidget,
+                                tabWidget->currentIndex());
 }

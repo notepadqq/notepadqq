@@ -10,14 +10,19 @@ namespace EditorNS
     {
         setContentsMargins(0, 0, 0, 0);
 
-        m_layout = new QHBoxLayout(this);
+        QWidget *topWidget = new QWidget(this);
+        QVBoxLayout *topLayout = new QVBoxLayout(this);
+        topLayout->setContentsMargins(0, 0, 0, 0);
+        topLayout->addWidget(topWidget);
+
+        m_layout = new QHBoxLayout(topWidget);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setMargin(12);
 
-        setObjectName("BannerBasicMessage_base");
-        setStyleSheet("#BannerBasicMessage_base {"
-                      "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(241, 218, 54, 255), stop:1 rgba(254, 252, 234, 255));"
-                      "}");
+        topWidget->setObjectName("BannerBasicMessage_base");
+        topWidget->setStyleSheet("#BannerBasicMessage_base {"
+                                 "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(241, 218, 54, 255), stop:1 rgba(254, 252, 234, 255));"
+                                 "}");
 
 
         m_message = new QLabel(this);
@@ -28,7 +33,8 @@ namespace EditorNS
 
         m_layout->addStretch(1);
 
-        setLayout(m_layout);
+        topWidget->setLayout(m_layout);
+        setLayout(topLayout);
     }
 
     void BannerBasicMessage::setMessage(QString text)

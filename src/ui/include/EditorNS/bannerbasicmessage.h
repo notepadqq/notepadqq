@@ -18,6 +18,7 @@ namespace EditorNS
         void setMessage(QString text);
         QPushButton *addButton(QString text);
     signals:
+        void bannerRemoved();
 
     public slots:
 

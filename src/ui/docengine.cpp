@@ -47,11 +47,24 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     return true;
 }
 
-bool DocEngine::loadDocuments(const QUrl &fileName, EditorTabWidget *tabWidget, const bool reload)
+bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget)
+{
+    return loadDocuments(fileNames, tabWidget, false);
+}
+
+bool DocEngine::loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget)
 {
     QList<QUrl> files;
     files.append(fileName);
-    return loadDocuments(files, tabWidget, reload);
+    return loadDocuments(files, tabWidget);
+}
+
+bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab)
+{
+    Editor *editor = tabWidget->editor(tab);
+    QList<QUrl> files;
+    files.append(editor->fileName());
+    return loadDocuments(files, tabWidget, true);
 }
 
 bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload)
@@ -144,7 +157,14 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 monitorDocument(editor);
 
+                if (reload) {
+                    emit documentReloaded(tabWidget, tabIndex);
+                }
+
                 editor->setFocus();
+
+            } else if (fileNames[i].isEmpty()) {
+                // Do nothing
 
             } else {
                 // TODO Better looking msgbox
@@ -155,6 +175,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
             }
         }
     }
+
     return true;
 }
 
@@ -262,6 +283,10 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         file.close();
 
         monitorDocument(editor);
+
+        if (!copy) {
+            emit documentSaved(tabWidget, tab);
+        }
 
         return MainWindow::saveFileResult_Saved;
 

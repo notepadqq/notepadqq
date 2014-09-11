@@ -22,9 +22,7 @@ public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
     ~DocEngine();
 
-    // FIXME Separate from reload
-    bool loadDocuments(const QUrl &fileName, EditorTabWidget *tabWidget, const bool reload);
-    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload);
+
 
     static QString getFileMimeEncoding(const QString &file);
     static QString getFileInformation(const QString &file, const int flags);
@@ -48,12 +46,17 @@ public:
     void unmonitorDocument(Editor *editor);
     bool isMonitored(Editor *editor);
 
+    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
+    bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
+    bool reloadDocument(EditorTabWidget *tabWidget, int tab);
 private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
     bool read(QFile *file, Editor *editor, QString encoding);
     QPair<int, int> findOpenEditorByUrl(QUrl filename);
+    // FIXME Separate from reload
+    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload);
     bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
@@ -64,9 +67,20 @@ signals:
      *        monitorDocument() again if you want to keep monitoring it.
      * @param tabWidget
      * @param tab
-     * @param removed
+     * @param removed true if the file has been removed from the disk
      */
     void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+
+    /**
+     * @brief The document has been successfully saved. This event is
+     *        not emitted if the document has just been copied to another
+     *        location.
+     * @param tabWidget
+     * @param tab
+     */
+    void documentSaved(EditorTabWidget *tabWidget, int tab);
+
+    void documentReloaded(EditorTabWidget *tabWidget, int tab);
 
 public slots:
 
