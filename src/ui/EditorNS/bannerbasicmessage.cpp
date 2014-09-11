@@ -21,7 +21,7 @@ namespace EditorNS
 
         topWidget->setObjectName("BannerBasicMessage_base");
         topWidget->setStyleSheet("#BannerBasicMessage_base {"
-                                 "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(241, 218, 54, 255), stop:1 rgba(254, 252, 234, 255));"
+                                 "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(241, 218, 54, 255), stop:1 rgba(249, 239, 166, 255));"
                                  "}");
 
 
