@@ -211,7 +211,7 @@ var Languages = new function() {
             name: "Haxe",
             mode: "haxe",
             mime: "text/x-haxe",
-            fileExtensions: []
+            fileExtensions: ["hx"]
         },
 
         "aspnet": {
@@ -225,7 +225,7 @@ var Languages = new function() {
             name: "Embedded Javascript",
             mode: "htmlembedded",
             mime: "application/x-ejs",
-            fileExtensions: ["ejs"]
+            fileExtensions: ["ejs", "dust"]
         },
 
         "jsp": {
@@ -422,7 +422,7 @@ var Languages = new function() {
             name: "Properties files",
             mode: "properties",
             mime: "text/x-properties",
-            fileExtensions: ["properties", "desktop", "theme"]
+            fileExtensions: ["properties", "desktop", "theme", "ini"]
         },
 
         "python": {
@@ -496,8 +496,8 @@ var Languages = new function() {
             fileExtensions: ["scss", "scss.erb"]
         },
 
-        "shell": {
-            name: "Shell script",
+        "bash": {
+            name: "Bash",
             mode: "shell",
             mime: "text/x-sh",
             fileExtensions: ["sh", "shr", "shar"]
@@ -633,7 +633,7 @@ var Languages = new function() {
             name: "VBScript",
             mode: "vbscript",
             mime: "text/vbscript",
-            fileExtensions: ["vb", "vbscript"]
+            fileExtensions: ["vbs", "vbe", "wsf", "wsc"]
         },
 
         "velocity": {
