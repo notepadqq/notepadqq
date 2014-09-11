@@ -14,8 +14,9 @@ class frmSearchReplace : public QDialog
 
 public:
     enum Tabs { TabSearch, TabReplace };
-    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, Tabs defaultTab = TabSearch, QWidget *parent = 0);
+    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
     ~frmSearchReplace();
+    void show(Tabs defaultTab);
 private slots:
     void on_btnFindNext_clicked();
 
@@ -45,6 +46,7 @@ private:
     void replace(QString string, QString replacement, bool isRegex, bool forward);
     int replaceAll(QString string, QString replacement, bool isRegex);
     int selectAll(QString string, bool isRegex);
+    void setCurrentTab(Tabs tab);
 };
 
 #endif // FRMSEARCHREPLACE_H

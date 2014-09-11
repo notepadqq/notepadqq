@@ -3,7 +3,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
-frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, Tabs defaultTab, QWidget *parent) :
+frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::frmSearchReplace), m_topEditorContainer(topEditorContainer)
 {
@@ -11,12 +11,6 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, Tabs 
 
     setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
-
-    if (defaultTab == TabSearch) {
-        ui->tabWidget->setCurrentWidget(ui->tabSearch);
-    } else if (defaultTab == TabReplace) {
-        ui->tabWidget->setCurrentWidget(ui->tabReplace);
-    }
 
     ui->tabWidget->currentChanged(ui->tabWidget->currentIndex());
 
@@ -28,6 +22,21 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, Tabs 
 frmSearchReplace::~frmSearchReplace()
 {
     delete ui;
+}
+
+void frmSearchReplace::show(Tabs defaultTab)
+{
+    setCurrentTab(defaultTab);
+    QDialog::show();
+}
+
+void frmSearchReplace::setCurrentTab(Tabs tab)
+{
+    if (tab == TabSearch) {
+        ui->tabWidget->setCurrentWidget(ui->tabSearch);
+    } else if (tab == TabReplace) {
+        ui->tabWidget->setCurrentWidget(ui->tabReplace);
+    }
 }
 
 Editor *frmSearchReplace::currentEditor()

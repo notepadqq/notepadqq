@@ -763,10 +763,9 @@ void MainWindow::on_actionSearch_triggered()
     if(!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(
                             m_topEditorContainer,
-                            frmSearchReplace::TabSearch,
                             this);
     }
-    m_frmSearchReplace->show();
+    m_frmSearchReplace->show(frmSearchReplace::TabSearch);
 }
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
@@ -893,10 +892,9 @@ void MainWindow::on_actionReplace_triggered()
     if(!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(
                             m_topEditorContainer,
-                            frmSearchReplace::TabReplace,
                             this);
     }
-    m_frmSearchReplace->show();
+    m_frmSearchReplace->show(frmSearchReplace::TabReplace);
 }
 
 void MainWindow::on_actionPlain_text_triggered()
