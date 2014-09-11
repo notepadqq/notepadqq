@@ -114,6 +114,14 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     }
                 }
 
+                if (!file.exists()) {
+                    // If it's a file that doesn't exists,
+                    // set it as if it has changed. This way, if someone
+                    // creates that file from outside of notepadqq,
+                    // when the user tries to save over it he gets a warning.
+                    editor->setFileOnDiskChanged(true);
+                }
+
                 // If there was only a new empty tab opened, remove it
                 if (tabWidget->count() == 2) {
                     Editor * victim = (Editor *)tabWidget->widget(0);
