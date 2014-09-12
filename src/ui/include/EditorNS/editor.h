@@ -1,7 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "include/customqwebview.h"
+#include "include/EditorNS/customqwebview.h"
 #include <QObject>
 #include <QVariant>
 #include <QQueue>

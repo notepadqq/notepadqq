@@ -56,12 +56,12 @@ SOURCES += main.cpp\
     frmsearchreplace.cpp \
     notepadqq.cpp \
     frmpreferences.cpp \
-    customqwebview.cpp \
     iconprovider.cpp \
     EditorNS/editor.cpp \
     EditorNS/bannerfilechanged.cpp \
     EditorNS/bannerbasicmessage.cpp \
-    EditorNS/bannerfileremoved.cpp
+    EditorNS/bannerfileremoved.cpp \
+    EditorNS/customqwebview.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -71,12 +71,12 @@ HEADERS  += include/mainwindow.h \
     include/frmsearchreplace.h \
     include/notepadqq.h \
     include/frmpreferences.h \
-    include/customqwebview.h \
     include/iconprovider.h \
     include/EditorNS/editor.h \
     include/EditorNS/bannerfilechanged.h \
     include/EditorNS/bannerbasicmessage.h \
-    include/EditorNS/bannerfileremoved.h
+    include/EditorNS/bannerfileremoved.h \
+    include/EditorNS/customqwebview.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
