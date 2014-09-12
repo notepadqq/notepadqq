@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
-    QDialog(parent),
+    QMainWindow(parent),
     ui(new Ui::frmSearchReplace), m_topEditorContainer(topEditorContainer)
 {
     ui->setupUi(this);
@@ -12,11 +12,17 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    ui->tabWidget->currentChanged(ui->tabWidget->currentIndex());
+    move(
+        parentWidget()->window()->frameGeometry().topLeft() +
+        parentWidget()->window()->rect().center() -
+        rect().center());
 
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
-    connect(ui->cmbSearch_2->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_3_clicked);
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
+
+    ui->actionFind->setChecked(true);
+    ui->actionReplace->toggled(false);
+    ui->actionFind->toggled(true);
 }
 
 frmSearchReplace::~frmSearchReplace()
@@ -27,16 +33,16 @@ frmSearchReplace::~frmSearchReplace()
 void frmSearchReplace::show(Tabs defaultTab)
 {
     setCurrentTab(defaultTab);
-    QDialog::show();
+    QMainWindow::show();
 }
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
 {
-    if (tab == TabSearch) {
+    /*if (tab == TabSearch) {
         ui->tabWidget->setCurrentWidget(ui->tabSearch);
     } else if (tab == TabReplace) {
         ui->tabWidget->setCurrentWidget(ui->tabReplace);
-    }
+    }*/
 }
 
 Editor *frmSearchReplace::currentEditor()
@@ -123,28 +129,9 @@ void frmSearchReplace::on_btnFindPrev_clicked()
     this->search(ui->cmbSearch->currentText(), false, false);
 }
 
-void frmSearchReplace::on_btnFindNext_3_clicked()
-{
-    this->search(ui->cmbSearch->currentText(), false, true);
-}
-
-void frmSearchReplace::on_btnFindPrev_3_clicked()
-{
-    this->search(ui->cmbSearch->currentText(), false, false);
-}
-
-void frmSearchReplace::on_tabWidget_currentChanged(int index)
-{
-    if (index == ui->tabWidget->indexOf(ui->tabSearch)) {
-        ui->cmbSearch->setFocus();
-    } else if (index == ui->tabWidget->indexOf(ui->tabReplace)) {
-        ui->cmbSearch_2->setFocus();
-    }
-}
-
 void frmSearchReplace::on_btnReplaceNext_clicked()
 {
-    this->replace(ui->cmbSearch_2->currentText(),
+    this->replace(ui->cmbSearch->currentText(),
                   ui->cmbReplace->currentText(),
                   false,
                   true);
@@ -152,7 +139,7 @@ void frmSearchReplace::on_btnReplaceNext_clicked()
 
 void frmSearchReplace::on_btnReplacePrev_clicked()
 {
-    this->replace(ui->cmbSearch_2->currentText(),
+    this->replace(ui->cmbSearch->currentText(),
                   ui->cmbReplace->currentText(),
                   false,
                   false);
@@ -160,7 +147,7 @@ void frmSearchReplace::on_btnReplacePrev_clicked()
 
 void frmSearchReplace::on_btnReplaceAll_clicked()
 {
-    int n = this->replaceAll(ui->cmbSearch_2->currentText(),
+    int n = this->replaceAll(ui->cmbSearch->currentText(),
                              ui->cmbReplace->currentText(),
                              false);
     QMessageBox::information(this, tr("Replace all"), tr("%1 occurrences have been replaced.").arg(n));
@@ -175,4 +162,21 @@ void frmSearchReplace::on_btnSelectAll_clicked()
         // Focus on main window
         this->m_topEditorContainer->activateWindow();
     }
+}
+
+void frmSearchReplace::on_actionReplace_toggled(bool on)
+{
+    ui->actionFind->setChecked(!on);
+
+    ui->btnReplaceAll->setVisible(on);
+    ui->btnReplaceNext->setVisible(on);
+    ui->btnReplacePrev->setVisible(on);
+    ui->cmbReplace->setVisible(on);
+    ui->lblReplace->setVisible(on);
+
+}
+
+void frmSearchReplace::on_actionFind_toggled(bool on)
+{
+    ui->actionReplace->setChecked(!on);
 }

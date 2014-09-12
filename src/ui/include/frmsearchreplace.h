@@ -3,12 +3,13 @@
 
 #include "topeditorcontainer.h"
 #include <QDialog>
+#include <QMainWindow>
 
 namespace Ui {
 class frmSearchReplace;
 }
 
-class frmSearchReplace : public QDialog
+class frmSearchReplace : public QMainWindow
 {
     Q_OBJECT
 
@@ -22,12 +23,6 @@ private slots:
 
     void on_btnFindPrev_clicked();
 
-    void on_btnFindNext_3_clicked();
-
-    void on_btnFindPrev_3_clicked();
-
-    void on_tabWidget_currentChanged(int index);
-
     void on_btnReplaceNext_clicked();
 
     void on_btnReplacePrev_clicked();
@@ -35,6 +30,10 @@ private slots:
     void on_btnReplaceAll_clicked();
 
     void on_btnSelectAll_clicked();
+
+    void on_actionReplace_toggled(bool on);
+
+    void on_actionFind_toggled(bool on);
 
 private:
     Ui::frmSearchReplace*  ui;
