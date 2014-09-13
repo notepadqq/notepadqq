@@ -46,6 +46,7 @@ private:
     int replaceAll(QString string, QString replacement, bool isRegex);
     int selectAll(QString string, bool isRegex);
     void setCurrentTab(Tabs tab);
+    void manualSizeAdjust();
 };
 
 #endif // FRMSEARCHREPLACE_H

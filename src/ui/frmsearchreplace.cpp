@@ -9,7 +9,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
 {
     ui->setupUi(this);
 
-    setFixedSize(this->width(), this->height());
+    //setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     move(
@@ -38,11 +38,11 @@ void frmSearchReplace::show(Tabs defaultTab)
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
 {
-    /*if (tab == TabSearch) {
-        ui->tabWidget->setCurrentWidget(ui->tabSearch);
+    if (tab == TabSearch) {
+        ui->actionFind->setChecked(true);
     } else if (tab == TabReplace) {
-        ui->tabWidget->setCurrentWidget(ui->tabReplace);
-    }*/
+        ui->actionReplace->setChecked(true);
+    }
 }
 
 Editor *frmSearchReplace::currentEditor()
@@ -174,9 +174,28 @@ void frmSearchReplace::on_actionReplace_toggled(bool on)
     ui->cmbReplace->setVisible(on);
     ui->lblReplace->setVisible(on);
 
+    manualSizeAdjust();
 }
 
 void frmSearchReplace::on_actionFind_toggled(bool on)
 {
     ui->actionReplace->setChecked(!on);
+
+    manualSizeAdjust();
+}
+
+void frmSearchReplace::manualSizeAdjust()
+{
+    int curX = geometry().x();
+    int curY = geometry().y();
+    //setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+    QApplication::processEvents();
+    QApplication::processEvents();
+    setGeometry(curX, curY, width(), 0);
+    /*QApplication::processEvents();
+    QApplication::processEvents();
+    setFixedSize(width(), height());
+    QApplication::processEvents();
+    QApplication::processEvents();
+    setGeometry(curX, curY, width(), height());*/
 }
