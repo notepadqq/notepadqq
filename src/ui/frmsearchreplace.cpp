@@ -1,4 +1,5 @@
 #include "include/frmsearchreplace.h"
+#include "include/iconprovider.h"
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>
@@ -19,6 +20,9 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
 
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
+
+    ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));
+    ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
 
     ui->actionFind->setChecked(true);
     ui->actionReplace->toggled(false);

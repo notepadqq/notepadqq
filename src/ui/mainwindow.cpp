@@ -80,11 +80,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setupLanguagesMenu();
 
-
-
-
-
-
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 }

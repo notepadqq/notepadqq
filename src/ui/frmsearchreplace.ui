@@ -272,6 +272,12 @@
    <property name="movable">
     <bool>false</bool>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
@@ -285,6 +291,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionFind"/>
+   <addaction name="separator"/>
    <addaction name="actionReplace"/>
   </widget>
   <action name="actionReplace">
