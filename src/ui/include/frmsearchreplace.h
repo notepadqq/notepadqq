@@ -49,14 +49,24 @@ private:
         Regex
     };
 
-    void search(QString string, SearchMode searchMode, bool forward);
-    QString plainTextToRegex(QString text);
-    void replace(QString string, QString replacement, SearchMode searchMode, bool forward);
-    int replaceAll(QString string, QString replacement, SearchMode searchMode);
-    int selectAll(QString string, bool isRegex);
+    struct SearchOptions {
+        unsigned MatchCase : 1;
+        unsigned MatchWholeWord : 1;
+
+        SearchOptions() : MatchCase(0), MatchWholeWord(0) { }
+    };
+
+    void search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions);
+    QString plainTextToRegex(QString text, bool matchWholeWord);
+    void replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions);
+    int replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions);
+    int selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions);
     void setCurrentTab(Tabs tab);
     void manualSizeAdjust();
+    SearchOptions searchOptionsFromUI();
     SearchMode searchModeFromUI();
+    QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
+
 };
 
 #endif // FRMSEARCHREPLACE_H

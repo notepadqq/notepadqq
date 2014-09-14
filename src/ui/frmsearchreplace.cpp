@@ -51,23 +51,35 @@ Editor *frmSearchReplace::currentEditor()
     return this->m_topEditorContainer->currentTabWidget()->currentEditor();
 }
 
-QString frmSearchReplace::plainTextToRegex(QString text)
+QString frmSearchReplace::plainTextToRegex(QString text, bool matchWholeWord)
 {
     // Transform it into a regex, but make sure to escape special chars
     QString regex = QRegExp::escape(text);
+
+    if (matchWholeWord)
+        regex = "\\b" + regex + "\\b";
+
     return regex;
 }
 
-void frmSearchReplace::search(QString string, SearchMode searchMode, bool forward) {
+QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions)
+{
     QString rawSearch;
 
     if (searchMode == SearchMode::Regex) {
-        rawSearch = string;
+        rawSearch = search;
     } else if (searchMode == SearchMode::SpecialChars) {
         // FIXME
     } else {
-        rawSearch = plainTextToRegex(string);
+        bool wholeWord = searchOptions.MatchWholeWord;
+        rawSearch = plainTextToRegex(search, wholeWord);
     }
+
+    return rawSearch;
+}
+
+void frmSearchReplace::search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
+    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
@@ -75,16 +87,8 @@ void frmSearchReplace::search(QString string, SearchMode searchMode, bool forwar
     currentEditor()->sendMessage("C_FUN_SEARCH", QVariant::fromValue(data));
 }
 
-void frmSearchReplace::replace(QString string, QString replacement, SearchMode searchMode, bool forward) {
-    QString rawSearch;
-
-    if (searchMode == SearchMode::Regex) {
-        rawSearch = string;
-    } else if (searchMode == SearchMode::SpecialChars) {
-        // FIXME
-    } else {
-        rawSearch = plainTextToRegex(string);
-    }
+void frmSearchReplace::replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
+    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
@@ -93,16 +97,8 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchMode s
     currentEditor()->sendMessage("C_FUN_REPLACE", QVariant::fromValue(data));
 }
 
-int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode searchMode) {
-    QString rawSearch;
-
-    if (searchMode == SearchMode::Regex) {
-        rawSearch = string;
-    } else if (searchMode == SearchMode::SpecialChars) {
-        // FIXME
-    } else {
-        rawSearch = plainTextToRegex(string);
-    }
+int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions) {
+    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
@@ -111,14 +107,8 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode
     return count.toInt();
 }
 
-int frmSearchReplace::selectAll(QString string, bool isRegex) {
-    QString rawSearch;
-
-    if (isRegex) {
-        rawSearch = string;
-    } else {
-        rawSearch = plainTextToRegex(string);
-    }
+int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions) {
+    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
@@ -129,6 +119,7 @@ int frmSearchReplace::selectAll(QString string, bool isRegex) {
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
 {
     SearchMode searchMode;
+
     if (ui->radSearchPlainText->isChecked())
         searchMode = SearchMode::PlainText;
     else if (ui->radSearchWithSpecialChars->isChecked())
@@ -139,14 +130,32 @@ frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
     return searchMode;
 }
 
+frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
+{
+    SearchOptions searchOptions;
+
+    if (ui->chkMatchCase->isChecked())
+        searchOptions.MatchCase = true;
+    if (ui->chkMatchWholeWord->isChecked())
+        searchOptions.MatchWholeWord = true;
+
+    return searchOptions;
+}
+
 void frmSearchReplace::on_btnFindNext_clicked()
 {
-    this->search(ui->cmbSearch->currentText(), searchModeFromUI(), true);
+    this->search(ui->cmbSearch->currentText(),
+                 searchModeFromUI(),
+                 true,
+                 searchOptionsFromUI());
 }
 
 void frmSearchReplace::on_btnFindPrev_clicked()
 {
-    this->search(ui->cmbSearch->currentText(), searchModeFromUI(), false);
+    this->search(ui->cmbSearch->currentText(),
+                 searchModeFromUI(),
+                 false,
+                 searchOptionsFromUI());
 }
 
 void frmSearchReplace::on_btnReplaceNext_clicked()
@@ -154,7 +163,8 @@ void frmSearchReplace::on_btnReplaceNext_clicked()
     this->replace(ui->cmbSearch->currentText(),
                   ui->cmbReplace->currentText(),
                   searchModeFromUI(),
-                  true);
+                  true,
+                  searchOptionsFromUI());
 }
 
 void frmSearchReplace::on_btnReplacePrev_clicked()
@@ -162,20 +172,24 @@ void frmSearchReplace::on_btnReplacePrev_clicked()
     this->replace(ui->cmbSearch->currentText(),
                   ui->cmbReplace->currentText(),
                   searchModeFromUI(),
-                  false);
+                  false,
+                  searchOptionsFromUI());
 }
 
 void frmSearchReplace::on_btnReplaceAll_clicked()
 {
     int n = this->replaceAll(ui->cmbSearch->currentText(),
                              ui->cmbReplace->currentText(),
-                             searchModeFromUI());
+                             searchModeFromUI(),
+                             searchOptionsFromUI());
     QMessageBox::information(this, tr("Replace all"), tr("%1 occurrences have been replaced.").arg(n));
 }
 
 void frmSearchReplace::on_btnSelectAll_clicked()
 {
-    int count = this->selectAll(ui->cmbSearch->currentText(), false);
+    int count = this->selectAll(ui->cmbSearch->currentText(),
+                                searchModeFromUI(),
+                                searchOptionsFromUI());
     if (count == 0) {
         QMessageBox::information(this, tr("Select all"), tr("No results found"));
     } else {
