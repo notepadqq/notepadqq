@@ -42,13 +42,21 @@ private:
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
     Editor*                currentEditor();
-    void search(QString string, bool isRegex, bool forward);
+
+    enum class SearchMode {
+        PlainText,
+        SpecialChars,
+        Regex
+    };
+
+    void search(QString string, SearchMode searchMode, bool forward);
     QString plainTextToRegex(QString text);
-    void replace(QString string, QString replacement, bool isRegex, bool forward);
-    int replaceAll(QString string, QString replacement, bool isRegex);
+    void replace(QString string, QString replacement, SearchMode searchMode, bool forward);
+    int replaceAll(QString string, QString replacement, SearchMode searchMode);
     int selectAll(QString string, bool isRegex);
     void setCurrentTab(Tabs tab);
     void manualSizeAdjust();
+    SearchMode searchModeFromUI();
 };
 
 #endif // FRMSEARCHREPLACE_H
