@@ -23,6 +23,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->actionFind->setChecked(true);
     ui->actionReplace->toggled(false);
     ui->actionFind->toggled(true);
+    ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
 }
 
 frmSearchReplace::~frmSearchReplace()
@@ -198,4 +199,14 @@ void frmSearchReplace::manualSizeAdjust()
     QApplication::processEvents();
     QApplication::processEvents();
     setGeometry(curX, curY, width(), height());*/
+}
+
+void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
+{
+    if (checked)
+        ui->groupAdvanced->show();
+    else
+        ui->groupAdvanced->hide();
+
+    manualSizeAdjust();
 }

@@ -35,6 +35,8 @@ private slots:
 
     void on_actionFind_toggled(bool on);
 
+    void on_chkShowAdvanced_toggled(bool checked);
+
 private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
