@@ -146,20 +146,22 @@ frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
     return searchOptions;
 }
 
-void frmSearchReplace::on_btnFindNext_clicked()
+void frmSearchReplace::findFromUI(bool forward)
 {
     this->search(ui->cmbSearch->currentText(),
                  searchModeFromUI(),
-                 true,
+                 forward,
                  searchOptionsFromUI());
+}
+
+void frmSearchReplace::on_btnFindNext_clicked()
+{
+    this->findFromUI(true);
 }
 
 void frmSearchReplace::on_btnFindPrev_clicked()
 {
-    this->search(ui->cmbSearch->currentText(),
-                 searchModeFromUI(),
-                 false,
-                 searchOptionsFromUI());
+    this->findFromUI(false);
 }
 
 void frmSearchReplace::on_btnReplaceNext_clicked()

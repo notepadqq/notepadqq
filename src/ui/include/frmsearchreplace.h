@@ -18,23 +18,22 @@ public:
     explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
     ~frmSearchReplace();
     void show(Tabs defaultTab);
+
+    /**
+     * @brief Runs a "find next" or "find prev", taking the options from the UI
+     * @param forward
+     */
+    void findFromUI(bool forward);
+
 private slots:
     void on_btnFindNext_clicked();
-
     void on_btnFindPrev_clicked();
-
     void on_btnReplaceNext_clicked();
-
     void on_btnReplacePrev_clicked();
-
     void on_btnReplaceAll_clicked();
-
     void on_btnSelectAll_clicked();
-
     void on_actionReplace_toggled(bool on);
-
     void on_actionFind_toggled(bool on);
-
     void on_chkShowAdvanced_toggled(bool checked);
 
 private:
@@ -66,7 +65,6 @@ private:
     SearchOptions searchOptionsFromUI();
     SearchMode searchModeFromUI();
     QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
-
 };
 
 #endif // FRMSEARCHREPLACE_H

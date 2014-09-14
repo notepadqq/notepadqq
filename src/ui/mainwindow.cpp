@@ -21,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
 {
-    // FIXME Set /usr/share/themes QIcon::setThemeSearchPaths();
-
     ui->setupUi(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
@@ -128,11 +126,11 @@ void MainWindow::loadIcons()
     ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("notepadqq-save-macro"));
     ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
     ui->actionSearch->setIcon(IconProvider::fromTheme("edit-find"));
+    ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
     ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("notepadqq-show-special-chars"));
     ui->actionWord_wrap->setIcon(IconProvider::fromTheme("notepadqq-word-wrap"));
-
-    //ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next",QIcon(ui->actionFind_Next->icon())));
-    //ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous",QIcon(ui->actionFind_Previous->icon())));
+    ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next"));
+    ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous"));
 }
 
 void MainWindow::createStatusBar()
@@ -1021,4 +1019,16 @@ void MainWindow::on_actionReload_from_Disk_triggered()
     EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
     m_docEngine->reloadDocument(tabWidget,
                                 tabWidget->currentIndex());
+}
+
+void MainWindow::on_actionFind_Next_triggered()
+{
+    if (m_frmSearchReplace)
+        m_frmSearchReplace->findFromUI(true);
+}
+
+void MainWindow::on_actionFind_Previous_triggered()
+{
+    if (m_frmSearchReplace)
+        m_frmSearchReplace->findFromUI(false);
 }
