@@ -247,14 +247,14 @@
         </spacer>
        </item>
        <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="chkMatchWholeWord">
          <property name="text">
           <string>Match whole word only</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QCheckBox" name="checkBox_2">
+        <widget class="QCheckBox" name="chkMatchCase">
          <property name="text">
           <string>Match case</string>
          </property>
