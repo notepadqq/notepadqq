@@ -226,7 +226,7 @@
        <item row="2" column="0">
         <widget class="QRadioButton" name="radSearchWithSpecialChars">
          <property name="text">
-          <string>Search with special characters (\n, \r, \t, \0, \x...)</string>
+          <string>Search with special characters (\n, \r, \t, \0, \u..., \x...)</string>
          </property>
         </widget>
        </item>

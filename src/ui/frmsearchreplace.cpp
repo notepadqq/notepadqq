@@ -73,7 +73,10 @@ QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode,
     if (searchMode == SearchMode::Regex) {
         rawSearch = search;
     } else if (searchMode == SearchMode::SpecialChars) {
-        // FIXME
+        bool wholeWord = searchOptions.MatchWholeWord;
+        rawSearch = plainTextToRegex(search, wholeWord);
+        // Replace '\\' with '\' (basically, we unescape escaped slashes)
+        rawSearch = rawSearch.replace("\\\\", "\\");
     } else {
         bool wholeWord = searchOptions.MatchWholeWord;
         rawSearch = plainTextToRegex(search, wholeWord);
@@ -84,7 +87,7 @@ QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode,
 
 QString frmSearchReplace::regexModifiersFromSearchOptions(SearchOptions searchOptions)
 {
-    QString modifiers = "";
+    QString modifiers = "m";
     if (!searchOptions.MatchCase)
         modifiers.append("i");
 
@@ -261,4 +264,33 @@ void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
         ui->groupAdvanced->hide();
 
     manualSizeAdjust();
+}
+
+void frmSearchReplace::on_radSearchWithRegex_toggled(bool checked)
+{
+    if (checked) {
+        ui->chkMatchWholeWord->setChecked(false);
+        ui->chkMatchWholeWord->setEnabled(false);
+
+        manualSizeAdjust();
+    }
+}
+
+void frmSearchReplace::on_radSearchPlainText_toggled(bool checked)
+{
+    if (checked) {
+        ui->chkMatchWholeWord->setEnabled(true);
+
+        manualSizeAdjust();
+    }
+}
+
+void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
+{
+    if (checked) {
+        ui->chkMatchWholeWord->setChecked(false);
+        ui->chkMatchWholeWord->setEnabled(false);
+
+        manualSizeAdjust();
+    }
 }
