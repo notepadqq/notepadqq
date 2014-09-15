@@ -100,10 +100,9 @@ private slots:
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
     void on_actionReload_from_Disk_triggered();
-
     void on_actionFind_Next_triggered();
-
     void on_actionFind_Previous_triggered();
+    void on_actionRename_triggered();
 
 private:
     Ui::MainWindow*     ui;

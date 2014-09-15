@@ -685,6 +685,10 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                        .arg(QApplication::applicationName()));
 
     }
+
+
+    // Enable / disable menus
+    ui->actionRename->setEnabled(!editor->fileName().isEmpty());
 }
 
 void MainWindow::on_action_Delete_triggered()
@@ -1005,6 +1009,10 @@ void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
     Editor *editor = tabWidget->editor(tab);
     editor->removeBanner("filechanged");
     editor->removeBanner("fileremoved");
+
+    if (editor == currentEditor()) {
+        ui->actionRename->setEnabled(true);
+    }
 }
 
 void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
@@ -1031,4 +1039,15 @@ void MainWindow::on_actionFind_Previous_triggered()
 {
     if (m_frmSearchReplace)
         m_frmSearchReplace->findFromUI(false);
+}
+
+void MainWindow::on_actionRename_triggered()
+{
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    QUrl oldFilename = tabW->currentEditor()->fileName();
+    int result = saveAs(tabW, tabW->currentIndex(), false);
+
+    if (result == saveFileResult_Saved && !oldFilename.isEmpty()) {
+        QFile::remove(oldFilename.toLocalFile());
+    }
 }
