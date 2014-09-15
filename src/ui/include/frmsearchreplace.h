@@ -65,6 +65,7 @@ private:
     SearchOptions searchOptionsFromUI();
     SearchMode searchModeFromUI();
     QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
+    QString regexModifiersFromSearchOptions(SearchOptions searchOptions);
 };
 
 #endif // FRMSEARCHREPLACE_H

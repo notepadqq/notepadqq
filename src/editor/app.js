@@ -49,7 +49,7 @@ UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, p
    If the length of the array doesn't match the number of the current selections,
    the array will be joined by a newline and every selection will be replaced with the
    content of the joined string.
-   
+
    data: {
         text: array of strings
         select: string used to specify where to place the cursor after the
@@ -60,7 +60,7 @@ UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, p
 UiDriver.registerEventHandler("C_CMD_SET_SELECTIONS_TEXT", function(msg, data, prevReturn) {
     var dataSelections = data.text;
     var selectedLines = editor.getSelections("\n");
-    
+
     var selectMode = undefined;
     if (data.select === "before") selectMode = "start";
     else if (data.select === "selected") selectMode = "around";
@@ -101,90 +101,101 @@ UiDriver.registerEventHandler("C_CMD_CLEAR_HISTORY", function(msg, data, prevRet
 });
 
 /* Search with a specified regex. Automatically select the text when found.
-   The return value indicates whether a match was found. 
+   The return value indicates whether a match was found.
    The return value is the array returned by the regex match method, in case you
    want to extract matched groups.
 
-   data is an array. data[0] contains the regex string. data[1] is a boolean
-   (true if you want to search forward).
+   regexStr: contains the regex string
+   regexModifiers: contains the regex modifiers (e.g. "ig")
+   forward: true if you want to search forward, false if backwards
 */
-function Search(data) {
-    var forward = data[1];
+function Search(regexStr, regexModifiers, forward) {
     var startPos;
-    
+
     // Avoid getting stuck finding always the same text
     if (forward)
         startPos = editor.getCursor("to");
     else
         startPos = editor.getCursor("from");
-    
+
     // We get a new cursor every time, because the user could have moved within
     // the editor and we want to start searching from the new position.
-    var searchCursor = editor.getSearchCursor(new RegExp(data[0]), startPos, false);
+    var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), startPos, false);
 
     var ret = forward ? searchCursor.findNext() : searchCursor.findPrevious();
     if (ret) {
         if (forward)
-             editor.setSelection(searchCursor.from(), searchCursor.to()); 
+             editor.setSelection(searchCursor.from(), searchCursor.to());
         else
              editor.setSelection(searchCursor.to(), searchCursor.from());
     }
 
     return ret;
 }
+
+/*
+   data[0]: contains the regex string
+   data[1]: contains the regex modifiers (e.g. "ig")
+   data[2]: true if you want to search forward, false if backwards
+*/
 UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
-    return Search(data);
+    return Search(data[0], data[1], data[2]);
 });
 
 /* Replace the currently selected text, then search with a specified regex (calls C_FUN_SEARCH)
 
-   The return value indicates whether a match was found. 
+   The return value indicates whether a match was found.
    The return value is the array returned by the regex match method, in case you
    want to extract matched groups.
 
    data[0]: contains the regex string
-   data[1]: string to use as replacement
+   data[1]: contains the regex modifiers (e.g. "ig")
    data[2]: true if you want to search forward, false if backwards
+   data[3]: string to use as replacement
 */
 UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
-	if (editor.somethingSelected()) {
-		// Replace
-		editor.replaceSelection(data[1]);
-	}
-	
-	// Find next/prev
-	return Search([data[0], data[2]]);
+    if (editor.somethingSelected()) {
+        // Replace
+        editor.replaceSelection(data[3]);
+    }
+
+    // Find next/prev
+    return Search(data[0], data[1], data[2]);
 });
 
-UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) { 
-    var dataLines = data[1].split("\n");
-    
-    var searchCursor = editor.getSearchCursor(new RegExp(data[0]), undefined, false);
-    
+UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) {
+    var regexStr = data[0];
+    var regexModifiers = data[1];
+    var replacement = data[2];
+
+    var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
+
     var count = 0;
-    
+
     while (searchCursor.findNext()) {
-    	count++;
-    	
-		// Replace
-		searchCursor.replace(data[1]);
+        count++;
+
+        // Replace
+        searchCursor.replace(replacement);
     }
 
     return count;
 });
 
-UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, prevReturn) { 
-	var searchCursor = editor.getSearchCursor(new RegExp(data[0]), undefined, false);
-    
+UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, prevReturn) {
+    var regexStr = data[0];
+    var regexModifiers = data[1];
+    var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
+
     var count = 0;
     var selections = [];
-    
+
     while (searchCursor.findNext()) {
-    	count++;
-    	
-    	selections.push({anchor: searchCursor.from(), head: searchCursor.to()});
+        count++;
+
+        selections.push({anchor: searchCursor.from(), head: searchCursor.to()});
     }
-    
+
     editor.setSelections(selections);
 
     return count;
@@ -210,7 +221,7 @@ $(document).ready(function () {
         tabSize: 4,
         matchBrackets: true
     });
-    
+
     editor.addKeyMap({
         "Tab": function (cm) {
             if (cm.somethingSelected()) {

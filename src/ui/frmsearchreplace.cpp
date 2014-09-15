@@ -82,11 +82,21 @@ QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode,
     return rawSearch;
 }
 
+QString frmSearchReplace::regexModifiersFromSearchOptions(SearchOptions searchOptions)
+{
+    QString modifiers = "";
+    if (!searchOptions.MatchCase)
+        modifiers.append("i");
+
+    return modifiers;
+}
+
 void frmSearchReplace::search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
     QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
+    data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(forward);
     currentEditor()->sendMessage("C_FUN_SEARCH", QVariant::fromValue(data));
 }
@@ -96,8 +106,9 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchMode s
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
-    data.append(replacement);
+    data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(forward);
+    data.append(replacement);
     currentEditor()->sendMessage("C_FUN_REPLACE", QVariant::fromValue(data));
 }
 
@@ -106,6 +117,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
+    data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data));
     return count.toInt();
@@ -116,6 +128,7 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
+    data.append(regexModifiersFromSearchOptions(searchOptions));
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
