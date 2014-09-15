@@ -1,9 +1,9 @@
 var Languages = new function() {
 
-    var m_currentLanguage = "";
+    var m_currentLanguage = "plaintext";
 
     this.languages = {
-        "": {
+        "plaintext": {
             name: "Text",
             mode: "null",
             mime: "text/plain",
@@ -703,7 +703,7 @@ var Languages = new function() {
             }
         }
 
-        return "";
+        return "plaintext";
     }
     
     this.setLanguage = function(editor, languageId) {

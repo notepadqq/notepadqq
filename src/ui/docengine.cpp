@@ -20,6 +20,13 @@ DocEngine::~DocEngine()
     delete m_fsWatcher;
 }
 
+int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget)
+{
+    int tab = tabWidget->addEditorTab(setFocus, name);
+    tabWidget->editor(tab)->setLanguage("plaintext");
+    return tab;
+}
+
 bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
 {
     if(!editor)

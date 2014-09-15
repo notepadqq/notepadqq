@@ -49,6 +49,7 @@ public:
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
     bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
     bool reloadDocument(EditorTabWidget *tabWidget, int tab);
+    int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
 private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;

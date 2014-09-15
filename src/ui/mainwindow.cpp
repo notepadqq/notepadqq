@@ -300,7 +300,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
 void MainWindow::on_action_New_triggered()
 {
-    static int num = 1; // FIXME maybe find smarter way
+    static int num = 1; // FIXME maybe find a smarter way
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
     // Make sure we have a tabWidget: if not, create it.
@@ -308,7 +308,7 @@ void MainWindow::on_action_New_triggered()
         tabW = m_topEditorContainer->addTabWidget();
     }
 
-    tabW->addEditorTab(true, tr("new %1").arg(num));
+    m_docEngine->addNewDocument(tr("new %1").arg(num), true, tabW);
     num++;
 }
 
