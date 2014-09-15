@@ -1048,6 +1048,13 @@ void MainWindow::on_actionRename_triggered()
     int result = saveAs(tabW, tabW->currentIndex(), false);
 
     if (result == saveFileResult_Saved && !oldFilename.isEmpty()) {
-        QFile::remove(oldFilename.toLocalFile());
+        QString filename = oldFilename.toLocalFile();
+        if (QFile::exists(filename)) {
+            if(!QFile::remove(filename)) {
+                QMessageBox::warning(this, QApplication::applicationName(),
+                                     QString("Error: unable to remove file %1")
+                                     .arg(filename));
+            }
+        }
     }
 }
