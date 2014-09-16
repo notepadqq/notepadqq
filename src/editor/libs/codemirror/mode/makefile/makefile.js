@@ -22,6 +22,15 @@ CodeMirror.defineMode('makefile', function() {
     var ch = stream.next();
     var cur = stream.current();
 
+  if (sol && ch === '#') {
+    if (stream.eat('!')) {
+        stream.skipToEnd();
+        return 'meta';
+      }
+      stream.skipToEnd();
+      return 'tag';
+    }
+
     // ifeq, ifneq
     if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
       stream.skipToEnd();
@@ -52,10 +61,6 @@ CodeMirror.defineMode('makefile', function() {
     if (ch === '*') { return "quote"; }
     if (ch === '\\' && stream.eol()) { return "comment"; }
     if (ch === '#') {
-      if (sol && stream.eat('!')) {
-        stream.skipToEnd();
-        return 'meta'; // 'comment'?
-      }
       stream.skipToEnd();
       return 'tag';
     }
