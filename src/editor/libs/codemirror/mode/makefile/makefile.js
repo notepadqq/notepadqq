@@ -22,8 +22,8 @@ CodeMirror.defineMode('makefile', function() {
     var ch = stream.next();
     var cur = stream.current();
 
-  if (sol && ch === '#') {
-    if (stream.eat('!')) {
+    if (sol && ch === '#') {
+      if (stream.eat('!')) {
         stream.skipToEnd();
         return 'meta';
       }
