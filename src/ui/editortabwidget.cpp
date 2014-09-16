@@ -166,7 +166,6 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
     }
 }
 
-
 void EditorTabWidget::setSavedIcon(int index, bool saved)
 {
     if (saved)

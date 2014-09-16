@@ -60,7 +60,6 @@
     <addaction name="actionClose"/>
     <addaction name="actionC_lose_All"/>
     <addaction name="actionClose_All_BUT_Current_Document"/>
-    <addaction name="actionDelete_from_Disk"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Session"/>
     <addaction name="actionSave_Session"/>
@@ -358,11 +357,6 @@
   <action name="actionClose_All_BUT_Current_Document">
    <property name="text">
     <string>Close All BUT Current Document</string>
-   </property>
-  </action>
-  <action name="actionDelete_from_Disk">
-   <property name="text">
-    <string>Delete from Disk</string>
    </property>
   </action>
   <action name="actionLoad_Session">

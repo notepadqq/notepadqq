@@ -100,6 +100,10 @@ UiDriver.registerEventHandler("C_CMD_CLEAR_HISTORY", function(msg, data, prevRet
     editor.clearHistory();
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_LINE_WRAP", function(msg, data, prevReturn) {
+    editor.setOption("lineWrapping", data == true);
+});
+
 /* Search with a specified regex. Automatically select the text when found.
    The return value indicates whether a match was found.
    The return value is the array returned by the regex match method, in case you

@@ -325,4 +325,9 @@ namespace EditorNS
         }
     }
 
+    void Editor::setLineWrap(const bool wrap)
+    {
+        sendMessage("C_CMD_SET_LINE_WRAP", wrap);
+    }
+
 }

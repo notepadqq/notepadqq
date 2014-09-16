@@ -140,6 +140,7 @@ namespace EditorNS
         void setSelectionsText(const QStringList &texts, selectMode mode);
         void setSelectionsText(const QStringList &texts);
         QString language();
+        void setLineWrap(const bool wrap);
     private:
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;

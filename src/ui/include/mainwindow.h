@@ -103,6 +103,7 @@ private slots:
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
     void on_actionRename_triggered();
+    void on_actionWord_wrap_toggled(bool on);
 
 private:
     Ui::MainWindow*     ui;

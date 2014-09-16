@@ -44,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_tabContextMenuActions.append(ui->actionSave);
     m_tabContextMenuActions.append(ui->actionSave_as);
     m_tabContextMenuActions.append(ui->actionRename);
-    m_tabContextMenuActions.append(ui->actionDelete_from_Disk);
     m_tabContextMenuActions.append(ui->actionPrint);
     m_tabContextMenuActions.append(separator);
     m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
@@ -606,6 +605,9 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
+
+    // Initialize editor with UI settings
+    editor->setLineWrap(ui->actionWord_wrap->isChecked());
 }
 
 void MainWindow::on_cursorActivity()
@@ -1057,4 +1059,12 @@ void MainWindow::on_actionRename_triggered()
             }
         }
     }
+}
+
+void MainWindow::on_actionWord_wrap_toggled(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setLineWrap(on);
+        return true;
+    });
 }
