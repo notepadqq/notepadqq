@@ -1077,6 +1077,13 @@ void MainWindow::updateRecentDocsInMenu()
         actions.append(action);
     }
 
+    // If there are no recent files, show a placeholder
+    if (actions.count() == 0) {
+        QAction *action = new QAction(tr("No recent files"), this);
+        action->setEnabled(false);
+        actions.append(action);
+    }
+
     ui->menuRecent_Files->addActions(actions);
 }
 
