@@ -79,6 +79,10 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
     if(!fileNames.empty()) {
         m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
 
+        // Used to know if the document that we're loading is
+        // the first one in the list.
+        bool isFirstDocument = true;
+
         for (int i = 0; i < fileNames.count(); i++)
         {
             if (fileNames[i].isLocalFile()) {
@@ -91,8 +95,10 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                         EditorTabWidget *tabW = static_cast<EditorTabWidget *>
                                 (m_topEditorContainer->widget(openPos.first));
 
-                        if(fileNames.count() == 1)
+                        if (isFirstDocument) {
+                            isFirstDocument = false;
                             tabW->setCurrentIndex(openPos.second);
+                        }
 
                         emit documentLoaded(tabW, openPos.second, true);
                         continue;
@@ -104,7 +110,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     tabWidget = m_topEditorContainer->tabWidget(openPos.first);
                     tabIndex = openPos.second;
                 } else {
-                    tabIndex = tabWidget->addEditorTab(true, fi.fileName());
+                    tabIndex = tabWidget->addEditorTab(false, fi.fileName());
                 }
 
                 Editor* editor = tabWidget->editor(tabIndex);
@@ -112,7 +118,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 QFile file(localFileName);
                 if (file.exists()) {
                     if (!read(&file, editor, "UTF-8")) {
-                        // Manage error
+                        // Handle error
                         QMessageBox msgBox;
                         msgBox.setWindowTitle(QCoreApplication::applicationName());
                         msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
@@ -165,13 +171,17 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 monitorDocument(editor);
 
+                if (isFirstDocument) {
+                    isFirstDocument = false;
+                    tabWidget->setCurrentIndex(tabIndex);
+                    tabWidget->editor(tabIndex)->setFocus();
+                }
+
                 if (reload) {
                     emit documentReloaded(tabWidget, tabIndex);
                 } else {
                     emit documentLoaded(tabWidget, tabIndex, false);
                 }
-
-                editor->setFocus();
 
             } else if (fileNames[i].isEmpty()) {
                 // Do nothing
