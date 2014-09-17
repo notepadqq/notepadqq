@@ -14,7 +14,7 @@
    <string>Notepadqq</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="documentMode">
@@ -49,6 +49,11 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuRecent_Files">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+    </widget>
     <addaction name="action_New"/>
     <addaction name="action_Open"/>
     <addaction name="actionReload_from_Disk"/>
@@ -67,7 +72,7 @@
     <addaction name="actionPrint"/>
     <addaction name="actionPrint_Now"/>
     <addaction name="separator"/>
-    <addaction name="separator"/>
+    <addaction name="menuRecent_Files"/>
     <addaction name="actionOpen_All_Recent_Files"/>
     <addaction name="actionEmpty_Recent_Files_List"/>
     <addaction name="separator"/>
@@ -818,8 +823,6 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

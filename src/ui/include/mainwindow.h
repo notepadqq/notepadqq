@@ -99,11 +99,14 @@ private slots:
     void on_bannerRemoved(QWidget *banner);
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
+    void on_documentLoaded(EditorTabWidget *tabWidget, int tab);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
     void on_actionRename_triggered();
     void on_actionWord_wrap_toggled(bool on);
+
+    void on_actionEmpty_Recent_Files_List_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -158,6 +161,7 @@ private:
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();
     void                loadIcons();
+    void                updateRecentDocsInMenu();
 };
 
 #endif // MAINWINDOW_H

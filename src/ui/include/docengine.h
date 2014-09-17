@@ -83,6 +83,8 @@ signals:
 
     void documentReloaded(EditorTabWidget *tabWidget, int tab);
 
+    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened);
+
 public slots:
 
 private slots:

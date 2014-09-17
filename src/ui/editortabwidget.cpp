@@ -88,7 +88,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
         editor = Editor::getNewEditor();
         editor->setParent(this);
     } else {
-        editor = (Editor *)source->widget(sourceTabIndex);
+        editor = source->editor(sourceTabIndex);
 
         oldText = source->tabText(sourceTabIndex);
         oldIcon = source->tabIcon(sourceTabIndex);
@@ -134,8 +134,8 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
     if (absFileName.isLocalFile())
         absFileName = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
 
-    for (int i = 0; i < this->count(); i++) {
-        Editor *editor = (Editor *)this->widget(i);
+    for (int i = 0; i < count(); i++) {
+        Editor *editor = this->editor(i);
         if (editor->fileName() == filename)
             return i;
     }
@@ -145,13 +145,14 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
 
 Editor *EditorTabWidget::editor(int index)
 {
-    return (Editor *)this->widget(index);
+    return dynamic_cast<Editor *>(this->widget(index));
 }
 
 Editor *EditorTabWidget::currentEditor()
 {
-    return (Editor *)this->currentWidget();
+    return editor(currentIndex());
 }
+
 qreal EditorTabWidget::zoomFactor() const
 {
     return m_zoomFactor;
@@ -189,20 +190,30 @@ void EditorTabWidget::setTabBarHighlight(bool yes)
 
 void EditorTabWidget::on_cleanChanged(bool isClean)
 {
-    int index = indexOf((QWidget *)sender());
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
+
+    int index = indexOf(editor);
     if(index >= 0)
         setSavedIcon(index, isClean);
 }
 
 void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
 {
-    Editor *editor = (Editor *)sender();
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
+
     emit editorMouseWheel(indexOf(editor), ev);
 }
 
 void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
 {
-    Editor *editor = (Editor *)sender();
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
+
     int index = indexOf(editor);
 
     QString fileName = QFileInfo(newFileName.toDisplayString(QUrl::RemoveScheme |

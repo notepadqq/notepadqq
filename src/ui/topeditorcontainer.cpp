@@ -29,7 +29,7 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
 
 EditorTabWidget *TopEditorContainer::tabWidget(int index)
 {
-    return (EditorTabWidget *)widget(index);
+    return dynamic_cast<EditorTabWidget *>(widget(index));
 }
 
 EditorTabWidget *TopEditorContainer::currentTabWidget()
@@ -48,7 +48,10 @@ EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
 
 void TopEditorContainer::on_currentTabChanged(int index)
 {
-    EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
+    EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
+    if (!tabWidget)
+        return;
+
     m_currentTabWidget = tabWidget;
     emit currentTabChanged(tabWidget, index);
     emit currentEditorChanged(tabWidget, index);
@@ -56,7 +59,9 @@ void TopEditorContainer::on_currentTabChanged(int index)
 
 void TopEditorContainer::on_currentTabWidgetChanged()
 {
-    EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
+    EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
+    if (!tabWidget)
+        return;
 
     if(m_currentTabWidget != tabWidget) {
         m_currentTabWidget = tabWidget;
@@ -67,7 +72,10 @@ void TopEditorContainer::on_currentTabWidgetChanged()
 
 void TopEditorContainer::on_customContextMenuRequested(QPoint point)
 {
-    EditorTabWidget *tabWidget = static_cast<EditorTabWidget *>(sender());
+    EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
+    if (!tabWidget)
+        return;
+
     int index = tabWidget->tabBar()->tabAt(point);
 
     if(index != -1)
@@ -84,14 +92,20 @@ void TopEditorContainer::on_customContextMenuRequested(QPoint point)
 
 void TopEditorContainer::on_tabCloseRequested(int index)
 {
-    EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
+    EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
+    if (!tabWidget)
+        return;
+
     m_currentTabWidget = tabWidget;
     emit tabCloseRequested(tabWidget, index);
 }
 
 void TopEditorContainer::on_editorAdded(int tab)
 {
-    EditorTabWidget *tabWidget = (EditorTabWidget *)sender();
+    EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
+    if (!tabWidget)
+        return;
+
     emit editorAdded(tabWidget, tab);
 }
 

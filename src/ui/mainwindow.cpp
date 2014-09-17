@@ -15,6 +15,7 @@
 #include <QMimeData>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QToolButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
     connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
+    connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 
     loadIcons();
 
@@ -52,6 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
+    // Set popup for action_Open in toolbar
+    QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
+    btnActionOpen->setMenu(ui->menuRecent_Files);
+    btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
+
     connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
             this, &MainWindow::on_customTabContextMenuRequested);
 
@@ -69,8 +76,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createStatusBar();
 
+    updateRecentDocsInMenu();
+
     setAcceptDrops(true);
 
+    // Inserts at least an editor
     openCommandLineProvidedUrls();
 
     restoreWindowSettings();
@@ -332,7 +342,7 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
             viewId = 0;
         }
 
-        destTabWidget = (EditorTabWidget *)m_topEditorContainer->widget(viewId);
+        destTabWidget = m_topEditorContainer->tabWidget(viewId);
 
     } else {
         destTabWidget = m_topEditorContainer->addTabWidget();
@@ -406,7 +416,7 @@ int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
 int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool force)
 {
     int result = MainWindow::tabCloseResult_AlreadySaved;
-    Editor *editor = (Editor *)tabWidget->widget(tab);
+    Editor *editor = tabWidget->editor(tab);
 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
@@ -612,7 +622,9 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_cursorActivity()
 {
-    Editor *editor = (Editor *)sender();
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
 
     if (currentEditor() == editor) {
         refreshEditorUiCursorInfo(editor);
@@ -621,7 +633,9 @@ void MainWindow::on_cursorActivity()
 
 void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
 {
-    Editor *editor = (Editor *)sender();
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
@@ -1024,6 +1038,48 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     editor->removeBanner("fileremoved");
 }
 
+void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
+{
+    const int MAX_RECENT_ENTRIES = 10;
+
+    QUrl newUrl = tabWidget->editor(tab)->fileName();
+    QList<QVariant> recentDocs = m_settings->value("recentDocuments", QList<QVariant>()).toList();
+    recentDocs.insert(0, QVariant(newUrl));
+
+    // Remove duplicates
+    for (int i = recentDocs.count() - 1; i >= 1; i--) {
+        if (newUrl == recentDocs[i].toUrl())
+            recentDocs.removeAt(i);
+    }
+
+    while (recentDocs.count() > MAX_RECENT_ENTRIES)
+        recentDocs.removeLast();
+
+    m_settings->setValue("recentDocuments", QVariant(recentDocs));
+
+    updateRecentDocsInMenu();
+}
+
+void MainWindow::updateRecentDocsInMenu()
+{
+    QList<QVariant> recentDocs = m_settings->value("recentDocuments", QList<QVariant>()).toList();
+
+    ui->menuRecent_Files->clear();
+
+    QList<QAction *> actions;
+    for (QVariant recentDoc : recentDocs) {
+        QUrl url = recentDoc.toUrl();
+        QAction *action = new QAction(Notepadqq::fileNameFromUrl(url), this);
+        connect(action, &QAction::triggered, this, [=]() {
+            m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+        });
+
+        actions.append(action);
+    }
+
+    ui->menuRecent_Files->addActions(actions);
+}
+
 void MainWindow::on_actionReload_from_Disk_triggered()
 {
     EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
@@ -1067,4 +1123,10 @@ void MainWindow::on_actionWord_wrap_toggled(bool on)
         editor->setLineWrap(on);
         return true;
     });
+}
+
+void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
+{
+    m_settings->remove("recentDocuments");
+    updateRecentDocsInMenu();
 }

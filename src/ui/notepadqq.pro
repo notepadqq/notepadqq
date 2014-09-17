@@ -16,6 +16,8 @@ UI_DIR = ../../out/build_data
 MOC_DIR = ../../out/build_data
 OBJECTS_DIR = ../../out/build_data
 
+QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
+
 # clear "rpath" so that we can override Qt lib path via LD_LIBRARY_PATH
 QMAKE_RPATH=
 
