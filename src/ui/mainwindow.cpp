@@ -650,10 +650,10 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
         int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
         m_statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
 
-        QList<QVariant> cursor = editor->sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        QPair<int, int> cursor = editor->cursorPosition();
         m_statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
-                                         arg(cursor[0].toInt() + 1).
-                                         arg(cursor[1].toInt() + 1).
+                                         arg(cursor.first + 1).
+                                         arg(cursor.second + 1).
                                          arg(0).arg(0));
     }
 }

@@ -105,7 +105,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     }
                 }
 
-                int tabIndex = 0;
+                int tabIndex;
                 if (reload) {
                     tabWidget = m_topEditorContainer->tabWidget(openPos.first);
                     tabIndex = openPos.second;
@@ -114,6 +114,14 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 }
 
                 Editor* editor = tabWidget->editor(tabIndex);
+
+                // In case of a reload, save cursor and scroll position
+                QPair<int, int> scrollPosition;
+                QPair<int, int> cursorPosition;
+                if (reload) {
+                    scrollPosition = editor->scrollPosition();
+                    cursorPosition = editor->cursorPosition();
+                }
 
                 QFile file(localFileName);
                 if (file.exists()) {
@@ -141,6 +149,12 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     }
                 }
 
+                // In case of reload, restore cursor and scroll position
+                if (reload) {
+                    editor->setScrollPosition(scrollPosition);
+                    editor->setCursorPosition(cursorPosition);
+                }
+
                 if (!file.exists()) {
                     // If it's a file that doesn't exists,
                     // set it as if it has changed. This way, if someone
@@ -151,7 +165,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 // If there was only a new empty tab opened, remove it
                 if (tabWidget->count() == 2) {
-                    Editor * victim = tabWidget->editor(0);
+                    Editor *victim = tabWidget->editor(0);
                     if (victim->fileName().isEmpty() && victim->isClean()) {
                         tabWidget->removeTab(0);
                         tabIndex--;

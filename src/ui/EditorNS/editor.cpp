@@ -330,4 +330,38 @@ namespace EditorNS
         sendMessage("C_CMD_SET_LINE_WRAP", wrap);
     }
 
+    QPair<int, int> Editor::cursorPosition()
+    {
+        QList<QVariant> cursor = sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+    }
+
+    void Editor::setCursorPosition(const int line, const int column)
+    {
+        QList<QVariant> arg = QList<QVariant>({line, column});
+        sendMessage("C_CMD_SET_CURSOR", QVariant(arg));
+    }
+
+    void Editor::setCursorPosition(const QPair<int, int> &position)
+    {
+        setCursorPosition(position.first, position.second);
+    }
+
+    QPair<int, int> Editor::scrollPosition()
+    {
+        QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();
+        return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
+    }
+
+    void Editor::setScrollPosition(const int left, const int top)
+    {
+        QList<QVariant> arg = QList<QVariant>({left, top});
+        sendMessage("C_CMD_SET_SCROLL_POS", QVariant(arg));
+    }
+
+    void Editor::setScrollPosition(const QPair<int, int> &position)
+    {
+        setScrollPosition(position.first, position.second);
+    }
+
 }

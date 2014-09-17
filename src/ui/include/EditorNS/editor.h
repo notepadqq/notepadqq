@@ -141,6 +141,22 @@ namespace EditorNS
         void setSelectionsText(const QStringList &texts);
         QString language();
         void setLineWrap(const bool wrap);
+
+        /**
+         * @brief Get the current cursor position
+         * @return a <line, column> pair.
+         */
+        QPair<int, int> cursorPosition();
+        void setCursorPosition(const int line, const int column);
+        void setCursorPosition(const QPair<int, int> &position);
+
+        /**
+         * @brief Get the current scroll position
+         * @return a <left, top> pair.
+         */
+        QPair<int, int> scrollPosition();
+        void setScrollPosition(const int left, const int top);
+        void setScrollPosition(const QPair<int, int> &position);
     private:
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;

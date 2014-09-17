@@ -84,6 +84,23 @@ UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn
     return [cur.line, cur.ch];
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
+	var line = data[0];
+	var ch = data[1];
+	editor.setCursor(line, ch);
+});
+
+UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
+    var scroll = editor.getScrollInfo();
+    return [scroll.left, scroll.top];
+});
+
+UiDriver.registerEventHandler("C_CMD_SET_SCROLL_POS", function(msg, data, prevReturn) {
+	var left = data[0];
+	var top = data[1];
+	editor.scrollTo(left, top);
+});
+
 UiDriver.registerEventHandler("C_CMD_SELECT_ALL", function(msg, data, prevReturn) {
     editor.execCommand("selectAll");
 });
