@@ -1078,13 +1078,20 @@ void MainWindow::updateRecentDocsInMenu()
     }
 
     // If there are no recent files, show a placeholder
-    if (actions.count() == 0) {
+    bool anyRecentDoc = (actions.count() != 0);
+    if (!anyRecentDoc) {
         QAction *action = new QAction(tr("No recent files"), this);
         action->setEnabled(false);
         actions.append(action);
     }
 
     ui->menuRecent_Files->addActions(actions);
+
+    if (anyRecentDoc) {
+        ui->menuRecent_Files->addSeparator();
+        ui->menuRecent_Files->addActions({ui->actionOpen_All_Recent_Files,
+                                          ui->actionEmpty_Recent_Files_List});
+    }
 }
 
 void MainWindow::on_actionReload_from_Disk_triggered()
@@ -1136,4 +1143,16 @@ void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
 {
     m_settings->remove("recentDocuments");
     updateRecentDocsInMenu();
+}
+
+void MainWindow::on_actionOpen_All_Recent_Files_triggered()
+{
+    QList<QVariant> recentDocs = m_settings->value("recentDocuments", QList<QVariant>()).toList();
+
+    QList<QUrl> convertedList;
+    for (QVariant doc : recentDocs) {
+        convertedList.append(doc.toUrl());
+    }
+
+    m_docEngine->loadDocuments(convertedList, m_topEditorContainer->currentTabWidget());
 }

@@ -108,6 +108,8 @@ private slots:
 
     void on_actionEmpty_Recent_Files_List_triggered();
 
+    void on_actionOpen_All_Recent_Files_triggered();
+
 private:
     Ui::MainWindow*     ui;
     TopEditorContainer* m_topEditorContainer;

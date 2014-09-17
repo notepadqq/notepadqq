@@ -73,8 +73,6 @@
     <addaction name="actionPrint_Now"/>
     <addaction name="separator"/>
     <addaction name="menuRecent_Files"/>
-    <addaction name="actionOpen_All_Recent_Files"/>
-    <addaction name="actionEmpty_Recent_Files_List"/>
     <addaction name="separator"/>
     <addaction name="actionE_xit"/>
    </widget>
