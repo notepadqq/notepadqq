@@ -138,7 +138,7 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
 
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
 {
-    SearchMode searchMode;
+    SearchMode searchMode = SearchMode::PlainText;
 
     if (ui->radSearchPlainText->isChecked())
         searchMode = SearchMode::PlainText;
