@@ -121,7 +121,7 @@
     <string notr="true"/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resources.qrc">:/icons/default/scalable/notepadqq.svg</pixmap>
+    <pixmap resource="resources.qrc">:/icons/default/logo/notepadqq.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
