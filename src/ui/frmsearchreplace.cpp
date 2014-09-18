@@ -138,16 +138,17 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
 
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
 {
-    SearchMode searchMode = SearchMode::PlainText;
-
     if (ui->radSearchPlainText->isChecked())
-        searchMode = SearchMode::PlainText;
-    else if (ui->radSearchWithSpecialChars->isChecked())
-        searchMode = SearchMode::SpecialChars;
-    else if (ui->radSearchWithRegex->isChecked())
-        searchMode = SearchMode::Regex;
+        return SearchMode::PlainText;
 
-    return searchMode;
+    else if (ui->radSearchWithSpecialChars->isChecked())
+        return SearchMode::SpecialChars;
+
+    else if (ui->radSearchWithRegex->isChecked())
+        return SearchMode::Regex;
+
+    else
+        return SearchMode::PlainText;
 }
 
 frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
