@@ -5,6 +5,7 @@ Build dependencies
 ------------------
    * Qt 5.3.1
    * libqt5webkit5-dev
+   * libqt5svg5-dev
    * libmagic-dev
 
 How to build

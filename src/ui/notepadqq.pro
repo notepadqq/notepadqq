@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets webkitwidgets
+QT       += core gui svg widgets webkitwidgets
 
 CONFIG += c++11
 
