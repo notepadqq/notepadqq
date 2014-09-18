@@ -23,6 +23,7 @@
 		<file alias="16x16/media-playback-stop.png">icons/default/16x16/media-playback-stop.png</file>
 		<file alias="16x16/media-record.png">icons/default/16x16/media-record.png</file>
 		<file alias="16x16/media-seek-forward.png">icons/default/16x16/media-seek-forward.png</file>
+		<file alias="16x16/notepadqq.png">icons/default/16x16/notepadqq.png</file>
 		<file alias="scalable/notepadqq.svg">icons/default/scalable/notepadqq.svg</file>
 		<file alias="16x16/notepadqq-document-close.png">icons/default/16x16/notepadqq-document-close.png</file>
 		<file alias="16x16/notepadqq-document-close-all.png">icons/default/16x16/notepadqq-document-close-all.png</file>
@@ -31,7 +32,6 @@
 		<file alias="16x16/notepadqq-save-macro.png">icons/default/16x16/notepadqq-save-macro.png</file>
 		<file alias="16x16/notepadqq-show-special-chars.png">icons/default/16x16/notepadqq-show-special-chars.png</file>
 		<file alias="16x16/notepadqq-word-wrap.png">icons/default/16x16/notepadqq-word-wrap.png</file>
-		<file alias="16x16/pixmap.png">icons/default/16x16/pixmap.png</file>
 		<file alias="16x16/preferences-other.png">icons/default/16x16/preferences-other.png</file>
 		<file alias="16x16/zoom-in.png">icons/default/16x16/zoom-in.png</file>
 		<file alias="16x16/zoom-original.png">icons/default/16x16/zoom-original.png</file>
