@@ -1,6 +1,7 @@
 #include "include/frmabout.h"
 #include "ui_frmabout.h"
 #include "include/notepadqq.h"
+#include "include/iconprovider.h"
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
@@ -10,6 +11,10 @@ frmAbout::frmAbout(QWidget *parent) :
     ui(new Ui::frmAbout)
 {
     ui->setupUi(this);
+
+    ui->lblIcon->setPixmap(IconProvider::fromTheme("notepadqq")
+                           .pixmap(ui->lblIcon->width(),
+                                   ui->lblIcon->height()));
 
     ui->lblVersion->setText("v" + QApplication::applicationVersion());
     ui->lblCopyright->setText(Notepadqq::copyright());

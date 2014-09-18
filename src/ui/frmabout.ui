@@ -17,7 +17,7 @@
    <string>Notepadqq</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="styleSheet">
@@ -108,7 +108,7 @@
     <string>License</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="lblIcon">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -119,9 +119,6 @@
    </property>
    <property name="text">
     <string notr="true"/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/icons/default/scalable/notepadqq.svg</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -169,8 +166,6 @@
    </property>
   </widget>
  </widget>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
