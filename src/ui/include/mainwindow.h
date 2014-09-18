@@ -105,10 +105,11 @@ private slots:
     void on_actionFind_Previous_triggered();
     void on_actionRename_triggered();
     void on_actionWord_wrap_toggled(bool on);
-
     void on_actionEmpty_Recent_Files_List_triggered();
-
     void on_actionOpen_All_Recent_Files_triggered();
+    void on_actionUNIX_Format_triggered();
+    void on_actionWindows_Format_triggered();
+    void on_actionMac_Format_triggered();
 
 private:
     Ui::MainWindow*     ui;

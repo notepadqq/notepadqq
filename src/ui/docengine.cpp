@@ -47,6 +47,13 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     txt = stream.readAll();
     file->close();
 
+    if (txt.indexOf("\r\n") != -1)
+        editor->setEndOfLineSequence("\r\n");
+    else if (txt.indexOf("\n") != -1)
+        editor->setEndOfLineSequence("\n");
+    else if (txt.indexOf("\r") != -1)
+        editor->setEndOfLineSequence("\r");
+
     editor->sendMessage("C_CMD_SET_VALUE", txt);
     editor->sendMessage("C_CMD_CLEAR_HISTORY");
     editor->sendMessage("C_CMD_MARK_CLEAN");
@@ -233,7 +240,8 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
     QTextStream stream(io);
 
     //Support for saving in all supported formats....
-    QString string = editor->value();
+    QString string = editor->value()
+            .replace("\n", editor->endOfLineSequence());
     QTextCodec *codec = QTextCodec::codecForName("utf8");//(sci->encoding().toUtf8()); //FIXME
     QByteArray data = codec->fromUnicode(string);
 

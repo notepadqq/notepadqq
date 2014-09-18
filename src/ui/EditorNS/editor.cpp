@@ -363,5 +363,15 @@ namespace EditorNS
     {
         setScrollPosition(position.first, position.second);
     }
+    QString Editor::endOfLineSequence() const
+    {
+        return m_endOfLineSequence;
+    }
+
+    void Editor::setEndOfLineSequence(const QString &newLineSequence)
+    {
+        m_endOfLineSequence = newLineSequence;
+    }
+
 
 }

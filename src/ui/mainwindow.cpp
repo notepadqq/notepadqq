@@ -59,6 +59,12 @@ MainWindow::MainWindow(QWidget *parent) :
     btnActionOpen->setMenu(ui->menuRecent_Files);
     btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
 
+    // Action group for EOL modes
+    QActionGroup *eolActionGroup = new QActionGroup(this);
+    eolActionGroup->addAction(ui->actionWindows_Format);
+    eolActionGroup->addAction(ui->actionUNIX_Format);
+    eolActionGroup->addAction(ui->actionMac_Format);
+
     connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
             this, &MainWindow::on_customTabContextMenuRequested);
 
@@ -705,6 +711,20 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
     // Enable / disable menus
     ui->actionRename->setEnabled(!editor->fileName().isEmpty());
+
+    // EOL
+    QString eol = editor->endOfLineSequence();
+    if (eol == "\r\n") {
+        ui->actionWindows_Format->setChecked(true);
+        m_statusBar_EOLstyle->setText(tr("Windows"));
+    } else if (eol == "\n") {
+        ui->actionUNIX_Format->setChecked(true);
+        m_statusBar_EOLstyle->setText(tr("UNIX / OS X"));
+    } else if (eol == "\r") {
+        ui->actionMac_Format->setChecked(true);
+        m_statusBar_EOLstyle->setText(tr("Old Mac"));
+    }
+
 }
 
 void MainWindow::on_action_Delete_triggered()
@@ -1155,4 +1175,19 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
     }
 
     m_docEngine->loadDocuments(convertedList, m_topEditorContainer->currentTabWidget());
+}
+
+void MainWindow::on_actionUNIX_Format_triggered()
+{
+    currentEditor()->setEndOfLineSequence("\n");
+}
+
+void MainWindow::on_actionWindows_Format_triggered()
+{
+    currentEditor()->setEndOfLineSequence("\r\n");
+}
+
+void MainWindow::on_actionMac_Format_triggered()
+{
+    currentEditor()->setEndOfLineSequence("\r");
 }

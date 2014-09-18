@@ -157,14 +157,19 @@ namespace EditorNS
         QPair<int, int> scrollPosition();
         void setScrollPosition(const int left, const int top);
         void setScrollPosition(const QPair<int, int> &position);
+        QString endOfLineSequence() const;
+        void setEndOfLineSequence(const QString &endOfLineSequence);
+
     private:
+        static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;
         QUrl m_fileName = QUrl();
         bool m_fileOnDiskChanged = false;
         bool m_loaded = false;
-        static QQueue<Editor*> m_editorBuffer;
+        QString m_endOfLineSequence = "\n";
+
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;

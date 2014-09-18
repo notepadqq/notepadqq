@@ -14,7 +14,7 @@
    <string>Notepadqq</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="resources.qrc">
     <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="documentMode">
@@ -82,7 +82,7 @@
     </property>
     <widget class="QMenu" name="menuEOL_Conversion">
      <property name="title">
-      <string>EOL Conversion</string>
+      <string>End of line</string>
      </property>
      <addaction name="actionWindows_Format"/>
      <addaction name="actionUNIX_Format"/>
@@ -488,7 +488,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>UNIX Format</string>
+    <string>UNIX / OS X Format</string>
    </property>
   </action>
   <action name="actionMac_Format">
@@ -496,7 +496,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Mac Format</string>
+    <string>Old Mac Format</string>
    </property>
   </action>
   <action name="actionShow_End_of_Line">
@@ -821,6 +821,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
