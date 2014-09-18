@@ -31,6 +31,7 @@
 		<file alias="16x16/notepadqq-save-macro.png">icons/default/16x16/notepadqq-save-macro.png</file>
 		<file alias="16x16/notepadqq-show-special-chars.png">icons/default/16x16/notepadqq-show-special-chars.png</file>
 		<file alias="16x16/notepadqq-word-wrap.png">icons/default/16x16/notepadqq-word-wrap.png</file>
+		<file alias="16x16/pixmap.png">icons/default/16x16/pixmap.png</file>
 		<file alias="16x16/preferences-other.png">icons/default/16x16/preferences-other.png</file>
 		<file alias="16x16/zoom-in.png">icons/default/16x16/zoom-in.png</file>
 		<file alias="16x16/zoom-original.png">icons/default/16x16/zoom-original.png</file>
