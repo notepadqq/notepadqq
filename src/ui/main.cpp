@@ -69,7 +69,7 @@ void checkQtVersion(MainWindow *w)
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
         msgBox.setInformativeText("<html><body>"
-            "<p>" + QObject::tr("Notepadqq will try to do its best, but some things might not work properly.") + "</p>" +
+            "<p>" + QObject::tr("Notepadqq will try to do its best, but some things will not work properly.") + "</p>" +
             QObject::tr(
                 "Install a newer Qt version (&ge; %1) from the official repositories "
                 "of your distribution.<br><br>"
