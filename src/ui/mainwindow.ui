@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/icons/default/16x16/notepadqq.png</normaloff>:/icons/default/16x16/notepadqq.png</iconset>
+    <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="documentMode">
    <bool>true</bool>
