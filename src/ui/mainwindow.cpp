@@ -86,8 +86,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setAcceptDrops(true);
 
+    // Initialize UI from settings
+    ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
+
     // Inserts at least an editor
     openCommandLineProvidedUrls();
+    // From now on, there is at least an Editor and at least
+    // an EditorTabWidget within m_topEditorContainer.
+
+    // Set zoom from settings
+    qreal zoom = m_settings->value("zoom", 1).toReal();
+    for (int i = 0; i < m_topEditorContainer->count(); i++) {
+        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
+    }
 
     restoreWindowSettings();
 
@@ -938,18 +949,23 @@ void MainWindow::on_actionPlain_text_triggered()
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
     m_topEditorContainer->currentTabWidget()->setZoomFactor(1);
+    m_settings->setValue("zoom", 1);
 }
 
 void MainWindow::on_actionZoom_In_triggered()
 {
     qreal curZoom = currentEditor()->zoomFactor();
-    m_topEditorContainer->currentTabWidget()->setZoomFactor(curZoom + 0.25);
+    qreal newZoom = curZoom + 0.25;
+    m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
+    m_settings->setValue("zoom", newZoom);
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
     qreal curZoom = currentEditor()->zoomFactor();
-    m_topEditorContainer->currentTabWidget()->setZoomFactor(curZoom - 0.25);
+    qreal newZoom = curZoom - 0.25;
+    m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
+    m_settings->setValue("zoom", newZoom);
 }
 
 void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
@@ -1157,6 +1173,7 @@ void MainWindow::on_actionWord_wrap_toggled(bool on)
         editor->setLineWrap(on);
         return true;
     });
+    m_settings->setValue("wordWrap", on);
 }
 
 void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
