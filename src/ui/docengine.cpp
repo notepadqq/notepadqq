@@ -56,7 +56,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
 
     editor->sendMessage("C_CMD_SET_VALUE", txt);
     editor->sendMessage("C_CMD_CLEAR_HISTORY");
-    editor->sendMessage("C_CMD_MARK_CLEAN");
+    editor->markClean();
 
     return true;
 }
@@ -318,7 +318,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 editor->setFileName(outFileName);
                 editor->setLanguageFromFileName();
             }
-            editor->sendMessage("C_CMD_MARK_CLEAN", 0);
+            editor->markClean();
             editor->setFileOnDiskChanged(false);
         }
 

@@ -129,6 +129,8 @@ namespace EditorNS
 
         // Lower-level message wrappers:
         bool isClean();
+        void markClean();
+        void markDirty();
         QList<QMap<QString, QString> > languages();
         void setLanguage(const QString &language);
         QString setLanguageFromFileName();

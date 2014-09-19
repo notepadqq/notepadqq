@@ -1196,15 +1196,21 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 
 void MainWindow::on_actionUNIX_Format_triggered()
 {
-    currentEditor()->setEndOfLineSequence("\n");
+    Editor *editor = currentEditor();
+    editor->setEndOfLineSequence("\n");
+    editor->markDirty();
 }
 
 void MainWindow::on_actionWindows_Format_triggered()
 {
-    currentEditor()->setEndOfLineSequence("\r\n");
+    Editor *editor = currentEditor();
+    editor->setEndOfLineSequence("\r\n");
+    editor->markDirty();
 }
 
 void MainWindow::on_actionMac_Format_triggered()
 {
-    currentEditor()->setEndOfLineSequence("\r");
+    Editor *editor = currentEditor();
+    editor->setEndOfLineSequence("\r");
+    editor->markDirty();
 }

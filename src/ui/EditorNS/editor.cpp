@@ -151,6 +151,16 @@ namespace EditorNS
         return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
     }
 
+    void Editor::markClean()
+    {
+        sendMessage("C_CMD_MARK_CLEAN");
+    }
+
+    void Editor::markDirty()
+    {
+        sendMessage("C_CMD_MARK_DIRTY");
+    }
+
     QList<QMap<QString, QString>> Editor::languages()
     {
         QMap<QString, QVariant> languages =

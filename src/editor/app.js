@@ -1,5 +1,6 @@
 var editor;
 var changeGeneration;
+var forceDirty = false;
 
 UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn) {
     editor.setValue(data);
@@ -9,13 +10,28 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
     return editor.getValue("\n");
 });
 
+/* Returns true if the editor is clean, false if
+   it's dirty or it's clean but forceDirty = true.
+   You'll generally want to use this function instead of
+   CodeMirror.isClean()
+*/
+function isCleanOrForced(generation) {
+	return !forceDirty && editor.isClean(generation);
+}
+
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
+	forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean(changeGeneration));
+    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+});
+
+UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
+	forceDirty = true;
+	UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
-    return editor.isClean(changeGeneration);
+    return isCleanOrForced(changeGeneration);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
@@ -268,7 +284,7 @@ $(document).ready(function () {
 
     editor.on("change", function(instance, changeObj) {
         UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
-        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", editor.isClean(changeGeneration));
+        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
