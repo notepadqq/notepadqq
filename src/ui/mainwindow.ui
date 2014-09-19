@@ -172,7 +172,6 @@
     </property>
     <addaction name="actionInterpret_as_UTF_8"/>
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
-    <addaction name="actionInterpret_as_Windows_1252"/>
     <addaction name="actionInterpret_as_UTF_16BE_UCS_2_Big_Endian"/>
     <addaction name="separator"/>
     <addaction name="actionReload_file_encoded_as"/>
