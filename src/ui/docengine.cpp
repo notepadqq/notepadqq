@@ -352,8 +352,9 @@ void DocEngine::documentChanged(QString fileName)
         QFile file(fileName);
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(pos.first);
 
-        // FIXME Set editor as dirty
-        tabWidget->editor(pos.second)->setFileOnDiskChanged(true);
+        Editor *editor = tabWidget->editor(pos.second);
+        editor->markDirty();
+        editor->setFileOnDiskChanged(true);
         emit fileOnDiskChanged(tabWidget, pos.second, !file.exists());
     }
 }
