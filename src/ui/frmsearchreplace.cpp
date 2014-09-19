@@ -38,6 +38,8 @@ frmSearchReplace::~frmSearchReplace()
 void frmSearchReplace::show(Tabs defaultTab)
 {
     setCurrentTab(defaultTab);
+    ui->cmbSearch->setFocus();
+    ui->cmbSearch->lineEdit()->selectAll();
     QMainWindow::show();
 }
 
