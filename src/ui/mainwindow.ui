@@ -175,11 +175,13 @@
     <addaction name="actionEncode_in_Windows_1252"/>
     <addaction name="actionEncode_in_UTF_16BE_UCS_2_Big_Endian"/>
     <addaction name="separator"/>
+    <addaction name="actionReload_file_encoded_as"/>
+    <addaction name="separator"/>
     <addaction name="actionUTF_8"/>
     <addaction name="actionUTF_8_with_BOM"/>
-    <addaction name="actionWindows_1252_ANSI"/>
     <addaction name="actionUTF_16BE"/>
     <addaction name="actionUTF_16LE"/>
+    <addaction name="actionConvert_to"/>
    </widget>
    <widget class="QMenu" name="menu_Language">
     <property name="title">
@@ -702,26 +704,6 @@
     <string>Convert to UTF-8 with BOM</string>
    </property>
   </action>
-  <action name="actionEncode_in_UTF_8">
-   <property name="text">
-    <string>Encode in UTF-8</string>
-   </property>
-  </action>
-  <action name="actionEncode_in_UTF_8_without_BOM">
-   <property name="text">
-    <string>Encode in UTF-8 without BOM</string>
-   </property>
-  </action>
-  <action name="actionEncode_in_Windows_1252">
-   <property name="text">
-    <string>Encode in Windows-1252</string>
-   </property>
-  </action>
-  <action name="actionEncode_in_UTF_16BE_UCS_2_Big_Endian">
-   <property name="text">
-    <string>Encode in UTF-16BE (UCS-2 Big Endian)</string>
-   </property>
-  </action>
   <action name="action_Run">
    <property name="text">
     <string>&amp;Run...</string>
@@ -817,6 +799,36 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionReload_file_encoded_as">
+   <property name="text">
+    <string>Reload file encoded as...</string>
+   </property>
+  </action>
+  <action name="actionConvert_to">
+   <property name="text">
+    <string>Convert to...</string>
+   </property>
+  </action>
+  <action name="actionEncode_in_UTF_16BE_UCS_2_Big_Endian">
+   <property name="text">
+    <string>Encode in UTF-16BE (UCS-2 Big Endian)</string>
+   </property>
+  </action>
+  <action name="actionEncode_in_Windows_1252">
+   <property name="text">
+    <string>Encode in Windows-1252</string>
+   </property>
+  </action>
+  <action name="actionEncode_in_UTF_8_without_BOM">
+   <property name="text">
+    <string>Encode in UTF-8 without BOM</string>
+   </property>
+  </action>
+  <action name="actionEncode_in_UTF_8">
+   <property name="text">
+    <string>Encode in UTF-8</string>
    </property>
   </action>
  </widget>
