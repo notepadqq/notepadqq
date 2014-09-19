@@ -401,13 +401,13 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
 
     // FIXME Save BOM in Editor!
     if (contents.startsWith(BOM_UTF_32_BE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-32")); // BE
+        return decodeText(contents, QTextCodec::codecForName("UTF-32BE"));
     } else if (contents.startsWith(BOM_UTF_32_LE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-32")); // LE
+        return decodeText(contents, QTextCodec::codecForName("UTF-32LE"));
     } else if (contents.startsWith(BOM_UTF_16_BE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-16")); // BE
+        return decodeText(contents, QTextCodec::codecForName("UTF-16BE"));
     } else if (contents.startsWith(BOM_UTF_16_LE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-16")); // LE
+        return decodeText(contents, QTextCodec::codecForName("UTF-16LE"));
     } else if (contents.startsWith(BOM_UTF_8)) {
         return decodeText(contents, QTextCodec::codecForName("UTF-8"));
     }
