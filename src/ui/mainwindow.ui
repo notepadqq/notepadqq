@@ -815,11 +815,6 @@
     <string>Interpret as UTF-16BE (UCS-2 Big Endian)</string>
    </property>
   </action>
-  <action name="actionInterpret_as_Windows_1252">
-   <property name="text">
-    <string>Interpret as Windows-1252</string>
-   </property>
-  </action>
   <action name="actionInterpret_as_UTF_8_without_BOM">
    <property name="text">
     <string>Interpret as UTF-8 without BOM</string>
