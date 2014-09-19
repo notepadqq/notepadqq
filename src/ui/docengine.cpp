@@ -4,7 +4,6 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 #include "include/mainwindow.h"
-#include <magic.h>
 
 DocEngine::DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
@@ -447,35 +446,4 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
     }
 
     return QPair<QString, QTextCodec *>(bestText, bestCodec);
-}
-
-QString DocEngine::getFileMimeEncoding(const QString &file)
-{
-    return getFileInformation(file, (MAGIC_ERROR|MAGIC_MIME_ENCODING));
-}
-
-QString DocEngine::getFileInformation(const QString &file, const int flags)
-{
-    if((!(QFile(file).exists())) && (file == "")) return "";
-
-    magic_t myt = magic_open(flags);
-    magic_load(myt,NULL);
-    QString finfo = magic_file(myt,file.toStdString().c_str());
-    magic_close(myt);
-
-    // We go a different route for checking encoding
-    if ((flags & MAGIC_MIME_ENCODING)) {
-        // Don't ever return a codec we don't support, will cause crashes.
-        foreach(QByteArray codec, QTextCodec::availableCodecs()){
-            if(codec.toUpper() == finfo.toUpper()) {
-                return codec;
-            }
-        }
-
-        return "UTF-8";
-    } else if ((flags & MAGIC_RAW)) {
-        return finfo.section(',', 0, 0);
-    } else {
-        return finfo;
-    }
 }

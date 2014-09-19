@@ -22,11 +22,6 @@ public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
     ~DocEngine();
 
-
-
-    static QString getFileMimeEncoding(const QString &file);
-    static QString getFileInformation(const QString &file, const int flags);
-
     /**
      * @brief Saves a document to the file system.
      * @param tabWidget tabWidget where the document is

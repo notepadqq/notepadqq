@@ -40,15 +40,6 @@ APPDATADIR = "$$DESTDIR/../appdata"
 
 INSTALLFILESDIR = ../../support_files
 
-win32 {
-    LIBS += User32.lib
-    #LIBS += -L"$$PWD/3rdparty/libs/magic/" -lmagic
-}
-
-unix {
-    LIBS += -lmagic
-}
-
 SOURCES += main.cpp\
     mainwindow.cpp \
     topeditorcontainer.cpp \
