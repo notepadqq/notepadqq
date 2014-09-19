@@ -7,6 +7,7 @@
 #include <QQueue>
 #include <QWheelEvent>
 #include <QVBoxLayout>
+#include <QTextCodec>
 
 namespace EditorNS
 {
@@ -162,6 +163,18 @@ namespace EditorNS
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
+        QTextCodec *codec() const;
+
+        /**
+         * @brief Set the codec for this Editor.
+         *        This method does not change the in-memory or on-screen
+         *        representation of the document (which is always Unicode).
+         *        It serves solely as a way to keep track of the encoding
+         *        that needs to be used when the document gets saved.
+         * @param codec
+         */
+        void setCodec(QTextCodec *codec);
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
@@ -171,6 +184,7 @@ namespace EditorNS
         bool m_fileOnDiskChanged = false;
         bool m_loaded = false;
         QString m_endOfLineSequence = "\n";
+        QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
 
 
         inline void waitAsyncLoad();

@@ -736,6 +736,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         m_statusBar_EOLstyle->setText(tr("Old Mac"));
     }
 
+    m_statusBar_textFormat->setText(editor->codec()->name());
 }
 
 void MainWindow::on_action_Delete_triggered()

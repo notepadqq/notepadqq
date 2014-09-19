@@ -54,14 +54,22 @@ private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
-    bool read(QFile *file, Editor *editor, QString encoding);
+    bool read(QFile *file, Editor *editor, QTextCodec *codec = nullptr);
     QPair<int, int> findOpenEditorByUrl(QUrl filename);
     // FIXME Separate from reload
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload);
     bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
-    QPair<QString, QTextCodec *> decodeText(QByteArray contents);
+
+    /**
+     * @brief Decodes a byte array into a string, trying to guess the best
+     *        codec. If @param codec is not null, force the use of this codec.
+     * @param contents
+     * @param codec If not null, the text will be decoded using this codec.
+     * @return
+     */
+    QPair<QString, QTextCodec *> decodeText(const QByteArray &contents, QTextCodec *codec = nullptr);
 signals:
     /**
      * @brief The monitored file has changed. Remember to call

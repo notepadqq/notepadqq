@@ -27,7 +27,7 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
     return tab;
 }
 
-bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
+bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec)
 {
     if(!editor)
         return false;
@@ -35,16 +35,10 @@ bool DocEngine::read(QFile *file, Editor* editor, QString encoding)
     if(!file->open(QFile::ReadOnly))
         return false;
 
-    QFileInfo fi(*file);
+    QPair<QString, QTextCodec *> decoded = decodeText(file->readAll(), codec);
+    QString txt = decoded.first;
+    editor->setCodec(decoded.second);
 
-    QString readEncodedAs = getFileMimeEncoding(fi.absoluteFilePath());
-    QTextStream stream(file);
-    QString txt;
-
-    stream.setCodec((encoding != "") ? encoding.toUtf8() : readEncodedAs.toUtf8());
-    stream.setCodec(readEncodedAs.toUtf8());
-
-    txt = stream.readAll();
     file->close();
 
     if (txt.indexOf("\r\n") != -1)
@@ -132,7 +126,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 QFile file(localFileName);
                 if (file.exists()) {
-                    if (!read(&file, editor, "UTF-8")) {
+                    if (!read(&file, editor)) {
                         // Handle error
                         QMessageBox msgBox;
                         msgBox.setWindowTitle(QCoreApplication::applicationName());
@@ -381,16 +375,78 @@ bool DocEngine::isMonitored(Editor *editor)
     return m_fsWatcher->files().contains(editor->fileName().toLocalFile());
 }
 
-QPair<QString, QTextCodec *> DocEngine::decodeText(QByteArray contents)
+QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, QTextCodec *codec)
 {
-    QTextCodec::ConverterState state;
-    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-    const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
-    if (state.invalidChars > 0) {
-        qDebug() << "Not a valid UTF-8 sequence.";
+    // If a specific codec was required
+    if (codec != nullptr) {
+        QTextCodec::ConverterState state;
+        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+        return QPair<QString, QTextCodec *>(text, codec);
     }
 
-    return QPair<QString, QTextCodec *>(text, codec);
+
+    // FIXME Could potentially be slow on large files!!
+    //       We should try checking only the first few KB.
+
+    int bestInvalidChars = -1;
+    QTextCodec *bestCodec;
+    QString bestText;
+
+    QTextCodec *localeCodec = QTextCodec::codecForLocale();
+
+    QList<int> alreadyTriedMibs;
+
+    // First try with these known codecs, in order.
+    // The first one without invalid characters is good.
+    QList<QByteArray> codecStrings = QList<QByteArray>
+            ({"UTF-8", "ISO-8859-1", "Windows-1251",
+              "Shift-JIS", "Windows-1252"
+              "UTF-16", "UTF-32", localeCodec->name() });
+
+    for (QByteArray codecString : codecStrings) {
+        QTextCodec::ConverterState state;
+        QTextCodec *codec = QTextCodec::codecForName(codecString);
+        if (codec == 0)
+            continue;
+
+        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+
+        if (state.invalidChars == 0) {
+            return QPair<QString, QTextCodec *>(text, codec);
+        } else {
+            alreadyTriedMibs.append(codec->mibEnum());
+
+            if (bestInvalidChars == -1 || state.invalidChars < bestInvalidChars) {
+                bestInvalidChars = state.invalidChars;
+                bestCodec = codec;
+                bestText = text;
+            }
+        }
+    }
+
+    // If we're here, none of the codecs in codecStrings worked
+    // (and variables bestCodec & co. *are* set).
+    // We try the other codecs hoping to find the best one.
+    QList<int> mibs = QTextCodec::availableMibs();
+    for (int mib : mibs) {
+        QTextCodec *codec = QTextCodec::codecForMib(mib);
+        if (codec == 0)
+            continue;
+
+        if (alreadyTriedMibs.contains(codec->mibEnum()))
+            continue;
+
+        QTextCodec::ConverterState state;
+        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+
+        if (state.invalidChars < bestInvalidChars) {
+            bestInvalidChars = state.invalidChars;
+            bestCodec = codec;
+            bestText = text;
+        }
+    }
+
+    return QPair<QString, QTextCodec *>(bestText, bestCodec);
 }
 
 QString DocEngine::getFileMimeEncoding(const QString &file)

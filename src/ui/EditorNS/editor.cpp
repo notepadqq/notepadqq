@@ -384,5 +384,14 @@ namespace EditorNS
         m_endOfLineSequence = newLineSequence;
     }
 
+    QTextCodec *Editor::codec() const
+    {
+        return m_codec;
+    }
+
+    void Editor::setCodec(QTextCodec *codec)
+    {
+        m_codec = codec;
+    }
 
 }
