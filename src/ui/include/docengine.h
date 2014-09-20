@@ -49,7 +49,8 @@ private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
-    bool read(QFile *file, Editor *editor, QTextCodec *codec = nullptr);
+    bool read(QFile *file, Editor *editor);
+    bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     QPair<int, int> findOpenEditorByUrl(QUrl filename);
     // FIXME Separate from reload
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload);
@@ -57,14 +58,27 @@ private:
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
 
+    struct DecodedText {
+        QString text;
+        QTextCodec *codec = nullptr;
+        bool bom = false;
+    };
+
     /**
      * @brief Decodes a byte array into a string, trying to guess the best
-     *        codec. If @param codec is not null, force the use of this codec.
+     *        codec.
      * @param contents
-     * @param codec If not null, the text will be decoded using this codec.
      * @return
      */
-    QPair<QString, QTextCodec *> decodeText(const QByteArray &contents, QTextCodec *codec = nullptr);
+    DecodedText decodeText(const QByteArray &contents);
+    /**
+     * @brief Decodes a byte array into a string, using the specified codec.
+     * @param contents
+     * @param codec
+     * @param contentHasBOM Simply copied to the result struct.
+     * @return
+     */
+    DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
 signals:
     /**
      * @brief The monitored file has changed. Remember to call

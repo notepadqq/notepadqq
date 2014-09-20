@@ -175,6 +175,9 @@ namespace EditorNS
          */
         void setCodec(QTextCodec *codec);
 
+        bool bom() const;
+        void setBom(bool bom);
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

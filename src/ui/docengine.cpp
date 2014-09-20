@@ -26,7 +26,12 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
     return tab;
 }
 
-bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec)
+bool DocEngine::read(QFile *file, Editor *editor)
+{
+    return read(file, editor, nullptr, false);
+}
+
+bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
 {
     if(!editor)
         return false;
@@ -34,20 +39,26 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec)
     if(!file->open(QFile::ReadOnly))
         return false;
 
-    QPair<QString, QTextCodec *> decoded = decodeText(file->readAll(), codec);
-    QString txt = decoded.first;
-    editor->setCodec(decoded.second);
+    DecodedText decoded;
+    if (codec == nullptr) {
+        decoded = decodeText(file->readAll());
+    } else {
+        decoded = decodeText(file->readAll(), codec, bom);
+    }
+
+    editor->setCodec(decoded.codec);
+    editor->setBom(decoded.bom);
 
     file->close();
 
-    if (txt.indexOf("\r\n") != -1)
+    if (decoded.text.indexOf("\r\n") != -1)
         editor->setEndOfLineSequence("\r\n");
-    else if (txt.indexOf("\n") != -1)
+    else if (decoded.text.indexOf("\n") != -1)
         editor->setEndOfLineSequence("\n");
-    else if (txt.indexOf("\r") != -1)
+    else if (decoded.text.indexOf("\r") != -1)
         editor->setEndOfLineSequence("\r");
 
-    editor->sendMessage("C_CMD_SET_VALUE", txt);
+    editor->sendMessage("C_CMD_SET_VALUE", decoded.text);
     editor->sendMessage("C_CMD_CLEAR_HISTORY");
     editor->markClean();
 
@@ -374,21 +385,12 @@ bool DocEngine::isMonitored(Editor *editor)
     return m_fsWatcher->files().contains(editor->fileName().toLocalFile());
 }
 
-QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, QTextCodec *codec)
+DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
 {
-    // If a specific codec was required
-    if (codec != nullptr) {
-        QTextCodec::ConverterState state;
-        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
-        return QPair<QString, QTextCodec *>(text, codec);
-    }
-
-
     // Search for a BOM mark
     QTextCodec *bomCodec = QTextCodec::codecForUtfText(contents, nullptr);
     if (bomCodec != nullptr) {
-        // FIXME Save BOM in Editor!
-        return decodeText(contents, bomCodec);
+        return decodeText(contents, bomCodec, true);
     }
 
 
@@ -396,8 +398,7 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
     //       We should try checking only the first few KB.
 
     int bestInvalidChars = -1;
-    QTextCodec *bestCodec;
-    QString bestText;
+    DecodedText bestDecodedText;
 
     QList<int> alreadyTriedMibs;
 
@@ -417,14 +418,20 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
         const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
 
         if (state.invalidChars == 0) {
-            return QPair<QString, QTextCodec *>(text, codec);
+            bestDecodedText.codec = codec;
+            bestDecodedText.text = text;
+            bestDecodedText.bom = false;
+
+            return bestDecodedText;
+
         } else {
             alreadyTriedMibs.append(codec->mibEnum());
 
             if (bestInvalidChars == -1 || state.invalidChars < bestInvalidChars) {
                 bestInvalidChars = state.invalidChars;
-                bestCodec = codec;
-                bestText = text;
+                bestDecodedText.codec = codec;
+                bestDecodedText.text = text;
+                bestDecodedText.bom = false;
             }
         }
     }
@@ -446,10 +453,24 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
 
         if (state.invalidChars < bestInvalidChars) {
             bestInvalidChars = state.invalidChars;
-            bestCodec = codec;
-            bestText = text;
+            bestDecodedText.codec = codec;
+            bestDecodedText.text = text;
+            bestDecodedText.bom = false;
         }
     }
 
-    return QPair<QString, QTextCodec *>(bestText, bestCodec);
+    return bestDecodedText;
+}
+
+DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM)
+{
+    QTextCodec::ConverterState state;
+    const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+
+    DecodedText ret;
+    ret.bom = contentHasBOM;
+    ret.codec = codec;
+    ret.text = text;
+
+    return ret;
 }
