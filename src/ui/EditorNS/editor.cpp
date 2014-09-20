@@ -394,4 +394,14 @@ namespace EditorNS
         m_codec = codec;
     }
 
+    bool Editor::bom() const
+    {
+        return m_bom;
+    }
+
+    void Editor::setBom(bool bom)
+    {
+        m_bom = bom;
+    }
+
 }

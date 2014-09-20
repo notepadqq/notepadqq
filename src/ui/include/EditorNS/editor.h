@@ -185,7 +185,7 @@ namespace EditorNS
         bool m_loaded = false;
         QString m_endOfLineSequence = "\n";
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
-
+        bool m_bom = false;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
