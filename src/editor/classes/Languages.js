@@ -337,7 +337,7 @@ var Languages = new function() {
             name: "Makefile",
             mode: "makefile",
             mime: "text/x-makefile",
-            fileExtensions: ["mak", "make", "mk", "mke", "mkg", "am"],
+            fileExtensions: ["mak", "make", "mk", "mke", "mkg", "am", "pro"],
             fileNames: ["Makefile", "Makefile.in", "GMakefile", "rules"]
         },
 
