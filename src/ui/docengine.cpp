@@ -246,7 +246,7 @@ QByteArray DocEngine::getBomForCodec(QTextCodec *codec)
     stream.setCodec(codec);
     stream.setGenerateByteOrderMark(true);
 
-    // Write an 'a' so that the BOM gets writed.
+    // Write an 'a' so that the BOM gets written.
     stream << "a";
     stream.flush();
     tmpSize = bom.size();
@@ -278,7 +278,10 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
 
     QByteArray data = codec->fromUnicode(string);
 
-    QByteArray bom;
+    // Some codecs always put the BOM (e.g. UTF-16BE).
+    // Others don't (e.g. UTF-8) so we have to manually
+    // write it, if the BOM is required.
+    QByteArray manualBom;
     if (editor->bom()) {
         // We can't write the BOM using QTextStream.setGenerateByteOrderMark(),
         // because we would need to open the QIODevice as Text (QIODevice::Text),
@@ -288,10 +291,12 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
         // So we generate the BOM here, and then
         // we prepend it to the output of our QIODevice.
 
-        bom = getBomForCodec(codec);
+        if (codec->mibEnum() == 106) { // UTF-8
+            manualBom = getBomForCodec(codec);
+        }
     }
 
-    if (!bom.isEmpty() && io->write(bom) == -1) {
+    if (!manualBom.isEmpty() && io->write(manualBom) == -1) {
         io->close();
         return false;
     }
