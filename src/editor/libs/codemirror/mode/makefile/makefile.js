@@ -42,7 +42,9 @@ CodeMirror.defineMode('makefile', function() {
     if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
     // makros
     if (sol && (stream.match(/^[\w]+[\s]+/) || stream.match(/^[\w]+/)) &&
-       (stream.peek() === '?' || stream.peek() === '=')) { return "variable-2"; }
+       (stream.peek() === '=' ||
+       ((stream.match('?') || stream.match('+') || stream.match('-')) && stream.peek() === '='))
+	   ) { return "variable-2"; }
 
     // Makefile targets
     if (sol && stream.eat(':')) {
