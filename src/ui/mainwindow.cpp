@@ -736,7 +736,15 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         m_statusBar_EOLstyle->setText(tr("Old Mac"));
     }
 
-    m_statusBar_textFormat->setText(editor->codec()->name());
+    // Encoding
+    QString encoding;
+    if (editor->codec()->mibEnum() == 106 && !editor->bom()) {
+        // Is UTF-8 without BOM
+        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
+    } else {
+        encoding = QString::fromUtf8(editor->codec()->name());
+    }
+    m_statusBar_textFormat->setText(encoding);
 }
 
 void MainWindow::on_action_Delete_triggered()
