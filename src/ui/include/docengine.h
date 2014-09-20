@@ -96,6 +96,8 @@ private:
      * @return
      */
     DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
+
+    QByteArray getBomForCodec(QTextCodec *codec);
 signals:
     /**
      * @brief The monitored file has changed. Remember to call

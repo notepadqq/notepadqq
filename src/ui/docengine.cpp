@@ -236,12 +236,40 @@ QPair<int, int> DocEngine::findOpenEditorByUrl(QUrl filename)
     return QPair<int, int>(-1, -1);
 }
 
+QByteArray DocEngine::getBomForCodec(QTextCodec *codec)
+{
+    QByteArray bom;
+    int tmpSize;
+    int aSize; // Size of the "a" character
+
+    QTextStream stream(&bom);
+    stream.setCodec(codec);
+    stream.setGenerateByteOrderMark(true);
+
+    // Write an 'a' so that the BOM gets writed.
+    stream << "a";
+    stream.flush();
+    tmpSize = bom.size();
+
+    // Write another 'a' so that we can see how much
+    // the byte array grows and then get the size of an 'a'
+    stream << "a";
+    stream.flush();
+
+    // Get the size of the 'a' character
+    aSize = bom.size() - tmpSize;
+
+    // Resize the byte array to remove the two 'a' chars
+    bom.resize(bom.size() - 2 * aSize);
+
+    return bom;
+}
+
 bool DocEngine::write(QIODevice *io, Editor *editor)
 {
     if (!io->open(QIODevice::WriteOnly))
         return false;
 
-    QTextStream stream(io);
 
     QString string = editor->value()
             .replace("\n", editor->endOfLineSequence());
@@ -250,8 +278,23 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
 
     QByteArray data = codec->fromUnicode(string);
 
-    stream.setGenerateByteOrderMark(editor->bom());
-    stream.setCodec(codec);
+    QByteArray bom;
+    if (editor->bom()) {
+        // We can't write the BOM using QTextStream.setGenerateByteOrderMark(),
+        // because we would need to open the QIODevice as Text (QIODevice::Text),
+        // but if we do, QTextStream will replace any newline character with
+        // the OS representation (and we want to be free to use *whatever*
+        // line ending we want).
+        // So we generate the BOM here, and then
+        // we prepend it to the output of our QIODevice.
+
+        bom = getBomForCodec(codec);
+    }
+
+    if (!bom.isEmpty() && io->write(bom) == -1) {
+        io->close();
+        return false;
+    }
 
     if (io->write(data) == -1) {
         io->close();
