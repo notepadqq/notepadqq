@@ -385,31 +385,10 @@ QPair<QString, QTextCodec *> DocEngine::decodeText(const QByteArray &contents, Q
 
 
     // Search for a BOM mark
-
-    static const char BYTE_00 = 0x00;
-    static const char BYTE_BB = 0xBB;
-    static const char BYTE_BF = 0xBF;
-    static const char BYTE_EF = 0xEF;
-    static const char BYTE_FE = 0xFE;
-    static const char BYTE_FF = 0xFF;
-
-    static const QByteArray BOM_UTF_32_BE = QByteArray().append(BYTE_00).append(BYTE_00).append(BYTE_FE).append(BYTE_FF);
-    static const QByteArray BOM_UTF_32_LE = QByteArray().append(BYTE_FF).append(BYTE_FE).append(BYTE_00).append(BYTE_00);
-    static const QByteArray BOM_UTF_16_BE = QByteArray().append(BYTE_FE).append(BYTE_FF);
-    static const QByteArray BOM_UTF_16_LE = QByteArray().append(BYTE_FF).append(BYTE_FE);
-    static const QByteArray BOM_UTF_8 = QByteArray().append(BYTE_EF).append(BYTE_BB).append(BYTE_BF);
-
-    // FIXME Save BOM in Editor!
-    if (contents.startsWith(BOM_UTF_32_BE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-32BE"));
-    } else if (contents.startsWith(BOM_UTF_32_LE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-32LE"));
-    } else if (contents.startsWith(BOM_UTF_16_BE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-16BE"));
-    } else if (contents.startsWith(BOM_UTF_16_LE)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-16LE"));
-    } else if (contents.startsWith(BOM_UTF_8)) {
-        return decodeText(contents, QTextCodec::codecForName("UTF-8"));
+    QTextCodec *bomCodec = QTextCodec::codecForUtfText(contents, nullptr);
+    if (bomCodec != nullptr) {
+        // FIXME Save BOM in Editor!
+        return decodeText(contents, bomCodec);
     }
 
 
