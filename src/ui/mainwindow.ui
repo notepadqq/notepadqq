@@ -678,11 +678,6 @@
     <string>Ctrl+U</string>
    </property>
   </action>
-  <action name="actionWindows_1252_ANSI">
-   <property name="text">
-    <string>Convert to Windows-1252</string>
-   </property>
-  </action>
   <action name="actionUTF_8">
    <property name="text">
     <string>Convert to UTF-8</string>
