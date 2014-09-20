@@ -48,7 +48,7 @@ CodeMirror.defineMode('makefile', function() {
 
     // Makefile targets
     if (sol && stream.eat(':')) {
-      if (stream.eat('=')) {
+      if (stream.peek('=')) {
         return "variable-2";
       } else {
         return "header";
