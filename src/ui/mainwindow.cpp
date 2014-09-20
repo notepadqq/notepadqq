@@ -985,7 +985,9 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
         diff /= 10;
 
         // Increment/Decrement zoom factor by 0.1 at each step.
-        tabWidget->setZoomFactor(curZoom + diff);
+        qreal newZoom = curZoom + diff;
+        tabWidget->setZoomFactor(newZoom);
+        m_settings->setValue("zoom", newZoom);
     }
 }
 
