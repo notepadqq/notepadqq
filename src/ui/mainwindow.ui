@@ -174,10 +174,10 @@
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
     <addaction name="actionInterpret_as_UTF_16BE_UCS_2_Big_Endian"/>
     <addaction name="separator"/>
-    <addaction name="actionReload_file_encoded_as"/>
+    <addaction name="actionReload_file_interpreted_as"/>
     <addaction name="separator"/>
     <addaction name="actionUTF_8"/>
-    <addaction name="actionUTF_8_with_BOM"/>
+    <addaction name="actionUTF_8_without_BOM"/>
     <addaction name="actionUTF_16BE"/>
     <addaction name="actionUTF_16LE"/>
     <addaction name="actionConvert_to"/>
@@ -698,9 +698,9 @@
     <string>Convert to UTF-16LE (UCS-2 Little Endian)</string>
    </property>
   </action>
-  <action name="actionUTF_8_with_BOM">
+  <action name="actionUTF_8_without_BOM">
    <property name="text">
-    <string>Convert to UTF-8 with BOM</string>
+    <string>Convert to UTF-8 without BOM</string>
    </property>
   </action>
   <action name="action_Run">
@@ -800,9 +800,9 @@
     <string>Ctrl+H</string>
    </property>
   </action>
-  <action name="actionReload_file_encoded_as">
+  <action name="actionReload_file_interpreted_as">
    <property name="text">
-    <string>Reload file encoded as...</string>
+    <string>Reload file interpreted as...</string>
    </property>
   </action>
   <action name="actionConvert_to">

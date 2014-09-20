@@ -1215,3 +1215,33 @@ void MainWindow::on_actionMac_Format_triggered()
     editor->setEndOfLineSequence("\r");
     editor->markDirty();
 }
+
+void MainWindow::convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom)
+{
+    editor->setCodec(codec);
+    editor->setBom(bom);
+    editor->markDirty();
+
+    if (editor == currentEditor())
+        refreshEditorUiInfo(editor);
+}
+
+void MainWindow::on_actionUTF_8_triggered()
+{
+    convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
+}
+
+void MainWindow::on_actionUTF_8_without_BOM_triggered()
+{
+    convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
+}
+
+void MainWindow::on_actionUTF_16BE_triggered()
+{
+    convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
+}
+
+void MainWindow::on_actionUTF_16LE_triggered()
+{
+    convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
+}

@@ -110,6 +110,10 @@ private slots:
     void on_actionUNIX_Format_triggered();
     void on_actionWindows_Format_triggered();
     void on_actionMac_Format_triggered();
+    void on_actionUTF_8_triggered();
+    void on_actionUTF_8_without_BOM_triggered();
+    void on_actionUTF_16BE_triggered();
+    void on_actionUTF_16LE_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -165,6 +169,7 @@ private:
     void                restoreWindowSettings();
     void                loadIcons();
     void                updateRecentDocsInMenu();
+    void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
 };
 
 #endif // MAINWINDOW_H
