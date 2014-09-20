@@ -49,11 +49,28 @@ private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
+
+    /**
+     * @brief Read a file and puts the content into the provided Editor, clearing
+     *        its history and marking it as clean. Tries to automatically
+     *        detect the encoding.
+     * @param file
+     * @param editor
+     * @return true if successful, false otherwise
+     */
     bool read(QFile *file, Editor *editor);
     bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     QPair<int, int> findOpenEditorByUrl(QUrl filename);
     // FIXME Separate from reload
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload);
+
+    /**
+     * @brief Write the provided Editor content to the specified IO device, using
+     *        the encoding and the BOM settings specified in the Editor.
+     * @param io
+     * @param editor
+     * @return true if successful, false otherwise
+     */
     bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);

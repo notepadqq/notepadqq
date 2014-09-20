@@ -238,25 +238,26 @@ QPair<int, int> DocEngine::findOpenEditorByUrl(QUrl filename)
 
 bool DocEngine::write(QIODevice *io, Editor *editor)
 {
-    if(!io->open(QIODevice::WriteOnly))
+    if (!io->open(QIODevice::WriteOnly))
         return false;
 
     QTextStream stream(io);
 
-    //Support for saving in all supported formats....
     QString string = editor->value()
             .replace("\n", editor->endOfLineSequence());
-    QTextCodec *codec = QTextCodec::codecForName("utf8");//(sci->encoding().toUtf8()); //FIXME
+
+    QTextCodec *codec = editor->codec();
+
     QByteArray data = codec->fromUnicode(string);
 
-    /*if(sci->BOM())
-    {
-        stream.setGenerateByteOrderMark(true);
-    }*/ // FIXME
+    stream.setGenerateByteOrderMark(editor->bom());
     stream.setCodec(codec);
 
-    if(io->write(data) == -1)
+    if (io->write(data) == -1) {
+        io->close();
         return false;
+    }
+
     io->close();
 
     return true;
