@@ -45,6 +45,7 @@ public:
     bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
     bool reloadDocument(EditorTabWidget *tabWidget, int tab);
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
+    void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
 private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;

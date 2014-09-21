@@ -135,6 +135,7 @@ namespace EditorNS
         QList<QMap<QString, QString> > languages();
         void setLanguage(const QString &language);
         QString setLanguageFromFileName();
+        void setValue(const QString &value);
         QString value();
         void setIndentationMode(bool useTabs, int size);
         void setIndentationMode(QString language);

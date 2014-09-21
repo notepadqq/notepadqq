@@ -1255,3 +1255,23 @@ void MainWindow::on_actionUTF_16LE_triggered()
 {
     convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
 }
+
+void MainWindow::on_actionInterpret_as_UTF_8_triggered()
+{
+    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
+}
+
+void MainWindow::on_actionInterpret_as_UTF_8_without_BOM_triggered()
+{
+    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
+}
+
+void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
+{
+    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
+}
+
+void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
+{
+    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
+}

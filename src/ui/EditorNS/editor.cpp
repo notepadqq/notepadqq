@@ -226,6 +226,11 @@ namespace EditorNS
         sendMessage("C_CMD_SET_INDENTATION_MODE", data);
     }
 
+    void Editor::setValue(const QString &value)
+    {
+        sendMessage("C_CMD_SET_VALUE", value);
+    }
+
     QString Editor::value()
     {
         return sendMessageWithResult("C_FUN_GET_VALUE").toString();
