@@ -70,6 +70,13 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
+
+        struct Theme {
+            QString name;
+            QString path;
+        };
+
+        explicit Editor(const Theme &theme, QWidget *parent = 0);
         explicit Editor(QWidget *parent = 0);
         ~Editor();
 
@@ -179,6 +186,8 @@ namespace EditorNS
         bool bom() const;
         void setBom(bool bom);
 
+        QList<Theme> themes();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
@@ -194,6 +203,7 @@ namespace EditorNS
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
+        void fullConstructor(const Theme &theme);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);

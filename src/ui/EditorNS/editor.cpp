@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QEventLoop>
 #include <QSettings>
+#include <QUrlQuery>
 
 namespace EditorNS
 {
@@ -15,6 +16,20 @@ namespace EditorNS
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
+        Theme defaultTheme;
+        defaultTheme.name = "";
+        defaultTheme.path = "";
+        fullConstructor(defaultTheme);
+    }
+
+    Editor::Editor(const Theme &theme, QWidget *parent) :
+        QWidget(parent)
+    {
+        fullConstructor(theme);
+    }
+
+    void Editor::fullConstructor(const Theme &theme)
+    {
         m_jsToCppProxy = new JsToCppProxy(this);
         connect(m_jsToCppProxy,
                 &JsToCppProxy::messageReceived,
@@ -22,7 +37,15 @@ namespace EditorNS
                 &Editor::on_proxyMessageReceived);
 
         m_webView = new CustomQWebView(this);
-        m_webView->setUrl(QUrl("file://" + Notepadqq::editorPath()));
+
+        QUrlQuery query;
+        query.addQueryItem("themePath", theme.path);
+        query.addQueryItem("themeName", theme.name);
+
+        QUrl url = QUrl("file://" + Notepadqq::editorPath());
+        url.setQuery(query);
+
+        m_webView->setUrl(url);
 
         // To load the page in the background (http://stackoverflow.com/a/10520029):
         // (however, no noticeable improvement here on an i5, september 2014)
@@ -407,6 +430,32 @@ namespace EditorNS
     void Editor::setBom(bool bom)
     {
         m_bom = bom;
+    }
+
+    QList<Editor::Theme> Editor::themes()
+    {
+        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
+        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+
+        QStringList filters;
+        filters << "*.css";
+        bundledThemesDir.setNameFilters(filters);
+
+        QStringList themeFiles = bundledThemesDir.entryList();
+
+        QList<Theme> out;
+        for (QString themeStr : themeFiles) {
+            QFileInfo theme = QFileInfo(themeStr);
+            QString nameWithoutExt = theme.fileName()
+                    .replace(QRegExp("\\.css$"), "");
+
+            Theme t;
+            t.name = nameWithoutExt;
+            t.path = bundledThemesDir.filePath(themeStr);
+            out.append(t);
+        }
+
+        return out;
     }
 
 }

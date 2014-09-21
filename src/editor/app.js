@@ -242,6 +242,17 @@ UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevRet
     return Languages.languages;
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
+    if (data.path != "") {
+        // Add the stylesheet only if it isn't already present
+        if (!$("link[href='" + data.path + "']").length) {
+            addStylesheet(data.path);
+        }
+    }
+
+    editor.theme = data.name;
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
@@ -256,7 +267,8 @@ $(document).ready(function () {
         indentWithTabs: true,
         indentUnit: 4,
         tabSize: 4,
-        matchBrackets: true
+        matchBrackets: true,
+        theme: _defaultTheme
     });
 
     editor.addKeyMap({
