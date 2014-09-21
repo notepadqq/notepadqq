@@ -35,6 +35,18 @@ frmSearchReplace::~frmSearchReplace()
     delete ui;
 }
 
+void frmSearchReplace::keyPressEvent(QKeyEvent *evt)
+{
+    switch (evt->key())
+    {
+    case Qt::Key_Escape:
+        close();
+        break;
+    default:
+        QMainWindow::keyPressEvent(evt);
+    }
+}
+
 void frmSearchReplace::show(Tabs defaultTab)
 {
     setCurrentTab(defaultTab);
