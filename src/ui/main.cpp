@@ -73,7 +73,8 @@ void checkQtVersion(MainWindow *w)
             QObject::tr(
                 "Install a newer Qt version (&ge; %1) from the official repositories "
                 "of your distribution.<br><br>"
-                "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.").
+                "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.<br><br>"
+                "(You can disable this message in the settings.)").
                       arg("5.3").
                       arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
                       arg("<nobr>" + dir + "</nobr>") +
