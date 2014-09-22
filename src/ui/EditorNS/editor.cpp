@@ -16,10 +16,11 @@ namespace EditorNS
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
-        Theme defaultTheme;
-        defaultTheme.name = "";
-        defaultTheme.path = "";
-        fullConstructor(defaultTheme);
+        QSettings s;
+
+        QString themeName = s.value("colorScheme", "").toString();
+
+        fullConstructor(themeFromName(themeName));
     }
 
     Editor::Editor(const Theme &theme, QWidget *parent) :
@@ -101,6 +102,11 @@ namespace EditorNS
     {
         for (int i = 0; i < howMany; i++)
             m_editorBuffer.enqueue(new Editor());
+    }
+
+    void Editor::invalidateEditorBuffer()
+    {
+        m_editorBuffer.clear();
     }
 
     void Editor::waitAsyncLoad()
@@ -432,6 +438,25 @@ namespace EditorNS
         m_bom = bom;
     }
 
+    Editor::Theme Editor::themeFromName(QString name)
+    {
+        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
+        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+
+        Theme t;
+        QString themeFile = bundledThemesDir.filePath(name + ".css");
+        if (QFile(themeFile).exists()) {
+            t.name = name;
+            t.path = themeFile;
+        } else {
+            Theme t;
+            t.name = "";
+            t.path = "";
+        }
+
+        return t;
+    }
+
     QList<Editor::Theme> Editor::themes()
     {
         QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
@@ -456,6 +481,14 @@ namespace EditorNS
         }
 
         return out;
+    }
+
+    void Editor::setTheme(Theme theme)
+    {
+        QMap<QString, QVariant> tmap;
+        tmap.insert("name", theme.name);
+        tmap.insert("path", theme.path);
+        sendMessage("C_CMD_SET_THEME", tmap);
     }
 
 }

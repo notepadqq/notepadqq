@@ -51,9 +51,9 @@ UiDriver.registerEventHandler("C_FUN_GET_CURRENT_LANGUAGE", function(msg, data, 
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {
-    editor.options.indentWithTabs = data.useTabs;
-    editor.options.indentUnit = data.size;
-    editor.options.tabSize = data.size;
+    editor.setOption("indentWithTabs", data.useTabs);
+    editor.setOption("indentUnit", data.size);
+    editor.setOption("tabSize", data.size);
     editor.refresh();
 });
 
@@ -250,7 +250,7 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
         }
     }
 
-    editor.theme = data.name;
+    editor.setOption("theme", data.name);
 });
 
 

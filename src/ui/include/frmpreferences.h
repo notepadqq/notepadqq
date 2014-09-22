@@ -41,6 +41,8 @@ private:
     void loadLanguages(QSettings *s);
     void saveLanguages(QSettings *s);
     void setCurrentLanguageTempValue(QString key, QVariant value);
+    void loadColorSchemes(QSettings *s);
+    void saveColorScheme(QSettings *s);
 };
 
 #endif // FRMPREFERENCES_H

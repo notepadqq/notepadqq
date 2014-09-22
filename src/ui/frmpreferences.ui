@@ -44,6 +44,11 @@
    </item>
    <item>
     <property name="text">
+     <string>Appearance</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
      <string>Languages</string>
     </property>
    </item>
@@ -73,6 +78,36 @@
      <property name="text">
       <string>Check Qt version at startup</string>
      </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_3">
+    <widget class="QWidget" name="horizontalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>431</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Color scheme:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cmbColorScheme"/>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QWidget" name="page_2">

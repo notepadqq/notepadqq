@@ -86,6 +86,8 @@ namespace EditorNS
              */
         static Editor *getNewEditor();
 
+        static void invalidateEditorBuffer();
+
         struct LanguageGreater {
             inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
                 return v1.value("name").toLower() < v2.value("name").toLower();
@@ -187,6 +189,8 @@ namespace EditorNS
         void setBom(bool bom);
 
         QList<Theme> themes();
+        void setTheme(Theme theme);
+        Editor::Theme themeFromName(QString name);
 
     private:
         static QQueue<Editor*> m_editorBuffer;

@@ -1,6 +1,7 @@
 #include "include/frmpreferences.h"
 #include "include/EditorNS/editor.h"
 #include "ui_frmpreferences.h"
+#include "include/EditorNS/editor.h"
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -18,6 +19,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkCheckQtVersionAtStartup->setChecked(s.value("checkQtVersionAtStartup", true).toBool());
 
     loadLanguages(&s);
+    loadColorSchemes(&s);
 }
 
 frmPreferences::~frmPreferences()
@@ -42,11 +44,25 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("checkQtVersionAtStartup", ui->chkCheckQtVersionAtStartup->isChecked());
 
     saveLanguages(&s);
-
+    saveColorScheme(&s);
 
     // Apply changes to currently opened editors
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget * /*tabWidget*/, Editor *editor) {
+
+        // Reset language-dependent settings (e.g. tab settings)
         editor->setLanguage(editor->language());
+
+        // Set theme
+        QMap<QString, QVariant> theme_map = ui->cmbColorScheme->currentData().toMap();
+        Editor::Theme theme;
+        theme.name = theme_map.value("name").toString();
+        theme.path = theme_map.value("path").toString();
+        editor->setTheme(theme);
+
+        // Invalidate already initialized editors in the buffer
+        editor->invalidateEditorBuffer();
+        editor->addEditorToBuffer();
+
         return true;
     });
 
@@ -90,6 +106,30 @@ void frmPreferences::loadLanguages(QSettings *s)
     ui->cmbLanguages->currentIndexChanged(0);
 }
 
+void frmPreferences::loadColorSchemes(QSettings *s)
+{
+    QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
+
+    QMap<QString, QVariant> defaultTheme;
+    defaultTheme.insert("name", "");
+    defaultTheme.insert("path", "");
+    ui->cmbColorScheme->addItem("Default", defaultTheme);
+    ui->cmbColorScheme->setCurrentIndex(0);
+
+    QString setting = s->value("colorScheme", "").toString();
+
+    for (Editor::Theme theme : themes) {
+        QMap<QString, QVariant> tmap;
+        tmap.insert("name", theme.name);
+        tmap.insert("path", theme.path);
+        ui->cmbColorScheme->addItem(theme.name, tmap);
+
+        if (setting == theme.name) {
+            ui->cmbColorScheme->setCurrentIndex(ui->cmbColorScheme->count() - 1);
+        }
+    }
+}
+
 void frmPreferences::saveLanguages(QSettings *s)
 {
     QString keyPrefix = "Languages/";
@@ -110,6 +150,12 @@ void frmPreferences::saveLanguages(QSettings *s)
             s->setValue(keyPrefix + prop.key(), m_langsTempSettings->value(keyPrefix + prop.key()));
         }
     }
+}
+
+void frmPreferences::saveColorScheme(QSettings *s)
+{
+    QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
+    s->setValue("colorScheme", selected.value("name").toString());
 }
 
 void frmPreferences::on_buttonBox_rejected()
