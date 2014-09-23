@@ -9,7 +9,7 @@ GenericName[it_IT]=Editor di codice sorgente Notepadqq
 Comment=Edit source code files
 Comment[de_DE]=Quelltext bearbeiten
 Comment[it_IT]=Modifica codici sorgenti
-Exec=notepadqq -style=gtk %U
+Exec=notepadqq %U
 Terminal=false
 Type=Application
 StartupNotify=false
