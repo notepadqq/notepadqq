@@ -500,7 +500,8 @@ var Languages = new function() {
             name: "Bash",
             mode: "shell",
             mime: "text/x-sh",
-            fileExtensions: ["sh", "shr", "shar"]
+            fileExtensions: ["sh", "shr", "shar"],
+            firstNonBlankLine: [/^#!.*sh$/]
         },
 
         "sieve": {
@@ -680,11 +681,19 @@ var Languages = new function() {
 
     }
 
-    this.languageByFileName = function(filename) {
+    this.languageByFileName = function(editor, filename) {
         for (var id in this.languages) { 
             if (this.languages.hasOwnProperty(id)) {
                 var lang = this.languages[id];
                 
+                // Case-sensitive search for file name match
+                if (lang.fileNames !== undefined) {
+                    for (var i = 0; i < lang.fileNames.length; i++) {
+                        if (filename === lang.fileNames[i] || endsWith(filename, "/" + lang.fileNames[i]) || endsWith(filename, "\\" + lang.fileNames[i]))
+                            return id;
+                    }
+                }
+
                 // Case-insensitive search for extension match
                 if (lang.fileExtensions !== undefined) {
                     for (var i = 0; i < lang.fileExtensions.length; i++) {
@@ -692,12 +701,25 @@ var Languages = new function() {
                             return id;
                     }
                 }
-                
-                // Case-sensitive search for file name match
-                if (lang.fileNames !== undefined) {
-                    for (var i = 0; i < lang.fileNames.length; i++) {
-                        if (filename === lang.fileNames[i] || endsWith(filename, "/" + lang.fileNames[i]) || endsWith(filename, "\\" + lang.fileNames[i]))
-                            return id;
+
+                // First non blank line match
+                if (lang.firstNonBlankLine !== undefined &&
+                    editor !== undefined && editor !== null) {
+
+                    // Find the first non blank line
+                    var lineCount = editor.lineCount();
+                    var line = null;
+                    for (var i = 0; i < lineCount && line === null; i++) {
+                        var iLine = editor.getLine(i);
+                        if (iLine.trim() !== "")
+                            line = iLine;
+                    }
+
+                    if (line !== null) {
+                        for (var i = 0; i < lang.firstNonBlankLine.length; i++) {
+                            if (line.match(lang.firstNonBlankLine[i]))
+                                return id;
+                        }
                     }
                 }
             }

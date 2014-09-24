@@ -39,7 +39,7 @@ UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevRetu
 });
 
 UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, data, prevReturn) {
-    var lang = Languages.languageByFileName(data);
+    var lang = Languages.languageByFileName(editor, data);
     Languages.setLanguage(editor, lang);
     return lang;
 });
