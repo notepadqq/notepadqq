@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QCommandLineParser>
+#include <QCheckBox>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -48,8 +49,8 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    QSettings *settings = new QSettings();
-    if (settings->value("checkQtVersionAtStartup", true).toBool())
+    QSettings settings;
+    if (settings.value("checkQtVersionAtStartup", true).toBool())
         checkQtVersion(&w);
 
     return a.exec();
@@ -69,7 +70,7 @@ void checkQtVersion(MainWindow *w)
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
         msgBox.setInformativeText("<html><body>"
-            "<p>" + QObject::tr("Notepadqq will try to do its best, but some things will not work properly.") + "</p>" +
+            "<p>" + QObject::tr("Notepadqq will try to do its best, but <b>some things will not work properly</b>.") + "</p>" +
             QObject::tr(
                 "Install a newer Qt version (&ge; %1) from the official repositories "
                 "of your distribution.<br><br>"
@@ -79,7 +80,16 @@ void checkQtVersion(MainWindow *w)
                       arg("<nobr>" + dir + "</nobr>") +
             "</body></html>");
 
+        QCheckBox *chkDontShowAgain = new QCheckBox();
+        chkDontShowAgain->setText(QObject::tr("Don't show me this warning again"));
+        msgBox.setCheckBox(chkDontShowAgain);
+
         msgBox.exec();
+
+        QSettings s;
+        s.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
+
+        chkDontShowAgain->deleteLater();
     }
 }
 
