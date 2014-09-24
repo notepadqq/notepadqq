@@ -682,27 +682,37 @@ var Languages = new function() {
     }
 
     this.languageByFileName = function(editor, filename) {
+
+        // Case-sensitive search for file name match
         for (var id in this.languages) { 
             if (this.languages.hasOwnProperty(id)) {
                 var lang = this.languages[id];
-                
-                // Case-sensitive search for file name match
                 if (lang.fileNames !== undefined) {
                     for (var i = 0; i < lang.fileNames.length; i++) {
                         if (filename === lang.fileNames[i] || endsWith(filename, "/" + lang.fileNames[i]) || endsWith(filename, "\\" + lang.fileNames[i]))
                             return id;
                     }
                 }
+            }
+        }
 
-                // Case-insensitive search for extension match
+        // Case-insensitive search for extension match
+        for (var id in this.languages) { 
+            if (this.languages.hasOwnProperty(id)) {
+                var lang = this.languages[id];
                 if (lang.fileExtensions !== undefined) {
                     for (var i = 0; i < lang.fileExtensions.length; i++) {
                         if (endsWith(filename.toLowerCase(), "." + lang.fileExtensions[i].toLowerCase()))
                             return id;
                     }
                 }
+            }
+        }
 
-                // First non blank line match
+        // First non blank line match
+        for (var id in this.languages) { 
+            if (this.languages.hasOwnProperty(id)) {
+                var lang = this.languages[id];
                 if (lang.firstNonBlankLine !== undefined &&
                     editor !== undefined && editor !== null) {
 
