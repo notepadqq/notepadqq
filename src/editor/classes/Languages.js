@@ -401,7 +401,8 @@ var Languages = new function() {
             name: "Perl",
             mode: "perl",
             mime: "text/x-perl",
-            fileExtensions: ["pl", "p6", "pdl", "ph", "pm"]
+            fileExtensions: ["pl", "p6", "pdl", "ph", "pm"],
+            firstNonBlankLine: [/^#!.*\/perl/]
         },
 
         "php": {
@@ -429,7 +430,8 @@ var Languages = new function() {
             name: "Python",
             mode: "python",
             mime: "text/x-python",
-            fileExtensions: ["py", "pyd", "pyw", "wsgi"]
+            fileExtensions: ["py", "pyd", "pyw", "wsgi"],
+            firstNonBlankLine: [/^#!.*\/python$/]
         },
 
         "cython": {
@@ -501,7 +503,7 @@ var Languages = new function() {
             mode: "shell",
             mime: "text/x-sh",
             fileExtensions: ["sh", "shr", "shar"],
-            firstNonBlankLine: [/^#!.*sh$/]
+            firstNonBlankLine: [/^#!.*\/sh$/]
         },
 
         "sieve": {
