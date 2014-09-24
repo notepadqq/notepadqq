@@ -111,7 +111,7 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
     QMap<QString, QVariant> defaultTheme;
-    defaultTheme.insert("name", "");
+    defaultTheme.insert("name", "default");
     defaultTheme.insert("path", "");
     ui->cmbColorScheme->addItem("Default", defaultTheme);
     ui->cmbColorScheme->setCurrentIndex(0);

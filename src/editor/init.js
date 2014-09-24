@@ -31,11 +31,11 @@ function init()
     
     var themePath = getParameterByName("themePath");
     var themeName = getParameterByName("themeName");
-    if (themePath !== "" && themeName !== "") {
+    if (themePath !== "") {
         addStylesheet(themePath);
-        _defaultTheme = getParameterByName("themeName");
     }
-
+    
+    _defaultTheme = themeName === "" ? "default" : themeName;
 }
 
 init();

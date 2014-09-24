@@ -18,7 +18,9 @@ namespace EditorNS
     {
         QSettings s;
 
-        QString themeName = s.value("colorScheme", "").toString();
+        QString themeName = s.value("colorScheme", "default").toString();
+        if (themeName == "")
+            themeName = "default";
 
         fullConstructor(themeFromName(themeName));
     }
@@ -440,6 +442,13 @@ namespace EditorNS
 
     Editor::Theme Editor::themeFromName(QString name)
     {
+        Theme defaultTheme;
+        defaultTheme.name = "default";
+        defaultTheme.path = "";
+
+        if (name == "default" || name == "")
+            return defaultTheme;
+
         QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
         QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
 
@@ -449,9 +458,7 @@ namespace EditorNS
             t.name = name;
             t.path = themeFile;
         } else {
-            Theme t;
-            t.name = "";
-            t.path = "";
+            t = defaultTheme;
         }
 
         return t;
@@ -486,7 +493,7 @@ namespace EditorNS
     void Editor::setTheme(Theme theme)
     {
         QMap<QString, QVariant> tmap;
-        tmap.insert("name", theme.name);
+        tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
     }
