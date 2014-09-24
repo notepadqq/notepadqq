@@ -87,6 +87,16 @@ UiDriver.registerEventHandler("C_CMD_SET_SELECTIONS_TEXT", function(msg, data, p
         editor.replaceSelection(dataSelections.join("\n"), selectMode);
 });
 
+/*
+    Retrieves a list of all current selections.
+    These will always be sorted, and never overlap (overlapping selections
+    are merged). Each object in the array contains anchor and head properties
+    referring to {line, ch} objects.
+*/
+UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS", function(msg, data, prevReturn) {
+    return editor.listSelections();
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
     return editor.getValue("\n").length;
 });

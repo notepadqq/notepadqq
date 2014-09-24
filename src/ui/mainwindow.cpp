@@ -597,9 +597,8 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 
 void MainWindow::on_action_Copy_triggered()
 {
-    QVariant text = currentEditor()->sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
-
-    QApplication::clipboard()->setText(text.toStringList().join("\n"));
+    QStringList sel = currentEditor()->selectedTexts();
+    QApplication::clipboard()->setText(sel.join("\n"));
 }
 
 void MainWindow::on_action_Paste_triggered()
@@ -668,10 +667,19 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
         m_statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
 
         QPair<int, int> cursor = editor->cursorPosition();
+        int selectedChars = 0;
+        int selectedPieces = 0;
+        QStringList selections = editor->selectedTexts();
+        for (QString sel : selections) {
+            selectedChars += sel.length();
+            selectedPieces += sel.split("\n").count();
+        }
+
         m_statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
                                          arg(cursor.first + 1).
                                          arg(cursor.second + 1).
-                                         arg(0).arg(0));
+                                         arg(selectedChars).
+                                         arg(selectedPieces));
     }
 }
 
@@ -996,7 +1004,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
     Editor *editor = currentEditor();
-    QStringList sel = editor->sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").toStringList();
+    QStringList sel = editor->selectedTexts();
 
     for (int i = 0; i < sel.length(); i++) {
         sel.replace(i, func(sel.at(i)));

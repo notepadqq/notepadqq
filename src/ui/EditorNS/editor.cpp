@@ -498,4 +498,31 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
     }
 
+    QList<Editor::Selection> Editor::selections()
+    {
+        QList<Selection> out;
+
+        QList<QVariant> sels = sendMessageWithResult("C_FUN_GET_SELECTIONS").toList();
+        for (int i = 0; i < sels.length(); i++) {
+            QVariantMap selMap = sels[i].toMap();
+            QVariantMap from = selMap.value("anchor").toMap();
+            QVariantMap to = selMap.value("head").toMap();
+
+            Selection sel;
+            sel.from.line = from.value("line").toInt();
+            sel.from.column = from.value("ch").toInt();
+            sel.to.line = to.value("line").toInt();
+            sel.to.column = to.value("ch").toInt();
+
+            out.append(sel);
+        }
+
+        return out;
+    }
+
+    QStringList Editor::selectedTexts()
+    {
+        QVariant text = sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
+        return text.toStringList();
+    }
 }

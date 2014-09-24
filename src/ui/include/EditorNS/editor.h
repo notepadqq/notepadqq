@@ -94,6 +94,16 @@ namespace EditorNS
             }
         };
 
+        struct Cursor {
+            int line;
+            int column;
+        };
+
+        struct Selection {
+            Cursor from;
+            Cursor to;
+        };
+
         /**
              * @brief Adds a new Editor to the internal buffer used by getNewEditor().
              *        You might want to call this method e.g. as soon as the application
@@ -191,6 +201,14 @@ namespace EditorNS
         QList<Theme> themes();
         void setTheme(Theme theme);
         Editor::Theme themeFromName(QString name);
+
+        QList<Selection> selections();
+
+        /**
+         * @brief Returns the currently selected texts.
+         * @return
+         */
+        QStringList selectedTexts();
 
     private:
         static QQueue<Editor*> m_editorBuffer;
