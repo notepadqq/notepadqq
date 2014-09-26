@@ -85,8 +85,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     QString oldTooltip;
 
     if (create) {
-        editor = Editor::getNewEditor();
-        editor->setParent(this);
+        editor = Editor::getNewEditor(this);
     } else {
         editor = source->editor(sourceTabIndex);
 

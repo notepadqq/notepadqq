@@ -86,18 +86,22 @@ namespace EditorNS
 
     }
 
-    Editor *Editor::getNewEditor()
+    Editor *Editor::getNewEditor(QWidget *parent)
     {
+        Editor *out;
+
         if (m_editorBuffer.length() == 0) {
             m_editorBuffer.enqueue(new Editor());
-            return new Editor();
-
+            out = new Editor();
         } else if (m_editorBuffer.length() == 1) {
             m_editorBuffer.enqueue(new Editor());
-            return m_editorBuffer.dequeue();
+            out = m_editorBuffer.dequeue();
+        } else {
+            out = m_editorBuffer.dequeue();
+        }
 
-        } else
-            return m_editorBuffer.dequeue();
+        out->setParent(parent);
+        return out;
     }
 
     void Editor::addEditorToBuffer(const int howMany)

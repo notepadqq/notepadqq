@@ -14,7 +14,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     setFixedSize(this->width(), this->height());
     setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    m_previewEditor = Editor::getNewEditor();
+    m_previewEditor = Editor::getNewEditor(this);
     m_previewEditor->setLanguageFromFileName("test.js");
     m_previewEditor->setValue(R"(var enabled = false;)" "\n"
                               R"()" "\n"

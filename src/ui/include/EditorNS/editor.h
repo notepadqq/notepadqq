@@ -84,7 +84,7 @@ namespace EditorNS
              * @brief Efficiently returns a new Editor object from an internal buffer.
              * @return
              */
-        static Editor *getNewEditor();
+        static Editor *getNewEditor(QWidget *parent = 0);
 
         static void invalidateEditorBuffer();
 
