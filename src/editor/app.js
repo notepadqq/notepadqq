@@ -254,8 +254,12 @@ UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevRet
 
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
     if (data.path != "") {
-        // Add the stylesheet only if it isn't already present
-        if (!$("link[href='" + data.path + "']").length) {
+        var stylesheet = $("link[href='" + data.path + "']");
+        if (stylesheet.length > 0) {
+            // Stylesheet already exists, move it to the bottom
+            stylesheet.appendTo('head');
+        } else {
+            // Add the stylesheet
             addStylesheet(data.path);
         }
     }
