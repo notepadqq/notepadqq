@@ -285,7 +285,6 @@
    <addaction name="action_Playback"/>
    <addaction name="actionRun_a_Macro_Multiple_Times"/>
    <addaction name="actionSave_Currently_Recorded_Macro"/>
-   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Open">
