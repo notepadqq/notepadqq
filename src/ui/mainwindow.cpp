@@ -213,7 +213,7 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_textFormat = label;
 
-    label = new QLabel("INS", this);
+    label = new QLabel(tr("INS"), this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(40);
     layout->addWidget(label);
@@ -321,6 +321,31 @@ void MainWindow::dropEvent(QDropEvent *e)
     if (!fileNames.empty()) {
         m_docEngine->loadDocuments(fileNames,
                                    m_topEditorContainer->currentTabWidget());
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *ev)
+{
+    if (ev->key() == Qt::Key_Insert) {
+        toggleOverwrite();
+    } else {
+        QMainWindow::keyPressEvent(ev);
+    }
+}
+
+void MainWindow::toggleOverwrite()
+{
+    m_overwrite = !m_overwrite;
+
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setOverwrite(m_overwrite);
+        return true;
+    });
+
+    if (m_overwrite) {
+        m_statusBar_overtypeNotify->setText(tr("OVR"));
+    } else {
+        m_statusBar_overtypeNotify->setText(tr("INS"));
     }
 }
 
@@ -634,6 +659,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
+    editor->setOverwrite(m_overwrite);
 }
 
 void MainWindow::on_cursorActivity()

@@ -14,4 +14,15 @@ namespace EditorNS
         QWebView::wheelEvent(ev);
     }
 
+    void CustomQWebView::keyPressEvent(QKeyEvent *ev)
+    {
+        switch (ev->key()) {
+        case Qt::Key_Insert:
+            ev->ignore();
+            break;
+        default:
+            QWebView::keyPressEvent(ev);
+        }
+    }
+
 }

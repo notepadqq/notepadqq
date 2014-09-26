@@ -19,6 +19,7 @@ namespace EditorNS
 
     protected:
         void wheelEvent(QWheelEvent *ev);
+        void keyPressEvent(QKeyEvent *ev);
     };
 
 }

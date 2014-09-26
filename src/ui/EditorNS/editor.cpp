@@ -525,4 +525,9 @@ namespace EditorNS
         QVariant text = sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
         return text.toStringList();
     }
+
+    void Editor::setOverwrite(bool overwrite)
+    {
+        sendMessage("C_CMD_SET_OVERWRITE", overwrite);
+    }
 }

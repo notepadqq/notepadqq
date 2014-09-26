@@ -52,6 +52,7 @@ protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *e);
     void dropEvent(QDropEvent *e);
+    void keyPressEvent(QKeyEvent *ev);
 private slots:
     void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
@@ -133,6 +134,8 @@ private:
     QLabel*             m_statusBar_overtypeNotify;
     QSettings*          m_settings;
     frmSearchReplace*   m_frmSearchReplace = 0;
+    bool                m_overwrite = false; // Overwrite mode vs Insert mode
+
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
@@ -174,6 +177,7 @@ private:
     void                loadIcons();
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
+    void                toggleOverwrite();
 };
 
 #endif // MAINWINDOW_H

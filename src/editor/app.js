@@ -263,6 +263,10 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
     editor.setOption("theme", data.name);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
+    editor.toggleOverwrite(data);
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
