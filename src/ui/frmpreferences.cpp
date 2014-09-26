@@ -11,6 +11,20 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 {
     ui->setupUi(this);
 
+    m_previewEditor = Editor::getNewEditor();
+    m_previewEditor->setLanguageFromFileName("test.js");
+    m_previewEditor->setValue(R"(var enabled = false;)" "\n"
+                              R"()" "\n"
+                              R"(function example(a, b) {)" "\n"
+                              R"(    if (b == 0 && enabled) {)" "\n"
+                              R"(        var ret = a > 3 ? "ok" : null;)" "\n"
+                              R"(        return !ret;)" "\n"
+                              R"(    })" "\n"
+                              R"()" "\n"
+                              R"(    return example(a + 1, 0);)" "\n"
+                              R"(})" "\n"
+                              );
+
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
 
@@ -116,7 +130,7 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     ui->cmbColorScheme->addItem("Default", defaultTheme);
     ui->cmbColorScheme->setCurrentIndex(0);
 
-    QString setting = s->value("colorScheme", "").toString();
+    QString themeSetting = s->value("colorScheme", "").toString();
 
     for (Editor::Theme theme : themes) {
         QMap<QString, QVariant> tmap;
@@ -124,10 +138,13 @@ void frmPreferences::loadColorSchemes(QSettings *s)
         tmap.insert("path", theme.path);
         ui->cmbColorScheme->addItem(theme.name, tmap);
 
-        if (setting == theme.name) {
+        if (themeSetting == theme.name) {
             ui->cmbColorScheme->setCurrentIndex(ui->cmbColorScheme->count() - 1);
         }
     }
+
+    ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
+    m_previewEditor->setTheme(Editor::themeFromName(themeSetting));
 }
 
 void frmPreferences::saveLanguages(QSettings *s)
@@ -226,4 +243,11 @@ void frmPreferences::on_txtLanguages_TabSize_valueChanged(int value)
 void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 {
     setCurrentLanguageTempValue("indentWithSpaces", checked);
+}
+
+void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
+{
+    QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
+    QString name = selected.value("name").toString();
+    m_previewEditor->setTheme(Editor::themeFromName(name));
 }

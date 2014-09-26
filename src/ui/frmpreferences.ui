@@ -109,6 +109,52 @@
       </item>
      </layout>
     </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>261</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Preview</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="colorSchemePreviewFrame">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>431</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
    </widget>
    <widget class="QWidget" name="page_2">
     <widget class="QCheckBox" name="chkLanguages_useDefaultSettings">

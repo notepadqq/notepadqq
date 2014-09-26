@@ -22,14 +22,11 @@ private slots:
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
-
     void on_cmbLanguages_currentIndexChanged(int index);
-
     void on_chkLanguages_useDefaultSettings_toggled(bool checked);
-
     void on_txtLanguages_TabSize_valueChanged(int value);
-
     void on_chkLanguages_IndentWithSpaces_toggled(bool checked);
+    void on_cmbColorScheme_currentIndexChanged(int index);
 
 private:
     Ui::frmPreferences *ui;
@@ -37,6 +34,7 @@ private:
     QMap<QString, QVariant> *m_langsTempSettings;
     QList<QMap<QString, QString>> m_langs;
     QVariantMap *m_commonLanguageProperties;
+    Editor *m_previewEditor;
 
     void loadLanguages(QSettings *s);
     void saveLanguages(QSettings *s);

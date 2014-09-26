@@ -153,6 +153,7 @@ namespace EditorNS
         void markDirty();
         QList<QMap<QString, QString> > languages();
         void setLanguage(const QString &language);
+        QString setLanguageFromFileName(QString fileName);
         QString setLanguageFromFileName();
         void setValue(const QString &value);
         QString value();
@@ -200,7 +201,7 @@ namespace EditorNS
 
         QList<Theme> themes();
         void setTheme(Theme theme);
-        Editor::Theme themeFromName(QString name);
+        static Editor::Theme themeFromName(QString name);
 
         QList<Selection> selections();
 

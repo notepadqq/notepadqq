@@ -152,6 +152,7 @@ namespace EditorNS
     void Editor::setFocus()
     {
         m_webView->setFocus();
+        sendMessage("C_CMD_SET_FOCUS");
     }
 
     /**
@@ -227,14 +228,19 @@ namespace EditorNS
         setIndentationMode(language);
     }
 
-    QString Editor::setLanguageFromFileName()
+    QString Editor::setLanguageFromFileName(QString fileName)
     {
         QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName().toString()).toString();
+                                             fileName).toString();
 
         setIndentationMode(lang);
 
         return lang;
+    }
+
+    QString Editor::setLanguageFromFileName()
+    {
+        return setLanguageFromFileName(fileName().toString());
     }
 
     void Editor::setIndentationMode(QString language)

@@ -38,6 +38,12 @@ UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevRetu
     Languages.setLanguage(editor, data);
 });
 
+/*
+    Sets the language by finding the more appropriate one for the file name.
+    E.g. path/to/worker.js => JavaScript
+    If nothing can be inferred from the file name, it looks at the editor content to see if it
+    can guess something (eg. files starting with #! are probably shell scripts).
+*/
 UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, data, prevReturn) {
     var lang = Languages.languageByFileName(editor, data);
     Languages.setLanguage(editor, lang);
@@ -271,10 +277,13 @@ UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevRet
     editor.toggleOverwrite(data);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_FOCUS", function(msg, data, prevReturn) {
+    editor.focus();
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
-        autofocus: true,
         lineNumbers: true,
         mode: { name: "" },
         highlightSelectionMatches: {style: "selectedHighlight", wordsOnly: true, delay: 25},
