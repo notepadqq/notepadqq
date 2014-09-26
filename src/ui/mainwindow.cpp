@@ -8,6 +8,7 @@
 #include "include/iconprovider.h"
 #include "include/EditorNS/bannerfilechanged.h"
 #include "include/EditorNS/bannerfileremoved.h"
+#include "include/clickablelabel.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -218,6 +219,17 @@ void MainWindow::createStatusBar()
     label->setMinimumWidth(40);
     layout->addWidget(label);
     m_statusBar_overtypeNotify = label;
+
+    if (Notepadqq::oldQt()) {
+        ClickableLabel *cklabel = new ClickableLabel("Qt", this);
+        cklabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        cklabel->setStyleSheet("QLabel { background-color: #FF4136; color: white; }");
+        cklabel->setCursor(Qt::PointingHandCursor);
+        connect(cklabel, &ClickableLabel::clicked, this, [&]() {
+            Notepadqq::showQtVersionWarning(false, this);
+        });
+        layout->addWidget(cklabel);
+    }
 
 
     status->addWidget(scrollArea, 1);

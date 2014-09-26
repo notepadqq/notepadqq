@@ -1,10 +1,15 @@
 #include "include/notepadqq.h"
 #include <QFileInfo>
+#include <QMessageBox>
+#include <QDir>
+#include <QCheckBox>
+#include <QSettings>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
 QCommandLineParser *Notepadqq::m_commandLineParameters = nullptr;
+bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
 {
@@ -65,4 +70,50 @@ void Notepadqq::parseCommandLineParameters()
 QCommandLineParser *Notepadqq::commandLineParameters()
 {
     return m_commandLineParameters;
+}
+
+bool Notepadqq::oldQt()
+{
+    return m_oldQt;
+}
+
+void Notepadqq::setOldQt(bool oldQt)
+{
+    m_oldQt = oldQt;
+}
+
+void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
+{
+    QSettings settings;
+    QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
+
+    QMessageBox msgBox(parent);
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
+    msgBox.setInformativeText("<html><body>"
+        "<p>" + QObject::tr("Notepadqq will try to do its best, but <b>some things will not work properly</b>.") + "</p>" +
+        QObject::tr(
+            "Install a newer Qt version (&ge; %1) from the official repositories "
+            "of your distribution.<br><br>"
+            "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.").
+                  arg("5.3").
+                  arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
+                  arg("<nobr>" + dir + "</nobr>") +
+        "</body></html>");
+
+    QCheckBox *chkDontShowAgain;
+
+    if (showCheckBox) {
+        chkDontShowAgain = new QCheckBox();
+        chkDontShowAgain->setText(QObject::tr("Don't show me this warning again"));
+        msgBox.setCheckBox(chkDontShowAgain);
+    }
+
+    msgBox.exec();
+
+    if (showCheckBox) {
+        settings.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
+        chkDontShowAgain->deleteLater();
+    }
 }

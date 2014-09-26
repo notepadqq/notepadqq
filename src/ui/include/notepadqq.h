@@ -45,8 +45,13 @@ public:
     static void parseCommandLineParameters();
     static QCommandLineParser *commandLineParameters();
 
+    static bool oldQt();
+    static void setOldQt(bool oldQt);
+
+    static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
 private:
     static QCommandLineParser *m_commandLineParameters;
+    static bool m_oldQt;
 };
 
 #endif // NOTEPADQQ_H

@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     EditorNS/bannerfilechanged.cpp \
     EditorNS/bannerbasicmessage.cpp \
     EditorNS/bannerfileremoved.cpp \
-    EditorNS/customqwebview.cpp
+    EditorNS/customqwebview.cpp \
+    clickablelabel.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -69,7 +70,8 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerfilechanged.h \
     include/EditorNS/bannerbasicmessage.h \
     include/EditorNS/bannerfileremoved.h \
-    include/EditorNS/customqwebview.h
+    include/EditorNS/customqwebview.h \
+    include/clickablelabel.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

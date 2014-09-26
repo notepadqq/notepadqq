@@ -3,18 +3,14 @@
 #include "include/EditorNS/editor.h"
 #include <QObject>
 #include <QFile>
-#include <QDir>
 #include <QApplication>
-#include <QMessageBox>
 #include <QSettings>
-#include <QCommandLineParser>
-#include <QCheckBox>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
 #endif
 
-void checkQtVersion(MainWindow *w);
+void checkQtVersion();
 
 int main(int argc, char *argv[])
 {
@@ -41,6 +37,8 @@ int main(int argc, char *argv[])
     }
     file.close();
 
+    checkQtVersion();
+
     MainWindow w;
     w.show();
 
@@ -50,46 +48,21 @@ int main(int argc, char *argv[])
 #endif
 
     QSettings settings;
-    if (settings.value("checkQtVersionAtStartup", true).toBool())
-        checkQtVersion(&w);
+    if (Notepadqq::oldQt() && settings.value("checkQtVersionAtStartup", true).toBool()) {
+        Notepadqq::showQtVersionWarning(true, &w);
+    }
 
     return a.exec();
 }
 
-void checkQtVersion(MainWindow *w)
+void checkQtVersion()
 {
     QString runtimeVersion = qVersion();
     if (runtimeVersion.startsWith("5.0") ||
             runtimeVersion.startsWith("5.1") ||
             runtimeVersion.startsWith("5.2")) {
 
-        QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
-
-        QMessageBox msgBox(w);
-        msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
-        msgBox.setInformativeText("<html><body>"
-            "<p>" + QObject::tr("Notepadqq will try to do its best, but <b>some things will not work properly</b>.") + "</p>" +
-            QObject::tr(
-                "Install a newer Qt version (&ge; %1) from the official repositories "
-                "of your distribution.<br><br>"
-                "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.").
-                      arg("5.3").
-                      arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
-                      arg("<nobr>" + dir + "</nobr>") +
-            "</body></html>");
-
-        QCheckBox *chkDontShowAgain = new QCheckBox();
-        chkDontShowAgain->setText(QObject::tr("Don't show me this warning again"));
-        msgBox.setCheckBox(chkDontShowAgain);
-
-        msgBox.exec();
-
-        QSettings s;
-        s.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
-
-        chkDontShowAgain->deleteLater();
+        Notepadqq::setOldQt(true);
     }
 }
 
