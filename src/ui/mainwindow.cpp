@@ -221,7 +221,7 @@ void MainWindow::createStatusBar()
     m_statusBar_overtypeNotify = label;
 
     if (Notepadqq::oldQt()) {
-        ClickableLabel *cklabel = new ClickableLabel("Qt", this);
+        ClickableLabel *cklabel = new ClickableLabel(QString("Qt ") + qVersion(), this);
         cklabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
         cklabel->setStyleSheet("QLabel { background-color: #FF4136; color: white; }");
         cklabel->setCursor(Qt::PointingHandCursor);
