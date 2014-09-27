@@ -90,7 +90,7 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
     QMessageBox msgBox(parent);
     msgBox.setWindowTitle(QCoreApplication::applicationName());
     msgBox.setIcon(QMessageBox::Warning);
-    msgBox.setText("<h3>" + QObject::tr("You're using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
+    msgBox.setText("<h3>" + QObject::tr("You are using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
     msgBox.setInformativeText("<html><body>"
         "<p>" + QObject::tr("Notepadqq will try to do its best, but <b>some things will not work properly</b>.") + "</p>" +
         QObject::tr(
