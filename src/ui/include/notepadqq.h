@@ -31,7 +31,7 @@
 #include <QUrl>
 #include <QCommandLineParser>
 
-#define POINTVERSION "0.36.0" // major.minor.revision
+#define POINTVERSION "0.37.0" // major.minor.revision
 
 class Notepadqq
 {
