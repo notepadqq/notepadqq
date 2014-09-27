@@ -11,16 +11,15 @@ How to build
 ------------
 You can build Notepadqq from command line:
 
-    notepadqq/src/ui$ git submodule init && git submodule update
-    notepadqq/src/ui$ qmake PREFIX=/opt/notepadqq notepadqq.pro
-    notepadqq/src/ui$ make
+    notepadqq$ ./configure
+    notepadqq$ make
     
 Install
 -------
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run
 
-    notepadqq/src/ui$ sudo make install
+    notepadqq$ sudo make install
 
 Debian package
 --------------
