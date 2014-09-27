@@ -11,6 +11,7 @@ How to build
 ------------
 You can build Notepadqq from command line:
 
+    notepadqq/src/ui$ git submodule init && git submodule update
     notepadqq/src/ui$ qmake PREFIX=/opt/notepadqq notepadqq.pro -r -spec linux-g++
     notepadqq/src/ui$ make
     
