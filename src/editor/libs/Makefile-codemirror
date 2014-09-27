@@ -8,5 +8,4 @@ all:
 	mkdir -p "$(DESTDIR)"
 	cd codemirror && cp -r addon keymap lib mode theme LICENSE "$(DESTDIR)"/
 	# Clean unnecessary files within "mode"
-	rm -f "$(DESTDIR)"/mode/index.html
-	find "$(DESTDIR)"/mode/ -type f -name 'index.html' -exec rm -f {} +
+	find "$(DESTDIR)"/mode/ -type f -name '*.html' -exec rm -f {} +
