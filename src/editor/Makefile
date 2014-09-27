@@ -9,4 +9,5 @@ all:
 	cp -r classes styles app.js index.html init.js "$(DESTDIR)"/
 	mkdir -p "$(DESTDIR)"/libs
 	cp -r libs/jquery "$(DESTDIR)"/libs/jquery/
-	cd libs/codemirror && $(MAKE) DESTDIR=../../"$(DESTDIR)"/libs/codemirror
+	# Call CodeMirror makefile passing DESTDIR as absolute path, so we have no problems with cd-ing to libs
+	$(MAKE) -C libs -f Makefile-codemirror DESTDIR="$(shell readlink -m "$(DESTDIR)")"/libs/codemirror
