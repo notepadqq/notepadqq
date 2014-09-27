@@ -3,7 +3,7 @@ Notepadqq
 
 Build dependencies
 ------------------
-   * Qt 5.3.1
+   * Qt 5.3
    * libqt5webkit5-dev
    * libqt5svg5-dev
 
