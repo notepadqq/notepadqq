@@ -11,10 +11,10 @@ CONFIG += c++11
 TARGET = notepadqq-bin
 TEMPLATE = app
 
-RCC_DIR = ../../out/build_data
-UI_DIR = ../../out/build_data
-MOC_DIR = ../../out/build_data
-OBJECTS_DIR = ../../out/build_data
+RCC_DIR = "$$PWD"/../../out/build_data
+UI_DIR = "$$PWD"/../../out/build_data
+MOC_DIR = "$$PWD"/../../out/build_data
+OBJECTS_DIR = "$$PWD"/../../out/build_data
 
 QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
 
@@ -29,16 +29,16 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug/bin
+        DESTDIR = "$$PWD"/../../out/debug/bin
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release/bin
+        DESTDIR = "$$PWD"/../../out/release/bin
     }
 }
 
 APPDATADIR = "$$DESTDIR/../appdata"
 
-INSTALLFILESDIR = ../../support_files
+INSTALLFILESDIR = "$$PWD"/../../support_files
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -102,7 +102,8 @@ PRE_TARGETDEPS += make_editor make_launch
 unix {
     # Set launch script permissions
     permissionsTarget.target = permissions
-    permissionsTarget.commands = (chmod 755 \"$$INSTALLFILESDIR/launch/notepadqq\")
+    permissionsTarget.commands = (cd \"$$PWD\" && \
+                                  chmod 755 \"$$DESTDIR/notepadqq\")
     QMAKE_EXTRA_TARGETS += permissionsTarget
     PRE_TARGETDEPS += permissions
 }
