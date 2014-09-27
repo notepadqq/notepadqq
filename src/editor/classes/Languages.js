@@ -355,6 +355,13 @@ var Languages = new function() {
             fileExtensions: ["mrc"]
         },
 
+        "modelica": {
+            name: "Modelica",
+            mode: "modelica",
+            mime: "text/x-modelica",
+            fileExtensions: ["mo"]
+        },
+
         "nginx": {
             name: "Nginx",
             mode: "nginx",
