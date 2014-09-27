@@ -212,6 +212,7 @@ namespace EditorNS
         QStringList selectedTexts();
 
         void setOverwrite(bool overwrite);
+        void forceRender(QSize size);
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

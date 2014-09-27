@@ -148,6 +148,10 @@ void frmPreferences::loadColorSchemes(QSettings *s)
 
     ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
     m_previewEditor->setTheme(Editor::themeFromName(themeSetting));
+
+    // Avoid glitch where scrollbars are appearing for a moment
+    QSize renderSize = ui->colorSchemePreviewFrame->size();
+    m_previewEditor->forceRender(renderSize);
 }
 
 void frmPreferences::saveLanguages(QSettings *s)

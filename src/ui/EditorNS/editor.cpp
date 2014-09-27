@@ -540,4 +540,17 @@ namespace EditorNS
     {
         sendMessage("C_CMD_SET_OVERWRITE", overwrite);
     }
+
+    void Editor::forceRender(QSize size)
+    {
+        QWebPage *page = m_webView->page();
+
+        page->setViewportSize(size);
+
+        QImage image(size.width(), size.height(), QImage::Format_Mono);
+        QPainter painter(&image);
+
+        page->mainFrame()->render(&painter);
+    }
+
 }
