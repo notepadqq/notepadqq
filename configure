@@ -3,4 +3,4 @@
 git submodule init
 git submodule update
 
-qmake PREFIX=${PREFIX:-/usr} src/ui/notepadqq.pro
+qmake PREFIX=${PREFIX:-/usr} notepadqq.pro
