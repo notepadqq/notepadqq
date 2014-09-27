@@ -65,22 +65,3 @@ void checkQtVersion()
         Notepadqq::setOldQt(true);
     }
 }
-
-void displayHelp()
-{
-    printf("\n"
-           "notepadqq    a Notepad++ clone\n\n"
-           "Text editor with support for multiple programming languages,\n"
-           "multiple encodings and plugin support.\n\n"
-           "Usage:\n"
-           "  notepadqq\n"
-           "  notepadqq [-h|--help]\n"
-           "  notepadqq [-v|--version]\n"
-           "  notepadqq [file1 file2 ...]\n\n"
-          );
-}
-
-void displayVersion()
-{
-    printf("%s\n", Notepadqq::version.toStdString().c_str());
-}
