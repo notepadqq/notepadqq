@@ -15,5 +15,5 @@ Thumbs.db
 build-notepadqq-Desktop*
 
 /out
-/src/ui/notepadqq.pro.user
-/src/ui/notepadqq.pro.user.*
+/src/ui/ui.pro.user
+/src/ui/ui.pro.user.*
