@@ -11,10 +11,10 @@ CONFIG += c++11
 TARGET = notepadqq-bin
 TEMPLATE = app
 
-RCC_DIR = "$$PWD"/../../out/build_data
-UI_DIR = "$$PWD"/../../out/build_data
-MOC_DIR = "$$PWD"/../../out/build_data
-OBJECTS_DIR = "$$PWD"/../../out/build_data
+RCC_DIR = ../../out/build_data
+UI_DIR = ../../out/build_data
+MOC_DIR = ../../out/build_data
+OBJECTS_DIR = ../../out/build_data
 
 QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
 
@@ -29,16 +29,16 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = "$$PWD"/../../out/debug/bin
+        DESTDIR = ../../out/debug/bin
     }
     CONFIG(release, debug|release) {
-        DESTDIR = "$$PWD"/../../out/release/bin
+        DESTDIR = ../../out/release/bin
     }
 }
 
 APPDATADIR = "$$DESTDIR/../appdata"
 
-INSTALLFILESDIR = "$$PWD"/../../support_files
+INSTALLFILESDIR = ../../support_files
 
 SOURCES += main.cpp\
     mainwindow.cpp \
