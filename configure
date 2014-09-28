@@ -17,7 +17,10 @@ case $key in
     exit
     shift
     ;;
-    --prefix)
+    --prefix=*) # --prefix=<something>
+    PREFIX="${key#*=}"
+    ;;
+    --prefix) # --prefix <something>
     PREFIX="$1"
     shift
     ;;
