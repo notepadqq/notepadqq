@@ -11,7 +11,7 @@ How to build
 ------------
 You can build Notepadqq from command line:
 
-    notepadqq$ ./configure-auto
+    notepadqq$ ./configure --prefix /usr
     notepadqq$ make
     
 Install
