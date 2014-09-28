@@ -11,6 +11,7 @@
 #endif
 
 void checkQtVersion();
+void forceDefaultSettings();
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +26,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
     QCoreApplication::setApplicationVersion(Notepadqq::version);
+
+    forceDefaultSettings();
 
     Notepadqq::parseCommandLineParameters();
 
@@ -63,5 +66,16 @@ void checkQtVersion()
             runtimeVersion.startsWith("5.2")) {
 
         Notepadqq::setOldQt(true);
+    }
+}
+
+void forceDefaultSettings()
+{
+    QSettings settings;
+
+    // Use spaces to indent makefile by default
+    if (!settings.contains("Languages/makefile/useDefaultSettings")) {
+        settings.setValue("Languages/makefile/useDefaultSettings", false);
+        settings.setValue("Languages/makefile/indentWithSpaces", false);
     }
 }
