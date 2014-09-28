@@ -73,7 +73,7 @@ void forceDefaultSettings()
 {
     QSettings settings;
 
-    // Use spaces to indent makefile by default
+    // Use tabs to indent makefile by default
     if (!settings.contains("Languages/makefile/useDefaultSettings")) {
         settings.setValue("Languages/makefile/useDefaultSettings", false);
         settings.setValue("Languages/makefile/indentWithSpaces", false);
