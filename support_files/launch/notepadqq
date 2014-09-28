@@ -12,4 +12,23 @@ fi
 
 export LD_LIBRARY_PATH="$PERSONAL_QT_LIB_PATH"
 
-exec "$SCRIPTPATH"/notepadqq-bin "$@"
+xprop -name "unity" >/dev/null 2>&1
+unity=no
+if [ $(echo $?) = 0 ]
+then
+  unity=yes
+fi
+
+xprop -name "kwin" >/dev/null 2>&1
+kde=no
+if [ $(echo $?) = 0 ]
+then
+  kde=yes
+fi
+
+if [ $unity = no ] && [ $kde = no ]
+then
+  gtk_style='-style=gtk'
+fi
+
+exec "$SCRIPTPATH"/notepadqq-bin $gtk_style "$@"
