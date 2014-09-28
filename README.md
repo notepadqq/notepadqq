@@ -21,12 +21,27 @@ by following the above steps, then run
 
     notepadqq$ sudo make install
 
-Debian package
---------------
-To build a Debian package, see here: https://github.com/notepadqq/notepadqq-packaging
+Distribution Packages
+---------------------
 
-Arch Linux Package
---------------
-You can install the package from AUR into different versions:
-   Stable (pre-build Debian package): https://aur.archlinux.org/packages/notepadqq-bin/
-   Dev (git version): https://aur.archlinux.org/packages/notepadqq-git/
+### Ubuntu (official packages)
+Notepadqq is available in an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
+
+```bash
+sudo add-apt-repository ppa:notepadqq-team/notepadqq
+sudo apt-get update
+sudo apt-get install notepadqq
+```
+
+### Debian (official packages)
+Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
+
+### Arch Linux
+You can install from AUR different versions of the package:
+
+ * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
+ * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)
+
+### Others
+Use a package for a compatible distribution, or build from source.
+If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
