@@ -1,10 +1,6 @@
 Notepadqq
 =========
 
-Build dependencies
-------------------
-
-
 Build
 -----
 
