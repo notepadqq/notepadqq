@@ -24,3 +24,9 @@ by following the above steps, then run
 Debian package
 --------------
 To build a Debian package, see here: https://github.com/notepadqq/notepadqq-packaging
+
+Arch Linux Package
+--------------
+You can install the package from AUR into different versions:
+   Stable (pre-build Debian package): https://aur.archlinux.org/packages/notepadqq-bin/
+   Dev (git version): https://aur.archlinux.org/packages/notepadqq-git/
