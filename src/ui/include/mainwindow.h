@@ -127,8 +127,11 @@ private:
     QMenu*              m_tabContextMenu;
     QList<QAction *>    m_tabContextMenuActions;
     QLabel*             m_statusBar_fileFormat;
-    QLabel*             m_statusBar_lengthInfo;
-    QLabel*             m_statusBar_selectionInfo;
+    QLabel*             m_statusBar_length;
+    QLabel*             m_statusBar_lines;
+    QLabel*             m_statusBar_curLine;
+    QLabel*             m_statusBar_curCol;
+    QLabel*             m_statusBar_selection;
     QLabel*             m_statusBar_EOLstyle;
     QLabel*             m_statusBar_textFormat;
     QLabel*             m_statusBar_overtypeNotify;

@@ -192,15 +192,30 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_fileFormat = label;
 
-    label = new QLabel("Length : 0     Lines : 1", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    layout->addWidget(label);
-    m_statusBar_lengthInfo = label;
-
-    label = new QLabel("Ln : 0     Col : 1     Sel : 0 | 0", this);
+    label = new QLabel("Length: 0", this);
     label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     layout->addWidget(label);
-    m_statusBar_selectionInfo = label;
+    m_statusBar_length = label;
+
+    label = new QLabel("Lines: 1", this);
+    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    layout->addWidget(label);
+    m_statusBar_lines = label;
+
+    label = new QLabel("Ln 0", this);
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    layout->addWidget(label);
+    m_statusBar_curLine = label;
+
+    label = new QLabel("Col 1", this);
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    layout->addWidget(label);
+    m_statusBar_curCol = label;
+
+    label = new QLabel("Sel 0, 0", this);
+    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    layout->addWidget(label);
+    m_statusBar_selection = label;
 
     label = new QLabel("EOL", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -702,7 +717,8 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
         // Update status bar
         int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
         int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-        m_statusBar_lengthInfo->setText(tr("Length : %1     Lines : %2").arg(len).arg(lines));
+        m_statusBar_length->setText(tr("%1 chars").arg(len));
+        m_statusBar_lines->setText(tr("%1 lines").arg(lines));
 
         QPair<int, int> cursor = editor->cursorPosition();
         int selectedChars = 0;
@@ -713,11 +729,9 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
             selectedPieces += sel.split("\n").count();
         }
 
-        m_statusBar_selectionInfo->setText(tr("Ln : %1     Col : %2     Sel : %3 | %4").
-                                         arg(cursor.first + 1).
-                                         arg(cursor.second + 1).
-                                         arg(selectedChars).
-                                         arg(selectedPieces));
+        m_statusBar_curLine->setText(tr("Ln %1").arg(cursor.first + 1));
+        m_statusBar_curCol->setText(tr("Col %1").arg(cursor.second + 1));
+        m_statusBar_selection->setText(tr("Sel %1, %2").arg(selectedChars).arg(selectedPieces));
     }
 }
 
