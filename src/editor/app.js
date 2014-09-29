@@ -173,9 +173,24 @@ function Search(regexStr, regexModifiers, forward) {
 
     // We get a new cursor every time, because the user could have moved within
     // the editor and we want to start searching from the new position.
-    var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), startPos, false);
+    var searchRegex = new RegExp(regexStr, regexModifiers);
+    var searchCursor = editor.getSearchCursor(searchRegex, startPos, false);
 
     var ret = forward ? searchCursor.findNext() : searchCursor.findPrevious();
+
+    if (!ret) {
+        // Maybe the end was reached. Try again from the start.
+        if (forward) {
+            searchCursor = editor.getSearchCursor(searchRegex, null, false);
+        } else {
+            var line = editor.lineCount() - 1;
+            var ch = editor.getLine(line).length;
+            searchCursor = editor.getSearchCursor(searchRegex, {line: line, ch: ch}, false);
+        }
+
+        ret = forward ? searchCursor.findNext() : searchCursor.findPrevious();
+    }
+
     if (ret) {
         if (forward)
              editor.setSelection(searchCursor.from(), searchCursor.to());
