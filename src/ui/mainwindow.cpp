@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
+    ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
     openCommandLineProvidedUrls();
@@ -671,6 +672,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
+    editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
     editor->setOverwrite(m_overwrite);
 }
 
@@ -1328,4 +1330,13 @@ void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
+}
+
+void MainWindow::on_actionShow_Tabs_toggled(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setTabsVisible(on);
+        return true;
+    });
+    m_settings->setValue("tabsVisible", on);
 }

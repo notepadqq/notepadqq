@@ -42,6 +42,12 @@ body {
 	cursor: default;
 }
 
+.editor.show-tabs .cm-tab {
+    background: url('../images/tab.png');
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
 /* Color of word highlight */
 .CodeMirror .cm-selectedHighlight {
 	background: rgba(0, 255, 0, 0.4); 

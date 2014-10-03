@@ -553,4 +553,9 @@ namespace EditorNS
         page->mainFrame()->render(&painter);
     }
 
+    void Editor::setTabsVisible(bool visible)
+    {
+        sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
+    }
+
 }

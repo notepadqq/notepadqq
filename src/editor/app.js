@@ -153,6 +153,14 @@ UiDriver.registerEventHandler("C_CMD_SET_LINE_WRAP", function(msg, data, prevRet
     editor.setOption("lineWrapping", data == true);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_TABS_VISIBLE", function(msg, data, prevReturn) {
+    if (data) {
+        $(".editor").addClass("show-tabs");
+    } else {
+        $(".editor").removeClass("show-tabs");
+    }
+});
+
 /* Search with a specified regex. Automatically select the text when found.
    The return value indicates whether a match was found.
    The return value is the array returned by the regex match method, in case you
