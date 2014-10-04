@@ -33,6 +33,8 @@
 
 #define POINTVERSION "0.37.0" // major.minor.revision
 
+#define MIB_UTF_8 106
+
 class Notepadqq
 {
 public:

@@ -120,6 +120,7 @@ private slots:
     void on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered();
     void on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered();
     void on_actionShow_Tabs_toggled(bool on);
+    void on_actionConvert_to_triggered();
 
 private:
     Ui::MainWindow*     ui;

@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     EditorNS/bannerbasicmessage.cpp \
     EditorNS/bannerfileremoved.cpp \
     EditorNS/customqwebview.cpp \
-    clickablelabel.cpp
+    clickablelabel.cpp \
+    frmencodingchooser.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -71,12 +72,14 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerbasicmessage.h \
     include/EditorNS/bannerfileremoved.h \
     include/EditorNS/customqwebview.h \
-    include/clickablelabel.h
+    include/clickablelabel.h \
+    include/frmencodingchooser.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
-    frmpreferences.ui
+    frmpreferences.ui \
+    frmencodingchooser.ui
 
 RESOURCES += \
     resources.qrc
