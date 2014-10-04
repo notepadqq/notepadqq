@@ -38,6 +38,10 @@ body {
     line-height: 1.3em;
 }
 
+.CodeMirror-scroll {
+    cursor: text
+}
+
 .CodeMirror-gutters {
 	cursor: default;
 }
