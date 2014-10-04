@@ -16,18 +16,18 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
    CodeMirror.isClean()
 */
 function isCleanOrForced(generation) {
-	return !forceDirty && editor.isClean(generation);
+    return !forceDirty && editor.isClean(generation);
 }
 
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
-	forceDirty = false;
+    forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
     UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
-	forceDirty = true;
-	UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    forceDirty = true;
+    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -117,9 +117,9 @@ UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
-	var line = data[0];
-	var ch = data[1];
-	editor.setCursor(line, ch);
+    var line = data[0];
+    var ch = data[1];
+    editor.setCursor(line, ch);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
@@ -128,9 +128,9 @@ UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevRe
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_SCROLL_POS", function(msg, data, prevReturn) {
-	var left = data[0];
-	var top = data[1];
-	editor.scrollTo(left, top);
+    var left = data[0];
+    var top = data[1];
+    editor.scrollTo(left, top);
 });
 
 UiDriver.registerEventHandler("C_CMD_SELECT_ALL", function(msg, data, prevReturn) {
