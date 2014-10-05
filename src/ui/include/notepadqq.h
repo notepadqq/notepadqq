@@ -31,7 +31,7 @@
 #include <QUrl>
 #include <QCommandLineParser>
 
-#define POINTVERSION "0.37.1" // major.minor.revision
+#define POINTVERSION "0.38.0" // major.minor.revision
 
 #define MIB_UTF_8 106
 
