@@ -187,47 +187,52 @@ void MainWindow::createStatusBar()
 
 
     QLabel *label;
+    QMargins tmpMargins;
 
     label = new QLabel("File Format", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(160);
+    label->setMinimumWidth(150);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_fileFormat = label;
 
-    label = new QLabel("Length: 0", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    layout->addWidget(label);
-    m_statusBar_length = label;
-
-    label = new QLabel("Lines: 1", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    layout->addWidget(label);
-    m_statusBar_lines = label;
-
-    label = new QLabel("Ln 0", this);
+    label = new QLabel("Ln 0, col 0", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    label->setMinimumWidth(120);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
-    m_statusBar_curLine = label;
-
-    label = new QLabel("Col 1", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    layout->addWidget(label);
-    m_statusBar_curCol = label;
+    m_statusBar_curPos = label;
 
     label = new QLabel("Sel 0, 0", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    label->setMinimumWidth(120);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_selection = label;
 
+    label = new QLabel("0 chars, 0 lines", this);
+    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
+    layout->addWidget(label);
+    m_statusBar_length_lines = label;
+
     label = new QLabel("EOL", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(128);
+    label->setMinimumWidth(118);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_EOLstyle = label;
 
     label = new QLabel("Encoding", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(128);
+    label->setMinimumWidth(118);
+    tmpMargins = label->contentsMargins();
+    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_textFormat = label;
 
@@ -720,8 +725,7 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
         // Update status bar
         int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
         int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-        m_statusBar_length->setText(tr("%1 chars").arg(len));
-        m_statusBar_lines->setText(tr("%1 lines").arg(lines));
+        m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 
         QPair<int, int> cursor = editor->cursorPosition();
         int selectedChars = 0;
@@ -732,9 +736,11 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
             selectedPieces += sel.split("\n").count();
         }
 
-        m_statusBar_curLine->setText(tr("Ln %1").arg(cursor.first + 1));
-        m_statusBar_curCol->setText(tr("Col %1").arg(cursor.second + 1));
-        m_statusBar_selection->setText(tr("Sel %1, %2").arg(selectedChars).arg(selectedPieces));
+        m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                     .arg(cursor.first + 1)
+                                     .arg(cursor.second + 1));
+
+        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
     }
 }
 
