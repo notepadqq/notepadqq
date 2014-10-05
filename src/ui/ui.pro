@@ -97,19 +97,11 @@ editorTarget.commands = (cd \"$$PWD\" && \
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_MKDIR} \"$$DESTDIR/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\")
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\" && \
+                         chmod 755 \"$$DESTDIR/notepadqq\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += make_editor make_launch
-
-unix {
-    # Set launch script permissions
-    permissionsTarget.target = permissions
-    permissionsTarget.commands = (cd \"$$PWD\" && \
-                                  chmod 755 \"$$DESTDIR/notepadqq\")
-    QMAKE_EXTRA_TARGETS += permissionsTarget
-    PRE_TARGETDEPS += permissions
-}
 
 ### INSTALL ###
 unix {
