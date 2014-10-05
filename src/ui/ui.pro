@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     EditorNS/bannerbasicmessage.cpp \
     EditorNS/bannerfileremoved.cpp \
     EditorNS/customqwebview.cpp \
-    clickablelabel.cpp
+    clickablelabel.cpp \
+    frmencodingchooser.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -71,12 +72,14 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerbasicmessage.h \
     include/EditorNS/bannerfileremoved.h \
     include/EditorNS/customqwebview.h \
-    include/clickablelabel.h
+    include/clickablelabel.h \
+    include/frmencodingchooser.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
-    frmpreferences.ui
+    frmpreferences.ui \
+    frmencodingchooser.ui
 
 RESOURCES += \
     resources.qrc
@@ -94,19 +97,11 @@ editorTarget.commands = (cd \"$$PWD\" && \
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_MKDIR} \"$$DESTDIR/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\")
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\" && \
+                         chmod 755 \"$$DESTDIR/notepadqq\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += make_editor make_launch
-
-unix {
-    # Set launch script permissions
-    permissionsTarget.target = permissions
-    permissionsTarget.commands = (cd \"$$PWD\" && \
-                                  chmod 755 \"$$DESTDIR/notepadqq\")
-    QMAKE_EXTRA_TARGETS += permissionsTarget
-    PRE_TARGETDEPS += permissions
-}
 
 ### INSTALL ###
 unix {

@@ -9,6 +9,7 @@
 #include "include/EditorNS/bannerfilechanged.h"
 #include "include/EditorNS/bannerfileremoved.h"
 #include "include/clickablelabel.h"
+#include "include/frmencodingchooser.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -89,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
+    ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
     openCommandLineProvidedUrls();
@@ -686,6 +688,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
+    editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
     editor->setOverwrite(m_overwrite);
 }
 
@@ -798,7 +801,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
     // Encoding
     QString encoding;
-    if (editor->codec()->mibEnum() == 106 && !editor->bom()) {
+    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
         // Is UTF-8 without BOM
         encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
     } else {
@@ -1342,4 +1345,27 @@ void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
+}
+
+void MainWindow::on_actionShow_Tabs_toggled(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setTabsVisible(on);
+        return true;
+    });
+    m_settings->setValue("tabsVisible", on);
+}
+
+void MainWindow::on_actionConvert_to_triggered()
+{
+    Editor *editor = currentEditor();
+    frmEncodingChooser *dialog = new frmEncodingChooser(this);
+    dialog->setEncoding(editor->codec());
+    dialog->setInfoText(tr("Convert to:"));
+
+    if (dialog->exec() == QDialog::Accepted) {
+        convertEditorEncoding(editor, dialog->selectedCodec(), false);
+    }
+
+    dialog->deleteLater();
 }

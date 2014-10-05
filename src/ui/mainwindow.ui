@@ -134,7 +134,7 @@
      <property name="title">
       <string>Show Symbol</string>
      </property>
-     <addaction name="actionShow_White_Space_and_TAB"/>
+     <addaction name="actionShow_Tabs"/>
      <addaction name="actionShow_End_of_Line"/>
      <addaction name="actionShow_All_Characters"/>
      <addaction name="separator"/>
@@ -508,12 +508,12 @@
     <string>Show End of Line</string>
    </property>
   </action>
-  <action name="actionShow_White_Space_and_TAB">
+  <action name="actionShow_Tabs">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show White Space and TAB</string>
+    <string>Show Tabs</string>
    </property>
   </action>
   <action name="actionShow_All_Characters">

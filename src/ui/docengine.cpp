@@ -1,4 +1,5 @@
 #include "include/docengine.h"
+#include "include/notepadqq.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextCodec>
@@ -291,7 +292,7 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
         // So we generate the BOM here, and then
         // we prepend it to the output of our QIODevice.
 
-        if (codec->mibEnum() == 106) { // UTF-8
+        if (codec->mibEnum() == MIB_UTF_8) { // UTF-8
             manualBom = getBomForCodec(codec);
         }
     }

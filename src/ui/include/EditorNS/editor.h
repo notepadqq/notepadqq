@@ -213,6 +213,8 @@ namespace EditorNS
 
         void setOverwrite(bool overwrite);
         void forceRender(QSize size);
+        void setTabsVisible(bool visible);
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

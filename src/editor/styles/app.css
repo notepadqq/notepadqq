@@ -1,5 +1,5 @@
 ﻿html {
-	height: 100vh;
+    height: 100vh;
 }
 
 body {
@@ -25,26 +25,36 @@ body {
 }*/
 
 .editor {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 
 .editor > .CodeMirror {
-	height: 100%;
-	/*cursor: text;*/
+    height: 100%;
+    /*cursor: text;*/
     line-height: 1.3em;
 }
 
+.CodeMirror-scroll {
+    cursor: text
+}
+
 .CodeMirror-gutters {
-	cursor: default;
+    cursor: default;
+}
+
+.editor.show-tabs .cm-tab {
+    background: url('../images/tab.png');
+    background-position: right;
+    background-repeat: no-repeat;
 }
 
 /* Color of word highlight */
 .CodeMirror .cm-selectedHighlight {
-	background: rgba(0, 255, 0, 0.4); 
+    background: rgba(0, 255, 0, 0.4); 
 }
 
 div.CodeMirror span.CodeMirror-matchingbracket {
