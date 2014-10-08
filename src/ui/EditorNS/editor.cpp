@@ -269,6 +269,15 @@ namespace EditorNS
         sendMessage("C_CMD_SET_INDENTATION_MODE", data);
     }
 
+    Editor::IndentationMode Editor::indentationMode()
+    {
+        QVariantMap indent = sendMessageWithResult("C_FUN_GET_INDENTATION_MODE").toMap();
+        IndentationMode out;
+        out.useTabs = indent.value("useTabs", true).toBool();
+        out.size = indent.value("size", 4).toInt();
+        return out;
+    }
+
     void Editor::setCustomIndentationMode(bool useTabs, int size)
     {
         m_customIndentationMode = true;
@@ -577,7 +586,7 @@ namespace EditorNS
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    Editor::IndentationMode Editor::detectIndentationMode(bool *found = nullptr)
+    Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
         QVariantMap indent =
                 sendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").toMap();

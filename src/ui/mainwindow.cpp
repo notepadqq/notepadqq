@@ -8,6 +8,7 @@
 #include "include/iconprovider.h"
 #include "include/EditorNS/bannerfilechanged.h"
 #include "include/EditorNS/bannerfileremoved.h"
+#include "include/EditorNS/bannerindentationdetected.h"
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include <QFileDialog>
@@ -1158,9 +1159,11 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
 {
+    Editor *editor = tabWidget->editor(tab);
+
     const int MAX_RECENT_ENTRIES = 10;
 
-    QUrl newUrl = tabWidget->editor(tab)->fileName();
+    QUrl newUrl = editor->fileName();
     QList<QVariant> recentDocs = m_settings->value("recentDocuments", QList<QVariant>()).toList();
     recentDocs.insert(0, QVariant(newUrl));
 
@@ -1176,6 +1179,45 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
     m_settings->setValue("recentDocuments", QVariant(recentDocs));
 
     updateRecentDocsInMenu();
+
+
+    checkIndentationMode(editor);
+}
+
+void MainWindow::checkIndentationMode(Editor *editor)
+{
+    bool found = false;
+    Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
+    if (found) {
+        Editor::IndentationMode curr = editor->indentationMode();
+        bool differentTabSpaces = detected.useTabs != curr.useTabs;
+        bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
+
+        if (differentTabSpaces || differentSpaceSize) {
+            // Show msg
+            BannerIndentationDetected *banner = new BannerIndentationDetected(
+                        differentSpaceSize,
+                        detected,
+                        curr,
+                        this);
+            banner->setObjectName("indentationdetected");
+
+            editor->insertBanner(banner);
+
+            connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
+                editor->removeBanner(banner);
+            });
+
+            connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
+                editor->removeBanner(banner);
+                if (detected.useTabs) {
+                    editor->setCustomIndentationMode(true);
+                } else {
+                    editor->setCustomIndentationMode(detected.useTabs, detected.size);
+                }
+            });
+        }
+    }
 }
 
 void MainWindow::updateRecentDocsInMenu()

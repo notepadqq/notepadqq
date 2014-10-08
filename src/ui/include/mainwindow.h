@@ -181,6 +181,7 @@ private:
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
+    void                checkIndentationMode(Editor *editor);
 };
 
 #endif // MAINWINDOW_H

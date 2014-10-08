@@ -15,8 +15,15 @@ namespace EditorNS
     public:
         explicit BannerBasicMessage(QWidget *parent = 0);
 
+        enum class Importance {
+            Warning,
+            Question
+        };
+
         void setMessage(QString text);
         QPushButton *addButton(QString text);
+        void setImportance(Importance importance);
+
     signals:
         void bannerRemoved();
 
@@ -27,7 +34,7 @@ namespace EditorNS
     private:
         QHBoxLayout *m_layout;
         QLabel *m_message;
-
+        QWidget *m_topWidget;
     };
 
 }

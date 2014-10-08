@@ -58,12 +58,16 @@ UiDriver.registerEventHandler("C_FUN_GET_CURRENT_LANGUAGE", function(msg, data, 
 
 UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {
     editor.setOption("indentWithTabs", data.useTabs);
-    editor.setOption("indentUnit", data.size);
     if (data.size !== undefined && data.size > 0) {
+        editor.setOption("indentUnit", data.size);
         editor.setOption("tabSize", data.size);
     }
 
     editor.refresh();
+});
+
+UiDriver.registerEventHandler("C_FUN_GET_INDENTATION_MODE", function(msg, data, prevReturn) {
+    return { useTabs: editor.options.indentWithTabs, size: editor.options.indentUnit };
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS_TEXT", function(msg, data, prevReturn) {

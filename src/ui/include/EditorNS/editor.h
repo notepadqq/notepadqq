@@ -244,8 +244,8 @@ namespace EditorNS
          * @brief Detect the indentation mode used within the current document.
          * @return
          */
-        Editor::IndentationMode detectIndentationMode(bool *found);
-
+        Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
+        Editor::IndentationMode indentationMode();
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

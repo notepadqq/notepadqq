@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     EditorNS/bannerfileremoved.cpp \
     EditorNS/customqwebview.cpp \
     clickablelabel.cpp \
-    frmencodingchooser.cpp
+    frmencodingchooser.cpp \
+    EditorNS/bannerindentationdetected.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -73,7 +74,8 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerfileremoved.h \
     include/EditorNS/customqwebview.h \
     include/clickablelabel.h \
-    include/frmencodingchooser.h
+    include/frmencodingchooser.h \
+    include/EditorNS/bannerindentationdetected.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

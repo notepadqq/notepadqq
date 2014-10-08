@@ -1,8 +1,6 @@
 #ifndef BANNERFILEREMOVED_H
 #define BANNERFILEREMOVED_H
 
-#include <QWidget>
-#include <QHBoxLayout>
 #include "include/EditorNS/bannerbasicmessage.h"
 
 namespace EditorNS
