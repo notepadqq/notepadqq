@@ -104,6 +104,11 @@ namespace EditorNS
             Cursor to;
         };
 
+        struct IndentationMode {
+            bool useTabs;
+            int size;
+        };
+
         /**
              * @brief Adds a new Editor to the internal buffer used by getNewEditor().
              *        You might want to call this method e.g. as soon as the application
@@ -173,9 +178,10 @@ namespace EditorNS
          *        will NOT modify these tab settings. Use
          *        clearCustomIndentationMode() to reset to default settings.
          * @param useTabs
-         * @param size
+         * @param size Size of an indentation. If 0, keeps the current one.
          */
         void setCustomIndentationMode(bool useTabs, int size);
+        void setCustomIndentationMode(bool useTabs);
         void clearCustomIndentationMode();
 
         qreal zoomFactor() const;
@@ -233,6 +239,12 @@ namespace EditorNS
         void setOverwrite(bool overwrite);
         void forceRender(QSize size);
         void setTabsVisible(bool visible);
+
+        /**
+         * @brief Detect the indentation mode used within the current document.
+         * @return
+         */
+        Editor::IndentationMode detectIndentationMode(bool *found);
 
     private:
         static QQueue<Editor*> m_editorBuffer;

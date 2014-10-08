@@ -304,6 +304,30 @@ UiDriver.registerEventHandler("C_CMD_SET_FOCUS", function(msg, data, prevReturn)
     editor.focus();
 });
 
+UiDriver.registerEventHandler("C_FUN_DETECT_INDENTATION_MODE", function(msg, data, prevReturn) {
+    var len = editor.lineCount();
+    var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space
+
+    for (var i = 0; i < len && i < 100; i++) {
+        var line = editor.getLine(i);
+        var matches = regexIndented.exec(line);
+        if (matches !== null) {
+            if (line[0] === "\t") { // Is a tab
+                return {found: true, useTabs: true, size: 0};
+            } else { // Is a space
+                var size = matches[1].length;
+                if (size === 2 || size === 4 || size === 8) {
+                    return {found: true, useTabs: false, size: size};
+                } else {
+                    return {found: false};
+                }
+            }
+        }
+    }
+
+    return {found: false};
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
