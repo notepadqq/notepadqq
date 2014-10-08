@@ -152,13 +152,32 @@ namespace EditorNS
         void markClean();
         void markDirty();
         QList<QMap<QString, QString> > languages();
+
+        /**
+         * @brief Set the language to use for the editor.
+         *        It automatically adjusts tab settings from
+         *        the default configuration for the specified language.
+         * @param language Language id
+         */
         void setLanguage(const QString &language);
         QString setLanguageFromFileName(QString fileName);
         QString setLanguageFromFileName();
         void setValue(const QString &value);
         QString value();
-        void setIndentationMode(bool useTabs, int size);
-        void setIndentationMode(QString language);
+
+        /**
+         * @brief Set custom indentation settings which may be different
+         *        from the default tab settings associated with the current
+         *        language.
+         *        If this method is called, further calls to setLanguage()
+         *        will NOT modify these tab settings. Use
+         *        clearCustomIndentationMode() to reset to default settings.
+         * @param useTabs
+         * @param size
+         */
+        void setCustomIndentationMode(bool useTabs, int size);
+        void clearCustomIndentationMode();
+
         qreal zoomFactor() const;
         void setZoomFactor(const qreal &factor);
         void setSelectionsText(const QStringList &texts, selectMode mode);
@@ -226,11 +245,15 @@ namespace EditorNS
         QString m_endOfLineSequence = "\n";
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
+        bool m_customIndentationMode = false;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
         void fullConstructor(const Theme &theme);
+
+        void setIndentationMode(bool useTabs, int size);
+        void setIndentationMode(QString language);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);

@@ -229,7 +229,8 @@ namespace EditorNS
     void Editor::setLanguage(const QString &language)
     {
         sendMessage("C_CMD_SET_LANGUAGE", language);
-        setIndentationMode(language);
+        if (!m_customIndentationMode)
+            setIndentationMode(language);
     }
 
     QString Editor::setLanguageFromFileName(QString fileName)
@@ -237,7 +238,8 @@ namespace EditorNS
         QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
                                              fileName).toString();
 
-        setIndentationMode(lang);
+        if (!m_customIndentationMode)
+            setIndentationMode(lang);
 
         return lang;
     }
@@ -265,6 +267,17 @@ namespace EditorNS
         data.insert("useTabs", useTabs);
         data.insert("size", size);
         sendMessage("C_CMD_SET_INDENTATION_MODE", data);
+    }
+
+    void Editor::setCustomIndentationMode(bool useTabs, int size)
+    {
+        m_customIndentationMode = true;
+        setIndentationMode(useTabs, size);
+    }
+
+    void Editor::clearCustomIndentationMode()
+    {
+        m_customIndentationMode = false;
     }
 
     void Editor::setValue(const QString &value)
