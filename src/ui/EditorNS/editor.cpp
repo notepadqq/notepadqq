@@ -278,7 +278,7 @@ namespace EditorNS
     void Editor::setCustomIndentationMode(bool useTabs)
     {
         m_customIndentationMode = true;
-        setIndentationMode(useTabs, 0); // FIXME No effect
+        setIndentationMode(useTabs, 0);
     }
 
     void Editor::clearCustomIndentationMode()
