@@ -249,7 +249,7 @@ namespace EditorNS
         return setLanguageFromFileName(fileName().toString());
     }
 
-    void Editor::setIndentationMode(QString language)
+    void Editor::setIndentationMode(const QString &language)
     {
         QSettings s;
         QString keyPrefix = "Languages/" + language + "/";
@@ -261,7 +261,7 @@ namespace EditorNS
                            s.value(keyPrefix + "tabSize", 4).toInt());
     }
 
-    void Editor::setIndentationMode(bool useTabs, int size)
+    void Editor::setIndentationMode(const bool useTabs, const int size)
     {
         QMap<QString, QVariant> data;
         data.insert("useTabs", useTabs);
@@ -278,13 +278,13 @@ namespace EditorNS
         return out;
     }
 
-    void Editor::setCustomIndentationMode(bool useTabs, int size)
+    void Editor::setCustomIndentationMode(const bool useTabs, const int size)
     {
         m_customIndentationMode = true;
         setIndentationMode(useTabs, size);
     }
 
-    void Editor::setCustomIndentationMode(bool useTabs)
+    void Editor::setCustomIndentationMode(const bool useTabs)
     {
         m_customIndentationMode = true;
         setIndentationMode(useTabs, 0);
@@ -293,6 +293,11 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
+    }
+
+    bool Editor::isUsingCustomIndentationMode() const
+    {
+        return m_customIndentationMode;
     }
 
     void Editor::setValue(const QString &value)

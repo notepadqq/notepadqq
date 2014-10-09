@@ -180,9 +180,10 @@ namespace EditorNS
          * @param useTabs
          * @param size Size of an indentation. If 0, keeps the current one.
          */
-        void setCustomIndentationMode(bool useTabs, int size);
-        void setCustomIndentationMode(bool useTabs);
+        void setCustomIndentationMode(const bool useTabs, const int size);
+        void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
+        bool isCustomIndentationMode() const;
 
         qreal zoomFactor() const;
         void setZoomFactor(const qreal &factor);
@@ -264,8 +265,8 @@ namespace EditorNS
 
         void fullConstructor(const Theme &theme);
 
-        void setIndentationMode(bool useTabs, int size);
-        void setIndentationMode(QString language);
+        void setIndentationMode(const bool useTabs, const int size);
+        void setIndentationMode(const QString &language);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
