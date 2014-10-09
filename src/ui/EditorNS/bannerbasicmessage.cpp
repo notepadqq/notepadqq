@@ -47,7 +47,7 @@ namespace EditorNS
                                      "}");
         } else if (importance == Importance::Question) {
             m_topWidget->setStyleSheet("#BannerBasicMessage_base {"
-                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(51, 153, 242, 255), stop:1 rgba(156, 209, 255, 255));"
+                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(85, 169, 242, 255), stop:1 rgba(181, 221, 255, 255));"
                                      "}");
         }
     }
