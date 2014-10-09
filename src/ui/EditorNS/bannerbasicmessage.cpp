@@ -58,6 +58,10 @@ namespace EditorNS
         button->setText(text);
         button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->insertWidget(m_layout->count() - 1, button);
+
+        /*button->setStyleSheet("QPushButton { border: 1px solid gray; background: transparent; padding: 5px; }"
+                              "QPushButton:hover { background: gray; }");*/
+
         return button;
     }
 

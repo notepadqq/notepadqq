@@ -21,16 +21,10 @@ namespace EditorNS
 
                 tmp = addButton(tr("Use spaces"));
                 connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useDocumentSettings);
-
-                tmp = addButton(tr("Use tabs"));
-                connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useApplicationSettings);
             } else {
                 message = message.arg(tr("tabs")).arg(tr("spaces"));
 
                 tmp = addButton(tr("Use tabs"));
-                connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useApplicationSettings);
-
-                tmp = addButton(tr("Use spaces"));
                 connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useDocumentSettings);
             }
         } else {
@@ -39,10 +33,10 @@ namespace EditorNS
 
             tmp = addButton(tr("Use %1 spaces").arg(detected.size));
             connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useDocumentSettings);
-
-            tmp = addButton(tr("Use %1 spaces").arg(current.size));
-            connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useApplicationSettings);
         }
+
+        tmp = addButton(tr("Ignore").arg(current.size));
+        connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useApplicationSettings);
 
         setMessage(message);
     }
