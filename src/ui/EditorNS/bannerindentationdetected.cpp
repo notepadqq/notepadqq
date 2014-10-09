@@ -35,7 +35,7 @@ namespace EditorNS
             connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useDocumentSettings);
         }
 
-        tmp = addButton(tr("Ignore").arg(current.size));
+        tmp = addButton(tr("Ignore"));
         connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useApplicationSettings);
 
         setMessage(message);
