@@ -988,6 +988,7 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
         connect(banner, &BannerFileRemoved::ignore, this, [=]() {
             editor->removeBanner(banner);
+            editor->setFocus();
         });
 
         connect(banner, &BannerFileRemoved::save, this, [=]() {
@@ -1001,11 +1002,14 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
         connect(banner, &BannerFileChanged::ignore, this, [=]() {
             editor->removeBanner(banner);
+            editor->setFocus();
             // FIXME Set editor as clean
         });
 
         connect(banner, &BannerFileChanged::reload, this, [=]() {
             editor->removeBanner(banner);
+            editor->setFocus();
+
             m_docEngine->reloadDocument(tabWidget, tab);
         });
     }
@@ -1206,6 +1210,7 @@ void MainWindow::checkIndentationMode(Editor *editor)
 
             connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
                 editor->removeBanner(banner);
+                editor->setFocus();
             });
 
             connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
@@ -1215,6 +1220,7 @@ void MainWindow::checkIndentationMode(Editor *editor)
                 } else {
                     editor->setCustomIndentationMode(detected.useTabs, detected.size);
                 }
+                editor->setFocus();
             });
         }
     }
