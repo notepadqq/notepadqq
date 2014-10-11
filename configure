@@ -38,7 +38,14 @@ case $key in
 esac
 done
 
-git submodule init
-git submodule update
+# If we're in a git repo, update the submodules.
+# If ".git" is not found, assume that the complete source
+# code is already available.
+if [ -d ".git" ]; then
+    git submodule init
+    git submodule update
+fi
+
+make distclean
 
 "$QMAKE_PATH" PREFIX="$PREFIX" "$@" notepadqq.pro
