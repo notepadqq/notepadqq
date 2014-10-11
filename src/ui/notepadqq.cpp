@@ -86,6 +86,7 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
 {
     QSettings settings;
     QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
+    QString altDir = "/opt/Qt";
 
     QMessageBox msgBox(parent);
     msgBox.setWindowTitle(QCoreApplication::applicationName());
@@ -96,10 +97,11 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
         QObject::tr(
             "Install a newer Qt version (&ge; %1) from the official repositories "
             "of your distribution.<br><br>"
-            "If it's not available, download Qt (&ge; %1) from %2 and install it to %3.").
+            "If it's not available, download Qt (&ge; %1) from %2 and install it to \"%3\" or to \"%4\".").
                   arg("5.3").
                   arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
-                  arg("<nobr>" + dir + "</nobr>") +
+                  arg("<nobr>" + dir + "</nobr>").
+                  arg("<nobr>" + altDir + "</nobr>") +
         "</body></html>");
 
     QCheckBox *chkDontShowAgain;
