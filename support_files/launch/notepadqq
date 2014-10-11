@@ -5,11 +5,13 @@ cd - > /dev/null
 
 if [ `getconf LONG_BIT` = "64" ]
 then
+    OPT_QT_LIB_PATH=/opt/Qt/5.3/gcc_64/lib
     PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc_64/lib
 else
+    OPT_QT_LIB_PATH=/opt/Qt/5.3/gcc/lib
     PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc/lib
 fi
 
-export LD_LIBRARY_PATH="$PERSONAL_QT_LIB_PATH"
+export LD_LIBRARY_PATH="$OPT_QT_LIB_PATH:$PERSONAL_QT_LIB_PATH:${LD_LIBRARY_PATH}"
 
 exec "$SCRIPTPATH"/notepadqq-bin "$@"
