@@ -121,6 +121,8 @@ private slots:
     void on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered();
     void on_actionShow_Tabs_toggled(bool on);
     void on_actionConvert_to_triggered();
+    void on_actionIndentation_Default_settings_triggered();
+    void on_actionIndentation_Custom_triggered();
 
 private:
     Ui::MainWindow*     ui;

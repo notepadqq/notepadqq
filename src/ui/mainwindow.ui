@@ -103,6 +103,13 @@
      <addaction name="actionUPPERCASE"/>
      <addaction name="actionLowercase"/>
     </widget>
+    <widget class="QMenu" name="menuIndentation">
+     <property name="title">
+      <string>Indentation</string>
+     </property>
+     <addaction name="actionIndentation_Default_settings"/>
+     <addaction name="actionIndentation_Custom"/>
+    </widget>
     <addaction name="action_Undo"/>
     <addaction name="action_Redo"/>
     <addaction name="separator"/>
@@ -115,6 +122,7 @@
     <addaction name="menuCopy_to_Clipboard"/>
     <addaction name="menuConvert_Case_to"/>
     <addaction name="menuEOL_Conversion"/>
+    <addaction name="menuIndentation"/>
    </widget>
    <widget class="QMenu" name="menu_Search">
     <property name="title">
@@ -823,6 +831,25 @@
   <action name="actionInterpret_as_UTF_16LE_UCS_2_Little_Endian">
    <property name="text">
     <string>Interpret as UTF-16LE (UCS-2 Little Endian)</string>
+   </property>
+  </action>
+  <action name="actionIndentation_Default_settings">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Default settings</string>
+   </property>
+  </action>
+  <action name="actionIndentation_Custom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Custom...</string>
    </property>
   </action>
  </widget>

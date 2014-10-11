@@ -293,6 +293,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
+        setIndentationMode(language());
     }
 
     bool Editor::isUsingCustomIndentationMode() const

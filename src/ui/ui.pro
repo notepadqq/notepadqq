@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     EditorNS/customqwebview.cpp \
     clickablelabel.cpp \
     frmencodingchooser.cpp \
-    EditorNS/bannerindentationdetected.cpp
+    EditorNS/bannerindentationdetected.cpp \
+    frmindentationmode.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -75,13 +76,15 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/customqwebview.h \
     include/clickablelabel.h \
     include/frmencodingchooser.h \
-    include/EditorNS/bannerindentationdetected.h
+    include/EditorNS/bannerindentationdetected.h \
+    include/frmindentationmode.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
     frmpreferences.ui \
-    frmencodingchooser.ui
+    frmencodingchooser.ui \
+    frmindentationmode.ui
 
 RESOURCES += \
     resources.qrc

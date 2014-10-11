@@ -63,7 +63,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="page">
     <widget class="QCheckBox" name="chkCheckQtVersionAtStartup">
@@ -248,6 +248,12 @@
         <width>71</width>
         <height>27</height>
        </rect>
+      </property>
+      <property name="minimum">
+       <number>2</number>
+      </property>
+      <property name="maximum">
+       <number>50</number>
       </property>
      </widget>
     </widget>

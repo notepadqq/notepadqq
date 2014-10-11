@@ -11,6 +11,7 @@
 #include "include/EditorNS/bannerindentationdetected.h"
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
+#include "include/frmindentationmode.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -67,6 +68,11 @@ MainWindow::MainWindow(QWidget *parent) :
     eolActionGroup->addAction(ui->actionWindows_Format);
     eolActionGroup->addAction(ui->actionUNIX_Format);
     eolActionGroup->addAction(ui->actionMac_Format);
+
+    // Action group for indentation modes
+    QActionGroup *indentationActionGroup = new QActionGroup(this);
+    indentationActionGroup->addAction(ui->actionIndentation_Default_settings);
+    indentationActionGroup->addAction(ui->actionIndentation_Custom);
 
     connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
             this, &MainWindow::on_customTabContextMenuRequested);
@@ -1420,6 +1426,27 @@ void MainWindow::on_actionConvert_to_triggered()
     if (dialog->exec() == QDialog::Accepted) {
         convertEditorEncoding(editor, dialog->selectedCodec(), false);
     }
+
+    dialog->deleteLater();
+}
+
+void MainWindow::on_actionIndentation_Default_settings_triggered()
+{
+    currentEditor()->clearCustomIndentationMode();
+}
+
+void MainWindow::on_actionIndentation_Custom_triggered()
+{
+    Editor *editor = currentEditor();
+
+    frmIndentationMode *dialog = new frmIndentationMode(this);
+    // TODO Load dialog with current settings
+    if (dialog->exec() == QDialog::Accepted) {
+        Editor::IndentationMode indent = dialog->indentationMode();
+        editor->setCustomIndentationMode(indent.useTabs, indent.size);
+    }
+
+    ui->actionIndentation_Custom->setChecked(editor->isUsingCustomIndentationMode());
 
     dialog->deleteLater();
 }
