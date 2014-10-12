@@ -452,7 +452,7 @@ var Languages = new function() {
             name: "Puppet",
             mode: "puppet",
             mime: "text/x-puppet",
-            fileExtensions: []
+            fileExtensions: ["pp"]
         },
 
         "r": {
@@ -488,14 +488,14 @@ var Languages = new function() {
             name: "Sass",
             mode: "sass",
             mime: "text/x-sass",
-            fileExtensions: []
+            fileExtensions: ["sass"]
         },
 
         "scheme": {
             name: "Scheme",
             mode: "scheme",
             mime: "text/x-scheme",
-            fileExtensions: ["xcscheme"]
+            fileExtensions: ["xcscheme", "scm", "ss"]
         },
 
         "scss": {
@@ -531,14 +531,14 @@ var Languages = new function() {
             name: "Smalltalk",
             mode: "smalltalk",
             mime: "text/x-stsrc",
-            fileExtensions: []
+            fileExtensions: ["st"]
         },
 
         "smarty": {
             name: "Smarty",
             mode: "smarty",
             mime: "text/x-smarty",
-            fileExtensions: []
+            fileExtensions: ["tpl"]
         },
 
         "smartymixed": {
@@ -559,7 +559,7 @@ var Languages = new function() {
             name: "SPARQL",
             mode: "sparql",
             mime: "application/x-sparql-query",
-            fileExtensions: []
+            fileExtensions: ["sparql"]
         },
 
         "sql": {
@@ -629,7 +629,7 @@ var Languages = new function() {
             name: "Turtle",
             mode: "turtle",
             mime: "text/turtle",
-            fileExtensions: []
+            fileExtensions: ["ttl"]
         },
 
         "vb": {
@@ -686,7 +686,7 @@ var Languages = new function() {
             name: "Z80",
             mode: "z80",
             mime: "text/x-z80",
-            fileExtensions: []
+            fileExtensions: ["z80"]
         },
 
     }
