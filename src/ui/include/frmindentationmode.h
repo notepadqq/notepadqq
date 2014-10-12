@@ -16,6 +16,7 @@ public:
     explicit frmIndentationMode(QWidget *parent = 0);
     ~frmIndentationMode();
 
+    void populateWidgets(EditorNS::Editor::IndentationMode indentationMode);
     EditorNS::Editor::IndentationMode indentationMode();
 
 private slots:

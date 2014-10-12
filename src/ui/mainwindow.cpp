@@ -821,6 +821,13 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         encoding = QString::fromUtf8(editor->codec()->name());
     }
     m_statusBar_textFormat->setText(encoding);
+
+    // Indentation
+    if (editor->isUsingCustomIndentationMode()) {
+        ui->actionIndentation_Custom->setChecked(true);
+    } else {
+        ui->actionIndentation_Default_settings->setChecked(true);
+    }
 }
 
 void MainWindow::on_action_Delete_triggered()
@@ -1226,6 +1233,7 @@ void MainWindow::checkIndentationMode(Editor *editor)
                 } else {
                     editor->setCustomIndentationMode(detected.useTabs, detected.size);
                 }
+                ui->actionIndentation_Custom->setChecked(true);
                 editor->setFocus();
             });
         }
@@ -1440,13 +1448,19 @@ void MainWindow::on_actionIndentation_Custom_triggered()
     Editor *editor = currentEditor();
 
     frmIndentationMode *dialog = new frmIndentationMode(this);
-    // TODO Load dialog with current settings
+    dialog->populateWidgets(editor->indentationMode());
+
     if (dialog->exec() == QDialog::Accepted) {
         Editor::IndentationMode indent = dialog->indentationMode();
         editor->setCustomIndentationMode(indent.useTabs, indent.size);
     }
 
-    ui->actionIndentation_Custom->setChecked(editor->isUsingCustomIndentationMode());
+    // Make sure the UI is consistent even if the user canceled the dialog.
+    if (editor->isUsingCustomIndentationMode()) {
+        ui->actionIndentation_Custom->setChecked(true);
+    } else {
+        ui->actionIndentation_Default_settings->setChecked(true);
+    }
 
     dialog->deleteLater();
 }
