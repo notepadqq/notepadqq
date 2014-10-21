@@ -604,6 +604,13 @@ var Languages = new function() {
             fileExtensions: ["tcl"]
         },
 
+        "textile": {
+            name: "Textile",
+            mode: "textile",
+            mime: "text/x-textile",
+            fileExtensions: []
+        },
+
         "tiddlywiki": {
             name: "TiddlyWiki",
             mode: "tiddlywiki",
@@ -630,6 +637,13 @@ var Languages = new function() {
             mode: "turtle",
             mime: "text/turtle",
             fileExtensions: ["ttl"]
+        },
+
+        "tornado": {
+            name: "Tornado",
+            mode: "tornado",
+            mime: "text/x-tornado",
+            fileExtensions: []
         },
 
         "vb": {
