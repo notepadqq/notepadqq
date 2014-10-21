@@ -123,6 +123,7 @@ private slots:
     void on_actionConvert_to_triggered();
     void on_actionIndentation_Default_settings_triggered();
     void on_actionIndentation_Custom_triggered();
+    void on_actionReload_file_interpreted_as_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -184,6 +185,7 @@ private:
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
     void                checkIndentationMode(Editor *editor);
+    bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
 };
 
 #endif // MAINWINDOW_H

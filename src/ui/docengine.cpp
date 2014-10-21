@@ -68,7 +68,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
 
 bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget)
 {
-    return loadDocuments(fileNames, tabWidget, false);
+    return loadDocuments(fileNames, tabWidget, false, nullptr, false);
 }
 
 bool DocEngine::loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget)
@@ -80,13 +80,18 @@ bool DocEngine::loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget)
 
 bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab)
 {
+    return reloadDocument(tabWidget, tab, nullptr, false);
+}
+
+bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
+{
     Editor *editor = tabWidget->editor(tab);
     QList<QUrl> files;
     files.append(editor->fileName());
-    return loadDocuments(files, tabWidget, true);
+    return loadDocuments(files, tabWidget, true, codec, bom);
 }
 
-bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload)
+bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom)
 {
     if(!fileNames.empty()) {
         m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
@@ -137,7 +142,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 QFile file(localFileName);
                 if (file.exists()) {
-                    if (!read(&file, editor)) {
+                    if (!read(&file, editor, codec, bom)) {
                         // Handle error
                         QMessageBox msgBox;
                         msgBox.setWindowTitle(QCoreApplication::applicationName());

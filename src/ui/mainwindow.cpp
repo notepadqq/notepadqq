@@ -414,6 +414,30 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
     m_tabContextMenu->exec(point);
 }
 
+bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
+{
+    if (!tabWidget->editor(tab)->isClean()) {
+        QMessageBox msgBox(this);
+        QString name = tabWidget->tabText(tab).toHtmlEscaped();
+
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+        msgBox.setText("<h3>" + tr("Your changes to «%1» will be discarded.").arg(name) + "</h3>");
+        msgBox.setButtonText(QMessageBox::Ok, tr("Reload"));
+
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.setEscapeButton(QMessageBox::Cancel);
+
+        msgBox.exec();
+
+        if (msgBox.standardButton(msgBox.clickedButton()) == QMessageBox::Cancel)
+            return false;
+    }
+
+    return m_docEngine->reloadDocument(tabWidget, tab, codec, bom);
+}
+
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
     EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
@@ -1172,6 +1196,11 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     Editor *editor = tabWidget->editor(tab);
     editor->removeBanner("filechanged");
     editor->removeBanner("fileremoved");
+
+    if (currentEditor() == editor) {
+        refreshEditorUiInfo(editor);
+        refreshEditorUiCursorInfo(editor);
+    }
 }
 
 void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
@@ -1277,8 +1306,12 @@ void MainWindow::updateRecentDocsInMenu()
 void MainWindow::on_actionReload_from_Disk_triggered()
 {
     EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
-    m_docEngine->reloadDocument(tabWidget,
-                                tabWidget->currentIndex());
+    Editor *editor = tabWidget->currentEditor();
+
+    reloadWithWarning(tabWidget,
+                      tabWidget->currentIndex(),
+                      editor->codec(),
+                      editor->bom());
 }
 
 void MainWindow::on_actionFind_Next_triggered()
@@ -1433,6 +1466,21 @@ void MainWindow::on_actionConvert_to_triggered()
 
     if (dialog->exec() == QDialog::Accepted) {
         convertEditorEncoding(editor, dialog->selectedCodec(), false);
+    }
+
+    dialog->deleteLater();
+}
+
+void MainWindow::on_actionReload_file_interpreted_as_triggered()
+{
+    Editor *editor = currentEditor();
+    frmEncodingChooser *dialog = new frmEncodingChooser(this);
+    dialog->setEncoding(editor->codec());
+    dialog->setInfoText(tr("Reload as:"));
+
+    if (dialog->exec() == QDialog::Accepted) {
+        EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
+        reloadWithWarning(tabWidget, tabWidget->currentIndex(), dialog->selectedCodec(), false);
     }
 
     dialog->deleteLater();
