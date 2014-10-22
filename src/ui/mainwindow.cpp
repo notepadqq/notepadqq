@@ -1512,3 +1512,17 @@ void MainWindow::on_actionIndentation_Custom_triggered()
 
     dialog->deleteLater();
 }
+
+void MainWindow::on_actionInterpret_as_triggered()
+{
+    Editor *editor = currentEditor();
+    frmEncodingChooser *dialog = new frmEncodingChooser(this);
+    dialog->setEncoding(editor->codec());
+    dialog->setInfoText(tr("Interpret as:"));
+
+    if (dialog->exec() == QDialog::Accepted) {
+        m_docEngine->reinterpretEncoding(editor, dialog->selectedCodec(), false);
+    }
+
+    dialog->deleteLater();
+}

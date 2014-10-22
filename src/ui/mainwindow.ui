@@ -182,6 +182,7 @@
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
     <addaction name="actionInterpret_as_UTF_16BE_UCS_2_Big_Endian"/>
     <addaction name="actionInterpret_as_UTF_16LE_UCS_2_Little_Endian"/>
+    <addaction name="actionInterpret_as"/>
     <addaction name="separator"/>
     <addaction name="actionReload_file_interpreted_as"/>
     <addaction name="separator"/>
@@ -850,6 +851,11 @@
    </property>
    <property name="text">
     <string>Custom...</string>
+   </property>
+  </action>
+  <action name="actionInterpret_as">
+   <property name="text">
+    <string>Interpret as...</string>
    </property>
   </action>
  </widget>

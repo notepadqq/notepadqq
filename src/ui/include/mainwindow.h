@@ -124,6 +124,7 @@ private slots:
     void on_actionIndentation_Default_settings_triggered();
     void on_actionIndentation_Custom_triggered();
     void on_actionReload_file_interpreted_as_triggered();
+    void on_actionInterpret_as_triggered();
 
 private:
     Ui::MainWindow*     ui;
