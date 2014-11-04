@@ -247,6 +247,7 @@ namespace EditorNS
          */
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
@@ -296,6 +297,8 @@ namespace EditorNS
         void sendMessage(const QString &msg);
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
         QVariant sendMessageWithResult(const QString &msg);
+
+        void print(QPrinter *printer);
     };
 
 }

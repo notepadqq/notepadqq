@@ -20,6 +20,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QToolButton>
+#include <QtPrintSupport/QPrintDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1525,4 +1526,12 @@ void MainWindow::on_actionInterpret_as_triggered()
     }
 
     dialog->deleteLater();
+}
+
+void MainWindow::on_actionPrint_triggered()
+{
+    QPrinter printer;
+    QPrintDialog *dialog = new QPrintDialog(&printer);
+    if ( dialog->exec() == QDialog::Accepted)
+          currentEditor()->print(&printer);
 }

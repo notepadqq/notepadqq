@@ -9,6 +9,7 @@
 #include "docengine.h"
 #include "frmsearchreplace.h"
 #include <functional>
+#include "QtPrintSupport/QPrinter"
 
 namespace Ui {
 class MainWindow;
@@ -125,6 +126,7 @@ private slots:
     void on_actionIndentation_Custom_triggered();
     void on_actionReload_file_interpreted_as_triggered();
     void on_actionInterpret_as_triggered();
+    void on_actionPrint_triggered();
 
 private:
     Ui::MainWindow*     ui;

@@ -612,4 +612,9 @@ namespace EditorNS
         return out;
     }
 
+    void Editor::print(QPrinter *printer)
+    {
+        m_webView->print(printer);
+    }
+
 }
