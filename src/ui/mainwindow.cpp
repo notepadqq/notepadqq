@@ -21,6 +21,7 @@
 #include <QScrollBar>
 #include <QToolButton>
 #include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrintPreviewDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1530,8 +1531,17 @@ void MainWindow::on_actionInterpret_as_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    QPrinter printer;
+    /*QPrinter printer;
     QPrintDialog *dialog = new QPrintDialog(&printer);
     if ( dialog->exec() == QDialog::Accepted)
-          currentEditor()->print(&printer);
+          currentEditor()->print(&printer);*/
+
+    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    QPrintPreviewDialog *pd = new QPrintPreviewDialog(printer);
+    connect(pd, &QPrintPreviewDialog::paintRequested, currentEditor(), &Editor::print);
+
+    pd->exec();
+
+    delete printer;
+    pd->deleteLater();
 }

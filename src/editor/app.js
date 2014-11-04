@@ -335,6 +335,14 @@ UiDriver.registerEventHandler("C_FUN_DETECT_INDENTATION_MODE", function(msg, dat
     return {found: false};
 });
 
+UiDriver.registerEventHandler("C_CMD_DISPLAY_PRINT_STYLE", function(msg, data, prevReturn) {
+    Printer.displayPrintStyle($(".editor")[0], editor);
+});
+
+UiDriver.registerEventHandler("C_CMD_DISPLAY_NORMAL_STYLE", function(msg, data, prevReturn) {
+    Printer.displayNormalStyle($(".editor")[0], editor);
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {

@@ -1,9 +1,9 @@
 ﻿html {
-    height: 100vh;
+    height: 100vh; /* Really needed? */
 }
 
 body {
-    height: 100vh;
+    height: 100vh; /* Really needed? */
     margin: 0;
 }
 

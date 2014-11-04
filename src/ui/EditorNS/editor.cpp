@@ -614,7 +614,9 @@ namespace EditorNS
 
     void Editor::print(QPrinter *printer)
     {
+        sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->print(printer);
+        sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
 }
