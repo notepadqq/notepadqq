@@ -2,14 +2,14 @@ var UiDriver = new function() {
     var handlers = [];
 
     this.sendMessage = function(msg, data) {
-	    cpp_ui_driver.messageReceived(msg, data);
+        cpp_ui_driver.messageReceived(msg, data);
     }
 
     this.registerEventHandler = function(msg, handler) {
         if (handlers[msg] === undefined)
-		    handlers[msg] = [];
+            handlers[msg] = [];
 
-	    handlers[msg].push(handler);
+        handlers[msg].push(handler);
     }
 
     this.messageReceived = function(msg) {
