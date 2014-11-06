@@ -22,6 +22,7 @@
 #include <QToolButton>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1544,4 +1545,52 @@ void MainWindow::on_actionPrint_triggered()
 
     delete printer;
     pd->deleteLater();
+}
+
+void MainWindow::on_actionLaunch_in_Firefox_triggered()
+{
+    QUrl fileName = currentEditor()->fileName();
+    if (!fileName.isEmpty()) {
+        QStringList args;
+        args << fileName.toString(QUrl::None);
+        QProcess::startDetached("firefox", args);
+    }
+}
+
+void MainWindow::on_actionLaunch_in_Chromium_triggered()
+{
+    QUrl fileName = currentEditor()->fileName();
+    if (!fileName.isEmpty()) {
+        QStringList args;
+        args << fileName.toString(QUrl::None);
+        QProcess::startDetached("chromium-browser", args);
+    }
+}
+
+void MainWindow::on_actionLaunch_in_Chrome_triggered()
+{
+    QUrl fileName = currentEditor()->fileName();
+    if (!fileName.isEmpty()) {
+        QStringList args;
+        args << fileName.toString(QUrl::None);
+        QProcess::startDetached("google-chrome", args);
+    }
+}
+
+void MainWindow::on_actionGet_php_help_triggered()
+{
+    Editor *editor = currentEditor();
+    QStringList selection = editor->selectedTexts();
+    QString term;
+
+    if (selection.isEmpty() || selection.first().isEmpty()) {
+        term = editor->getCurrentWord();
+    } else {
+        term = selection.first();
+    }
+
+    if (!term.isNull() && !term.isEmpty()) {
+        QUrl phpHelp = QUrl("https://php.net/" + QUrl::toPercentEncoding(term));
+        QDesktopServices::openUrl(phpHelp);
+    }
 }

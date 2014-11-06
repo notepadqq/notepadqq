@@ -248,6 +248,7 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
+        QString getCurrentWord();
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

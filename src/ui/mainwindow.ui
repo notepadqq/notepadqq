@@ -233,6 +233,7 @@
     <addaction name="action_Run"/>
     <addaction name="separator"/>
     <addaction name="actionLaunch_in_Firefox"/>
+    <addaction name="actionLaunch_in_Chrome"/>
     <addaction name="actionLaunch_in_Chromium"/>
     <addaction name="actionGet_php_help"/>
     <addaction name="actionGoogle_Search"/>
@@ -724,7 +725,7 @@
   </action>
   <action name="actionGet_php_help">
    <property name="text">
-    <string>Get php help</string>
+    <string>Get PHP help</string>
    </property>
   </action>
   <action name="actionGoogle_Search">
@@ -856,6 +857,11 @@
   <action name="actionInterpret_as">
    <property name="text">
     <string>Interpret as...</string>
+   </property>
+  </action>
+  <action name="actionLaunch_in_Chrome">
+   <property name="text">
+    <string>Launch in Chrome</string>
    </property>
   </action>
  </widget>

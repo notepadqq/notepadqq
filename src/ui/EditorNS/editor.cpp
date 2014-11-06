@@ -619,4 +619,9 @@ namespace EditorNS
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
+    QString Editor::getCurrentWord()
+    {
+        return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
+    }
+
 }

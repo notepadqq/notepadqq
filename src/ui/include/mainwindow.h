@@ -127,6 +127,10 @@ private slots:
     void on_actionReload_file_interpreted_as_triggered();
     void on_actionInterpret_as_triggered();
     void on_actionPrint_triggered();
+    void on_actionLaunch_in_Firefox_triggered();
+    void on_actionLaunch_in_Chromium_triggered();
+    void on_actionLaunch_in_Chrome_triggered();
+    void on_actionGet_php_help_triggered();
 
 private:
     Ui::MainWindow*     ui;

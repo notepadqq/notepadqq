@@ -343,6 +343,27 @@ UiDriver.registerEventHandler("C_CMD_DISPLAY_NORMAL_STYLE", function(msg, data, 
     Printer.displayNormalStyle($(".editor")[0], editor);
 });
 
+/*
+    Get the word under the (first) cursor head, or an empty string if there isn't one.
+*/
+UiDriver.registerEventHandler("C_FUN_GET_CURRENT_WORD", function(msg, data, prevReturn) {
+    var cur = editor.getCursor();
+    var line = editor.getLine(cur.line);
+
+    var strL = line.substring(0, cur.ch);
+    var strR = line.substring(cur.ch);
+    var regexL = /[^\w]?(\w*)$/;
+    var regexR = /^(\w*)[^\w]?/;
+    var matchL = regexL.exec(strL);
+    var matchR = regexR.exec(strR);
+
+    var word = "";
+    if (matchL !== null) word += matchL[1];
+    if (matchR !== null) word += matchR[1];
+
+    return word;
+});
+
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
