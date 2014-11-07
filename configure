@@ -46,6 +46,8 @@ if [ -d ".git" ]; then
     git submodule update
 fi
 
-make distclean || true
+if [ -f "Makefile" ]; then
+    make distclean
+fi
 
 "$QMAKE_PATH" PREFIX="$PREFIX" "$@" notepadqq.pro
