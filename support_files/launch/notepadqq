@@ -14,4 +14,10 @@ fi
 
 export LD_LIBRARY_PATH="$OPT_QT_LIB_PATH:$PERSONAL_QT_LIB_PATH:${LD_LIBRARY_PATH}"
 
-exec "$SCRIPTPATH"/notepadqq-bin "$@"
+if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
+    # Is installed
+    exec "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin "$@"
+else
+    # Is not installed
+    exec "$SCRIPTPATH"/../lib/notepadqq-bin "$@"
+fi

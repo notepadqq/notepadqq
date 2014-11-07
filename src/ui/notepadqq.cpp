@@ -22,7 +22,7 @@ QString Notepadqq::editorPath()
             arg(qApp->applicationDirPath());
 
     if(!QFile(def).exists())
-        def = QString("%1/../share/%2/editor/index.html").
+        def = QString("%1/../../share/%2/editor/index.html").
                 arg(qApp->applicationDirPath()).
                 arg(qApp->applicationName().toLower());
 

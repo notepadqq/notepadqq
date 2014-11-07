@@ -29,14 +29,15 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
-        DESTDIR = ../../out/debug/bin
+        DESTDIR = ../../out/debug/lib
     }
     CONFIG(release, debug|release) {
-        DESTDIR = ../../out/release/bin
+        DESTDIR = ../../out/release/lib
     }
 }
 
 APPDATADIR = "$$DESTDIR/../appdata"
+BINDIR = "$$DESTDIR/../bin"
 
 INSTALLFILESDIR = ../../support_files
 
@@ -101,9 +102,9 @@ editorTarget.commands = (cd \"$$PWD\" && \
 
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$DESTDIR/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$DESTDIR/\" && \
-                         chmod 755 \"$$DESTDIR/notepadqq\")
+                         $${QMAKE_MKDIR} \"$$BINDIR/\" && \
+                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
+                         chmod 755 \"$$BINDIR/notepadqq\")
 
 QMAKE_EXTRA_TARGETS += editorTarget launchTarget
 PRE_TARGETDEPS += make_editor make_launch
@@ -114,7 +115,7 @@ unix {
         PREFIX = /usr/local
     }
 
-    target.path = "$$INSTALL_ROOT$$PREFIX/bin/"
+    target.path = "$$INSTALL_ROOT$$PREFIX/lib/notepadqq/"
     target.files += "$$DESTDIR/$$TARGET"
 
     icon_h16.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/16x16/apps/"
@@ -143,7 +144,7 @@ unix {
     misc_data.files += "$$APPDATADIR/editor"
 
     launch.path = "$$INSTALL_ROOT$$PREFIX/bin/"
-    launch.files += "$$DESTDIR/notepadqq"
+    launch.files += "$$BINDIR/notepadqq"
     launch.CONFIG = no_check_exist     # Create the install rule even if the file doesn't exists when qmake is run
 
     shortcuts.path = "$$INSTALL_ROOT$$PREFIX/share/applications/"
