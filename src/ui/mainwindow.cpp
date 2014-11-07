@@ -1577,7 +1577,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
     }
 }
 
-void MainWindow::on_actionGet_php_help_triggered()
+void MainWindow::currentWordOnlineSearch(QString searchUrl)
 {
     Editor *editor = currentEditor();
     QStringList selection = editor->selectedTexts();
@@ -1590,7 +1590,22 @@ void MainWindow::on_actionGet_php_help_triggered()
     }
 
     if (!term.isNull() && !term.isEmpty()) {
-        QUrl phpHelp = QUrl("https://php.net/" + QUrl::toPercentEncoding(term));
+        QUrl phpHelp = QUrl(searchUrl.arg(QString(QUrl::toPercentEncoding(term))));
         QDesktopServices::openUrl(phpHelp);
     }
+}
+
+void MainWindow::on_actionGet_php_help_triggered()
+{
+    currentWordOnlineSearch("https://php.net/%1");
+}
+
+void MainWindow::on_actionGoogle_Search_triggered()
+{
+    currentWordOnlineSearch("https://www.google.com/?#q=%1");
+}
+
+void MainWindow::on_actionWikipedia_Search_triggered()
+{
+    currentWordOnlineSearch("https://en.wikipedia.org/?search=%1");
 }

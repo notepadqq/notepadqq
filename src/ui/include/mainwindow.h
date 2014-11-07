@@ -131,6 +131,8 @@ private slots:
     void on_actionLaunch_in_Chromium_triggered();
     void on_actionLaunch_in_Chrome_triggered();
     void on_actionGet_php_help_triggered();
+    void on_actionGoogle_Search_triggered();
+    void on_actionWikipedia_Search_triggered();
 
 private:
     Ui::MainWindow*     ui;
@@ -193,6 +195,7 @@ private:
     void                toggleOverwrite();
     void                checkIndentationMode(Editor *editor);
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
+    void                currentWordOnlineSearch(QString searchUrl);
 };
 
 #endif // MAINWINDOW_H
