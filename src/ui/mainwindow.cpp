@@ -1068,7 +1068,7 @@ void MainWindow::on_actionReplace_triggered()
 
 void MainWindow::on_actionPlain_text_triggered()
 {
-    currentEditor()->setLanguage("");
+    currentEditor()->setLanguage("plaintext");
 }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()

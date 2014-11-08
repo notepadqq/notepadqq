@@ -763,6 +763,9 @@ var Languages = new function() {
     }
     
     this.setLanguage = function(editor, languageId) {
+        if (languageId === "" || this.languages[languageId] === undefined)
+            languageId = "plaintext";
+
         var lang = this.languages[languageId];
         if (lang.mime !== undefined && lang.mime !== null && lang.mime !== "")
             editor.setOption("mode", lang.mime);
