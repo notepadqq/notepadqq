@@ -378,6 +378,7 @@ $(document).ready(function () {
         indentUnit: 4,
         tabSize: 4,
         matchBrackets: true,
+        extraKeys: {"Ctrl-Space": "autocomplete"},
         theme: _defaultTheme
     });
 
