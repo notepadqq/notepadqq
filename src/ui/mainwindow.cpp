@@ -24,12 +24,16 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 
+QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
+
 MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
 {
     ui->setupUi(this);
+
+    MainWindow::m_instances.append(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
     m_settings = new QSettings(this);
@@ -127,8 +131,20 @@ MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    MainWindow::m_instances.removeAll(this);
+
     delete ui;
     delete m_docEngine;
+}
+
+QList<MainWindow*> MainWindow::instances()
+{
+    return MainWindow::m_instances;
+}
+
+TopEditorContainer *MainWindow::topEditorContainer()
+{
+    return m_topEditorContainer;
 }
 
 void MainWindow::restoreWindowSettings()

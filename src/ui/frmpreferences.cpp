@@ -2,6 +2,7 @@
 #include "include/EditorNS/editor.h"
 #include "ui_frmpreferences.h"
 #include "include/EditorNS/editor.h"
+#include "include/mainwindow.h"
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -64,24 +65,26 @@ void frmPreferences::on_buttonBox_accepted()
     saveColorScheme(&s);
 
     // Apply changes to currently opened editors
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget * /*tabWidget*/, Editor *editor) {
+    for (MainWindow *w : MainWindow::instances()) {
+        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
 
-        // Reset language-dependent settings (e.g. tab settings)
-        editor->setLanguage(editor->language());
+            // Reset language-dependent settings (e.g. tab settings)
+            editor->setLanguage(editor->language());
 
-        // Set theme
-        QMap<QString, QVariant> theme_map = ui->cmbColorScheme->currentData().toMap();
-        Editor::Theme theme;
-        theme.name = theme_map.value("name").toString();
-        theme.path = theme_map.value("path").toString();
-        editor->setTheme(theme);
+            // Set theme
+            QMap<QString, QVariant> theme_map = ui->cmbColorScheme->currentData().toMap();
+            Editor::Theme theme;
+            theme.name = theme_map.value("name").toString();
+            theme.path = theme_map.value("path").toString();
+            editor->setTheme(theme);
 
-        // Invalidate already initialized editors in the buffer
-        editor->invalidateEditorBuffer();
-        editor->addEditorToBuffer();
+            // Invalidate already initialized editors in the buffer
+            editor->invalidateEditorBuffer();
+            editor->addEditorToBuffer();
 
-        return true;
-    });
+            return true;
+        });
+    }
 
     accept();
 }
