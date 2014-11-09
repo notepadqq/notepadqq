@@ -24,7 +24,7 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
@@ -103,7 +103,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
-    openCommandLineProvidedUrls();
+    if (firstWindow) {
+        openCommandLineProvidedUrls();
+    } else {
+        ui->action_New->trigger();
+    }
     // From now on, there is at least an Editor and at least
     // an EditorTabWidget within m_topEditorContainer.
 
@@ -1608,4 +1612,10 @@ void MainWindow::on_actionGoogle_Search_triggered()
 void MainWindow::on_actionWikipedia_Search_triggered()
 {
     currentWordOnlineSearch("https://en.wikipedia.org/?search=%1");
+}
+
+void MainWindow::on_actionOpen_a_New_Window_triggered()
+{
+    MainWindow *b = new MainWindow(false, 0);
+    b->show();
 }

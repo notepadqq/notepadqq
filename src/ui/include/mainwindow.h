@@ -20,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(bool firstWindow, QWidget *parent = 0);
     ~MainWindow();
 
     /**
@@ -133,6 +133,7 @@ private slots:
     void on_actionGet_php_help_triggered();
     void on_actionGoogle_Search_triggered();
     void on_actionWikipedia_Search_triggered();
+    void on_actionOpen_a_New_Window_triggered();
 
 private:
     Ui::MainWindow*     ui;

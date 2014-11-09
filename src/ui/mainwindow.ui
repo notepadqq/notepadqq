@@ -245,6 +245,12 @@
     <addaction name="separator"/>
     <addaction name="actionModify_Shortcut_Delete_Command"/>
    </widget>
+   <widget class="QMenu" name="menu_Window">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+    <addaction name="actionOpen_a_New_Window"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_Search"/>
@@ -254,6 +260,7 @@
    <addaction name="menuSe_ttings"/>
    <addaction name="menuMacro"/>
    <addaction name="menuRun"/>
+   <addaction name="menu_Window"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -862,6 +869,11 @@
   <action name="actionLaunch_in_Chrome">
    <property name="text">
     <string>Launch in Chrome</string>
+   </property>
+  </action>
+  <action name="actionOpen_a_New_Window">
+   <property name="text">
+    <string>Open a New Window</string>
    </property>
   </action>
  </widget>

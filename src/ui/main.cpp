@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    MainWindow w;
+    MainWindow w(true, 0);
     w.show();
 
 #ifdef QT_DEBUG
