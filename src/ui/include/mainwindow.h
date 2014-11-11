@@ -20,8 +20,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(bool firstWindow, QWidget *parent = 0);
     ~MainWindow();
+
+    static QList<MainWindow *> instances();
 
     /**
      * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
@@ -48,6 +50,8 @@ public:
          askToSaveChangesReason_tabClosing  /** The tab is closing */
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
+
+    TopEditorContainer *topEditorContainer();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -133,8 +137,10 @@ private slots:
     void on_actionGet_php_help_triggered();
     void on_actionGoogle_Search_triggered();
     void on_actionWikipedia_Search_triggered();
+    void on_actionOpen_a_New_Window_triggered();
 
 private:
+    static QList<MainWindow*> m_instances;
     Ui::MainWindow*     ui;
     TopEditorContainer* m_topEditorContainer;
     DocEngine*          m_docEngine;

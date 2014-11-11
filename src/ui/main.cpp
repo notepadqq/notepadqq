@@ -1,9 +1,9 @@
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
 #include "include/EditorNS/editor.h"
+#include "include/singleapplication.h"
 #include <QObject>
 #include <QFile>
-#include <QApplication>
 #include <QSettings>
 
 #ifdef QT_DEBUG
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     qDebug() << "Start-time benchmark started.";
 #endif
 
-    QApplication a(argc, argv);
+    SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
@@ -30,6 +30,13 @@ int main(int argc, char *argv[])
     forceDefaultSettings();
 
     Notepadqq::parseCommandLineParameters();
+
+    if (a.attachToOtherInstance()) {
+        return EXIT_SUCCESS;
+    }
+
+    // There are no other instances.
+    a.startServer();
 
     Editor::addEditorToBuffer();
 
@@ -42,7 +49,7 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    MainWindow w;
+    MainWindow w(true, 0);
     w.show();
 
 #ifdef QT_DEBUG

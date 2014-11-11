@@ -24,12 +24,16 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 
-MainWindow::MainWindow(QWidget *parent) :
+QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
+
+MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
 {
     ui->setupUi(this);
+
+    MainWindow::m_instances.append(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
     m_settings = new QSettings(this);
@@ -103,7 +107,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
-    openCommandLineProvidedUrls();
+    if (firstWindow) {
+        openCommandLineProvidedUrls();
+    } else {
+        ui->action_New->trigger();
+    }
     // From now on, there is at least an Editor and at least
     // an EditorTabWidget within m_topEditorContainer.
 
@@ -123,8 +131,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    MainWindow::m_instances.removeAll(this);
+
     delete ui;
     delete m_docEngine;
+}
+
+QList<MainWindow*> MainWindow::instances()
+{
+    return MainWindow::m_instances;
+}
+
+TopEditorContainer *MainWindow::topEditorContainer()
+{
+    return m_topEditorContainer;
 }
 
 void MainWindow::restoreWindowSettings()
@@ -1608,4 +1628,10 @@ void MainWindow::on_actionGoogle_Search_triggered()
 void MainWindow::on_actionWikipedia_Search_triggered()
 {
     currentWordOnlineSearch("https://en.wikipedia.org/?search=%1");
+}
+
+void MainWindow::on_actionOpen_a_New_Window_triggered()
+{
+    MainWindow *b = new MainWindow(false, 0);
+    b->show();
 }

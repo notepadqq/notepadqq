@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webkitwidgets printsupport
+QT       += core gui svg widgets webkitwidgets printsupport network
 
 CONFIG += c++11
 
@@ -59,7 +59,9 @@ SOURCES += main.cpp\
     clickablelabel.cpp \
     frmencodingchooser.cpp \
     EditorNS/bannerindentationdetected.cpp \
-    frmindentationmode.cpp
+    frmindentationmode.cpp \
+    singleapplication.cpp \
+    localcommunication.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -78,7 +80,9 @@ HEADERS  += include/mainwindow.h \
     include/clickablelabel.h \
     include/frmencodingchooser.h \
     include/EditorNS/bannerindentationdetected.h \
-    include/frmindentationmode.h
+    include/frmindentationmode.h \
+    include/singleapplication.h \
+    include/localcommunication.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
