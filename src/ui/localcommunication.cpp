@@ -10,13 +10,25 @@ bool LocalCommunication::sendRaw(QByteArray data, QLocalSocket *socket)
 
     int written = 0;
     while (written < header.length()) {
-        written += socket->write(header);
+        int bytes = socket->write(header);
+
+        if (bytes > -1)
+            written += bytes;
+        else
+            return false;
     }
 
     written = 0;
     while (written < data.length()) {
-        written += socket->write(data);
+        int bytes = socket->write(data);
+
+        if (bytes > -1)
+            written += bytes;
+        else
+            return false;
     }
+
+    return true;
 }
 
 bool LocalCommunication::send(QString message, QLocalSocket *socket)
