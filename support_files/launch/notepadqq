@@ -1,7 +1,5 @@
 #!/bin/sh
-cd `dirname $0` > /dev/null
-SCRIPTPATH=`pwd -P`
-cd - > /dev/null
+SCRIPTPATH="$(dirname "$(readlink -f "$0")")"
 
 if [ `getconf LONG_BIT` = "64" ]
 then
@@ -15,9 +13,13 @@ fi
 export LD_LIBRARY_PATH="$OPT_QT_LIB_PATH:$PERSONAL_QT_LIB_PATH:${LD_LIBRARY_PATH}"
 
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
-    # Is installed
+    # Nqq is installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin "$@"
-else
-    # Is not installed
+elif [ -f "$SCRIPTPATH"/../lib/notepadqq-bin ]; then
+    # Nqq is not installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq-bin "$@"
+else
+    # Nqq is installed via deb package:
+    # this script is in the same directory of the binary file.
+    exec "$SCRIPTPATH"/notepadqq-bin "$@"
 fi
