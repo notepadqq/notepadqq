@@ -1,9 +1,5 @@
 #include "include/localcommunication.h"
 
-LocalCommunication::LocalCommunication()
-{
-}
-
 bool LocalCommunication::sendRaw(QByteArray data, QLocalSocket *socket)
 {
     if (data.length() > MAX_PKT_SIZE)
