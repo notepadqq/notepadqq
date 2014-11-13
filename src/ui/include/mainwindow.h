@@ -20,10 +20,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(bool firstWindow, QWidget *parent = 0);
+    explicit MainWindow(const QStringList &arguments, QWidget *parent = 0);
     ~MainWindow();
 
     static QList<MainWindow *> instances();
+    static MainWindow * lastActiveInstance();
 
     /**
      * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
@@ -53,11 +54,15 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
+    void openCommandLineProvidedUrls(const QStringList &arguments);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *e);
     void dropEvent(QDropEvent *e);
     void keyPressEvent(QKeyEvent *ev);
+    void changeEvent(QEvent *e);
+
 private slots:
     void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
@@ -191,7 +196,6 @@ private:
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     Editor*             currentEditor();
-    void                openCommandLineProvidedUrls();
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();

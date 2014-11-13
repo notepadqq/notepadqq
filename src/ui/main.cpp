@@ -29,13 +29,29 @@ int main(int argc, char *argv[])
 
     forceDefaultSettings();
 
-    Notepadqq::parseCommandLineParameters();
+    // Check for "run-and-exit" options like -h or -v
+    QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
+    delete parser;
 
     if (a.attachToOtherInstance()) {
         return EXIT_SUCCESS;
     }
 
-    // There are no other instances.
+    QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QStringList &arguments) {
+        // Send the args to the last focused window
+        MainWindow *win = MainWindow::lastActiveInstance();
+        if (win != nullptr) {
+            win->openCommandLineProvidedUrls(arguments);
+
+            // Activate the window
+            win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+            win->raise();
+            win->show();
+            win->activateWindow();
+        }
+    });
+
+    // There are no other instances: start a new server.
     a.startServer();
 
     Editor::addEditorToBuffer();
@@ -49,7 +65,7 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    MainWindow w(true, 0);
+    MainWindow w(QApplication::arguments(), 0);
     w.show();
 
 #ifdef QT_DEBUG

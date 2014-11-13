@@ -26,7 +26,7 @@
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
-MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
+MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
@@ -107,11 +107,7 @@ MainWindow::MainWindow(bool firstWindow, QWidget *parent) :
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
-    if (firstWindow) {
-        openCommandLineProvidedUrls();
-    } else {
-        ui->action_New->trigger();
-    }
+    openCommandLineProvidedUrls(arguments);
     // From now on, there is at least an Editor and at least
     // an EditorTabWidget within m_topEditorContainer.
 
@@ -140,6 +136,15 @@ MainWindow::~MainWindow()
 QList<MainWindow*> MainWindow::instances()
 {
     return MainWindow::m_instances;
+}
+
+MainWindow *MainWindow::lastActiveInstance()
+{
+    if (m_instances.length() > 0) {
+        return m_instances.last();
+    } else {
+        return nullptr;
+    }
 }
 
 TopEditorContainer *MainWindow::topEditorContainer()
@@ -326,9 +331,14 @@ void MainWindow::setupLanguagesMenu()
     }
 }
 
-void MainWindow::openCommandLineProvidedUrls()
+void MainWindow::openCommandLineProvidedUrls(const QStringList &arguments)
 {
-    QCommandLineParser *parser = Notepadqq::commandLineParameters();
+    if (arguments.count() == 0) {
+        ui->action_New->trigger();
+        return;
+    }
+
+    QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(arguments);
 
     QStringList rawUrls = parser->positionalArguments();
 
@@ -359,9 +369,7 @@ void MainWindow::openCommandLineProvidedUrls()
         m_docEngine->loadDocuments(files, tabW);
     }
 
-    // Activate the window
-    activateWindow();
-    raise();
+    delete parser;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -394,6 +402,21 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
         toggleOverwrite();
     } else {
         QMainWindow::keyPressEvent(ev);
+    }
+}
+
+void MainWindow::changeEvent(QEvent *e)
+{
+    if (e->type() == QEvent::ActivationChange) {
+        if (isActiveWindow()) {
+            if (m_instances.length() > 0 && m_instances.last() != this) {
+                int pos = m_instances.indexOf(this);
+                if (pos > -1) {
+                    // Move this instance at the end of the list
+                    m_instances.move(pos, m_instances.length() - 1);
+                }
+            }
+        }
     }
 }
 
@@ -1632,6 +1655,6 @@ void MainWindow::on_actionWikipedia_Search_triggered()
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
 {
-    MainWindow *b = new MainWindow(false, 0);
+    MainWindow *b = new MainWindow(QStringList(), 0);
     b->show();
 }

@@ -30,6 +30,8 @@
 #include <QApplication>
 #include <QUrl>
 #include <QCommandLineParser>
+#include <QList>
+#include "include/mainwindow.h"
 
 #define POINTVERSION "0.40.0" // major.minor.revision
 
@@ -44,15 +46,14 @@ public:
     static QString copyright();
     static QString editorPath();
     static QString fileNameFromUrl(const QUrl &url);
-    static void parseCommandLineParameters();
-    static QCommandLineParser *commandLineParameters();
+    static QCommandLineParser *getCommandLineArgumentsParser(const QStringList &arguments);
 
     static bool oldQt();
     static void setOldQt(bool oldQt);
 
     static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
+
 private:
-    static QCommandLineParser *m_commandLineParameters;
     static bool m_oldQt;
 };
 

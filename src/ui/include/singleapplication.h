@@ -20,7 +20,7 @@ public:
      */
     bool attachToOtherInstance();
 signals:
-    void receivedArguments(QStringList arguments);
+    void receivedArguments(const QStringList &arguments);
 
 public slots:
 
