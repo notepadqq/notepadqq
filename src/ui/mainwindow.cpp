@@ -1580,14 +1580,14 @@ void MainWindow::on_actionPrint_triggered()
     if ( dialog->exec() == QDialog::Accepted)
           currentEditor()->print(&printer);*/
 
-    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    /*QPrinter *printer = new QPrinter(QPrinter::HighResolution);
     QPrintPreviewDialog *pd = new QPrintPreviewDialog(printer);
     connect(pd, &QPrintPreviewDialog::paintRequested, currentEditor(), &Editor::print);
 
     pd->exec();
 
     delete printer;
-    pd->deleteLater();
+    pd->deleteLater();*/
 }
 
 void MainWindow::on_actionLaunch_in_Firefox_triggered()
