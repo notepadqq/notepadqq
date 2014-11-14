@@ -143,6 +143,8 @@ private slots:
     void on_actionGoogle_Search_triggered();
     void on_actionWikipedia_Search_triggered();
     void on_actionOpen_a_New_Window_triggered();
+    void on_actionOpen_in_New_Window_triggered();
+    void on_actionMove_to_New_Window_triggered();
 
 private:
     static QList<MainWindow*> m_instances;

@@ -61,8 +61,8 @@ MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
     m_tabContextMenuActions.append(separator);
     m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
     m_tabContextMenuActions.append(ui->actionClone_to_Other_View);
-    m_tabContextMenuActions.append(ui->actionMove_to_New_Instance);
-    m_tabContextMenuActions.append(ui->actionOpen_in_New_Instance);
+    m_tabContextMenuActions.append(ui->actionMove_to_New_Window);
+    m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
     // Set popup for action_Open in toolbar
@@ -767,6 +767,10 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
+    connect(editor, &Editor::cleanChanged, this, [=]() {
+        if (currentEditor() == editor)
+            refreshEditorUiInfo(editor);
+    });
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
@@ -867,7 +871,11 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 
     // Enable / disable menus
-    ui->actionRename->setEnabled(!editor->fileName().isEmpty());
+    bool isClean = editor->isClean();
+    QUrl fileName = editor->fileName();
+    ui->actionRename->setEnabled(!fileName.isEmpty());
+    ui->actionMove_to_New_Window->setEnabled(isClean);
+    ui->actionOpen_in_New_Window->setEnabled(isClean);
 
     // EOL
     QString eol = editor->endOfLineSequence();
@@ -1657,4 +1665,32 @@ void MainWindow::on_actionOpen_a_New_Window_triggered()
 {
     MainWindow *b = new MainWindow(QStringList(), 0);
     b->show();
+}
+
+void MainWindow::on_actionOpen_in_New_Window_triggered()
+{
+    QStringList args;
+    args.append(QApplication::arguments().first());
+    if (!currentEditor()->fileName().isEmpty()) {
+        args.append(currentEditor()->fileName().toString(QUrl::None));
+    }
+
+    MainWindow *b = new MainWindow(args, 0);
+    b->show();
+}
+
+void MainWindow::on_actionMove_to_New_Window_triggered()
+{
+    QStringList args;
+    args.append(QApplication::arguments().first());
+    if (!currentEditor()->fileName().isEmpty()) {
+        args.append(currentEditor()->fileName().toString(QUrl::None));
+    }
+
+    EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
+    int tab = tabWidget->currentIndex();
+    if (closeTab(tabWidget, tab) != tabCloseResult_Canceled) {
+        MainWindow *b = new MainWindow(args, 0);
+        b->show();
+    }
 }

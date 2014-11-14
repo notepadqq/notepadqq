@@ -163,8 +163,8 @@
      </property>
      <addaction name="actionMove_to_Other_View"/>
      <addaction name="actionClone_to_Other_View"/>
-     <addaction name="actionMove_to_New_Instance"/>
-     <addaction name="actionOpen_in_New_Instance"/>
+     <addaction name="actionMove_to_New_Window"/>
+     <addaction name="actionOpen_in_New_Window"/>
     </widget>
     <addaction name="separator"/>
     <addaction name="menuShow_Symbol"/>
@@ -625,14 +625,14 @@
     <string>Clone to Other View</string>
    </property>
   </action>
-  <action name="actionMove_to_New_Instance">
+  <action name="actionMove_to_New_Window">
    <property name="text">
-    <string>Move to New Instance</string>
+    <string>Move to a New Window</string>
    </property>
   </action>
-  <action name="actionOpen_in_New_Instance">
+  <action name="actionOpen_in_New_Window">
    <property name="text">
-    <string>Open in New Instance</string>
+    <string>Open in a New Window</string>
    </property>
   </action>
   <action name="action_Start_Recording">
