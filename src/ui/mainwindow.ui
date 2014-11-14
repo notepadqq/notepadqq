@@ -239,7 +239,7 @@
     <addaction name="actionGoogle_Search"/>
     <addaction name="actionWikipedia_Search"/>
     <addaction name="actionOpen_file"/>
-    <addaction name="actionOpen_in_another_instance"/>
+    <addaction name="actionOpen_in_another_window"/>
     <addaction name="actionOpen_containing_folder"/>
     <addaction name="actionOpen_current_dir_terminal"/>
     <addaction name="separator"/>
@@ -755,9 +755,9 @@
     <string>Open containing folder</string>
    </property>
   </action>
-  <action name="actionOpen_in_another_instance">
+  <action name="actionOpen_in_another_window">
    <property name="text">
-    <string>Open in another instance</string>
+    <string>Open in another window</string>
    </property>
   </action>
   <action name="actionOpen_current_dir_terminal">

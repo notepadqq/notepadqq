@@ -1635,17 +1635,31 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
     }
 }
 
-void MainWindow::currentWordOnlineSearch(QString searchUrl)
+QStringList MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
     QStringList selection = editor->selectedTexts();
-    QString term;
 
     if (selection.isEmpty() || selection.first().isEmpty()) {
-        term = editor->getCurrentWord();
+        return QStringList(editor->getCurrentWord());
     } else {
-        term = selection.first();
+        return selection;
     }
+}
+
+QString MainWindow::currentWordOrSelection()
+{
+    QStringList terms = currentWordOrSelections();
+    if (terms.isEmpty()) {
+        return QString();
+    } else {
+        return terms.first();
+    }
+}
+
+void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
+{
+    QString term = currentWordOrSelection();
 
     if (!term.isNull() && !term.isEmpty()) {
         QUrl phpHelp = QUrl(searchUrl.arg(QString(QUrl::toPercentEncoding(term))));
@@ -1698,6 +1712,31 @@ void MainWindow::on_actionMove_to_New_Window_triggered()
     int tab = tabWidget->currentIndex();
     if (closeTab(tabWidget, tab) != tabCloseResult_Canceled) {
         MainWindow *b = new MainWindow(args, 0);
+        b->show();
+    }
+}
+
+void MainWindow::on_actionOpen_file_triggered()
+{
+    QStringList terms = currentWordOrSelections();
+    if (!terms.isEmpty()) {
+        QList<QUrl> urls;
+        for (QString term : terms) {
+            urls.append(QUrl::fromLocalFile(term));
+        }
+
+        m_docEngine->loadDocuments(urls,
+                               m_topEditorContainer->currentTabWidget());
+    }
+}
+
+void MainWindow::on_actionOpen_in_another_window_triggered()
+{
+    QStringList terms = currentWordOrSelections();
+    if (!terms.isEmpty()) {
+        terms.prepend(QApplication::arguments().first());
+
+        MainWindow *b = new MainWindow(terms, 0);
         b->show();
     }
 }

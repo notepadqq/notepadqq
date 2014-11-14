@@ -145,6 +145,8 @@ private slots:
     void on_actionOpen_a_New_Window_triggered();
     void on_actionOpen_in_New_Window_triggered();
     void on_actionMove_to_New_Window_triggered();
+    void on_actionOpen_file_triggered();
+    void on_actionOpen_in_another_window_triggered();
 
 private:
     static QList<MainWindow*> m_instances;
@@ -207,7 +209,9 @@ private:
     void                toggleOverwrite();
     void                checkIndentationMode(Editor *editor);
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
-    void                currentWordOnlineSearch(QString searchUrl);
+    QStringList         currentWordOrSelections();
+    QString             currentWordOrSelection();
+    void                currentWordOnlineSearch(const QString &searchUrl);
 };
 
 #endif // MAINWINDOW_H
