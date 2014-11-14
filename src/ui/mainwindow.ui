@@ -240,8 +240,6 @@
     <addaction name="actionWikipedia_Search"/>
     <addaction name="actionOpen_file"/>
     <addaction name="actionOpen_in_another_window"/>
-    <addaction name="actionOpen_containing_folder"/>
-    <addaction name="actionOpen_current_dir_terminal"/>
     <addaction name="separator"/>
     <addaction name="actionModify_Shortcut_Delete_Command"/>
    </widget>
@@ -750,19 +748,9 @@
     <string>Open file(s)</string>
    </property>
   </action>
-  <action name="actionOpen_containing_folder">
-   <property name="text">
-    <string>Open containing folder</string>
-   </property>
-  </action>
   <action name="actionOpen_in_another_window">
    <property name="text">
     <string>Open file(s) in a new window</string>
-   </property>
-  </action>
-  <action name="actionOpen_current_dir_terminal">
-   <property name="text">
-    <string>Open current dir terminal</string>
    </property>
   </action>
   <action name="actionModify_Shortcut_Delete_Command">
