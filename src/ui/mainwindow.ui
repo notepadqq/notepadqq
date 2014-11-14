@@ -747,7 +747,7 @@
   </action>
   <action name="actionOpen_file">
    <property name="text">
-    <string>Open file</string>
+    <string>Open file(s)</string>
    </property>
   </action>
   <action name="actionOpen_containing_folder">
@@ -757,7 +757,7 @@
   </action>
   <action name="actionOpen_in_another_window">
    <property name="text">
-    <string>Open in another window</string>
+    <string>Open file(s) in a new window</string>
    </property>
   </action>
   <action name="actionOpen_current_dir_terminal">
