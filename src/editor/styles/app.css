@@ -1,5 +1,6 @@
 ﻿html {
     height: 100vh; /* Really needed? */
+    overflow: hidden;
 }
 
 body {
