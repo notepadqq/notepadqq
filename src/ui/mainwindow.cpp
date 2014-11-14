@@ -119,6 +119,13 @@ MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
 
     restoreWindowSettings();
 
+    // If there was another window already opened, move this window
+    // slightly to the bottom-right, so that they won't completely overlap.
+    if (!isMaximized() && m_instances.count() > 1) {
+        QPoint curPos = pos();
+        move(curPos.x() + 50, curPos.y() + 50);
+    }
+
     setupLanguagesMenu();
 
     // DEBUG: Add a second tabWidget
