@@ -1,5 +1,6 @@
 #include "include/singleapplication.h"
 #include <QLocalSocket>
+#include <QDir>
 #include "include/localcommunication.h"
 
 #if defined(Q_OS_WIN)
@@ -26,7 +27,8 @@ static PProcessIdToSessionId pProcessIdToSessionId = 0;
  *   Client             Server
  *      ----- "ARGS" ----->
  *      <----- "OK" -------
- *      ---- ..data.. ---->
+ *      ---- ..data.. ---->   where "data" is a list like
+ *                            [working_dir, arg0, ..., argn]
  */
 
 SingleApplication::SingleApplication(int &argc, char **argv) :
@@ -82,7 +84,10 @@ void SingleApplication::newConnection()
                 QStringList argList;
                 args >> argList;
 
-                emit receivedArguments(argList);
+                if (!argList.isEmpty()) {
+                    QString workingDir = argList.takeFirst();
+                    emit receivedArguments(workingDir, argList);
+                }
             }
         });
     }
@@ -128,10 +133,12 @@ bool SingleApplication::sendCommandLineArguments(QLocalSocket *socket)
 {
     LocalCommunication::send("ARGS", socket);
     if (LocalCommunication::receive(socket) == "OK") {
+        QStringList data = QApplication::arguments();
+        data.prepend(QDir::currentPath());
 
         QByteArray ar;
         QDataStream args(&ar, QIODevice::WriteOnly);
-        args << QApplication::arguments();
+        args << data;
 
         LocalCommunication::sendRaw(ar, socket);
 

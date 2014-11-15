@@ -37,11 +37,11 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QStringList &arguments) {
+    QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QString &workingDirectory, const QStringList &arguments) {
         // Send the args to the last focused window
         MainWindow *win = MainWindow::lastActiveInstance();
         if (win != nullptr) {
-            win->openCommandLineProvidedUrls(arguments);
+            win->openCommandLineProvidedUrls(workingDirectory, arguments);
 
             // Activate the window
             win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);

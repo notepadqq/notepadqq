@@ -107,7 +107,7 @@ MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
-    openCommandLineProvidedUrls(arguments);
+    openCommandLineProvidedUrls(QDir::currentPath(), arguments);
     // From now on, there is at least an Editor and at least
     // an EditorTabWidget within m_topEditorContainer.
 
@@ -338,7 +338,7 @@ void MainWindow::setupLanguagesMenu()
     }
 }
 
-void MainWindow::openCommandLineProvidedUrls(const QStringList &arguments)
+void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments)
 {
     if (arguments.count() == 0) {
         ui->action_New->trigger();
@@ -361,10 +361,17 @@ void MainWindow::openCommandLineProvidedUrls(const QStringList &arguments)
         for(int i = 0; i < rawUrls.count(); i++)
         {
             QUrl f = QUrl(rawUrls.at(i));
-            if (f.isRelative())
-                files.append(QUrl::fromLocalFile(rawUrls.at(i)));
-            else
+            if (f.isRelative()) { // No schema
+                QFileInfo fi(rawUrls.at(i));
+                if (fi.isRelative()) { // Relative local path
+                    QString absolute = QDir::cleanPath(workingDirectory + QDir::separator() + rawUrls.at(i));
+                    files.append(QUrl::fromLocalFile(absolute));
+                } else {
+                    files.append(QUrl::fromLocalFile(rawUrls.at(i)));
+                }
+            } else {
                 files.append(f);
+            }
         }
 
         EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();

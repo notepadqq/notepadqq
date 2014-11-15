@@ -54,7 +54,7 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
-    void openCommandLineProvidedUrls(const QStringList &arguments);
+    void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
 protected:
     void closeEvent(QCloseEvent *event);
