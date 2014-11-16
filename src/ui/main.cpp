@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    MainWindow w(QApplication::arguments(), 0);
-    w.show();
+    MainWindow *w = new MainWindow(QApplication::arguments(), 0);
+    w->show();
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
     QSettings settings;
     if (Notepadqq::oldQt() && settings.value("checkQtVersionAtStartup", true).toBool()) {
-        Notepadqq::showQtVersionWarning(true, &w);
+        Notepadqq::showQtVersionWarning(true, w);
     }
 
     return a.exec();
