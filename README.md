@@ -11,7 +11,6 @@ Build
 | libqt5svg5-dev     | libqt5svg5    |
 |                    | coreutils     |
 
-#### How to build
 You can build Notepadqq from command line:
 
     notepadqq$ ./configure --prefix /usr
