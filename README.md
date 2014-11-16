@@ -4,10 +4,12 @@ Notepadqq
 Build
 -----
 
-#### Build dependencies
-   * Qt 5.3
-   * libqt5webkit5-dev
-   * libqt5svg5-dev
+| Build dependencies | Dependencies  |
+|--------------------|---------------|
+| Qt 5.3             | Qt 5.3        |
+| libqt5webkit5-dev  | libqt5webkit5 |
+| libqt5svg5-dev     | libqt5svg5    |
+|                    | coreutils     |
 
 #### How to build
 You can build Notepadqq from command line:
