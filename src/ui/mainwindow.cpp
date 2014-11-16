@@ -26,12 +26,13 @@
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
-MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
+MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this))
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     MainWindow::m_instances.append(this);
 
@@ -107,7 +108,7 @@ MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 
     // Inserts at least an editor
-    openCommandLineProvidedUrls(QDir::currentPath(), arguments);
+    openCommandLineProvidedUrls(workingDirectory, arguments);
     // From now on, there is at least an Editor and at least
     // an EditorTabWidget within m_topEditorContainer.
 
@@ -131,6 +132,10 @@ MainWindow::MainWindow(const QStringList &arguments, QWidget *parent) :
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 }
+
+MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)
+    : MainWindow(QDir::currentPath(), arguments, parent)
+{ }
 
 MainWindow::~MainWindow()
 {

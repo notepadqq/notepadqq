@@ -49,10 +49,10 @@ QCommandLineParser *Notepadqq::getCommandLineArgumentsParser(const QStringList &
     parser->addHelpOption();
     parser->addVersionOption();
 
-    /*QCommandLineOption newDocumentOption("new-document",
-                                         QObject::tr("Create a new document in an existing instance of %1.")
+    QCommandLineOption newWindowOption("new-window",
+                                         QObject::tr("Open a new window in an existing instance of %1.")
                                          .arg(QCoreApplication::applicationName()));
-    parser.addOption(newDocumentOption);*/
+    parser->addOption(newWindowOption);
 
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),

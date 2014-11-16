@@ -11,6 +11,7 @@
 #include <functional>
 #include "QtPrintSupport/QPrinter"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,6 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
     explicit MainWindow(const QStringList &arguments, QWidget *parent = 0);
     ~MainWindow();
 

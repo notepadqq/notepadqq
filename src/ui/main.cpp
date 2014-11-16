@@ -37,18 +37,28 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
+    // Arguments received from another instance
     QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QString &workingDirectory, const QStringList &arguments) {
-        // Send the args to the last focused window
-        MainWindow *win = MainWindow::lastActiveInstance();
-        if (win != nullptr) {
-            win->openCommandLineProvidedUrls(workingDirectory, arguments);
-
-            // Activate the window
-            win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-            win->raise();
+        QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(arguments);
+        if (parser->isSet("new-window")) {
+            // Open a new window
+            MainWindow *win = new MainWindow(workingDirectory, arguments, 0);
             win->show();
-            win->activateWindow();
+        } else {
+            // Send the args to the last focused window
+            MainWindow *win = MainWindow::lastActiveInstance();
+            if (win != nullptr) {
+                win->openCommandLineProvidedUrls(workingDirectory, arguments);
+
+                // Activate the window
+                win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+                win->raise();
+                win->show();
+                win->activateWindow();
+            }
         }
+
+        delete parser;
     });
 
     // There are no other instances: start a new server.
