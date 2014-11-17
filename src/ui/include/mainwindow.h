@@ -11,7 +11,6 @@
 #include <functional>
 #include "QtPrintSupport/QPrinter"
 
-
 namespace Ui {
 class MainWindow;
 }

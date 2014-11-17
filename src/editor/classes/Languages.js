@@ -409,7 +409,7 @@ var Languages = new function() {
             mode: "perl",
             mime: "text/x-perl",
             fileExtensions: ["pl", "p6", "pdl", "ph", "pm"],
-            firstNonBlankLine: [/^#!.*\/perl/]
+            firstNonBlankLine: [/^#!.*\/perl($| )/, /^#!\/usr\/bin\/env perl($| )/]
         },
 
         "php": {
@@ -438,7 +438,7 @@ var Languages = new function() {
             mode: "python",
             mime: "text/x-python",
             fileExtensions: ["py", "pyd", "pyw", "wsgi"],
-            firstNonBlankLine: [/^#!.*\/python$/]
+            firstNonBlankLine: [/^#!.*\/python[\d\.]*($| )/, /^#!\/usr\/bin\/env python[\d\.]*($| )/]
         },
 
         "cython": {
@@ -510,7 +510,8 @@ var Languages = new function() {
             mode: "shell",
             mime: "text/x-sh",
             fileExtensions: ["sh", "shr", "shar"],
-            firstNonBlankLine: [/^#!.*\/sh$/]
+            firstNonBlankLine: [/^#!.*\/sh($| )/, /^#!\/usr\/bin\/env sh($| )/,
+                                /^#!.*\/bash($| )/, /^#!\/usr\/bin\/env bash($| )/]
         },
 
         "sieve": {
