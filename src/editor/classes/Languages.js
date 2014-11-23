@@ -116,6 +116,20 @@ var Languages = new function() {
             fileExtensions: ["diff", "patch"]
         },
 
+        "django": {
+            name: "Django",
+            mode: "django",
+            mime: "text/x-django",
+            fileExtensions: []
+        },
+
+        "dockerfile": {
+            name: "Dockerfile",
+            mode: "dockerfile",
+            mime: "text/x-dockerfile",
+            fileExtensions: []
+        },
+
         "dtd": {
             name: "DTD",
             mode: "dtd",
@@ -249,6 +263,13 @@ var Languages = new function() {
             fileExtensions: ["htt"]
         },
 
+        "idl": {
+            name: "IDL",
+            mode: "idl",
+            mime: "text/x-idl",
+            fileExtensions: []
+        },
+
         "jade": {
             name: "Jade",
             mode: "jade",
@@ -376,6 +397,13 @@ var Languages = new function() {
             fileExtensions: []
         },
 
+        "objective_c": {
+            name: "Objective C",
+            mode: "clike",
+            mime: "text/x-objectivec",
+            fileExtensions: ["m", "mm"]
+        },
+
         "ocaml": {
             name: "OCaml",
             mode: "mllike",
@@ -467,6 +495,20 @@ var Languages = new function() {
             mode: "rst",
             mime: "text/x-rst",
             fileExtensions: ["rst"]
+        },
+
+        "rpm_changes": {
+            name: "RPM Changes",
+            mode: "rpm",
+            mime: "text/x-rpm-changes",
+            fileExtensions: []
+        },
+
+        "rpm_spec": {
+            name: "RPM Spec",
+            mode: "rpm",
+            mime: "text/x-rpm-spec",
+            fileExtensions: ["spec"]
         },
 
         "ruby": {
