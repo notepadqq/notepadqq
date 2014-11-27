@@ -33,7 +33,7 @@
 #include <QList>
 #include "include/mainwindow.h"
 
-#define POINTVERSION "0.40.1" // major.minor.revision
+#define POINTVERSION "0.40.2" // major.minor.revision
 
 #define MIB_UTF_8 106
 
