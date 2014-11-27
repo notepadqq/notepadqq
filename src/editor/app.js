@@ -107,7 +107,20 @@ UiDriver.registerEventHandler("C_CMD_SET_SELECTIONS_TEXT", function(msg, data, p
     referring to {line, ch} objects.
 */
 UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS", function(msg, data, prevReturn) {
-    return editor.listSelections();
+    var out = [];
+    var sels = editor.listSelections();
+    for (var i = 0; i < sels.length; i++) {
+        out[i] = { anchor: {
+                     line: sels[i].anchor.line,
+                     ch: sels[i].anchor.ch
+                   },
+                   head: {
+                     line: sels[i].head.line,
+                     ch: sels[i].head.ch
+                   }
+                 };
+    }
+    return out;
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
