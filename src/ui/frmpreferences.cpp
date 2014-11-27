@@ -140,7 +140,7 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     ui->cmbColorScheme->addItem("Default", defaultTheme);
     ui->cmbColorScheme->setCurrentIndex(0);
 
-    QString themeSetting = s->value("colorScheme", "").toString();
+    QString themeSetting = s->value("Appearance/ColorScheme", "").toString();
 
     for (Editor::Theme theme : themes) {
         QMap<QString, QVariant> tmap;
@@ -186,7 +186,7 @@ void frmPreferences::saveLanguages(QSettings *s)
 void frmPreferences::saveColorScheme(QSettings *s)
 {
     QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
-    s->setValue("colorScheme", selected.value("name").toString());
+    s->setValue("Appearance/ColorScheme", selected.value("name").toString());
 }
 
 void frmPreferences::on_buttonBox_rejected()

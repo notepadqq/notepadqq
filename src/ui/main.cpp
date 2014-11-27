@@ -111,4 +111,11 @@ void forceDefaultSettings()
         settings.setValue("Languages/makefile/useDefaultSettings", false);
         settings.setValue("Languages/makefile/indentWithSpaces", false);
     }
+
+    // Convert old "colorScheme" to new "Appearance/ColorScheme"
+    // TODO Remove me after a few months from 2014-dec-01.
+    if (!settings.contains("Appearance/ColorScheme")) {
+        settings.setValue("Appearance/ColorScheme", settings.value("colorScheme", "default"));
+        settings.remove("colorScheme");
+    }
 }

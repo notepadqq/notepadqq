@@ -18,7 +18,7 @@ namespace EditorNS
     {
         QSettings s;
 
-        QString themeName = s.value("colorScheme", "default").toString();
+        QString themeName = s.value("Appearance/ColorScheme", "default").toString();
         if (themeName == "")
             themeName = "default";
 
