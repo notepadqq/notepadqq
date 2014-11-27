@@ -23,7 +23,8 @@ public:
      * @brief Runs a "find next" or "find prev", taking the options from the UI
      * @param forward
      */
-    void findFromUI(bool forward);
+    void findFromUI(bool forward, bool searchFromStart = false);
+    void replaceFromUI(bool forward, bool searchFromStart = false);
 
 protected:
     void keyPressEvent(QKeyEvent *evt);
@@ -40,6 +41,7 @@ private slots:
     void on_radSearchWithRegex_toggled(bool checked);
     void on_radSearchPlainText_toggled(bool checked);
     void on_radSearchWithSpecialChars_toggled(bool checked);
+    void on_searchStringEdited(const QString &text);
 
 private:
     Ui::frmSearchReplace*  ui;
@@ -56,8 +58,10 @@ private:
     struct SearchOptions {
         unsigned MatchCase : 1;
         unsigned MatchWholeWord : 1;
+        unsigned SearchFromStart : 1;
 
-        SearchOptions() : MatchCase(0), MatchWholeWord(0) { }
+        SearchOptions() : MatchCase(0), MatchWholeWord(0),
+        SearchFromStart(0) { }
     };
 
     void search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions);

@@ -18,6 +18,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
         parentWidget()->window()->rect().center() -
         rect().center());
 
+    connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
 
@@ -109,24 +110,40 @@ QString frmSearchReplace::regexModifiersFromSearchOptions(SearchOptions searchOp
 }
 
 void frmSearchReplace::search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
-    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
+    if (!string.isEmpty()) {
+        QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
-    QList<QVariant> data = QList<QVariant>();
-    data.append(rawSearch);
-    data.append(regexModifiersFromSearchOptions(searchOptions));
-    data.append(forward);
-    currentEditor()->sendMessage("C_FUN_SEARCH", QVariant::fromValue(data));
+        Editor *editor = currentEditor();
+
+        if (searchOptions.SearchFromStart) {
+            editor->setCursorPosition(0, 0);
+        }
+
+        QList<QVariant> data = QList<QVariant>();
+        data.append(rawSearch);
+        data.append(regexModifiersFromSearchOptions(searchOptions));
+        data.append(forward);
+        editor->sendMessage("C_FUN_SEARCH", QVariant::fromValue(data));
+    }
 }
 
 void frmSearchReplace::replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
-    QString rawSearch = rawSearchString(string, searchMode, searchOptions);
+    if (!string.isEmpty()) {
+        QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
-    QList<QVariant> data = QList<QVariant>();
-    data.append(rawSearch);
-    data.append(regexModifiersFromSearchOptions(searchOptions));
-    data.append(forward);
-    data.append(replacement);
-    currentEditor()->sendMessage("C_FUN_REPLACE", QVariant::fromValue(data));
+        Editor *editor = currentEditor();
+
+        if (searchOptions.SearchFromStart) {
+            editor->setCursorPosition(0, 0);
+        }
+
+        QList<QVariant> data = QList<QVariant>();
+        data.append(rawSearch);
+        data.append(regexModifiersFromSearchOptions(searchOptions));
+        data.append(forward);
+        data.append(replacement);
+        editor->sendMessage("C_FUN_REPLACE", QVariant::fromValue(data));
+    }
 }
 
 int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions) {
@@ -177,40 +194,47 @@ frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
     return searchOptions;
 }
 
-void frmSearchReplace::findFromUI(bool forward)
+void frmSearchReplace::findFromUI(bool forward, bool searchFromStart)
 {
+    SearchOptions sOpts = searchOptionsFromUI();
+    sOpts.SearchFromStart = searchFromStart;
+
     this->search(ui->cmbSearch->currentText(),
                  searchModeFromUI(),
                  forward,
-                 searchOptionsFromUI());
+                 sOpts);
+}
+
+void frmSearchReplace::replaceFromUI(bool forward, bool searchFromStart)
+{
+    SearchOptions sOpts = searchOptionsFromUI();
+    sOpts.SearchFromStart = searchFromStart;
+
+    this->replace(ui->cmbSearch->currentText(),
+                  ui->cmbReplace->currentText(),
+                  searchModeFromUI(),
+                  forward,
+                  sOpts);
 }
 
 void frmSearchReplace::on_btnFindNext_clicked()
 {
-    this->findFromUI(true);
+    findFromUI(true);
 }
 
 void frmSearchReplace::on_btnFindPrev_clicked()
 {
-    this->findFromUI(false);
+    findFromUI(false);
 }
 
 void frmSearchReplace::on_btnReplaceNext_clicked()
 {
-    this->replace(ui->cmbSearch->currentText(),
-                  ui->cmbReplace->currentText(),
-                  searchModeFromUI(),
-                  true,
-                  searchOptionsFromUI());
+    replaceFromUI(true);
 }
 
 void frmSearchReplace::on_btnReplacePrev_clicked()
 {
-    this->replace(ui->cmbSearch->currentText(),
-                  ui->cmbReplace->currentText(),
-                  searchModeFromUI(),
-                  false,
-                  searchOptionsFromUI());
+    replaceFromUI(false);
 }
 
 void frmSearchReplace::on_btnReplaceAll_clicked()
@@ -307,5 +331,25 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
         ui->chkMatchWholeWord->setEnabled(false);
 
         manualSizeAdjust();
+    }
+}
+
+void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
+{
+    if (ui->actionFind->isChecked()) {
+        Editor *editor = currentEditor();
+
+        QList<Editor::Selection> selections = editor->selections();
+        if (selections.length() > 0) {
+            qDebug() << QString("%1,%2   %3,%4").arg(selections[0].from.line).arg(selections[0].from.column).arg(selections[0].to.line).arg(selections[0].to.column);
+
+            editor->setCursorPosition(
+                        std::min(selections[0].from, selections[0].to));
+
+
+            //qDebug() << QString::number(selections.count());
+        }
+
+        findFromUI(true);
     }
 }

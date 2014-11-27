@@ -97,6 +97,26 @@ namespace EditorNS
         struct Cursor {
             int line;
             int column;
+
+            bool operator == (const Cursor &x) const {
+                return line == x.line && column == x.column;
+            }
+
+            bool operator < (const Cursor &x) const {
+                return std::tie(line, column) < std::tie(x.line, x.column);
+            }
+
+            bool operator <= (const Cursor &x) const {
+                return *this == x || *this < x;
+            }
+
+            bool operator > (const Cursor &x) const {
+                return !(*this <= x);
+            }
+
+            bool operator >= (const Cursor &x) const {
+                return !(*this < x);
+            }
         };
 
         struct Selection {
@@ -199,6 +219,7 @@ namespace EditorNS
         QPair<int, int> cursorPosition();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
+        void setCursorPosition(const Cursor &cursor);
 
         /**
          * @brief Get the current scroll position
@@ -249,6 +270,7 @@ namespace EditorNS
         Editor::IndentationMode indentationMode();
 
         QString getCurrentWord();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;

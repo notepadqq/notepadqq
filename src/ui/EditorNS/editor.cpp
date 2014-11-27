@@ -437,6 +437,11 @@ namespace EditorNS
         setCursorPosition(position.first, position.second);
     }
 
+    void Editor::setCursorPosition(const Cursor &cursor)
+    {
+        setCursorPosition(cursor.line, cursor.column);
+    }
+
     QPair<int, int> Editor::scrollPosition()
     {
         QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();
