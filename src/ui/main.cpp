@@ -114,8 +114,8 @@ void forceDefaultSettings()
 
     // Convert old "colorScheme" to new "Appearance/ColorScheme"
     // TODO Remove me after a few months from 2014-dec-01.
-    if (!settings.contains("Appearance/ColorScheme")) {
-        settings.setValue("Appearance/ColorScheme", settings.value("colorScheme", "default"));
+    if (!settings.contains("Appearance/ColorScheme") && settings.contains("colorScheme")) {
+        settings.setValue("Appearance/ColorScheme", settings.value("colorScheme"));
         settings.remove("colorScheme");
     }
 }
