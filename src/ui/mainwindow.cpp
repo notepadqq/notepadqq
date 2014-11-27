@@ -97,6 +97,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_topEditorContainer, &TopEditorContainer::editorMouseWheel,
             this, &MainWindow::on_editorMouseWheel);
 
+    connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked,
+            this, &MainWindow::on_tabBarDoubleClicked);
+
     createStatusBar();
 
     updateRecentDocsInMenu();
@@ -455,9 +458,14 @@ void MainWindow::toggleOverwrite()
     }
 }
 
-void MainWindow::on_action_New_triggered()
+QString MainWindow::getNewDocumentName()
 {
     static int num = 1; // FIXME maybe find a smarter way
+    return tr("new %1").arg(num++);
+}
+
+void MainWindow::on_action_New_triggered()
+{
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
     // Make sure we have a tabWidget: if not, create it.
@@ -465,8 +473,7 @@ void MainWindow::on_action_New_triggered()
         tabW = m_topEditorContainer->addTabWidget();
     }
 
-    m_docEngine->addNewDocument(tr("new %1").arg(num), true, tabW);
-    num++;
+    m_docEngine->addNewDocument(getNewDocumentName(), true, tabW);
 }
 
 void MainWindow::setCurrentEditorLanguage(QString language)
@@ -1750,5 +1757,12 @@ void MainWindow::on_actionOpen_in_another_window_triggered()
 
         MainWindow *b = new MainWindow(terms, 0);
         b->show();
+    }
+}
+
+void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
+{
+    if (tab == -1) {
+        m_docEngine->addNewDocument(getNewDocumentName(), true, tabWidget);
     }
 }

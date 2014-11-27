@@ -67,6 +67,7 @@ signals:
     void tabCloseRequested(EditorTabWidget *tabWidget, int tab);
     void editorAdded(EditorTabWidget *tabWidget, int tab);
     void editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev);
+    void tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
 
 public slots:
 

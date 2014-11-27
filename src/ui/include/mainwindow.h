@@ -148,7 +148,7 @@ private slots:
     void on_actionMove_to_New_Window_triggered();
     void on_actionOpen_file_triggered();
     void on_actionOpen_in_another_window_triggered();
-
+    void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
 private:
     static QList<MainWindow*> m_instances;
     Ui::MainWindow*     ui;
@@ -213,6 +213,7 @@ private:
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
+    QString             getNewDocumentName();
 };
 
 #endif // MAINWINDOW_H

@@ -23,6 +23,9 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
     connect(tabWidget, &EditorTabWidget::editorMouseWheel, this, [=](int tab, QWheelEvent *ev) {
         emit editorMouseWheel(tabWidget, tab, ev);
     });
+    connect(tabWidget, &EditorTabWidget::tabBarDoubleClicked, this, [=](int index) {
+        emit tabBarDoubleClicked(tabWidget, index);
+    });
 
     return tabWidget;
 }
