@@ -38,6 +38,8 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 
     loadLanguages(&s);
     loadColorSchemes(&s);
+
+    ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
 }
 
 frmPreferences::~frmPreferences()
@@ -85,6 +87,8 @@ void frmPreferences::on_buttonBox_accepted()
             return true;
         });
     }
+
+    s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
 
     accept();
 }

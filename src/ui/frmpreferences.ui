@@ -52,6 +52,11 @@
      <string>Languages</string>
     </property>
    </item>
+   <item>
+    <property name="text">
+     <string>Search</string>
+    </property>
+   </item>
   </widget>
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
@@ -265,6 +270,21 @@
        <width>431</width>
        <height>27</height>
       </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_4">
+    <widget class="QCheckBox" name="chkSearch_SearchAsIType">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>341</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Search as I type</string>
      </property>
     </widget>
    </widget>

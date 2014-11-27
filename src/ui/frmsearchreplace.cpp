@@ -3,6 +3,7 @@
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QSettings>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),
@@ -336,20 +337,19 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
 
 void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 {
-    if (ui->actionFind->isChecked()) {
-        Editor *editor = currentEditor();
+    QSettings s;
 
-        QList<Editor::Selection> selections = editor->selections();
-        if (selections.length() > 0) {
-            qDebug() << QString("%1,%2   %3,%4").arg(selections[0].from.line).arg(selections[0].from.column).arg(selections[0].to.line).arg(selections[0].to.column);
+    if (s.value("Search/SearchAsIType", true).toBool()) {
+        if (ui->actionFind->isChecked()) {
+            Editor *editor = currentEditor();
 
-            editor->setCursorPosition(
-                        std::min(selections[0].from, selections[0].to));
+            QList<Editor::Selection> selections = editor->selections();
+            if (selections.length() > 0) {
+                editor->setCursorPosition(
+                            std::min(selections[0].from, selections[0].to));
+            }
 
-
-            //qDebug() << QString::number(selections.count());
+            findFromUI(true);
         }
-
-        findFromUI(true);
     }
 }
