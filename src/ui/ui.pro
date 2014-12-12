@@ -124,6 +124,8 @@ unix {
 
     icon_h16.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/16x16/apps/"
     icon_h16.files += "$$INSTALLFILESDIR/icons/hicolor/16x16/apps/notepadqq.png"
+    icon_h22.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/22x22/apps/"
+    icon_h22.files += "$$INSTALLFILESDIR/icons/hicolor/22x22/apps/notepadqq.png"
     icon_h24.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/24x24/apps/"
     icon_h24.files += "$$INSTALLFILESDIR/icons/hicolor/24x24/apps/notepadqq.png"
     icon_h32.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/32x32/apps/"
@@ -162,7 +164,7 @@ unix {
 
     # MAKE INSTALL
     INSTALLS += target \
-         icon_h16 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
+         icon_h16 icon_h22 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
          misc_data launch shortcuts \
          set_permissions
 
