@@ -3,14 +3,17 @@ SCRIPTPATH="$(dirname "$(readlink -f "$0")")"
 
 if [ `getconf LONG_BIT` = "64" ]
 then
-    OPT_QT_LIB_PATH=/opt/Qt/5.3/gcc_64/lib
-    PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc_64/lib
+    GCC_DIR=gcc_64
 else
-    OPT_QT_LIB_PATH=/opt/Qt/5.3/gcc/lib
-    PERSONAL_QT_LIB_PATH=~/Qt/5.3/gcc/lib
+    GCC_DIR=gcc
 fi
 
-export LD_LIBRARY_PATH="$OPT_QT_LIB_PATH:$PERSONAL_QT_LIB_PATH:${LD_LIBRARY_PATH}"
+OPT_QT54=/opt/Qt/5.4/$GCC_DIR/lib
+OPT_QT53=/opt/Qt/5.3/$GCC_DIR/lib
+PERSONAL_QT54=~/Qt/5.4/$GCC_DIR/lib
+PERSONAL_QT53=~/Qt/5.3/$GCC_DIR/lib
+
+export LD_LIBRARY_PATH="$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
 
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
     # Nqq is installed: this script is in bin/
