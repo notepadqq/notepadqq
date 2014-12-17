@@ -553,7 +553,12 @@ var Languages = new function() {
             mime: "text/x-sh",
             fileExtensions: ["sh", "shr", "shar"],
             firstNonBlankLine: [/^#!.*\/sh($| )/, /^#!\/usr\/bin\/env sh($| )/,
-                                /^#!.*\/bash($| )/, /^#!\/usr\/bin\/env bash($| )/]
+                                /^#!.*\/bash($| )/, /^#!\/usr\/bin\/env bash($| )/,
+                                /^#!.*\/ksh($| )/, /^#!\/usr\/bin\/env ksh($| )/,
+                                /^#!.*\/csh($| )/, /^#!\/usr\/bin\/env csh($| )/,
+                                /^#!.*\/tcsh($| )/, /^#!\/usr\/bin\/env tcsh($| )/,
+                                /^#!.*\/zsh($| )/, /^#!\/usr\/bin\/env zsh($| )/,
+                                /^#!.*\/fish($| )/, /^#!\/usr\/bin\/env fish($| )/]
         },
 
         "sieve": {
