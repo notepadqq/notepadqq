@@ -207,6 +207,18 @@ void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
     emit editorMouseWheel(indexOf(editor), ev);
 }
 
+void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
+{
+    if (ev->button() == Qt::MiddleButton) {
+        int index = tabBar()->tabAt(ev->pos());
+        if (index != -1) {
+            emit tabCloseRequested(index);
+        }
+    }
+
+    QTabWidget::mouseReleaseEvent(ev);
+}
+
 void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
 {
     Editor *editor = dynamic_cast<Editor *>(sender());

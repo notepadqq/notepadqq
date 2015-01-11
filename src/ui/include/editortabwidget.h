@@ -60,6 +60,8 @@ signals:
 public slots:
     void setSavedIcon(int index, bool saved);
 
+protected:
+    void mouseReleaseEvent(QMouseEvent *ev);
 };
 
 #endif // EDITORTABWIDGET_H
