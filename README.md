@@ -23,6 +23,10 @@ by following the above steps, then run
 
     notepadqq$ sudo make install
 
+Qt
+--
+Notepadqq might work on Qt 5.2, but it's recommended to use Qt 5.3 or later. If the newest version isn't available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
+
 Distribution Packages
 ---------------------
 
