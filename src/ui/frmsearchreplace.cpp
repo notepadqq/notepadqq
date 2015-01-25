@@ -23,13 +23,25 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
 
+    ui->cmbFilter->lineEdit()->setPlaceholderText("*.cpp, *.h");
+
     ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));
     ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
 
+    QActionGroup *tabGroup = new QActionGroup(this);
+    tabGroup->addAction(ui->actionFind);
+    tabGroup->addAction(ui->actionReplace);
+    tabGroup->addAction(ui->actionFind_in_files);
+    tabGroup->setExclusive(true);
+
+    // Initialize all the tabs
     ui->actionFind->setChecked(true);
-    ui->actionReplace->toggled(false);
-    ui->actionFind->toggled(true);
+    ui->actionReplace->setChecked(true);
+    ui->actionFind_in_files->setChecked(true);
+
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
+
+    setCurrentTab(TabSearch);
 }
 
 frmSearchReplace::~frmSearchReplace()
@@ -262,20 +274,39 @@ void frmSearchReplace::on_btnSelectAll_clicked()
 
 void frmSearchReplace::on_actionReplace_toggled(bool on)
 {
-    ui->actionFind->setChecked(!on);
-
     ui->btnReplaceAll->setVisible(on);
     ui->btnReplaceNext->setVisible(on);
     ui->btnReplacePrev->setVisible(on);
     ui->cmbReplace->setVisible(on);
     ui->lblReplace->setVisible(on);
 
+    ui->cmbSearch->setFocus();
+
     manualSizeAdjust();
 }
 
-void frmSearchReplace::on_actionFind_toggled(bool on)
+void frmSearchReplace::on_actionFind_toggled(bool /*on*/)
 {
-    ui->actionReplace->setChecked(!on);
+    ui->cmbSearch->setFocus();
+
+    manualSizeAdjust();
+}
+
+void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
+{
+    ui->lblLookIn->setVisible(on);
+    ui->cmbLookIn->setVisible(on);
+    ui->lblFilter->setVisible(on);
+    ui->cmbFilter->setVisible(on);
+    ui->btnLookInBrowse->setVisible(on);
+    ui->btnFindAll->setVisible(on);
+    ui->lblSpacer1->setVisible(on);
+    ui->lblSpacer2->setVisible(on);
+    ui->btnFindNext->setVisible(!on);
+    ui->btnFindPrev->setVisible(!on);
+    ui->btnSelectAll->setVisible(!on);
+
+    ui->cmbSearch->setFocus();
 
     manualSizeAdjust();
 }
@@ -353,3 +384,5 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
         }
     }
 }
+
+

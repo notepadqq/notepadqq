@@ -35,8 +35,9 @@ private slots:
     void on_btnReplacePrev_clicked();
     void on_btnReplaceAll_clicked();
     void on_btnSelectAll_clicked();
-    void on_actionReplace_toggled(bool on);
     void on_actionFind_toggled(bool on);
+    void on_actionReplace_toggled(bool on);
+    void on_actionFind_in_files_toggled(bool on);
     void on_chkShowAdvanced_toggled(bool checked);
     void on_radSearchWithRegex_toggled(bool checked);
     void on_radSearchPlainText_toggled(bool checked);
