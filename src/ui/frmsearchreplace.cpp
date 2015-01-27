@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QSettings>
+#include <QDirIterator>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),
@@ -86,7 +87,7 @@ Editor *frmSearchReplace::currentEditor()
 QString frmSearchReplace::plainTextToRegex(QString text, bool matchWholeWord)
 {
     // Transform it into a regex, but make sure to escape special chars
-    QString regex = QRegExp::escape(text);
+    QString regex = QRegularExpression::escape(text);
 
     if (matchWholeWord)
         regex = "\\b" + regex + "\\b";
@@ -178,6 +179,64 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
     data.append(regexModifiersFromSearchOptions(searchOptions));
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data));
     return count.toInt();
+}
+
+void frmSearchReplace::searchInFiles(QString string, QString path, QStringList filters, SearchMode searchMode, SearchOptions searchOptions)
+{
+    if (!string.isEmpty()) {
+        QRegularExpression newLine("\n|\r\n|\r");
+        QString rawSearch = rawSearchString(string, searchMode, searchOptions);
+
+        QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
+        if (searchOptions.MatchCase == false) {
+            options |= QRegularExpression::CaseInsensitiveOption;
+        }
+        QRegularExpression regex(rawSearch, options);
+
+        QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
+        while (it.hasNext()) {
+            QString fileName = it.next();
+
+            // Read the file into a string
+            QFile f(fileName);
+            if (!f.open(QFile::ReadOnly | QFile::Text)) continue;
+            QTextStream in(&f);
+            // FIXME Should we decode the file if it's in a strange encoding?
+            // FIXME What about line endings?
+            QString content = in.readAll();
+
+            // Run the search
+            QRegularExpressionMatchIterator i = regex.globalMatch(content);
+            while (i.hasNext())
+            {
+                QRegularExpressionMatch match = i.next();
+                QStringList matches = match.capturedTexts();
+
+                if (!matches[0].isEmpty()) {
+                    int capturedPosStart = match.capturedStart();
+                    //int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
+                    int linePosStart = content.lastIndexOf(newLine, capturedPosStart) + 1;
+                    int linePosEnd = content.indexOf(newLine, capturedPosStart);
+                    QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart);
+
+                    // FIXME Use leftRef!! Too much memory usage.
+                    int wholeLineNumber = content.left(linePosStart).count(newLine);
+
+                    int capturedPosStartInWholeLine = capturedPosStart - linePosStart;
+                    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length();
+
+                    QString richTextLine = wholeLine;
+                    // Insert tags from the end to the start so we don't mess up with the indexes.
+                    richTextLine.insert(capturedPosEndInWholeLine, "</b>");
+                    richTextLine.insert(capturedPosStartInWholeLine, "<b>");
+
+                    QMessageBox::information(this, fileName, "Line " + QString::number(wholeLineNumber) + "\n" + richTextLine);
+                }
+            }
+
+            f.close();
+        }
+    }
 }
 
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
@@ -386,3 +445,12 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 }
 
 
+
+void frmSearchReplace::on_btnFindAll_clicked()
+{
+    searchInFiles(ui->cmbSearch->currentText(),
+                  ui->cmbLookIn->currentText(),
+                  ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts),
+                  searchModeFromUI(),
+                  searchOptionsFromUI());
+}

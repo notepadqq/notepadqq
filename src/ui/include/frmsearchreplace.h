@@ -43,6 +43,7 @@ private slots:
     void on_radSearchPlainText_toggled(bool checked);
     void on_radSearchWithSpecialChars_toggled(bool checked);
     void on_searchStringEdited(const QString &text);
+    void on_btnFindAll_clicked();
 
 private:
     Ui::frmSearchReplace*  ui;
@@ -70,6 +71,7 @@ private:
     void replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions);
     int replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions);
     int selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions);
+    void searchInFiles(QString string, QString path, QStringList filter, SearchMode searchMode, SearchOptions searchOptions);
     void setCurrentTab(Tabs tab);
     void manualSizeAdjust();
     SearchOptions searchOptionsFromUI();
