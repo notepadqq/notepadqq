@@ -1,6 +1,7 @@
 #include "include/singleapplication.h"
 #include <QLocalSocket>
 #include <QDir>
+#include <QRegularExpression>
 #include "include/localcommunication.h"
 
 #if defined(Q_OS_WIN)
@@ -104,7 +105,7 @@ QString SingleApplication::socketNameForUser()
 #endif
         prefix = id.section(QLatin1Char('/'), -1);
     }
-    prefix.remove(QRegExp("[^a-zA-Z]"));
+    prefix.remove(QRegularExpression("[^a-zA-Z]"));
     prefix.truncate(6);
 
     QByteArray idc = id.toUtf8();

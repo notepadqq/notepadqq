@@ -767,7 +767,7 @@ void MainWindow::on_action_Paste_triggered()
 {
     // Normalize foreign text format
     QString text = QApplication::clipboard()->text()
-            .replace(QRegExp("\n|\r\n|\r"), "\n");
+            .replace(QRegularExpression("\n|\r\n|\r"), "\n");
 
     currentEditor()->setSelectionsText(text.split("\n"));
 }
