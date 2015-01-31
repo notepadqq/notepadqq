@@ -15,7 +15,7 @@ class frmSearchReplace : public QMainWindow
     Q_OBJECT
 
 public:
-    enum Tabs { TabSearch, TabReplace };
+    enum Tabs { TabSearch, TabReplace, TabSearchInFiles };
     explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent = 0);
     ~frmSearchReplace();
     void show(Tabs defaultTab);

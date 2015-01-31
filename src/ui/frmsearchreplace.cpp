@@ -78,6 +78,8 @@ void frmSearchReplace::setCurrentTab(Tabs tab)
         ui->actionFind->setChecked(true);
     } else if (tab == TabReplace) {
         ui->actionReplace->setChecked(true);
+    } else if (tab == TabSearchInFiles) {
+        ui->actionFind_in_files->setChecked(true);
     }
 }
 
@@ -198,7 +200,12 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
         QList<QStandardItem *> searchRow;
         searchRow << new QStandardItem();
 
-        QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
+        QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
+        if (ui->chkIncludeSubdirs->isChecked()) {
+            dirIteratorOptions |= QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
+        }
+
+        QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
         int totalFileMatches = 0;
         int totalFiles = 0;
         while (it.hasNext()) {
@@ -392,6 +399,7 @@ void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
     ui->btnFindAll->setVisible(on);
     ui->lblSpacer1->setVisible(on);
     ui->lblSpacer2->setVisible(on);
+    ui->chkIncludeSubdirs->setVisible(on);
     ui->btnFindNext->setVisible(!on);
     ui->btnFindPrev->setVisible(!on);
     ui->btnSelectAll->setVisible(!on);
