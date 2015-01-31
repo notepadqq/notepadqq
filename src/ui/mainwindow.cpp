@@ -1618,19 +1618,21 @@ void MainWindow::on_actionInterpret_as_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    /*QPrinter printer;
-    QPrintDialog *dialog = new QPrintDialog(&printer);
+	QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    QPrintDialog *dialog = new QPrintDialog(printer);
     if ( dialog->exec() == QDialog::Accepted)
-          currentEditor()->print(&printer);*/
-
-    /*QPrinter *printer = new QPrinter(QPrinter::HighResolution);
-    QPrintPreviewDialog *pd = new QPrintPreviewDialog(printer);
-    connect(pd, &QPrintPreviewDialog::paintRequested, currentEditor(), &Editor::print);
-
-    pd->exec();
+          currentEditor()->print(printer);
 
     delete printer;
-    pd->deleteLater();*/
+    dialog->deleteLater();
+}
+
+void MainWindow::on_actionPrint_Now_triggered()
+{
+	QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    currentEditor()->print(printer);
+
+    delete printer;
 }
 
 void MainWindow::on_actionLaunch_in_Firefox_triggered()
