@@ -1618,7 +1618,7 @@ void MainWindow::on_actionInterpret_as_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-	QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
     QPrintDialog *dialog = new QPrintDialog(printer);
     if ( dialog->exec() == QDialog::Accepted)
           currentEditor()->print(printer);
@@ -1629,7 +1629,7 @@ void MainWindow::on_actionPrint_triggered()
 
 void MainWindow::on_actionPrint_Now_triggered()
 {
-	QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
     currentEditor()->print(printer);
 
     delete printer;
