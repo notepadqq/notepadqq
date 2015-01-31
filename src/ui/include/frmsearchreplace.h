@@ -4,6 +4,7 @@
 #include "topeditorcontainer.h"
 #include <QDialog>
 #include <QMainWindow>
+#include <QStandardItemModel>
 
 namespace Ui {
 class frmSearchReplace;
@@ -15,7 +16,7 @@ class frmSearchReplace : public QMainWindow
 
 public:
     enum Tabs { TabSearch, TabReplace };
-    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
+    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent = 0);
     ~frmSearchReplace();
     void show(Tabs defaultTab);
 
@@ -49,6 +50,7 @@ private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
+    QStandardItemModel*    m_filesFindResultsModel;
     Editor*                currentEditor();
 
     enum class SearchMode {

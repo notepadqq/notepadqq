@@ -6,9 +6,11 @@
 #include <QSettings>
 #include <QDirIterator>
 
-frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
+frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::frmSearchReplace), m_topEditorContainer(topEditorContainer)
+    ui(new Ui::frmSearchReplace),
+    m_topEditorContainer(topEditorContainer),
+    m_filesFindResultsModel(filesFindResultsModel)
 {
     ui->setupUi(this);
 
@@ -193,9 +195,15 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
         }
         QRegularExpression regex(rawSearch, options);
 
+        QList<QStandardItem *> searchRow;
+        searchRow << new QStandardItem();
+
         QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, QDirIterator::Subdirectories | QDirIterator::FollowSymlinks);
+        int totalFileMatches = 0;
+        int totalFiles = 0;
         while (it.hasNext()) {
             QString fileName = it.next();
+            int curFileMatches = 0;
 
             // Read the file into a string
             QFile f(fileName);
@@ -205,6 +213,9 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
             // FIXME What about line endings?
             QString content = in.readAll();
 
+            QList<QStandardItem *> fileRow;
+            fileRow << new QStandardItem();
+
             // Run the search
             QRegularExpressionMatchIterator i = regex.globalMatch(content);
             while (i.hasNext())
@@ -213,29 +224,49 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                 QStringList matches = match.capturedTexts();
 
                 if (!matches[0].isEmpty()) {
-                    int capturedPosStart = match.capturedStart();
+                    int capturedPosStart = match.capturedStart(); // Position (from byte 0) of the start of the found word
                     //int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
-                    int linePosStart = content.lastIndexOf(newLine, capturedPosStart) + 1;
-                    int linePosEnd = content.indexOf(newLine, capturedPosStart);
-                    QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart);
+                    int linePosStart = content.lastIndexOf(newLine, capturedPosStart) + 1; // Position (from byte 0) of the start of the first line of the found word
+                    int linePosEnd = content.indexOf(newLine, capturedPosStart); // Position (from byte 0) of the end of the first line of the found word
+                    QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart); // Content of the first line of the found word
 
                     // FIXME Use leftRef!! Too much memory usage.
-                    int wholeLineNumber = content.left(linePosStart).count(newLine);
+                    int wholeLineNumber = content.left(linePosStart).count(newLine); // Number of the first line of the found word
 
-                    int capturedPosStartInWholeLine = capturedPosStart - linePosStart;
-                    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length();
+                    int capturedPosStartInWholeLine = capturedPosStart - linePosStart; // Position (from the start of the line) of the start of the found word
+                    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length(); // Position (from the start of the line) of the end of the found word
 
-                    QString richTextLine = wholeLine;
+                    /*QString richTextLine = wholeLine;
                     // Insert tags from the end to the start so we don't mess up with the indexes.
                     richTextLine.insert(capturedPosEndInWholeLine, "</b>");
                     richTextLine.insert(capturedPosStartInWholeLine, "<b>");
-
                     QMessageBox::information(this, fileName, "Line " + QString::number(wholeLineNumber) + "\n" + richTextLine);
+                    */
+
+                    QList<QStandardItem *> lineRow;
+                    lineRow << new QStandardItem(QString("Line %1: %2").arg(wholeLineNumber + 1).arg(wholeLine));
+                    fileRow[0]->appendRow(lineRow);
+
+                    curFileMatches++;
+                    totalFileMatches++;
                 }
             }
 
             f.close();
+
+            if (curFileMatches > 0) {
+                fileRow[0]->setText(QString("%1 (%2 hits)").arg(fileName).arg(curFileMatches));
+                searchRow[0]->appendRow(fileRow);
+
+                totalFiles++;
+            } else {
+                delete fileRow[0];
+            }
         }
+
+        searchRow[0]->setText(QString("Search \"%1\" (%2 hits in %3 files)").arg(string).arg(totalFileMatches).arg(totalFiles));
+        QStandardItem *root = m_filesFindResultsModel->invisibleRootItem();
+        root->insertRow(0, searchRow);
     }
 }
 

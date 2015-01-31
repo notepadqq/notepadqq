@@ -29,7 +29,8 @@ QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_topEditorContainer(new TopEditorContainer(this))
+    m_topEditorContainer(new TopEditorContainer(this)),
+    m_filesFindResultsModel(new QStandardItemModel(this))
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -106,6 +107,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setAcceptDrops(true);
 
+    connect(m_filesFindResultsModel, &QStandardItemModel::rowsInserted,
+            this, &MainWindow::on_filesFindResultsModelRowsInserted);
+    ui->treeFileSearchResults->setModel(m_filesFindResultsModel);
+
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
@@ -122,6 +127,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     restoreWindowSettings();
+
+    ui->dockFileSearchResults->hide();
 
     // If there was another window already opened, move this window
     // slightly to the bottom-right, so that they won't completely overlap.
@@ -1003,6 +1010,7 @@ void MainWindow::on_actionSearch_triggered()
     if (!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(
                             m_topEditorContainer,
+                            m_filesFindResultsModel,
                             this);
     }
     m_frmSearchReplace->show(frmSearchReplace::TabSearch);
@@ -1137,6 +1145,7 @@ void MainWindow::on_actionReplace_triggered()
     if (!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(
                             m_topEditorContainer,
+                            m_filesFindResultsModel,
                             this);
     }
     m_frmSearchReplace->show(frmSearchReplace::TabReplace);
@@ -1765,4 +1774,16 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
     if (tab == -1) {
         m_docEngine->addNewDocument(getNewDocumentName(), true, tabWidget);
     }
+}
+
+void MainWindow::on_filesFindResultsModelRowsInserted(const QModelIndex &/*parent*/, int /*first*/, int /*last*/)
+{
+    // Force an update of the treeView, otherwise the new row isn't available (Qt bug?)
+    ui->treeFileSearchResults->setModel(NULL);
+    ui->treeFileSearchResults->setModel(m_filesFindResultsModel);
+
+    // Expand the first row
+    ui->treeFileSearchResults->expand(m_filesFindResultsModel->item(0)->index());
+
+    ui->dockFileSearchResults->show();
 }

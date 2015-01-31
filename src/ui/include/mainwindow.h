@@ -10,6 +10,7 @@
 #include "frmsearchreplace.h"
 #include <functional>
 #include "QtPrintSupport/QPrinter"
+#include <QStandardItemModel>
 
 namespace Ui {
 class MainWindow;
@@ -149,6 +150,8 @@ private slots:
     void on_actionOpen_file_triggered();
     void on_actionOpen_in_another_window_triggered();
     void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
+    void on_filesFindResultsModelRowsInserted(const QModelIndex &parent, int first, int last);
+
 private:
     static QList<MainWindow*> m_instances;
     Ui::MainWindow*     ui;
@@ -166,6 +169,7 @@ private:
     QSettings*          m_settings;
     frmSearchReplace*   m_frmSearchReplace = 0;
     bool                m_overwrite = false; // Overwrite mode vs Insert mode
+    QStandardItemModel* m_filesFindResultsModel;
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
