@@ -29,6 +29,7 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *evt);
+
 private slots:
     void on_btnFindNext_clicked();
     void on_btnFindPrev_clicked();

@@ -413,16 +413,12 @@ void frmSearchReplace::manualSizeAdjust()
 {
     int curX = geometry().x();
     int curY = geometry().y();
-    //setFixedSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+
     QApplication::processEvents();
     QApplication::processEvents();
     setGeometry(curX, curY, width(), 0);
-    /*QApplication::processEvents();
-    QApplication::processEvents();
+
     setFixedSize(width(), height());
-    QApplication::processEvents();
-    QApplication::processEvents();
-    setGeometry(curX, curY, width(), height());*/
 }
 
 void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
@@ -482,8 +478,6 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
         }
     }
 }
-
-
 
 void frmSearchReplace::on_btnFindAll_clicked()
 {
