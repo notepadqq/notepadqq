@@ -258,7 +258,6 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                     QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart);
 
                     // Number of the first line of the found word
-                    //int wholeLineNumber = content.left(linePosStart).count(newLine);
                     int count1 = content.leftRef(linePosStart).count("\r\n");
                     int count2 = content.leftRef(linePosStart).count("\r");
                     int count3 = content.leftRef(linePosStart).count("\n");
@@ -269,13 +268,6 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
 
                     // Position (from the start of the line) of the end of the found word
                     int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length();
-
-                    /*QString richTextLine = wholeLine;
-                    // Insert tags from the end to the start so we don't mess up with the indexes.
-                    richTextLine.insert(capturedPosEndInWholeLine, "</b>");
-                    richTextLine.insert(capturedPosStartInWholeLine, "<b>");
-                    QMessageBox::information(this, fileName, "Line " + QString::number(wholeLineNumber) + "\n" + richTextLine);
-                    */
 
                     QList<QStandardItem *> lineRow;
                     lineRow << new QStandardItem(QString("Line %1: %2").arg(wholeLineNumber + 1).arg(wholeLine));
