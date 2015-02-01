@@ -71,6 +71,7 @@ void frmSearchReplace::show(Tabs defaultTab)
     ui->cmbSearch->setFocus();
     ui->cmbSearch->lineEdit()->selectAll();
     QMainWindow::show();
+    manualSizeAdjust();
 }
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
