@@ -138,6 +138,7 @@ private slots:
     void on_actionReload_file_interpreted_as_triggered();
     void on_actionInterpret_as_triggered();
     void on_actionPrint_triggered();
+    void on_actionPrint_Now_triggered();
     void on_actionLaunch_in_Firefox_triggered();
     void on_actionLaunch_in_Chromium_triggered();
     void on_actionLaunch_in_Chrome_triggered();
