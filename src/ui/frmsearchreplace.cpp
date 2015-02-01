@@ -188,15 +188,19 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
 void frmSearchReplace::searchInFiles(QString string, QString path, QStringList filters, SearchMode searchMode, SearchOptions searchOptions)
 {
     if (!string.isEmpty()) {
+        // Regex used to detect newlines
         QRegularExpression newLine("\n|\r\n|\r");
+        // Search string converted to a regex
         QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
         QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
         if (searchOptions.MatchCase == false) {
             options |= QRegularExpression::CaseInsensitiveOption;
         }
+
         QRegularExpression regex(rawSearch, options);
 
+        // Row, in the model, relative to this search
         QList<QStandardItem *> searchRow;
         searchRow << new QStandardItem();
 
@@ -205,21 +209,28 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
             dirIteratorOptions |= QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
         }
 
+        // Iterator used to find files in the specified directory
         QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
+
+        // Total number of matches in all the files
         int totalFileMatches = 0;
+        // Number of files that contain matches
         int totalFiles = 0;
+
         while (it.hasNext()) {
             QString fileName = it.next();
+
+            // Number of matches in the current file
             int curFileMatches = 0;
 
-            // Read the file into a string
+            // Read the file into a string.
+            // There is no manual decoding: we assume that the files are Unicode.
             QFile f(fileName);
             if (!f.open(QFile::ReadOnly | QFile::Text)) continue;
             QTextStream in(&f);
-            // FIXME Should we decode the file if it's in a strange encoding?
-            // FIXME What about line endings?
             QString content = in.readAll();
 
+            // Row, in the model, relative to this file
             QList<QStandardItem *> fileRow;
             fileRow << new QStandardItem();
 
@@ -231,17 +242,30 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                 QStringList matches = match.capturedTexts();
 
                 if (!matches[0].isEmpty()) {
-                    int capturedPosStart = match.capturedStart(); // Position (from byte 0) of the start of the found word
+                    // Position (from byte 0) of the start of the found word
+                    int capturedPosStart = match.capturedStart();
+
+                    // Position (from byte 0) of the end of the found word
                     //int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
-                    int linePosStart = content.lastIndexOf(newLine, capturedPosStart) + 1; // Position (from byte 0) of the start of the first line of the found word
-                    int linePosEnd = content.indexOf(newLine, capturedPosStart); // Position (from byte 0) of the end of the first line of the found word
-                    QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart); // Content of the first line of the found word
 
+                    // Position (from byte 0) of the start of the first line of the found word
+                    int linePosStart = content.lastIndexOf(newLine, capturedPosStart) + 1;
+
+                    // Position (from byte 0) of the end of the first line of the found word
+                    int linePosEnd = content.indexOf(newLine, capturedPosStart);
+
+                    // Content of the first line of the found word
+                    QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart);
+
+                    // Number of the first line of the found word
                     // FIXME Use leftRef!! Too much memory usage.
-                    int wholeLineNumber = content.left(linePosStart).count(newLine); // Number of the first line of the found word
+                    int wholeLineNumber = content.left(linePosStart).count(newLine);
 
-                    int capturedPosStartInWholeLine = capturedPosStart - linePosStart; // Position (from the start of the line) of the start of the found word
-                    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length(); // Position (from the start of the line) of the end of the found word
+                    // Position (from the start of the line) of the start of the found word
+                    int capturedPosStartInWholeLine = capturedPosStart - linePosStart;
+
+                    // Position (from the start of the line) of the end of the found word
+                    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + matches[0].length();
 
                     /*QString richTextLine = wholeLine;
                     // Insert tags from the end to the start so we don't mess up with the indexes.
