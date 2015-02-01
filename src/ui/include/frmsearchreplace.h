@@ -46,6 +46,7 @@ private slots:
     void on_radSearchWithSpecialChars_toggled(bool checked);
     void on_searchStringEdited(const QString &text);
     void on_btnFindAll_clicked();
+    void on_btnLookInBrowse_clicked();
 
 private:
     Ui::frmSearchReplace*  ui;

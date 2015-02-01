@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QDirIterator>
+#include <QFileDialog>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent) :
     QMainWindow(parent),
@@ -505,4 +506,16 @@ void frmSearchReplace::on_btnFindAll_clicked()
                   ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts),
                   searchModeFromUI(),
                   searchOptionsFromUI());
+}
+
+void frmSearchReplace::on_btnLookInBrowse_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Look in"),
+                                                     ui->cmbLookIn->currentText(),
+                                                     QFileDialog::ShowDirsOnly
+                                                     | QFileDialog::DontResolveSymlinks);
+
+    if (!dir.isEmpty()) {
+        ui->cmbLookIn->setCurrentText(dir);
+    }
 }
