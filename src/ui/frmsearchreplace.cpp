@@ -258,8 +258,11 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                     QString wholeLine = content.mid(linePosStart, linePosEnd - linePosStart);
 
                     // Number of the first line of the found word
-                    // FIXME Use leftRef!! Too much memory usage.
-                    int wholeLineNumber = content.left(linePosStart).count(newLine);
+                    //int wholeLineNumber = content.left(linePosStart).count(newLine);
+                    int count1 = content.leftRef(linePosStart).count("\r\n");
+                    int count2 = content.leftRef(linePosStart).count("\r");
+                    int count3 = content.leftRef(linePosStart).count("\n");
+                    int wholeLineNumber = qMax(count1, qMax(count2, count3));
 
                     // Position (from the start of the line) of the start of the found word
                     int capturedPosStartInWholeLine = capturedPosStart - linePosStart;
