@@ -61,7 +61,8 @@ SOURCES += main.cpp\
     EditorNS/bannerindentationdetected.cpp \
     frmindentationmode.cpp \
     singleapplication.cpp \
-    localcommunication.cpp
+    localcommunication.cpp \
+    treeviewhtmldelegate.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -82,7 +83,8 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerindentationdetected.h \
     include/frmindentationmode.h \
     include/singleapplication.h \
-    include/localcommunication.h
+    include/localcommunication.h \
+    include/treeviewhtmldelegate.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

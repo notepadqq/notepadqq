@@ -82,6 +82,7 @@ private:
     SearchMode searchModeFromUI();
     QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
     QString regexModifiersFromSearchOptions(SearchOptions searchOptions);
+    QString getFileResultFormattedLine(const QRegularExpressionMatch &match, QString *content);
 };
 
 #endif // FRMSEARCHREPLACE_H

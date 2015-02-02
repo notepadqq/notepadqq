@@ -12,6 +12,7 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
+#include "include/treeviewhtmldelegate.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -112,6 +113,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_filesFindResultsModel, &QStandardItemModel::rowsInserted,
             this, &MainWindow::on_filesFindResultsModelRowsInserted);
     ui->treeFileSearchResults->setModel(m_filesFindResultsModel);
+    TreeViewHTMLDelegate *delegate = new TreeViewHTMLDelegate();
+    ui->treeFileSearchResults->setItemDelegate(delegate);
 
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
