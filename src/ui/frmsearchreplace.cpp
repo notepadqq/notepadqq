@@ -24,10 +24,17 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QStan
         rect().center());
 
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
-    connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
+    connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, [=]() {
+        if (ui->actionFind_in_files->isChecked()) {
+            on_btnFindAll_clicked();
+        } else {
+            on_btnFindNext_clicked();
+        }
+    });
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
+    connect(ui->cmbLookIn->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindAll_clicked);
 
-    ui->cmbFilter->lineEdit()->setPlaceholderText("*.cpp, *.h");
+    ui->cmbFilter->lineEdit()->setPlaceholderText("*.ext1, *.ext2, ...");
 
     ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));
     ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
