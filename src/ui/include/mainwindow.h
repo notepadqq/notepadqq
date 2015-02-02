@@ -152,6 +152,7 @@ private slots:
     void on_actionOpen_in_another_window_triggered();
     void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
     void on_filesFindResultsModelRowsInserted(const QModelIndex &parent, int first, int last);
+    void on_actionFind_in_Files_triggered();
 
 private:
     static QList<MainWindow*> m_instances;

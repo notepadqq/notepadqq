@@ -129,10 +129,11 @@
      <string>&amp;Search</string>
     </property>
     <addaction name="actionSearch"/>
-    <addaction name="actionReplace"/>
-    <addaction name="separator"/>
+    <addaction name="actionFind_in_Files"/>
     <addaction name="actionFind_Next"/>
     <addaction name="actionFind_Previous"/>
+    <addaction name="separator"/>
+    <addaction name="actionReplace"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -896,6 +897,14 @@
   <action name="actionOpen_a_New_Window">
    <property name="text">
     <string>Open a New Window</string>
+   </property>
+  </action>
+  <action name="actionFind_in_Files">
+   <property name="text">
+    <string>Find in Files...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
    </property>
   </action>
  </widget>

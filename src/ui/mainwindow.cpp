@@ -1798,3 +1798,15 @@ void MainWindow::on_filesFindResultsModelRowsInserted(const QModelIndex &/*paren
 
     ui->dockFileSearchResults->show();
 }
+
+void MainWindow::on_actionFind_in_Files_triggered()
+{
+    if (!m_frmSearchReplace) {
+        m_frmSearchReplace = new frmSearchReplace(
+                            m_topEditorContainer,
+                            m_filesFindResultsModel,
+                            this);
+    }
+    m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
+    m_frmSearchReplace->activateWindow();
+}
