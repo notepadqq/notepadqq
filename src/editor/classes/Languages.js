@@ -220,8 +220,7 @@ var Languages = new function() {
             name: "Markdown (GitHub-flavour)",
             mode: "gfm",
             mime: "text/x-gfm",
-            fileExtensions: [],
-            fileNames: ["readme.md", "Readme.md", "README.md", "README.MD"]
+            fileExtensions: []
         },
 
         "go": {
