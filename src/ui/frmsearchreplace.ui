@@ -447,6 +447,27 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>cmbSearch</tabstop>
+  <tabstop>cmbReplace</tabstop>
+  <tabstop>cmbLookIn</tabstop>
+  <tabstop>btnLookInBrowse</tabstop>
+  <tabstop>cmbFilter</tabstop>
+  <tabstop>chkIncludeSubdirs</tabstop>
+  <tabstop>chkShowAdvanced</tabstop>
+  <tabstop>radSearchPlainText</tabstop>
+  <tabstop>radSearchWithRegex</tabstop>
+  <tabstop>radSearchWithSpecialChars</tabstop>
+  <tabstop>chkMatchWholeWord</tabstop>
+  <tabstop>chkMatchCase</tabstop>
+  <tabstop>btnFindPrev</tabstop>
+  <tabstop>btnFindNext</tabstop>
+  <tabstop>btnSelectAll</tabstop>
+  <tabstop>btnReplacePrev</tabstop>
+  <tabstop>btnReplaceNext</tabstop>
+  <tabstop>btnReplaceAll</tabstop>
+  <tabstop>btnFindAll</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
