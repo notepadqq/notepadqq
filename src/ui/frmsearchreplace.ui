@@ -289,12 +289,18 @@
         <property name="text">
          <string>Find ⇩</string>
         </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="3">
        <widget class="QPushButton" name="btnSelectAll">
         <property name="text">
          <string>Select all</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -303,6 +309,9 @@
         <property name="text">
          <string>Replace ⇧</string>
         </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="2">
@@ -310,12 +319,18 @@
         <property name="text">
          <string>Replace ⇩</string>
         </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="3">
        <widget class="QPushButton" name="btnReplaceAll">
         <property name="text">
          <string>Replace all</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -331,12 +346,18 @@
         <property name="text">
          <string>Find all</string>
         </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="btnFindPrev">
         <property name="text">
          <string>Find ⇧</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

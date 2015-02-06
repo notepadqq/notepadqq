@@ -31,8 +31,9 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QStan
             on_btnFindNext_clicked();
         }
     });
-    connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnReplaceNext_clicked);
+    connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
     connect(ui->cmbLookIn->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindAll_clicked);
+    connect(ui->cmbFilter->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindAll_clicked);
 
     ui->cmbFilter->lineEdit()->setPlaceholderText("*.ext1, *.ext2, ...");
 
