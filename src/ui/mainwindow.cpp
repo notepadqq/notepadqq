@@ -1813,3 +1813,13 @@ void MainWindow::on_actionFind_in_Files_triggered()
     m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
     m_frmSearchReplace->activateWindow();
 }
+
+void MainWindow::on_actionDelete_Line_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_DELETE_LINE");
+}
+
+void MainWindow::on_actionDuplicate_Line_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE");
+}

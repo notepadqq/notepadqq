@@ -154,6 +154,10 @@ private slots:
     void on_filesFindResultsModelRowsInserted(const QModelIndex &parent, int first, int last);
     void on_actionFind_in_Files_triggered();
 
+    void on_actionDelete_Line_triggered();
+
+    void on_actionDuplicate_Line_triggered();
+
 private:
     static QList<MainWindow*> m_instances;
     Ui::MainWindow*     ui;
