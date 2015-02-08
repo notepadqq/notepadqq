@@ -110,6 +110,13 @@
      <addaction name="actionIndentation_Default_settings"/>
      <addaction name="actionIndentation_Custom"/>
     </widget>
+    <widget class="QMenu" name="menuLine_Operations">
+     <property name="title">
+      <string>Line Operations</string>
+     </property>
+     <addaction name="actionDuplicate_Line"/>
+     <addaction name="actionDelete_Line"/>
+    </widget>
     <addaction name="action_Undo"/>
     <addaction name="action_Redo"/>
     <addaction name="separator"/>
@@ -121,6 +128,7 @@
     <addaction name="separator"/>
     <addaction name="menuCopy_to_Clipboard"/>
     <addaction name="menuConvert_Case_to"/>
+    <addaction name="menuLine_Operations"/>
     <addaction name="menuEOL_Conversion"/>
     <addaction name="menuIndentation"/>
    </widget>
@@ -905,6 +913,28 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionDelete_Line">
+   <property name="text">
+    <string>Delete Current Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the current line</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionDuplicate_Line">
+   <property name="text">
+    <string>Duplicate Current Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Duplicate the current line</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>
