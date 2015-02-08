@@ -389,6 +389,7 @@ UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevRe
 
 UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevReturn) {
     editor.execCommand("deleteLine");
+    editor.changeGeneration(true);
 });
 
 $(document).ready(function () {
