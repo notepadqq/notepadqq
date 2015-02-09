@@ -1,6 +1,7 @@
 #include "include/filesearchresultswidget.h"
 
 FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
+    QTreeView(parent),
     m_filesFindResultsModel(new QStandardItemModel(this)),
     m_treeViewHTMLDelegate(new TreeViewHTMLDelegate(this))
 {

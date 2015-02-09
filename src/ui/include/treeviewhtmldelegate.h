@@ -8,7 +8,7 @@
 class TreeViewHTMLDelegate : public QStyledItemDelegate
 {
 public:
-    TreeViewHTMLDelegate();
+    TreeViewHTMLDelegate(QObject *parent = 0);
     ~TreeViewHTMLDelegate();
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

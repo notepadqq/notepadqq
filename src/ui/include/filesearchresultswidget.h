@@ -9,7 +9,7 @@
 class FileSearchResultsWidget : public QTreeView
 {
 public:
-    FileSearchResultsWidget();
+    FileSearchResultsWidget(QWidget *parent = 0);
     ~FileSearchResultsWidget();
     void addSearchResult(FileSearchResult::SearchResult result);
 
