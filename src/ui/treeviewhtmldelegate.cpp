@@ -2,7 +2,7 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 
-TreeViewHTMLDelegate::TreeViewHTMLDelegate()
+TreeViewHTMLDelegate::TreeViewHTMLDelegate(QObject *parent)
 {
 
 }

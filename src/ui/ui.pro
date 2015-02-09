@@ -62,7 +62,8 @@ SOURCES += main.cpp\
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
-    treeviewhtmldelegate.cpp
+    treeviewhtmldelegate.cpp \
+    filesearchresultswidget.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -84,7 +85,9 @@ HEADERS  += include/mainwindow.h \
     include/frmindentationmode.h \
     include/singleapplication.h \
     include/localcommunication.h \
-    include/treeviewhtmldelegate.h
+    include/treeviewhtmldelegate.h \
+    include/filesearchresultswidget.h \
+    include/filesearchresult.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

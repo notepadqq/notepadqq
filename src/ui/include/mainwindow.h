@@ -2,15 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "topeditorcontainer.h"
+#include "include/topeditorcontainer.h"
 #include <QLabel>
 #include <QSettings>
 #include <QCloseEvent>
 #include "docengine.h"
-#include "frmsearchreplace.h"
+#include "include/frmsearchreplace.h"
 #include <functional>
 #include "QtPrintSupport/QPrinter"
-#include <QStandardItemModel>
+#include "include/filesearchresultswidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -151,12 +151,10 @@ private slots:
     void on_actionOpen_file_triggered();
     void on_actionOpen_in_another_window_triggered();
     void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
-    void on_filesFindResultsModelRowsInserted(const QModelIndex &parent, int first, int last);
     void on_actionFind_in_Files_triggered();
-
     void on_actionDelete_Line_triggered();
-
     void on_actionDuplicate_Line_triggered();
+    void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
 
 private:
     static QList<MainWindow*> m_instances;
@@ -175,7 +173,7 @@ private:
     QSettings*          m_settings;
     frmSearchReplace*   m_frmSearchReplace = 0;
     bool                m_overwrite = false; // Overwrite mode vs Insert mode
-    QStandardItemModel* m_filesFindResultsModel;
+    FileSearchResultsWidget* m_fileSearchResultsWidget;
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
@@ -229,6 +227,7 @@ private:
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
      */
     void                fixKeyboardShortcuts();
+    void                instantiateFrmSearchReplace();
 };
 
 #endif // MAINWINDOW_H

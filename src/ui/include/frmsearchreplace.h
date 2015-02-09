@@ -2,6 +2,7 @@
 #define FRMSEARCHREPLACE_H
 
 #include "topeditorcontainer.h"
+#include "include/filesearchresult.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QStandardItemModel>
@@ -16,7 +17,7 @@ class frmSearchReplace : public QMainWindow
 
 public:
     enum Tabs { TabSearch, TabReplace, TabSearchInFiles };
-    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent = 0);
+    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
     ~frmSearchReplace();
     void show(Tabs defaultTab);
 
@@ -52,7 +53,6 @@ private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
-    QStandardItemModel*    m_filesFindResultsModel;
     Editor*                currentEditor();
 
     enum class SearchMode {
@@ -82,7 +82,10 @@ private:
     SearchMode searchModeFromUI();
     QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
     QString regexModifiersFromSearchOptions(SearchOptions searchOptions);
-    QString getFileResultFormattedLine(const QRegularExpressionMatch &match, QString *content);
+    FileSearchResult::Result buildResult(const QRegularExpressionMatch &match, QString *content);
+
+signals:
+    void fileSearchResultFinished(FileSearchResult::SearchResult result);
 };
 
 #endif // FRMSEARCHREPLACE_H

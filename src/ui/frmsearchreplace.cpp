@@ -7,11 +7,10 @@
 #include <QDirIterator>
 #include <QFileDialog>
 
-frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QStandardItemModel *filesFindResultsModel, QWidget *parent) :
+frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::frmSearchReplace),
-    m_topEditorContainer(topEditorContainer),
-    m_filesFindResultsModel(filesFindResultsModel)
+    m_topEditorContainer(topEditorContainer)
 {
     ui->setupUi(this);
 
@@ -208,9 +207,9 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
 
         QRegularExpression regex(rawSearch, options);
 
-        // Row, in the model, relative to this search
-        QList<QStandardItem *> searchRow;
-        searchRow << new QStandardItem();
+        // Search result structure
+        FileSearchResult::SearchResult structSearchResult;
+        structSearchResult.search = string;
 
         QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
         if (ui->chkIncludeSubdirs->isChecked()) {
@@ -221,9 +220,9 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
         QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
 
         // Total number of matches in all the files
-        int totalFileMatches = 0;
+        //int totalFileMatches = 0;
         // Number of files that contain matches
-        int totalFiles = 0;
+        //int totalFiles = 0;
 
         while (it.hasNext()) {
             QString fileName = it.next();
@@ -238,9 +237,9 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
             QTextStream in(&f);
             QString content = in.readAll();
 
-            // Row, in the model, relative to this file
-            QList<QStandardItem *> fileRow;
-            fileRow << new QStandardItem();
+            // Search result structure
+            FileSearchResult::FileResult structFileResult;
+            structFileResult.fileName = fileName;
 
             // Run the search
             QRegularExpressionMatchIterator i = regex.globalMatch(content);
@@ -250,40 +249,30 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                 QStringList matches = match.capturedTexts();
 
                 if (!matches[0].isEmpty()) {
-
-                    QList<QStandardItem *> lineRow;
-                    lineRow << new QStandardItem(getFileResultFormattedLine(match, &content));
-                    fileRow[0]->appendRow(lineRow);
+                    structFileResult.results.append(buildResult(match, &content));
 
                     curFileMatches++;
-                    totalFileMatches++;
+                    //totalFileMatches++;
                 }
             }
 
             f.close();
 
             if (curFileMatches > 0) {
-                fileRow[0]->setText(QString("%1 (%2 hits)")
-                                    .arg(fileName.toHtmlEscaped())
-                                    .arg(curFileMatches));
-                searchRow[0]->appendRow(fileRow);
+                structSearchResult.fileResults.append(structFileResult);
 
-                totalFiles++;
-            } else {
-                delete fileRow[0];
+                //totalFiles++;
             }
         }
 
-        searchRow[0]->setText(QString("Search \"%1\" (%2 hits in %3 files)")
-                              .arg(string.toHtmlEscaped())
-                              .arg(totalFileMatches).arg(totalFiles));
-        QStandardItem *root = m_filesFindResultsModel->invisibleRootItem();
-        root->insertRow(0, searchRow);
+        emit fileSearchResultFinished(structSearchResult);
     }
 }
 
-QString frmSearchReplace::getFileResultFormattedLine(const QRegularExpressionMatch &match, QString *content)
+FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionMatch &match, QString *content)
 {
+    FileSearchResult::Result res;
+
     // Regex used to detect newlines
     static const QRegularExpression newLine("\n|\r\n|\r");
 
@@ -314,12 +303,13 @@ QString frmSearchReplace::getFileResultFormattedLine(const QRegularExpressionMat
     // Position (from the start of the line) of the end of the found word. It could be in a following line.
     int capturedPosEndInWholeLine = capturedPosStartInWholeLine + (capturedPosEnd - capturedPosStart);
 
-    QString richTextLine = wholeLine.mid(0, capturedPosStartInWholeLine).toHtmlEscaped()
-            + "<span style=\"background-color: #ffef0b\">"
-            + wholeLine.mid(capturedPosStartInWholeLine, capturedPosEndInWholeLine - capturedPosStartInWholeLine).toHtmlEscaped()
-            + "</span>" + wholeLine.mid(capturedPosEndInWholeLine).toHtmlEscaped();
 
-    return QString("Line %1: %2").arg(wholeLineNumber + 1).arg(richTextLine);
+    res.line = wholeLine;
+    res.lineNumber = wholeLineNumber;
+    res.lineMatchStart = capturedPosStartInWholeLine;
+    res.lineMatchEnd = capturedPosEndInWholeLine;
+
+    return res;
 }
 
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
