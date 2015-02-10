@@ -71,7 +71,6 @@
     <addaction name="separator"/>
     <addaction name="actionPrint"/>
     <addaction name="actionPrint_Now"/>
-    <addaction name="separator"/>
     <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
     <addaction name="actionE_xit"/>
@@ -428,10 +427,16 @@
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionPrint_Now">
    <property name="text">
     <string>Print Now</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionOpen_All_Recent_Files">
