@@ -379,12 +379,9 @@ UiDriver.registerEventHandler("C_FUN_GET_CURRENT_WORD", function(msg, data, prev
 
 UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
-    var line = editor.getLine(cur.line)
-    var pos = {
-        line: cur.line,
-        ch: line.length
-    }
-    editor.replaceRange( '\n' + line, pos);
+    var line = editor.getLine(cur.line);
+    var pos = {line: cur.line, ch: line.length};
+    editor.replaceRange('\n' + line, pos);
 });
 
 UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevReturn) {
