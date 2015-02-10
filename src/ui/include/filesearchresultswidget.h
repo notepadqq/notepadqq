@@ -33,7 +33,7 @@ private:
 
 signals:
     void resultFileClicked(const FileSearchResult::FileResult &file);
-    void resultMatchClicked(const FileSearchResult::Result &match);
+    void resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
 };
 
 #endif // FILESEARCHRESULTSWIDGET_H

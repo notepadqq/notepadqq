@@ -31,7 +31,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this)),
-    m_fileSearchResultsWidget(new FileSearchResultsWidget())
+    m_fileSearchResultsWidget(new FileSearchResultsWidget()),
+    m_workingDirectory(workingDirectory)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -111,6 +112,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     setAcceptDrops(true);
 
     ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
+    connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultFileClicked,
+            this, &MainWindow::on_resultFileClicked);
+    connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
+            this, &MainWindow::on_resultMatchClicked);
 
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
@@ -366,6 +371,25 @@ void MainWindow::fixKeyboardShortcuts()
     }
 }
 
+QUrl MainWindow::stringToUrl(QString fileName, QString workingDirectory)
+{
+    if (workingDirectory.isEmpty())
+        workingDirectory = m_workingDirectory;
+
+    QUrl f = QUrl(fileName);
+    if (f.isRelative()) { // No schema
+        QFileInfo fi(fileName);
+        if (fi.isRelative()) { // Relative local path
+            QString absolute = QDir::cleanPath(workingDirectory + QDir::separator() + fileName);
+            return QUrl::fromLocalFile(absolute);
+        } else {
+            return QUrl::fromLocalFile(fileName);
+        }
+    } else {
+        return f;
+    }
+}
+
 void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments)
 {
     if (arguments.count() == 0) {
@@ -388,18 +412,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
         QList<QUrl> files;
         for(int i = 0; i < rawUrls.count(); i++)
         {
-            QUrl f = QUrl(rawUrls.at(i));
-            if (f.isRelative()) { // No schema
-                QFileInfo fi(rawUrls.at(i));
-                if (fi.isRelative()) { // Relative local path
-                    QString absolute = QDir::cleanPath(workingDirectory + QDir::separator() + rawUrls.at(i));
-                    files.append(QUrl::fromLocalFile(absolute));
-                } else {
-                    files.append(QUrl::fromLocalFile(rawUrls.at(i)));
-                }
-            } else {
-                files.append(f);
-            }
+            files.append(stringToUrl(rawUrls.at(i), workingDirectory));
         }
 
         EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
@@ -1815,4 +1828,15 @@ void MainWindow::on_actionDelete_Line_triggered()
 void MainWindow::on_actionDuplicate_Line_triggered()
 {
     currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE");
+}
+
+void MainWindow::on_resultFileClicked(const FileSearchResult::FileResult &file)
+{
+    m_docEngine->loadDocument(stringToUrl(file.fileName),
+                              m_topEditorContainer->currentTabWidget());
+}
+
+void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match)
+{
+
 }

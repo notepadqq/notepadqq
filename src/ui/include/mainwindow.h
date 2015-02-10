@@ -155,6 +155,8 @@ private slots:
     void on_actionDelete_Line_triggered();
     void on_actionDuplicate_Line_triggered();
     void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
+    void on_resultFileClicked(const FileSearchResult::FileResult &file);
+    void on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
 
 private:
     static QList<MainWindow*> m_instances;
@@ -174,6 +176,7 @@ private:
     frmSearchReplace*   m_frmSearchReplace = 0;
     bool                m_overwrite = false; // Overwrite mode vs Insert mode
     FileSearchResultsWidget* m_fileSearchResultsWidget;
+    QString             m_workingDirectory;
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
@@ -228,6 +231,7 @@ private:
      */
     void                fixKeyboardShortcuts();
     void                instantiateFrmSearchReplace();
+    QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
 };
 
 #endif // MAINWINDOW_H

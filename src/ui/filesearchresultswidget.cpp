@@ -103,7 +103,9 @@ void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
         break;
 
     case ResultTypeMatch:
-        emit resultMatchClicked(data.value<FileSearchResult::Result>());
+        emit resultMatchClicked(
+                    index.parent().data(RESULT_DATA_ROLE).value<FileSearchResult::FileResult>(),
+                    data.value<FileSearchResult::Result>());
         break;
     }
 }
