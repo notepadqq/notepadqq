@@ -116,6 +116,19 @@
      <addaction name="actionDuplicate_Line"/>
      <addaction name="actionDelete_Line"/>
     </widget>
+    <widget class="QMenu" name="menuBlank_Operations">
+     <property name="title">
+      <string>Blank Operations</string>
+     </property>
+     <addaction name="actionTrim_Trailing_Space"/>
+     <addaction name="actionTrim_Leading_Space"/>
+     <addaction name="actionTrim_Leading_and_Trailing_Space"/>
+     <addaction name="actionEOL_to_Space"/>
+     <addaction name="separator"/>
+     <addaction name="actionTAB_to_Space"/>
+     <addaction name="actionSpace_to_TAB_All"/>
+     <addaction name="actionSpace_to_TAB_Leading"/>
+    </widget>
     <addaction name="action_Undo"/>
     <addaction name="action_Redo"/>
     <addaction name="separator"/>
@@ -129,6 +142,7 @@
     <addaction name="menuConvert_Case_to"/>
     <addaction name="menuLine_Operations"/>
     <addaction name="menuEOL_Conversion"/>
+    <addaction name="menuBlank_Operations"/>
     <addaction name="menuIndentation"/>
    </widget>
    <widget class="QMenu" name="menu_Search">
@@ -930,6 +944,47 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionTrim_Trailing_Space">
+   <property name="text">
+    <string>Trim Trailing Space</string>
+   </property>
+   <property name="toolTip">
+    <string>Trim Trailing Space</string>
+   </property>
+  </action>
+  <action name="actionTrim_Leading_Space">
+   <property name="text">
+    <string>Trim Leading Space</string>
+   </property>
+   <property name="toolTip">
+    <string>Trim Leading Space</string>
+   </property>
+  </action>
+  <action name="actionTrim_Leading_and_Trailing_Space">
+   <property name="text">
+    <string>Trim Leading and Trailing Space</string>
+   </property>
+  </action>
+  <action name="actionEOL_to_Space">
+   <property name="text">
+    <string>EOL to Space</string>
+   </property>
+  </action>
+  <action name="actionTAB_to_Space">
+   <property name="text">
+    <string>TAB to Space</string>
+   </property>
+  </action>
+  <action name="actionSpace_to_TAB_All">
+   <property name="text">
+    <string>Space to TAB (All)</string>
+   </property>
+  </action>
+  <action name="actionSpace_to_TAB_Leading">
+   <property name="text">
+    <string>Space to TAB (Leading)</string>
    </property>
   </action>
  </widget>

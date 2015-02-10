@@ -389,6 +389,47 @@ UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevRetur
     editor.changeGeneration(true);
 });
 
+UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_TRAILING_SPACE", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.trim(); });
+});
+
+UiDriver.registerEventHandler("C_CMD_TRIM_TRAILING_SPACE", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.replace(/\s+$/, ""); });
+});
+
+UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_SPACE", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.replace(/^\s+/, ""); });
+});
+
+UiDriver.registerEventHandler("C_CMD_TAB_TO_SPACE", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.replace(/\t/g, " "); });
+});
+
+UiDriver.registerEventHandler("C_CMD_SPACE_TO_TAB_ALL", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.replace(/ /g, "\t"); });
+});
+
+UiDriver.registerEventHandler("C_CMD_SPACE_TO_TAB_LEADING", function(msg, data, prevReturn) {
+    editLines(function (x) { return x.replace(/^\s+/g, function(m){ return m.replace(/\s/g, "\t");}); });
+});
+
+function editLines(funct){
+    editor.operation(function(){
+        var len = editor.lineCount();
+        for (var i = 0; i < len; i++) {
+            var line = editor.getLine(i);
+            var from = {line: i, ch: 0};
+            var to = {line: i, ch: line.length};
+            editor.replaceRange(funct(line), from,to);
+        }
+    });
+}
+
+UiDriver.registerEventHandler("C_CMD_EOL_TO_SPACE", function(msg, data, prevReturn) {
+    var text = editor.getValue("\n");
+    editor.setValue(text.replace(/\n/gm," "));
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
