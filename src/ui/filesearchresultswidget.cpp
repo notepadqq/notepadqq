@@ -10,6 +10,9 @@ FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
 
     setEditTriggers(NoEditTriggers);
     setHeaderHidden(true);
+
+    connect(this, &FileSearchResultsWidget::doubleClicked,
+            this, &FileSearchResultsWidget::on_doubleClicked);
 }
 
 FileSearchResultsWidget::~FileSearchResultsWidget()
@@ -17,7 +20,7 @@ FileSearchResultsWidget::~FileSearchResultsWidget()
 
 }
 
-void FileSearchResultsWidget::addSearchResult(FileSearchResult::SearchResult result)
+void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &result)
 {
     // Row, in the model, relative to this search
     QList<QStandardItem *> searchRow;
@@ -42,6 +45,8 @@ void FileSearchResultsWidget::addSearchResult(FileSearchResult::SearchResult res
         {
             QList<QStandardItem *> lineRow;
             lineRow << new QStandardItem(getFileResultFormattedLine(result));
+            lineRow[0]->setData(ResultTypeMatch, RESULT_TYPE_ROLE);
+            lineRow[0]->setData(result, RESULT_DATA_ROLE);
             fileRow[0]->appendRow(lineRow);
 
             curFileMatches++;
@@ -51,6 +56,8 @@ void FileSearchResultsWidget::addSearchResult(FileSearchResult::SearchResult res
         fileRow[0]->setText(QString("%1 (%2 hits)")
                             .arg(fileResult.fileName.toHtmlEscaped())
                             .arg(curFileMatches));
+        fileRow[0]->setData(ResultTypeFile, RESULT_TYPE_ROLE);
+        fileRow[0]->setData(fileResult, RESULT_DATA_ROLE);
         searchRow[0]->appendRow(fileRow);
     }
 
@@ -70,7 +77,7 @@ void FileSearchResultsWidget::addSearchResult(FileSearchResult::SearchResult res
     expand(m_filesFindResultsModel->item(0)->index());
 }
 
-QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResult::Result & result)
+const QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResult::Result &result)
 {
     QString richTextLine = result.line.mid(0, result.lineMatchStart).toHtmlEscaped()
             + "<span style=\"background-color: #ffef0b\">"
@@ -78,4 +85,25 @@ QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResu
             + "</span>" + result.line.mid(result.lineMatchEnd).toHtmlEscaped();
 
     return QString("Line %1: %2").arg(result.lineNumber + 1).arg(richTextLine);
+}
+
+void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
+{
+    QVariant type_q = index.data(RESULT_TYPE_ROLE);
+
+    if (!type_q.canConvert<int>()) return;
+    int type = type_q.toInt();
+
+    QVariant data = index.data(RESULT_DATA_ROLE);
+
+    switch (type)
+    {
+    case ResultTypeFile:
+        emit resultFileClicked(data.value<FileSearchResult::FileResult>());
+        break;
+
+    case ResultTypeMatch:
+        emit resultMatchClicked(data.value<FileSearchResult::Result>());
+        break;
+    }
 }

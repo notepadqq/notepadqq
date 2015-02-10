@@ -8,18 +8,32 @@
 
 class FileSearchResultsWidget : public QTreeView
 {
+    Q_OBJECT
+
 public:
     FileSearchResultsWidget(QWidget *parent = 0);
     ~FileSearchResultsWidget();
-    void addSearchResult(FileSearchResult::SearchResult result);
+    void addSearchResult(const FileSearchResult::SearchResult &result);
 
 private slots:
-    void on_filesFindResultsModelRowsInserted(const QModelIndex & parent, int first, int last);
+    void on_doubleClicked(const QModelIndex &index);
 
 private:
-    QStandardItemModel*  m_filesFindResultsModel;
+    static const int RESULT_TYPE_ROLE = Qt::UserRole + 1;
+    static const int RESULT_DATA_ROLE = Qt::UserRole + 2;
+
+    enum ResultType {
+        ResultTypeFile,
+        ResultTypeMatch
+    };
+
+    QStandardItemModel*   m_filesFindResultsModel;
     TreeViewHTMLDelegate* m_treeViewHTMLDelegate;
-    QString getFileResultFormattedLine(const FileSearchResult::Result &result);
+    const QString getFileResultFormattedLine(const FileSearchResult::Result &result);
+
+signals:
+    void resultFileClicked(const FileSearchResult::FileResult &file);
+    void resultMatchClicked(const FileSearchResult::Result &match);
 };
 
 #endif // FILESEARCHRESULTSWIDGET_H
