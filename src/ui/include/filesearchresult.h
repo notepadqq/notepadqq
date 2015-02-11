@@ -9,10 +9,13 @@ class FileSearchResult {
 public:
 
     struct Result {
-        QString previewLine;
-        int lineNumber;
-        int lineMatchStart;
-        int lineMatchEnd;
+        QString previewBeforeMatch;
+        QString match;
+        QString previewAfterMatch;
+        int matchStartLine;
+        int matchStartCol;
+        int matchEndLine;
+        int matchEndCol;
 
         operator QVariant() const
         {

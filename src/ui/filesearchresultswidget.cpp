@@ -79,12 +79,12 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
 
 QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResult::Result &result) const
 {
-    QString richTextLine = result.previewLine.mid(0, result.lineMatchStart).toHtmlEscaped()
+    QString richTextLine = result.previewBeforeMatch.toHtmlEscaped()
             + "<span style=\"background-color: #ffef0b\">"
-            + result.previewLine.mid(result.lineMatchStart, result.lineMatchEnd - result.lineMatchStart).toHtmlEscaped()
-            + "</span>" + result.previewLine.mid(result.lineMatchEnd).toHtmlEscaped();
+            + result.match.toHtmlEscaped()
+            + "</span>" + result.previewAfterMatch.toHtmlEscaped();
 
-    return QString("Line %1: %2").arg(result.lineNumber + 1).arg(richTextLine);
+    return QString("Line %1: %2").arg(result.matchStartLine + 1).arg(richTextLine);
 }
 
 void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)

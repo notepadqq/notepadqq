@@ -112,8 +112,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     setAcceptDrops(true);
 
     ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
-    connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultFileClicked,
-            this, &MainWindow::on_resultFileClicked);
     connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
             this, &MainWindow::on_resultMatchClicked);
 
@@ -1830,11 +1828,6 @@ void MainWindow::on_actionDuplicate_Line_triggered()
     currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE");
 }
 
-void MainWindow::on_resultFileClicked(const FileSearchResult::FileResult &file)
-{
-
-}
-
 void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match)
 {
     QUrl url = stringToUrl(file.fileName);
@@ -1845,8 +1838,7 @@ void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file,
     EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
     Editor *editor = tabW->editor(pos.second);
 
-    // FIXME Multiline??
-    editor->setSelection(match.lineNumber, match.lineMatchStart, match.lineNumber, match.lineMatchEnd);
+    editor->setSelection(match.matchStartLine, match.matchStartCol, match.matchEndLine, match.matchEndCol);
 
     editor->setFocus();
 }

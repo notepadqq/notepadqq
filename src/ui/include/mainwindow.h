@@ -155,21 +155,13 @@ private slots:
     void on_actionDelete_Line_triggered();
     void on_actionDuplicate_Line_triggered();
     void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
-    void on_resultFileClicked(const FileSearchResult::FileResult &file);
     void on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
-
     void on_actionTrim_Trailing_Space_triggered();
-
     void on_actionTrim_Leading_Space_triggered();
-
     void on_actionTrim_Leading_and_Trailing_Space_triggered();
-
     void on_actionEOL_to_Space_triggered();
-
     void on_actionTAB_to_Space_triggered();
-
     void on_actionSpace_to_TAB_All_triggered();
-
     void on_actionSpace_to_TAB_Leading_triggered();
 
 private:

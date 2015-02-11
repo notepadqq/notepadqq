@@ -296,44 +296,44 @@ FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionM
     int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
 
     // Position (from byte 0) of the start of the first line of the found word
-    int linePosStart = content->lastIndexOf(newLine, capturedPosStart) + 1;
+    int firstLinePosStart = content->lastIndexOf(newLine, capturedPosStart) + 1;
 
     // Position (from byte 0) of the end of the first line of the found word
-    int linePosEnd = content->indexOf(newLine, capturedPosStart);
+    //int firstLinePosEnd = content->indexOf(newLine, capturedPosStart);
+
+    // Position (from byte 0) of the start of the last line of the found word
+    int lastLinePosStart = content->lastIndexOf(newLine, capturedPosEnd - 1) + 1;
+
+    // Position (from byte 0) of the end of the last line of the found word
+    int lastLinePosEnd = content->indexOf(newLine, capturedPosStart);
 
     // String composed by all the lines that contain the found word.
-    QString previewString = content->mid(linePosStart, linePosEnd - linePosStart); // FIXME
+    QString previewString = content->mid(firstLinePosStart, lastLinePosEnd - firstLinePosStart);
 
     // All the lines in wholeLine
-    //QStringList matchLines = previewString.split(newLine, QString::KeepEmptyParts);
+    QStringList matchLines = previewString.split(newLine, QString::KeepEmptyParts);
 
     // Number of the first line of the found word
-    int count1 = content->leftRef(linePosStart).count("\r\n");
-    int count2 = content->leftRef(linePosStart).count("\r");
-    int count3 = content->leftRef(linePosStart).count("\n");
-    int wholeLineNumber = qMax(count1, qMax(count2, count3));
+    int count1 = content->leftRef(firstLinePosStart).count("\r\n");
+    int count2 = content->leftRef(firstLinePosStart).count("\r");
+    int count3 = content->leftRef(firstLinePosStart).count("\n");
+    int firstLineNumber = qMax(count1, qMax(count2, count3));
+    int lastLineNumber = firstLineNumber + matchLines.count() - 1;
 
-    // Position (from the start of the line) of the start of the found word
-    int capturedColStartInWholeLine = capturedPosStart - linePosStart;
+    // Position (from the start of the first line) of the start of the found word
+    int capturedColStartInFirstLine = capturedPosStart - firstLinePosStart;
 
-    // Position (from the start of the line) of the end of the found word. It could be in a following line.
-    int capturedColEndInWholeLine = capturedColStartInWholeLine + (capturedPosEnd - capturedPosStart);
-
-
+    // Position (from the start of the last line) of the end of the found word.
+    int capturedColEndInLastLine = capturedPosEnd - lastLinePosStart;
 
 
-    res.previewLine = previewString;
-    res.lineNumber = wholeLineNumber;
-    res.lineMatchStart = capturedColStartInWholeLine;
-    res.lineMatchEnd = capturedColEndInWholeLine;
-
-    /*res.previewBeforeMatch = previewString.mid(0, capturedColStartInWholeLine);
-    res.match = previewString.mid(capturedColStartInWholeLine, capturedColEndInWholeLine - capturedColStartInWholeLine);
-    res.previewAfterMatch = previewString.mid(capturedColEndInWholeLine);
-    res.matchStartLine = 0;
-    res.matchStartCol = 0;
-    res.matchEndLine = 0;
-    res.matchEndCol = 0;*/
+    res.previewBeforeMatch = previewString.mid(0, capturedColStartInFirstLine);
+    res.match = previewString.mid(capturedColStartInFirstLine, capturedPosEnd - capturedPosStart);
+    res.previewAfterMatch = previewString.mid(capturedColEndInLastLine);
+    res.matchStartLine = firstLineNumber;
+    res.matchStartCol = capturedColStartInFirstLine;
+    res.matchEndLine = lastLineNumber;
+    res.matchEndCol = capturedColEndInLastLine;
 
     return res;
 }
