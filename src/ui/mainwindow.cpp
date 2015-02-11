@@ -1850,3 +1850,38 @@ void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file,
 
     editor->setFocus();
 }
+
+void MainWindow::on_actionTrim_Trailing_Space_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRIM_TRAILING_SPACE");
+}
+
+void MainWindow::on_actionTrim_Leading_Space_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRIM_LEADING_SPACE");
+}
+
+void MainWindow::on_actionTrim_Leading_and_Trailing_Space_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRIM_LEADING_TRAILING_SPACE");
+}
+
+void MainWindow::on_actionEOL_to_Space_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_EOL_TO_SPACE");
+}
+
+void MainWindow::on_actionTAB_to_Space_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TAB_TO_SPACE");
+}
+
+void MainWindow::on_actionSpace_to_TAB_All_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_ALL");
+}
+
+void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_LEADING");
+}

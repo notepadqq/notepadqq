@@ -158,6 +158,20 @@ private slots:
     void on_resultFileClicked(const FileSearchResult::FileResult &file);
     void on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
 
+    void on_actionTrim_Trailing_Space_triggered();
+
+    void on_actionTrim_Leading_Space_triggered();
+
+    void on_actionTrim_Leading_and_Trailing_Space_triggered();
+
+    void on_actionEOL_to_Space_triggered();
+
+    void on_actionTAB_to_Space_triggered();
+
+    void on_actionSpace_to_TAB_All_triggered();
+
+    void on_actionSpace_to_TAB_Leading_triggered();
+
 private:
     static QList<MainWindow*> m_instances;
     Ui::MainWindow*     ui;
