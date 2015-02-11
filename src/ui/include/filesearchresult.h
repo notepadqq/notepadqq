@@ -9,7 +9,7 @@ class FileSearchResult {
 public:
 
     struct Result {
-        QString line;
+        QString previewLine;
         int lineNumber;
         int lineMatchStart;
         int lineMatchEnd;

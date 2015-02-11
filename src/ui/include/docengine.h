@@ -37,6 +37,8 @@ public:
 
     void closeDocument(EditorTabWidget *tabWidget, int tab);
 
+    QPair<int, int> findOpenEditorByUrl(const QUrl &filename) const;
+
     void monitorDocument(Editor *editor);
     void unmonitorDocument(Editor *editor);
     bool isMonitored(Editor *editor);
@@ -62,7 +64,6 @@ private:
      */
     bool read(QFile *file, Editor *editor);
     bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
-    QPair<int, int> findOpenEditorByUrl(QUrl filename);
     // FIXME Separate from reload
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom);
 

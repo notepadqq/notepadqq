@@ -443,6 +443,12 @@ namespace EditorNS
         setCursorPosition(cursor.line, cursor.column);
     }
 
+    void Editor::setSelection(int fromLine, int fromCol, int toLine, int toCol)
+    {
+        QList<QVariant> arg = QList<QVariant>({fromLine, fromCol, toLine, toCol});
+        sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
+    }
+
     QPair<int, int> Editor::scrollPosition()
     {
         QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();

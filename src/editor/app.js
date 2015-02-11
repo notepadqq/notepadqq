@@ -123,6 +123,19 @@ UiDriver.registerEventHandler("C_FUN_GET_SELECTIONS", function(msg, data, prevRe
     return out;
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_SELECTION", function(msg, data, prevReturn) {
+    editor.setSelection(
+        {
+          line: data[0],
+          ch: data[1]
+        },
+        {
+          line: data[2],
+          ch: data[3]
+        }
+    );
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_TEXT_LENGTH", function(msg, data, prevReturn) {
     return editor.getValue("\n").length;
 });

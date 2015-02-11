@@ -273,6 +273,19 @@ FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionM
 {
     FileSearchResult::Result res;
 
+    /*
+            --------------
+            --------------
+            ---------XXXXX
+            XXX-----------
+            --------------
+            --------------
+
+
+
+
+      */
+
     // Regex used to detect newlines
     static const QRegularExpression newLine("\n|\r\n|\r");
 
@@ -288,8 +301,11 @@ FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionM
     // Position (from byte 0) of the end of the first line of the found word
     int linePosEnd = content->indexOf(newLine, capturedPosStart);
 
-    // Content of the first line of the found word
-    QString wholeLine = content->mid(linePosStart, linePosEnd - linePosStart);
+    // String composed by all the lines that contain the found word.
+    QString previewString = content->mid(linePosStart, linePosEnd - linePosStart); // FIXME
+
+    // All the lines in wholeLine
+    //QStringList matchLines = previewString.split(newLine, QString::KeepEmptyParts);
 
     // Number of the first line of the found word
     int count1 = content->leftRef(linePosStart).count("\r\n");
@@ -298,16 +314,26 @@ FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionM
     int wholeLineNumber = qMax(count1, qMax(count2, count3));
 
     // Position (from the start of the line) of the start of the found word
-    int capturedPosStartInWholeLine = capturedPosStart - linePosStart;
+    int capturedColStartInWholeLine = capturedPosStart - linePosStart;
 
     // Position (from the start of the line) of the end of the found word. It could be in a following line.
-    int capturedPosEndInWholeLine = capturedPosStartInWholeLine + (capturedPosEnd - capturedPosStart);
+    int capturedColEndInWholeLine = capturedColStartInWholeLine + (capturedPosEnd - capturedPosStart);
 
 
-    res.line = wholeLine;
+
+
+    res.previewLine = previewString;
     res.lineNumber = wholeLineNumber;
-    res.lineMatchStart = capturedPosStartInWholeLine;
-    res.lineMatchEnd = capturedPosEndInWholeLine;
+    res.lineMatchStart = capturedColStartInWholeLine;
+    res.lineMatchEnd = capturedColEndInWholeLine;
+
+    /*res.previewBeforeMatch = previewString.mid(0, capturedColStartInWholeLine);
+    res.match = previewString.mid(capturedColStartInWholeLine, capturedColEndInWholeLine - capturedColStartInWholeLine);
+    res.previewAfterMatch = previewString.mid(capturedColEndInWholeLine);
+    res.matchStartLine = 0;
+    res.matchStartCol = 0;
+    res.matchEndLine = 0;
+    res.matchEndCol = 0;*/
 
     return res;
 }

@@ -29,7 +29,7 @@ private:
 
     QStandardItemModel*   m_filesFindResultsModel;
     TreeViewHTMLDelegate* m_treeViewHTMLDelegate;
-    const QString getFileResultFormattedLine(const FileSearchResult::Result &result);
+    QString getFileResultFormattedLine(const FileSearchResult::Result &result) const;
 
 signals:
     void resultFileClicked(const FileSearchResult::FileResult &file);

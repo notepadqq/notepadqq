@@ -230,7 +230,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
     return true;
 }
 
-QPair<int, int> DocEngine::findOpenEditorByUrl(QUrl filename)
+QPair<int, int> DocEngine::findOpenEditorByUrl(const QUrl &filename) const
 {
     for (int i = 0; i < m_topEditorContainer->count(); i++) {
         EditorTabWidget *tabW = m_topEditorContainer->tabWidget(i);

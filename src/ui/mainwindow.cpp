@@ -1832,11 +1832,21 @@ void MainWindow::on_actionDuplicate_Line_triggered()
 
 void MainWindow::on_resultFileClicked(const FileSearchResult::FileResult &file)
 {
-    m_docEngine->loadDocument(stringToUrl(file.fileName),
-                              m_topEditorContainer->currentTabWidget());
+
 }
 
 void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match)
 {
+    QUrl url = stringToUrl(file.fileName);
+    m_docEngine->loadDocument(url,
+                              m_topEditorContainer->currentTabWidget());
 
+    QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+    EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
+    Editor *editor = tabW->editor(pos.second);
+
+    // FIXME Multiline??
+    editor->setSelection(match.lineNumber, match.lineMatchStart, match.lineNumber, match.lineMatchEnd);
+
+    editor->setFocus();
 }
