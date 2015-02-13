@@ -1,4 +1,6 @@
 #include "include/filesearchresultswidget.h"
+#include <QMenu>
+#include <QContextMenuEvent>
 
 FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
     QTreeView(parent),
@@ -11,6 +13,8 @@ FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
     setEditTriggers(NoEditTriggers);
     setHeaderHidden(true);
 
+    setupActions();
+
     connect(this, &FileSearchResultsWidget::doubleClicked,
             this, &FileSearchResultsWidget::on_doubleClicked);
 }
@@ -18,6 +22,14 @@ FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
 FileSearchResultsWidget::~FileSearchResultsWidget()
 {
 
+}
+
+void FileSearchResultsWidget::setupActions()
+{
+    m_actionClear = new QAction(tr("Clear"), this);
+    connect(m_actionClear, &QAction::triggered, this, [&]{
+        m_filesFindResultsModel->clear();
+    });
 }
 
 void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &result)
@@ -108,4 +120,11 @@ void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
                     data.value<FileSearchResult::Result>());
         break;
     }
+}
+
+void FileSearchResultsWidget::contextMenuEvent(QContextMenuEvent *e)
+{
+    QMenu menu(this);
+    menu.addAction(m_actionClear);
+    menu.exec(e->globalPos());
 }

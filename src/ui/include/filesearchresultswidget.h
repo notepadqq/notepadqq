@@ -3,6 +3,7 @@
 
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QAction>
 #include "include/filesearchresult.h"
 #include "include/treeviewhtmldelegate.h"
 
@@ -29,11 +30,16 @@ private:
 
     QStandardItemModel*   m_filesFindResultsModel;
     TreeViewHTMLDelegate* m_treeViewHTMLDelegate;
+    QAction* m_actionClear;
     QString getFileResultFormattedLine(const FileSearchResult::Result &result) const;
+    void setupActions();
 
 signals:
     void resultFileClicked(const FileSearchResult::FileResult &file);
     void resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
+
+protected:
+    void contextMenuEvent(QContextMenuEvent *e);
 };
 
 #endif // FILESEARCHRESULTSWIDGET_H
