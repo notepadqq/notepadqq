@@ -7,10 +7,10 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include "docengine.h"
-#include "include/frmsearchreplace.h"
+#include "include/Search/frmsearchreplace.h"
 #include <functional>
 #include "QtPrintSupport/QPrinter"
-#include "include/filesearchresultswidget.h"
+#include "include/Search/filesearchresultswidget.h"
 
 namespace Ui {
 class MainWindow;

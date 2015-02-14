@@ -12,7 +12,6 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
-#include "include/treeviewhtmldelegate.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
