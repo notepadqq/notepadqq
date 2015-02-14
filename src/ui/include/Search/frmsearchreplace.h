@@ -1,8 +1,8 @@
 #ifndef FRMSEARCHREPLACE_H
 #define FRMSEARCHREPLACE_H
 
-#include "topeditorcontainer.h"
-#include "include/filesearchresult.h"
+#include "include/topeditorcontainer.h"
+#include "include/Search/filesearchresult.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QStandardItemModel>

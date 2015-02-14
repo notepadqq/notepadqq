@@ -1,4 +1,4 @@
-#include "include/searchinfilesworker.h"
+#include "include/Search/searchinfilesworker.h"
 #include <QDirIterator>
 #include <QRegularExpression>
 

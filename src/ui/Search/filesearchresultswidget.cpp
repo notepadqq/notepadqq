@@ -1,4 +1,4 @@
-#include "include/filesearchresultswidget.h"
+#include "include/Search/filesearchresultswidget.h"
 #include <QMenu>
 #include <QContextMenuEvent>
 

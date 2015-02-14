@@ -1,6 +1,6 @@
-#include "include/frmsearchreplace.h"
+#include "include/Search/frmsearchreplace.h"
 #include "include/iconprovider.h"
-#include "include/searchinfilesworker.h"
+#include "include/Search/searchinfilesworker.h"
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>

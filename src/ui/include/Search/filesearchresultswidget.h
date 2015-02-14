@@ -4,8 +4,8 @@
 #include <QTreeView>
 #include <QStandardItemModel>
 #include <QAction>
-#include "include/filesearchresult.h"
-#include "include/treeviewhtmldelegate.h"
+#include "include/Search/filesearchresult.h"
+#include "include/Search/treeviewhtmldelegate.h"
 
 class FileSearchResultsWidget : public QTreeView
 {

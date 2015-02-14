@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QMutex>
-#include "include/filesearchresult.h"
-#include "include/frmsearchreplace.h"
+#include "include/Search/filesearchresult.h"
+#include "include/Search/frmsearchreplace.h"
 
 class SearchInFilesWorker : public QObject
 {

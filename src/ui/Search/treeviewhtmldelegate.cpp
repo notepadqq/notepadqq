@@ -1,4 +1,4 @@
-#include "include/treeviewhtmldelegate.h"
+#include "include/Search/treeviewhtmldelegate.h"
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 

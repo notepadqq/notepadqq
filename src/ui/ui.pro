@@ -47,7 +47,6 @@ SOURCES += main.cpp\
     editortabwidget.cpp \
     docengine.cpp \
     frmabout.cpp \
-    frmsearchreplace.cpp \
     notepadqq.cpp \
     frmpreferences.cpp \
     iconprovider.cpp \
@@ -62,16 +61,16 @@ SOURCES += main.cpp\
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
-    treeviewhtmldelegate.cpp \
-    filesearchresultswidget.cpp \
-    searchinfilesworker.cpp
+    Search/filesearchresultswidget.cpp \
+    Search/frmsearchreplace.cpp \
+    Search/treeviewhtmldelegate.cpp \
+    Search/searchinfilesworker.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
     include/editortabwidget.h \
     include/docengine.h \
     include/frmabout.h \
-    include/frmsearchreplace.h \
     include/notepadqq.h \
     include/frmpreferences.h \
     include/iconprovider.h \
@@ -86,10 +85,11 @@ HEADERS  += include/mainwindow.h \
     include/frmindentationmode.h \
     include/singleapplication.h \
     include/localcommunication.h \
-    include/treeviewhtmldelegate.h \
-    include/filesearchresultswidget.h \
-    include/filesearchresult.h \
-    include/searchinfilesworker.h
+    include/Search/filesearchresultswidget.h \
+    include/Search/filesearchresult.h \
+    include/Search/treeviewhtmldelegate.h \
+    include/Search/frmsearchreplace.h \
+    include/Search/searchinfilesworker.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
