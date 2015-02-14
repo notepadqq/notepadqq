@@ -21,12 +21,31 @@ public:
     ~frmSearchReplace();
     void show(Tabs defaultTab);
 
+    enum class SearchMode {
+        PlainText,
+        SpecialChars,
+        Regex
+    };
+
+    struct SearchOptions {
+        unsigned MatchCase : 1;
+        unsigned MatchWholeWord : 1;
+        unsigned SearchFromStart : 1;
+        unsigned IncludeSubDirs : 1;
+
+        SearchOptions() : MatchCase(0), MatchWholeWord(0),
+        SearchFromStart(0), IncludeSubDirs(0) { }
+    };
+
     /**
      * @brief Runs a "find next" or "find prev", taking the options from the UI
      * @param forward
      */
     void findFromUI(bool forward, bool searchFromStart = false);
     void replaceFromUI(bool forward, bool searchFromStart = false);
+
+    static QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
+    static QString plainTextToRegex(QString text, bool matchWholeWord);
 
 protected:
     void keyPressEvent(QKeyEvent *evt);
@@ -55,23 +74,7 @@ private:
     QString                m_lastSearch;
     Editor*                currentEditor();
 
-    enum class SearchMode {
-        PlainText,
-        SpecialChars,
-        Regex
-    };
-
-    struct SearchOptions {
-        unsigned MatchCase : 1;
-        unsigned MatchWholeWord : 1;
-        unsigned SearchFromStart : 1;
-
-        SearchOptions() : MatchCase(0), MatchWholeWord(0),
-        SearchFromStart(0) { }
-    };
-
     void search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions);
-    QString plainTextToRegex(QString text, bool matchWholeWord);
     void replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions);
     int replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions);
     int selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions);
@@ -80,7 +83,6 @@ private:
     void manualSizeAdjust();
     SearchOptions searchOptionsFromUI();
     SearchMode searchModeFromUI();
-    QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
     QString regexModifiersFromSearchOptions(SearchOptions searchOptions);
     FileSearchResult::Result buildResult(const QRegularExpressionMatch &match, QString *content);
 

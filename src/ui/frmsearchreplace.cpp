@@ -1,11 +1,12 @@
 #include "include/frmsearchreplace.h"
 #include "include/iconprovider.h"
+#include "include/searchinfilesworker.h"
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QSettings>
-#include <QDirIterator>
 #include <QFileDialog>
+#include <QThread>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),
@@ -197,145 +198,50 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
 void frmSearchReplace::searchInFiles(QString string, QString path, QStringList filters, SearchMode searchMode, SearchOptions searchOptions)
 {
     if (!string.isEmpty()) {
-        // Search string converted to a regex
-        QString rawSearch = rawSearchString(string, searchMode, searchOptions);
+        QMessageBox *msgBox = new QMessageBox(this);
+        msgBox->setText(tr("Searching..."));
+        msgBox->setWindowTitle(tr("Searching..."));
+        msgBox->setStandardButtons(QMessageBox::Cancel);
+        msgBox->setGeometry(x(), y(), width(), height()/2);
 
-        QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
-        if (searchOptions.MatchCase == false) {
-            options |= QRegularExpression::CaseInsensitiveOption;
+        QThread *thread = new QThread();
+        SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
+        worker->moveToThread(thread);
+        bool workerDeleted = false;
+
+        connect(thread, &QThread::started, worker, &SearchInFilesWorker::run);
+
+        connect(worker, &SearchInFilesWorker::error, this, [=](QString err){
+            msgBox->setText(err);
+        });
+
+        connect(worker, &SearchInFilesWorker::progress, this, [=](QString file){
+            msgBox->setText(tr("Searching in %1").arg(file));
+        });
+
+        connect(thread, &QThread::finished, this, [=, &workerDeleted]{
+            thread->deleteLater();
+
+            workerDeleted = true;
+            worker->deleteLater();
+        });
+
+        connect(worker, &SearchInFilesWorker::finished, this, [=](){
+            FileSearchResult::SearchResult result = worker->getResult();
+
+            msgBox->hide();
+            emit fileSearchResultFinished(result);
+        });
+
+        thread->start();
+        msgBox->exec();
+
+        // If we're here, the search finished or the user wants to cancel it.
+
+        if (!workerDeleted) {
+            worker->stop();
         }
-
-        QRegularExpression regex(rawSearch, options);
-
-        // Search result structure
-        FileSearchResult::SearchResult structSearchResult;
-        structSearchResult.search = string;
-
-        QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
-        if (ui->chkIncludeSubdirs->isChecked()) {
-            dirIteratorOptions |= QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
-        }
-
-        // Iterator used to find files in the specified directory
-        QDirIterator it(path, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
-
-        // Total number of matches in all the files
-        //int totalFileMatches = 0;
-        // Number of files that contain matches
-        //int totalFiles = 0;
-
-        while (it.hasNext()) {
-            QString fileName = it.next();
-
-            // Number of matches in the current file
-            int curFileMatches = 0;
-
-            // Read the file into a string.
-            // There is no manual decoding: we assume that the files are Unicode.
-            QFile f(fileName);
-            if (!f.open(QFile::ReadOnly | QFile::Text)) continue;
-            QTextStream in(&f);
-            QString content = in.readAll();
-
-            // Search result structure
-            FileSearchResult::FileResult structFileResult;
-            structFileResult.fileName = fileName;
-
-            // Run the search
-            QRegularExpressionMatchIterator i = regex.globalMatch(content);
-            while (i.hasNext())
-            {
-                QRegularExpressionMatch match = i.next();
-                QStringList matches = match.capturedTexts();
-
-                if (!matches[0].isEmpty()) {
-                    structFileResult.results.append(buildResult(match, &content));
-
-                    curFileMatches++;
-                    //totalFileMatches++;
-                }
-            }
-
-            f.close();
-
-            if (curFileMatches > 0) {
-                structSearchResult.fileResults.append(structFileResult);
-
-                //totalFiles++;
-            }
-        }
-
-        emit fileSearchResultFinished(structSearchResult);
     }
-}
-
-FileSearchResult::Result frmSearchReplace::buildResult(const QRegularExpressionMatch &match, QString *content)
-{
-    FileSearchResult::Result res;
-
-    /*
-            --------------
-            --------------
-            ---------XXXXX
-            XXX-----------
-            --------------
-            --------------
-
-
-
-
-      */
-
-    // Regex used to detect newlines
-    static const QRegularExpression newLine("\n|\r\n|\r");
-
-    // Position (from byte 0) of the start of the found word
-    int capturedPosStart = match.capturedStart();
-
-    // Position (from byte 0) of the end of the found word
-    int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
-
-    // Position (from byte 0) of the start of the first line of the found word
-    int firstLinePosStart = content->lastIndexOf(newLine, capturedPosStart) + 1;
-
-    // Position (from byte 0) of the end of the first line of the found word
-    //int firstLinePosEnd = content->indexOf(newLine, capturedPosStart);
-
-    // Position (from byte 0) of the start of the last line of the found word
-    int lastLinePosStart = content->lastIndexOf(newLine, capturedPosEnd - 1) + 1;
-
-    // Position (from byte 0) of the end of the last line of the found word
-    int lastLinePosEnd = content->indexOf(newLine, capturedPosStart);
-
-    // String composed by all the lines that contain the found word.
-    QString previewString = content->mid(firstLinePosStart, lastLinePosEnd - firstLinePosStart);
-
-    // All the lines in wholeLine
-    QStringList matchLines = previewString.split(newLine, QString::KeepEmptyParts);
-
-    // Number of the first line of the found word
-    int count1 = content->leftRef(firstLinePosStart).count("\r\n");
-    int count2 = content->leftRef(firstLinePosStart).count("\r");
-    int count3 = content->leftRef(firstLinePosStart).count("\n");
-    int firstLineNumber = qMax(count1, qMax(count2, count3));
-    int lastLineNumber = firstLineNumber + matchLines.count() - 1;
-
-    // Position (from the start of the first line) of the start of the found word
-    int capturedColStartInFirstLine = capturedPosStart - firstLinePosStart;
-
-    // Position (from the start of the last line) of the end of the found word.
-    int capturedColEndInLastLine = capturedPosEnd - lastLinePosStart;
-
-
-    res.previewBeforeMatch = previewString.mid(0, capturedColStartInFirstLine);
-    res.match = previewString.mid(capturedColStartInFirstLine, capturedPosEnd - capturedPosStart);
-    res.previewAfterMatch = previewString.mid(capturedColEndInLastLine);
-    res.matchStartLine = firstLineNumber;
-    res.matchStartCol = capturedColStartInFirstLine;
-    res.matchEndLine = lastLineNumber;
-    res.matchEndCol = capturedColEndInLastLine;
-
-    return res;
 }
 
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
@@ -361,6 +267,8 @@ frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
         searchOptions.MatchCase = true;
     if (ui->chkMatchWholeWord->isChecked())
         searchOptions.MatchWholeWord = true;
+    if (ui->chkIncludeSubdirs->isChecked())
+        searchOptions.IncludeSubDirs = true;
 
     return searchOptions;
 }

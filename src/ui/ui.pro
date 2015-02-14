@@ -63,7 +63,8 @@ SOURCES += main.cpp\
     singleapplication.cpp \
     localcommunication.cpp \
     treeviewhtmldelegate.cpp \
-    filesearchresultswidget.cpp
+    filesearchresultswidget.cpp \
+    searchinfilesworker.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -87,7 +88,8 @@ HEADERS  += include/mainwindow.h \
     include/localcommunication.h \
     include/treeviewhtmldelegate.h \
     include/filesearchresultswidget.h \
-    include/filesearchresult.h
+    include/filesearchresult.h \
+    include/searchinfilesworker.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
