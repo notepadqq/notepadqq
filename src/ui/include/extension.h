@@ -8,7 +8,7 @@ class Extension : public QObject
 {
     Q_OBJECT
 public:
-    explicit Extension(QObject *parent = 0);
+    explicit Extension(QString path, QObject *parent = 0);
     ~Extension();
 
 signals:
@@ -17,6 +17,7 @@ public slots:
 
 private:
     QScriptEngine *m_uiScriptEngine;
+    void failedToLoadMessage(QString path);
 };
 
 #endif // EXTENSION_H

@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QCheckBox>
 #include <QSettings>
+#include <QDirIterator>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
@@ -112,10 +113,22 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
     }
 }
 
+QString Notepadqq::extensionsPath()
+{
+    QSettings settings;
+
+    QFileInfo f = QFileInfo(settings.fileName());
+    return f.absoluteDir().absoluteFilePath("extensions");
+}
+
 void Notepadqq::loadExtensions()
 {
     qRegisterMetaType<MainWindow*>("MainWindow*");
     qRegisterMetaType<Editor*>("Editor*");
 
-    m_extensions.append(new Extension());
+    QDirIterator it(extensionsPath(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
+    while (it.hasNext()) {
+        QString ext = it.next();
+        m_extensions.append(new Extension(ext));
+    }
 }

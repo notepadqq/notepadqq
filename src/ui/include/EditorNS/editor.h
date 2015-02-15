@@ -145,22 +145,22 @@ namespace EditorNS
              *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
              *        and TopEditorContainer::setFocus() for that. (actually it's a bug)
              */
-        void setFocus();
+        Q_INVOKABLE void setFocus();
 
         /**
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */
-        void setFileName(const QUrl &filename);
+        Q_INVOKABLE void setFileName(const QUrl &filename);
 
         /**
              * @brief Get the file name associated with this editor
              * @return
              */
-        QUrl fileName() const;
+        Q_INVOKABLE QUrl fileName() const;
 
-        bool fileOnDiskChanged() const;
-        void setFileOnDiskChanged(bool fileOnDiskChanged);
+        Q_INVOKABLE bool fileOnDiskChanged() const;
+        Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
 
         enum selectMode {
             selectMode_cursorBefore,
@@ -173,9 +173,9 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        bool isClean();
-        void markClean();
-        void markDirty();
+        Q_INVOKABLE bool isClean();
+        Q_INVOKABLE void markClean();
+        Q_INVOKABLE void markDirty();
         QList<QMap<QString, QString> > languages();
 
         /**
@@ -184,11 +184,11 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        void setLanguage(const QString &language);
-        QString setLanguageFromFileName(QString fileName);
-        QString setLanguageFromFileName();
-        void setValue(const QString &value);
-        QString value();
+        Q_INVOKABLE void setLanguage(const QString &language);
+        Q_INVOKABLE QString setLanguageFromFileName(QString fileName);
+        Q_INVOKABLE QString setLanguageFromFileName();
+        Q_INVOKABLE void setValue(const QString &value);
+        Q_INVOKABLE QString value();
 
         /**
          * @brief Set custom indentation settings which may be different

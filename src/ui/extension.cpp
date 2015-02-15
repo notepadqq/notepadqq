@@ -3,9 +3,9 @@
 #include <QFile>
 #include <QTextStream>
 
-Extension::Extension(QObject *parent) : QObject(parent)
+Extension::Extension(QString path, QObject *parent) : QObject(parent)
 {
-    QFile f("/home/daniele/Progetti/qt/notepadqq-exts/test1/ui.js");
+    QFile f(path + "/ui.js");
     if (f.open(QFile::ReadOnly | QFile::Text)) {
         QTextStream in(&f);
         QString content = in.readAll();
@@ -17,6 +17,8 @@ Extension::Extension(QObject *parent) : QObject(parent)
         m_uiScriptEngine->globalObject().setProperty("nqq", nqq_val);
 
         m_uiScriptEngine->evaluate(content);
+    } else {
+        failedToLoadMessage(path);
     }
 }
 
@@ -25,3 +27,7 @@ Extension::~Extension()
 
 }
 
+void Extension::failedToLoadMessage(QString path)
+{
+    qWarning() << QString("Failed to load " + path).toStdString().c_str();
+}

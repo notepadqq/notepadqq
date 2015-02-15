@@ -54,6 +54,7 @@ public:
 
     static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
 
+    static QString extensionsPath();
     static void loadExtensions();
 
 private:
