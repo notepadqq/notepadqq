@@ -59,7 +59,6 @@ public:
 
 private:
     static bool m_oldQt;
-    static QList<Extension*> m_extensions;
 };
 
 #endif // NOTEPADQQ_H

@@ -1,16 +1,15 @@
 #include "include/notepadqq.h"
+#include "include/Extensions/extensionloader.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDir>
 #include <QCheckBox>
 #include <QSettings>
-#include <QDirIterator>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
 bool Notepadqq::m_oldQt = false;
-QList<Extension*> Notepadqq::m_extensions;
 
 QString Notepadqq::copyright()
 {
@@ -123,12 +122,5 @@ QString Notepadqq::extensionsPath()
 
 void Notepadqq::loadExtensions()
 {
-    qRegisterMetaType<MainWindow*>("MainWindow*");
-    qRegisterMetaType<Editor*>("Editor*");
-
-    QDirIterator it(extensionsPath(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
-    while (it.hasNext()) {
-        QString ext = it.next();
-        m_extensions.append(new Extension(ext));
-    }
+    ExtensionLoader::loadExtensions(extensionsPath());
 }
