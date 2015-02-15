@@ -19,8 +19,9 @@ public slots:
 
 private:
     QString m_extensionId;
+    QString m_name;
     QScriptEngine *m_uiScriptEngine;
-    void failedToLoadMessage(QString path);
+    void failedToLoadExtension(QString path, QString reason);
 };
 
 #endif // EXTENSION_H
