@@ -13,6 +13,7 @@
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
 #include "include/Extensions/extensionsapi.h"
+#include "include/Extensions/extensionloader.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -766,6 +767,30 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
 Editor *MainWindow::currentEditor()
 {
     return m_topEditorContainer->currentTabWidget()->currentEditor();
+}
+
+QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
+{
+    QMap<QString, Extension*> extensions = ExtensionLoader::loadedExtensions();
+    Extension *extension = extensions[extensionId];
+
+    if (extensions.contains(extensionId)) {
+        // Create the menu for the extension if it doesn't exist yet.
+        if (!m_extensionMenus.contains(extension)) {
+            QMenu *menu = new QMenu(extension->name(), this);
+            ui->menuExtensions->addMenu(menu);
+            m_extensionMenus.insert(extension, menu);
+        }
+
+        // Create the menu item
+        QAction *action = new QAction(text, this);
+        m_extensionMenus[extension]->addAction(action);
+
+        return action;
+    } else {
+        // Invalid extension id
+        return NULL;
+    }
 }
 
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)

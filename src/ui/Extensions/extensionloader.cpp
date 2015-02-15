@@ -2,7 +2,7 @@
 #include "include/mainwindow.h"
 #include <QDirIterator>
 
-QList<Extension*> ExtensionLoader::m_extensions;
+QMap<QString, Extension*> ExtensionLoader::m_extensions;
 
 ExtensionLoader::ExtensionLoader(QObject *parent) : QObject(parent)
 {
@@ -18,10 +18,16 @@ void ExtensionLoader::loadExtensions(QString path)
 {
     qRegisterMetaType<MainWindow*>("MainWindow*");
     qRegisterMetaType<Editor*>("Editor*");
+    qRegisterMetaType<QAction*>("QAction*");
 
     QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
     while (it.hasNext()) {
-        QString ext = it.next();
-        m_extensions.append(new Extension(ext));
+        Extension *ext = new Extension(it.next());
+        m_extensions.insert(ext->id(), ext);
     }
+}
+
+QMap<QString, Extension*> ExtensionLoader::loadedExtensions()
+{
+    return m_extensions;
 }

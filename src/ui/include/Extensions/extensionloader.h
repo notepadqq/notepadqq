@@ -9,6 +9,7 @@ class ExtensionLoader : public QObject
     Q_OBJECT
 public:
     static void loadExtensions(QString path);
+    static QMap<QString, Extension *> loadedExtensions();
 
 signals:
 
@@ -18,7 +19,7 @@ private:
     explicit ExtensionLoader(QObject *parent = 0);
     ~ExtensionLoader();
 
-    static QList<Extension*> m_extensions;
+    static QMap<QString, Extension*> m_extensions;
 };
 
 #endif // EXTENSIONLOADER_H

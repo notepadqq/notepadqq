@@ -271,6 +271,11 @@
     </property>
     <addaction name="actionOpen_a_New_Window"/>
    </widget>
+   <widget class="QMenu" name="menuExtensions">
+    <property name="title">
+     <string>Extensions</string>
+    </property>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_Search"/>
@@ -280,6 +285,7 @@
    <addaction name="menuSe_ttings"/>
    <addaction name="menuMacro"/>
    <addaction name="menuRun"/>
+   <addaction name="menuExtensions"/>
    <addaction name="menu_Window"/>
    <addaction name="menu"/>
   </widget>
