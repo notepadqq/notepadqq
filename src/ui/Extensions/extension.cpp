@@ -1,4 +1,4 @@
-#include "include/extension.h"
+#include "include/Extensions/extension.h"
 #include "include/Extensions/extensionsapi.h"
 #include <QFile>
 #include <QTextStream>

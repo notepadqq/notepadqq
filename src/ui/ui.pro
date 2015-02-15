@@ -65,9 +65,9 @@ SOURCES += main.cpp\
     Search/frmsearchreplace.cpp \
     Search/treeviewhtmldelegate.cpp \
     Search/searchinfilesworker.cpp \
-    extension.cpp \
     Extensions/extensionsapi.cpp \
-    Extensions/extensionloader.cpp
+    Extensions/extensionloader.cpp \
+    Extensions/extension.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -93,9 +93,9 @@ HEADERS  += include/mainwindow.h \
     include/Search/treeviewhtmldelegate.h \
     include/Search/frmsearchreplace.h \
     include/Search/searchinfilesworker.h \
-    include/extension.h \
     include/Extensions/extensionsapi.h \
-    include/Extensions/extensionloader.h
+    include/Extensions/extensionloader.h \
+    include/Extensions/extension.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

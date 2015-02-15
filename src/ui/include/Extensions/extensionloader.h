@@ -2,7 +2,7 @@
 #define EXTENSIONLOADER_H
 
 #include <QObject>
-#include "include/extension.h"
+#include "include/Extensions/extension.h"
 
 class ExtensionLoader : public QObject
 {
