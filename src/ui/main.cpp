@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
 
     Notepadqq::loadExtensions();
 
-    //qRegisterMetaType<MainWindow>("MainWindow");
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();
 

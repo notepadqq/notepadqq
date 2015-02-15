@@ -114,5 +114,8 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
 
 void Notepadqq::loadExtensions()
 {
+    qRegisterMetaType<MainWindow*>("MainWindow*");
+    qRegisterMetaType<Editor*>("Editor*");
+
     m_extensions.append(new Extension());
 }
