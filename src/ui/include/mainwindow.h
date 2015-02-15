@@ -58,6 +58,8 @@ public:
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
+    Q_INVOKABLE Editor*             currentEditor();
+
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *e);
@@ -217,7 +219,6 @@ private:
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
-    Editor*             currentEditor();
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();

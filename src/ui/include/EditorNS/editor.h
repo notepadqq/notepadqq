@@ -205,12 +205,12 @@ namespace EditorNS
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
 
-        qreal zoomFactor() const;
-        void setZoomFactor(const qreal &factor);
-        void setSelectionsText(const QStringList &texts, selectMode mode);
-        void setSelectionsText(const QStringList &texts);
-        QString language();
-        void setLineWrap(const bool wrap);
+        Q_INVOKABLE qreal zoomFactor() const;
+        Q_INVOKABLE void setZoomFactor(const qreal &factor);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        Q_INVOKABLE QString language();
+        Q_INVOKABLE void setLineWrap(const bool wrap);
 
         /**
          * @brief Get the current cursor position

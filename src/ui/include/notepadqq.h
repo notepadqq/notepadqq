@@ -32,6 +32,7 @@
 #include <QCommandLineParser>
 #include <QList>
 #include "include/mainwindow.h"
+#include "include/extension.h"
 
 #define POINTVERSION "0.44.1" // major.minor.revision
 
@@ -53,8 +54,11 @@ public:
 
     static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
 
+    static void loadExtensions();
+
 private:
     static bool m_oldQt;
+    static QList<Extension*> m_extensions;
 };
 
 #endif // NOTEPADQQ_H

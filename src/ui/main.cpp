@@ -12,6 +12,7 @@
 
 void checkQtVersion();
 void forceDefaultSettings();
+void loadExtensions();
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
     QCoreApplication::setApplicationVersion(Notepadqq::version);
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     forceDefaultSettings();
 
@@ -75,6 +78,9 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
+    Notepadqq::loadExtensions();
+
+    //qRegisterMetaType<MainWindow>("MainWindow");
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();
 

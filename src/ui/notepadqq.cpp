@@ -9,6 +9,7 @@ const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
 bool Notepadqq::m_oldQt = false;
+QList<Extension*> Notepadqq::m_extensions;
 
 QString Notepadqq::copyright()
 {
@@ -109,4 +110,9 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
         settings.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
         chkDontShowAgain->deleteLater();
     }
+}
+
+void Notepadqq::loadExtensions()
+{
+    m_extensions.append(new Extension());
 }

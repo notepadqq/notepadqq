@@ -12,6 +12,7 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
+#include "include/Extensions/extensionsapi.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -144,6 +145,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
+
+    emit ExtensionsApi::instance()->newWindow(this);
+
 }
 
 MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)

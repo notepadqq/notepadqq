@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webkitwidgets printsupport network
+QT       += core gui svg widgets webkitwidgets printsupport network script
 
 CONFIG += c++11
 
@@ -64,7 +64,9 @@ SOURCES += main.cpp\
     Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
     Search/treeviewhtmldelegate.cpp \
-    Search/searchinfilesworker.cpp
+    Search/searchinfilesworker.cpp \
+    extension.cpp \
+    Extensions/extensionsapi.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -89,7 +91,9 @@ HEADERS  += include/mainwindow.h \
     include/Search/filesearchresult.h \
     include/Search/treeviewhtmldelegate.h \
     include/Search/frmsearchreplace.h \
-    include/Search/searchinfilesworker.h
+    include/Search/searchinfilesworker.h \
+    include/extension.h \
+    include/Extensions/extensionsapi.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
