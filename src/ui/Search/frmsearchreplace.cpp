@@ -371,7 +371,7 @@ void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
     ui->btnLookInBrowse->setVisible(on);
     ui->btnFindAll->setVisible(on);
     ui->lblSpacer1->setVisible(on);
-    ui->lblSpacer2->setVisible(on);
+    ui->btnReplaceAllInFiles->setVisible(on);
     ui->chkIncludeSubdirs->setVisible(on);
     ui->btnFindNext->setVisible(!on);
     ui->btnFindPrev->setVisible(!on);
