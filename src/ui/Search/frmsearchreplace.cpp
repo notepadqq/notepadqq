@@ -221,16 +221,18 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
                 msgBox->setText(tr("Searching in %1").arg(file));
         });
 
+        connect(thread, &QThread::finished, thread, [=, &deletingObjects](){
+            deletingObjects = true;
+            worker->deleteLater();
+            thread->deleteLater();
+            msgBox->deleteLater();
+        });
+
         connect(worker, &SearchInFilesWorker::finished, this, [=, &deletingObjects](){
             FileSearchResult::SearchResult result = worker->getResult();
 
             msgBox->hide();
-
-            deletingObjects = true;
-
-            thread->deleteLater();
-            worker->deleteLater();
-            msgBox->deleteLater();
+            thread->quit();
 
             emit fileSearchResultFinished(result);
         });
