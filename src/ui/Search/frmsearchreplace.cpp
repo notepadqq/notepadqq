@@ -229,6 +229,8 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
         connect(worker, &SearchInFilesWorker::finished, this, [=](){
             FileSearchResult::SearchResult result = worker->getResult();
 
+            // Ensure the msgbox finished loading
+            QApplication::processEvents();
             msgBox->hide();
             emit fileSearchResultFinished(result);
         });
