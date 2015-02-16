@@ -248,6 +248,62 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
     }
 }
 
+void frmSearchReplace::replaceInFiles(QString string, QString replacement, QString path, QStringList filters, frmSearchReplace::SearchMode searchMode, frmSearchReplace::SearchOptions searchOptions)
+{
+    // FIXME Ask confirm
+
+    if (!string.isEmpty()) {
+        QMessageBox *msgBox = new QMessageBox(this);
+        msgBox->setText(tr("Searching..."));
+        msgBox->setWindowTitle(tr("Searching..."));
+        msgBox->setStandardButtons(QMessageBox::Cancel);
+        msgBox->setGeometry(x(), y(), width(), height()/2);
+
+        QThread *thread = new QThread();
+        SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
+        worker->moveToThread(thread);
+        bool deletingObjects = false;
+
+        connect(thread, &QThread::started, worker, &SearchInFilesWorker::run);
+
+        connect(worker, &SearchInFilesWorker::error, this, [=](QString err){
+            if (!deletingObjects)
+                msgBox->setText(err);
+        });
+
+        connect(worker, &SearchInFilesWorker::progress, this, [=](QString file){
+            if (!deletingObjects)
+                msgBox->setText(tr("Searching in %1").arg(file));
+        });
+
+        connect(thread, &QThread::finished, thread, [=, &deletingObjects](){
+            deletingObjects = true;
+            worker->deleteLater();
+            thread->deleteLater();
+            msgBox->deleteLater();
+        });
+
+        connect(worker, &SearchInFilesWorker::finished, this, [=, &deletingObjects](){
+            FileSearchResult::SearchResult result = worker->getResult();
+
+            msgBox->hide();
+            thread->quit();
+
+            //emit fileSearchResultFinished(result);
+            // FIXME Start replace
+        });
+
+        thread->start();
+        msgBox->exec();
+
+        // If we're here, the search finished or the user wants to cancel it.
+
+        if (!deletingObjects) {
+            worker->stop();
+        }
+    }
+}
+
 frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
 {
     if (ui->radSearchPlainText->isChecked())
@@ -471,4 +527,14 @@ void frmSearchReplace::on_btnLookInBrowse_clicked()
     if (!dir.isEmpty()) {
         ui->cmbLookIn->setCurrentText(dir);
     }
+}
+
+void frmSearchReplace::on_btnReplaceAllInFiles_clicked()
+{
+    replaceInFiles(ui->cmbSearch->currentText(),
+                   ui->cmbReplace->currentText(),
+                   ui->cmbLookIn->currentText(),
+                   ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts),
+                   searchModeFromUI(),
+                   searchOptionsFromUI());
 }

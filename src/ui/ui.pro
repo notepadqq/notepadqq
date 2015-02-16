@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
     Search/treeviewhtmldelegate.cpp \
-    Search/searchinfilesworker.cpp
+    Search/searchinfilesworker.cpp \
+    Search/replaceinfilesworker.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -89,7 +90,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/filesearchresult.h \
     include/Search/treeviewhtmldelegate.h \
     include/Search/frmsearchreplace.h \
-    include/Search/searchinfilesworker.h
+    include/Search/searchinfilesworker.h \
+    include/Search/replaceinfilesworker.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

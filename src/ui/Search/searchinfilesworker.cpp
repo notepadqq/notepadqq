@@ -182,6 +182,8 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const QRegularExpressi
     res.matchStartCol = capturedColStartInFirstLine;
     res.matchEndLine = lastLineNumber;
     res.matchEndCol = capturedColEndInLastLine;
+    res.matchStartPosition = capturedPosStart;
+    res.matchEndPosition = capturedPosEnd;
 
     return res;
 }
