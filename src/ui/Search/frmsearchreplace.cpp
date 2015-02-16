@@ -207,31 +207,31 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
         QThread *thread = new QThread();
         SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
         worker->moveToThread(thread);
-        bool workerDeleted = false;
+        bool deletingObjects = false;
 
         connect(thread, &QThread::started, worker, &SearchInFilesWorker::run);
 
         connect(worker, &SearchInFilesWorker::error, this, [=](QString err){
-            msgBox->setText(err);
+            if (!deletingObjects)
+                msgBox->setText(err);
         });
 
         connect(worker, &SearchInFilesWorker::progress, this, [=](QString file){
-            msgBox->setText(tr("Searching in %1").arg(file));
+            if (!deletingObjects)
+                msgBox->setText(tr("Searching in %1").arg(file));
         });
 
-        connect(thread, &QThread::finished, this, [=, &workerDeleted]{
-            thread->deleteLater();
-
-            workerDeleted = true;
-            worker->deleteLater();
-        });
-
-        connect(worker, &SearchInFilesWorker::finished, this, [=](){
+        connect(worker, &SearchInFilesWorker::finished, this, [=, &deletingObjects](){
             FileSearchResult::SearchResult result = worker->getResult();
 
-            // Ensure the msgbox finished loading
-            QApplication::processEvents();
             msgBox->hide();
+
+            deletingObjects = true;
+
+            thread->deleteLater();
+            worker->deleteLater();
+            msgBox->deleteLater();
+
             emit fileSearchResultFinished(result);
         });
 
@@ -240,7 +240,7 @@ void frmSearchReplace::searchInFiles(QString string, QString path, QStringList f
 
         // If we're here, the search finished or the user wants to cancel it.
 
-        if (!workerDeleted) {
+        if (!deletingObjects) {
             worker->stop();
         }
     }
