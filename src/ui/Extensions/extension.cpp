@@ -16,14 +16,15 @@ Extension::Extension(QString path, QObject *parent) : QObject(parent)
         fManifest.close();
 
         QJsonParseError err;
-        QJsonDocument manifest = QJsonDocument::fromJson(content.toUtf8(), &err);
+        QJsonDocument manifestDoc = QJsonDocument::fromJson(content.toUtf8(), &err);
 
         if (err.error != QJsonParseError::NoError) {
             failedToLoadExtension(path, "manifest.json: " + err.errorString());
             return;
         }
 
-        m_name = manifest.object().value("name").toString();
+        QJsonObject manifest = manifestDoc.object();
+        m_name = manifest.value("name").toString();
 
         if (m_name.isEmpty()) {
             failedToLoadExtension(path, "name missing or invalid");
