@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QMutex>
 #include "include/Search/filesearchresult.h"
-#include "include/Search/frmsearchreplace.h"
 
 class ReplaceInFilesWorker : public QObject
 {
@@ -14,7 +13,7 @@ public:
     ~ReplaceInFilesWorker();
 
 signals:
-    void finished();
+    void finished(bool stopped);
     void error(QString string);
     void progress(QString file);
 

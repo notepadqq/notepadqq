@@ -91,7 +91,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/treeviewhtmldelegate.h \
     include/Search/frmsearchreplace.h \
     include/Search/searchinfilesworker.h \
-    include/Search/replaceinfilesworker.h
+    include/Search/replaceinfilesworker.h \
+    include/Search/searchhelpers.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

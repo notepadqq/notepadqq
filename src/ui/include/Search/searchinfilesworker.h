@@ -4,19 +4,19 @@
 #include <QObject>
 #include <QMutex>
 #include "include/Search/filesearchresult.h"
-#include "include/Search/frmsearchreplace.h"
+#include "include/Search/searchhelpers.h"
 
 class SearchInFilesWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit SearchInFilesWorker(QString string, QString path, QStringList filters, frmSearchReplace::SearchMode searchMode, frmSearchReplace::SearchOptions searchOptions);
+    explicit SearchInFilesWorker(QString string, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
     ~SearchInFilesWorker();
 
     FileSearchResult::SearchResult getResult();
 
 signals:
-    void finished();
+    void finished(bool stopped);
     void error(QString string);
     void progress(QString file);
 
@@ -28,8 +28,8 @@ private:
     QString m_string;
     QString m_path;
     QStringList m_filters;
-    frmSearchReplace::SearchMode m_searchMode;
-    frmSearchReplace::SearchOptions m_searchOptions;
+    SearchHelpers::SearchMode m_searchMode;
+    SearchHelpers::SearchOptions m_searchOptions;
     FileSearchResult::SearchResult m_result;
     QMutex m_resultMutex;
     bool m_stop = false;

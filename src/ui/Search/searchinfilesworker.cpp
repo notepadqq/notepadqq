@@ -1,9 +1,9 @@
 #include "include/Search/searchinfilesworker.h"
+#include "include/Search/frmsearchreplace.h"
 #include <QDirIterator>
 #include <QRegularExpression>
 
-
-SearchInFilesWorker::SearchInFilesWorker(QString string, QString path, QStringList filters, frmSearchReplace::SearchMode searchMode, frmSearchReplace::SearchOptions searchOptions)
+SearchInFilesWorker::SearchInFilesWorker(QString string, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
     : m_string(string),
       m_path(path),
       m_filters(filters),
@@ -52,6 +52,7 @@ void SearchInFilesWorker::run()
         bool stop = m_stop;
         m_stopMutex.unlock();
         if (stop) {
+            emit finished(true);
             return;
         }
 
@@ -82,6 +83,7 @@ void SearchInFilesWorker::run()
             m_stopMutex.unlock();
             if (stop) {
                 f.close();
+                emit finished(true);
                 return;
             }
 
@@ -109,7 +111,7 @@ void SearchInFilesWorker::run()
     m_result = structSearchResult;
     m_resultMutex.unlock();
 
-    emit finished();
+    emit finished(false);
 }
 
 void SearchInFilesWorker::stop()

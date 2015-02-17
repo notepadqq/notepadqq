@@ -1,6 +1,5 @@
 #include "include/Search/frmsearchreplace.h"
 #include "include/iconprovider.h"
-#include "include/Search/searchinfilesworker.h"
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>
@@ -109,13 +108,13 @@ QString frmSearchReplace::plainTextToRegex(QString text, bool matchWholeWord)
     return regex;
 }
 
-QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions)
+QString frmSearchReplace::rawSearchString(QString search, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
 {
     QString rawSearch;
 
-    if (searchMode == SearchMode::Regex) {
+    if (searchMode == SearchHelpers::SearchMode::Regex) {
         rawSearch = search;
-    } else if (searchMode == SearchMode::SpecialChars) {
+    } else if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
         bool wholeWord = searchOptions.MatchWholeWord;
         rawSearch = plainTextToRegex(search, wholeWord);
         // Replace '\\' with '\' (basically, we unescape escaped slashes)
@@ -128,7 +127,7 @@ QString frmSearchReplace::rawSearchString(QString search, SearchMode searchMode,
     return rawSearch;
 }
 
-QString frmSearchReplace::regexModifiersFromSearchOptions(SearchOptions searchOptions)
+QString frmSearchReplace::regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions)
 {
     QString modifiers = "m";
     if (!searchOptions.MatchCase)
@@ -137,7 +136,7 @@ QString frmSearchReplace::regexModifiersFromSearchOptions(SearchOptions searchOp
     return modifiers;
 }
 
-void frmSearchReplace::search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
+void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
     if (!string.isEmpty()) {
         QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
@@ -155,7 +154,7 @@ void frmSearchReplace::search(QString string, SearchMode searchMode, bool forwar
     }
 }
 
-void frmSearchReplace::replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions) {
+void frmSearchReplace::replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
     if (!string.isEmpty()) {
         QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
@@ -174,7 +173,7 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchMode s
     }
 }
 
-int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions) {
+int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
     QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
@@ -185,7 +184,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchMode
     return count.toInt();
 }
 
-int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions) {
+int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
     QString rawSearch = rawSearchString(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
@@ -195,133 +194,237 @@ int frmSearchReplace::selectAll(QString string, SearchMode searchMode, SearchOpt
     return count.toInt();
 }
 
-void frmSearchReplace::searchInFiles(QString string, QString path, QStringList filters, SearchMode searchMode, SearchOptions searchOptions)
+void frmSearchReplace::searchInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
+    cleanFindInFilesPtrs();
+
     if (!string.isEmpty()) {
-        QMessageBox *msgBox = new QMessageBox(this);
-        msgBox->setText(tr("Searching..."));
-        msgBox->setWindowTitle(tr("Searching..."));
-        msgBox->setStandardButtons(QMessageBox::Cancel);
-        msgBox->setGeometry(x(), y(), width(), height()/2);
+        SearchInFilesSession *session = new SearchInFilesSession(this);
+        m_findInFilesPtrs.append(session);
 
-        QThread *thread = new QThread();
-        SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
-        worker->moveToThread(thread);
-        bool deletingObjects = false;
+        session->msgBox = new QMessageBox(this);
+        session->msgBox->setText(tr("Searching..."));
+        session->msgBox->setWindowTitle(tr("Searching..."));
+        session->msgBox->setStandardButtons(QMessageBox::Cancel);
+        session->msgBox->setGeometry(x(), y(), width(), height()/2); // FIXME
 
-        connect(thread, &QThread::started, worker, &SearchInFilesWorker::run);
+        session->threadSearch = new QThread();
+        session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
+        session->workerSearch->moveToThread(session->threadSearch);
 
-        connect(worker, &SearchInFilesWorker::error, this, [=](QString err){
-            if (!deletingObjects)
-                msgBox->setText(err);
+        connect(session->threadSearch, &QThread::started, session->workerSearch, &SearchInFilesWorker::run);
+
+        connect(session->workerSearch, &SearchInFilesWorker::error, this, [=](QString err){
+            if (session->msgBox != nullptr)
+                session->msgBox->setText(err);
         });
 
-        connect(worker, &SearchInFilesWorker::progress, this, [=](QString file){
-            if (!deletingObjects)
-                msgBox->setText(tr("Searching in %1").arg(file));
+        connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
+            if (session->msgBox != nullptr)
+                session->msgBox->setText(tr("Searching in %1").arg(file));
         });
 
-        connect(thread, &QThread::finished, thread, [=, &deletingObjects](){
-            deletingObjects = true;
-            worker->deleteLater();
-            thread->deleteLater();
-            msgBox->deleteLater();
+        connect(session->threadSearch, &QThread::finished, this, [=]{
+            session->threadSearch->deleteLater();
+            session->threadSearch = nullptr;
         });
 
-        connect(worker, &SearchInFilesWorker::finished, this, [=, &deletingObjects](){
-            FileSearchResult::SearchResult result = worker->getResult();
+        connect(session->workerSearch, &SearchInFilesWorker::finished, this, [&](bool stopped){
+            FileSearchResult::SearchResult result;
 
-            msgBox->hide();
-            thread->quit();
+            if (session->threadSearch != nullptr)
+                session->threadSearch->quit();
+
+
+            if (stopped) {
+                session->workerSearch->deleteLater();
+                session->workerSearch = nullptr;
+                session->msgBox->deleteLater();
+                session->msgBox = nullptr;
+
+                return;
+            } else {
+                result = session->workerSearch->getResult();
+
+                session->workerSearch->deleteLater();
+                session->workerSearch = nullptr;
+            }
 
             emit fileSearchResultFinished(result);
         });
 
-        thread->start();
-        msgBox->exec();
+        session->threadSearch->start();
+        session->msgBox->exec();
 
         // If we're here, the search finished or the user wants to cancel it.
 
-        if (!deletingObjects) {
-            worker->stop();
-        }
+        if (session->workerSearch != nullptr)
+            session->workerSearch->stop();
     }
 }
 
-void frmSearchReplace::replaceInFiles(QString string, QString replacement, QString path, QStringList filters, frmSearchReplace::SearchMode searchMode, frmSearchReplace::SearchOptions searchOptions)
+void frmSearchReplace::replaceInFiles(QString string, QString replacement, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
 {
-    // FIXME Ask confirm
+    cleanFindInFilesPtrs();
+
+    if (QMessageBox::warning(
+                this,
+                tr("Replace in files"),
+                tr("Are you sure you want to replace all occurrences in %1 for file types %2?")
+                   .arg(path)
+                   .arg(filters.join(", ")),
+                QMessageBox::Ok | QMessageBox::Cancel,
+                QMessageBox::Cancel)
+          != QMessageBox::Ok) {
+
+        return;
+    }
 
     if (!string.isEmpty()) {
-        QMessageBox *msgBox = new QMessageBox(this);
-        msgBox->setText(tr("Searching..."));
-        msgBox->setWindowTitle(tr("Searching..."));
-        msgBox->setStandardButtons(QMessageBox::Cancel);
-        msgBox->setGeometry(x(), y(), width(), height()/2);
+        SearchInFilesSession *session = new SearchInFilesSession(this);
+        m_findInFilesPtrs.append(session);
 
-        QThread *thread = new QThread();
-        SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
-        worker->moveToThread(thread);
-        bool deletingObjects = false;
+        session->msgBox = new QMessageBox(this);
+        session->msgBox->setText(tr("Searching..."));
+        session->msgBox->setWindowTitle(tr("Searching..."));
+        session->msgBox->setStandardButtons(QMessageBox::Cancel);
+        session->msgBox->setGeometry(x(), y(), width(), height()/2); // FIXME
 
-        connect(thread, &QThread::started, worker, &SearchInFilesWorker::run);
+        session->threadSearch = new QThread();
+        session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
+        session->workerSearch->moveToThread(session->threadSearch);
 
-        connect(worker, &SearchInFilesWorker::error, this, [=](QString err){
-            if (!deletingObjects)
-                msgBox->setText(err);
+
+        connect(session->threadSearch, &QThread::started, session->workerSearch, &SearchInFilesWorker::run);
+
+        connect(session->workerSearch, &SearchInFilesWorker::error, this, [=](QString err){
+            if (session->msgBox != nullptr)
+                session->msgBox->setText(err);
         });
 
-        connect(worker, &SearchInFilesWorker::progress, this, [=](QString file){
-            if (!deletingObjects)
-                msgBox->setText(tr("Searching in %1").arg(file));
+        connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
+            if (session->msgBox != nullptr)
+                session->msgBox->setText(tr("Searching in %1").arg(file));
         });
 
-        connect(thread, &QThread::finished, thread, [=, &deletingObjects](){
-            deletingObjects = true;
-            worker->deleteLater();
-            thread->deleteLater();
-            msgBox->deleteLater();
+        connect(session->threadSearch, &QThread::finished, this, [=]{
+            session->threadSearch->deleteLater();
+            session->threadSearch = nullptr;
         });
 
-        connect(worker, &SearchInFilesWorker::finished, this, [=, &deletingObjects](){
-            FileSearchResult::SearchResult result = worker->getResult();
+        connect(session->workerSearch, &SearchInFilesWorker::finished, this, [=](bool stopped){
+            FileSearchResult::SearchResult result;
 
-            msgBox->hide();
-            thread->quit();
+            if (session->threadSearch != nullptr)
+                session->threadSearch->quit();
 
-            //emit fileSearchResultFinished(result);
-            // FIXME Start replace
+            if (stopped) {
+                session->workerSearch->deleteLater();
+                session->workerSearch = nullptr;
+                session->msgBox->deleteLater();
+                session->msgBox = nullptr;
+
+                return;
+            } else {
+                result = session->workerSearch->getResult();
+
+                session->workerSearch->deleteLater();
+                session->workerSearch = nullptr;
+            }
+
+            // Start to replace
+
+            session->threadReplace = new QThread();
+            session->workerReplace = new ReplaceInFilesWorker(result, replacement);
+            session->workerReplace->moveToThread(session->threadReplace);
+
+            connect(session->threadReplace, &QThread::started, session->workerReplace, &ReplaceInFilesWorker::run);
+
+            connect(session->workerReplace, &ReplaceInFilesWorker::error, this, [=](QString err){
+                if (session->msgBox != nullptr)
+                    session->msgBox->setText(err);
+            });
+
+            connect(session->workerReplace, &ReplaceInFilesWorker::progress, this, [=](QString file){
+                if (session->msgBox != nullptr)
+                    session->msgBox->setText(tr("Replacing in %1").arg(file));
+            });
+
+            connect(session->threadReplace, &QThread::finished, this, [=]{
+                session->threadReplace->deleteLater();
+                session->threadReplace = nullptr;
+            });
+
+            connect(session->workerReplace, &ReplaceInFilesWorker::finished, this, [=](bool stopped){
+                //FileSearchResult::SearchResult result = workerReplace->getResult();
+
+                session->msgBox->hide();
+
+                if (session->threadReplace != nullptr)
+                    session->threadReplace->quit();
+
+                session->workerReplace->deleteLater();
+                session->workerReplace = nullptr;
+                session->msgBox->deleteLater();
+                session->msgBox = nullptr;
+
+                if (!stopped) {
+                    // show msgbox
+                }
+
+                //emit fileSearchResultFinished(result);
+            });
+
+            session->threadReplace->start();
         });
 
-        thread->start();
-        msgBox->exec();
+        session->threadSearch->start();
+        session->msgBox->exec();
 
         // If we're here, the search finished or the user wants to cancel it.
 
-        if (!deletingObjects) {
-            worker->stop();
+        // If the search wasn't finished yet, cancel it
+        if (session->workerSearch != nullptr)
+            session->workerSearch->stop();
+        if (session->workerReplace != nullptr)
+            session->workerReplace->stop();
+    }
+}
+
+void frmSearchReplace::cleanFindInFilesPtrs()
+{
+    for (int i = m_findInFilesPtrs.count() - 1; i >= 0; i--) {
+        SearchInFilesSession *session = m_findInFilesPtrs[i];
+        if (session->msgBox == nullptr
+                && session->threadSearch == nullptr
+                && session->workerSearch == nullptr
+                && session->threadReplace == nullptr
+                && session->workerReplace == nullptr) {
+
+            m_findInFilesPtrs.removeAt(i);
+            session->deleteLater();
         }
     }
 }
 
-frmSearchReplace::SearchMode frmSearchReplace::searchModeFromUI()
+SearchHelpers::SearchMode frmSearchReplace::searchModeFromUI()
 {
     if (ui->radSearchPlainText->isChecked())
-        return SearchMode::PlainText;
+        return SearchHelpers::SearchMode::PlainText;
 
     else if (ui->radSearchWithSpecialChars->isChecked())
-        return SearchMode::SpecialChars;
+        return SearchHelpers::SearchMode::SpecialChars;
 
     else if (ui->radSearchWithRegex->isChecked())
-        return SearchMode::Regex;
+        return SearchHelpers::SearchMode::Regex;
 
     else
-        return SearchMode::PlainText;
+        return SearchHelpers::SearchMode::PlainText;
 }
 
-frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
+SearchHelpers::SearchOptions frmSearchReplace::searchOptionsFromUI()
 {
-    SearchOptions searchOptions;
+    SearchHelpers::SearchOptions searchOptions;
 
     if (ui->chkMatchCase->isChecked())
         searchOptions.MatchCase = true;
@@ -335,7 +438,7 @@ frmSearchReplace::SearchOptions frmSearchReplace::searchOptionsFromUI()
 
 void frmSearchReplace::findFromUI(bool forward, bool searchFromStart)
 {
-    SearchOptions sOpts = searchOptionsFromUI();
+    SearchHelpers::SearchOptions sOpts = searchOptionsFromUI();
     sOpts.SearchFromStart = searchFromStart;
 
     this->search(ui->cmbSearch->currentText(),
@@ -346,7 +449,7 @@ void frmSearchReplace::findFromUI(bool forward, bool searchFromStart)
 
 void frmSearchReplace::replaceFromUI(bool forward, bool searchFromStart)
 {
-    SearchOptions sOpts = searchOptionsFromUI();
+    SearchHelpers::SearchOptions sOpts = searchOptionsFromUI();
     sOpts.SearchFromStart = searchFromStart;
 
     this->replace(ui->cmbSearch->currentText(),
@@ -512,7 +615,7 @@ void frmSearchReplace::on_btnFindAll_clicked()
 {
     searchInFiles(ui->cmbSearch->currentText(),
                   ui->cmbLookIn->currentText(),
-                  ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts),
+                  fileFiltersFromUI(),
                   searchModeFromUI(),
                   searchOptionsFromUI());
 }
@@ -534,7 +637,16 @@ void frmSearchReplace::on_btnReplaceAllInFiles_clicked()
     replaceInFiles(ui->cmbSearch->currentText(),
                    ui->cmbReplace->currentText(),
                    ui->cmbLookIn->currentText(),
-                   ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts),
+                   fileFiltersFromUI(),
                    searchModeFromUI(),
                    searchOptionsFromUI());
+}
+
+QStringList frmSearchReplace::fileFiltersFromUI()
+{
+    QStringList filters = ui->cmbFilter->currentText().split(",", QString::SkipEmptyParts);
+    for (int i = 0; i < filters.count(); i++) {
+        filters[i] = filters[i].trimmed();
+    }
+    return filters;
 }
