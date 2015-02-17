@@ -9,7 +9,7 @@ class ReplaceInFilesWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit ReplaceInFilesWorker(FileSearchResult::SearchResult searchResult, QString replacement);
+    explicit ReplaceInFilesWorker(const FileSearchResult::SearchResult &searchResult, const QString &replacement);
     ~ReplaceInFilesWorker();
 
 signals:

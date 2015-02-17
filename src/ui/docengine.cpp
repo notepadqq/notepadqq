@@ -289,24 +289,18 @@ QByteArray DocEngine::getBomForCodec(QTextCodec *codec)
     return bom;
 }
 
-bool DocEngine::write(QIODevice *io, Editor *editor)
+bool DocEngine::writeFromString(QIODevice *io, const DecodedText &write)
 {
     if (!io->open(QIODevice::WriteOnly))
         return false;
 
-
-    QString string = editor->value()
-            .replace("\n", editor->endOfLineSequence());
-
-    QTextCodec *codec = editor->codec();
-
-    QByteArray data = codec->fromUnicode(string);
+    QByteArray data = write.codec->fromUnicode(write.text);
 
     // Some codecs always put the BOM (e.g. UTF-16BE).
     // Others don't (e.g. UTF-8) so we have to manually
     // write it, if the BOM is required.
     QByteArray manualBom;
-    if (editor->bom()) {
+    if (write.bom) {
         // We can't write the BOM using QTextStream.setGenerateByteOrderMark(),
         // because we would need to open the QIODevice as Text (QIODevice::Text),
         // but if we do, QTextStream will replace any newline character with
@@ -315,8 +309,8 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
         // So we generate the BOM here, and then
         // we prepend it to the output of our QIODevice.
 
-        if (codec->mibEnum() == MIB_UTF_8) { // UTF-8
-            manualBom = getBomForCodec(codec);
+        if (write.codec->mibEnum() == MIB_UTF_8) { // UTF-8
+            manualBom = getBomForCodec(write.codec);
         }
     }
 
@@ -333,6 +327,18 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
     io->close();
 
     return true;
+}
+
+bool DocEngine::write(QIODevice *io, Editor *editor)
+{
+    DecodedText info;
+    info.text = editor->value()
+            .replace("\n", editor->endOfLineSequence());
+
+    info.codec = editor->codec();
+    info.bom = editor->bom();
+
+    return writeFromString(io, info);
 }
 
 void DocEngine::reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom)

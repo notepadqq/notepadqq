@@ -524,6 +524,8 @@ void frmSearchReplace::on_actionFind_toggled(bool /*on*/)
 
 void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
 {
+    ui->lblReplace->setVisible(on);
+    ui->cmbReplace->setVisible(on);
     ui->lblLookIn->setVisible(on);
     ui->cmbLookIn->setVisible(on);
     ui->lblFilter->setVisible(on);

@@ -58,6 +58,7 @@ public:
     void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
     static DocEngine::DecodedText readToString(QFile *file);
     static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
+    static bool writeFromString(QIODevice *io, const DecodedText &write);
 
 private:
     QSettings *m_settings;
@@ -104,7 +105,7 @@ private:
      */
     static DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
 
-    QByteArray getBomForCodec(QTextCodec *codec);
+    static QByteArray getBomForCodec(QTextCodec *codec);
 signals:
     /**
      * @brief The monitored file has changed. Remember to call
