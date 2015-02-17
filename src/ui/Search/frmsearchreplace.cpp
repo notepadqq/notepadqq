@@ -235,12 +235,13 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
             if (session->threadSearch != nullptr)
                 session->threadSearch->quit();
 
+            session->msgBox->hide();
+            session->msgBox->deleteLater();
+            session->msgBox = nullptr;
 
             if (stopped) {
                 session->workerSearch->deleteLater();
                 session->workerSearch = nullptr;
-                session->msgBox->deleteLater();
-                session->msgBox = nullptr;
 
                 return;
             } else {
@@ -263,7 +264,7 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
     }
 }
 
-void frmSearchReplace::replaceInFiles(QString string, QString replacement, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
+void frmSearchReplace::replaceInFiles(const QString &string, const QString &replacement, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
     cleanFindInFilesPtrs();
 
