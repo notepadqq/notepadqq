@@ -27,6 +27,31 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
     return tab;
 }
 
+DocEngine::DecodedText DocEngine::readToString(QFile *file)
+{
+    return readToString(file, nullptr, false);
+}
+
+DocEngine::DecodedText DocEngine::readToString(QFile *file, QTextCodec *codec, bool bom)
+{
+    DecodedText decoded;
+
+    if(!file->open(QFile::ReadOnly)) {
+        decoded.error = true;
+        return decoded;
+    }
+
+    if (codec == nullptr) {
+        decoded = decodeText(file->readAll());
+    } else {
+        decoded = decodeText(file->readAll(), codec, bom);
+    }
+
+    file->close();
+
+    return decoded;
+}
+
 bool DocEngine::read(QFile *file, Editor *editor)
 {
     return read(file, editor, nullptr, false);
@@ -37,20 +62,13 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
     if(!editor)
         return false;
 
-    if(!file->open(QFile::ReadOnly))
-        return false;
+    DecodedText decoded = readToString(file, codec, bom);
 
-    DecodedText decoded;
-    if (codec == nullptr) {
-        decoded = decodeText(file->readAll());
-    } else {
-        decoded = decodeText(file->readAll(), codec, bom);
-    }
+    if (decoded.error)
+        return false;
 
     editor->setCodec(decoded.codec);
     editor->setBom(decoded.bom);
-
-    file->close();
 
     if (decoded.text.indexOf("\r\n") != -1)
         editor->setEndOfLineSequence("\r\n");

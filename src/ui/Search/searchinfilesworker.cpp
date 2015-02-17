@@ -1,9 +1,10 @@
 #include "include/Search/searchinfilesworker.h"
 #include "include/Search/frmsearchreplace.h"
+#include "include/docengine.h"
 #include <QDirIterator>
 #include <QRegularExpression>
 
-SearchInFilesWorker::SearchInFilesWorker(QString string, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
+SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
       m_filters(filters),
@@ -63,11 +64,10 @@ void SearchInFilesWorker::run()
         int curFileMatches = 0;
 
         // Read the file into a string.
-        // There is no manual decoding: we assume that the files are Unicode.
         QFile f(fileName);
-        if (!f.open(QFile::ReadOnly | QFile::Text)) continue;
-        QTextStream in(&f);
-        QString content = in.readAll();
+        DocEngine::DecodedText decodedText = DocEngine::readToString(&f);
+        if (decodedText.error) continue;
+        QString content = decodedText.text;
 
         // Search result structure
         FileSearchResult::FileResult structFileResult;

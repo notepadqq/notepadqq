@@ -10,7 +10,7 @@ class SearchInFilesWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit SearchInFilesWorker(QString string, QString path, QStringList filters, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
+    explicit SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     ~SearchInFilesWorker();
 
     FileSearchResult::SearchResult getResult();
