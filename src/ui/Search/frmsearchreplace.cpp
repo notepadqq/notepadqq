@@ -229,7 +229,7 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
             session->threadSearch = nullptr;
         });
 
-        connect(session->workerSearch, &SearchInFilesWorker::finished, this, [&](bool stopped){
+        connect(session->workerSearch, &SearchInFilesWorker::finished, this, [=](bool stopped){
             FileSearchResult::SearchResult result;
 
             if (session->threadSearch != nullptr)
