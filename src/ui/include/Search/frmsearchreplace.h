@@ -3,9 +3,14 @@
 
 #include "include/topeditorcontainer.h"
 #include "include/Search/filesearchresult.h"
+#include "include/Search/searchinfilesworker.h"
+#include "include/Search/replaceinfilesworker.h"
+#include "include/Search/searchhelpers.h"
+#include "include/Search/dlgsearching.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 namespace Ui {
 class frmSearchReplace;
@@ -21,22 +26,6 @@ public:
     ~frmSearchReplace();
     void show(Tabs defaultTab);
 
-    enum class SearchMode {
-        PlainText,
-        SpecialChars,
-        Regex
-    };
-
-    struct SearchOptions {
-        unsigned MatchCase : 1;
-        unsigned MatchWholeWord : 1;
-        unsigned SearchFromStart : 1;
-        unsigned IncludeSubDirs : 1;
-
-        SearchOptions() : MatchCase(0), MatchWholeWord(0),
-        SearchFromStart(0), IncludeSubDirs(0) { }
-    };
-
     /**
      * @brief Runs a "find next" or "find prev", taking the options from the UI
      * @param forward
@@ -44,9 +33,10 @@ public:
     void findFromUI(bool forward, bool searchFromStart = false);
     void replaceFromUI(bool forward, bool searchFromStart = false);
 
-    static QString rawSearchString(QString search, SearchMode searchMode, SearchOptions searchOptions);
+    static QString rawSearchString(QString search, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
     static QString plainTextToRegex(QString text, bool matchWholeWord);
 
+    void cleanFindInFilesPtrs();
 protected:
     void keyPressEvent(QKeyEvent *evt);
 
@@ -67,25 +57,50 @@ private slots:
     void on_searchStringEdited(const QString &text);
     void on_btnFindAll_clicked();
     void on_btnLookInBrowse_clicked();
+    void on_btnReplaceAllInFiles_clicked();
 
 private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
+
+    class SearchInFilesSession : public QObject {
+    public:
+        SearchInFilesSession(QObject *parent) : QObject(parent) { }
+
+        QThread*               threadSearch = nullptr;
+        SearchInFilesWorker*   workerSearch = nullptr;
+        QThread*               threadReplace = nullptr;
+        ReplaceInFilesWorker*  workerReplace = nullptr;
+        dlgSearching*          msgBox = nullptr;
+    };
+
+    QList<SearchInFilesSession*> m_findInFilesPtrs;
+
     Editor*                currentEditor();
 
-    void search(QString string, SearchMode searchMode, bool forward, SearchOptions searchOptions);
-    void replace(QString string, QString replacement, SearchMode searchMode, bool forward, SearchOptions searchOptions);
-    int replaceAll(QString string, QString replacement, SearchMode searchMode, SearchOptions searchOptions);
-    int selectAll(QString string, SearchMode searchMode, SearchOptions searchOptions);
-    void searchInFiles(QString string, QString path, QStringList filter, SearchMode searchMode, SearchOptions searchOptions);
+    void search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
+    void replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
+    int replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
+    int selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
+    void searchInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    void replaceInFiles(const QString &string, const QString &replacement, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     void setCurrentTab(Tabs tab);
     void manualSizeAdjust();
-    SearchOptions searchOptionsFromUI();
-    SearchMode searchModeFromUI();
-    QString regexModifiersFromSearchOptions(SearchOptions searchOptions);
+    SearchHelpers::SearchOptions searchOptionsFromUI();
+    SearchHelpers::SearchMode searchModeFromUI();
+    QString regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions);
     FileSearchResult::Result buildResult(const QRegularExpressionMatch &match, QString *content);
+    QStringList fileFiltersFromUI();
 
+    /**
+     * @brief Displays the abort/retry/ignore message box for read and write errors
+     *        in SearchInFilesWorker and ReplaceInFilesWorker.
+     *        Assigns the return value to "operation".
+     * @param message
+     * @param operation
+     */
+    void displayThreadErrorMessageBox(const QString &message, int &operation);
 signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
 };

@@ -16,6 +16,8 @@ public:
         int matchStartCol;
         int matchEndLine;
         int matchEndCol;
+        int matchStartPosition;
+        int matchEndPosition;
 
         operator QVariant() const
         {

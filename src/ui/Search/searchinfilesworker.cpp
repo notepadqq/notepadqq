@@ -1,9 +1,11 @@
 #include "include/Search/searchinfilesworker.h"
+#include "include/Search/frmsearchreplace.h"
+#include "include/docengine.h"
 #include <QDirIterator>
 #include <QRegularExpression>
+#include <QMessageBox>
 
-
-SearchInFilesWorker::SearchInFilesWorker(QString string, QString path, QStringList filters, frmSearchReplace::SearchMode searchMode, frmSearchReplace::SearchOptions searchOptions)
+SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
       m_filters(filters),
@@ -52,6 +54,7 @@ void SearchInFilesWorker::run()
         bool stop = m_stop;
         m_stopMutex.unlock();
         if (stop) {
+            emit finished(true);
             return;
         }
 
@@ -62,11 +65,31 @@ void SearchInFilesWorker::run()
         int curFileMatches = 0;
 
         // Read the file into a string.
-        // There is no manual decoding: we assume that the files are Unicode.
         QFile f(fileName);
-        if (!f.open(QFile::ReadOnly | QFile::Text)) continue;
-        QTextStream in(&f);
-        QString content = in.readAll();
+        DocEngine::DecodedText decodedText;
+        bool retry;
+
+        do {
+            retry = false;
+            decodedText = DocEngine::readToString(&f);
+            if (decodedText.error) {
+                // Error reading from file: show message box
+
+                int result = QMessageBox::StandardButton::NoButton;
+                emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
+
+                if (result == QMessageBox::StandardButton::Abort) {
+                    emit finished(true);
+                    return;
+                } else if (result == QMessageBox::StandardButton::Retry) {
+                    retry = true;
+                } else {
+                    continue;
+                }
+            }
+        } while (retry);
+
+        QString content = decodedText.text;
 
         // Search result structure
         FileSearchResult::FileResult structFileResult;
@@ -82,6 +105,7 @@ void SearchInFilesWorker::run()
             m_stopMutex.unlock();
             if (stop) {
                 f.close();
+                emit finished(true);
                 return;
             }
 
@@ -109,7 +133,7 @@ void SearchInFilesWorker::run()
     m_result = structSearchResult;
     m_resultMutex.unlock();
 
-    emit finished();
+    emit finished(false);
 }
 
 void SearchInFilesWorker::stop()
@@ -182,6 +206,8 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const QRegularExpressi
     res.matchStartCol = capturedColStartInFirstLine;
     res.matchEndLine = lastLineNumber;
     res.matchEndCol = capturedColEndInLastLine;
+    res.matchStartPosition = capturedPosStart;
+    res.matchEndPosition = capturedPosEnd;
 
     return res;
 }

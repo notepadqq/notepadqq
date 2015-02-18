@@ -361,13 +361,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="lblSpacer2">
-        <property name="text">
-         <string notr="true"/>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0" rowspan="3">
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -383,6 +376,16 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="btnReplaceAllInFiles">
+        <property name="text">
+         <string>Replace all</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

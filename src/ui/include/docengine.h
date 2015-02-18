@@ -22,6 +22,13 @@ public:
     explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
     ~DocEngine();
 
+    struct DecodedText {
+        QString text;
+        QTextCodec *codec = nullptr;
+        bool bom = false;
+        bool error = false;
+    };
+
     /**
      * @brief Saves a document to the file system.
      * @param tabWidget tabWidget where the document is
@@ -49,6 +56,10 @@ public:
     bool reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
     void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
+    static DocEngine::DecodedText readToString(QFile *file);
+    static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
+    static bool writeFromString(QIODevice *io, const DecodedText &write);
+
 private:
     QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
@@ -78,19 +89,13 @@ private:
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
 
-    struct DecodedText {
-        QString text;
-        QTextCodec *codec = nullptr;
-        bool bom = false;
-    };
-
     /**
      * @brief Decodes a byte array into a string, trying to guess the best
      *        codec.
      * @param contents
      * @return
      */
-    DecodedText decodeText(const QByteArray &contents);
+    static DecodedText decodeText(const QByteArray &contents);
     /**
      * @brief Decodes a byte array into a string, using the specified codec.
      * @param contents
@@ -98,9 +103,9 @@ private:
      * @param contentHasBOM Simply copied to the result struct.
      * @return
      */
-    DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
+    static DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
 
-    QByteArray getBomForCodec(QTextCodec *codec);
+    static QByteArray getBomForCodec(QTextCodec *codec);
 signals:
     /**
      * @brief The monitored file has changed. Remember to call
