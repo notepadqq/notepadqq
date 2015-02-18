@@ -98,11 +98,11 @@ HEADERS  += include/mainwindow.h \
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
-    frmsearchreplace.ui \
     frmpreferences.ui \
     frmencodingchooser.ui \
     frmindentationmode.ui \
-    Search/dlgsearching.ui
+    Search/dlgsearching.ui \
+    Search/frmsearchreplace.ui
 
 RESOURCES += \
     resources.qrc
