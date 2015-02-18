@@ -65,7 +65,8 @@ SOURCES += main.cpp\
     Search/frmsearchreplace.cpp \
     Search/treeviewhtmldelegate.cpp \
     Search/searchinfilesworker.cpp \
-    Search/replaceinfilesworker.cpp
+    Search/replaceinfilesworker.cpp \
+    Search/dlgsearching.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -92,14 +93,16 @@ HEADERS  += include/mainwindow.h \
     include/Search/frmsearchreplace.h \
     include/Search/searchinfilesworker.h \
     include/Search/replaceinfilesworker.h \
-    include/Search/searchhelpers.h
+    include/Search/searchhelpers.h \
+    include/Search/dlgsearching.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
     frmsearchreplace.ui \
     frmpreferences.ui \
     frmencodingchooser.ui \
-    frmindentationmode.ui
+    frmindentationmode.ui \
+    Search/dlgsearching.ui
 
 RESOURCES += \
     resources.qrc

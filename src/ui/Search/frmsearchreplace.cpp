@@ -14,7 +14,6 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
 {
     ui->setupUi(this);
 
-    //setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     move(
@@ -202,11 +201,9 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
         SearchInFilesSession *session = new SearchInFilesSession(this);
         m_findInFilesPtrs.append(session);
 
-        session->msgBox = new QMessageBox(this);
-        session->msgBox->setText(tr("Searching..."));
-        session->msgBox->setWindowTitle(tr("Searching..."));
-        session->msgBox->setStandardButtons(QMessageBox::Cancel);
-        session->msgBox->setGeometry(x(), y() + this->height() / 3, width(), height()/2);
+        session->msgBox = new dlgSearching(this);
+        session->msgBox->setTitle(tr("Searching..."));
+        session->msgBox->setWindowTitle(session->msgBox->title());
 
         session->threadSearch = new QThread();
         session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
@@ -215,15 +212,17 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
         connect(session->threadSearch, &QThread::started, session->workerSearch, &SearchInFilesWorker::run);
 
         connect(session->workerSearch, &SearchInFilesWorker::error, this, [=](QString err){
-            if (session->msgBox != nullptr)
+            if (session->msgBox != nullptr) {
+                session->msgBox->setTitle(tr("Error"));
                 session->msgBox->setText(err);
+            }
         });
 
         connect(session->workerSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
 
         connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
             if (session->msgBox != nullptr)
-                session->msgBox->setText(tr("Searching in %1").arg(file));
+                session->msgBox->setText(QString("%1").arg(file));
         });
 
         connect(session->threadSearch, &QThread::finished, this, [=]{
@@ -275,7 +274,7 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
                 tr("Replace in files"),
                 tr("Are you sure you want to replace all occurrences in %1 for file types %2?")
                    .arg(path)
-                   .arg(filters.join(", ")),
+                   .arg(filters.isEmpty() ? "*" : filters.join(", ")),
                 QMessageBox::Ok | QMessageBox::Cancel,
                 QMessageBox::Cancel)
           != QMessageBox::Ok) {
@@ -287,11 +286,9 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
         SearchInFilesSession *session = new SearchInFilesSession(this);
         m_findInFilesPtrs.append(session);
 
-        session->msgBox = new QMessageBox(this);
-        session->msgBox->setText(tr("Searching..."));
-        session->msgBox->setWindowTitle(tr("Searching..."));
-        session->msgBox->setStandardButtons(QMessageBox::Cancel);
-        session->msgBox->setGeometry(x(), y() + this->height() / 3, width(), height()/2);
+        session->msgBox = new dlgSearching(this);
+        session->msgBox->setTitle(tr("Searching..."));
+        session->msgBox->setWindowTitle(session->msgBox->title());
 
         session->threadSearch = new QThread();
         session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
@@ -301,8 +298,10 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
         connect(session->threadSearch, &QThread::started, session->workerSearch, &SearchInFilesWorker::run);
 
         connect(session->workerSearch, &SearchInFilesWorker::error, this, [=](QString err){
-            if (session->msgBox != nullptr)
+            if (session->msgBox != nullptr) {
+                session->msgBox->setTitle(tr("Error"));
                 session->msgBox->setText(err);
+            }
         });
 
         connect(session->workerSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
@@ -338,6 +337,7 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
             }
 
             // Start to replace
+            session->msgBox->setTitle(tr("Replacing..."));
 
             session->threadReplace = new QThread();
             session->workerReplace = new ReplaceInFilesWorker(result, replacement);
@@ -346,8 +346,10 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
             connect(session->threadReplace, &QThread::started, session->workerReplace, &ReplaceInFilesWorker::run);
 
             connect(session->workerReplace, &ReplaceInFilesWorker::error, this, [=](QString err){
-                if (session->msgBox != nullptr)
+                if (session->msgBox != nullptr) {
+                    session->msgBox->setTitle(tr("Error"));
                     session->msgBox->setText(err);
+                }
             });
 
             connect(session->workerReplace, &ReplaceInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
@@ -365,8 +367,6 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
             });
 
             connect(session->workerReplace, &ReplaceInFilesWorker::finished, this, [=](bool stopped){
-                //FileSearchResult::SearchResult result = workerReplace->getResult();
-
                 session->msgBox->hide();
 
                 if (session->threadReplace != nullptr)
@@ -378,10 +378,9 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
                 session->msgBox = nullptr;
 
                 if (!stopped) {
-                    // show msgbox
+                    QApplication::processEvents();
+                    QMessageBox::information(this, tr("Replace in files"), tr("Completed."));
                 }
-
-                //emit fileSearchResultFinished(result);
             });
 
             session->threadReplace->start();

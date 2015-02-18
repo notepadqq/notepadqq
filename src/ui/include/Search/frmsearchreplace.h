@@ -6,6 +6,7 @@
 #include "include/Search/searchinfilesworker.h"
 #include "include/Search/replaceinfilesworker.h"
 #include "include/Search/searchhelpers.h"
+#include "include/Search/dlgsearching.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QStandardItemModel>
@@ -71,7 +72,7 @@ private:
         SearchInFilesWorker*   workerSearch = nullptr;
         QThread*               threadReplace = nullptr;
         ReplaceInFilesWorker*  workerReplace = nullptr;
-        QMessageBox*           msgBox = nullptr;
+        dlgSearching*          msgBox = nullptr;
     };
 
     QList<SearchInFilesSession*> m_findInFilesPtrs;
