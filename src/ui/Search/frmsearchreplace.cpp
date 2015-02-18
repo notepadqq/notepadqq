@@ -206,7 +206,7 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
         session->msgBox->setText(tr("Searching..."));
         session->msgBox->setWindowTitle(tr("Searching..."));
         session->msgBox->setStandardButtons(QMessageBox::Cancel);
-        session->msgBox->setGeometry(x(), y(), width(), height()/2); // FIXME
+        session->msgBox->setGeometry(x(), y() + this->height() / 3, width(), height()/2);
 
         session->threadSearch = new QThread();
         session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
@@ -291,7 +291,7 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
         session->msgBox->setText(tr("Searching..."));
         session->msgBox->setWindowTitle(tr("Searching..."));
         session->msgBox->setStandardButtons(QMessageBox::Cancel);
-        session->msgBox->setGeometry(x(), y(), width(), height()/2); // FIXME
+        session->msgBox->setGeometry(x(), y() + this->height() / 3, width(), height()/2);
 
         session->threadSearch = new QThread();
         session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
