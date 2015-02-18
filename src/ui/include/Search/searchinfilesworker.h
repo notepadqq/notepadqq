@@ -16,9 +16,25 @@ public:
     FileSearchResult::SearchResult getResult();
 
 signals:
+    /**
+     * @brief The worker finished its work.
+     * @param stopped if true, the worker did not complete its operations
+     *        (e.g. because of an error or because it was manually stopped).
+     */
     void finished(bool stopped);
     void error(QString string);
     void progress(QString file);
+
+    /**
+     * @brief Error reading a file. You can handle this signal
+     *        and show a message box asking the user to abort/retry/ignore.
+     *        Assign the result of the message box to "operation".
+     *        Make sure to connect to this signal with
+     *        Qt::BlockingQueuedConnection
+     * @param message
+     * @param operation
+     */
+    void errorReadingFile(const QString &message, int &operation);
 
 public slots:
     void run();

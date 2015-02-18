@@ -65,8 +65,29 @@ void SearchInFilesWorker::run()
 
         // Read the file into a string.
         QFile f(fileName);
-        DocEngine::DecodedText decodedText = DocEngine::readToString(&f);
-        if (decodedText.error) continue;
+        DocEngine::DecodedText decodedText;
+        bool retry;
+
+        do {
+            retry = false;
+            decodedText = DocEngine::readToString(&f);
+            if (decodedText.error) {
+                // Error reading from file: show message box
+
+                int result = QMessageBox::StandardButton::NoButton;
+                emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
+
+                if (result == QMessageBox::StandardButton::Abort) {
+                    emit finished(true);
+                    return;
+                } else if (result == QMessageBox::StandardButton::Retry) {
+                    retry = true;
+                } else {
+                    continue;
+                }
+            }
+        } while (retry);
+
         QString content = decodedText.text;
 
         // Search result structure

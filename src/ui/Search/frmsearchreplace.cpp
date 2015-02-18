@@ -219,6 +219,8 @@ void frmSearchReplace::searchInFiles(const QString &string, const QString &path,
                 session->msgBox->setText(err);
         });
 
+        connect(session->workerSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
+
         connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
             if (session->msgBox != nullptr)
                 session->msgBox->setText(tr("Searching in %1").arg(file));
@@ -303,6 +305,8 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
                 session->msgBox->setText(err);
         });
 
+        connect(session->workerSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
+
         connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
             if (session->msgBox != nullptr)
                 session->msgBox->setText(tr("Searching in %1").arg(file));
@@ -345,6 +349,10 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
                 if (session->msgBox != nullptr)
                     session->msgBox->setText(err);
             });
+
+            connect(session->workerReplace, &ReplaceInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
+
+            connect(session->workerReplace, &ReplaceInFilesWorker::errorWritingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
 
             connect(session->workerReplace, &ReplaceInFilesWorker::progress, this, [=](QString file){
                 if (session->msgBox != nullptr)
@@ -390,6 +398,16 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
         if (session->workerReplace != nullptr)
             session->workerReplace->stop();
     }
+}
+
+void frmSearchReplace::displayThreadErrorMessageBox(const QString &message, int &operation)
+{
+    operation = QMessageBox::warning(
+                this,
+                tr("Error"),
+                message,
+                QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore,
+                QMessageBox::Retry);
 }
 
 void frmSearchReplace::cleanFindInFilesPtrs()

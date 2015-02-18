@@ -22,19 +22,51 @@ void ReplaceInFilesWorker::run()
         emit progress(fileResult.fileName);
 
         QFile f(fileResult.fileName);
-        DocEngine::DecodedText decodedText = DocEngine::readToString(&f);
-        if (decodedText.error) {
-            // FIXME emit error, then get abort/retry/ignore
-            continue;
-        }
+        DocEngine::DecodedText decodedText;
+        bool retry;
+
+        do {
+            retry = false;
+            decodedText = DocEngine::readToString(&f);
+            if (decodedText.error) {
+                // Error reading from file: show message box
+
+                int result = QMessageBox::StandardButton::NoButton;
+                emit errorReadingFile(tr("Error reading %1").arg(fileResult.fileName), result);
+
+                if (result == QMessageBox::StandardButton::Abort) {
+                    emit finished(true);
+                    return;
+                } else if (result == QMessageBox::StandardButton::Retry) {
+                    retry = true;
+                } else {
+                    continue;
+                }
+            }
+        } while (retry);
 
         for (FileSearchResult::Result result : fileResult.results) {
             decodedText.text.replace(result.matchStartPosition, result.matchEndPosition - result.matchStartPosition, m_replacement);
         }
 
-        if (DocEngine::writeFromString(&f, decodedText) == false) {
-            // Fixme emit error, then get abort/retry/ignore
-        }
+        do {
+            retry = false;
+            if (DocEngine::writeFromString(&f, decodedText) == false) {
+                // Error writing to file: show message box
+
+                int result = QMessageBox::StandardButton::NoButton;
+                emit errorReadingFile(tr("Error writing %1").arg(fileResult.fileName), result);
+
+                if (result == QMessageBox::StandardButton::Abort) {
+                    emit finished(true);
+                    return;
+                } else if (result == QMessageBox::StandardButton::Retry) {
+                    retry = true;
+                } else {
+                    continue;
+                }
+            }
+        } while (retry);
     }
 
     emit finished(false);

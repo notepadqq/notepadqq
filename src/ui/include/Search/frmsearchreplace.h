@@ -91,6 +91,15 @@ private:
     QString regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions);
     FileSearchResult::Result buildResult(const QRegularExpressionMatch &match, QString *content);
     QStringList fileFiltersFromUI();
+
+    /**
+     * @brief Displays the abort/retry/ignore message box for read and write errors
+     *        in SearchInFilesWorker and ReplaceInFilesWorker.
+     *        Assigns the return value to "operation".
+     * @param message
+     * @param operation
+     */
+    void displayThreadErrorMessageBox(const QString &message, int &operation);
 signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
 };
