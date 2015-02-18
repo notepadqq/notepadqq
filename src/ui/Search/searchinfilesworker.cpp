@@ -3,6 +3,7 @@
 #include "include/docengine.h"
 #include <QDirIterator>
 #include <QRegularExpression>
+#include <QMessageBox>
 
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),

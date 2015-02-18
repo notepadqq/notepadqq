@@ -3,6 +3,7 @@
 #include "include/docengine.h"
 #include <QFile>
 #include <QTextStream>
+#include <QMessageBox>
 
 ReplaceInFilesWorker::ReplaceInFilesWorker(const FileSearchResult::SearchResult &searchResult, const QString &replacement)
     : m_searchResult(searchResult),
