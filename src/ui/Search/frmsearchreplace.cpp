@@ -372,14 +372,23 @@ void frmSearchReplace::replaceInFiles(const QString &string, const QString &repl
                 if (session->threadReplace != nullptr)
                     session->threadReplace->quit();
 
+                QPair<int, int> result = session->workerReplace->getResult();
+
                 session->workerReplace->deleteLater();
                 session->workerReplace = nullptr;
                 session->msgBox->deleteLater();
                 session->msgBox = nullptr;
 
+                QApplication::processEvents();
+
                 if (!stopped) {
-                    QApplication::processEvents();
-                    QMessageBox::information(this, tr("Replace in files"), tr("Completed."));
+                    QMessageBox::information(this,
+                                             tr("Replace in files"),
+                                             tr("%1 occurrences replaced in %2 files.").arg(result.first).arg(result.second));
+                } else {
+                    QMessageBox::information(this,
+                                             tr("Replace in files"),
+                                             tr("%1 occurrences replaced in %2 files, but the replacement has been canceled before it could finish.").arg(result.first).arg(result.second));
                 }
             });
 

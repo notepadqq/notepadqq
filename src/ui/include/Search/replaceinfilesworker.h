@@ -16,6 +16,8 @@ public:
     explicit ReplaceInFilesWorker(const FileSearchResult::SearchResult &searchResult, const QString &replacement);
     ~ReplaceInFilesWorker();
 
+    QPair<int, int> getResult();
+
 signals:
     /**
      * @brief The worker finished its work.
@@ -55,9 +57,12 @@ public slots:
 private:
     FileSearchResult::SearchResult m_searchResult;
     QString m_replacement;
-    QMutex m_resultMutex;
     bool m_stop = false;
     QMutex m_stopMutex;
+
+    QMutex m_resultMutex;
+    int m_numOfFilesReplaced = 0;
+    int m_numOfOccurrencesReplaced = 0;
 };
 
 #endif // REPLACEINFILESWORKER_H
