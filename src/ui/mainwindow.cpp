@@ -437,14 +437,27 @@ void MainWindow::dropEvent(QDropEvent *e)
 {
     QMainWindow::dropEvent(e);
 
-    QList<QUrl> fileNames;
-    foreach (const QUrl &url, e->mimeData()->urls()) {
-        fileNames.append(url);
-    }
-
+    QList<QUrl> fileNames = e->mimeData()->urls();
     if (!fileNames.empty()) {
         m_docEngine->loadDocuments(fileNames,
                                    m_topEditorContainer->currentTabWidget());
+    }
+}
+
+void MainWindow::on_editorUrlsDropped(QList<QUrl> urls)
+{
+    EditorTabWidget *tabWidget;
+    Editor *editor = dynamic_cast<Editor *>(sender());
+
+    if (editor) {
+        tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
+    } else {
+        tabWidget = m_topEditorContainer->currentTabWidget();
+    }
+
+    if (!urls.empty()) {
+        m_docEngine->loadDocuments(urls,
+                                   tabWidget);
     }
 }
 
@@ -827,6 +840,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
         if (currentEditor() == editor)
             refreshEditorUiInfo(editor);
     });
+    connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());

@@ -76,6 +76,7 @@ namespace EditorNS
                 &Editor::on_javaScriptWindowObjectCleared);
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
+        connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we

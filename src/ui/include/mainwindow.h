@@ -163,6 +163,7 @@ private slots:
     void on_actionTAB_to_Space_triggered();
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
+    void on_editorUrlsDropped(QList<QUrl> urls);
 
 private:
     static QList<MainWindow*> m_instances;
