@@ -85,9 +85,14 @@ void ReplaceInFilesWorker::run()
 
         if (tmpNumReplaced > 0) {
 
+            bool fileWritten = false;
+
             do {
                 retry = false;
-                if (DocEngine::writeFromString(&f, decodedText) == false) {
+
+                if (DocEngine::writeFromString(&f, decodedText)) {
+                    fileWritten = true;
+                } else {
                     // Error writing to file: show message box
 
                     int result = QMessageBox::StandardButton::NoButton;
@@ -104,10 +109,12 @@ void ReplaceInFilesWorker::run()
                 }
             } while (retry);
 
-            m_resultMutex.lock();
-            m_numOfFilesReplaced++;
-            m_numOfOccurrencesReplaced += tmpNumReplaced;
-            m_resultMutex.unlock();
+            if (fileWritten) {
+                m_resultMutex.lock();
+                m_numOfFilesReplaced++;
+                m_numOfOccurrencesReplaced += tmpNumReplaced;
+                m_resultMutex.unlock();
+            }
         }
     }
 
