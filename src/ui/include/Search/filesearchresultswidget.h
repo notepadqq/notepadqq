@@ -5,7 +5,7 @@
 #include <QStandardItemModel>
 #include <QAction>
 #include "include/Search/filesearchresult.h"
-#include "include/Search/treeviewhtmldelegate.h"
+#include "include/Search/searchresultsitemdelegate.h"
 
 class FileSearchResultsWidget : public QTreeView
 {
@@ -29,7 +29,7 @@ private:
     };
 
     QStandardItemModel*   m_filesFindResultsModel;
-    TreeViewHTMLDelegate* m_treeViewHTMLDelegate;
+    SearchResultsItemDelegate* m_treeViewHTMLDelegate;
     QAction* m_actionClear;
     QString getFileResultFormattedLine(const FileSearchResult::Result &result) const;
     void setupActions();

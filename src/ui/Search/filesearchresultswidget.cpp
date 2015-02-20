@@ -5,7 +5,7 @@
 FileSearchResultsWidget::FileSearchResultsWidget(QWidget *parent) :
     QTreeView(parent),
     m_filesFindResultsModel(new QStandardItemModel(this)),
-    m_treeViewHTMLDelegate(new TreeViewHTMLDelegate(this))
+    m_treeViewHTMLDelegate(new SearchResultsItemDelegate(this))
 {
     setModel(m_filesFindResultsModel);
     setItemDelegate(m_treeViewHTMLDelegate);

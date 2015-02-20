@@ -1,19 +1,19 @@
-#include "include/Search/treeviewhtmldelegate.h"
+#include "include/Search/searchresultsitemdelegate.h"
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QBrush>
 
-TreeViewHTMLDelegate::TreeViewHTMLDelegate(QObject *parent) : QStyledItemDelegate(parent)
+SearchResultsItemDelegate::SearchResultsItemDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
 
 }
 
-TreeViewHTMLDelegate::~TreeViewHTMLDelegate()
+SearchResultsItemDelegate::~SearchResultsItemDelegate()
 {
 
 }
 
-void TreeViewHTMLDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex &index) const
+void SearchResultsItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex &index) const
 {
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
@@ -46,7 +46,7 @@ void TreeViewHTMLDelegate::paint(QPainter* painter, const QStyleOptionViewItem &
     painter->restore();
 }
 
-QSize TreeViewHTMLDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize SearchResultsItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);

@@ -63,10 +63,10 @@ SOURCES += main.cpp\
     localcommunication.cpp \
     Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
-    Search/treeviewhtmldelegate.cpp \
     Search/searchinfilesworker.cpp \
     Search/replaceinfilesworker.cpp \
-    Search/dlgsearching.cpp
+    Search/dlgsearching.cpp \
+    Search/searchresultsitemdelegate.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -89,12 +89,12 @@ HEADERS  += include/mainwindow.h \
     include/localcommunication.h \
     include/Search/filesearchresultswidget.h \
     include/Search/filesearchresult.h \
-    include/Search/treeviewhtmldelegate.h \
     include/Search/frmsearchreplace.h \
     include/Search/searchinfilesworker.h \
     include/Search/replaceinfilesworker.h \
     include/Search/searchhelpers.h \
-    include/Search/dlgsearching.h
+    include/Search/dlgsearching.h \
+    include/Search/searchresultsitemdelegate.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
