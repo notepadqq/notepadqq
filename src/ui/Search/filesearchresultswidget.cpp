@@ -92,7 +92,7 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
 QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResult::Result &result) const
 {
     QString richTextLine = result.previewBeforeMatch.toHtmlEscaped()
-            + "<span style=\"background-color: #ffef0b\">"
+            + "<span style=\"background-color: #ffef0b; color: black;\">"
             + result.match.toHtmlEscaped()
             + "</span>" + result.previewAfterMatch.toHtmlEscaped();
 

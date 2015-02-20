@@ -1,6 +1,7 @@
 #include "include/Search/treeviewhtmldelegate.h"
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include <QBrush>
 
 TreeViewHTMLDelegate::TreeViewHTMLDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
@@ -34,9 +35,11 @@ void TreeViewHTMLDelegate::paint(QPainter* painter, const QStyleOptionViewItem &
 
     painter->setClipRect(clip);
     QAbstractTextDocumentLayout::PaintContext ctx;
-    // set text color to red for selected item
-    //if (option.state & QStyle::State_Selected)
-    //    ctx.palette.setColor(QPalette::Text, QColor("red"));
+
+    // set text color for selected item
+    if (option.state & QStyle::State_Selected)
+        ctx.palette.setColor(QPalette::Text, options.palette.highlightedText().color());
+
     ctx.clip = clip;
     doc.documentLayout()->draw(painter, ctx);
 
