@@ -32,7 +32,7 @@ void FileSearchResultsWidget::setupActions()
     });
 }
 
-void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &result)
+void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &searchResult)
 {
     // Row, in the model, relative to this search
     QList<QStandardItem *> searchRow;
@@ -43,7 +43,7 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
     // Number of files that contain matches
     int totalFiles = 0;
 
-    for (FileSearchResult::FileResult fileResult : result.fileResults)
+    for (FileSearchResult::FileResult fileResult : searchResult.fileResults)
     {
         totalFiles++;
 
@@ -56,29 +56,23 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
         for (FileSearchResult::Result result : fileResult.results)
         {
             QList<QStandardItem *> lineRow;
-            lineRow << new QStandardItem(getFileResultFormattedLine(result));
-            lineRow[0]->setData(ResultTypeMatch, RESULT_TYPE_ROLE);
-            lineRow[0]->setData(result, RESULT_DATA_ROLE);
+            lineRow << new QStandardItem();
+            SearchResultsItemDelegate::fillResultRowItem(lineRow[0], result);
             fileRow[0]->appendRow(lineRow);
 
             curFileMatches++;
             totalFileMatches++;
         }
 
-        fileRow[0]->setText(QString("%1 (%2 hits)")
-                            .arg(fileResult.fileName.toHtmlEscaped())
-                            .arg(curFileMatches));
-        fileRow[0]->setData(ResultTypeFile, RESULT_TYPE_ROLE);
-        fileRow[0]->setData(fileResult, RESULT_DATA_ROLE);
+        SearchResultsItemDelegate::fillFileResultRowItem(fileRow[0], fileResult, curFileMatches);
         searchRow[0]->appendRow(fileRow);
     }
 
-    searchRow[0]->setText(QString("Search \"%1\" (%2 hits in %3 files)")
-                          .arg(result.search.toHtmlEscaped())
-                          .arg(totalFileMatches).arg(totalFiles));
+
+    SearchResultsItemDelegate::fillSearchResultRowItem(searchRow[0], searchResult, totalFileMatches, totalFiles);
+
     QStandardItem *root = m_filesFindResultsModel->invisibleRootItem();
     root->insertRow(0, searchRow);
-
 
 
     // Force an update of the treeView, otherwise the new row isn't available (Qt bug?)
@@ -89,35 +83,20 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
     expand(m_filesFindResultsModel->item(0)->index());
 }
 
-QString FileSearchResultsWidget::getFileResultFormattedLine(const FileSearchResult::Result &result) const
-{
-    QString richTextLine = result.previewBeforeMatch.toHtmlEscaped()
-            + "<span style=\"background-color: #ffef0b; color: black;\">"
-            + result.match.toHtmlEscaped()
-            + "</span>" + result.previewAfterMatch.toHtmlEscaped();
-
-    return QString("Line %1: %2").arg(result.matchStartLine + 1).arg(richTextLine);
-}
-
 void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
 {
-    QVariant type_q = index.data(RESULT_TYPE_ROLE);
-
-    if (!type_q.canConvert<int>()) return;
-    int type = type_q.toInt();
-
-    QVariant data = index.data(RESULT_DATA_ROLE);
+    int type = SearchResultsItemDelegate::rowItemType(index);
 
     switch (type)
     {
-    case ResultTypeFile:
-        emit resultFileClicked(data.value<FileSearchResult::FileResult>());
+    case SearchResultsItemDelegate::ResultTypeMatch:
+        emit resultMatchClicked(
+                    SearchResultsItemDelegate::fileResultRowData(index.parent()),
+                    SearchResultsItemDelegate::resultRowData(index));
         break;
 
-    case ResultTypeMatch:
-        emit resultMatchClicked(
-                    index.parent().data(RESULT_DATA_ROLE).value<FileSearchResult::FileResult>(),
-                    data.value<FileSearchResult::Result>());
+    case SearchResultsItemDelegate::ResultTypeFile:
+        emit resultFileClicked(SearchResultsItemDelegate::fileResultRowData(index));
         break;
     }
 }

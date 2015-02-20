@@ -14,24 +14,15 @@ class FileSearchResultsWidget : public QTreeView
 public:
     FileSearchResultsWidget(QWidget *parent = 0);
     ~FileSearchResultsWidget();
-    void addSearchResult(const FileSearchResult::SearchResult &result);
+    void addSearchResult(const FileSearchResult::SearchResult &searchResult);
 
 private slots:
     void on_doubleClicked(const QModelIndex &index);
 
 private:
-    static const int RESULT_TYPE_ROLE = Qt::UserRole + 1;
-    static const int RESULT_DATA_ROLE = Qt::UserRole + 2;
-
-    enum ResultType {
-        ResultTypeFile,
-        ResultTypeMatch
-    };
-
     QStandardItemModel*   m_filesFindResultsModel;
     SearchResultsItemDelegate* m_treeViewHTMLDelegate;
     QAction* m_actionClear;
-    QString getFileResultFormattedLine(const FileSearchResult::Result &result) const;
     void setupActions();
 
 signals:
