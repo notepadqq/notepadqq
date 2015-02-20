@@ -321,13 +321,6 @@ var Languages = new function() {
             fileExtensions: ["json", "geojson", "resjson"]
         },
 
-        "xjson": {
-            name: "JSON",
-            mode: "javascript",
-            mime: "application/x-json",
-            fileExtensions: []
-        },
-
         "jsonld": {
             name: "JSON-LD",
             mode: "javascript",
