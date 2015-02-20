@@ -26,7 +26,6 @@ private:
     void setupActions();
 
 signals:
-    void resultFileClicked(const FileSearchResult::FileResult &file);
     void resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
 
 protected:

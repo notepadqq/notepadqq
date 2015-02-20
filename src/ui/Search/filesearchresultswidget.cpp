@@ -87,17 +87,10 @@ void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
 {
     int type = SearchResultsItemDelegate::rowItemType(index);
 
-    switch (type)
-    {
-    case SearchResultsItemDelegate::ResultTypeMatch:
+    if (type == SearchResultsItemDelegate::ResultTypeMatch) {
         emit resultMatchClicked(
                     SearchResultsItemDelegate::fileResultRowData(index.parent()),
                     SearchResultsItemDelegate::resultRowData(index));
-        break;
-
-    case SearchResultsItemDelegate::ResultTypeFile:
-        emit resultFileClicked(SearchResultsItemDelegate::fileResultRowData(index));
-        break;
     }
 }
 

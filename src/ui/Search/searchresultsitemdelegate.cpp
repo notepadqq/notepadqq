@@ -70,35 +70,43 @@ FileSearchResult::FileResult SearchResultsItemDelegate::fileResultRowData(const 
 
 void SearchResultsItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV4 options = option;
-    initStyleOption(&options, index);
+    ResultType rType = rowItemType(index);
 
-    painter->save();
+    if (rType == ResultTypeMatch)
+    {
+        QStyleOptionViewItemV4 options = option;
+        initStyleOption(&options, index);
 
-    QTextDocument doc;
-    doc.setHtml(options.text);
+        painter->save();
 
-    options.text = "";
-    options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+        QTextDocument doc;
+        doc.setHtml(options.text);
 
-    // shift text right to make icon visible
-    QSize iconSize = options.icon.actualSize(options.rect.size());
-    painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
-    QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
+        options.text = "";
+        options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
-    //doc.drawContents(painter, clip);
+        // shift text right to make icon visible
+        QSize iconSize = options.icon.actualSize(options.rect.size());
+        painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
+        QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
 
-    painter->setClipRect(clip);
-    QAbstractTextDocumentLayout::PaintContext ctx;
+        //doc.drawContents(painter, clip);
 
-    // set text color for selected item
-    if (option.state & QStyle::State_Selected)
-        ctx.palette.setColor(QPalette::Text, options.palette.highlightedText().color());
+        painter->setClipRect(clip);
+        QAbstractTextDocumentLayout::PaintContext ctx;
 
-    ctx.clip = clip;
-    doc.documentLayout()->draw(painter, ctx);
+        // set text color for selected item
+        if (option.state & QStyle::State_Selected)
+            ctx.palette.setColor(QPalette::Text, options.palette.highlightedText().color());
 
-    painter->restore();
+        ctx.clip = clip;
+        doc.documentLayout()->draw(painter, ctx);
+
+        painter->restore();
+
+    } else {
+        QStyledItemDelegate::paint(painter, option, index);
+    }
 }
 
 QSize SearchResultsItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
