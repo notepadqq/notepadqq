@@ -4,6 +4,9 @@
 #include <QString>
 #include <QLocalSocket>
 
+/**
+ * @brief Send and receive messages through local sockets.
+ */
 class LocalCommunication
 {
 public:
