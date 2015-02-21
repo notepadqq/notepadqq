@@ -37,6 +37,9 @@
 
 #define MIB_UTF_8 106
 
+/**
+ * @brief Global information and utility functions.
+ */
 class Notepadqq
 {
 public:
