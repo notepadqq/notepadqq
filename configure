@@ -1,10 +1,37 @@
 #!/bin/sh
 
-# --qmake-args <arguments>
-# --qmake-path <path>
-# --prefix <prefix>
+QMAKE="qtchooser -run-tool=qmake -qt=5"
 
-QMAKE_PATH=qmake
+help() {
+cat << EOF
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g. CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+  -h, --help              display this help and exit
+
+  --prefix PREFIX,
+  --prefix=PREFIX         install files in PREFIX [/usr/local]
+
+  --qmake COMMAND,
+  --qmake=COMMAND         specify qmake command [$QMAKE]
+
+  --qmake-args ARGS       arguments to pass directly to qmake
+
+Some influential environment variables:
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+              you have headers in a nonstandard directory <include dir>
+  CXXFLAGS    C++ compiler flags
+
+EOF
+}
 
 while [ "$#" -ge 1 ]
 do
@@ -13,8 +40,8 @@ shift
 
 case $key in
     -h|--help)
-    echo "Configure script"
-    exit
+    help
+    exit 0
     shift
     ;;
     --prefix=*) # --prefix=<something>
@@ -24,8 +51,12 @@ case $key in
     PREFIX="$1"
     shift
     ;;
-    --qmake-path)
-    QMAKE_PATH="$1"
+    --qmake=*)
+    QMAKE="${key#*=}"
+    shift
+    ;;
+    --qmake)
+    QMAKE="$1"
     shift
     ;;
     --qmake-args)
@@ -38,20 +69,52 @@ case $key in
 esac
 done
 
+# check for QT5 qmake
+printf "check for QT5 qmake ... "
+$QMAKE -v 2>/dev/null 1>/dev/null
+if [ $(echo $?) -eq 0 ] ; then
+    echo "ok"
+else
+    echo "not found!"
+    exit 1
+fi
+
+# check for tools
+tools="make git pkg-config"
+for c in $tools ; do
+    printf "check for $c ... "
+    which $c 2>/dev/null 1>/dev/null
+    test $(echo $?) -eq 0 && echo "ok" || echo "not found!"
+done
+
+# check for libraries via pkg-config
+libraries="Qt5Core Qt5Gui Qt5Network Qt5WebKit Qt5Widgets Qt5WebKitWidgets Qt5PrintSupport"
+which pkg-config 2>/dev/null 1>/dev/null
+if [ $(echo $?) -eq 0 ] ; then
+    for l in $libraries ; do
+        printf "check for library $l ... "
+        pkg-config --libs $l 2>/dev/null 1>/dev/null
+        test $(echo $?) -eq 0 && pkg-config --libs $l || echo "not found!"
+    done
+fi
+
 # If we're in a git repo, update the submodules.
 # If ".git" is not found, assume that the complete source
 # code is already available.
-if [ -d ".git" ]; then
+which git 2>/dev/null 1>/dev/null
+if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
     git submodule init
     git submodule update
 fi
 
 if [ -f "Makefile" ]; then
-    make distclean
+    make distclean 2>/dev/null 1>/dev/null || true
 fi
 
-"$QMAKE_PATH" PREFIX="$PREFIX" \
+printf "generate Makefile ... "
+
+$QMAKE PREFIX="$PREFIX" \
 QMAKE_CFLAGS="$CFLAGS $CPPFLAGS" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
-"$@" notepadqq.pro
+"$@" notepadqq.pro && echo "done" || echo "error!"
