@@ -60,43 +60,41 @@ check() {
 
 
 fail_on_missing="no"
-while [ "$#" -ge 1 ]
-do
-key="$1"
-shift
+while [ "$#" -ge 1 ]; do
+    key="$1"
+    shift
 
-case $key in
-    -h|--help)
-    help
-    exit 0
-    shift
-    ;;
-    --prefix=*) # --prefix=<something>
-    PREFIX="${key#*=}"
-    ;;
-    --prefix) # --prefix <something>
-    PREFIX="$1"
-    shift
-    ;;
-    --fail-on-missing)
-    fail_on_missing="yes"
-    ;;
-    --qmake=*)
-    QMAKE="${key#*=}"
-    shift
-    ;;
-    --qmake)
-    QMAKE="$1"
-    shift
-    ;;
-    --qmake-args)
-    # Leave qmake args in $@
-    break
-    ;;
-    *)
-    echo WARNING: Unknown option "$key"
-    ;;
-esac
+    case $key in
+        -h|--help)
+        help
+        exit 0
+        ;;
+        --prefix=*) # --prefix=<something>
+        PREFIX="${key#*=}"
+        ;;
+        --prefix) # --prefix <something>
+        PREFIX="$1"
+        shift
+        ;;
+        --fail-on-missing)
+        fail_on_missing="yes"
+        ;;
+        --qmake=*)
+        QMAKE="${key#*=}"
+        shift
+        ;;
+        --qmake)
+        QMAKE="$1"
+        shift
+        ;;
+        --qmake-args)
+        # Leave qmake args in $@
+        break
+        ;;
+        *)
+        echo WARNING: Unknown option "$key"
+        ;;
+    esac
 done
 
 
