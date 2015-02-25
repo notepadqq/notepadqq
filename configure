@@ -99,12 +99,34 @@ case $key in
 esac
 done
 
+
 # check for QT5 qmake
 printf "checking for QT5 qmake... "
 $QMAKE -v 2>/dev/null 1>/dev/null
 test $(echo $?) -eq 0 && echo "$QMAKE" || errorExit "not found!" 1
 
 check c++ "$CXX" 1
+
+# check C++ compiler functionality
+rm -f test test.cpp
+cat << EOF > test.cpp
+#include <iostream>
+
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
+EOF
+printf "checking whether c++ compiler builds test program... "
+$CXX -o test test.cpp && echo "ok" || errorExit "error!" 1
+printf "checking whether c++ compiler supports -std=c++0x... "
+rm -f test
+$CXX -std=c++0x -o test test.cpp && echo "ok" || errorExit "error!" 1
+printf "checking whether compiled test program works... "
+./test 2>/dev/null 1>/dev/null && echo "ok" || errorExit "error!" 1
+rm -f test test.cpp
+
 check make "$MAKE" 1
 check git git
 check pkg-config pkg-config
@@ -132,6 +154,7 @@ fi
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true
 fi
+
 
 printf "generate Makefile... "
 
