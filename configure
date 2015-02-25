@@ -1,6 +1,16 @@
 #!/bin/sh
+# Don't set `-e'!
 
-QMAKE="qtchooser -run-tool=qmake -qt=5"
+test -n "$QMAKE" || QMAKE="qtchooser -run-tool=qmake -qt=5"
+test -n "$MAKE"  || MAKE="make"
+test -n "$CXX"   || CXX="c++"
+
+
+errorExit() {
+    echo $1
+    test x"$2" != x"1" || fail_on_missing="yes"
+    test $fail_on_missing != "yes" || exit 1
+}
 
 help() {
 cat << EOF
@@ -17,13 +27,16 @@ Defaults for the options are specified in brackets.
   --prefix PREFIX,
   --prefix=PREFIX         install files in PREFIX [/usr/local]
 
+  --fail-on-missing       return exit 1 if non-optional components are missing
+
   --qmake COMMAND,
   --qmake=COMMAND         specify qmake command [$QMAKE]
 
   --qmake-args ARGS       arguments to pass directly to qmake
 
 Some influential environment variables:
-  CFLAGS      C compiler flags
+  MAKE        make command
+  CXX         C++ compiler
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
@@ -33,68 +46,97 @@ Some influential environment variables:
 EOF
 }
 
-while [ "$#" -ge 1 ]
-do
-key="$1"
-shift
+# check "toolname/description" "command" errorExit
+# set errorExit to 1 for an error exit, otherwise leave it empty.
+# examples:
+# check "a Git client tool" git
+# check c++ g++ 1
+check() {
+    printf "checking for $1... "
+    t=$(basename $2)
+    which $t 2>/dev/null 1>/dev/null
+    test $(echo $?) -eq 0 && echo "$(which $t)" || errorExit "not found!" $3
+}
 
-case $key in
-    -h|--help)
-    help
-    exit 0
+
+fail_on_missing="no"
+while [ "$#" -ge 1 ]; do
+    key="$1"
     shift
-    ;;
-    --prefix=*) # --prefix=<something>
-    PREFIX="${key#*=}"
-    ;;
-    --prefix) # --prefix <something>
-    PREFIX="$1"
-    shift
-    ;;
-    --qmake=*)
-    QMAKE="${key#*=}"
-    shift
-    ;;
-    --qmake)
-    QMAKE="$1"
-    shift
-    ;;
-    --qmake-args)
-    # Leave qmake args in $@
-    break
-    ;;
-    *)
-    echo WARNING: Unknown option "$key"
-    ;;
-esac
+
+    case $key in
+        -h|--help)
+        help
+        exit 0
+        ;;
+        --prefix=*) # --prefix=<something>
+        PREFIX="${key#*=}"
+        ;;
+        --prefix) # --prefix <something>
+        PREFIX="$1"
+        shift
+        ;;
+        --fail-on-missing)
+        fail_on_missing="yes"
+        ;;
+        --qmake=*)
+        QMAKE="${key#*=}"
+        shift
+        ;;
+        --qmake)
+        QMAKE="$1"
+        shift
+        ;;
+        --qmake-args)
+        # Leave qmake args in $@
+        break
+        ;;
+        *)
+        echo WARNING: Unknown option "$key"
+        ;;
+    esac
 done
+
 
 # check for QT5 qmake
-printf "check for QT5 qmake ... "
+printf "checking for QT5 qmake... "
 $QMAKE -v 2>/dev/null 1>/dev/null
-if [ $(echo $?) -eq 0 ] ; then
-    echo "ok"
-else
-    echo "not found!"
-    exit 1
-fi
+test $(echo $?) -eq 0 && echo "$QMAKE" || errorExit "not found!" 1
 
-# check for tools
-tools="make git pkg-config"
-for c in $tools ; do
-    printf "check for $c ... "
-    which $c 2>/dev/null 1>/dev/null
-    test $(echo $?) -eq 0 && echo "ok" || echo "not found!"
-done
+check c++ "$CXX" 1
+
+# check C++ compiler functionality
+rm -f test test.cpp
+cat << EOF > test.cpp
+#include <iostream>
+
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
+EOF
+printf "checking whether c++ compiler builds test program... "
+$CXX -o test test.cpp && echo "ok" || errorExit "error!" 1
+printf "checking whether c++ compiler supports -std=c++0x... "
+rm -f test
+$CXX -std=c++0x -o test test.cpp && echo "ok" || errorExit "error!" 1
+printf "checking whether compiled test program works... "
+./test 2>/dev/null 1>/dev/null && echo "ok" || errorExit "error!" 1
+rm -f test test.cpp
+
+check make "$MAKE" 1
+check git git
+check pkg-config pkg-config
 
 # check for libraries via pkg-config
-libraries="Qt5Core Qt5Gui Qt5Network Qt5WebKit Qt5Widgets Qt5WebKitWidgets Qt5PrintSupport"
+libraries="Qt5Core Qt5Gui Qt5Network Qt5WebKit Qt5Widgets Qt5WebKitWidgets Qt5PrintSupport Qt5Svg"
 which pkg-config 2>/dev/null 1>/dev/null
 if [ $(echo $?) -eq 0 ] ; then
     for l in $libraries ; do
-        printf "check for library $l ... "
+        printf "checking for ${l} library... "
         pkg-config --libs $l 2>/dev/null 1>/dev/null
-        test $(echo $?) -eq 0 && pkg-config --libs $l || echo "not found!"
+        test $(echo $?) -eq 0 && pkg-config --libs $l || errorExit "not found!"
     done
 fi
 
@@ -106,15 +148,17 @@ if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
     git submodule init
     git submodule update
 fi
+test -d "src/editor/libs/codemirror" || errorExit "error: CodeMirror submodule not available at \`src/editor/libs/codemirror'!" 1
 
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true
 fi
 
-printf "generate Makefile ... "
+
+printf "generate Makefile... "
 
 $QMAKE PREFIX="$PREFIX" \
-QMAKE_CFLAGS="$CFLAGS $CPPFLAGS" \
+QMAKE_CXX="$CXX" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
-"$@" notepadqq.pro && echo "done" || echo "error!"
+"$@" notepadqq.pro && echo "done" || errorExit "error!" 1
