@@ -40,8 +40,6 @@
   MT("doubleQuotedSubshell",
      "[builtin echo] [string \"][quote $(whoami)][string 's log, stardate `date`.\"]");
 
-  MT("hashbang",
-     "[meta #!/bin/bash]");
   MT("comment",
      "text [comment # Blurb]");
 
