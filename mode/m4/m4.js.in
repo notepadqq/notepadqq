@@ -36,7 +36,10 @@ CodeMirror.defineMode('m4', function() {
     'touch vi vim wall wc wget who write yes zsh');
 
   // autoconf/automake macros
-  define('meta', '@MACROS@');
+  define('meta', ' ' +
+@MACROS@
+
+    ' ');
 
   function tokenBase(stream, state) {
     if (stream.eatSpace()) return null;
