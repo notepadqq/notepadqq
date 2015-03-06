@@ -147,6 +147,6 @@ CodeMirror.defineMode('m4', function() {
   };
 });
 
-//CodeMirror.defineMIME('text/x-sh', 'shell');
+CodeMirror.defineMIME('application/x-m4', 'm4');
 
 });
