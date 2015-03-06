@@ -377,6 +377,14 @@ var Languages = new function() {
             fileExtensions: ["lua"]
         },
 
+        "m4": {
+            name: "m4",
+            mode: "m4",
+            mime: "application/x-m4",
+            fileExtensions: ["m4"]
+            fileNames: ["configure.ac"]
+        },
+
         "makefile": {
             name: "Makefile",
             mode: "makefile",
