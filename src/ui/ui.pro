@@ -113,9 +113,9 @@ RESOURCES += \
 # Copy the editor in the "shared" folder
 editorTarget.target = make_editor
 editorTarget.commands = (cd \"$$PWD\" && \
-                         $${CMD_FULLDELETE} \"$$APPDATADIR/editor\" && \
+                         $${CMD_FULLDELETE} \"$$APPDATADIR\" && \
                          cd \"../editor\" && \
-                         $(MAKE) DESTDIR=\"$$APPDATADIR/editor\")
+                         $(MAKE) DESTDIR=\"$$APPDATADIR\")
 
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
@@ -158,9 +158,9 @@ unix {
     icon_hscalable.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/"
     icon_hscalable.files += "$$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg"
 
-    system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")    # Make sure that the folder exists, otherwise qmake won't create the install rule
+    system($${QMAKE_MKDIR} \"$$APPDATADIR\")    # Make sure that the folder exists, otherwise qmake won't create the install rule
     misc_data.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/"
-    misc_data.files += "$$APPDATADIR/editor"
+    misc_data.files += "$$APPDATADIR/*"
 
     launch.path = "$$INSTALL_ROOT$$PREFIX/bin/"
     launch.files += "$$BINDIR/notepadqq"

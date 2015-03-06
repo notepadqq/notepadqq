@@ -17,11 +17,11 @@ QString Notepadqq::copyright()
 
 QString Notepadqq::editorPath()
 {
-    QString def = QString("%1/../appdata/editor/index.html").
+    QString def = QString("%1/../appdata/index.html").
             arg(qApp->applicationDirPath());
 
     if(!QFile(def).exists())
-        def = QString("%1/../../share/%2/editor/index.html").
+        def = QString("%1/../../share/%2/index.html").
                 arg(qApp->applicationDirPath()).
                 arg(qApp->applicationName().toLower());
 
