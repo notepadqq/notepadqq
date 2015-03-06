@@ -381,7 +381,7 @@ var Languages = new function() {
             name: "m4",
             mode: "m4",
             mime: "application/x-m4",
-            fileExtensions: ["m4"]
+            fileExtensions: ["m4"],
             fileNames: ["configure.ac"]
         },
 
