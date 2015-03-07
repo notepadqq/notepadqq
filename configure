@@ -148,7 +148,13 @@ if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
     git submodule init
     git submodule update
 fi
-test -d "src/editor/libs/codemirror" || errorExit "error: CodeMirror submodule not available at \`src/editor/libs/codemirror'!" 1
+
+cmdir=src/editor/libs/codemirror
+cmerror="error: CodeMirror submodule not available at \`$cmdir'!"
+# check if directory exists
+test -d "$cmdir" || errorExit "$cmerror" 1
+# check if directory is empty
+test $(ls -A $cmdir) || errorExit "$cmerror" 1
 
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true
