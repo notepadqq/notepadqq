@@ -29,7 +29,8 @@ Defaults for the options are specified in brackets.
 
   --fail-on-missing       return exit 1 if non-optional components are missing
 
-  --qmake COMMAND         specify qmake command [$QMAKE]
+  --qmake COMMAND,
+  --qmake=COMMAND         specify qmake command [$QMAKE]
   --qmake-args ARGS       arguments to pass directly to qmake
 
 Some influential environment variables:
@@ -76,6 +77,9 @@ while [ "$#" -ge 1 ]; do
         ;;
         --fail-on-missing)
         fail_on_missing="yes"
+        ;;
+        --qmake=*)
+        QMAKE="${key#*=}"
         ;;
         --qmake)
         QMAKE="$1"
