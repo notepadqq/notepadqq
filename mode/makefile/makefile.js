@@ -22,72 +22,79 @@ CodeMirror.defineMode('makefile', function() {
     var ch = stream.next();
     var cur = stream.current();
 
-    if (sol && ch === '#') {
-      if (stream.eat('!')) {
-        stream.skipToEnd();
-        return 'meta';
-      }
-      stream.skipToEnd();
-      return 'tag';
-    }
-
-    // ifeq, ifneq
-    if (ch === 'i' && (stream.match('feq ') || stream.match('fneq '))) {
-      stream.skipToEnd();
-      return "bracket";
-    }
-    // else, endif
-    if (ch === 'e' && (stream.match('lse') || stream.match('ndif')) && stream.eol()) { return "bracket"; }
-    // include
-    if (sol && ch === 'i' && stream.match('nclude ')) { return "string"; }
-    // makros
-    if (sol && (stream.match(/^[\w]+[\s]+/) || stream.match(/^[\w]+/)) &&
-       (stream.peek() === '=' ||
-       ((stream.match('?') || stream.match('+') || stream.match('-')) && stream.peek() === '='))
-	   ) { return "variable-2"; }
-
-    // Makefile targets
-    if (sol && stream.eat(':')) {
-      if (stream.peek('=')) {
-        return "variable-2";
-      } else {
-        return "header";
-      }
-    }
-    else if (sol && ch === '$' && stream.match(/^\(+[\w]+\)+/) && stream.eat(':')) { return "header"; }
-    else if (sol && stream.match(/^\$+\(+[\w]+\)+/) && stream.eat(':')) { return "header"; }
-    else if (sol && stream.match(/^(.)+[\w]+:+ /)) { return "header"; }
-    else if (sol && stream.match(/^(.)+[\w]+:/) && stream.eol()) { return "header"; }
-
     if (ch === '@') { return "atom"; }
-    if (ch === '*') { return "quote"; }
-    if (ch === '\\' && stream.eol()) { return "comment"; }
-    if (ch === '#') {
-      stream.skipToEnd();
-      return 'tag';
-    }
-    if (ch === '%') {
-        if (sol && stream.eat(':')) {
-        return 'header';
+
+    if (sol) {
+
+      if (ch === '#') {
+        if (stream.eat('!')) {
+          stream.skipToEnd();
+          return 'meta';
+        }
+        stream.skipToEnd();
+        return 'tag';
       }
-      return 'atom';
+
+      // if, ifdef, ifeq, ifneq
+      if (ch === 'i' && (stream.match('f ') || stream.match('fdef ') || stream.match('feq (') || stream.match('fneq ('))) {
+        stream.skipToEnd();
+        return "bracket";
+      }
+      // else, endif
+      if (ch === 'e' && (stream.match('lse') || stream.match('ndif'))) { return "bracket"; }
+      // include
+      if (ch === 'i' && stream.match('nclude ')) { return "string"; }
+      // -include
+      if (ch === '-' && stream.match('include ')) { return "string"; }
+      // vpath
+      if (ch === 'v' && stream.match('path ')) { return "string"; }
+
+      // makros
+      if ((stream.match(/^[\w]+[\s]+/) || stream.match(/^[\w]+/)) &&
+         (stream.peek() === '=' ||
+         ((stream.match('?') || stream.match('+') || stream.match('-')) && stream.peek() === '='))
+	     ) { return "variable-2"; }
+
+      // Makefile targets
+      if ( stream.eat(':') || stream.match(/^[\w]+:/) || stream.match(/^(.)+[\w]+:/) ||
+          (ch === '$' && stream.match(/^\(+[\w]+\)+/) && stream.eat(':'))
+         ) {
+        if (stream.peek() === '=') {
+          return "variable-2";
+        } else {
+          return "header";
+        }
+      }
+
+    } else {
+
+      if (ch === '*') { return "quote"; }
+      if (ch === '%') { return 'atom'; }
+      if (ch === '\\' && stream.eol()) { return "comment"; }
+      if (ch === '#') {
+        stream.skipToEnd();
+        return 'tag';
+      }
+
+      if ((stream.eat(':') || stream.eat('+')) && stream.peek('=')) { return "variable-2"; }
+
+      if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "variable-2"; }
+      if (ch === '$' && stream.eat('(')) {
+        state.tokens.unshift(tokenDollar);
+        return tokenize(stream, state);
+      }
+      if (ch === '$' && stream.eat('{')) {
+        state.tokens.unshift(tokenDollarB);
+        return tokenize(stream, state);
+      }
+      if (ch === '$' && (stream.eat('@') || stream.eat('<') || stream.eat('^'))) { return "quote"; }
+
+      if (ch === '\'' || ch === '"' || ch === '`') {
+        state.tokens.unshift(tokenString(ch));
+        return tokenize(stream, state);
+      }
     }
 
-    if (ch === '$' && stream.eat('$') && stream.match(/^[\w]+/)) { return "variable-2"; }
-    if (ch === '$' && stream.eat('(')) {
-      state.tokens.unshift(tokenDollar);
-      return tokenize(stream, state);
-    }
-    if (ch === '$' && stream.eat('{')) {
-      state.tokens.unshift(tokenDollarB);
-      return tokenize(stream, state);
-    }
-    if (ch === '$' && (stream.eat('@') || stream.eat('<') || stream.eat('^'))) { return "quote"; }
-
-    if (ch === '\'' || ch === '"' || ch === '`') {
-      state.tokens.unshift(tokenString(ch));
-      return tokenize(stream, state);
-    }
     stream.eatWhile(/[\w-]/);
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
@@ -107,7 +114,6 @@ CodeMirror.defineMode('makefile', function() {
       return ((quote === ')' || quote === '}') ? 'variable-2' : 'string');
     };
   };
-
 
   var tokenDollar = function(stream, state) {
     if (state.tokens.length > 1) stream.eat('$');

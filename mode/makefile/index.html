@@ -33,8 +33,9 @@
 #!/usr/bin/make -f
 
 include debian/confflags
+vpath %.c $(CURDIR)
 
-DEB_HOST_GNU_CPU        =  $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
+DEB_HOST_GNU_CPU = $(shell dpkg-architecture -qDEB_HOST_GNU_CPU)
 
 %:
 	dh ${@} --parallel
@@ -50,9 +51,11 @@ else
 	$(MAKE) -f debian/custom.mk
 endif
 
+if install
 override_dh_install:
+	@echo $$install
 	dh_install --list-missing #another comment
-	$$makro
+endif
 </textarea>
 
 <script>
