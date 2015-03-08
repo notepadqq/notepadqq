@@ -29,9 +29,7 @@ Defaults for the options are specified in brackets.
 
   --fail-on-missing       return exit 1 if non-optional components are missing
 
-  --qmake COMMAND,
-  --qmake=COMMAND         specify qmake command [$QMAKE]
-
+  --qmake COMMAND         specify qmake command [$QMAKE]
   --qmake-args ARGS       arguments to pass directly to qmake
 
 Some influential environment variables:
@@ -79,10 +77,6 @@ while [ "$#" -ge 1 ]; do
         --fail-on-missing)
         fail_on_missing="yes"
         ;;
-        --qmake=*)
-        QMAKE="${key#*=}"
-        shift
-        ;;
         --qmake)
         QMAKE="$1"
         shift
@@ -101,7 +95,8 @@ done
 # check for QT5 qmake
 printf "checking for QT5 qmake... "
 $QMAKE -v 2>/dev/null 1>/dev/null
-test $(echo $?) -eq 0 && echo "$QMAKE" || errorExit "not found!" 1
+test $(echo $?) -eq 0 && echo "$QMAKE" || \
+    errorExit "not found!\n  Try to run configure with \`--qmake /path/to/qmake-executable'." 1
 
 check c++ "$CXX" 1
 
@@ -154,7 +149,7 @@ cmerror="error: CodeMirror submodule not available at \`$cmdir'!"
 # check if directory exists
 test -d "$cmdir" || errorExit "$cmerror" 1
 # check if directory is empty
-test $(ls -A $cmdir) || errorExit "$cmerror" 1
+test "$(ls -A $cmdir)" || errorExit "$cmerror" 1
 
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true
