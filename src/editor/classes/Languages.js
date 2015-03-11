@@ -503,7 +503,7 @@ var Languages = new function() {
             name: "Python",
             mode: "python",
             mime: "text/x-python",
-            fileExtensions: ["py", "pyd", "pyw", "wsgi"],
+            fileExtensions: ["py", "pyd", "pyw", "vpy", "wsgi"],
             firstNonBlankLine: [/^#!.*\/python[\d\.]*($| )/, /^#!\/usr\/bin\/env python[\d\.]*($| )/]
         },
 
