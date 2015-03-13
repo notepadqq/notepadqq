@@ -53,7 +53,7 @@ CodeMirror.defineMode('makefile', function() {
       if ((stream.match(/^[\w]+[\s]+/) || stream.match(/^[\w]+/)) &&
          (stream.peek() === '=' ||
          ((stream.match('?') || stream.match('+') || stream.match('-')) && stream.peek() === '='))
-	     ) { return "variable-2"; }
+         ) { return "variable-2"; }
 
       // Makefile targets
       if ( stream.eat(':') || stream.match(/^[\w]+:/) || stream.match(/^(.)+[\w]+:/) ||
@@ -135,7 +135,7 @@ CodeMirror.defineMode('makefile', function() {
     token: function(stream, state) {
       return tokenize(stream, state);
     },
-	lineComment: "#"
+  lineComment: "#"
   };
 });
 
