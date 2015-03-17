@@ -188,6 +188,13 @@ var Languages = new function() {
             fileExtensions: ["erl", "hrl"]
         },
 
+        "forth": {
+            name: "Forth",
+            mode: "forth",
+            mime: "text/x-forth",
+            fileExtensions: ["forth", "fth", "4th"]
+        },
+
         "fortran": {
             name: "Fortran",
             mode: "fortran",
