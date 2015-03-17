@@ -29,7 +29,7 @@ var Languages = new function() {
             name: "C",
             mode: "clike",
             mime: "text/x-csrc",
-            fileExtensions: ["c", "h", "i"]
+            fileExtensions: ["c", "h", "i", "xbm", "xpm"]
         },
 
         "cpp": {
