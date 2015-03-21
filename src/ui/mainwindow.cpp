@@ -603,6 +603,41 @@ void MainWindow::on_action_Open_triggered()
     }
 }
 
+void MainWindow::on_actionOpen_Folder_triggered()
+{
+    QUrl defaultUrl = currentEditor()->fileName();
+    if (defaultUrl.isEmpty())
+            defaultUrl = QUrl::fromLocalFile(m_settings->value("lastSelectedDir", ".").toString());
+
+    // Select directory
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
+    if (!folder.isEmpty()) {
+
+        // Get files within directory
+        QDir dir(folder);
+        QStringList files = dir.entryList(QStringList(), QDir::Files);
+
+        // Convert file names to urls
+        QList<QUrl> fileNames;
+        for (QString file : files) {
+            // Exclude hidden and backup files
+            if (!file.startsWith(".") && !file.endsWith("~")) {
+                fileNames.append(stringToUrl(file, folder));
+            }
+        }
+
+        if (!fileNames.isEmpty()) {
+
+            m_docEngine->loadDocuments(fileNames,
+                                       m_topEditorContainer->currentTabWidget());
+
+            m_settings->setValue("lastSelectedDir", folder);
+
+        }
+
+    }
+}
+
 int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
 {
     QMessageBox msgBox(this);

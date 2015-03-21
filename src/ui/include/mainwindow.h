@@ -72,6 +72,7 @@ private slots:
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
     void on_action_Open_triggered();
+    void on_actionOpen_Folder_triggered();
     void on_tabCloseRequested(EditorTabWidget* tabWidget, int tab);
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
