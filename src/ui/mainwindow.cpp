@@ -1399,8 +1399,9 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
 
     updateRecentDocsInMenu();
 
-
-    checkIndentationMode(editor);
+    if (m_settings->value("warnForDifferentIndentation", true).toBool()) {
+        checkIndentationMode(editor);
+    }
 }
 
 void MainWindow::checkIndentationMode(Editor *editor)
