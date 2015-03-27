@@ -280,12 +280,13 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
     var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
 
     var count = 0;
+    var id = Math.round(Math.random() * 1000000) + "/" + Date.now();
 
     while (searchCursor.findNext()) {
         count++;
 
         // Replace
-        searchCursor.replace(replacement);
+        searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
     }
 
     return count;
