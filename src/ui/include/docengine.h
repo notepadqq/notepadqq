@@ -13,7 +13,7 @@
  * @brief Provides methods for managing documents
  *
  * This class is responsible for reading files, monitoring
- * file changes, etc.
+ * file changes, text encoding, etc.
  */
 class DocEngine : public QObject
 {

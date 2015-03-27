@@ -13,7 +13,7 @@ bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
 {
-    return QObject::trUtf8("Copyright © 2010-2014, Daniele Di Sarli");
+    return QObject::trUtf8("Copyright © 2010-2015, Daniele Di Sarli");
 }
 
 QString Notepadqq::editorPath()

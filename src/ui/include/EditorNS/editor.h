@@ -301,6 +301,7 @@ namespace EditorNS
         void messageReceived(QString msg, QVariant data);
         void gotFocus();
         void mouseWheel(QWheelEvent *ev);
+        void urlsDropped(QList<QUrl> urls);
         void bannerRemoved(QWidget *banner);
 
         // Pre-interpreted messages:

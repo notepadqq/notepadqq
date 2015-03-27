@@ -76,12 +76,25 @@
       <rect>
        <x>20</x>
        <y>10</y>
-       <width>341</width>
+       <width>391</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
       <string>Check Qt version at startup</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chkWarnForDifferentIndentation">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>411</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Warn when the indentation doesn't match the settings</string>
      </property>
     </widget>
    </widget>

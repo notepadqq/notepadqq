@@ -1,4 +1,5 @@
 #include "include/EditorNS/customqwebview.h"
+#include <QMimeData>
 
 namespace EditorNS
 {
@@ -22,6 +23,16 @@ namespace EditorNS
             break;
         default:
             QWebView::keyPressEvent(ev);
+        }
+    }
+
+    void CustomQWebView::dropEvent(QDropEvent *ev)
+    {
+        if (ev->mimeData()->hasUrls()) {
+            ev->ignore();
+            emit urlsDropped(ev->mimeData()->urls());
+        } else {
+            QWebView::dropEvent(ev);
         }
     }
 

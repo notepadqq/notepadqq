@@ -76,6 +76,7 @@ private slots:
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
     void on_action_Open_triggered();
+    void on_actionOpen_Folder_triggered();
     void on_tabCloseRequested(EditorTabWidget* tabWidget, int tab);
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
@@ -167,6 +168,7 @@ private slots:
     void on_actionTAB_to_Space_triggered();
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
+    void on_editorUrlsDropped(QList<QUrl> urls);
 
 private:
     static QList<MainWindow*> m_instances;

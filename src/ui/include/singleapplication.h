@@ -4,6 +4,10 @@
 #include <QApplication>
 #include <QLocalServer>
 
+/**
+ * @brief QApplication subclass which, using local sockets, makes sure only
+ *        one instance of the application is running at the same time.
+ */
 class SingleApplication : public QApplication
 {
     Q_OBJECT

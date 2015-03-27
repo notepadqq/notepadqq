@@ -56,6 +56,7 @@
     </widget>
     <addaction name="action_New"/>
     <addaction name="action_Open"/>
+    <addaction name="actionOpen_Folder"/>
     <addaction name="actionReload_from_Disk"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
@@ -991,6 +992,11 @@
   <action name="actionSpace_to_TAB_Leading">
    <property name="text">
     <string>Space to TAB (Leading)</string>
+   </property>
+  </action>
+  <action name="actionOpen_Folder">
+   <property name="text">
+    <string>Open Folder...</string>
    </property>
   </action>
  </widget>

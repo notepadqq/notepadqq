@@ -33,10 +33,13 @@
 #include <QList>
 #include "include/mainwindow.h"
 
-#define POINTVERSION "0.44.1" // major.minor.revision
+#define POINTVERSION "0.45.2" // major.minor.revision
 
 #define MIB_UTF_8 106
 
+/**
+ * @brief Global information and utility functions.
+ */
 class Notepadqq
 {
 public:

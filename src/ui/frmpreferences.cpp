@@ -35,6 +35,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     QSettings s;
 
     ui->chkCheckQtVersionAtStartup->setChecked(s.value("checkQtVersionAtStartup", true).toBool());
+    ui->chkWarnForDifferentIndentation->setChecked(s.value("warnForDifferentIndentation", true).toBool());
 
     loadLanguages(&s);
     loadColorSchemes(&s);
@@ -62,6 +63,7 @@ void frmPreferences::on_buttonBox_accepted()
 {
     QSettings s;
     s.setValue("checkQtVersionAtStartup", ui->chkCheckQtVersionAtStartup->isChecked());
+    s.setValue("warnForDifferentIndentation", ui->chkWarnForDifferentIndentation->isChecked());
 
     saveLanguages(&s);
     saveColorScheme(&s);

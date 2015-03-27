@@ -17,10 +17,30 @@ ReplaceInFilesWorker::~ReplaceInFilesWorker()
 
 }
 
+QPair<int, int> ReplaceInFilesWorker::getResult()
+{
+    QPair<int, int> result;
+
+    m_resultMutex.lock();
+    result.first = m_numOfOccurrencesReplaced;
+    result.second = m_numOfFilesReplaced;
+    m_resultMutex.unlock();
+
+    return result;
+}
+
 void ReplaceInFilesWorker::run()
 {
     for (FileSearchResult::FileResult fileResult : m_searchResult.fileResults) {
         emit progress(fileResult.fileName);
+
+        m_stopMutex.lock();
+        bool stop = m_stop;
+        m_stopMutex.unlock();
+        if (stop) {
+            emit finished(true);
+            return;
+        }
 
         QFile f(fileResult.fileName);
         DocEngine::DecodedText decodedText;
@@ -46,28 +66,56 @@ void ReplaceInFilesWorker::run()
             }
         } while (retry);
 
-        for (FileSearchResult::Result result : fileResult.results) {
-            decodedText.text.replace(result.matchStartPosition, result.matchEndPosition - result.matchStartPosition, m_replacement);
+        m_stopMutex.lock();
+        stop = m_stop;
+        m_stopMutex.unlock();
+        if (stop) {
+            emit finished(true);
+            return;
         }
 
-        do {
-            retry = false;
-            if (DocEngine::writeFromString(&f, decodedText) == false) {
-                // Error writing to file: show message box
+        int tmpNumReplaced = 0;
 
-                int result = QMessageBox::StandardButton::NoButton;
-                emit errorReadingFile(tr("Error writing %1").arg(fileResult.fileName), result);
+        // Replace in reverse order to make sure all the positions are still valid after each iteration.
+        for (int i = fileResult.results.count() - 1; i >= 0; i--) {
+            FileSearchResult::Result result = fileResult.results[i];
+            decodedText.text.replace(result.matchStartPosition, result.matchEndPosition - result.matchStartPosition, m_replacement);
+            tmpNumReplaced++;
+        }
 
-                if (result == QMessageBox::StandardButton::Abort) {
-                    emit finished(true);
-                    return;
-                } else if (result == QMessageBox::StandardButton::Retry) {
-                    retry = true;
+        if (tmpNumReplaced > 0) {
+
+            bool fileWritten = false;
+
+            do {
+                retry = false;
+
+                if (DocEngine::writeFromString(&f, decodedText)) {
+                    fileWritten = true;
                 } else {
-                    continue;
+                    // Error writing to file: show message box
+
+                    int result = QMessageBox::StandardButton::NoButton;
+                    emit errorReadingFile(tr("Error writing %1").arg(fileResult.fileName), result);
+
+                    if (result == QMessageBox::StandardButton::Abort) {
+                        emit finished(true);
+                        return;
+                    } else if (result == QMessageBox::StandardButton::Retry) {
+                        retry = true;
+                    } else {
+                        continue;
+                    }
                 }
+            } while (retry);
+
+            if (fileWritten) {
+                m_resultMutex.lock();
+                m_numOfFilesReplaced++;
+                m_numOfOccurrencesReplaced += tmpNumReplaced;
+                m_resultMutex.unlock();
             }
-        } while (retry);
+        }
     }
 
     emit finished(false);

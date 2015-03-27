@@ -29,7 +29,7 @@ var Languages = new function() {
             name: "C",
             mode: "clike",
             mime: "text/x-csrc",
-            fileExtensions: ["c", "h", "i"]
+            fileExtensions: ["c", "h", "i", "xbm", "xpm"]
         },
 
         "cpp": {
@@ -188,6 +188,13 @@ var Languages = new function() {
             fileExtensions: ["erl", "hrl"]
         },
 
+        "forth": {
+            name: "Forth",
+            mode: "forth",
+            mime: "text/x-forth",
+            fileExtensions: ["forth", "fth", "4th"]
+        },
+
         "fortran": {
             name: "Fortran",
             mode: "fortran",
@@ -321,13 +328,6 @@ var Languages = new function() {
             fileExtensions: ["json", "geojson", "resjson"]
         },
 
-        "xjson": {
-            name: "JSON",
-            mode: "javascript",
-            mime: "application/x-json",
-            fileExtensions: []
-        },
-
         "jsonld": {
             name: "JSON-LD",
             mode: "javascript",
@@ -382,6 +382,14 @@ var Languages = new function() {
             mode: "lua",
             mime: "text/x-lua",
             fileExtensions: ["lua"]
+        },
+
+        "m4": {
+            name: "m4",
+            mode: "m4",
+            mime: "application/x-m4",
+            fileExtensions: ["m4"],
+            fileNames: ["configure.ac"]
         },
 
         "makefile": {
@@ -502,7 +510,7 @@ var Languages = new function() {
             name: "Python",
             mode: "python",
             mime: "text/x-python",
-            fileExtensions: ["py", "pyd", "pyw", "wsgi"],
+            fileExtensions: ["py", "pyd", "pyw", "vpy", "wsgi"],
             firstNonBlankLine: [/^#!.*\/python[\d\.]*($| )/, /^#!\/usr\/bin\/env python[\d\.]*($| )/]
         },
 

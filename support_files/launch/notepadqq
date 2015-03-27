@@ -23,6 +23,6 @@ elif [ -f "$SCRIPTPATH"/../lib/notepadqq-bin ]; then
     exec "$SCRIPTPATH"/../lib/notepadqq-bin "$@"
 else
     # Nqq is installed via deb package:
-    # this script is in the same directory of the binary file.
+    # this script is in the same directory as the binary file.
     exec "$SCRIPTPATH"/notepadqq-bin "$@"
 fi

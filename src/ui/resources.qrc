@@ -1,15 +1,17 @@
 <RCC>
     <qresource prefix="icons/default">
 		<file alias="index.theme">icons/default/index.theme</file>
-		
+
+		<file alias="16x16/document-close.png">icons/default/16x16/document-close.png</file>
+		<file alias="16x16/document-close-all.png">icons/default/16x16/document-close-all.png</file>
 		<file alias="16x16/document-new.png">icons/default/16x16/document-new.png</file>
 		<file alias="16x16/document-open.png">icons/default/16x16/document-open.png</file>
 		<file alias="16x16/document-print.png">icons/default/16x16/document-print.png</file>
-		
+
 		<file alias="16x16/document-save.png">icons/default/16x16/document-save.png</file>
 		<file alias="64x64/document-save.png">icons/default/64x64/document-save.png</file>
 		<file alias="128x128/document-save.png">icons/default/128x128/document-save.png</file>
-		
+
 		<file alias="16x16/document-save-all.png">icons/default/16x16/document-save-all.png</file>
 		<file alias="16x16/document-save-as.png">icons/default/16x16/document-save-as.png</file>
 		<file alias="16x16/edit-copy.png">icons/default/16x16/edit-copy.png</file>
@@ -24,17 +26,13 @@
 		<file alias="16x16/media-record.png">icons/default/16x16/media-record.png</file>
 		<file alias="16x16/media-seek-forward.png">icons/default/16x16/media-seek-forward.png</file>
 		<file alias="scalable/notepadqq.svg">icons/default/scalable/notepadqq.svg</file>
-		<file alias="16x16/notepadqq-document-close.png">icons/default/16x16/notepadqq-document-close.png</file>
-		<file alias="16x16/notepadqq-document-close-all.png">icons/default/16x16/notepadqq-document-close-all.png</file>
 		<file alias="16x16/notepadqq-document-saved.png">icons/default/16x16/notepadqq-document-saved.png</file>
 		<file alias="16x16/notepadqq-document-unsaved.png">icons/default/16x16/notepadqq-document-unsaved.png</file>
-		<file alias="16x16/notepadqq-save-macro.png">icons/default/16x16/notepadqq-save-macro.png</file>
-		<file alias="16x16/notepadqq-show-special-chars.png">icons/default/16x16/notepadqq-show-special-chars.png</file>
-		<file alias="16x16/notepadqq-word-wrap.png">icons/default/16x16/notepadqq-word-wrap.png</file>
 		<file alias="16x16/preferences-other.png">icons/default/16x16/preferences-other.png</file>
+		<file alias="16x16/show-special-chars.png">icons/default/16x16/show-special-chars.png</file>
+		<file alias="16x16/word-wrap.png">icons/default/16x16/word-wrap.png</file>
 		<file alias="16x16/zoom-in.png">icons/default/16x16/zoom-in.png</file>
 		<file alias="16x16/zoom-original.png">icons/default/16x16/zoom-original.png</file>
 		<file alias="16x16/zoom-out.png">icons/default/16x16/zoom-out.png</file>
-        
     </qresource>
 </RCC>

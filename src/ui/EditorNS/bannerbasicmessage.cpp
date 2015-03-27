@@ -24,7 +24,7 @@ namespace EditorNS
 
         m_message = new QLabel(this);
 
-        m_message->setStyleSheet(".QLabel { margin-left: 5px; margin-right: 10px; } ");
+        m_message->setStyleSheet(".QLabel { margin-left: 5px; margin-right: 10px; color: white } ");
         m_message->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         m_layout->addWidget(m_message);
 
@@ -43,11 +43,11 @@ namespace EditorNS
     {
         if (importance == Importance::Warning) {
             m_topWidget->setStyleSheet("#BannerBasicMessage_base {"
-                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(241, 218, 54, 255), stop:1 rgba(249, 239, 166, 255));"
+                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(227, 115, 0, 255), stop:1 rgba(245, 144, 39, 255));"
                                      "}");
         } else if (importance == Importance::Question) {
             m_topWidget->setStyleSheet("#BannerBasicMessage_base {"
-                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(85, 169, 242, 255), stop:1 rgba(181, 221, 255, 255));"
+                                     "   background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0 stop:0 rgba(58, 146, 222, 255), stop:1 rgba(112, 189, 255, 255));"
                                      "}");
         }
     }
@@ -59,8 +59,11 @@ namespace EditorNS
         button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->insertWidget(m_layout->count() - 1, button);
 
-        /*button->setStyleSheet("QPushButton { border: 1px solid gray; background: transparent; padding: 5px; }"
-                              "QPushButton:hover { background: gray; }");*/
+        button->setStyleSheet("QPushButton { border: 1px solid white; background: transparent; padding: 5px; color: white }"
+                              "QPushButton:hover { background: rgba(0, 0, 0, 60); }"
+                              "QPushButton:pressed { background: rgba(0, 0, 0, 100); }"
+                              "QPushButton:focus { outline: none; text-decoration: underline; }"
+                              "QPushButton:focus:pressed { outline: none; text-decoration: none; }");
 
         return button;
     }
