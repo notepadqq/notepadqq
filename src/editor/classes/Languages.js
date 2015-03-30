@@ -17,6 +17,13 @@ var Languages = new function() {
             fileExtensions: ["apl"]
         },
 
+        "pgp": {
+            name: "PGP",
+            mode: "asciiarmor",
+            mime: "application/pgp",
+            fileExtensions: ["pgp"]
+        },
+
         "asterisk": {
             name: "Asterisk",
             mode: "asterisk",
@@ -634,13 +641,6 @@ var Languages = new function() {
             fileExtensions: ["tpl"]
         },
 
-        "smartymixed": {
-            name: "SmartyMixed",
-            mode: "smartymixed",
-            mime: "text/x-smarty",
-            fileExtensions: []
-        },
-
         "solr": {
             name: "Solr",
             mode: "solr",
@@ -800,7 +800,7 @@ var Languages = new function() {
             name: "YAML",
             mode: "yaml",
             mime: "text/x-yaml",
-            fileExtensions: ["yml", "yaml"]
+            fileExtensions: ["yaml", "yml"]
         },
 
         "z80": {
