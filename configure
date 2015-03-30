@@ -139,7 +139,7 @@ if [ $(echo $?) -eq 0 ] ; then
     done
 fi
 
-# If we're in a git repo, update the submodules.
+# If we're in a git repo and git is installed, update the submodules.
 # If ".git" is not found, assume that the complete source
 # code is already available.
 which git 2>/dev/null 1>/dev/null
@@ -149,7 +149,7 @@ if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
 fi
 
 cmdir=src/editor/libs/codemirror
-cmerror="error: CodeMirror submodule not available at \`$cmdir'!"
+cmerror="error: CodeMirror submodule not available at \`$cmdir'! Make sure you downloaded the source code using git as specified in README.md."
 # check if directory exists
 test -d "$cmdir" || errorExit "$cmerror" 1
 # check if directory is empty
