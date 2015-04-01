@@ -1377,7 +1377,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     }
 }
 
-void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
+void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened)
 {
     Editor *editor = tabWidget->editor(tab);
 
@@ -1400,8 +1400,10 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
 
     updateRecentDocsInMenu();
 
-    if (m_settings->value("warnForDifferentIndentation", true).toBool()) {
-        checkIndentationMode(editor);
+    if (!wasAlreadyOpened) {
+        if (m_settings->value("warnForDifferentIndentation", true).toBool()) {
+            checkIndentationMode(editor);
+        }
     }
 }
 
@@ -1885,6 +1887,10 @@ void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file,
                               m_topEditorContainer->currentTabWidget());
 
     QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+    if (pos.first == -1 || pos.second == -1)
+        return;
+
     EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
     Editor *editor = tabW->editor(pos.second);
 
