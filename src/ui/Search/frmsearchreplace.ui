@@ -14,7 +14,7 @@
    <string>Search</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -393,7 +393,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Toolbar</string>
    </property>
    <property name="movable">
     <bool>false</bool>
@@ -472,7 +472,7 @@
   <tabstop>btnFindAll</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

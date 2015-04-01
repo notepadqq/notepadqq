@@ -21,6 +21,16 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
         parentWidget()->window()->rect().center() -
         rect().center());
 
+    QSettings s;
+    ui->cmbSearch->addItems(s.value("Search/searchHistory", QStringList()).toStringList());
+    ui->cmbSearch->setCurrentText("");
+    ui->cmbReplace->addItems(s.value("Search/replaceHistory", QStringList()).toStringList());
+    ui->cmbReplace->setCurrentText("");
+    ui->cmbLookIn->addItems(s.value("Search/fileHistory", QStringList()).toStringList());
+    ui->cmbLookIn->setCurrentText("");
+    ui->cmbFilter->addItems(s.value("Search/filterHistory", QStringList()).toStringList());
+    ui->cmbFilter->setCurrentText("");
+
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, [=]() {
         if (ui->actionFind_in_files->isChecked()) {
@@ -489,21 +499,27 @@ void frmSearchReplace::replaceFromUI(bool forward, bool searchFromStart)
 void frmSearchReplace::on_btnFindNext_clicked()
 {
     findFromUI(true);
+    addToSearchHistory(ui->cmbSearch->currentText());
 }
 
 void frmSearchReplace::on_btnFindPrev_clicked()
 {
     findFromUI(false);
+    addToSearchHistory(ui->cmbSearch->currentText());
 }
 
 void frmSearchReplace::on_btnReplaceNext_clicked()
 {
     replaceFromUI(true);
+    addToSearchHistory(ui->cmbSearch->currentText());
+    addToReplaceHistory(ui->cmbReplace->currentText());
 }
 
 void frmSearchReplace::on_btnReplacePrev_clicked()
 {
     replaceFromUI(false);
+    addToSearchHistory(ui->cmbSearch->currentText());
+    addToReplaceHistory(ui->cmbReplace->currentText());
 }
 
 void frmSearchReplace::on_btnReplaceAll_clicked()
@@ -512,6 +528,10 @@ void frmSearchReplace::on_btnReplaceAll_clicked()
                              ui->cmbReplace->currentText(),
                              searchModeFromUI(),
                              searchOptionsFromUI());
+
+    addToSearchHistory(ui->cmbSearch->currentText());
+    addToReplaceHistory(ui->cmbReplace->currentText());
+
     QMessageBox::information(this, tr("Replace all"), tr("%1 occurrences have been replaced.").arg(n));
 }
 
@@ -520,6 +540,9 @@ void frmSearchReplace::on_btnSelectAll_clicked()
     int count = this->selectAll(ui->cmbSearch->currentText(),
                                 searchModeFromUI(),
                                 searchOptionsFromUI());
+
+    addToSearchHistory(ui->cmbSearch->currentText());
+
     if (count == 0) {
         QMessageBox::information(this, tr("Select all"), tr("No results found"));
     } else {
@@ -647,6 +670,10 @@ void frmSearchReplace::on_btnFindAll_clicked()
                   fileFiltersFromUI(),
                   searchModeFromUI(),
                   searchOptionsFromUI());
+
+    addToSearchHistory(ui->cmbSearch->currentText());
+    addToFileHistory(ui->cmbLookIn->currentText());
+    addToFilterHistory(ui->cmbFilter->currentText());
 }
 
 void frmSearchReplace::on_btnLookInBrowse_clicked()
@@ -669,6 +696,11 @@ void frmSearchReplace::on_btnReplaceAllInFiles_clicked()
                    fileFiltersFromUI(),
                    searchModeFromUI(),
                    searchOptionsFromUI());
+
+    addToSearchHistory(ui->cmbSearch->currentText());
+    addToReplaceHistory(ui->cmbReplace->currentText());
+    addToFileHistory(ui->cmbLookIn->currentText());
+    addToFilterHistory(ui->cmbFilter->currentText());
 }
 
 QStringList frmSearchReplace::fileFiltersFromUI()
@@ -678,4 +710,38 @@ QStringList frmSearchReplace::fileFiltersFromUI()
         filters[i] = filters[i].trimmed();
     }
     return filters;
+}
+
+void frmSearchReplace::addToHistory(QString string, QString type, QComboBox *comboBox)
+{
+    if (string != "") {
+        QSettings s;
+        QStringList history = s.value("Search/" + type + "History", QStringList()).toStringList();
+        history.prepend(string);
+        history.removeDuplicates();
+        history = history.mid(0, 10);
+        s.setValue("Search/" + type + "History", history);
+        comboBox->clear();
+        comboBox->addItems(history);
+    }
+}
+
+void frmSearchReplace::addToSearchHistory(QString string)
+{
+    addToHistory(string, "search", ui->cmbSearch);
+}
+
+void frmSearchReplace::addToReplaceHistory(QString string)
+{
+    addToHistory(string, "replace", ui->cmbReplace);
+}
+
+void frmSearchReplace::addToFileHistory(QString string)
+{
+    addToHistory(string, "file", ui->cmbLookIn);
+}
+
+void frmSearchReplace::addToFilterHistory(QString string)
+{
+    addToHistory(string, "filter", ui->cmbFilter);
 }
