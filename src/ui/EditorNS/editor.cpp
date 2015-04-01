@@ -637,4 +637,9 @@ namespace EditorNS
         return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
     }
 
+    int Editor::lineCount()
+    {
+        return sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+    }
+
 }

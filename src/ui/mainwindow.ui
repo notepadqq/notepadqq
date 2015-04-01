@@ -156,6 +156,8 @@
     <addaction name="actionFind_Previous"/>
     <addaction name="separator"/>
     <addaction name="actionReplace"/>
+    <addaction name="separator"/>
+    <addaction name="actionGo_to_line"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -991,6 +993,14 @@
   <action name="actionOpen_Folder">
    <property name="text">
     <string>Open Folder...</string>
+   </property>
+  </action>
+  <action name="actionGo_to_line">
+   <property name="text">
+    <string>Go to line...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

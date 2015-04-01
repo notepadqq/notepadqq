@@ -66,7 +66,8 @@ SOURCES += main.cpp\
     Search/searchinfilesworker.cpp \
     Search/replaceinfilesworker.cpp \
     Search/dlgsearching.cpp \
-    Search/searchresultsitemdelegate.cpp
+    Search/searchresultsitemdelegate.cpp \
+    frmlinenumberchooser.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -94,7 +95,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/replaceinfilesworker.h \
     include/Search/searchhelpers.h \
     include/Search/dlgsearching.h \
-    include/Search/searchresultsitemdelegate.h
+    include/Search/searchresultsitemdelegate.h \
+    include/frmlinenumberchooser.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -102,7 +104,8 @@ FORMS    += mainwindow.ui \
     frmencodingchooser.ui \
     frmindentationmode.ui \
     Search/dlgsearching.ui \
-    Search/frmsearchreplace.ui
+    Search/frmsearchreplace.ui \
+    frmlinenumberchooser.ui
 
 RESOURCES += \
     resources.qrc

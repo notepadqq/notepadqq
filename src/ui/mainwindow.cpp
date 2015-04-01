@@ -12,6 +12,7 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
+#include "include/frmlinenumberchooser.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -910,7 +911,7 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     if (editor != 0) {
         // Update status bar
         int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
-        int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        int lines = editor->lineCount();
         m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 
         QPair<int, int> cursor = editor->cursorPosition();
@@ -1925,4 +1926,16 @@ void MainWindow::on_actionSpace_to_TAB_All_triggered()
 void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
 {
     currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_LEADING");
+}
+
+void MainWindow::on_actionGo_to_line_triggered()
+{
+    Editor *editor = currentEditor();
+    int currentLine = editor->cursorPosition().first;
+    int lines = editor->lineCount();
+    frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
+    if (frm->exec() == QDialog::Accepted) {
+        int line = frm->value();
+        editor->setSelection(line - 1, 0, line - 1, 0);
+    }
 }
