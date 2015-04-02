@@ -44,6 +44,8 @@ Extension::Extension(QString path, QObject *parent) : QObject(parent)
         fUi.close();
 
         m_uiScriptEngine = new QScriptEngine(this);
+        //m_uiScriptEngine->importExtension("qt.core");
+        //m_uiScriptEngine->importExtension("qt.ui");
 
         QObject *nqq = ExtensionsApi::instance();
         QScriptValue nqq_val = m_uiScriptEngine->newQObject(nqq);
@@ -55,6 +57,7 @@ Extension::Extension(QString path, QObject *parent) : QObject(parent)
 
         m_uiScriptEngine->evaluate(content);
 
+        // setProcessEventsInterval() FIXME
     } else {
         failedToLoadExtension(path, "ui.js missing");
         return;
