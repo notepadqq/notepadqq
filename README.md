@@ -11,7 +11,12 @@ Build
 | libqt5svg5-dev     | libqt5svg5    |
 |                    | coreutils     |
 
-You can build Notepadqq from command line:
+#### Get the source
+
+    $ git clone https://github.com/notepadqq/notepadqq.git
+    $ cd notepadqq
+
+#### Build it
 
     notepadqq$ ./configure --prefix /usr
     notepadqq$ make

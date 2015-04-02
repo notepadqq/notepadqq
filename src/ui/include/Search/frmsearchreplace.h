@@ -11,6 +11,7 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QComboBox>
 
 namespace Ui {
 class frmSearchReplace;
@@ -101,6 +102,11 @@ private:
      * @param operation
      */
     void displayThreadErrorMessageBox(const QString &message, int &operation);
+    void addToHistory(QString string, QString type, QComboBox *comboBox);
+    void addToSearchHistory(QString string);
+    void addToReplaceHistory(QString string);
+    void addToFileHistory(QString string);
+    void addToFilterHistory(QString string);
 signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
 };

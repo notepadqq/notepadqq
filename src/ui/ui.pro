@@ -69,7 +69,8 @@ SOURCES += main.cpp\
     Search/searchresultsitemdelegate.cpp \
     Extensions/extensionsapi.cpp \
     Extensions/extensionloader.cpp \
-    Extensions/extension.cpp
+    Extensions/extension.cpp \
+    frmlinenumberchooser.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -100,7 +101,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchresultsitemdelegate.h \
     include/Extensions/extensionsapi.h \
     include/Extensions/extensionloader.h \
-    include/Extensions/extension.h
+    include/Extensions/extension.h \
+    include/frmlinenumberchooser.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -108,7 +110,8 @@ FORMS    += mainwindow.ui \
     frmencodingchooser.ui \
     frmindentationmode.ui \
     Search/dlgsearching.ui \
-    Search/frmsearchreplace.ui
+    Search/frmsearchreplace.ui \
+    frmlinenumberchooser.ui
 
 RESOURCES += \
     resources.qrc

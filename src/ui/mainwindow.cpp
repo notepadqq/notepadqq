@@ -14,6 +14,7 @@
 #include "include/frmindentationmode.h"
 #include "include/Extensions/extensionsapi.h"
 #include "include/Extensions/extensionloader.h"
+#include "include/frmlinenumberchooser.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -939,7 +940,7 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     if (editor != 0) {
         // Update status bar
         int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
-        int lines = editor->sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        int lines = editor->lineCount();
         m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 
         QPair<int, int> cursor = editor->cursorPosition();
@@ -1405,7 +1406,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     }
 }
 
-void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
+void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened)
 {
     Editor *editor = tabWidget->editor(tab);
 
@@ -1428,8 +1429,10 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab)
 
     updateRecentDocsInMenu();
 
-    if (m_settings->value("warnForDifferentIndentation", true).toBool()) {
-        checkIndentationMode(editor);
+    if (!wasAlreadyOpened) {
+        if (m_settings->value("warnForDifferentIndentation", true).toBool()) {
+            checkIndentationMode(editor);
+        }
     }
 }
 
@@ -1913,6 +1916,10 @@ void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file,
                               m_topEditorContainer->currentTabWidget());
 
     QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+    if (pos.first == -1 || pos.second == -1)
+        return;
+
     EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
     Editor *editor = tabW->editor(pos.second);
 
@@ -1954,4 +1961,16 @@ void MainWindow::on_actionSpace_to_TAB_All_triggered()
 void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
 {
     currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_LEADING");
+}
+
+void MainWindow::on_actionGo_to_line_triggered()
+{
+    Editor *editor = currentEditor();
+    int currentLine = editor->cursorPosition().first;
+    int lines = editor->lineCount();
+    frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
+    if (frm->exec() == QDialog::Accepted) {
+        int line = frm->value();
+        editor->setSelection(line - 1, 0, line - 1, 0);
+    }
 }

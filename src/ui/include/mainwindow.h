@@ -117,7 +117,7 @@ private slots:
     void on_bannerRemoved(QWidget *banner);
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
-    void on_documentLoaded(EditorTabWidget *tabWidget, int tab);
+    void on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
@@ -169,6 +169,8 @@ private slots:
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
     void on_editorUrlsDropped(QList<QUrl> urls);
+
+    void on_actionGo_to_line_triggered();
 
 private:
     static QList<MainWindow*> m_instances;

@@ -273,6 +273,8 @@ namespace EditorNS
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
+        int lineCount();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
