@@ -90,6 +90,11 @@ void frmSearchReplace::show(Tabs defaultTab)
     manualSizeAdjust();
 }
 
+void frmSearchReplace::setSearchText(QString string)
+{
+    ui->cmbSearch->setCurrentText(string);
+}
+
 void frmSearchReplace::setCurrentTab(Tabs tab)
 {
     if (tab == TabSearch) {

@@ -1101,6 +1101,12 @@ void MainWindow::on_actionSearch_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabSearch);
     m_frmSearchReplace->activateWindow();
 }
@@ -1233,6 +1239,12 @@ void MainWindow::on_actionReplace_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabReplace);
     m_frmSearchReplace->activateWindow();
 }
@@ -1866,6 +1878,12 @@ void MainWindow::on_actionFind_in_Files_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
     m_frmSearchReplace->activateWindow();
 }
