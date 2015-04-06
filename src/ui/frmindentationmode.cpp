@@ -17,6 +17,7 @@ frmIndentationMode::~frmIndentationMode()
 void frmIndentationMode::populateWidgets(EditorNS::Editor::IndentationMode indentationMode)
 {
     ui->radTabs->setChecked(indentationMode.useTabs);
+    ui->radSpaces->setChecked(!indentationMode.useTabs);
     ui->txtLanguages_TabSize->setValue(indentationMode.size);
 }
 
