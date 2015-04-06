@@ -16,14 +16,14 @@ frmIndentationMode::~frmIndentationMode()
 
 void frmIndentationMode::populateWidgets(EditorNS::Editor::IndentationMode indentationMode)
 {
-    ui->chkLanguages_IndentWithSpaces->setChecked(!indentationMode.useTabs);
+    ui->radTabs->setChecked(indentationMode.useTabs);
     ui->txtLanguages_TabSize->setValue(indentationMode.size);
 }
 
 EditorNS::Editor::IndentationMode frmIndentationMode::indentationMode()
 {
     EditorNS::Editor::IndentationMode indent;
-    indent.useTabs = !ui->chkLanguages_IndentWithSpaces->isChecked();
+    indent.useTabs = ui->radTabs->isChecked();
     indent.size = ui->txtLanguages_TabSize->value();
     return indent;
 }
