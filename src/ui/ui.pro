@@ -102,7 +102,8 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/extensionsapi.h \
     include/Extensions/extensionloader.h \
     include/Extensions/extension.h \
-    include/frmlinenumberchooser.h
+    include/frmlinenumberchooser.h \
+    include/Extensions/Stubs/editor.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
