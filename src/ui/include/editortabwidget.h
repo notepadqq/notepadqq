@@ -16,6 +16,8 @@ class EditorTabWidget : public QTabWidget
     Q_OBJECT
 public:
     explicit EditorTabWidget(QWidget *parent = 0);
+    ~EditorTabWidget();
+
     int addEditorTab(bool setFocus, const QString &title);
     /**
      * @brief Add a new document, moving it from another EditorTabWidget
@@ -27,13 +29,19 @@ public:
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
     int findOpenEditorByUrl(const QUrl &filename);
     Editor *editor(int index);
+    QSharedPointer<Editor> editorSharedPtr(int index);
+    QSharedPointer<Editor> editorSharedPtr(Editor *editor);
     Editor *currentEditor();
 
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &zoomFactor);
 
 private:
+    // Smart pointers to the editors within this TabWidget
+    QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;
+
     qreal m_zoomFactor = 1;
+
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
     void connectEditorSignals(Editor *editor);
@@ -62,6 +70,7 @@ public slots:
 
 protected:
     void mouseReleaseEvent(QMouseEvent *ev);
+    void tabRemoved(int);
 };
 
 #endif // EDITORTABWIDGET_H

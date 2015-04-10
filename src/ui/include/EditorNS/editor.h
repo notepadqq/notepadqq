@@ -78,13 +78,13 @@ namespace EditorNS
 
         explicit Editor(const Theme &theme, QWidget *parent = 0);
         explicit Editor(QWidget *parent = 0);
-        ~Editor();
 
         /**
              * @brief Efficiently returns a new Editor object from an internal buffer.
              * @return
              */
-        static Editor *getNewEditor(QWidget *parent = 0);
+        static QSharedPointer<Editor> getNewEditor(QWidget *parent = 0);
+        static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
 
         static void invalidateEditorBuffer();
 
@@ -295,6 +295,7 @@ namespace EditorNS
 
         void setIndentationMode(const bool useTabs, const int size);
         void setIndentationMode(const QString &language);
+
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);

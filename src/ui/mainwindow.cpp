@@ -1071,6 +1071,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_settings->setValue("geometry", saveGeometry());
     m_settings->setValue("windowState", saveState());
     m_settings->endGroup();
+
+    // Disconnect signals to avoid handling events while
+    // the UI is being destroyed.
+    disconnect(m_topEditorContainer, 0, this, 0);
 }
 
 void MainWindow::on_actionE_xit_triggered()
