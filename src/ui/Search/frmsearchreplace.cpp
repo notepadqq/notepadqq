@@ -90,6 +90,11 @@ void frmSearchReplace::show(Tabs defaultTab)
     manualSizeAdjust();
 }
 
+void frmSearchReplace::setSearchText(QString string)
+{
+    ui->cmbSearch->setCurrentText(string);
+}
+
 void frmSearchReplace::setCurrentTab(Tabs tab)
 {
     if (tab == TabSearch) {
@@ -678,8 +683,14 @@ void frmSearchReplace::on_btnFindAll_clicked()
 
 void frmSearchReplace::on_btnLookInBrowse_clicked()
 {
+    QString defaultDir = ui->cmbLookIn->currentText();
+    if (defaultDir.isEmpty()) {
+        QFileInfo file(currentEditor()->fileName().toLocalFile());
+        defaultDir = file.absolutePath();
+    }
+
     QString dir = QFileDialog::getExistingDirectory(this, tr("Look in"),
-                                                     ui->cmbLookIn->currentText(),
+                                                     defaultDir,
                                                      QFileDialog::ShowDirsOnly
                                                      | QFileDialog::DontResolveSymlinks);
 

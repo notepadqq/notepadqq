@@ -43,9 +43,11 @@ QString Notepadqq::fileNameFromUrl(const QUrl &url)
                      ).fileName();
 }
 
-QCommandLineParser *Notepadqq::getCommandLineArgumentsParser(const QStringList &arguments)
+QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(const QStringList &arguments)
 {
-    QCommandLineParser *parser = new QCommandLineParser();
+    QSharedPointer<QCommandLineParser> parser =
+            QSharedPointer<QCommandLineParser>(new QCommandLineParser());
+
     parser->setApplicationDescription("Text editor for developers");
     parser->addHelpOption();
     parser->addVersionOption();

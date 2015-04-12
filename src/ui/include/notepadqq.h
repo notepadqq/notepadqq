@@ -33,7 +33,7 @@
 #include <QList>
 #include "include/mainwindow.h"
 
-#define POINTVERSION "0.45.2" // major.minor.revision
+#define POINTVERSION "0.46.1" // major.minor.revision
 
 #define MIB_UTF_8 106
 
@@ -49,7 +49,7 @@ public:
     static QString copyright();
     static QString editorPath();
     static QString fileNameFromUrl(const QUrl &url);
-    static QCommandLineParser *getCommandLineArgumentsParser(const QStringList &arguments);
+    static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList &arguments);
 
     static bool oldQt();
     static void setOldQt(bool oldQt);

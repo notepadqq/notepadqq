@@ -23,6 +23,18 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     setStyleSheet(style);
 }
 
+EditorTabWidget::~EditorTabWidget()
+{
+    // Manually remove each tab to keep m_editorPointers consistent
+    for (int i = this->count() - 1; i >= 0; i--) {
+        QSharedPointer<Editor> edt = editorSharedPtr(i);
+        m_editorPointers.remove(edt.data());
+        // Remove the parent so that QObject cannot destroy the
+        // object (QSharedPointer will take care of it).
+        edt->setParent(nullptr);
+    }
+}
+
 int EditorTabWidget::addEditorTab(bool setFocus, const QString &title)
 {
     return this->rawAddEditorTab(setFocus, title, 0, 0);
@@ -78,7 +90,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
 
     this->setUpdatesEnabled(false);
 
-    Editor *editor;
+    QSharedPointer<Editor> editor;
 
     QString oldText;
     QIcon oldIcon;
@@ -87,18 +99,20 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     if (create) {
         editor = Editor::getNewEditor(this);
     } else {
-        editor = source->editor(sourceTabIndex);
+        editor = source->editorSharedPtr(sourceTabIndex);
 
         oldText = source->tabText(sourceTabIndex);
         oldIcon = source->tabIcon(sourceTabIndex);
         oldTooltip = source->tabToolTip(sourceTabIndex);
     }
 
-    int index = this->addTab(editor, create ? title : oldText);
+    m_editorPointers.insert(editor.data(), editor);
+    int index = addTab(editor.data(), create ? title : oldText);
+
     if (!create) {
-        source->disconnectEditorSignals(editor);
+        source->disconnectEditorSignals(editor.data());
     }
-    this->connectEditorSignals(editor);
+    this->connectEditorSignals(editor.data());
 
     if(setFocus) {
         this->setCurrentIndex(index);
@@ -145,6 +159,41 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
 Editor *EditorTabWidget::editor(int index)
 {
     return dynamic_cast<Editor *>(this->widget(index));
+}
+
+QSharedPointer<Editor> EditorTabWidget::editorSharedPtr(int index)
+{
+    return m_editorPointers.value(editor(index));
+}
+
+QSharedPointer<Editor> EditorTabWidget::editorSharedPtr(Editor *editor)
+{
+    return m_editorPointers.value(editor);
+}
+
+void EditorTabWidget::tabRemoved(int)
+{
+    // FIXME Find a more efficient way to get the deleted editor
+
+    QList<QWidget*> tabs;
+    for (int i = 0; i < this->count(); i++) {
+        tabs.append(widget(i));
+    }
+
+    for (QSharedPointer<Editor> editor : m_editorPointers) {
+        if (!tabs.contains(editor.data())) {
+            // Editor is the one that has been removed!
+            if (editor.data() != nullptr && editor->parent() == this) {
+                // Set no parent, so that QObject won't delete
+                // the editor: that's what QSharedPointer should do.
+                editor->setParent(nullptr);
+                disconnectEditorSignals(editor.data());
+            }
+
+            m_editorPointers.remove(editor.data());
+            break;
+        }
+    }
 }
 
 Editor *EditorTabWidget::currentEditor()

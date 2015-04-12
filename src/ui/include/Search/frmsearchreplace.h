@@ -26,6 +26,7 @@ public:
     explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
     ~frmSearchReplace();
     void show(Tabs defaultTab);
+    void setSearchText(QString string);
 
     /**
      * @brief Runs a "find next" or "find prev", taking the options from the UI

@@ -83,12 +83,12 @@ namespace EditorNS
         // get stuck waiting a J_EVT_READY that will never come.
     }
 
-    Editor::~Editor()
+    QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
     {
-
+        return QSharedPointer<Editor>(getNewEditorUnmanagedPtr(parent), &Editor::deleteLater);
     }
 
-    Editor *Editor::getNewEditor(QWidget *parent)
+    Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
     {
         Editor *out;
 

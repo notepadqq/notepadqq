@@ -400,7 +400,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
         return;
     }
 
-    QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(arguments);
+    QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
 
     QStringList rawUrls = parser->positionalArguments();
 
@@ -426,8 +426,6 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
 
         m_docEngine->loadDocuments(files, tabW);
     }
-
-    delete parser;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -1100,6 +1098,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_settings->setValue("geometry", saveGeometry());
     m_settings->setValue("windowState", saveState());
     m_settings->endGroup();
+
+    // Disconnect signals to avoid handling events while
+    // the UI is being destroyed.
+    disconnect(m_topEditorContainer, 0, this, 0);
 }
 
 void MainWindow::on_actionE_xit_triggered()
@@ -1130,6 +1132,12 @@ void MainWindow::on_actionSearch_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabSearch);
     m_frmSearchReplace->activateWindow();
 }
@@ -1262,6 +1270,12 @@ void MainWindow::on_actionReplace_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabReplace);
     m_frmSearchReplace->activateWindow();
 }
@@ -1895,6 +1909,12 @@ void MainWindow::on_actionFind_in_Files_triggered()
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
+
+    QStringList sel = currentEditor()->selectedTexts();
+    if (sel.length() > 0 && sel[0].length() > 0) {
+        m_frmSearchReplace->setSearchText(sel[0]);
+    }
+
     m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
     m_frmSearchReplace->activateWindow();
 }
