@@ -49,7 +49,7 @@ public:
     static QString copyright();
     static QString editorPath();
     static QString fileNameFromUrl(const QUrl &url);
-    static QCommandLineParser *getCommandLineArgumentsParser(const QStringList &arguments);
+    static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList &arguments);
 
     static bool oldQt();
     static void setOldQt(bool oldQt);

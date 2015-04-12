@@ -395,7 +395,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
         return;
     }
 
-    QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(arguments);
+    QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
 
     QStringList rawUrls = parser->positionalArguments();
 
@@ -421,8 +421,6 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
 
         m_docEngine->loadDocuments(files, tabW);
     }
-
-    delete parser;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)

@@ -30,8 +30,7 @@ int main(int argc, char *argv[])
     forceDefaultSettings();
 
     // Check for "run-and-exit" options like -h or -v
-    QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
-    delete parser;
+    Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
 
     if (a.attachToOtherInstance()) {
         return EXIT_SUCCESS;
@@ -39,7 +38,7 @@ int main(int argc, char *argv[])
 
     // Arguments received from another instance
     QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QString &workingDirectory, const QStringList &arguments) {
-        QCommandLineParser *parser = Notepadqq::getCommandLineArgumentsParser(arguments);
+        QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
         if (parser->isSet("new-window")) {
             // Open a new window
             MainWindow *win = new MainWindow(workingDirectory, arguments, 0);
@@ -57,8 +56,6 @@ int main(int argc, char *argv[])
                 win->activateWindow();
             }
         }
-
-        delete parser;
     });
 
     // There are no other instances: start a new server.
