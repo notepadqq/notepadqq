@@ -1,5 +1,6 @@
 #include "include/notepadqq.h"
 #include "include/Extensions/extensionloader.h"
+#include "include/Extensions/runtimesupport.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDir>
@@ -10,6 +11,7 @@ const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
 bool Notepadqq::m_oldQt = false;
+QSharedPointer<Extensions::ExtensionsServer> Notepadqq::m_extensionsServer;
 
 QString Notepadqq::copyright()
 {
@@ -125,4 +127,14 @@ QString Notepadqq::extensionsPath()
 void Notepadqq::loadExtensions()
 {
     ExtensionLoader::loadExtensions(extensionsPath());
+
+    QSharedPointer<Extensions::RuntimeSupport> rts =
+            QSharedPointer<Extensions::RuntimeSupport>(new Extensions::RuntimeSupport());
+
+    m_extensionsServer = QSharedPointer<Extensions::ExtensionsServer>(
+                new Extensions::ExtensionsServer(rts));
+
+    m_extensionsServer->startServer("/tmp/srv");
+
+    // SRV => RTS
 }

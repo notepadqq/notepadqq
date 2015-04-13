@@ -70,7 +70,10 @@ SOURCES += main.cpp\
     Extensions/extensionsapi.cpp \
     Extensions/extensionloader.cpp \
     Extensions/extension.cpp \
-    frmlinenumberchooser.cpp
+    frmlinenumberchooser.cpp \
+    Extensions/extensionsserver.cpp \
+    Extensions/Stubs/stub.cpp \
+    Extensions/runtimesupport.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -103,7 +106,9 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/extensionloader.h \
     include/Extensions/extension.h \
     include/frmlinenumberchooser.h \
-    include/Extensions/Stubs/editor.h
+    include/Extensions/extensionsserver.h \
+    include/Extensions/Stubs/stub.h \
+    include/Extensions/runtimesupport.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
