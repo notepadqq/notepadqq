@@ -1,10 +1,11 @@
 #include "include/Extensions/runtimesupport.h"
+#include "include/Extensions/Stubs/notepadqq_stub.h"
 
 namespace Extensions {
 
     RuntimeSupport::RuntimeSupport(QObject *parent) : QObject(parent)
     {
-
+        m_pointers.insert(1, QSharedPointer<Stubs::Stub>(new Stubs::Notepadqq()));
     }
 
     RuntimeSupport::~RuntimeSupport()
@@ -17,23 +18,20 @@ namespace Extensions {
         unsigned long objectId = request.value("objectId").toDouble();
         QString method = request.value("method").toString();
 
+        // Fail if some fields are missing
         if (objectId <= 0 || method.isEmpty()) {
             QJsonObject retJson;
             retJson.insert("err", "Invalid request");
             return retJson;
         }
 
-        QJsonValue jsonArgs = request.value("args");
-
         QSharedPointer<Stubs::Stub> object = m_pointers.value(objectId);
 
         if (!object.isNull()) {
+            QJsonValue jsonArgs = request.value("args");
+
             Stubs::Stub::StubReturnValue ret;
-            bool invoked = QMetaObject::invokeMethod(object.data(),
-                                      method.toStdString().c_str(),
-                                      Qt::BlockingQueuedConnection,
-                                      Q_RETURN_ARG(Stubs::Stub::StubReturnValue, ret),
-                                      Q_ARG(QJsonValue, jsonArgs));
+            bool invoked = object->invoke(method, ret, jsonArgs);
 
             if (invoked) {
                 QJsonObject retJson;

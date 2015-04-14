@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     frmlinenumberchooser.cpp \
     Extensions/extensionsserver.cpp \
     Extensions/Stubs/stub.cpp \
-    Extensions/runtimesupport.cpp
+    Extensions/runtimesupport.cpp \
+    Extensions/Stubs/notepadqq_stub.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -108,7 +109,8 @@ HEADERS  += include/mainwindow.h \
     include/frmlinenumberchooser.h \
     include/Extensions/extensionsserver.h \
     include/Extensions/Stubs/stub.h \
-    include/Extensions/runtimesupport.h
+    include/Extensions/runtimesupport.h \
+    include/Extensions/Stubs/notepadqq_stub.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
