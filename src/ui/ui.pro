@@ -67,7 +67,6 @@ SOURCES += main.cpp\
     Search/replaceinfilesworker.cpp \
     Search/dlgsearching.cpp \
     Search/searchresultsitemdelegate.cpp \
-    Extensions/extensionsapi.cpp \
     Extensions/extensionloader.cpp \
     Extensions/extension.cpp \
     frmlinenumberchooser.cpp \
@@ -103,7 +102,6 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchhelpers.h \
     include/Search/dlgsearching.h \
     include/Search/searchresultsitemdelegate.h \
-    include/Extensions/extensionsapi.h \
     include/Extensions/extensionloader.h \
     include/Extensions/extension.h \
     include/frmlinenumberchooser.h \

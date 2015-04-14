@@ -31,5 +31,11 @@ namespace Extensions {
             return ret;
         }
 
+        NQQ_DEFINE_EXTENSION_METHOD(Notepadqq, print, args)
+        {
+            qDebug() << args.toArray().at(0).toString().toStdString().c_str();
+            return StubReturnValue();
+        }
+
     }
 }

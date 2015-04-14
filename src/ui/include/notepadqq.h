@@ -32,7 +32,6 @@
 #include <QCommandLineParser>
 #include <QList>
 #include "include/mainwindow.h"
-#include "include/Extensions/extensionsserver.h"
 
 #define POINTVERSION "0.46.1" // major.minor.revision
 
@@ -58,11 +57,9 @@ public:
     static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
 
     static QString extensionsPath();
-    static void loadExtensions();
 
 private:
     static bool m_oldQt;
-    static QSharedPointer<Extensions::ExtensionsServer> m_extensionsServer;
 };
 
 #endif // NOTEPADQQ_H

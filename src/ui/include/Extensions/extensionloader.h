@@ -3,23 +3,30 @@
 
 #include <QObject>
 #include "include/Extensions/extension.h"
+#include "include/Extensions/extensionsserver.h"
 
-class ExtensionLoader : public QObject
-{
-    Q_OBJECT
-public:
-    static void loadExtensions(QString path);
-    static QMap<QString, Extension *> loadedExtensions();
+namespace Extensions {
 
-signals:
+    class ExtensionLoader : public QObject
+    {
+        Q_OBJECT
+    public:
+        static void startExtensionServer(QString address);
+        static void loadExtensions(QString path);
+        static QMap<QString, Extension *> loadedExtensions();
 
-public slots:
+    signals:
 
-private:
-    explicit ExtensionLoader(QObject *parent = 0);
-    ~ExtensionLoader();
+    public slots:
 
-    static QMap<QString, Extension*> m_extensions;
-};
+    private:
+        explicit ExtensionLoader(QObject *parent = 0);
+        ~ExtensionLoader();
+
+        static QSharedPointer<ExtensionsServer> m_extensionsServer;
+        static QMap<QString, Extension*> m_extensions;
+    };
+
+}
 
 #endif // EXTENSIONLOADER_H

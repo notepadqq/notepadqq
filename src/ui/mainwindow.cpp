@@ -12,7 +12,6 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
-#include "include/Extensions/extensionsapi.h"
 #include "include/Extensions/extensionloader.h"
 #include "include/frmlinenumberchooser.h"
 #include <QFileDialog>
@@ -148,7 +147,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 
-    emit ExtensionsApi::instance()->newWindow(this);
+    // FIXME Extensions EMIT EVENT!
+    //emit ExtensionsApi::instance()->newWindow(this);
 
 }
 
@@ -818,8 +818,9 @@ Editor *MainWindow::currentEditor()
 
 QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
 {
-    QMap<QString, Extension*> extensions = ExtensionLoader::loadedExtensions();
-    Extension *extension = extensions[extensionId];
+    // FIXME Remove
+    QMap<QString, Extensions::Extension*> extensions = Extensions::ExtensionLoader::loadedExtensions();
+    Extensions::Extension *extension = extensions[extensionId];
 
     if (extensions.contains(extensionId)) {
         // Create the menu for the extension if it doesn't exist yet.

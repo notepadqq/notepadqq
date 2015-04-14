@@ -11,7 +11,6 @@ const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
 const QString Notepadqq::website = "http://notepadqq.altervista.org";
 bool Notepadqq::m_oldQt = false;
-QSharedPointer<Extensions::ExtensionsServer> Notepadqq::m_extensionsServer;
 
 QString Notepadqq::copyright()
 {
@@ -122,19 +121,4 @@ QString Notepadqq::extensionsPath()
 
     QFileInfo f = QFileInfo(settings.fileName());
     return f.absoluteDir().absoluteFilePath("extensions");
-}
-
-void Notepadqq::loadExtensions()
-{
-    ExtensionLoader::loadExtensions(extensionsPath());
-
-    QSharedPointer<Extensions::RuntimeSupport> rts =
-            QSharedPointer<Extensions::RuntimeSupport>(new Extensions::RuntimeSupport());
-
-    m_extensionsServer = QSharedPointer<Extensions::ExtensionsServer>(
-                new Extensions::ExtensionsServer(rts));
-
-    m_extensionsServer->startServer("/tmp/srv");
-
-    // SRV => RTS
 }

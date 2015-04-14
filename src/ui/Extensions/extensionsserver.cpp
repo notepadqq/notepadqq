@@ -51,15 +51,19 @@ namespace Extensions {
         if (stream.atEnd())
             return;
 
-        QString jsonRequest = stream.readLine();
+        while (1) {
+            QString jsonRequest = stream.readLine();
+            if (jsonRequest.isNull())
+                break;
 
-        QJsonDocument request = QJsonDocument::fromJson(jsonRequest.toUtf8());
+            QJsonDocument request = QJsonDocument::fromJson(jsonRequest.toUtf8());
 
-        QJsonObject response = m_extensionsRTS->handleRequest(request.object());
-        QString jsonResponse = QString(
-                    QJsonDocument(response).toJson(QJsonDocument::Compact))
-                .trimmed();
+            QJsonObject response = m_extensionsRTS->handleRequest(request.object());
+            QString jsonResponse = QString(
+                        QJsonDocument(response).toJson(QJsonDocument::Compact))
+                    .trimmed();
 
-        stream << jsonResponse << "\n";
+            stream << jsonResponse << "\n";
+        }
     }
 }

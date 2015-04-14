@@ -16,6 +16,7 @@ namespace Extensions {
         private:
             NQQ_DECLARE_EXTENSION_METHOD(commandLineArguments)
             NQQ_DECLARE_EXTENSION_METHOD(version)
+            NQQ_DECLARE_EXTENSION_METHOD(print)
         };
 
     }

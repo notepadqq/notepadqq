@@ -25,6 +25,7 @@ namespace Extensions {
     private:
         QSharedPointer<RuntimeSupport> m_extensionsRTS;
         QLocalServer *m_server;
+        QString m_bufferedData = "";
 
     };
 
