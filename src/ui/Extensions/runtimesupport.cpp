@@ -1,11 +1,11 @@
 #include "include/Extensions/runtimesupport.h"
-#include "include/Extensions/Stubs/notepadqq_stub.h"
+#include "include/Extensions/Stubs/notepadqqstub.h"
 
 namespace Extensions {
 
     RuntimeSupport::RuntimeSupport(QObject *parent) : QObject(parent)
     {
-        m_pointers.insert(1, QSharedPointer<Stubs::Stub>(new Stubs::Notepadqq()));
+        m_pointers.insert(1, QSharedPointer<Stubs::Stub>(new Stubs::NotepadqqStub(this)));
     }
 
     RuntimeSupport::~RuntimeSupport()
@@ -15,7 +15,7 @@ namespace Extensions {
 
     QJsonObject RuntimeSupport::handleRequest(const QJsonObject &request)
     {
-        unsigned long objectId = request.value("objectId").toDouble();
+        quint32 objectId = request.value("objectId").toDouble();
         QString method = request.value("method").toString();
 
         // Fail if some fields are missing
@@ -54,11 +54,11 @@ namespace Extensions {
         }
     }
 
-    unsigned long RuntimeSupport::presentObject(QSharedPointer<Stubs::Stub> stub)
+    quint32 RuntimeSupport::presentObject(QSharedPointer<Stubs::Stub> stub)
     {
-        static unsigned long counter = 0;
+        static quint32 counter = 100;
 
-        unsigned long id = ++counter;
+        quint32 id = ++counter;
         m_pointers.insert(id, stub);
         return id;
     }

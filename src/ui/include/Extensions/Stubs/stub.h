@@ -17,21 +17,34 @@
 #include <functional>
 #include <QHash>
 
+//class Extensions::RuntimeSupport;
+
 namespace Extensions {
+
+    class RuntimeSupport;
+
     namespace Stubs {
 
         class Stub : public QObject
         {
             Q_OBJECT
         public:
-            explicit Stub();
-            explicit Stub(QWeakPointer<QObject> object);
-            explicit Stub(QSharedPointer<QObject> object);
+            explicit Stub(RuntimeSupport *rts);
+            explicit Stub(QWeakPointer<QObject> object, RuntimeSupport *rts);
+            explicit Stub(QSharedPointer<QObject> object, RuntimeSupport *rts);
+            explicit Stub(QObject *object, RuntimeSupport *rts);
             ~Stub();
 
             struct StubReturnValue {
                 QJsonValue result;
                 QJsonValue error;
+            };
+
+            enum class StubType {
+                DETACHED,
+                WEAK_POINTER,
+                SHARED_POINTER,
+                UNMANAGED_POINTER
             };
 
             bool invoke(const QString &method, StubReturnValue &ret, const QJsonValue &args);
@@ -41,18 +54,20 @@ namespace Extensions {
         public slots:
 
         protected:
-            QWeakPointer<QObject> object();
+            QWeakPointer<QObject> objectWeakPtr();
             QSharedPointer<QObject> objectSharedPtr();
-            bool isWeak();
-            bool hasObject();
+            QObject *objectUnmanagedPtr();
+            StubType stubType();
 
             bool registerMethod(const QString &methodName, std::function<StubReturnValue (const QJsonValue &)> method);
+            RuntimeSupport *runtimeSupport();
 
         private:
+            RuntimeSupport *m_rts;
+            StubType m_stubType;
             QWeakPointer<QObject> m_weakPointer;
             QSharedPointer<QObject> m_sharedPointer;
-            bool m_weak;
-            bool m_hasObject;
+            QObject *m_unmanagedPointer = nullptr;
             QHash<QString, std::function<StubReturnValue (const QJsonValue &)>> m_methods;
         };
 

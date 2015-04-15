@@ -18,13 +18,13 @@ namespace Extensions {
         ~RuntimeSupport();
 
         QJsonObject handleRequest(const QJsonObject &request);
-        unsigned long presentObject(QSharedPointer<Stubs::Stub> stub);
+        quint32 presentObject(QSharedPointer<Stubs::Stub> stub);
     signals:
 
     public slots:
 
     private:
-        QHash<unsigned long, QSharedPointer<Stubs::Stub>> m_pointers;
+        QHash<quint32, QSharedPointer<Stubs::Stub>> m_pointers;
     };
 
 }

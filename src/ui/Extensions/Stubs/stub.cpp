@@ -3,23 +3,39 @@
 namespace Extensions {
     namespace Stubs {
 
-        Stub::Stub() : QObject(0)
+        Stub::Stub(RuntimeSupport *rts) :
+            QObject(0),
+            m_rts(rts),
+            m_stubType(StubType::DETACHED)
         {
-            m_hasObject = false;
+
         }
 
-        Stub::Stub(QWeakPointer<QObject> object) : QObject(0)
+        Stub::Stub(QWeakPointer<QObject> object, RuntimeSupport *rts) :
+            QObject(0),
+            m_rts(rts),
+            m_stubType(StubType::WEAK_POINTER),
+            m_weakPointer(object)
         {
-            m_weakPointer = object;
-            m_weak = true;
-            m_hasObject = true;
+
         }
 
-        Stub::Stub(QSharedPointer<QObject> object) : QObject(0)
+        Stub::Stub(QSharedPointer<QObject> object, RuntimeSupport *rts) :
+            QObject(0),
+            m_rts(rts),
+            m_stubType(StubType::SHARED_POINTER),
+            m_sharedPointer(object)
         {
-            m_sharedPointer = object;
-            m_weak = false;
-            m_hasObject = true;
+
+        }
+
+        Stub::Stub(QObject *object, RuntimeSupport *rts) :
+            QObject(0),
+            m_rts(rts),
+            m_stubType(StubType::UNMANAGED_POINTER),
+            m_unmanagedPointer(object)
+        {
+
         }
 
         Stub::~Stub()
@@ -27,12 +43,14 @@ namespace Extensions {
 
         }
 
-        QWeakPointer<QObject> Stub::object()
+        QWeakPointer<QObject> Stub::objectWeakPtr()
         {
-            if (m_weak)
+            if (m_stubType == StubType::WEAK_POINTER)
                 return m_weakPointer;
-            else
+            else if (m_stubType == StubType::SHARED_POINTER)
                 return m_sharedPointer.toWeakRef();
+            else
+                return QWeakPointer<QObject>();
         }
 
         QSharedPointer<QObject> Stub::objectSharedPtr()
@@ -40,14 +58,14 @@ namespace Extensions {
             return m_sharedPointer;
         }
 
-        bool Stub::isWeak()
+        Stub::StubType Stub::stubType()
         {
-            return m_weak;
+            return m_stubType;
         }
 
-        bool Stub::hasObject()
+        QObject *Stub::objectUnmanagedPtr()
         {
-            return m_hasObject;
+            return m_unmanagedPointer;
         }
 
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonValue &args)
@@ -64,6 +82,11 @@ namespace Extensions {
         {
             m_methods.insert(methodName, method);
             return true;
+        }
+
+        RuntimeSupport *Stub::runtimeSupport()
+        {
+            return m_rts;
         }
 
     }

@@ -73,7 +73,9 @@ SOURCES += main.cpp\
     Extensions/extensionsserver.cpp \
     Extensions/Stubs/stub.cpp \
     Extensions/runtimesupport.cpp \
-    Extensions/Stubs/notepadqq_stub.cpp
+    Extensions/Stubs/windowstub.cpp \
+    Extensions/Stubs/notepadqqstub.cpp \
+    Extensions/Stubs/editorstub.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -108,7 +110,9 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/extensionsserver.h \
     include/Extensions/Stubs/stub.h \
     include/Extensions/runtimesupport.h \
-    include/Extensions/Stubs/notepadqq_stub.h
+    include/Extensions/Stubs/windowstub.h \
+    include/Extensions/Stubs/notepadqqstub.h \
+    include/Extensions/Stubs/editorstub.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
