@@ -17,12 +17,14 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
         {
-            StubReturnValue ret;
-            //MainWindow *window = objectUnsafePtr();
+            MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
+            QSharedPointer<Stub> stub = QSharedPointer<Stub>(
+                        new EditorStub(window->currentEditorSharedPtr(), runtimeSupport()));
+            qint32 stubId = runtimeSupport()->presentObject(stub);
 
-            //window->currentEditor()
-            //QSharedPointer<Stub> obj = QSharedPointer<Stub>(new EditorStub(runtimeSupport()));
-            //ret.result = QJsonValue(static_cast<qint64>(runtimeSupport()->presentObject(obj)));
+            StubReturnValue ret;
+            ret.result = QJsonValue(static_cast<qint64>(stubId));
+            ret.resultStubName = EditorStub::stubName();
             return ret;
         }
 

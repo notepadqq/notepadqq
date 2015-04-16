@@ -12,6 +12,8 @@ namespace Extensions {
         public:
             EditorStub(QSharedPointer<QObject> object, RuntimeSupport *rts);
             ~EditorStub();
+
+            NQQ_STUB_NAME("Editor")
         };
 
     }

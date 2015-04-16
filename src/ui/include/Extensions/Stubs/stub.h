@@ -8,6 +8,8 @@
 #define NQQ_DEFINE_EXTENSION_METHOD(class_name, method_name, args_name) \
     Stub::StubReturnValue class_name::method_name(const QJsonValue &args_name)
 
+#define NQQ_STUB_NAME(stub_name) inline static QString stubName() { return stub_name; }
+
 #ifndef EXTENSIONS_STUBS_STUB_H
 #define EXTENSIONS_STUBS_STUB_H
 
@@ -16,8 +18,6 @@
 #include <QJsonValue>
 #include <functional>
 #include <QHash>
-
-//class Extensions::RuntimeSupport;
 
 namespace Extensions {
 
@@ -33,11 +33,12 @@ namespace Extensions {
             explicit Stub(QWeakPointer<QObject> object, RuntimeSupport *rts);
             explicit Stub(QSharedPointer<QObject> object, RuntimeSupport *rts);
             explicit Stub(QObject *object, RuntimeSupport *rts);
-            ~Stub();
+            virtual ~Stub() = 0;
 
             struct StubReturnValue {
                 QJsonValue result;
                 QJsonValue error;
+                QString resultStubName;
             };
 
             enum class StubType {

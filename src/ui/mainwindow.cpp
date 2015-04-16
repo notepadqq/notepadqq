@@ -816,6 +816,12 @@ Editor *MainWindow::currentEditor()
     return m_topEditorContainer->currentTabWidget()->currentEditor();
 }
 
+QSharedPointer<Editor> MainWindow::currentEditorSharedPtr()
+{
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    return tabW->editorSharedPtr(tabW->currentIndex());
+}
+
 QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
 {
     // FIXME Remove

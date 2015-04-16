@@ -59,8 +59,9 @@ public:
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
-    Q_INVOKABLE Editor*   currentEditor();
-    Q_INVOKABLE QAction*  addExtensionMenuItem(QString extensionId, QString text);
+    Editor*   currentEditor();
+    QSharedPointer<Editor> currentEditorSharedPtr();
+    QAction*  addExtensionMenuItem(QString extensionId, QString text);
 
 protected:
     void closeEvent(QCloseEvent *event);

@@ -37,6 +37,8 @@ namespace Extensions {
                 QJsonObject retJson;
                 retJson.insert("return", ret.result);
                 retJson.insert("err", ret.error);
+                if (!ret.resultStubName.isNull())
+                    retJson.insert("resultStubType", ret.resultStubName);
                 return retJson;
             } else {
                 QJsonObject retJson;
@@ -57,6 +59,7 @@ namespace Extensions {
     quint32 RuntimeSupport::presentObject(QSharedPointer<Stubs::Stub> stub)
     {
         static quint32 counter = 100;
+        // FIXME Do not reallocate same object
 
         quint32 id = ++counter;
         m_pointers.insert(id, stub);

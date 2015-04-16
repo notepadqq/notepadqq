@@ -35,7 +35,9 @@ namespace Extensions {
             m_stubType(StubType::UNMANAGED_POINTER),
             m_unmanagedPointer(object)
         {
-
+            connect(object, &QObject::destroyed, this, [&] {
+                m_unmanagedPointer = nullptr;
+            });
         }
 
         Stub::~Stub()
