@@ -23,8 +23,8 @@ namespace Extensions {
             qint32 stubId = runtimeSupport()->presentObject(stub);
 
             StubReturnValue ret;
-            ret.result = QJsonValue(static_cast<qint64>(stubId));
-            ret.resultStubName = EditorStub::stubName();
+            ret.result = QJsonValue(stubId);
+            ret.resultStubType = EditorStub::stubName();
             return ret;
         }
 

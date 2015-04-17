@@ -8,7 +8,9 @@
 #define NQQ_DEFINE_EXTENSION_METHOD(class_name, method_name, args_name) \
     Stub::StubReturnValue class_name::method_name(const QJsonArray &args_name)
 
-#define NQQ_STUB_NAME(stub_name) inline static QString stubName() { return stub_name; }
+#define NQQ_STUB_NAME(stub_name) \
+    inline static QString stubName() { return stub_name; } \
+    inline QString stubName_() const { return stubName(); }
 
 #ifndef EXTENSIONS_STUBS_STUB_H
 #define EXTENSIONS_STUBS_STUB_H
@@ -38,10 +40,10 @@ namespace Extensions {
             struct StubReturnValue {
                 QJsonValue result;
                 QJsonValue error;
-                QString resultStubName;
+                QString resultStubType;
             };
 
-            enum class StubType {
+            enum class PointerType {
                 DETACHED,
                 WEAK_POINTER,
                 SHARED_POINTER,
@@ -49,7 +51,10 @@ namespace Extensions {
             };
 
             bool invoke(const QString &method, StubReturnValue &ret, const QJsonArray &args);
+            virtual QString stubName_() const = 0;
 
+            bool operator ==(const Stub &other) const;
+            bool operator !=(const Stub &other) const;
         signals:
 
         public slots:
@@ -58,14 +63,14 @@ namespace Extensions {
             QWeakPointer<QObject> objectWeakPtr();
             QSharedPointer<QObject> objectSharedPtr();
             QObject *objectUnmanagedPtr();
-            StubType stubType();
+            PointerType pointerType();
 
             bool registerMethod(const QString &methodName, std::function<StubReturnValue (const QJsonArray &)> method);
             RuntimeSupport *runtimeSupport();
 
         private:
             RuntimeSupport *m_rts;
-            StubType m_stubType;
+            PointerType m_pointerType;
             QWeakPointer<QObject> m_weakPointer;
             QSharedPointer<QObject> m_sharedPointer;
             QObject *m_unmanagedPointer = nullptr;

@@ -7,21 +7,22 @@
 
 namespace Extensions {
 
-    class ExtensionLoader : public QObject
+    class ExtensionsLoader : public QObject
     {
         Q_OBJECT
     public:
-        static void startExtensionServer(QString address);
+        static QSharedPointer<ExtensionsServer> startExtensionsServer(QString address);
         static void loadExtensions(QString path);
         static QMap<QString, Extension *> loadedExtensions();
+        static QSharedPointer<ExtensionsServer> extensionsServer();
 
     signals:
 
     public slots:
 
     private:
-        explicit ExtensionLoader(QObject *parent = 0);
-        ~ExtensionLoader();
+        explicit ExtensionsLoader(QObject *parent = 0);
+        ~ExtensionsLoader();
 
         static QSharedPointer<ExtensionsServer> m_extensionsServer;
         static QMap<QString, Extension*> m_extensions;

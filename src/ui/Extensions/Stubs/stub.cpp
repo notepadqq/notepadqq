@@ -6,7 +6,7 @@ namespace Extensions {
         Stub::Stub(RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
-            m_stubType(StubType::DETACHED)
+            m_pointerType(PointerType::DETACHED)
         {
 
         }
@@ -14,7 +14,7 @@ namespace Extensions {
         Stub::Stub(QWeakPointer<QObject> object, RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
-            m_stubType(StubType::WEAK_POINTER),
+            m_pointerType(PointerType::WEAK_POINTER),
             m_weakPointer(object)
         {
 
@@ -23,7 +23,7 @@ namespace Extensions {
         Stub::Stub(QSharedPointer<QObject> object, RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
-            m_stubType(StubType::SHARED_POINTER),
+            m_pointerType(PointerType::SHARED_POINTER),
             m_sharedPointer(object)
         {
 
@@ -32,7 +32,7 @@ namespace Extensions {
         Stub::Stub(QObject *object, RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
-            m_stubType(StubType::UNMANAGED_POINTER),
+            m_pointerType(PointerType::UNMANAGED_POINTER),
             m_unmanagedPointer(object)
         {
             connect(object, &QObject::destroyed, this, [&] {
@@ -47,9 +47,9 @@ namespace Extensions {
 
         QWeakPointer<QObject> Stub::objectWeakPtr()
         {
-            if (m_stubType == StubType::WEAK_POINTER)
+            if (m_pointerType == PointerType::WEAK_POINTER)
                 return m_weakPointer;
-            else if (m_stubType == StubType::SHARED_POINTER)
+            else if (m_pointerType == PointerType::SHARED_POINTER)
                 return m_sharedPointer.toWeakRef();
             else
                 return QWeakPointer<QObject>();
@@ -60,9 +60,9 @@ namespace Extensions {
             return m_sharedPointer;
         }
 
-        Stub::StubType Stub::stubType()
+        Stub::PointerType Stub::pointerType()
         {
-            return m_stubType;
+            return m_pointerType;
         }
 
         QObject *Stub::objectUnmanagedPtr()
@@ -90,6 +90,23 @@ namespace Extensions {
         {
             return m_rts;
         }
+
+        bool Stub::operator==(const Stub &other) const
+        {
+            return m_pointerType == other.m_pointerType
+                    && m_sharedPointer == other.m_sharedPointer
+                    && m_weakPointer == other.m_weakPointer
+                    && m_unmanagedPointer == other.m_unmanagedPointer
+                    && m_rts == other.m_rts
+                    && stubName_() == other.stubName_();
+        }
+
+        bool Stub::operator!=(const Stub &other) const
+        {
+            return !(*this == other);
+        }
+
+        //void emitEvent(const QString &eventName, const QJsonArray &args)
 
     }
 }

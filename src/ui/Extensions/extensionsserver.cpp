@@ -38,14 +38,14 @@ namespace Extensions {
     {
         QLocalSocket *client = m_server->nextPendingConnection();
         if (client != nullptr) {
-            connect(client, &QLocalSocket::readyRead, this, [=]() { on_clientMessage(client); });
-            connect(client, &QLocalSocket::disconnected, client, &QLocalSocket::deleteLater);
+            m_sockets.append(client);
+            connect(client, &QLocalSocket::readyRead, this, [=] { on_clientMessage(client); });
+            connect(client, &QLocalSocket::disconnected, this, [=] { on_socketDisconnected(client); });
         }
     }
 
     void ExtensionsServer::on_clientMessage(QLocalSocket *socket)
     {
-        // FIXME Can reopen a stream multiple times on the same socket?
         QTextStream stream(socket);
 
         if (stream.atEnd())
@@ -65,5 +65,32 @@ namespace Extensions {
 
             stream << jsonResponse << "\n";
         }
+    }
+
+    void ExtensionsServer::on_socketDisconnected(QLocalSocket *socket)
+    {
+        m_sockets.removeAll(socket);
+        socket->deleteLater();
+    }
+
+    void ExtensionsServer::broadcastMessage(const QJsonObject &message)
+    {
+        QString jsonMessage = QString(
+                    QJsonDocument(message).toJson(QJsonDocument::Compact))
+                .trimmed();
+
+        // FIXME If extension crashes, we crash too!
+
+        for (QLocalSocket *socket : m_sockets) {
+            if (socket->isOpen()) {
+                QTextStream stream(socket);
+                stream << jsonMessage << "\n";
+            }
+        }
+    }
+
+    QSharedPointer<RuntimeSupport> ExtensionsServer::runtimeSupport()
+    {
+        return m_extensionsRTS;
     }
 }

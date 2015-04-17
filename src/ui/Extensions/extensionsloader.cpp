@@ -1,23 +1,23 @@
-#include "include/Extensions/extensionloader.h"
+#include "include/Extensions/extensionsloader.h"
 #include "include/mainwindow.h"
 #include <QDirIterator>
 
 namespace Extensions {
 
-    QSharedPointer<ExtensionsServer> ExtensionLoader::m_extensionsServer;
-    QMap<QString, Extension*> ExtensionLoader::m_extensions;
+    QSharedPointer<ExtensionsServer> ExtensionsLoader::m_extensionsServer;
+    QMap<QString, Extension*> ExtensionsLoader::m_extensions;
 
-    ExtensionLoader::ExtensionLoader(QObject *parent) : QObject(parent)
+    ExtensionsLoader::ExtensionsLoader(QObject *parent) : QObject(parent)
     {
 
     }
 
-    ExtensionLoader::~ExtensionLoader()
+    ExtensionsLoader::~ExtensionsLoader()
     {
 
     }
 
-    void ExtensionLoader::startExtensionServer(QString address)
+    QSharedPointer<Extensions::ExtensionsServer> ExtensionsLoader::startExtensionsServer(QString address)
     {
         QSharedPointer<Extensions::RuntimeSupport> rts =
                 QSharedPointer<Extensions::RuntimeSupport>(new Extensions::RuntimeSupport());
@@ -26,9 +26,11 @@ namespace Extensions {
                     new Extensions::ExtensionsServer(rts));
 
         m_extensionsServer->startServer(address);
+
+        return m_extensionsServer;
     }
 
-    void ExtensionLoader::loadExtensions(QString path)
+    void ExtensionsLoader::loadExtensions(QString path)
     {
         QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
         while (it.hasNext()) {
@@ -37,9 +39,14 @@ namespace Extensions {
         }
     }
 
-    QMap<QString, Extension*> ExtensionLoader::loadedExtensions()
+    QMap<QString, Extension*> ExtensionsLoader::loadedExtensions()
     {
         return m_extensions;
+    }
+
+    QSharedPointer<ExtensionsServer> ExtensionsLoader::extensionsServer()
+    {
+        return m_extensionsServer;
     }
 
 }

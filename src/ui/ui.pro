@@ -67,7 +67,6 @@ SOURCES += main.cpp\
     Search/replaceinfilesworker.cpp \
     Search/dlgsearching.cpp \
     Search/searchresultsitemdelegate.cpp \
-    Extensions/extensionloader.cpp \
     Extensions/extension.cpp \
     frmlinenumberchooser.cpp \
     Extensions/extensionsserver.cpp \
@@ -75,7 +74,8 @@ SOURCES += main.cpp\
     Extensions/runtimesupport.cpp \
     Extensions/Stubs/windowstub.cpp \
     Extensions/Stubs/notepadqqstub.cpp \
-    Extensions/Stubs/editorstub.cpp
+    Extensions/Stubs/editorstub.cpp \
+    Extensions/extensionsloader.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -104,7 +104,6 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchhelpers.h \
     include/Search/dlgsearching.h \
     include/Search/searchresultsitemdelegate.h \
-    include/Extensions/extensionloader.h \
     include/Extensions/extension.h \
     include/frmlinenumberchooser.h \
     include/Extensions/extensionsserver.h \
@@ -112,7 +111,8 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/runtimesupport.h \
     include/Extensions/Stubs/windowstub.h \
     include/Extensions/Stubs/notepadqqstub.h \
-    include/Extensions/Stubs/editorstub.h
+    include/Extensions/Stubs/editorstub.h \
+    include/Extensions/extensionsloader.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

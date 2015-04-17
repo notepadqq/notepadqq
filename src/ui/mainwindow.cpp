@@ -12,8 +12,9 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
-#include "include/Extensions/extensionloader.h"
+#include "include/Extensions/extensionsloader.h"
 #include "include/frmlinenumberchooser.h"
+#include "include/Extensions/Stubs/windowstub.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -25,6 +26,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
+#include <QJsonArray>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -147,8 +149,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 
-    // FIXME Extensions EMIT EVENT!
-    //emit ExtensionsApi::instance()->newWindow(this);
+    // FIXME Could be too early to send the event? Extensions could have not been connected yet.
+    emit Notepadqq::getInstance().newWindow(this);
 
 }
 
@@ -825,7 +827,7 @@ QSharedPointer<Editor> MainWindow::currentEditorSharedPtr()
 QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
 {
     // FIXME Remove
-    QMap<QString, Extensions::Extension*> extensions = Extensions::ExtensionLoader::loadedExtensions();
+    QMap<QString, Extensions::Extension*> extensions = Extensions::ExtensionsLoader::loadedExtensions();
     Extensions::Extension *extension = extensions[extensionId];
 
     if (extensions.contains(extensionId)) {

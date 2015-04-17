@@ -9,6 +9,8 @@
 
 namespace Extensions {
 
+    class ExtensionsServer;
+
     class RuntimeSupport : public QObject
     {
         Q_OBJECT
@@ -17,13 +19,17 @@ namespace Extensions {
         ~RuntimeSupport();
 
         QJsonObject handleRequest(const QJsonObject &request);
-        quint32 presentObject(QSharedPointer<Stubs::Stub> stub);
+        qint64 presentObject(QSharedPointer<Stubs::Stub> stub);
+        void emitEvent(Stubs::Stub *sender, QString event, const QJsonArray &args);
     signals:
 
     public slots:
 
     private:
-        QHash<quint32, QSharedPointer<Stubs::Stub>> m_pointers;
+        QHash<qint64, QSharedPointer<Stubs::Stub>> m_pointers;
+        //QHash<QSharedPointer<Stubs::Stub>, qint64> m_pointersRev;
+        QSharedPointer<ExtensionsServer> m_extensionServer;
+        qint64 findStubId(Stubs::Stub *stub);
     };
 
 }

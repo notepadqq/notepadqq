@@ -10,7 +10,15 @@ namespace Extensions {
 
         NotepadqqStub::NotepadqqStub(RuntimeSupport *rts) : Stub(rts)
         {
+            connect(&Notepadqq::getInstance(), &Notepadqq::newWindow, this, [=](MainWindow *window){
+                auto windowStub = QSharedPointer<Extensions::Stubs::WindowStub>(
+                            new Extensions::Stubs::WindowStub(window, rts));
 
+                QJsonArray args;
+                args.append(rts->presentObject(windowStub));
+
+                rts->emitEvent(this, "newWindow", args);
+            });
         }
 
         NotepadqqStub::~NotepadqqStub()
@@ -46,8 +54,8 @@ namespace Extensions {
             qint32 stubId = runtimeSupport()->presentObject(stub);
 
             StubReturnValue ret;
-            ret.result = QJsonValue(static_cast<qint64>(stubId));
-            ret.resultStubName = WindowStub::stubName();
+            ret.result = QJsonValue(stubId);
+            ret.resultStubType = WindowStub::stubName();
             return ret;
         }
 

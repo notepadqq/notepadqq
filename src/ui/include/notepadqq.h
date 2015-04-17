@@ -32,6 +32,7 @@
 #include <QCommandLineParser>
 #include <QList>
 #include "include/mainwindow.h"
+#include "include/Extensions/extensionsserver.h"
 
 #define POINTVERSION "0.46.1" // major.minor.revision
 
@@ -40,9 +41,17 @@
 /**
  * @brief Global information and utility functions.
  */
-class Notepadqq
+class Notepadqq : public QObject
 {
+    Q_OBJECT
 public:
+
+    static Notepadqq& getInstance()
+    {
+        static Notepadqq instance;
+        return instance;
+    }
+
     static const QString version;
     static const QString contributorsUrl;
     static const QString website;
@@ -58,7 +67,14 @@ public:
 
     static QString extensionsPath();
 
+signals:
+    void newWindow(MainWindow *window);
+
 private:
+    Notepadqq() {}
+    Notepadqq(Notepadqq const&);      // Don't Implement.
+    void operator=(Notepadqq const&); // Don't implement
+
     static bool m_oldQt;
 };
 

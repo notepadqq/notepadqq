@@ -1,5 +1,5 @@
 #include "include/notepadqq.h"
-#include "include/Extensions/extensionloader.h"
+#include "include/Extensions/extensionsloader.h"
 #include "include/Extensions/runtimesupport.h"
 #include <QFileInfo>
 #include <QMessageBox>

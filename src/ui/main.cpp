@@ -2,7 +2,7 @@
 #include "include/notepadqq.h"
 #include "include/EditorNS/editor.h"
 #include "include/singleapplication.h"
-#include "include/Extensions/extensionloader.h"
+#include "include/Extensions/extensionsloader.h"
 #include <QObject>
 #include <QFile>
 #include <QSettings>
@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    Extensions::ExtensionLoader::startExtensionServer("/tmp/srv"); // FIXME Hardcoded path
-    Extensions::ExtensionLoader::loadExtensions(Notepadqq::extensionsPath());
+    Extensions::ExtensionsLoader::startExtensionsServer("/tmp/srv"); // FIXME Hardcoded path
+    Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
 
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();

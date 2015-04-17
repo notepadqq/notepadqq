@@ -14,19 +14,24 @@ namespace Extensions {
         explicit ExtensionsServer(QSharedPointer<RuntimeSupport> extensionsRTS, QObject *parent = 0);
         ~ExtensionsServer();
         void startServer(QString path);
+        void broadcastMessage(const QJsonObject &message);
+        QSharedPointer<RuntimeSupport> runtimeSupport();
+
     signals:
 
     public slots:
 
     private slots:
         void on_newConnection();
-        void on_clientMessage(QLocalSocket *socket);
 
     private:
         QSharedPointer<RuntimeSupport> m_extensionsRTS;
         QLocalServer *m_server;
         QString m_bufferedData = "";
+        QList<QLocalSocket *> m_sockets;
 
+        void on_clientMessage(QLocalSocket *socket);
+        void on_socketDisconnected(QLocalSocket *socket);
     };
 
 }

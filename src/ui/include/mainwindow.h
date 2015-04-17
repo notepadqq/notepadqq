@@ -170,7 +170,6 @@ private slots:
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
     void on_editorUrlsDropped(QList<QUrl> urls);
-
     void on_actionGo_to_line_triggered();
 
 private:
