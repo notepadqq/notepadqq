@@ -35,7 +35,7 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, print, args)
         {
-            qDebug() << args.toArray().at(0).toString().toStdString().c_str();
+            qDebug() << args.at(0).toString().toStdString().c_str();
             return StubReturnValue();
         }
 

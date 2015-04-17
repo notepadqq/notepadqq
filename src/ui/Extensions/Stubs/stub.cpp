@@ -70,7 +70,7 @@ namespace Extensions {
             return m_unmanagedPointer;
         }
 
-        bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonValue &args)
+        bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
         {
             auto fun = m_methods.value(method);
             if (fun != nullptr) {
@@ -80,7 +80,7 @@ namespace Extensions {
             return false;
         }
 
-        bool Stub::registerMethod(const QString &methodName, std::function<Stub::StubReturnValue (const QJsonValue &)> method)
+        bool Stub::registerMethod(const QString &methodName, std::function<Stub::StubReturnValue (const QJsonArray &)> method)
         {
             m_methods.insert(methodName, method);
             return true;

@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QHash>
 #include <QSharedPointer>
-#include <QJsonValue>
 #include <QJsonObject>
 #include "include/Extensions/Stubs/stub.h"
 

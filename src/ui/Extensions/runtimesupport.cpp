@@ -1,5 +1,6 @@
 #include "include/Extensions/runtimesupport.h"
 #include "include/Extensions/Stubs/notepadqqstub.h"
+#include <QJsonArray>
 
 namespace Extensions {
 
@@ -28,7 +29,7 @@ namespace Extensions {
         QSharedPointer<Stubs::Stub> object = m_pointers.value(objectId);
 
         if (!object.isNull()) {
-            QJsonValue jsonArgs = request.value("args");
+            QJsonArray jsonArgs = request.value("args").toArray();
 
             Stubs::Stub::StubReturnValue ret;
             bool invoked = object->invoke(method, ret, jsonArgs);
@@ -65,5 +66,10 @@ namespace Extensions {
         m_pointers.insert(id, stub);
         return id;
     }
+
+    /*void RuntimeSupport::emitEvent(QString event, const QJsonArray &args)
+    {
+
+    }*/
 
 }
