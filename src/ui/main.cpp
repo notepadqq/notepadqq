@@ -1,3 +1,4 @@
+#include "include/globals.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
 #include "include/EditorNS/editor.h"
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
     __aet_timer.start();
     qDebug() << "Start-time benchmark started.";
 
-    qDebug() << "WARNING: Notepadqq is running in DEBUG mode.";
+    printerrln("WARNING: Notepadqq is running in DEBUG mode.");
 #endif
 
     // Initialize random number generator

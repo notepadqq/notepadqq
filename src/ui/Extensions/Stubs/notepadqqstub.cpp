@@ -1,3 +1,4 @@
+#include "include/globals.h"
 #include "include/Extensions/Stubs/notepadqqstub.h"
 #include "include/Extensions/Stubs/windowstub.h"
 #include "include/notepadqq.h"
@@ -74,8 +75,7 @@ namespace Extensions {
                 }
             }
 
-            // FIXME Do not use qDebug()!
-            qDebug() << output.toStdString().c_str();
+            println(output);
             return StubReturnValue();
         }
 
