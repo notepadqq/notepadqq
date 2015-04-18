@@ -32,8 +32,8 @@ namespace Extensions {
             Q_OBJECT
         public:
             explicit Stub(RuntimeSupport *rts);
-            explicit Stub(QWeakPointer<QObject> object, RuntimeSupport *rts);
-            explicit Stub(QSharedPointer<QObject> object, RuntimeSupport *rts);
+            explicit Stub(const QWeakPointer<QObject> &object, RuntimeSupport *rts);
+            explicit Stub(const QSharedPointer<QObject> &object, RuntimeSupport *rts);
             explicit Stub(QObject *object, RuntimeSupport *rts);
             virtual ~Stub() = 0;
 

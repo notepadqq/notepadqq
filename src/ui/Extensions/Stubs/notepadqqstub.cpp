@@ -74,6 +74,7 @@ namespace Extensions {
                 }
             }
 
+            // FIXME Do not use qDebug()!
             qDebug() << output.toStdString().c_str();
             return StubReturnValue();
         }

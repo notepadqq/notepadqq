@@ -13,7 +13,7 @@ namespace Extensions {
     public:
         explicit ExtensionsServer(QSharedPointer<RuntimeSupport> extensionsRTS, QObject *parent = 0);
         ~ExtensionsServer();
-        void startServer(QString name);
+        bool startServer(QString name);
         void broadcastMessage(const QJsonObject &message);
         QSharedPointer<RuntimeSupport> runtimeSupport();
         QString socketPath();

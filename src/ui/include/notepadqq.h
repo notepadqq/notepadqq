@@ -72,7 +72,7 @@ signals:
 
 private:
     Notepadqq() {}
-    Notepadqq(Notepadqq const&);      // Don't Implement.
+    Notepadqq(Notepadqq const&);      // Don't implement
     void operator=(Notepadqq const&); // Don't implement
 
     static bool m_oldQt;

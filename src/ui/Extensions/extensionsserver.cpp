@@ -17,21 +17,21 @@ namespace Extensions {
 
     }
 
-    void ExtensionsServer::startServer(QString name)
+    bool ExtensionsServer::startServer(QString name)
     {
         QLocalServer::removeServer(name);
 
         m_server = new QLocalServer(this);
         if (!m_server->listen(name)) {
 
-            /*QMessageBox::critical(this, tr("Extensions"),
-                                  tr("Unable to communicate with the extensions: %1.")
-                                  .arg(m_server->errorString()));*/
-            // FIXME Display error
-            return;
+            qCritical() << QString("Unable to start extensions server %1. Extensions will not be loaded.")
+                           .arg(name).toStdString().c_str();
+
+            return false;
         }
 
         connect(m_server, &QLocalServer::newConnection, this, &ExtensionsServer::on_newConnection);
+        return true;
     }
 
     QString ExtensionsServer::socketPath()
@@ -80,6 +80,7 @@ namespace Extensions {
     {
         m_sockets.removeAll(socket);
         socket->deleteLater();
+        Q_ASSERT(m_sockets.contains(socket) == false);
     }
 
     void ExtensionsServer::broadcastMessage(const QJsonObject &message)

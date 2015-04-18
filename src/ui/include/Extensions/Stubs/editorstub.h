@@ -10,7 +10,7 @@ namespace Extensions {
         class EditorStub : public Stub
         {
         public:
-            EditorStub(QWeakPointer<QObject> object, RuntimeSupport *rts);
+            EditorStub(const QWeakPointer<QObject> &object, RuntimeSupport *rts);
             ~EditorStub();
 
             NQQ_STUB_NAME("Editor")

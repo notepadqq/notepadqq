@@ -29,9 +29,11 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
+        message(Debug build)
         DESTDIR = ../../out/debug/lib
     }
     CONFIG(release, debug|release) {
+        message(Release build)
         DESTDIR = ../../out/release/lib
     }
 }

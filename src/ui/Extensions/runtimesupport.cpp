@@ -29,9 +29,13 @@ namespace Extensions {
             return retJson;
         }
 
+        Q_ASSERT(objectId >= 0 && method.length() > 0);
+
         QSharedPointer<Stubs::Stub> object = m_pointers.value(objectId);
 
         if (!object.isNull()) {
+            // FIXME if not object->isAlive(), then send an error and remove the stub from m_pointers
+
             QJsonArray jsonArgs = request.value("args").toArray();
 
             Stubs::Stub::StubReturnValue ret;

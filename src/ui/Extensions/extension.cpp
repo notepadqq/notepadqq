@@ -39,14 +39,14 @@ namespace Extensions {
             QStringList args;
             args << path + "/main.js";
             args << serverSocketPath;
-            process->start("node", args); // FIXME Start package.json
+            process->start("node", args);
 
         } else {
             failedToLoadExtension(path, "manifest.json missing");
             return;
         }
 
-
+        // FIXME Load editor parts
         /*QFile fUi(path + "/ui.js");
         if (fUi.open(QFile::ReadOnly | QFile::Text)) {
 

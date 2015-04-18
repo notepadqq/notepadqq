@@ -11,7 +11,7 @@ namespace Extensions {
 
         }
 
-        Stub::Stub(QWeakPointer<QObject> object, RuntimeSupport *rts) :
+        Stub::Stub(const QWeakPointer<QObject> &object, RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
             m_pointerType(PointerType::WEAK_POINTER),
@@ -20,7 +20,7 @@ namespace Extensions {
 
         }
 
-        Stub::Stub(QSharedPointer<QObject> object, RuntimeSupport *rts) :
+        Stub::Stub(const QSharedPointer<QObject> &object, RuntimeSupport *rts) :
             QObject(0),
             m_rts(rts),
             m_pointerType(PointerType::SHARED_POINTER),

@@ -23,6 +23,7 @@ namespace Extensions {
         name += QString::number(QDateTime::currentMSecsSinceEpoch());
         name += "-";
         name += QString::number(qrand());
+
         return startExtensionsServer(name);
     }
 
@@ -41,6 +42,10 @@ namespace Extensions {
 
     void ExtensionsLoader::loadExtensions(QString path)
     {
+        if (m_extensionsServer.isNull()) {
+            return;
+        }
+
         QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
         while (it.hasNext()) {
             Extension *ext = new Extension(it.next(), m_extensionsServer->socketPath()); // FIXME SharedPointer

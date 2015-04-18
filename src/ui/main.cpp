@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QFile>
 #include <QSettings>
+#include <QtGlobal>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -21,8 +22,11 @@ int main(int argc, char *argv[])
     QElapsedTimer __aet_timer;
     __aet_timer.start();
     qDebug() << "Start-time benchmark started.";
+
+    qDebug() << "WARNING: Notepadqq is running in DEBUG mode.";
 #endif
 
+    // Initialize random number generator
     qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
 
     SingleApplication a(argc, argv);
