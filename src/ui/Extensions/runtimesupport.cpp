@@ -73,6 +73,7 @@ namespace Extensions {
 
         qint64 id = ++counter;
         m_pointers.insert(id, stub);
+        Q_ASSERT(findStubId(stub.data()) != -1);
         return id;
     }
 

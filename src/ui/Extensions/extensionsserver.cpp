@@ -89,8 +89,6 @@ namespace Extensions {
                     QJsonDocument(message).toJson(QJsonDocument::Compact))
                 .trimmed();
 
-        // FIXME If extension crashes, we crash too!
-
         for (QLocalSocket *socket : m_sockets) {
             if (socket->isOpen()) {
                 QTextStream stream(socket);
