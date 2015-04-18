@@ -17,12 +17,12 @@ namespace Extensions {
 
     }
 
-    void ExtensionsServer::startServer(QString path)
+    void ExtensionsServer::startServer(QString name)
     {
-        QLocalServer::removeServer(path);
+        QLocalServer::removeServer(name);
 
         m_server = new QLocalServer(this);
-        if (!m_server->listen(path)) {
+        if (!m_server->listen(name)) {
 
             /*QMessageBox::critical(this, tr("Extensions"),
                                   tr("Unable to communicate with the extensions: %1.")
@@ -32,6 +32,15 @@ namespace Extensions {
         }
 
         connect(m_server, &QLocalServer::newConnection, this, &ExtensionsServer::on_newConnection);
+    }
+
+    QString ExtensionsServer::socketPath()
+    {
+        if (m_server->isListening()) {
+            return m_server->fullServerName();
+        } else {
+            return QString();
+        }
     }
 
     void ExtensionsServer::on_newConnection()

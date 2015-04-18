@@ -9,7 +9,7 @@
 
 namespace Extensions {
 
-    Extension::Extension(QString path) : QObject(0)
+    Extension::Extension(QString path, QString serverSocketPath) : QObject(0)
     {
         m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(rand() * 1048576);
 
@@ -36,7 +36,10 @@ namespace Extensions {
             }
 
             QProcess *process = new QProcess(this);
-            process->start("node", QStringList() << path + "/main.js"); // FIXME Start package.json
+            QStringList args;
+            args << path + "/main.js";
+            args << serverSocketPath;
+            process->start("node", args); // FIXME Start package.json
 
         } else {
             failedToLoadExtension(path, "manifest.json missing");

@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     qDebug() << "Start-time benchmark started.";
 #endif
 
+    qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
+
     SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
@@ -76,7 +78,7 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    Extensions::ExtensionsLoader::startExtensionsServer("/tmp/srv"); // FIXME Hardcoded path
+    Extensions::ExtensionsLoader::startExtensionsServer();
     Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
 
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);

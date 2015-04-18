@@ -10,7 +10,7 @@ namespace Extensions {
     {
         Q_OBJECT
     public:
-        explicit Extension(QString path);
+        explicit Extension(QString path, QString serverSocketPath);
         ~Extension();
 
         Q_INVOKABLE QString id() const;

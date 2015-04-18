@@ -11,7 +11,12 @@ namespace Extensions {
     {
         Q_OBJECT
     public:
-        static QSharedPointer<ExtensionsServer> startExtensionsServer(QString address);
+        /**
+         * @brief Starts an extensions server with a new unique name.
+         * @return
+         */
+        static QSharedPointer<Extensions::ExtensionsServer> startExtensionsServer();
+        static QSharedPointer<ExtensionsServer> startExtensionsServer(QString name);
         static void loadExtensions(QString path);
         static QMap<QString, Extension *> loadedExtensions();
         static QSharedPointer<ExtensionsServer> extensionsServer();
