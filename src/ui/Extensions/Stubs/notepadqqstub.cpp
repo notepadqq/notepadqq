@@ -10,20 +10,25 @@ namespace Extensions {
 
         NotepadqqStub::NotepadqqStub(RuntimeSupport *rts) : Stub(rts)
         {
-            connect(&Notepadqq::getInstance(), &Notepadqq::newWindow, this, [=](MainWindow *window){
-                auto windowStub = QSharedPointer<Extensions::Stubs::WindowStub>(
-                            new Extensions::Stubs::WindowStub(window, rts));
-
-                QJsonArray args;
-                args.append(rts->presentObject(windowStub));
-
-                rts->emitEvent(this, "newWindow", args);
-            });
+            connect(&Notepadqq::getInstance(), &Notepadqq::newWindow, this, &NotepadqqStub::on_newWindow);
         }
 
         NotepadqqStub::~NotepadqqStub()
         {
 
+        }
+
+        void NotepadqqStub::on_newWindow(MainWindow *window)
+        {
+            RuntimeSupport *rts = runtimeSupport();
+            QSharedPointer<Extensions::Stubs::WindowStub> windowStub =
+                    QSharedPointer<Extensions::Stubs::WindowStub>(
+                        new Extensions::Stubs::WindowStub(window, rts));
+
+            QJsonArray args;
+            args.append(rts->getJSONStub(rts->presentObject(windowStub), windowStub->stubName()));
+
+            rts->emitEvent(this, "newWindow", args);
         }
 
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, commandLineArguments, )
@@ -43,7 +48,33 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, print, args)
         {
-            qDebug() << args.at(0).toString().toStdString().c_str();
+            QString output = "";
+
+            for (int i = 0; i < args.count(); i++) {
+                QJsonValue val = args.at(i);
+
+                if (i != 0) {
+                    output += " ";
+                }
+
+                if (val.isString()) {
+                    output += val.toString();
+                } else if (val.isDouble()) {
+                    output += QString::number(val.toDouble());
+                } else if (val.isBool()) {
+                    output += val.toBool() ? "true" : "false";
+                } else if (val.isNull()) {
+                    output += "null";
+                } else if (val.isUndefined()) {
+                    output += "undefined";
+                } else if (val.isArray()) {
+                    output += "[Array]";
+                } else if (val.isObject()) {
+                    output += "[Object]";
+                }
+            }
+
+            qDebug() << output.toStdString().c_str();
             return StubReturnValue();
         }
 
@@ -54,8 +85,7 @@ namespace Extensions {
             qint32 stubId = runtimeSupport()->presentObject(stub);
 
             StubReturnValue ret;
-            ret.result = QJsonValue(stubId);
-            ret.resultStubType = WindowStub::stubName();
+            ret.result = runtimeSupport()->getJSONStub(stubId, stub->stubName_());
             return ret;
         }
 

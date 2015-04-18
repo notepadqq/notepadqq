@@ -17,7 +17,7 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
         {
-            MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
+            /*MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
             QSharedPointer<Stub> stub = QSharedPointer<Stub>(
                         new EditorStub(window->currentEditorSharedPtr(), runtimeSupport()));
             qint32 stubId = runtimeSupport()->presentObject(stub);
@@ -25,7 +25,7 @@ namespace Extensions {
             StubReturnValue ret;
             ret.result = QJsonValue(stubId);
             ret.resultStubType = EditorStub::stubName();
-            return ret;
+            return ret;*/
         }
 
     }

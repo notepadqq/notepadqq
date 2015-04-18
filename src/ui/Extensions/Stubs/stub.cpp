@@ -106,7 +106,5 @@ namespace Extensions {
             return !(*this == other);
         }
 
-        //void emitEvent(const QString &eventName, const QJsonArray &args)
-
     }
 }

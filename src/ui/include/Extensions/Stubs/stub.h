@@ -40,7 +40,6 @@ namespace Extensions {
             struct StubReturnValue {
                 QJsonValue result;
                 QJsonValue error;
-                QString resultStubType;
             };
 
             enum class PointerType {

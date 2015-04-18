@@ -41,8 +41,6 @@ namespace Extensions {
                 QJsonObject retJson;
                 retJson.insert("result", ret.result);
                 retJson.insert("err", ret.error);
-                if (!ret.resultStubType.isNull())
-                    retJson.insert("resultStubType", ret.resultStubType);
                 return retJson;
             } else {
                 QJsonObject retJson;
@@ -72,6 +70,14 @@ namespace Extensions {
         qint64 id = ++counter;
         m_pointers.insert(id, stub);
         return id;
+    }
+
+    QJsonObject RuntimeSupport::getJSONStub(qint64 objectId, QString stubType)
+    {
+        QJsonObject obj;
+        obj.insert("$__nqq__stub_type", stubType);
+        obj.insert("id", objectId);
+        return obj;
     }
 
     qint64 RuntimeSupport::findStubId(Stubs::Stub *stub)

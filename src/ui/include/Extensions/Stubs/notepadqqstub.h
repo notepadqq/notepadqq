@@ -2,6 +2,7 @@
 #define EXTENSIONS_STUBS_NOTEPADQQ_H
 
 #include "include/Extensions/Stubs/stub.h"
+#include "include/mainwindow.h"
 
 namespace Extensions {
     namespace Stubs {
@@ -14,6 +15,10 @@ namespace Extensions {
             ~NotepadqqStub();
 
             NQQ_STUB_NAME("Notepadqq")
+
+        private slots:
+                void on_newWindow(MainWindow *window);
+
         private:
             NQQ_DECLARE_EXTENSION_METHOD(commandLineArguments)
             NQQ_DECLARE_EXTENSION_METHOD(version)

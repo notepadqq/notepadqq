@@ -20,7 +20,9 @@ namespace Extensions {
 
         QJsonObject handleRequest(const QJsonObject &request);
         qint64 presentObject(QSharedPointer<Stubs::Stub> stub);
+        QJsonObject getJSONStub(qint64 objectId, QString stubType);
         void emitEvent(Stubs::Stub *sender, QString event, const QJsonArray &args);
+
     signals:
 
     public slots:

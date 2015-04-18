@@ -3,7 +3,7 @@
 namespace Extensions {
     namespace Stubs {
 
-        EditorStub::EditorStub(QSharedPointer<QObject> object, RuntimeSupport *rts) : Stub(object, rts)
+        EditorStub::EditorStub(QWeakPointer<QObject> object, RuntimeSupport *rts) : Stub(object, rts)
         {
 
         }
