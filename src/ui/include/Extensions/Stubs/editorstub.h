@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "include/Extensions/Stubs/stub.h"
+#include "include/EditorNS/editor.h"
 
 namespace Extensions {
     namespace Stubs {
@@ -14,6 +15,9 @@ namespace Extensions {
             ~EditorStub();
 
             NQQ_STUB_NAME("Editor")
+
+        private:
+            NQQ_DECLARE_EXTENSION_METHOD(setValue)
         };
 
     }

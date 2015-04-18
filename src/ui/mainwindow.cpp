@@ -827,7 +827,7 @@ QSharedPointer<Editor> MainWindow::currentEditorSharedPtr()
 QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
 {
     // FIXME Remove
-    QMap<QString, Extensions::Extension*> extensions = Extensions::ExtensionsLoader::loadedExtensions();
+    /*QMap<QString, QSharedPointer<Extensions::Extension>> extensions = Extensions::ExtensionsLoader::loadedExtensions();
     Extensions::Extension *extension = extensions[extensionId];
 
     if (extensions.contains(extensionId)) {
@@ -846,7 +846,7 @@ QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
     } else {
         // Invalid extension id
         return NULL;
-    }
+    }*/
 }
 
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)

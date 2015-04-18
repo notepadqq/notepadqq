@@ -18,7 +18,7 @@ namespace Extensions {
         static QSharedPointer<Extensions::ExtensionsServer> startExtensionsServer();
         static QSharedPointer<ExtensionsServer> startExtensionsServer(QString name);
         static void loadExtensions(QString path);
-        static QMap<QString, Extension *> loadedExtensions();
+        static QMap<QString, QSharedPointer<Extension>> loadedExtensions();
         static QSharedPointer<ExtensionsServer> extensionsServer();
 
     signals:
@@ -30,7 +30,7 @@ namespace Extensions {
         ~ExtensionsLoader();
 
         static QSharedPointer<ExtensionsServer> m_extensionsServer;
-        static QMap<QString, Extension*> m_extensions;
+        static QMap<QString, QSharedPointer<Extension>> m_extensions;
     };
 
 }

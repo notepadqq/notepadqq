@@ -91,6 +91,17 @@ namespace Extensions {
             return m_rts;
         }
 
+        QString Stub::convertToString(const QJsonValue &value)
+        {
+            if (value.isString()) {
+                return value.toString();
+            } else if (value.isDouble()) {
+                return QString::number(value.toDouble());
+            } else {
+                return QString();
+            }
+        }
+
         bool Stub::operator==(const Stub &other) const
         {
             return m_pointerType == other.m_pointerType

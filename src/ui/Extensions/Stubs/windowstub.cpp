@@ -17,15 +17,15 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
         {
-            /*MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
+            RuntimeSupport *rts = runtimeSupport();
+            MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
             QSharedPointer<Stub> stub = QSharedPointer<Stub>(
-                        new EditorStub(window->currentEditorSharedPtr(), runtimeSupport()));
-            qint32 stubId = runtimeSupport()->presentObject(stub);
+                        new EditorStub(window->currentEditorSharedPtr().toWeakRef(), rts));
+            qint32 stubId = rts->presentObject(stub);
 
             StubReturnValue ret;
-            ret.result = QJsonValue(stubId);
-            ret.resultStubType = EditorStub::stubName();
-            return ret;*/
+            ret.result = rts->getJSONStub(stubId, stub->stubName_());
+            return ret;
         }
 
     }

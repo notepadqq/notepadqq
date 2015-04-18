@@ -4,7 +4,6 @@
 #include "include/notepadqq.h"
 #include "include/Extensions/runtimesupport.h"
 #include <QApplication>
-#include <QJsonArray>
 
 namespace Extensions {
     namespace Stubs {
@@ -77,17 +76,6 @@ namespace Extensions {
 
             println(output);
             return StubReturnValue();
-        }
-
-        NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, testGetWindow, )
-        {
-            QSharedPointer<Stub> stub = QSharedPointer<Stub>(
-                        new WindowStub(MainWindow::instances().first(), runtimeSupport()));
-            qint32 stubId = runtimeSupport()->presentObject(stub);
-
-            StubReturnValue ret;
-            ret.result = runtimeSupport()->getJSONStub(stubId, stub->stubName_());
-            return ret;
         }
 
     }

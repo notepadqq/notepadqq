@@ -5,7 +5,7 @@
 namespace Extensions {
 
     QSharedPointer<ExtensionsServer> ExtensionsLoader::m_extensionsServer;
-    QMap<QString, Extension*> ExtensionsLoader::m_extensions;
+    QMap<QString, QSharedPointer<Extension>> ExtensionsLoader::m_extensions;
 
     ExtensionsLoader::ExtensionsLoader(QObject *parent) : QObject(parent)
     {
@@ -48,12 +48,13 @@ namespace Extensions {
 
         QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
         while (it.hasNext()) {
-            Extension *ext = new Extension(it.next(), m_extensionsServer->socketPath()); // FIXME SharedPointer
+            QSharedPointer<Extension> ext = QSharedPointer<Extension>(
+                    new Extension(it.next(), m_extensionsServer->socketPath()));
             m_extensions.insert(ext->id(), ext);
         }
     }
 
-    QMap<QString, Extension*> ExtensionsLoader::loadedExtensions()
+    QMap<QString, QSharedPointer<Extension>> ExtensionsLoader::loadedExtensions()
     {
         return m_extensions;
     }

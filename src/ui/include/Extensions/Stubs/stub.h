@@ -20,6 +20,7 @@
 #include <QJsonValue>
 #include <functional>
 #include <QHash>
+#include <QJsonArray>
 
 namespace Extensions {
 
@@ -51,6 +52,8 @@ namespace Extensions {
 
             bool invoke(const QString &method, StubReturnValue &ret, const QJsonArray &args);
             virtual QString stubName_() const = 0;
+
+            QString convertToString(const QJsonValue &value);
 
             bool operator ==(const Stub &other) const;
             bool operator !=(const Stub &other) const;

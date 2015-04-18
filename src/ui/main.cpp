@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
+    // FIXME Remove all those Q_INVOKABLE in Editor, MainWindow, etc
     Extensions::ExtensionsLoader::startExtensionsServer();
     Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
 
