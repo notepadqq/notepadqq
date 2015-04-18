@@ -191,7 +191,7 @@ private:
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
-    QMap<Extensions::Extension*, QMenu*> m_extensionMenus;
+    QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();

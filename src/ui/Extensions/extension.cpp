@@ -11,7 +11,7 @@ namespace Extensions {
 
     Extension::Extension(QString path, QString serverSocketPath) : QObject(0)
     {
-        m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(rand() * 1048576);
+        m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(qrand());
 
         QFile fManifest(path + "/manifest.json");
         if (fManifest.open(QFile::ReadOnly | QFile::Text)) {
@@ -36,10 +36,12 @@ namespace Extensions {
             }
 
             QProcess *process = new QProcess(this);
+            process->setProcessChannelMode(QProcess::ForwardedChannels);
             QStringList args;
             args << path + "/main.js";
             args << serverSocketPath;
-            process->start("node", args);
+            args << m_extensionId;
+            process->start("node", args); // Are we sure it's "node"?
 
         } else {
             failedToLoadExtension(path, "manifest.json missing");

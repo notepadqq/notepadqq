@@ -15,9 +15,14 @@ namespace Extensions {
 
         NQQ_DEFINE_EXTENSION_METHOD(EditorStub, setValue, args)
         {
+            if (!(args.count() >= 1))
+                return StubReturnValue(); // FIXME Return error
+
             QWeakPointer<EditorNS::Editor> editor = objectWeakPtr().toStrongRef().staticCast<EditorNS::Editor>();
             if (editor.isNull())
-                return StubReturnValue();
+                return StubReturnValue(); // FIXME Return error
+
+            Q_ASSERT(args.count() >= 1);
 
             editor.data()->setValue(convertToString(args.at(0)));
             return StubReturnValue();

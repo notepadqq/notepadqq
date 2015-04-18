@@ -16,13 +16,12 @@ namespace Extensions {
 
             NQQ_STUB_NAME("Notepadqq")
 
-        private slots:
-                void on_newWindow(MainWindow *window);
-
         private:
             NQQ_DECLARE_EXTENSION_METHOD(commandLineArguments)
             NQQ_DECLARE_EXTENSION_METHOD(version)
             NQQ_DECLARE_EXTENSION_METHOD(print)
+
+            void on_newWindow(MainWindow *window);
         };
 
     }
