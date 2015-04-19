@@ -34,16 +34,12 @@ namespace Extensions {
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, commandLineArguments, )
         {
             QJsonArray arr = QJsonArray::fromStringList(QApplication::arguments());
-            StubReturnValue ret;
-            ret.result = arr;
-            return ret;
+            return StubReturnValue(arr);
         }
 
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, version, )
         {
-            StubReturnValue ret;
-            ret.result = QJsonValue(::Notepadqq::version);
-            return ret;
+            return StubReturnValue(QJsonValue(::Notepadqq::version));
         }
 
         NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, print, args)

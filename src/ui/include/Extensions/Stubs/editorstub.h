@@ -18,6 +18,9 @@ namespace Extensions {
 
         private:
             NQQ_DECLARE_EXTENSION_METHOD(setValue)
+            NQQ_DECLARE_EXTENSION_METHOD(value)
+
+            EditorNS::Editor *editor();
         };
 
     }

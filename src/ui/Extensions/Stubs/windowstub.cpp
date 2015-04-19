@@ -24,15 +24,13 @@ namespace Extensions {
                         new EditorStub(window->currentEditorSharedPtr().toWeakRef(), rts));
             qint32 stubId = rts->presentObject(stub);
 
-            StubReturnValue ret;
-            ret.result = rts->getJSONStub(stubId, stub->stubName_());
-            return ret;
+            return StubReturnValue(rts->getJSONStub(stubId, stub->stubName_()));
         }
 
         NQQ_DEFINE_EXTENSION_METHOD(WindowStub, addExtensionMenuItem, args)
         {
             if (!(args.count() >= 2))
-                return StubReturnValue(); // FIXME Return error
+                return StubReturnValue(ErrorCode::INVALID_ARGUMENT_NUMBER);
 
             RuntimeSupport *rts = runtimeSupport();
             MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
@@ -44,9 +42,7 @@ namespace Extensions {
                         new MenuItemStub(menuItem, rts));
             qint32 stubId = rts->presentObject(stub);
 
-            StubReturnValue ret;
-            ret.result = rts->getJSONStub(stubId, stub->stubName_());
-            return ret;
+            return StubReturnValue(rts->getJSONStub(stubId, stub->stubName_()));
         }
 
     }

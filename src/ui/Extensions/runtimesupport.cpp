@@ -34,21 +34,29 @@ namespace Extensions {
         QSharedPointer<Stubs::Stub> object = m_pointers.value(objectId);
 
         if (!object.isNull()) {
-            // FIXME if not object->isAlive(), then send an error and remove the stub from m_pointers
 
-            QJsonArray jsonArgs = request.value("args").toArray();
+            if (object->isAlive()) {
+                QJsonArray jsonArgs = request.value("args").toArray();
 
-            Stubs::Stub::StubReturnValue ret;
-            bool invoked = object->invoke(method, ret, jsonArgs);
+                Stubs::Stub::StubReturnValue ret;
+                bool invoked = object->invoke(method, ret, jsonArgs);
 
-            if (invoked) {
-                QJsonObject retJson;
-                retJson.insert("result", ret.result);
-                retJson.insert("err", ret.error);
-                return retJson;
+                if (invoked) {
+                    QJsonObject retJson;
+                    retJson.insert("result", ret.result);
+                    retJson.insert("err", static_cast<int>(ret.error));
+                    return retJson;
+                } else {
+                    QJsonObject retJson;
+                    retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::METHOD_NOT_FOUND));
+                    return retJson;
+                }
+
             } else {
+                m_pointers.remove(objectId);
+
                 QJsonObject retJson;
-                retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::METHOD_NOT_FOUND));
+                retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::OBJECT_DEALLOCATED));
                 return retJson;
             }
 

@@ -40,6 +40,15 @@ namespace Extensions {
             });
         }
 
+        bool Stub::isAlive()
+        {
+            if (m_pointerType == PointerType::DETACHED) {
+                return true;
+            } else {
+                return m_unmanagedPointer != nullptr || !m_weakPointer.isNull() || !m_sharedPointer.isNull();
+            }
+        }
+
         Stub::~Stub()
         {
 
@@ -100,13 +109,6 @@ namespace Extensions {
             } else {
                 return QString();
             }
-        }
-
-        Stub::StubReturnValue Stub::stubReturnError(ErrorCode error)
-        {
-            StubReturnValue ret;
-            ret.error = QJsonValue(static_cast<int>(error));
-            return ret;
         }
 
         bool Stub::operator==(const Stub &other) const

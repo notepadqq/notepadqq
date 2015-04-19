@@ -38,9 +38,21 @@ namespace Extensions {
             explicit Stub(QObject *object, RuntimeSupport *rts);
             virtual ~Stub() = 0;
 
+            enum class ErrorCode {
+                NONE = 0,
+                INVALID_ARGUMENT_NUMBER = 1,
+                OBJECT_DEALLOCATED = 2,
+                OBJECT_NOT_FOUND = 3,
+                METHOD_NOT_FOUND = 4,
+            };
+
             struct StubReturnValue {
                 QJsonValue result;
-                QJsonValue error;
+                ErrorCode error = ErrorCode::NONE;
+
+                StubReturnValue() {}
+                StubReturnValue(const QJsonValue &_result) : result(_result) {}
+                StubReturnValue(const ErrorCode &_error) : error(_error) {}
             };
 
             enum class PointerType {
@@ -50,14 +62,20 @@ namespace Extensions {
                 UNMANAGED_POINTER
             };
 
-            enum class ErrorCode {
-                NONE = 0,
-                INVALID_ARGUMENT_NUMBER = 1,
-                OBJECT_DEALLOCATED = 2,
-                OBJECT_NOT_FOUND = 3,
-                METHOD_NOT_FOUND = 4,
-            };
+            /**
+             * @brief Call this method to know if the object referenced by this stub is still valid.
+             * @return
+             */
+            virtual bool isAlive();
 
+            /**
+             * @brief Invoke a registered method. This method must have been registered with
+             *        registerMethod(), or using the NQQ_DECLARE_EXTENSION_METHOD macro.
+             * @param method method name
+             * @param ret return value of the method
+             * @param args arguments for the method
+             * @return true if the method has been invoked, false otherwise.
+             */
             bool invoke(const QString &method, StubReturnValue &ret, const QJsonArray &args);
             virtual QString stubName_() const = 0;
 
@@ -77,8 +95,6 @@ namespace Extensions {
 
             bool registerMethod(const QString &methodName, std::function<StubReturnValue (const QJsonArray &)> method);
             RuntimeSupport *runtimeSupport();
-
-            Stub::StubReturnValue stubReturnError(ErrorCode error);
 
         private:
             RuntimeSupport *m_rts;
