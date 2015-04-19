@@ -50,6 +50,14 @@ namespace Extensions {
                 UNMANAGED_POINTER
             };
 
+            enum class ErrorCode {
+                NONE = 0,
+                INVALID_ARGUMENT_NUMBER = 1,
+                OBJECT_DEALLOCATED = 2,
+                OBJECT_NOT_FOUND = 3,
+                METHOD_NOT_FOUND = 4,
+            };
+
             bool invoke(const QString &method, StubReturnValue &ret, const QJsonArray &args);
             virtual QString stubName_() const = 0;
 
@@ -69,6 +77,8 @@ namespace Extensions {
 
             bool registerMethod(const QString &methodName, std::function<StubReturnValue (const QJsonArray &)> method);
             RuntimeSupport *runtimeSupport();
+
+            Stub::StubReturnValue stubReturnError(ErrorCode error);
 
         private:
             RuntimeSupport *m_rts;

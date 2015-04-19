@@ -48,7 +48,7 @@ namespace Extensions {
                 return retJson;
             } else {
                 QJsonObject retJson;
-                retJson.insert("err", "Invalid method");
+                retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::METHOD_NOT_FOUND));
                 return retJson;
             }
 
@@ -56,7 +56,7 @@ namespace Extensions {
             m_pointers.remove(objectId);
 
             QJsonObject retJson;
-            retJson.insert("err", "Invalid object"); // FIXME Better error codes
+            retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::OBJECT_NOT_FOUND));
 
             return retJson;
         }

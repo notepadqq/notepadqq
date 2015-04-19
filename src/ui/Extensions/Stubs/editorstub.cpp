@@ -16,11 +16,11 @@ namespace Extensions {
         NQQ_DEFINE_EXTENSION_METHOD(EditorStub, setValue, args)
         {
             if (!(args.count() >= 1))
-                return StubReturnValue(); // FIXME Return error
+                return stubReturnError(ErrorCode::INVALID_ARGUMENT_NUMBER);
 
             QWeakPointer<EditorNS::Editor> editor = objectWeakPtr().toStrongRef().staticCast<EditorNS::Editor>();
             if (editor.isNull())
-                return StubReturnValue(); // FIXME Return error
+                return stubReturnError(ErrorCode::OBJECT_DEALLOCATED);
 
             Q_ASSERT(args.count() >= 1);
 

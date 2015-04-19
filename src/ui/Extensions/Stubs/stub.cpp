@@ -102,6 +102,13 @@ namespace Extensions {
             }
         }
 
+        Stub::StubReturnValue Stub::stubReturnError(ErrorCode error)
+        {
+            StubReturnValue ret;
+            ret.error = QJsonValue(static_cast<int>(error));
+            return ret;
+        }
+
         bool Stub::operator==(const Stub &other) const
         {
             return m_pointerType == other.m_pointerType
