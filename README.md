@@ -35,14 +35,14 @@ Notepadqq might work on Qt 5.2, but it's recommended to use Qt 5.3 or later. If 
 Distribution Packages
 ---------------------
 
-#### Ubuntu (official packages)
+#### Ubuntu (official packages) ★
 Notepadqq is available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
     sudo add-apt-repository ppa:notepadqq-team/notepadqq
     sudo apt-get update
     sudo apt-get install notepadqq
 
-#### Debian (official packages)
+#### Debian (official packages) ★
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
 #### Arch Linux
