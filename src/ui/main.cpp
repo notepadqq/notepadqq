@@ -124,10 +124,10 @@ void forceDefaultSettings()
         settings.setValue("Languages/makefile/indentWithSpaces", false);
     }
 
-    // Convert old "colorScheme" to new "Appearance/ColorScheme"
-    // TODO Remove me after a few months from 2014-dec-01.
-    if (!settings.contains("Appearance/ColorScheme") && settings.contains("colorScheme")) {
-        settings.setValue("Appearance/ColorScheme", settings.value("colorScheme"));
-        settings.remove("colorScheme");
+    // Use two spaces to indent ruby by default
+    if (!settings.contains("Languages/ruby/useDefaultSettings")) {
+        settings.setValue("Languages/ruby/useDefaultSettings", false);
+        settings.setValue("Languages/ruby/tabSize", 2);
+        settings.setValue("Languages/ruby/indentWithSpaces", true);
     }
 }
