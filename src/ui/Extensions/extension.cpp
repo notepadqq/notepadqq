@@ -37,11 +37,11 @@ namespace Extensions {
 
             QProcess *process = new QProcess(this);
             process->setProcessChannelMode(QProcess::ForwardedChannels);
+            process->setWorkingDirectory(path);
             QStringList args;
-            args << path + "/main.js";
             args << serverSocketPath;
             args << m_extensionId;
-            process->start("node", args); // Are we sure it's "node"?
+            process->start("./start.sh", args); // Are we sure it's ".sh"?
 
         } else {
             failedToLoadExtension(path, "manifest.json missing");

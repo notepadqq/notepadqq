@@ -40,10 +40,11 @@ namespace Extensions {
 
             enum class ErrorCode {
                 NONE = 0,
-                INVALID_ARGUMENT_NUMBER = 1,
-                OBJECT_DEALLOCATED = 2,
-                OBJECT_NOT_FOUND = 3,
-                METHOD_NOT_FOUND = 4,
+                INVALID_REQUEST = 1,
+                INVALID_ARGUMENT_NUMBER = 2,
+                OBJECT_DEALLOCATED = 3,
+                OBJECT_NOT_FOUND = 4,
+                METHOD_NOT_FOUND = 5,
             };
 
             struct StubReturnValue {

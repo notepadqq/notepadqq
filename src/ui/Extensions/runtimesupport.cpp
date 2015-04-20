@@ -25,7 +25,7 @@ namespace Extensions {
         // Fail if some fields are missing
         if (objectId <= 0 || method.isEmpty()) {
             QJsonObject retJson;
-            retJson.insert("err", "Invalid request");
+            retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::INVALID_REQUEST));
             return retJson;
         }
 
