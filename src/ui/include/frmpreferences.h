@@ -28,6 +28,14 @@ private slots:
     void on_chkLanguages_IndentWithSpaces_toggled(bool checked);
     void on_cmbColorScheme_currentIndexChanged(int index);
 
+    void on_btnRuby2_1Browse_clicked();
+
+    void on_btnRubyGems2_1Browse_clicked();
+
+    void on_txtRuby2_1_textChanged(const QString &arg1);
+
+    void on_txtRubyGems2_1_textChanged(const QString &arg1);
+
 private:
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
@@ -41,6 +49,8 @@ private:
     void setCurrentLanguageTempValue(QString key, QVariant value);
     void loadColorSchemes(QSettings *s);
     void saveColorScheme(QSettings *s);
+    bool extensionBrowseRuntime(QLineEdit *lineEdit);
+    void checkExecutableExists(QLineEdit *path);
 };
 
 #endif // FRMPREFERENCES_H

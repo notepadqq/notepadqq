@@ -2,7 +2,7 @@
 #define EXTENSION_H
 
 #include <QObject>
-#include <QScriptEngine>
+#include <QProcess>
 
 namespace Extensions {
 
@@ -13,16 +13,17 @@ namespace Extensions {
         explicit Extension(QString path, QString serverSocketPath);
         ~Extension();
 
-        Q_INVOKABLE QString id() const;
-        Q_INVOKABLE QString name() const;
+        QString id() const;
+        QString name() const;
     signals:
 
     public slots:
 
+    private slots:
+        void on_processError(QProcess::ProcessError error);
     private:
         QString m_extensionId;
         QString m_name;
-        QScriptEngine *m_uiScriptEngine;
         void failedToLoadExtension(QString path, QString reason);
     };
 

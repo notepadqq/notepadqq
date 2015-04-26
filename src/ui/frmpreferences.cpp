@@ -3,6 +3,7 @@
 #include "ui_frmpreferences.h"
 #include "include/EditorNS/editor.h"
 #include "include/mainwindow.h"
+#include <QFileDialog>
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -12,8 +13,8 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 {
     ui->setupUi(this);
 
-    setFixedSize(this->width(), this->height());
-    setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
+    //setFixedSize(this->width(), this->height());
+    //setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     m_previewEditor = Editor::getNewEditorUnmanagedPtr(this);
     m_previewEditor->setLanguageFromFileName("test.js");
@@ -41,6 +42,9 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadColorSchemes(&s);
 
     ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
+
+    ui->txtRuby2_1->setText(s.value("Extensions/Runtime_Ruby2.1", "").toString());
+    ui->txtRubyGems2_1->setText(s.value("Extensions/Runtime_RubyGems2.1", "").toString());
 }
 
 frmPreferences::~frmPreferences()
@@ -91,6 +95,9 @@ void frmPreferences::on_buttonBox_accepted()
     }
 
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
+
+    s.setValue("Extensions/Runtime_Ruby2.1", ui->txtRuby2_1->text());
+    s.setValue("Extensions/Runtime_RubyGems2.1", ui->txtRubyGems2_1->text());
 
     accept();
 }
@@ -266,4 +273,46 @@ void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
     QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
     QString name = selected.value("name").toString();
     m_previewEditor->setTheme(Editor::themeFromName(name));
+}
+
+bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
+{
+    QString fn = QFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
+    if (fn.isNull()) {
+        return false;
+    } else {
+        lineEdit->setText(fn);
+        return true;
+    }
+}
+
+void frmPreferences::checkExecutableExists(QLineEdit *path)
+{
+    QPalette palette;
+    QFileInfo fi(path->text());
+
+    if (!(fi.isFile() && fi.isExecutable())) {
+        palette.setColor(QPalette::ColorRole::Text, Qt::GlobalColor::red);
+    }
+    path->setPalette(palette);
+}
+
+void frmPreferences::on_btnRuby2_1Browse_clicked()
+{
+    extensionBrowseRuntime(ui->txtRuby2_1);
+}
+
+void frmPreferences::on_btnRubyGems2_1Browse_clicked()
+{
+    extensionBrowseRuntime(ui->txtRubyGems2_1);
+}
+
+void frmPreferences::on_txtRuby2_1_textChanged(const QString &)
+{
+    checkExecutableExists(ui->txtRuby2_1);
+}
+
+void frmPreferences::on_txtRubyGems2_1_textChanged(const QString &)
+{
+    checkExecutableExists(ui->txtRubyGems2_1);
 }

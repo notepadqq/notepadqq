@@ -32,7 +32,6 @@
 #include <QCommandLineParser>
 #include <QList>
 #include "include/mainwindow.h"
-#include "include/Extensions/extensionsserver.h"
 
 #define POINTVERSION "0.46.1" // major.minor.revision
 

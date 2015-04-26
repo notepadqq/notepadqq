@@ -3,9 +3,9 @@
 #include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QProcess>
 #include <QTime>
 #include <QDebug>
+#include <QSettings>
 
 namespace Extensions {
 
@@ -35,13 +35,30 @@ namespace Extensions {
                 return;
             }
 
-            QProcess *process = new QProcess(this);
-            process->setProcessChannelMode(QProcess::ForwardedChannels);
-            process->setWorkingDirectory(path);
-            QStringList args;
-            args << serverSocketPath;
-            args << m_extensionId;
-            process->start("./start.sh", args); // Are we sure it's ".sh"?
+            QString runtime = manifest.value("runtime").toString().toLower();
+            QString runtimeVersion = manifest.value("runtimeVersion").toString().toLower();
+            QString main = manifest.value("main").toString();
+
+            if (runtime == "ruby") {
+
+                QProcess *process = new QProcess(this);
+                process->setProcessChannelMode(QProcess::ForwardedChannels);
+                process->setWorkingDirectory(path);
+
+                QStringList args;
+                args << main;
+                args << serverSocketPath;
+                args << m_extensionId;
+
+                QSettings s;
+                QString nodePath = s.value("Extensions/Runtime_Ruby2.1", "").toString();
+
+                connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
+
+                process->start(nodePath, args);
+
+                // FIXME Handle QProcess 'error' event
+            }
 
         } else {
             failedToLoadExtension(path, "manifest.json missing");
@@ -62,6 +79,15 @@ namespace Extensions {
     Extension::~Extension()
     {
 
+    }
+
+    void Extension::on_processError(QProcess::ProcessError error)
+    {
+        if (error == QProcess::FailedToStart) {
+            failedToLoadExtension(m_name, "failed to start. Check your runtime.");
+        } else if (error == QProcess::Crashed) {
+            qWarning() << QString("%1 crashed.").arg(m_name).toStdWString().c_str();
+        }
     }
 
     void Extension::failedToLoadExtension(QString path, QString reason)
