@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webkitwidgets printsupport network script
+QT       += core gui svg widgets webkitwidgets printsupport network
 
 CONFIG += c++11
 
@@ -79,7 +79,8 @@ SOURCES += main.cpp\
     Extensions/Stubs/editorstub.cpp \
     Extensions/extensionsloader.cpp \
     globals.cpp \
-    Extensions/Stubs/menuitemstub.cpp
+    Extensions/Stubs/menuitemstub.cpp \
+    Extensions/installextension.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -118,7 +119,8 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/Stubs/editorstub.h \
     include/Extensions/extensionsloader.h \
     include/globals.h \
-    include/Extensions/Stubs/menuitemstub.h
+    include/Extensions/Stubs/menuitemstub.h \
+    include/Extensions/installextension.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -127,7 +129,8 @@ FORMS    += mainwindow.ui \
     frmindentationmode.ui \
     Search/dlgsearching.ui \
     Search/frmsearchreplace.ui \
-    frmlinenumberchooser.ui
+    frmlinenumberchooser.ui \
+    Extensions/installextension.ui
 
 RESOURCES += \
     resources.qrc

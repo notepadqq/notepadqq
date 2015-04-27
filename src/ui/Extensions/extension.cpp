@@ -84,7 +84,7 @@ namespace Extensions {
     void Extension::on_processError(QProcess::ProcessError error)
     {
         if (error == QProcess::FailedToStart) {
-            failedToLoadExtension(m_name, "failed to start. Check your runtime.");
+            failedToLoadExtension(m_name, "failed to start. Check your runtime."); // FIXME Add info about the missing runtime
         } else if (error == QProcess::Crashed) {
             qWarning() << QString("%1 crashed.").arg(m_name).toStdWString().c_str();
         }

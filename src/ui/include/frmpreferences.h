@@ -27,14 +27,10 @@ private slots:
     void on_txtLanguages_TabSize_valueChanged(int value);
     void on_chkLanguages_IndentWithSpaces_toggled(bool checked);
     void on_cmbColorScheme_currentIndexChanged(int index);
-
     void on_btnRuby2_1Browse_clicked();
-
-    void on_btnRubyGems2_1Browse_clicked();
-
+    void on_btnBundlerBrowse_clicked();
     void on_txtRuby2_1_textChanged(const QString &arg1);
-
-    void on_txtRubyGems2_1_textChanged(const QString &arg1);
+    void on_txtBundler_textChanged(const QString &arg1);
 
 private:
     Ui::frmPreferences *ui;

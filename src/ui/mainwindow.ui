@@ -14,7 +14,7 @@
    <string>Notepadqq</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset>
     <normaloff>:/icons/default/scalable/notepadqq.svg</normaloff>:/icons/default/scalable/notepadqq.svg</iconset>
   </property>
   <property name="documentMode">
@@ -278,6 +278,8 @@
     <property name="title">
      <string>Extensions</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="actionInstall_Extension"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -1012,10 +1014,13 @@
     <string>Ctrl+G</string>
    </property>
   </action>
+  <action name="actionInstall_Extension">
+   <property name="text">
+    <string>Install Extension...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

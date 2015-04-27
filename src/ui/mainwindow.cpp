@@ -15,6 +15,7 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/frmlinenumberchooser.h"
 #include "include/Extensions/Stubs/windowstub.h"
+#include "include/Extensions/installextension.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -2002,4 +2003,11 @@ void MainWindow::on_actionGo_to_line_triggered()
         int line = frm->value();
         editor->setSelection(line - 1, 0, line - 1, 0);
     }
+}
+
+void MainWindow::on_actionInstall_Extension_triggered()
+{
+    Extensions::InstallExtension *installExt = new Extensions::InstallExtension(this);
+    installExt->exec();
+    installExt->deleteLater();
 }

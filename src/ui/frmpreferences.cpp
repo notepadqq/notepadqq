@@ -44,7 +44,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
 
     ui->txtRuby2_1->setText(s.value("Extensions/Runtime_Ruby2.1", "").toString());
-    ui->txtRubyGems2_1->setText(s.value("Extensions/Runtime_RubyGems2.1", "").toString());
+    ui->txtBundler->setText(s.value("Extensions/Runtime_Bundler", "").toString());
 }
 
 frmPreferences::~frmPreferences()
@@ -97,7 +97,7 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
 
     s.setValue("Extensions/Runtime_Ruby2.1", ui->txtRuby2_1->text());
-    s.setValue("Extensions/Runtime_RubyGems2.1", ui->txtRubyGems2_1->text());
+    s.setValue("Extensions/Runtime_Bundler", ui->txtBundler->text());
 
     accept();
 }
@@ -302,9 +302,9 @@ void frmPreferences::on_btnRuby2_1Browse_clicked()
     extensionBrowseRuntime(ui->txtRuby2_1);
 }
 
-void frmPreferences::on_btnRubyGems2_1Browse_clicked()
+void frmPreferences::on_btnBundlerBrowse_clicked()
 {
-    extensionBrowseRuntime(ui->txtRubyGems2_1);
+    extensionBrowseRuntime(ui->txtBundler);
 }
 
 void frmPreferences::on_txtRuby2_1_textChanged(const QString &)
@@ -312,7 +312,7 @@ void frmPreferences::on_txtRuby2_1_textChanged(const QString &)
     checkExecutableExists(ui->txtRuby2_1);
 }
 
-void frmPreferences::on_txtRubyGems2_1_textChanged(const QString &)
+void frmPreferences::on_txtBundler_textChanged(const QString &)
 {
-    checkExecutableExists(ui->txtRubyGems2_1);
+    checkExecutableExists(ui->txtBundler);
 }

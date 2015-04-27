@@ -440,24 +440,24 @@
                 <item row="2" column="0">
                  <widget class="QLabel" name="label_6">
                   <property name="text">
-                   <string>RubyGems 2.1 path:</string>
+                   <string>Bundler path:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_4">
                   <item>
-                   <widget class="QLineEdit" name="txtRubyGems2_1"/>
+                   <widget class="QLineEdit" name="txtBundler"/>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="btnRubyGems2_1Browse">
+                   <widget class="QPushButton" name="btnBundlerBrowse">
                     <property name="text">
                      <string>Browse...</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="lnkRubyGems2_1Detect">
+                   <widget class="QLabel" name="lnkBundlerDetect">
                     <property name="text">
                      <string>&lt;a href=&quot;#&quot;&gt;Detect&lt;/a&gt;</string>
                     </property>
