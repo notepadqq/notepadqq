@@ -67,7 +67,7 @@ namespace Extensions {
 
     QString InstallExtension::getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName, bool create)
     {
-        if (extensionUniqueName.length() <= 3)
+        if (extensionUniqueName.isEmpty())
             return QString();
 
         QDir path(extensionsPath);

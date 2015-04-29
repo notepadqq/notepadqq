@@ -19,11 +19,9 @@ namespace Extensions {
             m_name = manifest.value("name").toString();
 
             if (m_name.isEmpty()) {
-                failedToLoadExtension(path, "name missing or invalid");
+                failedToLoadExtension(path, tr("name missing or invalid"));
                 return;
             }
-
-            // FIXME Check reverse-dns: ^[A-Za-z]{2,6}((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+$
 
             m_runtime = manifest.value("runtime").toString().toLower();
             QString main = manifest.value("main").toString();
@@ -48,7 +46,7 @@ namespace Extensions {
             }
 
         } else {
-            failedToLoadExtension(path, "unable to read manifest.json");
+            failedToLoadExtension(path, tr("unable to read manifest.json"));
             return;
         }
 
