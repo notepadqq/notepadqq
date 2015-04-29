@@ -35,5 +35,20 @@ namespace Extensions {
             return StubReturnValue(editor()->value());
         }
 
+        NQQ_DEFINE_EXTENSION_METHOD(EditorStub, setSelectionsText, args)
+        {
+            if (!args.at(0).isArray())
+                return StubReturnValue(ErrorCode::INVALID_ARGUMENT_TYPE);
+
+            QStringList strList;
+            QJsonArray jsonArr = args.at(0).toArray();
+            for (int i = 0; i < jsonArr.count(); i++) {
+                strList.append(convertToString(jsonArr.at(i)));
+            }
+
+            editor()->setSelectionsText(strList);
+            return StubReturnValue();
+        }
+
     }
 }

@@ -42,9 +42,10 @@ namespace Extensions {
                 NONE = 0,
                 INVALID_REQUEST = 1,
                 INVALID_ARGUMENT_NUMBER = 2,
-                OBJECT_DEALLOCATED = 3,
-                OBJECT_NOT_FOUND = 4,
-                METHOD_NOT_FOUND = 5,
+                INVALID_ARGUMENT_TYPE = 3,
+                OBJECT_DEALLOCATED = 4,
+                OBJECT_NOT_FOUND = 5,
+                METHOD_NOT_FOUND = 6,
             };
 
             struct StubReturnValue {

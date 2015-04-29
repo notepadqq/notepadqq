@@ -19,6 +19,7 @@ namespace Extensions {
         private:
             NQQ_DECLARE_EXTENSION_METHOD(setValue)
             NQQ_DECLARE_EXTENSION_METHOD(value)
+            NQQ_DECLARE_EXTENSION_METHOD(setSelectionsText)
 
             EditorNS::Editor *editor();
         };
