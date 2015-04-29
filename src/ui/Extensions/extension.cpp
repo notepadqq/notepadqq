@@ -23,10 +23,12 @@ namespace Extensions {
                 return;
             }
 
-            QString runtime = manifest.value("runtime").toString().toLower();
+            // FIXME Check reverse-dns: ^[A-Za-z]{2,6}((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+$
+
+            m_runtime = manifest.value("runtime").toString().toLower();
             QString main = manifest.value("main").toString();
 
-            if (runtime == "ruby") {
+            if (m_runtime == "ruby") {
 
                 QProcess *process = new QProcess(this);
                 process->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -43,8 +45,6 @@ namespace Extensions {
                 connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
 
                 process->start(nodePath, args);
-
-                // FIXME Handle QProcess 'error' event
             }
 
         } else {
@@ -93,7 +93,7 @@ namespace Extensions {
     void Extension::on_processError(QProcess::ProcessError error)
     {
         if (error == QProcess::FailedToStart) {
-            failedToLoadExtension(m_name, "failed to start. Check your runtime."); // FIXME Add info about the missing runtime
+            failedToLoadExtension(m_name, tr("failed to start. Check your runtime: %1").arg(m_runtime));
         } else if (error == QProcess::Crashed) {
             qWarning() << QString("%1 crashed.").arg(m_name).toStdWString().c_str();
         }
@@ -102,7 +102,7 @@ namespace Extensions {
     void Extension::failedToLoadExtension(QString path, QString reason)
     {
         // FIXME Mark extension as broken
-        qWarning() << QString("Failed to load %1: %2").arg(path).arg(reason).toStdString().c_str();
+        qWarning() << tr("Failed to load %1: %2").arg(path).arg(reason).toStdString().c_str();
     }
 
     QString Extension::id() const

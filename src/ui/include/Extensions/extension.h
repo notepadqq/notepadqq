@@ -25,6 +25,7 @@ namespace Extensions {
     private:
         QString m_extensionId;
         QString m_name;
+        QString m_runtime;
         void failedToLoadExtension(QString path, QString reason);
     };
 
