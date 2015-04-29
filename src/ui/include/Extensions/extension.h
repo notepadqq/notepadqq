@@ -15,6 +15,7 @@ namespace Extensions {
 
         QString id() const;
         QString name() const;
+        static QJsonObject getManifest(const QString &extensionPath);
     signals:
 
     public slots:

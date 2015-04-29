@@ -14,11 +14,23 @@ namespace Extensions {
         Q_OBJECT
 
     public:
-        explicit InstallExtension(QWidget *parent = 0);
+        explicit InstallExtension(const QString &extensionFilename, QWidget *parent = 0);
         ~InstallExtension();
+
+    private slots:
+        void on_btnCancel_clicked();
+        void on_btnInstall_clicked();
 
     private:
         Ui::InstallExtension *ui;
+        QString m_extensionFilename;
+        QString m_uniqueName;
+        QString m_runtime;
+
+        static void extractExtension(const QString &archivePath, const QString &destination);
+        static QString readExtensionManifest(const QString &archivePath);
+        static void installRuby1_2Extension(const QString &extensionPath);
+        static QString getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName, bool create = true);
     };
 
 }

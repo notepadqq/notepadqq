@@ -13,21 +13,9 @@ namespace Extensions {
     {
         m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(qrand());
 
-        QFile fManifest(path + "/manifest.json");
-        if (fManifest.open(QFile::ReadOnly | QFile::Text)) {
-            QTextStream in(&fManifest);
-            QString content = in.readAll();
-            fManifest.close();
+        QJsonObject manifest = getManifest(path);
 
-            QJsonParseError err;
-            QJsonDocument manifestDoc = QJsonDocument::fromJson(content.toUtf8(), &err);
-
-            if (err.error != QJsonParseError::NoError) {
-                failedToLoadExtension(path, "manifest.json: " + err.errorString());
-                return;
-            }
-
-            QJsonObject manifest = manifestDoc.object();
+        if (!manifest.isEmpty()) {
             m_name = manifest.value("name").toString();
 
             if (m_name.isEmpty()) {
@@ -36,7 +24,6 @@ namespace Extensions {
             }
 
             QString runtime = manifest.value("runtime").toString().toLower();
-            QString runtimeVersion = manifest.value("runtimeVersion").toString().toLower();
             QString main = manifest.value("main").toString();
 
             if (runtime == "ruby") {
@@ -61,7 +48,7 @@ namespace Extensions {
             }
 
         } else {
-            failedToLoadExtension(path, "manifest.json missing");
+            failedToLoadExtension(path, "unable to read manifest.json");
             return;
         }
 
@@ -79,6 +66,28 @@ namespace Extensions {
     Extension::~Extension()
     {
 
+    }
+
+    QJsonObject Extension::getManifest(const QString &extensionPath)
+    {
+        QFile fManifest(extensionPath + "/manifest.json");
+        if (fManifest.open(QFile::ReadOnly | QFile::Text)) {
+            QTextStream in(&fManifest);
+            QString content = in.readAll();
+            fManifest.close();
+
+            QJsonParseError err;
+            QJsonDocument manifestDoc = QJsonDocument::fromJson(content.toUtf8(), &err);
+
+            if (err.error != QJsonParseError::NoError) {
+                return QJsonObject();
+            }
+
+            return manifestDoc.object();
+
+        } else {
+            return QJsonObject();
+        }
     }
 
     void Extension::on_processError(QProcess::ProcessError error)

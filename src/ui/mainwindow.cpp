@@ -2007,7 +2007,10 @@ void MainWindow::on_actionGo_to_line_triggered()
 
 void MainWindow::on_actionInstall_Extension_triggered()
 {
-    Extensions::InstallExtension *installExt = new Extensions::InstallExtension(this);
-    installExt->exec();
-    installExt->deleteLater();
+    QString file = QFileDialog::getOpenFileName(this, tr("Extension"), QString(), "Notepadqq extensions (*.nqqext)");
+    if (!file.isNull()) {
+        Extensions::InstallExtension *installExt = new Extensions::InstallExtension(file, this);
+        installExt->exec();
+        installExt->deleteLater();
+    }
 }
