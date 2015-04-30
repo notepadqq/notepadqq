@@ -9,7 +9,7 @@ namespace Extensions {
     RuntimeSupport::RuntimeSupport(QObject *parent) : QObject(parent)
     {
         QSharedPointer<Stubs::Stub> nqqStub = QSharedPointer<Stubs::Stub>(new Stubs::NotepadqqStub(this));
-        m_pointers.insert(1, nqqStub);
+        m_pointers.insert(NQQ_STUB_ID, nqqStub);
     }
 
     RuntimeSupport::~RuntimeSupport()
@@ -120,6 +120,15 @@ namespace Extensions {
 
             ExtensionsLoader::extensionsServer()->broadcastMessage(retJson);
         }
+    }
+
+    QJsonObject RuntimeSupport::getCurrentExtensionStartedEvent()
+    {
+        QJsonObject retJson;
+        retJson.insert("objectId", NQQ_STUB_ID);
+        retJson.insert("event", "currentExtensionStarted");
+        retJson.insert("args", QJsonArray());
+        return retJson;
     }
 
 }

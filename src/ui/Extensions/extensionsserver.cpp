@@ -48,8 +48,11 @@ namespace Extensions {
         QLocalSocket *client = m_server->nextPendingConnection();
         if (client != nullptr) {
             m_sockets.append(client);
+
             connect(client, &QLocalSocket::readyRead, this, [=] { on_clientMessage(client); });
             connect(client, &QLocalSocket::disconnected, this, [=] { on_socketDisconnected(client); });
+
+            sendMessage(client, m_extensionsRTS->getCurrentExtensionStartedEvent());
         }
     }
 
@@ -94,6 +97,18 @@ namespace Extensions {
                 QTextStream stream(socket);
                 stream << jsonMessage << "\n";
             }
+        }
+    }
+
+    void ExtensionsServer::sendMessage(QLocalSocket *socket, const QJsonObject &message)
+    {
+        if (socket->isOpen()) {
+            QString jsonMessage = QString(
+                        QJsonDocument(message).toJson(QJsonDocument::Compact))
+                    .trimmed();
+
+            QTextStream stream(socket);
+            stream << jsonMessage << "\n";
         }
     }
 

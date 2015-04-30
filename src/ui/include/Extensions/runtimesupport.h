@@ -23,11 +23,13 @@ namespace Extensions {
         QJsonObject getJSONStub(qint64 objectId, QString stubType);
         void emitEvent(Stubs::Stub *sender, QString event, const QJsonArray &args);
 
+        QJsonObject getCurrentExtensionStartedEvent();
     signals:
 
     public slots:
 
     private:
+        const qint64 NQQ_STUB_ID = 1;
         QHash<qint64, QSharedPointer<Stubs::Stub>> m_pointers;
         //QHash<QSharedPointer<Stubs::Stub>, qint64> m_pointersRev;
         QSharedPointer<ExtensionsServer> m_extensionServer;

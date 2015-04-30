@@ -33,6 +33,7 @@ namespace Extensions {
 
         void on_clientMessage(QLocalSocket *socket);
         void on_socketDisconnected(QLocalSocket *socket);
+        void sendMessage(QLocalSocket *socket, const QJsonObject &message);
     };
 
 }

@@ -74,5 +74,23 @@ namespace Extensions {
             return StubReturnValue();
         }
 
+        NQQ_DEFINE_EXTENSION_METHOD(NotepadqqStub, windows, )
+        {
+            QList<MainWindow *> windows = MainWindow::instances();
+            RuntimeSupport *rts = runtimeSupport();
+
+            QJsonArray jsonWindows;
+
+            for (int i = 0; i < windows.length(); i++) {
+                QSharedPointer<Extensions::Stubs::WindowStub> windowStub =
+                        QSharedPointer<Extensions::Stubs::WindowStub>(
+                            new Extensions::Stubs::WindowStub(windows[i], rts));
+
+                QJsonObject stub = rts->getJSONStub(rts->presentObject(windowStub), windowStub->stubName());
+                jsonWindows.append(stub);
+            }
+
+            return StubReturnValue(jsonWindows);
+        }
     }
 }
