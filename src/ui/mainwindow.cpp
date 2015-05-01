@@ -150,9 +150,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 
-    // FIXME Could be too early to send the event? Extensions could have not been connected yet.
     emit Notepadqq::getInstance().newWindow(this);
-
 }
 
 MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)
