@@ -81,6 +81,14 @@ var Languages = new function() {
             fileExtensions: ["clj", "cljs", "cljx"]
         },
 
+        "cmake": {
+            name: "CMake",
+            mode: "cmake",
+            mime: "text/x-cmake",
+            fileExtensions: ["cmake", "cmake.in"],
+            fileNames: ["CMakeLists.txt"]
+        },
+
         "coffeescript": {
             name: "CoffeeScript",
             mode: "coffeescript",
@@ -101,6 +109,13 @@ var Languages = new function() {
             mode: "cypher",
             mime: "application/x-cypher-query",
             fileExtensions: ["cyp", "cypher"]
+        },
+
+        "cython": {
+            name: "Cython",
+            mode: "python",
+            mime: "text/x-cython",
+            fileExtensions: ["pyx", "pxd", "pxi"]
         },
 
         "css": {
@@ -521,13 +536,6 @@ var Languages = new function() {
             firstNonBlankLine: [/^#!.*\/python[\d\.]*($| )/, /^#!\/usr\/bin\/env python[\d\.]*($| )/]
         },
 
-        "cython": {
-            name: "Cython",
-            mode: "python",
-            mime: "text/x-cython",
-            fileExtensions: ["pyx", "pxi", "pxd"]
-        },
-
         "puppet": {
             name: "Puppet",
             mode: "puppet",
@@ -751,6 +759,13 @@ var Languages = new function() {
             mode: "tornado",
             mime: "text/x-tornado",
             fileExtensions: []
+        },
+
+        "troff": {
+            name: "troff",
+            mode: "troff",
+            mime: "troff",
+            fileExtensions: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
         },
 
         "vb": {
