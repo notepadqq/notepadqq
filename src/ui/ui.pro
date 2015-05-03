@@ -27,7 +27,9 @@ DEFINES += QT_NO_URL_CAST_FROM_STRING
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q
 
-PYTHON = python
+isEmpty(PYTHON) {
+    PYTHON = python
+}
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
