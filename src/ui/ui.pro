@@ -27,6 +27,8 @@ DEFINES += QT_NO_URL_CAST_FROM_STRING
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q
 
+PYTHON = python
+
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
         DESTDIR = ../../out/debug/lib
@@ -118,7 +120,7 @@ editorTarget.target = make_editor
 editorTarget.commands = (cd \"$$PWD\" && \
                          $${CMD_FULLDELETE} \"$$APPDATADIR/editor\" && \
                          cd \"../editor\" && \
-                         $(MAKE) DESTDIR=\"$$APPDATADIR/editor\")
+                         $${PYTHON} build.py \"$$APPDATADIR/editor\")
 
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
