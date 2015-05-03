@@ -135,6 +135,11 @@ void Extensions::InstallExtension::on_btnInstall_clicked()
 {
     // FIXME Show progress bar
 
+    if (m_runtime != "ruby") {
+        QMessageBox::critical(this, tr("Error"), tr("Unsupported runtime: %1").arg(m_runtime));
+        return;
+    }
+
     QString extFolder = getAbsoluteExtensionFolder(Notepadqq::extensionsPath(), m_uniqueName, true);
     if (!extFolder.isNull()) {
         QDir extFolderDir(extFolder);
@@ -149,15 +154,13 @@ void Extensions::InstallExtension::on_btnInstall_clicked()
                 installRuby1_2Extension(extFolder);
 
                 accept();
-            } else {
-                // FIXME Error: unknown runtime
             }
 
         } else {
-            // FIXME Error: unable to create extension folder in Notepadqq::extensionsPath()
+            QMessageBox::critical(this, tr("Error"), tr("Unable to create extension folder %1").arg(extFolder));
         }
     } else {
-        // FIXME Error: unable to create extension folder in Notepadqq::extensionsPath()
+        QMessageBox::critical(this, tr("Error"), tr("Unable to create extension folder in %1").arg(Notepadqq::extensionsPath()));
     }
 
 }
