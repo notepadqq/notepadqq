@@ -105,6 +105,14 @@ namespace Extensions {
             QSharedPointer<QObject> m_sharedPointer;
             QObject *m_unmanagedPointer = nullptr;
             QHash<QString, std::function<StubReturnValue (const QJsonArray &)>> m_methods;
+
+            /**
+             * @brief jsonValueToArgument
+             * @param value
+             * @param ok Output parameter: it is touched and set to false ONLY if there is an error.
+             * @return
+             */
+            QGenericArgument jsonValueToArgument(const QJsonArray &args, int i, bool &ok);
         };
 
     }

@@ -89,11 +89,79 @@ namespace Extensions {
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
         {
             auto fun = m_methods.value(method);
-            if (fun != nullptr) {
+            if (fun == nullptr)
+            {
+                // No explicit stub method found: try to invoke it on the real object
+                if (m_pointerType == PointerType::DETACHED) {
+                    return false;
+                } else {
+
+                    // FIXME See this: https://gist.github.com/andref/2838534
+
+                    if (args.count() > 10) {
+                        return false;
+                    }
+
+                    bool ok = true;
+                    QGenericArgument arg0 = jsonValueToArgument(args, 0, ok);
+                    QGenericArgument arg1 = jsonValueToArgument(args, 1, ok);
+                    QGenericArgument arg2 = jsonValueToArgument(args, 2, ok);
+                    QGenericArgument arg3 = jsonValueToArgument(args, 3, ok);
+                    QGenericArgument arg4 = jsonValueToArgument(args, 4, ok);
+                    QGenericArgument arg5 = jsonValueToArgument(args, 5, ok);
+                    QGenericArgument arg6 = jsonValueToArgument(args, 6, ok);
+                    QGenericArgument arg7 = jsonValueToArgument(args, 7, ok);
+                    QGenericArgument arg8 = jsonValueToArgument(args, 8, ok);
+                    QGenericArgument arg9 = jsonValueToArgument(args, 9, ok);
+
+                    if (!ok) {
+                        return false;
+                    }
+
+                    QJsonValue retval;
+                    bool invoked = QMetaObject::invokeMethod(
+                                objectUnmanagedPtr(),
+                                method.toStdString().c_str(),
+                                Qt::DirectConnection,
+                                Q_RETURN_ARG(QJsonValue, retval),
+                                arg0, arg1, arg2, arg3, arg4,
+                                arg5, arg6, arg7, arg8, arg9);
+
+                    if (invoked) {
+                        ret.error = ErrorCode::NONE;
+                        ret.result = retval;
+                    } else {
+                        return false;
+                    }
+                }
+
+            } else {
+                // Explicit stub method found: call it
                 ret = fun(args);
                 return true;
             }
             return false;
+        }
+
+        QGenericArgument Stub::jsonValueToArgument(const QJsonArray &args, int i, bool &ok)
+        {
+            if (i >= args.size()) {
+                // It's ok! We need an empty QGenericArgument
+                return QGenericArgument();
+            }
+
+            if (args.at(i).isBool()) {
+                return Q_ARG(bool, args.at(i).toBool());
+            } else if (args.at(i).isDouble()) {
+                return Q_ARG(bool, args.at(i).toDouble());
+            } else if (args.at(i).isNull()) {
+                return Q_ARG(void *, nullptr);
+            } else if (args.at(i).isString()) {
+                return Q_ARG(QString, args.at(i).toString());
+            } else {
+                ok = false;
+                return QGenericArgument();
+            }
         }
 
         bool Stub::registerMethod(const QString &methodName, std::function<Stub::StubReturnValue (const QJsonArray &)> method)
