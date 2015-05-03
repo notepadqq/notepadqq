@@ -76,7 +76,14 @@ namespace Extensions {
 
         QObject *Stub::objectUnmanagedPtr()
         {
-            return m_unmanagedPointer;
+            if (m_pointerType == PointerType::WEAK_POINTER)
+                return m_weakPointer.data();
+            else if (m_pointerType == PointerType::SHARED_POINTER)
+                return m_sharedPointer.data();
+            else if (m_pointerType == PointerType::UNMANAGED_POINTER)
+                return m_unmanagedPointer;
+            else
+                return nullptr;
         }
 
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
