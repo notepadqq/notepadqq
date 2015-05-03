@@ -15,8 +15,7 @@ namespace Extensions {
 
         EditorNS::Editor *EditorStub::editor()
         {
-            QWeakPointer<EditorNS::Editor> editor = objectWeakPtr().toStrongRef().staticCast<EditorNS::Editor>();
-            return editor.data();
+            return static_cast<EditorNS::Editor*>(objectUnmanagedPtr());
         }
 
         NQQ_DEFINE_EXTENSION_METHOD(EditorStub, setValue, args)
