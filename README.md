@@ -9,7 +9,7 @@ Build
 | Qt 5.3             | Qt 5.3        |
 | libqt5webkit5-dev  | libqt5webkit5 |
 | libqt5svg5-dev     | libqt5svg5    |
-|                    | coreutils     |
+| python             | coreutils     |
 
 #### Get the source
 

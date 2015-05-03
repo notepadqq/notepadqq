@@ -3,6 +3,14 @@ import sys
 import os
 import shutil
 import re
+import errno
+
+def mkdirs(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
 
 def copy(source, destdir):
   print("Copying {0} to {1}.".format(os.path.abspath(source), os.path.abspath(destdir)))
@@ -31,7 +39,8 @@ if (len(sys.argv) != 2):
 print("Copying editor files...")
 
 destdir = sys.argv[1]
-os.makedirs(destdir)
+shutil.rmtree(destdir)
+mkdirs(destdir)
 
 copyall(["classes", "styles", "images", "app.js", "index.html", "init.js"], destdir)  
 copy("libs/jquery", os.path.join(destdir, "libs"))
@@ -41,7 +50,7 @@ copy("libs/jquery", os.path.join(destdir, "libs"))
 print("Copying CodeMirror files...")
 
 cm_destdir = os.path.join(destdir, "libs/codemirror")
-os.makedirs(cm_destdir)
+mkdirs(cm_destdir)
 
 copyall(["addon", "keymap", "lib", "mode", "theme", "LICENSE"], cm_destdir, "./libs/codemirror")
 
