@@ -89,35 +89,9 @@ namespace Extensions {
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
         {
             auto fun = m_methods.value(method);
-            if (fun == nullptr)
-            {
+            if (fun == nullptr) {
                 // No explicit stub method found: try to invoke it on the real object
-                if (m_pointerType == PointerType::DETACHED) {
-                    return false;
-                } else {
-
-                    ErrorCode err = ErrorCode::NONE;
-
-                    QObject *obj = objectUnmanagedPtr();
-
-                    int index = obj->metaObject()->indexOfMethod("foo(qulonglong)");
-                    QMetaMethod metaMethod = t->metaObject()->method(index);
-
-                    QVariant retval = genericCall(objectUnmanagedPtr(),
-                                      metaMethod,
-                                      args.toVariantList(),
-                                      err);
-
-                    if (err == ErrorCode::NONE) {
-                        // FIXME Conversion to jsonValue??
-                        ret = Stub::StubReturnValue(retval.toJsonValue());
-                        return true;
-                    } else {
-                        ret = Stub::StubReturnValue(err);
-                        return false;
-                    }
-                }
-
+                return invokeOnRealObject(method, ret, args);
             } else {
                 // Explicit stub method found: call it
                 ret = fun(args);
@@ -126,6 +100,46 @@ namespace Extensions {
             return false;
         }
 
+        bool Stub::invokeOnRealObject(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
+        {
+            if (m_pointerType == PointerType::DETACHED) {
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                return false;
+            } else {
+
+                ErrorCode err = ErrorCode::NONE;
+
+                QObject *obj = objectUnmanagedPtr();
+
+                // Find a method with the same name of the one we're looking for
+                int methodCount = obj->metaObject()->methodCount();
+                for (int i = 0; i < methodCount; i++) {
+                    QMetaMethod metaMethod = obj->metaObject()->method(i);
+
+                    if (metaMethod.name() != method)
+                        continue;
+
+                    QVariant retval = genericCall(obj,
+                                      metaMethod,
+                                      args.toVariantList(),
+                                      err);
+
+                    if (err == ErrorCode::NONE) {
+                        // Ok!!
+                        ret = Stub::StubReturnValue(QJsonValue::fromVariant(retval));
+                        return true;
+                    } else {
+                        // Keep searching: maybe it's another overload
+                        continue;
+                    }
+                }
+
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                return false;
+            }
+        }
+
+        // https://gist.github.com/andref/2838534
         QVariant Stub::genericCall(QObject* object, QMetaMethod metaMethod, QVariantList args, ErrorCode &error)
         {
             // Convert the arguments
@@ -136,7 +150,8 @@ namespace Extensions {
 
             QList<QByteArray> methodTypes = metaMethod.parameterTypes();
             if (methodTypes.size() < args.size()) {
-                qWarning() << "Insufficient arguments to call" << metaMethod.signature();
+                //qWarning() << "Insufficient arguments to call" << metaMethod.signature();
+                error = ErrorCode::INVALID_ARGUMENT_NUMBER;
                 return QVariant();
             }
 
@@ -144,10 +159,10 @@ namespace Extensions {
                 const QVariant& arg = args.at(i);
 
                 QByteArray methodTypeName = methodTypes.at(i);
-                QByteArray argTypeName = arg.typeName();
+                //QByteArray argTypeName = arg.typeName();
 
                 QVariant::Type methodType = QVariant::nameToType(methodTypeName);
-                QVariant::Type argType = arg.type();
+                //QVariant::Type argType = arg.type();
 
                 QVariant copy = QVariant(arg);
 
@@ -157,8 +172,9 @@ namespace Extensions {
                 if (copy.type() != methodType) {
                     if (copy.canConvert(methodType)) {
                         if (!copy.convert(methodType)) {
-                            qWarning() << "Cannot convert" << argTypeName
-                                       << "to" << methodTypeName;
+                            /*qWarning() << "Cannot convert" << argTypeName
+                                       << "to" << methodTypeName;*/
+                            error = ErrorCode::INVALID_ARGUMENT_TYPE;
                             return QVariant();
                         }
                     }
@@ -188,8 +204,11 @@ namespace Extensions {
                 arguments << genericArgument;
             }
 
-            QVariant returnValue(QMetaType::type(metaMethod.typeName()),
-                static_cast<void*>(NULL));
+            QVariant returnValue;
+            if (QString(metaMethod.typeName()) != "void") {
+                returnValue = QVariant(QMetaType::type(metaMethod.typeName()),
+                    static_cast<void*>(NULL));
+            }
 
             QGenericReturnArgument returnArgument(
                 metaMethod.typeName(),
@@ -215,7 +234,8 @@ namespace Extensions {
             );
 
             if (!ok) {
-                qWarning() << "Calling" << metaMethod.signature() << "failed.";
+                //qWarning() << "Calling" << metaMethod.signature() << "failed.";
+                error = ErrorCode::METHOD_NOT_FOUND;
                 return QVariant();
             } else {
                 return returnValue;
