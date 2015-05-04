@@ -28,6 +28,7 @@
 #include <functional>
 #include <QHash>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QVariant>
 #include <QMetaMethod>
 
@@ -60,10 +61,25 @@ namespace Extensions {
             struct StubReturnValue {
                 QJsonValue result;
                 ErrorCode error = ErrorCode::NONE;
+                QString errorString;
 
                 StubReturnValue() {}
-                StubReturnValue(const QJsonValue &_result) : result(_result) {}
-                StubReturnValue(const ErrorCode &_error) : error(_error) {}
+                StubReturnValue(const QJsonValue &_result) :
+                    result(_result) {}
+                StubReturnValue(const ErrorCode &_error, const QString &_errorString = QString()) :
+                    error(_error), errorString(_errorString) {}
+                StubReturnValue(const QJsonValue &_result, const ErrorCode &_error, const QString &_errorString = QString()) :
+                    result(_result), error(_error), errorString(_errorString) {}
+
+                QJsonObject toJsonObject() {
+                    QJsonObject ret;
+                    ret.insert("result", result.isUndefined() ? QJsonValue() : result);
+                    ret.insert("err", static_cast<int>(error));
+                    if (error != ErrorCode::NONE) {
+                        ret.insert("errStr", errorString);
+                    }
+                    return ret;
+                }
             };
 
             enum class PointerType {

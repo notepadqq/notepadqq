@@ -256,7 +256,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        QStringList selectedTexts();
+        Q_INVOKABLE QStringList selectedTexts();
 
         void setOverwrite(bool overwrite);
         void forceRender(QSize size);

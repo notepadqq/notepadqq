@@ -97,13 +97,13 @@ namespace Extensions {
                 ret = fun(args);
                 return true;
             }
-            return false;
         }
 
         bool Stub::invokeOnRealObject(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
         {
             if (m_pointerType == PointerType::DETACHED) {
-                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND,
+                                            QString("Method not found for %1: %2").arg(stubName_(), method));
                 return false;
             } else {
 
@@ -134,7 +134,9 @@ namespace Extensions {
                     }
                 }
 
-                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND,
+                                            QString("Method not found for %1: %2 with %3 args")
+                                            .arg(stubName_(), method).arg(args.count()));
                 return false;
             }
         }

@@ -24,9 +24,10 @@ namespace Extensions {
 
         // Fail if some fields are missing
         if (objectId <= 0 || method.isEmpty()) {
-            QJsonObject retJson;
-            retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::INVALID_REQUEST));
-            return retJson;
+            return Stubs::Stub::StubReturnValue(
+                        Stubs::Stub::ErrorCode::INVALID_REQUEST,
+                        QString("Invalid request (objectId: %1, method: %2)").arg(objectId).arg(method)
+                        ).toJsonObject();
         }
 
         Q_ASSERT(objectId >= 0 && method.length() > 0);
@@ -39,34 +40,24 @@ namespace Extensions {
                 QJsonArray jsonArgs = request.value("args").toArray();
 
                 Stubs::Stub::StubReturnValue ret;
-                bool invoked = object->invoke(method, ret, jsonArgs);
+                object->invoke(method, ret, jsonArgs);
 
-                if (invoked) {
-                    QJsonObject retJson;
-                    retJson.insert("result", ret.result);
-                    retJson.insert("err", static_cast<int>(ret.error));
-                    return retJson;
-                } else {
-                    QJsonObject retJson;
-                    retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::METHOD_NOT_FOUND));
-                    return retJson;
-                }
+                return ret.toJsonObject();
 
             } else {
                 m_pointers.remove(objectId);
-
-                QJsonObject retJson;
-                retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::OBJECT_DEALLOCATED));
-                return retJson;
+                return Stubs::Stub::StubReturnValue(
+                            Stubs::Stub::ErrorCode::OBJECT_DEALLOCATED,
+                            QString("Object id %1 is deallocated.").arg(objectId)
+                            ).toJsonObject();
             }
 
         } else {
             m_pointers.remove(objectId);
-
-            QJsonObject retJson;
-            retJson.insert("err", static_cast<int>(Stubs::Stub::ErrorCode::OBJECT_NOT_FOUND));
-
-            return retJson;
+            return Stubs::Stub::StubReturnValue(
+                        Stubs::Stub::ErrorCode::OBJECT_NOT_FOUND,
+                        QString("Object id %1 doesn't exist.").arg(objectId)
+                        ).toJsonObject();
         }
     }
 
