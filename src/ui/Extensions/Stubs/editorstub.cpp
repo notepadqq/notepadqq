@@ -49,5 +49,21 @@ namespace Extensions {
             return StubReturnValue();
         }
 
+        /*Stub::StubReturnValue EditorStub::markClean(const QJsonArray &args)
+        {
+            EditorNS::Editor *tmp = static_cast<EditorNS::Editor*>(objectUnmanagedPtr());
+            tmp->setValue(args.at(0).toBool());
+            bool param0;
+            //QJsonValue(a);
+            QJsonValue val = args.at(0);
+            if (val.isBool()) {
+                param0 = val.toBool();
+            } else if (val.isString()) {
+                param0 = val.toString();
+            } else if (val.isObject()) {
+                param0 = val.toObject();
+            }
+            return StubReturnValue();
+        }*/
     }
 }
