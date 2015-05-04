@@ -115,6 +115,7 @@ namespace Extensions {
                 int methodCount = obj->metaObject()->methodCount();
                 for (int i = 0; i < methodCount; i++) {
                     QMetaMethod metaMethod = obj->metaObject()->method(i);
+                    // FIXME Check method visibility!!
 
                     if (metaMethod.name() != method)
                         continue;
@@ -219,6 +220,7 @@ namespace Extensions {
 
             // Perform the call
 
+            // FIXME Crash when invoking method with complex return type (e.g. QList<Selection>)
             bool ok = metaMethod.invoke(
                 object,
                 Qt::DirectConnection,
