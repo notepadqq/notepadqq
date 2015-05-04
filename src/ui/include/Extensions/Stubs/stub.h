@@ -12,13 +12,6 @@
 #define NQQ_DEFINE_EXTENSION_METHOD(class_name, method_name, args_name) \
     Stub::StubReturnValue class_name::method_name(const QJsonArray &args_name)
 
-/*#define NQQ_DEFINE_AUTO_EXTENSION_METHOD_0(class_name, object_type, method_name, args_name) \
-    Stub::StubReturnValue class_name::method_name(const QJsonArray &args_name) { \
-        object_type *tmp = static_cast<object_type*>(objectUnmanagedPtr()); \
-        tmp->markClean(); \
-        return StubReturnValue(); \
-    }*/
-
 /** Set the current stub name. Add this macro to the public section of a stub.
  *  For example: NQQ_STUB_NAME("Editor")
  */
