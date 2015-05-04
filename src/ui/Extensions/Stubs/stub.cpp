@@ -96,41 +96,24 @@ namespace Extensions {
                     return false;
                 } else {
 
-                    // FIXME See this: https://gist.github.com/andref/2838534
+                    ErrorCode err = ErrorCode::NONE;
 
-                    if (args.count() > 10) {
-                        return false;
-                    }
+                    QObject *obj = objectUnmanagedPtr();
 
-                    bool ok = true;
-                    QGenericArgument arg0 = jsonValueToArgument(args, 0, ok);
-                    QGenericArgument arg1 = jsonValueToArgument(args, 1, ok);
-                    QGenericArgument arg2 = jsonValueToArgument(args, 2, ok);
-                    QGenericArgument arg3 = jsonValueToArgument(args, 3, ok);
-                    QGenericArgument arg4 = jsonValueToArgument(args, 4, ok);
-                    QGenericArgument arg5 = jsonValueToArgument(args, 5, ok);
-                    QGenericArgument arg6 = jsonValueToArgument(args, 6, ok);
-                    QGenericArgument arg7 = jsonValueToArgument(args, 7, ok);
-                    QGenericArgument arg8 = jsonValueToArgument(args, 8, ok);
-                    QGenericArgument arg9 = jsonValueToArgument(args, 9, ok);
+                    int index = obj->metaObject()->indexOfMethod("foo(qulonglong)");
+                    QMetaMethod metaMethod = t->metaObject()->method(index);
 
-                    if (!ok) {
-                        return false;
-                    }
+                    QVariant retval = genericCall(objectUnmanagedPtr(),
+                                      metaMethod,
+                                      args.toVariantList(),
+                                      err);
 
-                    QJsonValue retval;
-                    bool invoked = QMetaObject::invokeMethod(
-                                objectUnmanagedPtr(),
-                                method.toStdString().c_str(),
-                                Qt::DirectConnection,
-                                Q_RETURN_ARG(QJsonValue, retval),
-                                arg0, arg1, arg2, arg3, arg4,
-                                arg5, arg6, arg7, arg8, arg9);
-
-                    if (invoked) {
-                        ret.error = ErrorCode::NONE;
-                        ret.result = retval;
+                    if (err == ErrorCode::NONE) {
+                        // FIXME Conversion to jsonValue??
+                        ret = Stub::StubReturnValue(retval.toJsonValue());
+                        return true;
                     } else {
+                        ret = Stub::StubReturnValue(err);
                         return false;
                     }
                 }
@@ -143,24 +126,99 @@ namespace Extensions {
             return false;
         }
 
-        QGenericArgument Stub::jsonValueToArgument(const QJsonArray &args, int i, bool &ok)
+        QVariant Stub::genericCall(QObject* object, QMetaMethod metaMethod, QVariantList args, ErrorCode &error)
         {
-            if (i >= args.size()) {
-                // It's ok! We need an empty QGenericArgument
-                return QGenericArgument();
+            // Convert the arguments
+
+            QVariantList converted;
+
+            // We need enough arguments to perform the conversion.
+
+            QList<QByteArray> methodTypes = metaMethod.parameterTypes();
+            if (methodTypes.size() < args.size()) {
+                qWarning() << "Insufficient arguments to call" << metaMethod.signature();
+                return QVariant();
             }
 
-            if (args.at(i).isBool()) {
-                return Q_ARG(bool, args.at(i).toBool());
-            } else if (args.at(i).isDouble()) {
-                return Q_ARG(bool, args.at(i).toDouble());
-            } else if (args.at(i).isNull()) {
-                return Q_ARG(void *, nullptr);
-            } else if (args.at(i).isString()) {
-                return Q_ARG(QString, args.at(i).toString());
+            for (int i = 0; i < methodTypes.size(); i++) {
+                const QVariant& arg = args.at(i);
+
+                QByteArray methodTypeName = methodTypes.at(i);
+                QByteArray argTypeName = arg.typeName();
+
+                QVariant::Type methodType = QVariant::nameToType(methodTypeName);
+                QVariant::Type argType = arg.type();
+
+                QVariant copy = QVariant(arg);
+
+                // If the types are not the same, attempt a conversion. If it
+                // fails, we cannot proceed.
+
+                if (copy.type() != methodType) {
+                    if (copy.canConvert(methodType)) {
+                        if (!copy.convert(methodType)) {
+                            qWarning() << "Cannot convert" << argTypeName
+                                       << "to" << methodTypeName;
+                            return QVariant();
+                        }
+                    }
+                }
+
+                converted << copy;
+            }
+
+            QList<QGenericArgument> arguments;
+
+            for (int i = 0; i < converted.size(); i++) {
+
+                // Notice that we have to take a reference to the argument, else
+                // we'd be pointing to a copy that will be destroyed when this
+                // loop exits.
+
+                QVariant& argument = converted[i];
+
+                // A const_cast is needed because calling data() would detach
+                // the QVariant.
+
+                QGenericArgument genericArgument(
+                    QMetaType::typeName(argument.userType()),
+                    const_cast<void*>(argument.constData())
+                );
+
+                arguments << genericArgument;
+            }
+
+            QVariant returnValue(QMetaType::type(metaMethod.typeName()),
+                static_cast<void*>(NULL));
+
+            QGenericReturnArgument returnArgument(
+                metaMethod.typeName(),
+                const_cast<void*>(returnValue.constData())
+            );
+
+            // Perform the call
+
+            bool ok = metaMethod.invoke(
+                object,
+                Qt::DirectConnection,
+                returnArgument,
+                arguments.value(0),
+                arguments.value(1),
+                arguments.value(2),
+                arguments.value(3),
+                arguments.value(4),
+                arguments.value(5),
+                arguments.value(6),
+                arguments.value(7),
+                arguments.value(8),
+                arguments.value(9)
+            );
+
+            if (!ok) {
+                qWarning() << "Calling" << metaMethod.signature() << "failed.";
+                return QVariant();
             } else {
-                ok = false;
-                return QGenericArgument();
+                return returnValue;
             }
         }
 
