@@ -89,11 +89,157 @@ namespace Extensions {
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
         {
             auto fun = m_methods.value(method);
-            if (fun != nullptr) {
+            if (fun == nullptr) {
+                // No explicit stub method found: try to invoke it on the real object
+                return invokeOnRealObject(method, ret, args);
+            } else {
+                // Explicit stub method found: call it
                 ret = fun(args);
                 return true;
             }
             return false;
+        }
+
+        bool Stub::invokeOnRealObject(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
+        {
+            if (m_pointerType == PointerType::DETACHED) {
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                return false;
+            } else {
+
+                ErrorCode err = ErrorCode::NONE;
+
+                QObject *obj = objectUnmanagedPtr();
+
+                // Find a method with the same name of the one we're looking for
+                int methodCount = obj->metaObject()->methodCount();
+                for (int i = 0; i < methodCount; i++) {
+                    QMetaMethod metaMethod = obj->metaObject()->method(i);
+
+                    if (metaMethod.name() != method)
+                        continue;
+
+                    QVariant retval = genericCall(obj,
+                                      metaMethod,
+                                      args.toVariantList(),
+                                      err);
+
+                    if (err == ErrorCode::NONE) {
+                        // Ok!!
+                        ret = Stub::StubReturnValue(QJsonValue::fromVariant(retval));
+                        return true;
+                    } else {
+                        // Keep searching: maybe it's another overload
+                        continue;
+                    }
+                }
+
+                ret = Stub::StubReturnValue(ErrorCode::METHOD_NOT_FOUND);
+                return false;
+            }
+        }
+
+        // https://gist.github.com/andref/2838534
+        QVariant Stub::genericCall(QObject* object, QMetaMethod metaMethod, QVariantList args, ErrorCode &error)
+        {
+            // Convert the arguments
+
+            QVariantList converted;
+
+            // We need enough arguments to perform the conversion.
+
+            QList<QByteArray> methodTypes = metaMethod.parameterTypes();
+            if (methodTypes.size() < args.size()) {
+                //qWarning() << "Insufficient arguments to call" << metaMethod.signature();
+                error = ErrorCode::INVALID_ARGUMENT_NUMBER;
+                return QVariant();
+            }
+
+            for (int i = 0; i < methodTypes.size(); i++) {
+                const QVariant& arg = args.at(i);
+
+                QByteArray methodTypeName = methodTypes.at(i);
+                //QByteArray argTypeName = arg.typeName();
+
+                QVariant::Type methodType = QVariant::nameToType(methodTypeName);
+                //QVariant::Type argType = arg.type();
+
+                QVariant copy = QVariant(arg);
+
+                // If the types are not the same, attempt a conversion. If it
+                // fails, we cannot proceed.
+
+                if (copy.type() != methodType) {
+                    if (copy.canConvert(methodType)) {
+                        if (!copy.convert(methodType)) {
+                            /*qWarning() << "Cannot convert" << argTypeName
+                                       << "to" << methodTypeName;*/
+                            error = ErrorCode::INVALID_ARGUMENT_TYPE;
+                            return QVariant();
+                        }
+                    }
+                }
+
+                converted << copy;
+            }
+
+            QList<QGenericArgument> arguments;
+
+            for (int i = 0; i < converted.size(); i++) {
+
+                // Notice that we have to take a reference to the argument, else
+                // we'd be pointing to a copy that will be destroyed when this
+                // loop exits.
+
+                QVariant& argument = converted[i];
+
+                // A const_cast is needed because calling data() would detach
+                // the QVariant.
+
+                QGenericArgument genericArgument(
+                    QMetaType::typeName(argument.userType()),
+                    const_cast<void*>(argument.constData())
+                );
+
+                arguments << genericArgument;
+            }
+
+            QVariant returnValue;
+            if (QString(metaMethod.typeName()) != "void") {
+                returnValue = QVariant(QMetaType::type(metaMethod.typeName()),
+                    static_cast<void*>(NULL));
+            }
+
+            QGenericReturnArgument returnArgument(
+                metaMethod.typeName(),
+                const_cast<void*>(returnValue.constData())
+            );
+
+            // Perform the call
+
+            bool ok = metaMethod.invoke(
+                object,
+                Qt::DirectConnection,
+                returnArgument,
+                arguments.value(0),
+                arguments.value(1),
+                arguments.value(2),
+                arguments.value(3),
+                arguments.value(4),
+                arguments.value(5),
+                arguments.value(6),
+                arguments.value(7),
+                arguments.value(8),
+                arguments.value(9)
+            );
+
+            if (!ok) {
+                //qWarning() << "Calling" << metaMethod.signature() << "failed.";
+                error = ErrorCode::METHOD_NOT_FOUND;
+                return QVariant();
+            } else {
+                return returnValue;
+            }
         }
 
         bool Stub::registerMethod(const QString &methodName, std::function<Stub::StubReturnValue (const QJsonArray &)> method)

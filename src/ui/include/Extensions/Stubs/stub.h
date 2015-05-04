@@ -35,6 +35,8 @@
 #include <functional>
 #include <QHash>
 #include <QJsonArray>
+#include <QVariant>
+#include <QMetaMethod>
 
 namespace Extensions {
 
@@ -119,6 +121,8 @@ namespace Extensions {
             QSharedPointer<QObject> m_sharedPointer;
             QObject *m_unmanagedPointer = nullptr;
             QHash<QString, std::function<StubReturnValue (const QJsonArray &)>> m_methods;
+            QVariant genericCall(QObject *object, QMetaMethod metaMethod, QVariantList args, ErrorCode &error);
+            bool invokeOnRealObject(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args);
         };
 
     }
