@@ -18,6 +18,10 @@ namespace Extensions {
             ~MenuItemStub();
 
             NQQ_STUB_NAME("MenuItem")
+
+        private:
+            NQQ_DECLARE_EXTENSION_METHOD(setShortcut)
+
         };
 
     }

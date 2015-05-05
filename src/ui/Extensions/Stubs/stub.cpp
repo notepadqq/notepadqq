@@ -115,7 +115,9 @@ namespace Extensions {
                 int methodCount = obj->metaObject()->methodCount();
                 for (int i = 0; i < methodCount; i++) {
                     QMetaMethod metaMethod = obj->metaObject()->method(i);
-                    // FIXME Check method visibility!!
+
+                    if (metaMethod.access() != QMetaMethod::Public)
+                        continue;
 
                     if (metaMethod.name() != method)
                         continue;
