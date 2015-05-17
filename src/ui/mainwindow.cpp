@@ -938,17 +938,18 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 
     // Update MainWindow title
+    QString newTitle;
     if (editor->fileName().isEmpty()) {
 
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
             int tab = tabWidget->indexOf(editor);
             if (tab != -1) {
-                setWindowTitle(QString("%1 - %2")
+                newTitle = QString("%1 - %2")
                                .arg(tabWidget->tabText(tab))
-                               .arg(QApplication::applicationName()));
-            } else setWindowTitle(QApplication::applicationName());
-        } else setWindowTitle(QApplication::applicationName());
+                               .arg(QApplication::applicationName());
+            }
+        }
 
     } else {
         QUrl url = editor->fileName();
@@ -965,11 +966,15 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                            QUrl::StripTrailingSlash
                                            );
 
-        setWindowTitle(QString("%1 (%2) - %3")
+        newTitle = QString("%1 (%2) - %3")
                        .arg(Notepadqq::fileNameFromUrl(editor->fileName()))
                        .arg(path)
-                       .arg(QApplication::applicationName()));
+                       .arg(QApplication::applicationName());
 
+    }
+
+    if (newTitle != windowTitle()) {
+        setWindowTitle(newTitle.isNull() ? QApplication::applicationName() : newTitle);
     }
 
 
