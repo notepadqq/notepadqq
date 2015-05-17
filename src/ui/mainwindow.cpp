@@ -939,7 +939,6 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
     // Update MainWindow title
     if (editor->fileName().isEmpty()) {
-        setWindowTitle(QApplication::applicationName()); // Fallback
 
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
@@ -948,8 +947,8 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                 setWindowTitle(QString("%1 - %2")
                                .arg(tabWidget->tabText(tab))
                                .arg(QApplication::applicationName()));
-            }
-        }
+            } else setWindowTitle(QApplication::applicationName());
+        } else setWindowTitle(QApplication::applicationName());
 
     } else {
         QUrl url = editor->fileName();
