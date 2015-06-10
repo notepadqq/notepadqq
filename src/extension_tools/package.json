@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "archiver": "^0.14.4",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "rimraf": "^2.4.0"
+  }
+}
