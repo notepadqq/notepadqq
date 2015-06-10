@@ -1,6 +1,3 @@
-var path = require('path');
-var fs = require('fs');
-
 var AdmZip = require('adm-zip');
 
 var package = process.argv[2];
