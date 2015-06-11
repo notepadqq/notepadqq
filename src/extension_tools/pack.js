@@ -6,7 +6,6 @@ var fs = require('fs');
 var archiver = require('archiver');
 
 var sh = require('shelljs');
-sh.config.fatal = true;
 
 var project = process.argv[2];
 var npm = process.argv[3];
@@ -31,6 +30,11 @@ function exec(name, args, options, callback) {
     });
 }
 
+function failtest(error) {
+    if (error !== null)
+        throw error;
+}
+
 function clean() {
     sh.rm('-rf', tmpdir);
 }
@@ -51,8 +55,11 @@ var tmpdir_ext = path.join(tmpdir, 'ext');
 var tmpdir_pkg = path.join(tmpdir, 'pkg');
 
 sh.mkdir('-p', tmpdir);     // /tmp/_notepadqq_ext_xxxxx/
+failtest(sh.error());
 sh.mkdir('-p', tmpdir_pkg); // Contains the notepadqq extension files
+failtest(sh.error());
 sh.mkdir('-p', tmpdir_ext); // Contains a copy of the extension code
+failtest(sh.error());
 
 console.log(tmpdir);
 
@@ -66,6 +73,7 @@ function buildArchive(callback) {
     output.on('close', function() {
         console.log('Written ' + archive.pointer() + ' bytes');
         sh.cp('-f', temporaryArchive, definitiveArchive);
+        failtest(sh.error());
         callback(definitiveArchive);
     });
 
@@ -95,6 +103,7 @@ function prepare_npm_package(callback) {
     
     // Remove notepadqq files
     sh.rm(path.join(tmpdir_ext, MANIFEST_FILENAME));
+    failtest(sh.error());
     
     // npm install
     exec(npm, ['install'], { cwd: tmpdir_ext }, function(code) {
@@ -128,6 +137,7 @@ function create_npm_package(callback) {
 
 // Copy extension folder to a temporary dir
 sh.cp('-r', path.join(project, '*'), path.join(project, '.*'), tmpdir_ext);
+failtest(sh.error());
 
 prepare_npm_package(function() {
 
