@@ -70,16 +70,24 @@ try {
         if (code !== 0) throw "npm install failed: exit code " + code;
 
         // Take out the module from the node_modules folder
-        var folders = fs.readdirSync(node_modules);
+        // Rename node_modules to avoid conflicts with the inner node_modules that we're pulling out.
+        var node_modules_tmp = path.join(extensionFolder, "___tmp_node_modules");
+        sh.mv(node_modules, node_modules_tmp);
+        var folders = fs.readdirSync(node_modules_tmp);
         if (folders.length == 1) {
-            sh.cp('-r', path.join(node_modules, folders[0], '*'), path.join(node_modules, folders[0], '.*'), extensionFolder);
+            sh.cp('-r', path.join(node_modules_tmp, folders[0], '*'), path.join(node_modules_tmp, folders[0], '.*'), extensionFolder);
 
             // Clean all
-            sh.rm('-rf', node_modules, npmArchive);
+            sh.rm('-rf', node_modules_tmp, npmArchive);
             
-            console.log("Installed to " + extensionFolder);
+            exec(npm, ['rebuild'], { cwd: extensionFolder }, function(code){
+                if (code !== 0) throw "npm rebuild failed: exit code " + code;
+                
+                console.log("Installed to " + extensionFolder);
+            });
+            
         } else {
-            throw "Unexpected files found in " + node_modules;
+            throw "Unexpected files found in " + node_modules_tmp;
         }
 
     });
