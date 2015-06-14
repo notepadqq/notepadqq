@@ -193,9 +193,13 @@ unix {
     icon_hscalable.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/"
     icon_hscalable.files += "$$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg"
 
-    system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")    # Make sure that the folder exists, otherwise qmake won't create the install rule
+    # Make sure that the folders exists, otherwise qmake won't create the misc_data install rule
+    system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")
+    system($${QMAKE_MKDIR} \"$$APPDATADIR/extension_tools\")
+
     misc_data.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/"
     misc_data.files += "$$APPDATADIR/editor"
+    misc_data.files += "$$APPDATADIR/extension_tools"
 
     launch.path = "$$INSTALL_ROOT$$PREFIX/bin/"
     launch.files += "$$BINDIR/notepadqq"
