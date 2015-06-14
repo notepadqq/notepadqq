@@ -1,5 +1,6 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/mainwindow.h"
+#include "include/notepadqq.h"
 #include <QDirIterator>
 
 namespace Extensions {
@@ -62,6 +63,12 @@ namespace Extensions {
     QSharedPointer<ExtensionsServer> ExtensionsLoader::extensionsServer()
     {
         return m_extensionsServer;
+    }
+
+    bool ExtensionsLoader::extensionRuntimePresent()
+    {
+        QFileInfo f = QFileInfo(Notepadqq::nodejsPath());
+        return f.exists() && f.isExecutable();
     }
 
 }

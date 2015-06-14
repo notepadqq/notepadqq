@@ -1,4 +1,5 @@
 #include "include/Extensions/extension.h"
+#include "include/notepadqq.h"
 #include <QFile>
 #include <QTextStream>
 #include <QJsonDocument>
@@ -26,7 +27,7 @@ namespace Extensions {
             m_runtime = manifest.value("runtime").toString().toLower();
             QString main = manifest.value("main").toString();
 
-            if (m_runtime == "ruby") {
+            /*if (m_runtime == "ruby") {
 
                 QProcess *process = new QProcess(this);
                 process->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -43,10 +44,49 @@ namespace Extensions {
                 connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
 
                 process->start(nodePath, args);
+
+            } else if (m_runtime == "python") {
+
+                QProcess *process = new QProcess(this);
+                process->setProcessChannelMode(QProcess::ForwardedChannels);
+                process->setWorkingDirectory(path);
+
+                QStringList args;
+                args << "-u"; // Unbuffered output
+                args << main;
+                args << serverSocketPath;
+                args << m_extensionId;
+
+                QSettings s;
+                QString runtimePath = s.value("Extensions/Runtime_Python3", "").toString();
+                runtimePath = "python3"; // FIXME !!!
+
+                connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
+
+                process->start(runtimePath, args);
+
+            } else*/ if (m_runtime == "nodejs") {
+
+                QProcess *process = new QProcess(this);
+                process->setProcessChannelMode(QProcess::ForwardedChannels);
+                process->setWorkingDirectory(path);
+
+                QStringList args;
+                args << "--harmony-proxies";
+                args << main;
+                args << serverSocketPath;
+                args << m_extensionId;
+
+                QString runtimePath = Notepadqq::nodejsPath();
+
+                connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
+
+                process->start(runtimePath, args);
+
             }
 
         } else {
-            failedToLoadExtension(path, tr("unable to read manifest.json"));
+            failedToLoadExtension(path, tr("unable to read nqq-manifest.json"));
             return;
         }
 
@@ -68,7 +108,7 @@ namespace Extensions {
 
     QJsonObject Extension::getManifest(const QString &extensionPath)
     {
-        QFile fManifest(extensionPath + "/manifest.json");
+        QFile fManifest(extensionPath + "/nqq-manifest.json");
         if (fManifest.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&fManifest);
             QString content = in.readAll();

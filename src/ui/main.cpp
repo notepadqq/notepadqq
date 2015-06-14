@@ -83,9 +83,12 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
-    // FIXME Remove all those Q_INVOKABLE in Editor, MainWindow, etc
-    Extensions::ExtensionsLoader::startExtensionsServer();
-    Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
+    if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
+        Extensions::ExtensionsLoader::startExtensionsServer();
+        Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
+    } else {
+        qDebug() << "Extension support is not installed.";
+    }
 
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();

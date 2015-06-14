@@ -17,17 +17,34 @@ QString Notepadqq::copyright()
     return QObject::trUtf8("Copyright © 2010-2015, Daniele Di Sarli");
 }
 
-QString Notepadqq::editorPath()
+QString Notepadqq::appDataPath(QString fileName)
 {
-    QString def = QString("%1/../appdata/editor/index.html").
+    QString def = QString("%1/../appdata/").
             arg(qApp->applicationDirPath());
 
-    if(!QFile(def).exists())
-        def = QString("%1/../../share/%2/editor/index.html").
+    if(!QDir(def).exists())
+        def = QString("%1/../../share/%2/").
                 arg(qApp->applicationDirPath()).
                 arg(qApp->applicationName().toLower());
 
+    if (!fileName.isNull()) {
+        def.append(fileName);
+    }
+
     return def;
+}
+
+QString Notepadqq::editorPath()
+{
+    return appDataPath("editor/index.html");
+}
+
+QString Notepadqq::nodejsPath() {
+    return appDataPath("node/node");
+}
+
+QString Notepadqq::npmPath() {
+    return appDataPath("node/npm");
 }
 
 QString Notepadqq::fileNameFromUrl(const QUrl &url)

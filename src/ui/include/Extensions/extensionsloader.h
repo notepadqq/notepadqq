@@ -20,6 +20,7 @@ namespace Extensions {
         static void loadExtensions(QString path);
         static QMap<QString, QSharedPointer<Extension>> loadedExtensions();
         static QSharedPointer<ExtensionsServer> extensionsServer();
+        static bool extensionRuntimePresent();
 
     signals:
 

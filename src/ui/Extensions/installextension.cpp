@@ -111,7 +111,7 @@ namespace Extensions {
 
         QProcess process;
         QByteArray output;
-        process.start("tar", QStringList() << "--gzip" << "-xOf" << archivePath << "manifest.json");
+        process.start("tar", QStringList() << "--gzip" << "-xOf" << archivePath << "nqq-manifest.json");
 
         if (process.waitForStarted(20000)) {
             while (process.waitForReadyRead(30000)) {
