@@ -31,6 +31,8 @@ namespace Extensions {
 
             if (err.error != QJsonParseError::NoError) {
                 // FIXME Failed to load
+                qDebug() << manifestStr;
+                qCritical() << err.errorString();
             }
 
             QJsonObject manifest = manifestDoc.object();
@@ -107,11 +109,10 @@ namespace Extensions {
 
     QString InstallExtension::readExtensionManifest(const QString &archivePath)
     {
-        // FIXME Use a cross-platform library
-
         QProcess process;
         QByteArray output;
-        process.start("tar", QStringList() << "--gzip" << "-xOf" << archivePath << "nqq-manifest.json");
+        process.setWorkingDirectory(Notepadqq::extensionToolsPath());
+        process.start(Notepadqq::nodejsPath(), QStringList() << "readmanifest.js" << archivePath);
 
         if (process.waitForStarted(20000)) {
             while (process.waitForReadyRead(30000)) {

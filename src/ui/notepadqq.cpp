@@ -39,6 +39,11 @@ QString Notepadqq::editorPath()
     return appDataPath("editor/index.html");
 }
 
+QString Notepadqq::extensionToolsPath()
+{
+    return appDataPath("extension_tools");
+}
+
 QString Notepadqq::nodejsPath() {
     return appDataPath("node/node");
 }

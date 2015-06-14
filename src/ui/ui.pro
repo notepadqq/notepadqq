@@ -145,14 +145,21 @@ editorTarget.commands = (cd \"$$PWD\" && \
                          cd \"../editor\" && \
                          $(MAKE) DESTDIR=\"$$APPDATADIR/editor\")
 
+# Copy the extension_tools in the "shared" folder
+extensionToolsTarget.target = make_extensionTools
+extensionToolsTarget.commands = (cd \"$$PWD\" && \
+                           $${CMD_FULLDELETE} \"$$APPDATADIR/extension_tools\" && \
+                           cd \"../extension_tools\" && \
+                           $(MAKE) DESTDIR=\"$$APPDATADIR/extension_tools\")
+
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_MKDIR} \"$$BINDIR/\" && \
                          $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
                          chmod 755 \"$$BINDIR/notepadqq\")
 
-QMAKE_EXTRA_TARGETS += editorTarget launchTarget
-PRE_TARGETDEPS += make_editor make_launch
+QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget
+PRE_TARGETDEPS += make_editor make_extensionTools make_launch
 
 ### INSTALL ###
 unix {

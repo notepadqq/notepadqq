@@ -11,5 +11,5 @@ if (process.argv.length !== 2+1) {
 var MANIFEST_FILENAME = "nqq-manifest.json";
 
 var zip = new AdmZip(package);
-var manifest = JSON.parse(zip.readAsText(MANIFEST_FILENAME));
+var manifest = zip.readAsText(MANIFEST_FILENAME);
 console.log(manifest);
