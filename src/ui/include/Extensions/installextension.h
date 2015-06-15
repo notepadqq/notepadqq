@@ -27,10 +27,9 @@ namespace Extensions {
         QString m_uniqueName;
         QString m_runtime;
 
-        static void extractExtension(const QString &archivePath, const QString &destination);
         static QString readExtensionManifest(const QString &archivePath);
-        static void installRuby1_2Extension(const QString &extensionPath);
-        static QString getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName, bool create = true);
+        bool installNodejsExtension(const QString &packagePath);
+        static QString getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName);
     };
 
 }

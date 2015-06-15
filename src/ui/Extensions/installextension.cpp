@@ -46,7 +46,7 @@ namespace Extensions {
             ui->lblDescription->setText(manifest.value("description").toString());
 
             // Tell the user if this is an update
-            QString alreadyInstalledPath = getAbsoluteExtensionFolder(Notepadqq::extensionsPath(), m_uniqueName, false);
+            QString alreadyInstalledPath = getAbsoluteExtensionFolder(Notepadqq::extensionsPath(), m_uniqueName);
             if (!alreadyInstalledPath.isNull()) {
                 QJsonObject manifest = Extension::getManifest(alreadyInstalledPath);
                 if (!manifest.isEmpty()) {
@@ -67,44 +67,50 @@ namespace Extensions {
         delete ui;
     }
 
-    QString InstallExtension::getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName, bool create)
+    QString InstallExtension::getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName)
     {
         if (extensionUniqueName.isEmpty())
             return QString();
 
-        QDir path(extensionsPath);
-
-        QString escapedExtName = QString(extensionUniqueName).replace(QRegExp("[^a-zA-Z\\d._-]"), "_");
-
-        Q_ASSERT(escapedExtName.contains(QRegExp("[^a-zA-Z\\d._-]")) == false);
-        QString extPath = path.absoluteFilePath(escapedExtName);
-
-        if (create && !path.mkpath(extPath))
+        if (!extensionUniqueName.contains(QRegExp(R"(^[-_0-9a-z]+(\.[-_0-9a-z]+)+$)", Qt::CaseSensitive))) {
             return QString();
+        }
 
-        return extPath;
+        QDir path(extensionsPath);
+        return path.absoluteFilePath(extensionUniqueName);
+
     }
 
-    void InstallExtension::installRuby1_2Extension(const QString &extensionPath)
+    bool InstallExtension::installNodejsExtension(const QString &packagePath)
     {
         QProcess process;
-        process.setWorkingDirectory(extensionPath);
+        QByteArray output;
+        QByteArray error;
+        process.setWorkingDirectory(Notepadqq::extensionToolsPath());
+        process.start(Notepadqq::nodejsPath(), QStringList()
+                      << "install.js"
+                      << packagePath
+                      << Notepadqq::extensionsPath()
+                      << Notepadqq::npmPath());
 
-        QSettings s;
-        QString bundlerPath = s.value("Extensions/Runtime_Bundler", "").toString();
+        if (process.waitForStarted(20000)) {
+            while (process.waitForReadyRead(30000)) {
+                output.append(process.readAllStandardOutput());
+                error.append(process.readAllStandardError());
+            }
 
-        process.start(bundlerPath, QStringList() << "install" << "--deployment");
-        process.waitForFinished(-1);
-    }
+            QString err = QString(error);
+            if (err.trimmed().isEmpty()) {
+                QMessageBox::information(this, tr("Extension installed"), tr("The extension has been successfully installed!"));
+                return true;
+            } else {
+                QMessageBox::critical(this, tr("Error installing the extension"), err);
+            }
+        } else {
+            // FIXME Display error
+        }
 
-    void InstallExtension::extractExtension(const QString &archivePath, const QString &destination)
-    {
-        // FIXME Use a cross-platform library
-
-        QProcess process;
-        process.setWorkingDirectory(destination);
-        process.start("tar", QStringList() << "--gzip" << "-xf" << archivePath);
-        process.waitForFinished(-1);
+        return false;
     }
 
     QString InstallExtension::readExtensionManifest(const QString &archivePath)
@@ -136,32 +142,13 @@ void Extensions::InstallExtension::on_btnInstall_clicked()
 {
     // FIXME Show progress bar
 
-    if (m_runtime != "ruby") {
-        QMessageBox::critical(this, tr("Error"), tr("Unsupported runtime: %1").arg(m_runtime));
-        return;
-    }
-
-    QString extFolder = getAbsoluteExtensionFolder(Notepadqq::extensionsPath(), m_uniqueName, true);
-    if (!extFolder.isNull()) {
-        QDir extFolderDir(extFolder);
-
-        if (extFolderDir.exists()) {
-            extFolderDir.removeRecursively();
-            extFolderDir.mkpath(extFolder);
-
-            extractExtension(m_extensionFilename, extFolder);
-
-            if (m_runtime == "ruby") {
-                installRuby1_2Extension(extFolder);
-
-                accept();
-            }
-
-        } else {
-            QMessageBox::critical(this, tr("Error"), tr("Unable to create extension folder %1").arg(extFolder));
+    if (m_runtime == "nodejs") {
+        if (installNodejsExtension(m_extensionFilename)) {
+            accept();
         }
     } else {
-        QMessageBox::critical(this, tr("Error"), tr("Unable to create extension folder in %1").arg(Notepadqq::extensionsPath()));
+        QMessageBox::critical(this, tr("Error"), tr("Unsupported runtime: %1").arg(m_runtime));
+        return;
     }
 
 }
