@@ -49,9 +49,12 @@ namespace Extensions {
 
         QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot | QDir::Readable, QDirIterator::NoIteratorFlags);
         while (it.hasNext()) {
-            QSharedPointer<Extension> ext = QSharedPointer<Extension>(
-                    new Extension(it.next(), m_extensionsServer->socketPath()));
-            m_extensions.insert(ext->id(), ext);
+            QString fileName = it.next();
+            if (!fileName.endsWith("%%BACKUP", Qt::CaseInsensitive)) {
+                QSharedPointer<Extension> ext = QSharedPointer<Extension>(
+                        new Extension(fileName, m_extensionsServer->socketPath()));
+                m_extensions.insert(ext->id(), ext);
+            }
         }
     }
 

@@ -28,8 +28,9 @@ namespace Extensions {
         QString m_runtime;
 
         static QString readExtensionManifest(const QString &archivePath);
-        bool installNodejsExtension(const QString &packagePath);
+        void installNodejsExtension(const QString &packagePath);
         static QString getAbsoluteExtensionFolder(const QString &extensionsPath, const QString &extensionUniqueName);
+        void setUIClean(bool success);
     };
 
 }

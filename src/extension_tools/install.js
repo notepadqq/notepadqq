@@ -43,7 +43,7 @@ if (!uniqueName.match(/^[-_0-9a-z]+(\.[-_0-9a-z]+)+$/) || uniqueName.length > 64
 }
 
 var extensionFolder = path.join(destdir, uniqueName);
-var extensionFolderBackup = path.join(destdir, uniqueName + ".BACKUP");
+var extensionFolderBackup = path.join(destdir, uniqueName + "%%BACKUP");
 
 // Create backup copy if folder already existing
 sh.rm('-rf', extensionFolderBackup);

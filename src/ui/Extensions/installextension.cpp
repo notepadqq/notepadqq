@@ -81,36 +81,68 @@ namespace Extensions {
 
     }
 
-    bool InstallExtension::installNodejsExtension(const QString &packagePath)
+    void InstallExtension::setUIClean(bool success)
     {
-        QProcess process;
-        QByteArray output;
-        QByteArray error;
-        process.setWorkingDirectory(Notepadqq::extensionToolsPath());
-        process.start(Notepadqq::nodejsPath(), QStringList()
+        this->setEnabled(true);
+        ui->progressBar->setMinimum(0);
+        ui->progressBar->setMaximum(100);
+        ui->progressBar->setValue(success ? 100 : 0);
+
+    }
+
+    void InstallExtension::installNodejsExtension(const QString &packagePath)
+    {
+        ui->progressBar->setMinimum(0);
+        ui->progressBar->setMaximum(0);
+        ui->progressBar->setValue(0);
+
+        QProcess *process = new QProcess(this);
+
+        connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), [=](){
+            setUIClean(false);
+
+            QMessageBox infoBox;
+            infoBox.setWindowTitle(tr("Error installing the extension"));
+            infoBox.setText(process->errorString());
+            infoBox.setIcon(QMessageBox::Critical);
+            infoBox.exec();
+        });
+
+        connect(process, static_cast<void (QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), [=](int exitCode, QProcess::ExitStatus exitStatus) {
+            if (exitCode == 0) {
+                setUIClean(true);
+
+                QMessageBox infoBox;
+                infoBox.setWindowTitle(tr("Extension installed"));
+                infoBox.setText(tr("The extension has been successfully installed!"));
+                infoBox.setDetailedText(QString(process->readAllStandardOutput()));
+                infoBox.setIcon(QMessageBox::Information);
+                infoBox.exec();
+
+                accept();
+            } else {
+                setUIClean(false);
+
+                QMessageBox infoBox;
+                infoBox.setWindowTitle(tr("Error installing the extension"));
+                infoBox.setText(QString("Exit code: %1\n%2").arg(exitCode).arg(QString(process->readAllStandardError())));
+                infoBox.setDetailedText(QString(process->readAllStandardOutput()));
+                infoBox.setIcon(QMessageBox::Critical);
+                infoBox.exec();
+            }
+
+            if (process->isOpen()) {
+                process->close();
+            }
+        });
+
+        this->setEnabled(false);
+        process->setWorkingDirectory(Notepadqq::extensionToolsPath());
+        process->start(Notepadqq::nodejsPath(), QStringList()
                       << "install.js"
                       << packagePath
                       << Notepadqq::extensionsPath()
                       << Notepadqq::npmPath());
-
-        if (process.waitForStarted(20000)) {
-            while (process.waitForReadyRead(30000)) {
-                output.append(process.readAllStandardOutput());
-                error.append(process.readAllStandardError());
-            }
-
-            QString err = QString(error);
-            if (err.trimmed().isEmpty()) {
-                QMessageBox::information(this, tr("Extension installed"), tr("The extension has been successfully installed!"));
-                return true;
-            } else {
-                QMessageBox::critical(this, tr("Error installing the extension"), err);
-            }
-        } else {
-            // FIXME Display error
-        }
-
-        return false;
     }
 
     QString InstallExtension::readExtensionManifest(const QString &archivePath)
@@ -143,9 +175,7 @@ void Extensions::InstallExtension::on_btnInstall_clicked()
     // FIXME Show progress bar
 
     if (m_runtime == "nodejs") {
-        if (installNodejsExtension(m_extensionFilename)) {
-            accept();
-        }
+        installNodejsExtension(m_extensionFilename);
     } else {
         QMessageBox::critical(this, tr("Error"), tr("Unsupported runtime: %1").arg(m_runtime));
         return;
