@@ -67,7 +67,7 @@ namespace Extensions {
 
             } else*/ if (m_runtime == "nodejs") {
 
-                QProcess *process = new QProcess(this);
+                process = new QProcess();
                 process->setProcessChannelMode(QProcess::ForwardedChannels);
                 process->setWorkingDirectory(path);
 
@@ -103,7 +103,9 @@ namespace Extensions {
 
     Extension::~Extension()
     {
-
+        if (process != nullptr) {
+            process->deleteLater();
+        }
     }
 
     QJsonObject Extension::getManifest(const QString &extensionPath)

@@ -27,6 +27,7 @@ namespace Extensions {
         QString m_name;
         QString m_runtime;
         void failedToLoadExtension(QString path, QString reason);
+        QProcess *process = nullptr;
     };
 
 }

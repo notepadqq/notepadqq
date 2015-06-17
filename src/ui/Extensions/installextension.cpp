@@ -108,7 +108,7 @@ namespace Extensions {
             infoBox.exec();
         });
 
-        connect(process, static_cast<void (QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), [=](int exitCode, QProcess::ExitStatus exitStatus) {
+        connect(process, static_cast<void (QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), [=](int exitCode, QProcess::ExitStatus) {
             if (exitCode == 0) {
                 setUIClean(true);
 
