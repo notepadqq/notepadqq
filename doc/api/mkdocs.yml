@@ -1,2 +1,5 @@
 site_name: Notepadqq API
 theme: readthedocs
+markdown_extensions:
+    - toc:
+        permalink: True
