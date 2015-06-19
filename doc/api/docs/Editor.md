@@ -2,7 +2,29 @@
 
 Description
 
+[TOC]
+
+## editor.fileName()
+
+Description
+
+## editor.fileOnDiskChanged()
+
+Description
+
+## editor.selectedTexts()
+
+Description
+
+## editor.setFileOnDiskChanged(changed)
+
+Description
+
 ## editor.setFocus()
+
+Description
+
+## editor.setSelectionsText(values)
 
 Description
 
@@ -10,10 +32,14 @@ Description
 
 Description
 
+## editor.setZoomFactor(factor)
+
+Description
+
 ## editor.value()
 
 Description
 
-## editor.setSelectionsText(values)
+## editor.zoomFactor()
 
 Description
