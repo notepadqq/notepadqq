@@ -1,15 +1,17 @@
 # Notepadqq
 
-Description
+Represents the entire application.
+
+[TOC]
 
 ## nqq.commandLineArguments()
 
-Description
+Returns the list of command line arguments passed to Notepadqq.
 
 ## nqq.version()
 
-Description
+Returns the version of Notepadqq.
 
 ## nqq.windows()
 
-Description
+Returns a list of [`Window`](Window) object, one for each open window.
