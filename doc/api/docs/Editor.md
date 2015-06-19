@@ -2,6 +2,10 @@
 
 Description
 
+## editor.setFocus()
+
+Description
+
 ## editor.setValue(val)
 
 Description
