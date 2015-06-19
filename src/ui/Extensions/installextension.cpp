@@ -172,8 +172,6 @@ void Extensions::InstallExtension::on_btnCancel_clicked()
 
 void Extensions::InstallExtension::on_btnInstall_clicked()
 {
-    // FIXME Show progress bar
-
     if (m_runtime == "nodejs") {
         installNodejsExtension(m_extensionFilename);
     } else {
