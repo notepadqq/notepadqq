@@ -12,6 +12,22 @@ Description
 
 Description
 
+## editor.isClean()
+
+Description
+
+## editor.language()
+
+Description
+
+## editor.markClean()
+
+Description
+
+## editor.markDirty()
+
+Description
+
 ## editor.selectedTexts()
 
 Description
@@ -21,6 +37,18 @@ Description
 Description
 
 ## editor.setFocus()
+
+Description
+
+## editor.setLanguage()
+
+Description
+
+## editor.setLanguageFromFileName([fileName])
+
+Description
+
+## editor.setLineWrap(wrap)
 
 Description
 

@@ -1,13 +1,27 @@
 # MenuItem
 
-Description
+A menu item.
+
+[TOC]
 
 ## item.setShortcut(shortcut)
 
-Description
+Sets the shortcut keys for this menu item.
+
+For example:
+
+    var menu = window.addExtensionMenuItem(api.extensionId, "My menu");
+    menu.setShortcut("Ctrl+Alt+E");
 
 ## Event: 'triggered'
 
 `function (checked) { }`
 
-Description
+This event is emitted when the user clicks the menu item.
+
+For example:
+
+    var menu = window.addExtensionMenuItem(api.extensionId, "My menu");
+    menu.on("triggered", function(checked) {
+        console.log("Clicked!");
+    });
