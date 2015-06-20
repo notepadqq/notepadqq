@@ -74,24 +74,34 @@ file name associated with the editor is used (see [editor.fileName()](#editorfil
 
 ## editor.setLineWrap(wrap)
 
-Description
+Set line wrapping behavior for lines longer than the editor width.
+Wraps if `wrap == true`, scrolls otherwise.
 
 ## editor.setSelectionsText(values)
 
-Description
+Replace the current selections with different texts. `values` is an array of
+strings.
+
+See [`editor.selectedTexts()`](#editorselectedtexts).
 
 ## editor.setValue(val)
 
-Description
+Replace the entire editor content with the provided value. This function might
+be slow: avoid it when not necessary.
 
 ## editor.setZoomFactor(factor)
 
-Description
+Set the zoom for this editor. A factor of `1.0` means no zoom.
+
+Example:
+
+    window.currentEditor().setZoomFactor(1.75)
 
 ## editor.value()
 
-Description
+Returns the entire editor content. This function might be slow: avoid it when not
+necessary.
 
 ## editor.zoomFactor()
 
-Description
+Returns the editor zoom factor.
