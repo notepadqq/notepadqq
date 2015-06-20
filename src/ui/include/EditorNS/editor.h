@@ -143,7 +143,7 @@ namespace EditorNS
              * @brief Give focus to the editor, so that the user can start
              *        typing. Note that calling won't automatically switch to
              *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
-             *        and TopEditorContainer::setFocus() for that. (actually it's a bug)
+             *        and TopEditorContainer::setFocus() for that.
              */
         Q_INVOKABLE void setFocus();
 
