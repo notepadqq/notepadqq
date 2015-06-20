@@ -87,7 +87,9 @@ int main(int argc, char *argv[])
         Extensions::ExtensionsLoader::startExtensionsServer();
         Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
     } else {
+#ifdef QT_DEBUG
         qDebug() << "Extension support is not installed.";
+#endif
     }
 
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);

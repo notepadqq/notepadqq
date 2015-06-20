@@ -1,6 +1,6 @@
 # Editor
 
-Description
+Represents the content of a standard tab in Notepadqq.
 
 [TOC]
 
