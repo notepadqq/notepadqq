@@ -27,45 +27,7 @@ namespace Extensions {
             m_runtime = manifest.value("runtime").toString().toLower();
             QString main = manifest.value("main").toString();
 
-            /*if (m_runtime == "ruby") {
-
-                QProcess *process = new QProcess(this);
-                process->setProcessChannelMode(QProcess::ForwardedChannels);
-                process->setWorkingDirectory(path);
-
-                QStringList args;
-                args << main;
-                args << serverSocketPath;
-                args << m_extensionId;
-
-                QSettings s;
-                QString nodePath = s.value("Extensions/Runtime_Ruby2.1", "").toString();
-
-                connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
-
-                process->start(nodePath, args);
-
-            } else if (m_runtime == "python") {
-
-                QProcess *process = new QProcess(this);
-                process->setProcessChannelMode(QProcess::ForwardedChannels);
-                process->setWorkingDirectory(path);
-
-                QStringList args;
-                args << "-u"; // Unbuffered output
-                args << main;
-                args << serverSocketPath;
-                args << m_extensionId;
-
-                QSettings s;
-                QString runtimePath = s.value("Extensions/Runtime_Python3", "").toString();
-                runtimePath = "python3"; // FIXME !!!
-
-                connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
-
-                process->start(runtimePath, args);
-
-            } else*/ if (m_runtime == "nodejs") {
+            if (m_runtime == "nodejs") {
 
                 process = new QProcess();
                 process->setProcessChannelMode(QProcess::ForwardedChannels);
