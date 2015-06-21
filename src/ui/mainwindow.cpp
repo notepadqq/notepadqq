@@ -147,6 +147,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setupLanguagesMenu();
 
+    showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
 
@@ -2015,4 +2017,9 @@ void MainWindow::on_actionInstall_Extension_triggered()
         installExt->exec();
         installExt->deleteLater();
     }
+}
+
+void MainWindow::showExtensionsMenu(bool show)
+{
+    ui->menuExtensions->menuAction()->setVisible(show);
 }
