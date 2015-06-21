@@ -45,11 +45,13 @@ QString Notepadqq::extensionToolsPath()
 }
 
 QString Notepadqq::nodejsPath() {
-    return appDataPath("node/node");
+    QSettings s;
+    return s.value("Extensions/Runtime_Nodejs", "").toString();
 }
 
 QString Notepadqq::npmPath() {
-    return appDataPath("node/npm");
+    QSettings s;
+    return s.value("Extensions/Runtime_Npm", "").toString();
 }
 
 QString Notepadqq::fileNameFromUrl(const QUrl &url)

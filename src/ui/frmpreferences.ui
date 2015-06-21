@@ -394,93 +394,15 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
-              <widget class="QGroupBox" name="groupBox">
-               <property name="title">
-                <string>Ruby 2.1</string>
-               </property>
-               <layout class="QFormLayout" name="formLayout">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                </property>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>Ruby 2.1 path:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <item>
-                   <widget class="QLineEdit" name="txtRuby2_1">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnRuby2_1Browse">
-                    <property name="text">
-                     <string>Browse...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="lnkRuby2_1Detect">
-                    <property name="text">
-                     <string>&lt;a href=&quot;#&quot;&gt;Detect&lt;/a&gt;</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_6">
-                  <property name="text">
-                   <string>Bundler path:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <layout class="QHBoxLayout" name="horizontalLayout_4">
-                  <item>
-                   <widget class="QLineEdit" name="txtBundler"/>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="btnBundlerBrowse">
-                    <property name="text">
-                     <string>Browse...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="lnkBundlerDetect">
-                    <property name="text">
-                     <string>&lt;a href=&quot;#&quot;&gt;Detect&lt;/a&gt;</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
               <widget class="QGroupBox" name="groupBox_2">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
                <property name="title">
-                <string>Node.js</string>
+                <string>Node.js runtime</string>
                </property>
                <layout class="QFormLayout" name="formLayout_2">
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_4">
                   <property name="text">
-                   <string>Node.js path:</string>
+                   <string>Node.js 0.12 path:</string>
                   </property>
                  </widget>
                 </item>
@@ -493,13 +415,6 @@
                    <widget class="QPushButton" name="btnNodejsBrowse">
                     <property name="text">
                      <string>Browse...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="lnkNodejsDetect">
-                    <property name="text">
-                     <string>&lt;a href=&quot;#&quot;&gt;Detect&lt;/a&gt;</string>
                     </property>
                    </widget>
                   </item>
@@ -521,13 +436,6 @@
                    <widget class="QPushButton" name="btnNpmBrowse">
                     <property name="text">
                      <string>Browse...</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="lnkNpmDetect">
-                    <property name="text">
-                     <string>&lt;a href=&quot;#&quot;&gt;Detect&lt;/a&gt;</string>
                     </property>
                    </widget>
                   </item>

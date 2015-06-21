@@ -43,8 +43,8 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 
     ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
 
-    ui->txtRuby2_1->setText(s.value("Extensions/Runtime_Ruby2.1", "").toString());
-    ui->txtBundler->setText(s.value("Extensions/Runtime_Bundler", "").toString());
+    ui->txtNodejs->setText(s.value("Extensions/Runtime_Nodejs", "").toString());
+    ui->txtNpm->setText(s.value("Extensions/Runtime_Npm", "").toString());
 }
 
 frmPreferences::~frmPreferences()
@@ -96,8 +96,8 @@ void frmPreferences::on_buttonBox_accepted()
 
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
 
-    s.setValue("Extensions/Runtime_Ruby2.1", ui->txtRuby2_1->text());
-    s.setValue("Extensions/Runtime_Bundler", ui->txtBundler->text());
+    s.setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
+    s.setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
 
     accept();
 }
@@ -297,22 +297,22 @@ void frmPreferences::checkExecutableExists(QLineEdit *path)
     path->setPalette(palette);
 }
 
-void frmPreferences::on_btnRuby2_1Browse_clicked()
+void frmPreferences::on_btnNodejsBrowse_clicked()
 {
-    extensionBrowseRuntime(ui->txtRuby2_1);
+    extensionBrowseRuntime(ui->txtNodejs);
 }
 
-void frmPreferences::on_btnBundlerBrowse_clicked()
+void frmPreferences::on_btnNpmBrowse_clicked()
 {
-    extensionBrowseRuntime(ui->txtBundler);
+    extensionBrowseRuntime(ui->txtNpm);
 }
 
-void frmPreferences::on_txtRuby2_1_textChanged(const QString &)
+void frmPreferences::on_txtNodejs_textChanged(const QString &)
 {
-    checkExecutableExists(ui->txtRuby2_1);
+    checkExecutableExists(ui->txtNodejs);
 }
 
-void frmPreferences::on_txtBundler_textChanged(const QString &)
+void frmPreferences::on_txtNpm_textChanged(const QString &)
 {
-    checkExecutableExists(ui->txtBundler);
+    checkExecutableExists(ui->txtNpm);
 }
