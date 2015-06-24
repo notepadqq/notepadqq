@@ -443,6 +443,13 @@ var Languages = new function() {
             fileExtensions: ["mo"]
         },
 
+        "mumps": {
+            name: "MUMPS",
+            mode: "mumps",
+            mime: "text/x-mumps",
+            fileExtensions: ["mo"]
+        },
+
         "nginx": {
             name: "Nginx",
             mode: "nginx",
@@ -689,6 +696,13 @@ var Languages = new function() {
             mode: "sql",
             mime: "text/x-mariadb",
             fileExtensions: []
+        },
+
+        "mathematica": {
+            name: "Mathematica",
+            mode: "mathematica",
+            mime: "text/x-mathematica",
+            fileExtensions: ["m", "nb"]
         },
 
         "stex": {
