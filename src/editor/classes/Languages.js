@@ -17,6 +17,13 @@ var Languages = new function() {
             fileExtensions: ["apl"]
         },
 
+        "asn.1": {
+            name: "ASN.1",
+            mode: "asn.1",
+            mime: "text/x-ttcn-asn",
+            fileExtensions: []
+        },
+
         "pgp": {
             name: "PGP",
             mode: "asciiarmor",
@@ -780,6 +787,20 @@ var Languages = new function() {
             mode: "troff",
             mime: "troff",
             fileExtensions: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        },
+
+        "ttcn": {
+            name: "TTCN",
+            mode: "ttcn",
+            mime: "text/x-ttcn",
+            fileExtensions: []
+        },
+
+        "ttcn-cfg": {
+            name: "TTCN-CFG",
+            mode: "ttcn-cfg",
+            mime: "text/x-ttcn-cfg",
+            fileExtensions: []
         },
 
         "vb": {
