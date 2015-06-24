@@ -143,24 +143,24 @@ namespace EditorNS
              * @brief Give focus to the editor, so that the user can start
              *        typing. Note that calling won't automatically switch to
              *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
-             *        and TopEditorContainer::setFocus() for that. (actually it's a bug)
+             *        and TopEditorContainer::setFocus() for that.
              */
-        void setFocus();
+        Q_INVOKABLE void setFocus();
 
         /**
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */
-        void setFileName(const QUrl &filename);
+        Q_INVOKABLE void setFileName(const QUrl &filename);
 
         /**
              * @brief Get the file name associated with this editor
              * @return
              */
-        QUrl fileName() const;
+        Q_INVOKABLE QUrl fileName() const;
 
-        bool fileOnDiskChanged() const;
-        void setFileOnDiskChanged(bool fileOnDiskChanged);
+        Q_INVOKABLE bool fileOnDiskChanged() const;
+        Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
 
         enum selectMode {
             selectMode_cursorBefore,
@@ -173,9 +173,9 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        bool isClean();
-        void markClean();
-        void markDirty();
+        Q_INVOKABLE bool isClean();
+        Q_INVOKABLE void markClean();
+        Q_INVOKABLE void markDirty();
         QList<QMap<QString, QString> > languages();
 
         /**
@@ -184,11 +184,11 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        void setLanguage(const QString &language);
-        QString setLanguageFromFileName(QString fileName);
-        QString setLanguageFromFileName();
-        void setValue(const QString &value);
-        QString value();
+        Q_INVOKABLE void setLanguage(const QString &language);
+        Q_INVOKABLE QString setLanguageFromFileName(QString fileName);
+        Q_INVOKABLE QString setLanguageFromFileName();
+        Q_INVOKABLE void setValue(const QString &value);
+        Q_INVOKABLE QString value();
 
         /**
          * @brief Set custom indentation settings which may be different
@@ -205,12 +205,12 @@ namespace EditorNS
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
 
-        qreal zoomFactor() const;
-        void setZoomFactor(const qreal &factor);
-        void setSelectionsText(const QStringList &texts, selectMode mode);
-        void setSelectionsText(const QStringList &texts);
-        QString language();
-        void setLineWrap(const bool wrap);
+        Q_INVOKABLE qreal zoomFactor() const;
+        Q_INVOKABLE void setZoomFactor(const qreal &factor);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        Q_INVOKABLE QString language();
+        Q_INVOKABLE void setLineWrap(const bool wrap);
 
         /**
          * @brief Get the current cursor position
@@ -256,7 +256,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        QStringList selectedTexts();
+        Q_INVOKABLE QStringList selectedTexts();
 
         void setOverwrite(bool overwrite);
         void forceRender(QSize size);

@@ -29,9 +29,11 @@ win32: CMD_FULLDELETE = del /F /S /Q
 
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
+        message(Debug build)
         DESTDIR = ../../out/debug/lib
     }
     CONFIG(release, debug|release) {
+        message(Release build)
         DESTDIR = ../../out/release/lib
     }
 }
@@ -67,7 +69,18 @@ SOURCES += main.cpp\
     Search/replaceinfilesworker.cpp \
     Search/dlgsearching.cpp \
     Search/searchresultsitemdelegate.cpp \
-    frmlinenumberchooser.cpp
+    Extensions/extension.cpp \
+    frmlinenumberchooser.cpp \
+    Extensions/extensionsserver.cpp \
+    Extensions/Stubs/stub.cpp \
+    Extensions/runtimesupport.cpp \
+    Extensions/Stubs/windowstub.cpp \
+    Extensions/Stubs/notepadqqstub.cpp \
+    Extensions/Stubs/editorstub.cpp \
+    Extensions/extensionsloader.cpp \
+    globals.cpp \
+    Extensions/Stubs/menuitemstub.cpp \
+    Extensions/installextension.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -96,7 +109,18 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchhelpers.h \
     include/Search/dlgsearching.h \
     include/Search/searchresultsitemdelegate.h \
-    include/frmlinenumberchooser.h
+    include/Extensions/extension.h \
+    include/frmlinenumberchooser.h \
+    include/Extensions/extensionsserver.h \
+    include/Extensions/Stubs/stub.h \
+    include/Extensions/runtimesupport.h \
+    include/Extensions/Stubs/windowstub.h \
+    include/Extensions/Stubs/notepadqqstub.h \
+    include/Extensions/Stubs/editorstub.h \
+    include/Extensions/extensionsloader.h \
+    include/globals.h \
+    include/Extensions/Stubs/menuitemstub.h \
+    include/Extensions/installextension.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -105,7 +129,8 @@ FORMS    += mainwindow.ui \
     frmindentationmode.ui \
     Search/dlgsearching.ui \
     Search/frmsearchreplace.ui \
-    frmlinenumberchooser.ui
+    frmlinenumberchooser.ui \
+    Extensions/installextension.ui
 
 RESOURCES += \
     resources.qrc
@@ -120,14 +145,21 @@ editorTarget.commands = (cd \"$$PWD\" && \
                          cd \"../editor\" && \
                          $(MAKE) DESTDIR=\"$$APPDATADIR/editor\")
 
+# Copy the extension_tools in the "shared" folder
+extensionToolsTarget.target = make_extensionTools
+extensionToolsTarget.commands = (cd \"$$PWD\" && \
+                           $${CMD_FULLDELETE} \"$$APPDATADIR/extension_tools\" && \
+                           cd \"../extension_tools\" && \
+                           $(MAKE) DESTDIR=\"$$APPDATADIR/extension_tools\")
+
 launchTarget.target = make_launch
 launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_MKDIR} \"$$BINDIR/\" && \
                          $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
                          chmod 755 \"$$BINDIR/notepadqq\")
 
-QMAKE_EXTRA_TARGETS += editorTarget launchTarget
-PRE_TARGETDEPS += make_editor make_launch
+QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget
+PRE_TARGETDEPS += make_editor make_extensionTools make_launch
 
 ### INSTALL ###
 unix {
@@ -161,9 +193,13 @@ unix {
     icon_hscalable.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/"
     icon_hscalable.files += "$$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg"
 
-    system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")    # Make sure that the folder exists, otherwise qmake won't create the install rule
+    # Make sure that the folders exists, otherwise qmake won't create the misc_data install rule
+    system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")
+    system($${QMAKE_MKDIR} \"$$APPDATADIR/extension_tools\")
+
     misc_data.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/"
     misc_data.files += "$$APPDATADIR/editor"
+    misc_data.files += "$$APPDATADIR/extension_tools"
 
     launch.path = "$$INSTALL_ROOT$$PREFIX/bin/"
     launch.files += "$$BINDIR/notepadqq"

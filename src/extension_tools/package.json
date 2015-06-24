@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "archiver": "^0.14.4",
+    "shelljs": "^0.5.1"
+  }
+}

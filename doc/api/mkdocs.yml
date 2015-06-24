@@ -1,0 +1,5 @@
+site_name: Notepadqq API
+theme_dir: 'theme'
+markdown_extensions:
+    - toc:
+        permalink: True

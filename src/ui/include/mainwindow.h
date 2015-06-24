@@ -11,6 +11,7 @@
 #include <functional>
 #include "QtPrintSupport/QPrinter"
 #include "include/Search/filesearchresultswidget.h"
+#include "include/Extensions/extension.h"
 
 namespace Ui {
 class MainWindow;
@@ -57,6 +58,11 @@ public:
     TopEditorContainer *topEditorContainer();
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
+
+    Editor*   currentEditor();
+    QSharedPointer<Editor> currentEditorSharedPtr();
+    QAction*  addExtensionMenuItem(QString extensionId, QString text);
+    void showExtensionsMenu(bool show);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -165,28 +171,29 @@ private slots:
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
     void on_editorUrlsDropped(QList<QUrl> urls);
-
     void on_actionGo_to_line_triggered();
+    void on_actionInstall_Extension_triggered();
 
 private:
     static QList<MainWindow*> m_instances;
-    Ui::MainWindow*     ui;
-    TopEditorContainer* m_topEditorContainer;
-    DocEngine*          m_docEngine;
-    QMenu*              m_tabContextMenu;
-    QList<QAction *>    m_tabContextMenuActions;
-    QLabel*             m_statusBar_fileFormat;
-    QLabel*             m_statusBar_length_lines;
-    QLabel*             m_statusBar_curPos;
-    QLabel*             m_statusBar_selection;
-    QLabel*             m_statusBar_EOLstyle;
-    QLabel*             m_statusBar_textFormat;
-    QLabel*             m_statusBar_overtypeNotify;
-    QSettings*          m_settings;
-    frmSearchReplace*   m_frmSearchReplace = 0;
-    bool                m_overwrite = false; // Overwrite mode vs Insert mode
+    Ui::MainWindow*       ui;
+    TopEditorContainer*   m_topEditorContainer;
+    DocEngine*            m_docEngine;
+    QMenu*                m_tabContextMenu;
+    QList<QAction *>      m_tabContextMenuActions;
+    QLabel*               m_statusBar_fileFormat;
+    QLabel*               m_statusBar_length_lines;
+    QLabel*               m_statusBar_curPos;
+    QLabel*               m_statusBar_selection;
+    QLabel*               m_statusBar_EOLstyle;
+    QLabel*               m_statusBar_textFormat;
+    QLabel*               m_statusBar_overtypeNotify;
+    QSettings*            m_settings;
+    frmSearchReplace*     m_frmSearchReplace = 0;
+    bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     FileSearchResultsWidget* m_fileSearchResultsWidget;
-    QString             m_workingDirectory;
+    QString               m_workingDirectory;
+    QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
@@ -221,7 +228,6 @@ private:
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
-    Editor*             currentEditor();
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();

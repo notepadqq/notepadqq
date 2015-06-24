@@ -1,10 +1,13 @@
+#include "include/globals.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
 #include "include/EditorNS/editor.h"
 #include "include/singleapplication.h"
+#include "include/Extensions/extensionsloader.h"
 #include <QObject>
 #include <QFile>
 #include <QSettings>
+#include <QtGlobal>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -12,6 +15,7 @@
 
 void checkQtVersion();
 void forceDefaultSettings();
+void loadExtensions();
 
 int main(int argc, char *argv[])
 {
@@ -19,13 +23,20 @@ int main(int argc, char *argv[])
     QElapsedTimer __aet_timer;
     __aet_timer.start();
     qDebug() << "Start-time benchmark started.";
+
+    printerrln("WARNING: Notepadqq is running in DEBUG mode.");
 #endif
+
+    // Initialize random number generator
+    qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
 
     SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
     QCoreApplication::setApplicationName("Notepadqq");
     QCoreApplication::setApplicationVersion(Notepadqq::version);
+
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     forceDefaultSettings();
 
@@ -72,6 +83,15 @@ int main(int argc, char *argv[])
 
     checkQtVersion();
 
+    if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
+        Extensions::ExtensionsLoader::startExtensionsServer();
+        Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
+    } else {
+#ifdef QT_DEBUG
+        qDebug() << "Extension support is not installed.";
+#endif
+    }
+
     MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();
 
@@ -109,10 +129,10 @@ void forceDefaultSettings()
         settings.setValue("Languages/makefile/indentWithSpaces", false);
     }
 
-    // Convert old "colorScheme" to new "Appearance/ColorScheme"
-    // TODO Remove me after a few months from 2014-dec-01.
-    if (!settings.contains("Appearance/ColorScheme") && settings.contains("colorScheme")) {
-        settings.setValue("Appearance/ColorScheme", settings.value("colorScheme"));
-        settings.remove("colorScheme");
+    // Use two spaces to indent ruby by default
+    if (!settings.contains("Languages/ruby/useDefaultSettings")) {
+        settings.setValue("Languages/ruby/useDefaultSettings", false);
+        settings.setValue("Languages/ruby/tabSize", 2);
+        settings.setValue("Languages/ruby/indentWithSpaces", true);
     }
 }

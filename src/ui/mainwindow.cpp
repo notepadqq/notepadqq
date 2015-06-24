@@ -12,7 +12,10 @@
 #include "include/clickablelabel.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
+#include "include/Extensions/extensionsloader.h"
 #include "include/frmlinenumberchooser.h"
+#include "include/Extensions/Stubs/windowstub.h"
+#include "include/Extensions/installextension.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -24,6 +27,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
+#include <QJsonArray>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -143,8 +147,12 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setupLanguagesMenu();
 
+    showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
+
+    emit Notepadqq::getInstance().newWindow(this);
 }
 
 MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)
@@ -809,6 +817,37 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
 Editor *MainWindow::currentEditor()
 {
     return m_topEditorContainer->currentTabWidget()->currentEditor();
+}
+
+QSharedPointer<Editor> MainWindow::currentEditorSharedPtr()
+{
+    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
+    return tabW->editorSharedPtr(tabW->currentIndex());
+}
+
+QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
+{
+    QMap<QString, QSharedPointer<Extensions::Extension>> extensions = Extensions::ExtensionsLoader::loadedExtensions();
+
+    if (extensions.contains(extensionId)) {
+        QSharedPointer<Extensions::Extension> extension = extensions.value(extensionId);
+
+        // Create the menu for the extension if it doesn't exist yet.
+        if (!m_extensionMenus.contains(extension)) {
+            QMenu *menu = new QMenu(extension->name(), this);
+            ui->menuExtensions->addMenu(menu);
+            m_extensionMenus.insert(extension, menu);
+        }
+
+        // Create the menu item
+        QAction *action = new QAction(text, this);
+        m_extensionMenus[extension]->addAction(action);
+
+        return action;
+    } else {
+        // Invalid extension id
+        return NULL;
+    }
 }
 
 void MainWindow::on_tabCloseRequested(EditorTabWidget *tabWidget, int tab)
@@ -1968,4 +2007,19 @@ void MainWindow::on_actionGo_to_line_triggered()
         int line = frm->value();
         editor->setSelection(line - 1, 0, line - 1, 0);
     }
+}
+
+void MainWindow::on_actionInstall_Extension_triggered()
+{
+    QString file = QFileDialog::getOpenFileName(this, tr("Extension"), QString(), "Notepadqq extensions (*.nqqext)");
+    if (!file.isNull()) {
+        Extensions::InstallExtension *installExt = new Extensions::InstallExtension(file, this);
+        installExt->exec();
+        installExt->deleteLater();
+    }
+}
+
+void MainWindow::showExtensionsMenu(bool show)
+{
+    ui->menuExtensions->menuAction()->setVisible(show);
 }
