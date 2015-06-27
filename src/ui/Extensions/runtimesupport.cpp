@@ -117,7 +117,7 @@ namespace Extensions {
     {
         QJsonObject retJson;
         retJson.insert("objectId", NQQ_STUB_ID);
-        retJson.insert("event", "currentExtensionStarted");
+        retJson.insert("event", QStringLiteral("currentExtensionStarted"));
         retJson.insert("args", QJsonArray());
         return retJson;
     }
