@@ -8,12 +8,14 @@ else
     GCC_DIR=gcc
 fi
 
+OPT_QT55=/opt/Qt/5.5/$GCC_DIR/lib
 OPT_QT54=/opt/Qt/5.4/$GCC_DIR/lib
 OPT_QT53=/opt/Qt/5.3/$GCC_DIR/lib
+PERSONAL_QT55=~/Qt/5.5/$GCC_DIR/lib
 PERSONAL_QT54=~/Qt/5.4/$GCC_DIR/lib
 PERSONAL_QT53=~/Qt/5.3/$GCC_DIR/lib
 
-export LD_LIBRARY_PATH="$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$OPT_QT55:$PERSONAL_QT55:$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
 
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
     # Nqq is installed: this script is in bin/
