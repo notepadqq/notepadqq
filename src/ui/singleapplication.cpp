@@ -2,7 +2,7 @@
 #include <QLocalSocket>
 #include <QDir>
 #include <QRegularExpression>
-#include <QtCore/QDataStream>
+#include <QDataStream>
 #include "include/localcommunication.h"
 
 #if defined(Q_OS_WIN)
