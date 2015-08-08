@@ -1,4 +1,16 @@
 
+EXTRA_DIST = \
+	doc \
+	images \
+	src \
+	support_files \
+	\
+	autogen.sh \
+	CONTRIBUTORS.md \
+	notepadqq.pro \
+	README.md
+
+
 all-local: Makefile.qmake
 	$(MAKE) -f $^ $(AM_MAKEFLAGS) all
 
@@ -18,4 +30,6 @@ Makefile.qmake: notepadqq.pro
 
 clobber: maintainer-clean
 	rm -f Makefile.in aclocal.m4 compile configure install-sh missing
+	rm -f $(DIST_ARCHIVES)
+	if [ -d ".git" ] && [ $$(which git) ]; then git submodule deinit . ; fi
 

@@ -1,9 +1,8 @@
 #!/bin/sh
 
 # If we're in a git repo and git is installed, update the submodules.
-# If ".git" is not found, assume that the complete source
-# code is already available.
-if [ -d ".git" ] && [ -n "$(whereis -b git | awk '{print $2}')" ]; then
+# If ".git" is not found, assume that the complete source code is already available.
+if [ -d ".git" ] && [ $(which git) ]; then
     git submodule init
     git submodule update
 fi
@@ -15,8 +14,8 @@ test -d "$cmdir" || (echo "$cmerror" && exit 1)
 # check if directory is empty
 test "$(ls -A $cmdir)" || (echo "$cmerror" && exit 1)
 
-test -n "$(whereis -b autoreconf | awk '{print $2}')" || (echo "autoreconf not found!" && exit 1)
+test -n "$(which git)" || (echo "autoreconf not found!" && exit 1)
 
-autoreconf -ivf "$@"
+autoreconf --install --force "$@"
 rm -rf autom4te.cache
 

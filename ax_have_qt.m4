@@ -62,7 +62,7 @@ AC_DEFUN([AX_HAVE_QT],
   AC_REQUIRE([AC_PATH_X])
   AC_REQUIRE([AC_PATH_XTRA])
 
-  AC_MSG_CHECKING(for Qt)
+  AC_MSG_CHECKING(for Qt5)
   # If we have Qt5 or later in the path, we're golden
   ver=`qmake --version | grep -o "Qt version ."`
   if test "$ver" ">" "Qt version 4"; then
@@ -215,8 +215,8 @@ EOF
     ])dnl AC_CACHE_VAL ax_cv_qt_test_result
     AC_MSG_RESULT([$ax_cv_qt_test_result])
     if test x"$ax_cv_qt_test_result" = "xfailure"; then
-      AC_MSG_ERROR([Failed to find matching components of a complete
-                  Qt installation. Try using more options,
+      AC_MSG_ERROR([Failed to find matching components of a
+                  Qt5 installation. Try using more options,
                   see ./configure --help.])
     fi
 
