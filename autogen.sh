@@ -14,7 +14,8 @@ test -d "$cmdir" || (echo "$cmerror" && exit 1)
 # check if directory is empty
 test "$(ls -A $cmdir)" || (echo "$cmerror" && exit 1)
 
-test -n "$(which git)" || (echo "autoreconf not found!" && exit 1)
+test -n "$(which autoreconf)" || (echo "autoreconf not found!" && exit 1)
+test -n "$(which pkg-config)" || (echo "pkg-config not found!" && exit 1)
 
 autoreconf --install --force "$@"
 rm -rf autom4te.cache
