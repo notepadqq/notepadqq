@@ -1,38 +1,38 @@
 <RCC>
-    <qresource prefix="icons/default">
-		<file alias="index.theme">icons/default/index.theme</file>
+    <qresource prefix="icons/notepadqq">
+		<file alias="index.theme">icons/notepadqq/index.theme</file>
 
-		<file alias="16x16/document-close.png">icons/default/16x16/document-close.png</file>
-		<file alias="16x16/document-close-all.png">icons/default/16x16/document-close-all.png</file>
-		<file alias="16x16/document-new.png">icons/default/16x16/document-new.png</file>
-		<file alias="16x16/document-open.png">icons/default/16x16/document-open.png</file>
-		<file alias="16x16/document-print.png">icons/default/16x16/document-print.png</file>
+		<file alias="16x16/document-close.png">icons/notepadqq/16x16/document-close.png</file>
+		<file alias="16x16/document-close-all.png">icons/notepadqq/16x16/document-close-all.png</file>
+		<file alias="16x16/document-new.png">icons/notepadqq/16x16/document-new.png</file>
+		<file alias="16x16/document-open.png">icons/notepadqq/16x16/document-open.png</file>
+		<file alias="16x16/document-print.png">icons/notepadqq/16x16/document-print.png</file>
 
-		<file alias="16x16/document-save.png">icons/default/16x16/document-save.png</file>
-		<file alias="64x64/document-save.png">icons/default/64x64/document-save.png</file>
-		<file alias="128x128/document-save.png">icons/default/128x128/document-save.png</file>
+		<file alias="16x16/document-save.png">icons/notepadqq/16x16/document-save.png</file>
+		<file alias="64x64/document-save.png">icons/notepadqq/64x64/document-save.png</file>
+		<file alias="128x128/document-save.png">icons/notepadqq/128x128/document-save.png</file>
 
-		<file alias="16x16/document-save-all.png">icons/default/16x16/document-save-all.png</file>
-		<file alias="16x16/document-save-as.png">icons/default/16x16/document-save-as.png</file>
-		<file alias="16x16/edit-copy.png">icons/default/16x16/edit-copy.png</file>
-		<file alias="16x16/edit-cut.png">icons/default/16x16/edit-cut.png</file>
-		<file alias="16x16/edit-find.png">icons/default/16x16/edit-find.png</file>
-		<file alias="16x16/edit-find-replace.png">icons/default/16x16/edit-find-replace.png</file>
-		<file alias="16x16/edit-paste.png">icons/default/16x16/edit-paste.png</file>
-		<file alias="16x16/edit-redo.png">icons/default/16x16/edit-redo.png</file>
-		<file alias="16x16/edit-undo.png">icons/default/16x16/edit-undo.png</file>
-		<file alias="16x16/media-playback-start.png">icons/default/16x16/media-playback-start.png</file>
-		<file alias="16x16/media-playback-stop.png">icons/default/16x16/media-playback-stop.png</file>
-		<file alias="16x16/media-record.png">icons/default/16x16/media-record.png</file>
-		<file alias="16x16/media-seek-forward.png">icons/default/16x16/media-seek-forward.png</file>
-		<file alias="scalable/notepadqq.svg">icons/default/scalable/notepadqq.svg</file>
-		<file alias="16x16/notepadqq-document-saved.png">icons/default/16x16/notepadqq-document-saved.png</file>
-		<file alias="16x16/notepadqq-document-unsaved.png">icons/default/16x16/notepadqq-document-unsaved.png</file>
-		<file alias="16x16/preferences-other.png">icons/default/16x16/preferences-other.png</file>
-		<file alias="16x16/show-special-chars.png">icons/default/16x16/show-special-chars.png</file>
-		<file alias="16x16/word-wrap.png">icons/default/16x16/word-wrap.png</file>
-		<file alias="16x16/zoom-in.png">icons/default/16x16/zoom-in.png</file>
-		<file alias="16x16/zoom-original.png">icons/default/16x16/zoom-original.png</file>
-		<file alias="16x16/zoom-out.png">icons/default/16x16/zoom-out.png</file>
+		<file alias="16x16/document-save-all.png">icons/notepadqq/16x16/document-save-all.png</file>
+		<file alias="16x16/document-save-as.png">icons/notepadqq/16x16/document-save-as.png</file>
+		<file alias="16x16/edit-copy.png">icons/notepadqq/16x16/edit-copy.png</file>
+		<file alias="16x16/edit-cut.png">icons/notepadqq/16x16/edit-cut.png</file>
+		<file alias="16x16/edit-find.png">icons/notepadqq/16x16/edit-find.png</file>
+		<file alias="16x16/edit-find-replace.png">icons/notepadqq/16x16/edit-find-replace.png</file>
+		<file alias="16x16/edit-paste.png">icons/notepadqq/16x16/edit-paste.png</file>
+		<file alias="16x16/edit-redo.png">icons/notepadqq/16x16/edit-redo.png</file>
+		<file alias="16x16/edit-undo.png">icons/notepadqq/16x16/edit-undo.png</file>
+		<file alias="16x16/media-playback-start.png">icons/notepadqq/16x16/media-playback-start.png</file>
+		<file alias="16x16/media-playback-stop.png">icons/notepadqq/16x16/media-playback-stop.png</file>
+		<file alias="16x16/media-record.png">icons/notepadqq/16x16/media-record.png</file>
+		<file alias="16x16/media-seek-forward.png">icons/notepadqq/16x16/media-seek-forward.png</file>
+		<file alias="scalable/notepadqq.svg">icons/notepadqq/scalable/notepadqq.svg</file>
+		<file alias="16x16/notepadqq-document-saved.png">icons/notepadqq/16x16/notepadqq-document-saved.png</file>
+		<file alias="16x16/notepadqq-document-unsaved.png">icons/notepadqq/16x16/notepadqq-document-unsaved.png</file>
+		<file alias="16x16/preferences-other.png">icons/notepadqq/16x16/preferences-other.png</file>
+		<file alias="16x16/show-special-chars.png">icons/notepadqq/16x16/show-special-chars.png</file>
+		<file alias="16x16/word-wrap.png">icons/notepadqq/16x16/word-wrap.png</file>
+		<file alias="16x16/zoom-in.png">icons/notepadqq/16x16/zoom-in.png</file>
+		<file alias="16x16/zoom-original.png">icons/notepadqq/16x16/zoom-original.png</file>
+		<file alias="16x16/zoom-out.png">icons/notepadqq/16x16/zoom-out.png</file>
     </qresource>
 </RCC>
