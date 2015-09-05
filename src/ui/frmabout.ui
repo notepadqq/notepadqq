@@ -17,7 +17,7 @@
    <string>Notepadqq</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="resources.qrc">
     <normaloff>:/icons/notepadqq/scalable/notepadqq.svg</normaloff>:/icons/notepadqq/scalable/notepadqq.svg</iconset>
   </property>
   <property name="styleSheet">
@@ -42,7 +42,7 @@
   <widget class="QLabel" name="lblCopyright">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>190</y>
      <width>311</width>
      <height>21</height>
@@ -58,7 +58,7 @@
   <widget class="QLabel" name="lblVersion">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>70</y>
      <width>211</width>
      <height>16</height>
@@ -77,7 +77,7 @@
   <widget class="QLabel" name="lblName">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>20</y>
      <width>221</width>
      <height>41</height>
@@ -112,9 +112,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>150</width>
-     <height>150</height>
+     <y>20</y>
+     <width>192</width>
+     <height>192</height>
     </rect>
    </property>
    <property name="text">
@@ -127,7 +127,7 @@
   <widget class="QLabel" name="lblWebsite">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>130</y>
      <width>299</width>
      <height>21</height>
@@ -149,7 +149,7 @@
   <widget class="QLabel" name="lblContributors">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>150</y>
      <width>301</width>
      <height>21</height>
@@ -166,6 +166,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
