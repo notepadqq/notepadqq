@@ -198,6 +198,8 @@
     <addaction name="actionWord_wrap"/>
     <addaction name="separator"/>
     <addaction name="actionText_Direction_RTL"/>
+    <addaction name="separator"/>
+    <addaction name="actionFull_Screen"/>
    </widget>
    <widget class="QMenu" name="menuEncoding">
     <property name="title">
@@ -1017,6 +1019,17 @@
   <action name="actionInstall_Extension">
    <property name="text">
     <string>Install Extension...</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Screen</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
    </property>
   </action>
  </widget>
