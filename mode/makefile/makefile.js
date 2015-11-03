@@ -35,8 +35,8 @@ CodeMirror.defineMode('makefile', function() {
         return 'tag';
       }
 
-      // if, ifdef, ifeq, ifneq
-      if (ch === 'i' && (stream.match('f ') || stream.match('fdef ') || stream.match('feq (') || stream.match('fneq ('))) {
+      // if, ifdef, ifndef, ifeq, ifneq
+      if (ch === 'i' && (stream.match('f ') || stream.match('fdef ') || stream.match('fndef ') || stream.match('feq (') || stream.match('fneq ('))) {
         stream.skipToEnd();
         return "bracket";
       }
