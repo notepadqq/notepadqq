@@ -136,6 +136,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     restoreWindowSettings();
 
+    ui->actionFull_Screen->setChecked(isFullScreen());
+
     ui->dockFileSearchResults->hide();
 
     // If there was another window already opened, move this window
@@ -2022,4 +2024,20 @@ void MainWindow::on_actionInstall_Extension_triggered()
 void MainWindow::showExtensionsMenu(bool show)
 {
     ui->menuExtensions->menuAction()->setVisible(show);
+}
+
+void MainWindow::on_actionFull_Screen_toggled(bool on)
+{
+    static bool maximized = isMaximized();
+
+    if (on) {
+        maximized = isMaximized();
+        showFullScreen();
+    } else {
+        if (maximized) {
+            showMaximized();
+        } else {
+            showNormal();
+        }
+    }
 }

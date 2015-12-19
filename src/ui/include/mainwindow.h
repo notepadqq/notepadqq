@@ -173,6 +173,7 @@ private slots:
     void on_editorUrlsDropped(QList<QUrl> urls);
     void on_actionGo_to_line_triggered();
     void on_actionInstall_Extension_triggered();
+    void on_actionFull_Screen_toggled(bool on);
 
 private:
     static QList<MainWindow*> m_instances;
