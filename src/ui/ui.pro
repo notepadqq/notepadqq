@@ -38,7 +38,7 @@ isEmpty(DESTDIR) {
     }
 }
 
-LRELEASE = lrelease
+LRELEASE = qtchooser -run-tool=lrelease -qt=5
 
 APPDATADIR = "$$DESTDIR/../appdata"
 BINDIR = "$$DESTDIR/../bin"
