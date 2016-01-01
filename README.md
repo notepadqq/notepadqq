@@ -48,8 +48,8 @@ Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~no
 #### Arch Linux
 You can install different versions of the package from AUR:
 
- * Stable (pre-built Debian package): [notepadqq-bin](https://aur4.archlinux.org/packages/notepadqq-bin/)
- * Development (git version): [notepadqq-git](https://aur4.archlinux.org/packages/notepadqq-git/)
+ * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
+ * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)
 
 #### Others
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
