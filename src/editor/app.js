@@ -416,7 +416,16 @@ UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_SPACE", function(msg, data, pr
 });
 
 UiDriver.registerEventHandler("C_CMD_TAB_TO_SPACE", function(msg, data, prevReturn) {
-    editLines(function (x) { return x.replace(/\t/g, (function(tabSize) {var result = ""; for (var i = 0; i< tabSize; i++) { result += " ";} return result;})(editor.getOption("tabSize"))); });
+    editLines(function (x) {
+        return x.replace(/\t/g, (function(tabSize) {
+            var result = "";
+            for (var i = 0; i< tabSize; i++) {
+                result += " ";}
+            return result;
+        })(
+            editor.getOption("tabSize")
+        ));
+    });
 });
 
 UiDriver.registerEventHandler("C_CMD_SPACE_TO_TAB_ALL", function(msg, data, prevReturn) {
