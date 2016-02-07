@@ -420,7 +420,8 @@ UiDriver.registerEventHandler("C_CMD_TAB_TO_SPACE", function(msg, data, prevRetu
         return x.replace(/\t/g, (function(tabSize) {
             var result = "";
             for (var i = 0; i< tabSize; i++) {
-                result += " ";}
+                result += " ";
+            }
             return result;
         })(
             editor.getOption("tabSize")
