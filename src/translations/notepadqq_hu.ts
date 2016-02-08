@@ -40,16 +40,21 @@
 <context>
     <name>BannerIndentationDetected</name>
     <message>
+        <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="18"/>
+        <source>This file is indented with %1, but your current settings specify to use %2.</source>
+        <translation>Ennek a fájlnak a behúzása %1 tartalmaz, ám a beállításokban %2 adott meg.</translation>
+    </message>
+    <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>spaces</source>
-        <translation>szóköz</translation>
+        <translation>szóközt</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>tabs</source>
-        <translation>tabulátor</translation>
+        <translation>tabulátort</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="22"/>
@@ -60,6 +65,11 @@
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="27"/>
         <source>Use tabs</source>
         <translation>Tabulátor használata</translation>
+    </message>
+    <message>
+        <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="31"/>
+        <source>This file is indented with %1 spaces, but your current settings specify to use %2 spaces.</source>
+        <translation>Ennek a fájlnak a behúzása %1 szóközt tartalmaz, ám a beállításokban %2 szóközt adott meg.</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="34"/>
