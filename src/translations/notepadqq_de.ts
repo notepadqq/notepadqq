@@ -330,7 +330,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="372"/>
         <source>Ctrl+O</source>
-        <translation>Strg+O</translation>
+        <translation>Ctrl+O</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="377"/>
@@ -340,7 +340,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="380"/>
         <source>Ctrl+N</source>
-        <translation>Strg+N</translation>
+        <translation>Ctrl+N</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="385"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="393"/>
         <source>Ctrl+S</source>
-        <translation>Strg+S</translation>
+        <translation>Ctrl+S</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="398"/>
@@ -370,7 +370,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="404"/>
         <source>Ctrl+Alt+S</source>
-        <translation>Strg+Alt+S</translation>
+        <translation>Ctrl+Alt+S</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="409"/>
@@ -385,7 +385,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="417"/>
         <source>Ctrl+Shift+S</source>
-        <translation>Strg+Umschalt+S</translation>
+        <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="422"/>
@@ -400,7 +400,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="430"/>
         <source>Ctrl+W</source>
-        <translation>Strg+W</translation>
+        <translation>Ctrl+W</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="435"/>
@@ -430,7 +430,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="458"/>
         <source>Ctrl+P</source>
-        <translation>Strg+P</translation>
+        <translation>Ctrl+P</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="466"/>
@@ -465,7 +465,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="495"/>
         <source>Ctrl+Z</source>
-        <translation>Strg+Z</translation>
+        <translation>Ctrl+Z</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="500"/>
@@ -475,7 +475,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="503"/>
         <source>Ctrl+Y</source>
-        <translation>Strg+Y</translation>
+        <translation>Ctrl+Y</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="508"/>
@@ -485,7 +485,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="511"/>
         <source>Ctrl+X</source>
-        <translation>Strg+X</translation>
+        <translation>Ctrl+X</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="516"/>
@@ -495,7 +495,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="519"/>
         <source>Ctrl+C</source>
-        <translation>Strg+C</translation>
+        <translation>Ctrl+C</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="524"/>
@@ -505,7 +505,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="527"/>
         <source>Ctrl+V</source>
-        <translation>Strg+V</translation>
+        <translation>Ctrl+V</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="532"/>
@@ -515,7 +515,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="535"/>
         <source>Del</source>
-        <translation>Entf</translation>
+        <translation>Del</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="540"/>
@@ -525,7 +525,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="543"/>
         <source>Ctrl+A</source>
-        <translation>Strg+A</translation>
+        <translation>Ctrl+A</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="548"/>
@@ -615,7 +615,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="665"/>
         <source>Ctrl++</source>
-        <translation>Strg++</translation>
+        <translation>Ctrl++</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="670"/>
@@ -625,7 +625,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="673"/>
         <source>Ctrl+-</source>
-        <translation>Strg+-</translation>
+        <translation>Ctrl+-</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="678"/>
@@ -635,7 +635,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="681"/>
         <source>Ctrl+0</source>
-        <translation>Strg+0</translation>
+        <translation>Ctrl+0</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="686"/>
@@ -701,7 +701,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="753"/>
         <source>Ctrl+Shift+U</source>
-        <translation>Strg+Shift+U</translation>
+        <translation>Ctrl+Shift+U</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="758"/>
@@ -711,7 +711,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="761"/>
         <source>Ctrl+U</source>
-        <translation>Strg+U</translation>
+        <translation>Ctrl+U</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="766"/>
@@ -791,7 +791,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="839"/>
         <source>Ctrl+F</source>
-        <translation>Strg+F</translation>
+        <translation>Ctrl+F</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="844"/>
@@ -811,7 +811,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="855"/>
         <source>Shift+F3</source>
-        <translation>Umschalt+F3</translation>
+        <translation>Shift+F3</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="860"/>
@@ -826,7 +826,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="868"/>
         <source>Ctrl+H</source>
-        <translation>Strg+H</translation>
+        <translation>Ctrl+H</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="873"/>
@@ -891,7 +891,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="940"/>
         <source>Ctrl+Shift+F</source>
-        <translation>Strg+Umschalt+F</translation>
+        <translation>Ctrl+Shift+F</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="945"/>
@@ -906,7 +906,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="951"/>
         <source>Ctrl+L</source>
-        <translation>Strg+L</translation>
+        <translation>Ctrl+L</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="956"/>
@@ -921,7 +921,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="962"/>
         <source>Ctrl+D</source>
-        <translation>Strg+D</translation>
+        <translation>Ctrl+D</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="967"/>
@@ -973,7 +973,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1016"/>
         <source>Ctrl+G</source>
-        <translation>Strg+G</translation>
+        <translation>Ctrl+G</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1021"/>
