@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QThread>
+#include <QCompleter>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),
@@ -20,6 +21,9 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
         parentWidget()->window()->frameGeometry().topLeft() +
         parentWidget()->window()->rect().center() -
         rect().center());
+
+    ui->cmbSearch->completer()->setCaseSensitivity(Qt::CaseSensitive);
+    ui->cmbReplace->completer()->setCaseSensitivity(Qt::CaseSensitive);
 
     QSettings s;
     ui->cmbSearch->addItems(s.value("Search/searchHistory", QStringList()).toStringList());
