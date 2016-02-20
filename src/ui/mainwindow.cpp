@@ -473,7 +473,11 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> urls)
 void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
     if (ev->key() == Qt::Key_Insert) {
-        toggleOverwrite();
+        if (QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
+	    on_action_Paste_triggered();
+        }else{
+            toggleOverwrite();
+	}
     } else {
         QMainWindow::keyPressEvent(ev);
     }
