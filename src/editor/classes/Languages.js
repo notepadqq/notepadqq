@@ -737,7 +737,8 @@ var Languages = new function() {
             name: "Tcl",
             mode: "tcl",
             mime: "text/x-tcl",
-            fileExtensions: ["tcl"]
+            fileExtensions: ["tcl"],
+            firstNonBlankLine: [/^#!.*\/tclsh($| )/, /^#!\/usr\/bin\/env tclsh($| )/]
         },
 
         "textile": {
