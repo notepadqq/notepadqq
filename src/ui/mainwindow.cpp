@@ -474,10 +474,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
     if (ev->key() == Qt::Key_Insert) {
         if (QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
-	    on_action_Paste_triggered();
-        }else{
+            on_action_Paste_triggered();
+        } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) {
+            on_action_Copy_triggered();
+        } else {
             toggleOverwrite();
-	}
+        }
     } else {
         QMainWindow::keyPressEvent(ev);
     }
