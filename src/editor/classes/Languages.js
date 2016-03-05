@@ -228,7 +228,7 @@ var Languages = new function() {
             name: "Fortran",
             mode: "fortran",
             mime: "text/x-fortran",
-            fileExtensions: ["f", "f90", "for", "fpp", "ftn"]
+            fileExtensions: ["f", "f90", "for", "fpp", "ftn", "f95", "f03", "f08"]
         },
 
         "fsharp": {
