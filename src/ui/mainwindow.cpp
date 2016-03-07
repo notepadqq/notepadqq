@@ -480,6 +480,9 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
         } else {
             toggleOverwrite();
         }
+    } else if (ev->key() >= Qt::Key_1 && ev->key() <= Qt::Key_9 &&
+               QApplication::keyboardModifiers().testFlag(Qt::AltModifier)) {
+        m_topEditorContainer->currentTabWidget()->setCurrentIndex(ev->key() - Qt::Key_1);
     } else {
         QMainWindow::keyPressEvent(ev);
     }
