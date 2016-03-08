@@ -483,19 +483,19 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
     } else if (ev->key() >= Qt::Key_1 && ev->key() <= Qt::Key_9
                && QApplication::keyboardModifiers().testFlag(Qt::AltModifier)) {
         m_topEditorContainer->currentTabWidget()->setCurrentIndex(ev->key() - Qt::Key_1);
-    } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) {
-        if (ev->key() == Qt::Key_PageDown) {
-            // switch to the next tab to the right or wrap around if last
-            EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
-            int nextTabIndex = (curTabWidget->currentIndex() + 1) % curTabWidget->count();
-            curTabWidget->setCurrentIndex(nextTabIndex);
-        } else if (ev->key() == Qt::Key_PageUp) {
-            // switch to the previous tab or wrap around if first
-            EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
-            int prevTabIndex = (curTabWidget->currentIndex() + curTabWidget->count() - 1)
-                                    % curTabWidget->count();
-            curTabWidget->setCurrentIndex(prevTabIndex);
-        }
+    } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+               && ev->key() == Qt::Key_PageDown) {
+        // switch to the next tab to the right or wrap around if last
+        EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
+        int nextTabIndex = (curTabWidget->currentIndex() + 1) % curTabWidget->count();
+        curTabWidget->setCurrentIndex(nextTabIndex);
+    } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
+               && ev->key() == Qt::Key_PageUp) {
+        // switch to the previous tab or wrap around if first
+        EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
+        int prevTabIndex = (curTabWidget->currentIndex() + curTabWidget->count() - 1)
+                            % curTabWidget->count();
+        curTabWidget->setCurrentIndex(prevTabIndex);
     } else {
         QMainWindow::keyPressEvent(ev);
     }
