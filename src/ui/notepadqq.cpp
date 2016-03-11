@@ -14,7 +14,7 @@ bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
 {
-    return QObject::trUtf8("Copyright © 2010-2015, Daniele Di Sarli");
+    return QObject::trUtf8("Copyright © 2010-%1, Daniele Di Sarli").arg(COPYRIGHT_YEAR);
 }
 
 QString Notepadqq::appDataPath(QString fileName)

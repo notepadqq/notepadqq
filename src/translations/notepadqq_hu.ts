@@ -1147,8 +1147,8 @@ Biztosan menteni szeretné?</translation>
     <name>QObject</name>
     <message>
         <location filename="../ui/notepadqq.cpp" line="17"/>
-        <source>Copyright © 2010-2015, Daniele Di Sarli</source>
-        <translation>Szerzői jog © 2010-2015, Daniele Di Sarli</translation>
+        <source>Copyright © 2010-%1, Daniele Di Sarli</source>
+        <translation>Szerzői jog © 2010-%1, Daniele Di Sarli</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="81"/>
