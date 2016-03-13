@@ -146,3 +146,28 @@ QString Notepadqq::extensionsPath()
     QFileInfo f = QFileInfo(settings.fileName());
     return f.absoluteDir().absoluteFilePath("extensions");
 }
+
+QList<QString> Notepadqq::translations()
+{
+    QList<QString> out;
+
+    QString translationsPath = appDataPath();
+    translationsPath.append("/translations");
+    QDir dir(translationsPath);
+    QStringList fileNames = dir.entryList(QStringList("notepadqq_*.qm"));
+
+    // FIXME this can be removed if we create a .qm file for English too, which should exist for consistency purposes
+    out.append("en");
+
+    for (int i = 0; i < fileNames.size(); ++i) {
+        // get locale extracted by filename
+        QString langCode;
+        langCode = fileNames[i]; // "notepadqq_de.qm"
+        langCode.truncate(langCode.lastIndexOf('.')); // "notepadqq_de"
+        langCode.remove(0, langCode.indexOf('_') + 1); // "de"
+
+        out.append(langCode);
+    }
+
+    return out;
+}

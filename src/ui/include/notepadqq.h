@@ -70,6 +70,8 @@ public:
 
     static QString extensionsPath();
 
+    static QList<QString> translations();
+
 signals:
     void newWindow(MainWindow *window);
 

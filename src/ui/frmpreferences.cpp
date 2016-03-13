@@ -4,6 +4,7 @@
 #include "include/EditorNS/editor.h"
 #include "include/mainwindow.h"
 #include "include/Extensions/extensionsloader.h"
+#include "include/notepadqq.h"
 #include <QFileDialog>
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
@@ -41,6 +42,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 
     loadLanguages(&s);
     loadColorSchemes(&s);
+    loadTranslations(&s);
 
     ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
 
@@ -72,6 +74,7 @@ void frmPreferences::on_buttonBox_accepted()
 
     saveLanguages(&s);
     saveColorScheme(&s);
+    saveTranslation(&s);
 
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
 
@@ -173,6 +176,27 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     m_previewEditor->forceRender(renderSize);
 }
 
+void frmPreferences::loadTranslations(QSettings *s)
+{
+    QList<QString> translations = Notepadqq::translations();
+
+    QString localizationSetting = s->value("General/Localization", "en").toString();
+
+    for (QString langCode : translations) {
+        QString langName = QLocale::languageToString(QLocale(langCode).language());
+
+        QMap<QString, QVariant> tmap;
+        tmap.insert("langName", langName);
+        tmap.insert("langCode", langCode);
+
+        ui->localizationComboBox->addItem(langName, tmap);
+
+        if (localizationSetting == langCode) {
+            ui->localizationComboBox->setCurrentIndex(ui->localizationComboBox->count() - 1);
+        }
+    }
+}
+
 void frmPreferences::saveLanguages(QSettings *s)
 {
     QString keyPrefix = "Languages/";
@@ -199,6 +223,12 @@ void frmPreferences::saveColorScheme(QSettings *s)
 {
     QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
     s->setValue("Appearance/ColorScheme", selected.value("name").toString());
+}
+
+void frmPreferences::saveTranslation(QSettings *s)
+{
+    QMap<QString, QVariant> selected = ui->localizationComboBox->currentData().toMap();
+    s->setValue("General/Localization", selected.value("langCode").toString());
 }
 
 void frmPreferences::on_buttonBox_rejected()
@@ -276,6 +306,32 @@ void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
     QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
     QString name = selected.value("name").toString();
     m_previewEditor->setTheme(Editor::themeFromName(name));
+}
+
+void frmPreferences::on_localizationComboBox_activated(int /*index*/)
+{
+    QSettings settings;
+
+    if (settings.value("General/LocalizationShowPopup", true).toBool()) {
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText("<h3>" + QObject::tr("Restart required") + "</h3>");
+        msgBox.setInformativeText("<html><body>"
+            "<p>" + QObject::tr("You need to restart Notepadqq for the localization changes to take effect.") + "</p>");
+
+        QCheckBox *chkDontShowAgain = new QCheckBox();
+        chkDontShowAgain->setText(QObject::tr("Don't show me this popup again"));
+
+        msgBox.setCheckBox(chkDontShowAgain);
+        msgBox.exec();
+
+        settings.setValue("General/LocalizationShowPopup",
+                          !chkDontShowAgain->isChecked());
+        chkDontShowAgain->deleteLater();
+
+    }
 }
 
 bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
