@@ -116,6 +116,8 @@
      </property>
      <addaction name="actionDuplicate_Line"/>
      <addaction name="actionDelete_Line"/>
+     <addaction name="actionMove_Line_Up" />
+     <addaction name="actionMove_Line_Down"/>
     </widget>
     <widget class="QMenu" name="menuBlank_Operations">
      <property name="title">
@@ -962,6 +964,28 @@
     <string>Ctrl+D</string>
    </property>
   </action>
+  <action name="actionMove_Line_Up">
+   <property name="text">
+    <string>Move Line Up</string>
+   </property>
+   <property name="toolTip">
+    <string>Move the current line up</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Up</string>
+   </property> 
+  </action>	 
+  <action name="actionMove_Line_Down">
+   <property name="text">
+    <string>Move Line Down</string>
+   </property>
+   <property name="toolTip">
+    <string>Move the current line down</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Down</string>
+   </property> 
+  </action>	 
   <action name="actionTrim_Trailing_Space">
    <property name="text">
     <string>Trim Trailing Space</string>

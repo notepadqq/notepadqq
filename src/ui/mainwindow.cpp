@@ -1951,6 +1951,17 @@ void MainWindow::on_actionDuplicate_Line_triggered()
     currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE");
 }
 
+void MainWindow::on_actionMove_Line_Up_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_MOVE_LINE_UP");
+}
+
+void MainWindow::on_actionMove_Line_Down_triggered()
+{
+    //currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
+    currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
+}
+
 void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match)
 {
     QUrl url = stringToUrl(file.fileName);
