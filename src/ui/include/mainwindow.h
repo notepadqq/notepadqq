@@ -161,6 +161,8 @@ private slots:
     void on_actionFind_in_Files_triggered();
     void on_actionDelete_Line_triggered();
     void on_actionDuplicate_Line_triggered();
+    void on_actionMove_Line_Up_triggered();
+    void on_actionMove_Line_Down_triggered();
     void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
     void on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
     void on_actionTrim_Trailing_Space_triggered();

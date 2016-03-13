@@ -398,6 +398,42 @@ UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevRe
     editor.replaceRange('\n' + line, pos);
 });
 
+UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevReturn) {
+    
+    var cur = editor.getCursor();
+    
+    //check previous line is not beginning of the document
+    if( (cur.line - 1) < 0) {
+        return;
+    }
+    
+    var line = editor.getLine(cur.line) + '\n' + editor.getLine(cur.line-1);
+    var from = { line: cur.line - 1, ch: 0           };
+    var to   = { line: cur.line,     ch: line.length };
+    
+    editor.replaceRange(line, from, to);
+    editor.setCursor(cur.line - 1, cur.ch );
+});
+
+UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevReturn) {
+    
+    var cur = editor.getCursor();
+    
+    // check that next line is not past end of document
+    if( (cur.line + 1) == editor.lineCount() )  {
+        return;
+    }
+    
+    var line = editor.getLine(cur.line + 1) + '\n' + editor.getLine(cur.line);
+    var from = { line: cur.line,     ch: 0           };
+    var to   = { line: cur.line + 1, ch: line.length };
+    
+    editor.replaceRange(line, from, to);
+    editor.setCursor(cur.line + 1, cur.ch );
+    
+});
+
+
 UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevReturn) {
     editor.execCommand("deleteLine");
     editor.changeGeneration(true);
