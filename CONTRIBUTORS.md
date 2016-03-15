@@ -11,3 +11,4 @@ Sorted alphabetically.
  * [OpenNingia](https://github.com/OpenNingia)
  * [pcatalani](https://github.com/pcatalani)
  * [Teklad](https://github.com/Teklad)
+ * [vpop](https://github.com/vpop) - Voicu Pop
