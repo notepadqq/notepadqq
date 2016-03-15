@@ -6,7 +6,6 @@
 #include <QDir>
 #include <QCheckBox>
 #include <QSettings>
-#include <QDate>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
@@ -15,7 +14,7 @@ bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
 {
-    return QObject::trUtf8("Copyright © 2010-%1, Daniele Di Sarli").arg(QDate::currentDate().year());
+    return QObject::trUtf8("Copyright © 2010-%1, Daniele Di Sarli").arg(COPYRIGHT_YEAR);
 }
 
 QString Notepadqq::appDataPath(QString fileName)

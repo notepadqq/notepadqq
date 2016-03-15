@@ -35,6 +35,8 @@
 
 #define POINTVERSION "0.51.0" // major.minor.revision
 
+#define COPYRIGHT_YEAR "2016"
+
 #define MIB_UTF_8 106
 
 /**
