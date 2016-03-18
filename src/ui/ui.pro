@@ -139,7 +139,8 @@ RESOURCES += \
 
 TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
-    ../translations/notepadqq_hu.ts
+    ../translations/notepadqq_hu.ts \
+    ../translations/notepadqq_ru.ts
 
 
 ### EXTRA TARGETS ###
@@ -170,7 +171,9 @@ translationsTarget.commands = (cd \"$$PWD\" && \
                          $${LRELEASE} \"../translations/notepadqq_de.ts\" \
                                   -qm \"$$APPDATADIR/translations/notepadqq_de.qm\" && \
                          $${LRELEASE} \"../translations/notepadqq_hu.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_hu.qm\")
+                                  -qm \"$$APPDATADIR/translations/notepadqq_hu.qm\" && \
+                         $${LRELEASE} \"../translations/notepadqq_ru.ts\" \
+                                  -qm \"$$APPDATADIR/translations/notepadqq_ru.qm\")
 
 QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget translationsTarget
 PRE_TARGETDEPS += make_editor make_extensionTools make_launch make_translations
