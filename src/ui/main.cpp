@@ -39,13 +39,21 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Notepadqq");
     QCoreApplication::setApplicationVersion(Notepadqq::version);
 
-    if (translator.load(QLocale(),
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+
+    forceDefaultSettings();
+
+    QSettings settings;
+
+    QString langCode = settings.value("General/Localization", "en").toString();
+
+    if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
                         QString("_"),
                         QString("%1/../appdata/translations")
                         .arg(qApp->applicationDirPath()))) {
         a.installTranslator(&translator);
-    } else if (translator.load(QLocale(),
+    } else if (translator.load(QLocale(langCode),
                                QString("%1").arg(qApp->applicationName().toLower()),
                                QString("_"),
                                QString("%1/../../share/%2/translations")
@@ -53,10 +61,6 @@ int main(int argc, char *argv[])
                                .arg(qApp->applicationName().toLower()))) {
         a.installTranslator(&translator);
     }
-
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-
-    forceDefaultSettings();
 
     // Check for "run-and-exit" options like -h or -v
     Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
@@ -118,7 +122,6 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    QSettings settings;
     if (Notepadqq::oldQt() && settings.value("checkQtVersionAtStartup", true).toBool()) {
         Notepadqq::showQtVersionWarning(true, w);
     }

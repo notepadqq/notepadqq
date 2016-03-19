@@ -27,6 +27,7 @@ private slots:
     void on_txtLanguages_TabSize_valueChanged(int value);
     void on_chkLanguages_IndentWithSpaces_toggled(bool checked);
     void on_cmbColorScheme_currentIndexChanged(int index);
+    void on_localizationComboBox_activated(int index);
     void on_btnNodejsBrowse_clicked();
     void on_btnNpmBrowse_clicked();
     void on_txtNodejs_textChanged(const QString &);
@@ -47,6 +48,8 @@ private:
     void saveColorScheme(QSettings *s);
     bool extensionBrowseRuntime(QLineEdit *lineEdit);
     void checkExecutableExists(QLineEdit *path);
+    void loadTranslations(QSettings *s);
+    void saveTranslation(QSettings *s);
 };
 
 #endif // FRMPREFERENCES_H
