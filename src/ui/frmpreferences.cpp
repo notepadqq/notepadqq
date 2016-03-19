@@ -310,28 +310,12 @@ void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)
 {
-    QSettings settings;
-
-    if (settings.value("General/LocalizationShowPopup", true).toBool()) {
-
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText("<h3>" + QObject::tr("Restart required") + "</h3>");
-        msgBox.setInformativeText("<html><body>"
-            "<p>" + QObject::tr("You need to restart Notepadqq for the localization changes to take effect.") + "</p>");
-
-        QCheckBox *chkDontShowAgain = new QCheckBox();
-        chkDontShowAgain->setText(QObject::tr("Don't show me this popup again"));
-
-        msgBox.setCheckBox(chkDontShowAgain);
-        msgBox.exec();
-
-        settings.setValue("General/LocalizationShowPopup",
-                          !chkDontShowAgain->isChecked());
-        chkDontShowAgain->deleteLater();
-
-    }
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText("<h3>" + QObject::tr("Restart required") + "</h3>");
+    msgBox.setInformativeText(QObject::tr("You need to restart Notepadqq\nfor the localization changes to take effect."));
+    msgBox.exec();
 }
 
 bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
