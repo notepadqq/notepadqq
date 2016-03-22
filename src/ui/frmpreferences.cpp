@@ -180,7 +180,7 @@ void frmPreferences::loadTranslations(QSettings *s)
 {
     QList<QString> translations = Notepadqq::translations();
 
-    QString localizationSetting = s->value("General/Localization", "en").toString();
+    QString localizationSetting = s->value("Localization", "en").toString();
 
     for (QString langCode : translations) {
         QString langName = QLocale::languageToString(QLocale(langCode).language());
@@ -228,7 +228,7 @@ void frmPreferences::saveColorScheme(QSettings *s)
 void frmPreferences::saveTranslation(QSettings *s)
 {
     QMap<QString, QVariant> selected = ui->localizationComboBox->currentData().toMap();
-    s->setValue("General/Localization", selected.value("langCode").toString());
+    s->setValue("Localization", selected.value("langCode").toString());
 }
 
 void frmPreferences::on_buttonBox_rejected()

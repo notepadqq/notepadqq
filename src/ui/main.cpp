@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
     QSettings settings;
 
-    QString langCode = settings.value("General/Localization", "en").toString();
+    QString langCode = settings.value("Localization", "en").toString();
 
     if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
