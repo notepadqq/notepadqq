@@ -62,6 +62,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     separator->setSeparator(true);
     m_tabContextMenuActions.append(ui->actionClose);
     m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
+    m_tabContextMenuActions.append(ui->actionCloseLeft);
+    m_tabContextMenuActions.append(ui->actionCloseRight);
     m_tabContextMenuActions.append(ui->actionSave);
     m_tabContextMenuActions.append(ui->actionSave_as);
     m_tabContextMenuActions.append(ui->actionRename);
@@ -1408,6 +1410,80 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
         m_topEditorContainer->forEachEditor(true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
             if (keepOpen == editor)
                 return true;
+
+            closeTab(tabWidget, editorId, true, true);
+            return true;
+        });
+    }
+
+}
+
+void MainWindow::on_actionCloseLeft_triggered()
+{
+    Editor *keepOpen = currentEditor();
+    bool canceled = false;
+
+    // Save what needs to be saved, check if user wants to cancel the closing
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+        if (keepOpen == editor) {
+            return false;
+        }
+
+        int closeResult = closeTab(tabWidget, editorId, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            canceled = true;
+            return false; // Cancel all
+        } else {
+            return true;
+        }
+    });
+
+    bool closing = false;
+
+    if (!canceled) {
+        m_topEditorContainer->forEachEditor(true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+            if (keepOpen == editor) {
+                closing = true;
+                return true;
+            }
+
+            if(closing)
+                closeTab(tabWidget, editorId, true, true);
+            return true;
+        });
+    }
+
+}
+
+void MainWindow::on_actionCloseRight_triggered()
+{
+    Editor *keepOpen = currentEditor();
+    bool canceled = false;
+    bool closing = false;
+
+    // Save what needs to be saved, check if user wants to cancel the closing
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+        if (keepOpen == editor) {
+            closing = true;
+            return true;
+        }
+
+        if(!closing)
+            return true;
+
+        int closeResult = closeTab(tabWidget, editorId, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            canceled = true;
+            return false; // Cancel all
+        } else {
+            return true;
+        }
+    });
+
+    if (!canceled) {
+        m_topEditorContainer->forEachEditor(true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget *tabWidget, Editor *editor) {
+            if (keepOpen == editor)
+                return false;
 
             closeTab(tabWidget, editorId, true, true);
             return true;
