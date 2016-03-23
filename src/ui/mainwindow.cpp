@@ -83,6 +83,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     separatorBottom->setSeparator(true);
     m_tabContextMenuActions.append(ui->actionClose);
     m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
+    m_tabContextMenuActions.append(ui->actionCloseLeft);
+    m_tabContextMenuActions.append(ui->actionCloseRight);
     m_tabContextMenuActions.append(ui->actionSave);
     m_tabContextMenuActions.append(ui->actionSave_as);
     m_tabContextMenuActions.append(ui->actionRename);
@@ -1731,6 +1733,40 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
         });
     }
 
+}
+
+void MainWindow::on_actionCloseLeft_triggered()
+{
+    auto tabW = m_topEditorContainer->currentTabWidget();
+    int currEditorId = tabW->currentIndex();
+
+    for (int i = currEditorId - 1; i >= 0; i--) {
+        int closeResult = closeTab(tabW, i, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            return; // Cancel all
+        }
+    }
+
+    for (int i = currEditorId - 1; i >= 0; i--) {
+        closeTab(tabW, i, true, true);
+    }
+}
+
+void MainWindow::on_actionCloseRight_triggered()
+{
+    auto tabW = m_topEditorContainer->currentTabWidget();
+    int currEditorId = tabW->currentIndex();
+
+    for (int i = currEditorId + 1; i < tabW->count(); i++) {
+        int closeResult = closeTab(tabW, i, false, false);
+        if (closeResult == MainWindow::tabCloseResult_Canceled) {
+            return; // Cancel all
+        }
+    }
+
+    for (int i = tabW->count() - 1; i > currEditorId; i--) {
+        closeTab(tabW, i, true, true);
+    }
 }
 
 void MainWindow::on_actionSave_All_triggered()
