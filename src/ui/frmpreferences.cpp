@@ -6,6 +6,7 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
 #include <QFileDialog>
+#include <QSortFilterProxyModel>
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -190,11 +191,17 @@ void frmPreferences::loadTranslations(QSettings *s)
         tmap.insert("langCode", langCode);
 
         ui->localizationComboBox->addItem(langName, tmap);
-
-        if (localizationSetting == langCode) {
-            ui->localizationComboBox->setCurrentIndex(ui->localizationComboBox->count() - 1);
-        }
     }
+
+    QSortFilterProxyModel* proxy = new QSortFilterProxyModel(ui->localizationComboBox);
+    proxy->setSourceModel(ui->localizationComboBox->model());
+    ui->localizationComboBox->model()->setParent(proxy);
+    ui->localizationComboBox->setModel(proxy);
+    ui->localizationComboBox->model()->sort(0);
+
+    ui->localizationComboBox->setCurrentIndex(
+                ui->localizationComboBox->findData(
+                    QLocale::languageToString(QLocale(localizationSetting).language()), Qt::DisplayRole));
 }
 
 void frmPreferences::saveLanguages(QSettings *s)
