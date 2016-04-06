@@ -1,9 +1,10 @@
 #!/bin/sh
 # Don't set `-e'!
 
-test -n "$QMAKE" || QMAKE="qtchooser -run-tool=qmake -qt=5"
-test -n "$MAKE"  || MAKE="make"
-test -n "$CXX"   || CXX="c++"
+test -n "$QMAKE"    || QMAKE="qtchooser -run-tool=qmake -qt=5"
+test -n "$LRELEASE" || LRELEASE="qtchooser -run-tool=lrelease -qt=5"
+test -n "$MAKE"     || MAKE="make"
+test -n "$CXX"      || CXX="c++"
 
 
 errorExit() {
@@ -28,6 +29,9 @@ Defaults for the options are specified in brackets.
   --prefix=PREFIX         install files in PREFIX [/usr/local]
 
   --fail-on-missing       return exit 1 if non-optional components are missing
+
+  --lrelease COMMAND,
+  --lrelease=COMMAND      specify lrelease command [$LRELEASE]
 
   --qmake COMMAND,
   --qmake=COMMAND         specify qmake command [$QMAKE]
@@ -78,6 +82,13 @@ while [ "$#" -ge 1 ]; do
         --fail-on-missing)
         fail_on_missing="yes"
         ;;
+        --lrelease=*)
+        LRELEASE="${key#*=}"
+        ;;
+        --lrelease)
+        LRELEASE="$1"
+        shift
+        ;;
         --qmake=*)
         QMAKE="${key#*=}"
         ;;
@@ -98,9 +109,15 @@ done
 
 # check for QT5 qmake
 printf "checking for QT5 qmake... "
-$QMAKE -v 2>/dev/null 1>/dev/null
-test $(echo $?) -eq 0 && echo "$QMAKE" || \
+$QMAKE -help 2>/dev/null 1>/dev/null
+test $? -eq 0 && echo "$QMAKE" || \
     errorExit "not found!\n  Try to run configure with \`--qmake /path/to/qmake-executable'." 1
+
+# check for lrelease
+printf "checking for lrelease... "
+$LRELEASE -help 2>/dev/null 1>/dev/null
+test $? -eq 0 && echo "$LRELEASE" || \
+    errorExit "not found!\n  Try to run configure with \`--lrelease /path/to/lrelease-executable'."
 
 check c++ "$CXX" 1
 
@@ -166,4 +183,5 @@ $QMAKE PREFIX="$PREFIX" \
 QMAKE_CXX="$CXX" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
+LRELEASE="$LRELEASE" \
 "$@" notepadqq.pro && echo "done" || errorExit "error!" 1
