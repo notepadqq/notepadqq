@@ -60,6 +60,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenu = new QMenu(this);
     QAction *separator = new QAction(this);
     separator->setSeparator(true);
+    QAction *separatorBottom = new QAction(this);
+    separatorBottom->setSeparator(true);
     m_tabContextMenuActions.append(ui->actionClose);
     m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
     m_tabContextMenuActions.append(ui->actionSave);
@@ -67,6 +69,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionRename);
     m_tabContextMenuActions.append(ui->actionPrint);
     m_tabContextMenuActions.append(separator);
+    m_tabContextMenuActions.append(ui->actionCurrent_Full_File_path_to_Clipboard);
+    m_tabContextMenuActions.append(ui->actionCurrent_Filename_to_Clipboard);
+    m_tabContextMenuActions.append(ui->actionCurrent_Directory_Path_to_Clipboard);
+    m_tabContextMenuActions.append(separatorBottom);
     m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
     m_tabContextMenuActions.append(ui->actionClone_to_Other_View);
     m_tabContextMenuActions.append(ui->actionMove_to_New_Window);
