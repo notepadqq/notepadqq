@@ -646,17 +646,17 @@
   </action>
   <action name="actionCurrent_Full_File_path_to_Clipboard">
    <property name="text">
-    <string>Current Full File Path to Clipboard</string>
+    <string>Copy Full Path to Clipboard</string>
    </property>
   </action>
   <action name="actionCurrent_Filename_to_Clipboard">
    <property name="text">
-    <string>Current Filename to Clipboard</string>
+    <string>Copy Filename to Clipboard</string>
    </property>
   </action>
   <action name="actionCurrent_Directory_Path_to_Clipboard">
    <property name="text">
-    <string>Current Directory Path to Clipboard</string>
+    <string>Copy Directory to Clipboard</string>
    </property>
   </action>
   <action name="actionZoom_In">
@@ -973,8 +973,8 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Up</string>
-   </property> 
-  </action>	 
+   </property>
+  </action>
   <action name="actionMove_Line_Down">
    <property name="text">
     <string>Move Line Down</string>
@@ -984,8 +984,8 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Down</string>
-   </property> 
-  </action>	 
+   </property>
+  </action>
   <action name="actionTrim_Trailing_Space">
    <property name="text">
     <string>Trim Trailing Space</string>
