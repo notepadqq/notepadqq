@@ -15,7 +15,7 @@ namespace EditorNS
         QString message;
         QPushButton *tmp;
         if (mode == false) {
-            message = "This file is indented with %1, but your current settings specify to use %2.";
+            message = (tr("This file is indented with %1, but your current settings specify to use %2."));
             if (current.useTabs) {
                 message = message.arg(tr("spaces")).arg(tr("tabs"));
 
@@ -28,7 +28,7 @@ namespace EditorNS
                 connect(tmp, &QPushButton::clicked, this, &BannerIndentationDetected::useDocumentSettings);
             }
         } else {
-            message = "This file is indented with %1 spaces, but your current settings specify to use %2 spaces.";
+            message = (tr("This file is indented with %1 spaces, but your current settings specify to use %2 spaces."));
             message = message.arg(detected.size).arg(current.size);
 
             tmp = addButton(tr("Use %1 spaces").arg(detected.size));
