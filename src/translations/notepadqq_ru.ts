@@ -594,19 +594,31 @@
         <translation>Направление текста справа налево</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="649"/>
         <source>Current Full File Path to Clipboard</source>
-        <translation>Полный путь к текущему файлу</translation>
+        <translation type="vanished">Полный путь к текущему файлу</translation>
+    </message>
+    <message>
+        <source>Current Filename to Clipboard</source>
+        <translation type="vanished">Имя текущего файла</translation>
+    </message>
+    <message>
+        <source>Current Directory Path to Clipboard</source>
+        <translation type="vanished">Путь к текущей папке</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.ui" line="649"/>
+        <source>Copy Full Path to Clipboard</source>
+        <translation>Скопировать полный путь в буфер обмена</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="654"/>
-        <source>Current Filename to Clipboard</source>
-        <translation>Имя текущего файла</translation>
+        <source>Copy Filename to Clipboard</source>
+        <translation>Скопировать имя файла в буфер обмена</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="659"/>
-        <source>Current Directory Path to Clipboard</source>
-        <translation>Путь к текущей папке</translation>
+        <source>Copy Directory to Clipboard</source>
+        <translation>Скопировать папку в буфер обмена</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="664"/>
@@ -926,32 +938,32 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="969"/>
         <source>Move Line Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить строку вверх</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="972"/>
         <source>Move the current line up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить текущую строку вверх</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="975"/>
         <source>Ctrl+Shift+Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+Up</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="980"/>
         <source>Move Line Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить строку вниз</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="983"/>
         <source>Move the current line down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить текущую строку вниз</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="986"/>
         <source>Ctrl+Shift+Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+Down</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="991"/>
@@ -1021,145 +1033,145 @@
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="310"/>
-        <location filename="../ui/mainwindow.cpp" line="531"/>
+        <location filename="../ui/mainwindow.cpp" line="316"/>
+        <location filename="../ui/mainwindow.cpp" line="537"/>
         <source>INS</source>
         <translation>INS</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="529"/>
+        <location filename="../ui/mainwindow.cpp" line="535"/>
         <source>OVR</source>
         <translation>OVR</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="538"/>
+        <location filename="../ui/mainwindow.cpp" line="544"/>
         <source>new %1</source>
         <translation>новый %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="572"/>
+        <location filename="../ui/mainwindow.cpp" line="578"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>Ваши изменения в «%1» будут отклонены.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="573"/>
+        <location filename="../ui/mainwindow.cpp" line="579"/>
         <source>Reload</source>
         <translation>Перезагрузить</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="623"/>
+        <location filename="../ui/mainwindow.cpp" line="629"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="625"/>
+        <location filename="../ui/mainwindow.cpp" line="631"/>
         <source>All files (*)</source>
         <translation>Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="644"/>
+        <location filename="../ui/mainwindow.cpp" line="650"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="684"/>
+        <location filename="../ui/mainwindow.cpp" line="690"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Вы хотите сохранить изменения в «%1»?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="685"/>
+        <location filename="../ui/mainwindow.cpp" line="691"/>
         <source>Don&apos;t Save</source>
         <translation>Не сохранять</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="688"/>
+        <location filename="../ui/mainwindow.cpp" line="694"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Вы хотите сохранить изменения в «%1» перед закрытием?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="692"/>
+        <location filename="../ui/mainwindow.cpp" line="698"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Все несохраненные изменения будут потеряны навсегда.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="792"/>
+        <location filename="../ui/mainwindow.cpp" line="798"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>Файл на диске изменился с момента последнего чтения.
 Вы хотите сохранить его в любом случае?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="795"/>
+        <location filename="../ui/mainwindow.cpp" line="801"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>Сохранение файла может привести к утрате внешних данных.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="814"/>
+        <location filename="../ui/mainwindow.cpp" line="820"/>
         <source>Save as</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="816"/>
+        <location filename="../ui/mainwindow.cpp" line="822"/>
         <source>Any file (*)</source>
         <translation>Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="976"/>
+        <location filename="../ui/mainwindow.cpp" line="982"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1 символов, %2 строк</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="987"/>
+        <location filename="../ui/mainwindow.cpp" line="993"/>
         <source>Ln %1, col %2</source>
         <translation>Стр %1, стол %2</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="991"/>
+        <location filename="../ui/mainwindow.cpp" line="997"/>
         <source>Sel %1 (%2)</source>
         <translation>Выб %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1055"/>
+        <location filename="../ui/mainwindow.cpp" line="1061"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1058"/>
+        <location filename="../ui/mainwindow.cpp" line="1064"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1061"/>
+        <location filename="../ui/mainwindow.cpp" line="1067"/>
         <source>Old Mac</source>
         <translation>Old Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1068"/>
+        <location filename="../ui/mainwindow.cpp" line="1074"/>
         <source>%1 w/o BOM</source>
         <translation>%1 без BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1550"/>
+        <location filename="../ui/mainwindow.cpp" line="1556"/>
         <source>No recent files</source>
         <translation>Нет недавних файлов</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1723"/>
+        <location filename="../ui/mainwindow.cpp" line="1729"/>
         <source>Convert to:</source>
         <translation>Преобразовать в:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1737"/>
+        <location filename="../ui/mainwindow.cpp" line="1743"/>
         <source>Reload as:</source>
         <translation>Перезагрузить как:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1779"/>
+        <location filename="../ui/mainwindow.cpp" line="1785"/>
         <source>Interpret as:</source>
         <translation>Интерпретировать как:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2049"/>
+        <location filename="../ui/mainwindow.cpp" line="2055"/>
         <source>Extension</source>
         <translation>Расширение</translation>
     </message>
@@ -1204,12 +1216,12 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="323"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется перезапуск</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="324"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы должны перезапустить Notepadqq чтобы изменения локализации вступили в силу.</translation>
     </message>
 </context>
 <context>
@@ -1375,7 +1387,7 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/frmpreferences.ui" line="116"/>
         <source>Localization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Локализация:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="173"/>
