@@ -926,32 +926,32 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="969"/>
         <source>Move Line Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить строку вверх</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="972"/>
         <source>Move the current line up</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить текущую строку вверх</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="975"/>
         <source>Ctrl+Shift+Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+Up</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="980"/>
         <source>Move Line Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить строку вниз</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="983"/>
         <source>Move the current line down</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить текущую строку вниз</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="986"/>
         <source>Ctrl+Shift+Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+Down</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="991"/>
@@ -1204,12 +1204,12 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="323"/>
         <source>Restart required</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется перезапуск</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="324"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы должны перезапустить Notepadqq чтобы изменения локализации вступили в силу.</translation>
     </message>
 </context>
 <context>
@@ -1375,7 +1375,7 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/frmpreferences.ui" line="116"/>
         <source>Localization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Локализация:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="173"/>
