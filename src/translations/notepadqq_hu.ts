@@ -603,18 +603,6 @@
         <translation>Szövegirány jobbról balra</translation>
     </message>
     <message>
-        <source>Current Full File Path to Clipboard</source>
-        <translation type="vanished">Jelenlegi teljes fájlelérési út vágólapra másolása</translation>
-    </message>
-    <message>
-        <source>Current Filename to Clipboard</source>
-        <translation type="vanished">Jelenlegi fájlnév vágólapra másolása</translation>
-    </message>
-    <message>
-        <source>Current Directory Path to Clipboard</source>
-        <translation type="vanished">Jelenlegi könyvtárelérési út vágólapra másolása</translation>
-    </message>
-    <message>
         <location filename="../ui/mainwindow.ui" line="649"/>
         <source>Copy Full Path to Clipboard</source>
         <translation>Teljes fájl elérési út vágólapra másolása</translation>
