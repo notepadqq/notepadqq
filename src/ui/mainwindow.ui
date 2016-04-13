@@ -116,7 +116,7 @@
      </property>
      <addaction name="actionDuplicate_Line"/>
      <addaction name="actionDelete_Line"/>
-     <addaction name="actionMove_Line_Up" />
+     <addaction name="actionMove_Line_Up"/>
      <addaction name="actionMove_Line_Down"/>
     </widget>
     <widget class="QMenu" name="menuBlank_Operations">
@@ -707,6 +707,9 @@
    <property name="text">
     <string>&amp;Start Recording</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="action_Stop_Recording">
    <property name="enabled">
@@ -714,6 +717,9 @@
    </property>
    <property name="text">
     <string>&amp;Stop Recording</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="action_Playback">
@@ -723,6 +729,9 @@
    <property name="text">
     <string>&amp;Playback</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSave_Currently_Recorded_Macro">
    <property name="enabled">
@@ -731,10 +740,16 @@
    <property name="text">
     <string>Save Currently Recorded Macro</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRun_a_Macro_Multiple_Times">
    <property name="text">
     <string>Run a Macro Multiple Times...</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionTrim_Trailing_and_save">
