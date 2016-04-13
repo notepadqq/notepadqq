@@ -37,6 +37,7 @@ body {
     height: 100%;
     /*cursor: text;*/
     line-height: 1.3em;
+    font-family: "monospace";
 }
 
 .CodeMirror-scroll {
