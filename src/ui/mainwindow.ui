@@ -241,20 +241,6 @@
     <addaction name="actionAbout_Qt"/>
     <addaction name="actionAbout_Notepadqq"/>
    </widget>
-   <widget class="QMenu" name="menuMacro">
-    <property name="title">
-     <string>Macro</string>
-    </property>
-    <addaction name="action_Start_Recording"/>
-    <addaction name="action_Stop_Recording"/>
-    <addaction name="action_Playback"/>
-    <addaction name="actionSave_Currently_Recorded_Macro"/>
-    <addaction name="actionRun_a_Macro_Multiple_Times"/>
-    <addaction name="separator"/>
-    <addaction name="actionTrim_Trailing_and_save"/>
-    <addaction name="separator"/>
-    <addaction name="actionModify_Shortcut_Delete_Macro"/>
-   </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
      <string>Run</string>
@@ -292,7 +278,6 @@
    <addaction name="menuEncoding"/>
    <addaction name="menu_Language"/>
    <addaction name="menuSe_ttings"/>
-   <addaction name="menuMacro"/>
    <addaction name="menuRun"/>
    <addaction name="menuExtensions"/>
    <addaction name="menu_Window"/>
