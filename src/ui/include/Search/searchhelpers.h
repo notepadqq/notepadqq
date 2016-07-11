@@ -7,9 +7,9 @@ class SearchHelpers
 public:
 
     enum class SearchMode {
-        PlainText,
-        SpecialChars,
-        Regex
+        PlainText = 1,
+        SpecialChars = 2,
+        Regex = 3
     };
 
     struct SearchOptions {

@@ -251,6 +251,48 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
     return Search(data[0], data[1], data[2]);
 });
 
+/*
+   Determine whether the proposed replacement contains
+   group reuse tokens i.e. \1, \2, etc.
+   (Helper function for search/replace & replace all.)
+ */
+function HasGroupReuseTokens(replacement){
+	var groupReuseRegex = /\\([1-9])/g;
+	return (groupReuseRegex.exec(replacement) !== null);
+}
+/*
+   Substitute group reuse tokens (i.e. \1, \2, etc.) with 
+   the matched groups provided.
+   (Helper function for search/replace & replace all.)
+   groups: contains array of regexp matches, where the first 
+   entry is the whole match and the rest are groups.
+   
+*/
+function ApplyReusedGroups(replacement, groups){
+	//If we got match subgroups, see if we need to alter the replacement
+	for (var iReuseGroup = 1; iReuseGroup < groups.length; iReuseGroup ++){
+		//takes care of non-consecutive group reuse tokens,
+		//i.e. in "\1 \3" with no "\2", the "\3" is ignored 
+		groupToReuse = groups[iReuseGroup];
+		replacement = replacement.replace(new RegExp("\\\\"+iReuseGroup), groupToReuse);
+	}
+	var groupReuseRegex = /\\([1-9])/g;
+	//take care of all non-matched group reuse tokens (replace with empty string)
+	//this is the Notepad++ functionality
+	replacement = replacement.replace(groupReuseRegex,"");
+	return replacement;
+}
+
+/*
+   Must match the definition of enum class SearchMode
+	 in src/ui/include/Search/searchhelpers.h
+*/
+SearchMode = {
+	PlainText:1,
+	SpecialChars:2,
+	Regex:3
+}
+
 /* Replace the currently selected text, then search with a specified regex (calls C_FUN_SEARCH)
 
    The return value indicates whether a match was found.
@@ -263,30 +305,48 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
    data[3]: string to use as replacement
 */
 UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
-    if (editor.somethingSelected()) {
-        // Replace
-        editor.replaceSelection(data[3]);
+    var regexStr = data[0];
+    var regexModifiers = data[1];
+    var forward = data[2];
+		var searchMode = Number(data[4]);
+	  if (editor.somethingSelected()) {
+    	var replacement = data[3];
+    	// Replace
+    	if(searchMode == SearchMode.Regex && HasGroupReuseTokens(replacement)){
+    		var searchRegex = new RegExp(regexStr, regexModifiers);
+    		groups = searchRegex.exec(editor.getSelection())
+    		if(groups !== null){//groups === null should never occur!
+    			editor.replaceSelection(ApplyReusedGroups(replacement,groups));
+    		}
+    	}else{
+    		editor.replaceSelection(replacement);
+    	}
     }
 
     // Find next/prev
-    return Search(data[0], data[1], data[2]);
+    return Search(regexStr, regexModifiers, forward);
 });
 
 UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) {
     var regexStr = data[0];
     var regexModifiers = data[1];
     var replacement = data[2];
-
+		var searchMode = Number(data[3]);
     var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
 
     var count = 0;
     var id = Math.round(Math.random() * 1000000) + "/" + Date.now();
+    
+    var hasReuseTokens = HasGroupReuseTokens(replacement) && searchMode == SearchMode.Regex;
 
-    while (searchCursor.findNext()) {
+    while (groups = searchCursor.findNext()) {
         count++;
-
         // Replace
-        searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
+        if(hasReuseTokens){
+        	searchCursor.replace(ApplyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
+        }else{
+            searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
+        }        
     }
 
     return count;
