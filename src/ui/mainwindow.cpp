@@ -340,7 +340,7 @@ void MainWindow::updateShortcuts()
     QString action;
     QString shortcut;
     lst = ui->menuBar->findChildren<QMenu*>();
-
+    m_settings->beginGroup("Shortcuts");
     foreach (QAction* a, getActions())
     {
         action = a->objectName();
@@ -353,6 +353,7 @@ void MainWindow::updateShortcuts()
             m_settings->setValue(action,a->shortcut().toString());
         }
     }
+    m_settings->endGroup();
 }
 
 //Return a list of all available action items in the menu

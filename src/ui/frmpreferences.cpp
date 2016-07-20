@@ -81,11 +81,13 @@ void frmPreferences::loadShortcuts(QSettings* s)
 
     QMap<QString,QString>::iterator it;
     int i = 0;
+    s->beginGroup("Shortcuts");
     for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
         kg->setItem(i,0,new QTableWidgetItem(it.value()));
         kg->setItem(i,1,new QTableWidgetItem(s->value(it.key()).toString()));
         i++;
     }
+    s->endGroup();
 
 }
 
@@ -93,10 +95,11 @@ void frmPreferences::saveShortcuts(QSettings* s)
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
     int rows = kg->rowCount();
+    s->beginGroup("Shortcuts");
     for(int i=0;i<rows;i++) {
         s->setValue(m_shortcuts->key(kg->item(i,0)->text()),kg->item(i,1)->text());
     }
-    
+    s->endGroup();
     mw->updateShortcuts();
 }
 
