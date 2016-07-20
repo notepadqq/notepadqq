@@ -158,6 +158,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
+    defaultShortcuts();
     updateShortcuts();
     emit Notepadqq::getInstance().newWindow(this);
 }
@@ -332,6 +333,20 @@ void MainWindow::createStatusBar()
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
+}
+
+//Store the default shortcuts on startup
+void MainWindow::defaultShortcuts()
+{
+    m_defaultShortcuts = new QMap<QString,QString>();
+    foreach(QAction* a, getActions()) {
+        if(!a->objectName().isEmpty()) m_defaultShortcuts->insert(a->objectName(),a->shortcut().toString());
+    }
+}
+
+QString MainWindow::getDefaultShortcut(QString actionName)
+{
+    return m_defaultShortcuts->value(actionName);
 }
 
 void MainWindow::updateShortcuts()

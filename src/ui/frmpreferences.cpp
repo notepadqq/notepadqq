@@ -64,6 +64,17 @@ frmPreferences::~frmPreferences()
     delete m_shortcuts;
 }
 
+void frmPreferences::resetShortcuts()
+{
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+    int i = 0;
+    QMap<QString,QString>::iterator it;
+    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
+        kg->item(i,1)->setText(mw->getDefaultShortcut(m_shortcuts->key(kg->item(i,0)->text())));
+        i++;
+    }
+}
+
 void frmPreferences::loadShortcuts(QSettings* s)
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
@@ -76,9 +87,19 @@ void frmPreferences::loadShortcuts(QSettings* s)
 
     kg = new keyGrabber();
 
-    ui->stackedWidget->insertWidget(4,kg);
-    kg->setRowCount(m_shortcuts->size());
+    //Build the interface
+    QWidget *container = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout();
+    QPushButton *resetDefaults = new QPushButton("Restore Defaults");
+    QObject::connect(resetDefaults,SIGNAL(clicked()),this,SLOT(resetShortcuts()));
+    resetDefaults->setFixedWidth(128);
+    layout->addWidget(kg);
+    layout->addWidget(resetDefaults);
+    container->setLayout(layout);
+    ui->stackedWidget->insertWidget(4,container);
 
+
+    kg->setRowCount(m_shortcuts->size());
     QMap<QString,QString>::iterator it;
     int i = 0;
     s->beginGroup("Shortcuts");

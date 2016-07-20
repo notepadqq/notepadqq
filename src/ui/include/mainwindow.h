@@ -65,6 +65,7 @@ public:
     void showExtensionsMenu(bool show);
     void updateShortcuts();
     QList<QAction*> getActions();
+    QString getDefaultShortcut(QString actionName);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -199,7 +200,9 @@ private:
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+    QMap<QString,QString>* m_defaultShortcuts;
 
+    void                defaultShortcuts();
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);

@@ -34,6 +34,7 @@ private slots:
     void on_btnNpmBrowse_clicked();
     void on_txtNodejs_textChanged(const QString &);
     void on_txtNpm_textChanged(const QString &);
+    void resetShortcuts();
 private:
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
