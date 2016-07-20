@@ -341,23 +341,16 @@ void MainWindow::updateShortcuts()
     QString shortcut;
     lst = ui->menuBar->findChildren<QMenu*>();
 
-    foreach (QMenu* m, lst)
+    foreach (QAction* a, getActions())
     {
-        //Skip over the Language menu... far too vast to be adding shortcuts to.
-	//TODO: Probably need to use translated string here to be on the safe side.
-        if(m->title().compare("&Language")==0) continue;
-
-        foreach (QAction* a, m->actions())
-        {
-            action = a->objectName();
-            if(m_settings->contains(action)){
-                shortcut = m_settings->value(action).toString();
-                a->setShortcut(shortcut);
+        action = a->objectName();
+        if(m_settings->contains(action)){
+            shortcut = m_settings->value(action).toString();
+            a->setShortcut(shortcut);
 
             //Initialize settings built into the editor by default
-            }else if(!a->shortcut().isEmpty()) {
-                m_settings->setValue(action,a->shortcut().toString());
-            }
+        }else if(!a->shortcut().isEmpty()) {
+            m_settings->setValue(action,a->shortcut().toString());
         }
     }
 }
