@@ -63,6 +63,7 @@ public:
     QSharedPointer<Editor> currentEditorSharedPtr();
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
+    void updateShortcuts();
 
 protected:
     void closeEvent(QCloseEvent *event);

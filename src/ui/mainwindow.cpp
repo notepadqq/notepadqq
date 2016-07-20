@@ -80,7 +80,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
     fixKeyboardShortcuts();
-
     // Set popup for action_Open in toolbar
     QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
     btnActionOpen->setMenu(ui->menuRecent_Files);
@@ -159,7 +158,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
-
+    updateShortcuts();
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -333,6 +332,34 @@ void MainWindow::createStatusBar()
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
+}
+
+void MainWindow::updateShortcuts()
+{
+    QList<QMenu*> lst;
+    QString action;
+    QString shortcut;
+    lst = ui->menuBar->findChildren<QMenu*>();
+
+    foreach (QMenu* m, lst)
+    {
+        //Skip over the Language menu... far too vast to be adding shortcuts to.
+	//TODO: Probably need to use translated string here to be on the safe side.
+        if(m->title().compare("&Language")==0) continue;
+
+        foreach (QAction* a, m->actions())
+        {
+            action = a->objectName();
+            if(m_settings->contains(action)){
+                shortcut = m_settings->value(action).toString();
+                a->setShortcut(shortcut);
+
+            //Initialize settings built into the editor by default
+            }else if(!a->shortcut().isEmpty()) {
+                m_settings->setValue(action,a->shortcut().toString());
+            }
+        }
+    }
 }
 
 void MainWindow::setupLanguagesMenu()
@@ -1238,7 +1265,7 @@ void MainWindow::on_actionPreferences_triggered()
     frmPreferences *_pref;
     _pref = new frmPreferences(m_topEditorContainer, this);
     _pref->exec();
-
+    updateShortcuts();
     _pref->deleteLater();
 }
 

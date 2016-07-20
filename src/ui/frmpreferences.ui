@@ -73,6 +73,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Shortcuts</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Extensions</string>
         </property>
        </item>
@@ -375,7 +380,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_5">
+       <widget class="QWidget" name="page_6">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">
           <number>9</number>
@@ -402,8 +407,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>565</width>
-              <height>388</height>
+              <width>568</width>
+              <height>396</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
