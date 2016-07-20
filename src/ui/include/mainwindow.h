@@ -64,6 +64,7 @@ public:
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
     void updateShortcuts();
+    QList<QAction*> getActions();
 
 protected:
     void closeEvent(QCloseEvent *event);

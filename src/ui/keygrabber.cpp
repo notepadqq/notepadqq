@@ -37,8 +37,22 @@ void keyGrabber::keyPressEvent(QKeyEvent* event)
                  grab.clear();
              }
              break;
+        case Qt::Key_F1:
+        case Qt::Key_F2:
+        case Qt::Key_F3:
+        case Qt::Key_F4:
+        case Qt::Key_F5:
+        case Qt::Key_F6:
+        case Qt::Key_F7:
+        case Qt::Key_F8:
+        case Qt::Key_F9:
+        case Qt::Key_F10:
+        case Qt::Key_F11:
+        case Qt::Key_F12:
+            grab.append(QKeySequence(event->key()).toString());
+            break;
         default:
-            if(modifiers)grab.append(QKeySequence(event->key()).toString(QKeySequence::PortableText));
+            if(modifiers)grab.append(QKeySequence(event->key()).toString());
             break;
     }
     item(currentRow(),1)->setText(grab);

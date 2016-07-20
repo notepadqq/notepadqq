@@ -362,6 +362,25 @@ void MainWindow::updateShortcuts()
     }
 }
 
+//Return a list of all available action items in the menu
+QList<QAction*> MainWindow::getActions()
+{
+    QList<QMenu*> lst;
+    QList<QAction*> lactions;
+    QString action;
+    lst = ui->menuBar->findChildren<QMenu*>();
+
+    foreach (QMenu* m, lst)
+    {
+        if(m->title().compare("&Language")==0) continue;
+        foreach (QAction* a, m->actions())
+        {
+            lactions.append(a);
+        }
+    }
+    return lactions;
+}
+
 void MainWindow::setupLanguagesMenu()
 {
     Editor *editor = currentEditor();
@@ -1265,7 +1284,6 @@ void MainWindow::on_actionPreferences_triggered()
     frmPreferences *_pref;
     _pref = new frmPreferences(m_topEditorContainer, this);
     _pref->exec();
-    updateShortcuts();
     _pref->deleteLater();
 }
 
