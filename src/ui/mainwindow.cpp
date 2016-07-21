@@ -80,7 +80,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
     fixKeyboardShortcuts();
-
     // Set popup for action_Open in toolbar
     QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
     btnActionOpen->setMenu(ui->menuRecent_Files);
@@ -159,7 +158,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // DEBUG: Add a second tabWidget
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
-
+    defaultShortcuts();
+    updateShortcuts();
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -333,6 +333,61 @@ void MainWindow::createStatusBar()
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
+}
+
+//Store the default shortcuts on startup
+void MainWindow::defaultShortcuts()
+{
+    m_defaultShortcuts = new QMap<QString,QString>();
+    foreach(QAction* a, getActions()) {
+        if(!a->objectName().isEmpty()) m_defaultShortcuts->insert(a->objectName(),a->shortcut().toString());
+    }
+}
+
+QString MainWindow::getDefaultShortcut(QString actionName)
+{
+    return m_defaultShortcuts->value(actionName);
+}
+
+void MainWindow::updateShortcuts()
+{
+    QList<QMenu*> lst;
+    QString action;
+    QString shortcut;
+    lst = ui->menuBar->findChildren<QMenu*>();
+    m_settings->beginGroup("Shortcuts");
+    foreach (QAction* a, getActions())
+    {
+        action = a->objectName();
+        if(m_settings->contains(action)){
+            shortcut = m_settings->value(action).toString();
+            a->setShortcut(shortcut);
+
+            //Initialize settings built into the editor by default
+        }else if(!a->shortcut().isEmpty()) {
+            m_settings->setValue(action,a->shortcut().toString());
+        }
+    }
+    m_settings->endGroup();
+}
+
+//Return a list of all available action items in the menu
+QList<QAction*> MainWindow::getActions()
+{
+    QList<QMenu*> lst;
+    QList<QAction*> lactions;
+    QString action;
+    lst = ui->menuBar->findChildren<QMenu*>();
+
+    foreach (QMenu* m, lst)
+    {
+        if(m->title().compare("&Language")==0) continue;
+        foreach (QAction* a, m->actions())
+        {
+            lactions.append(a);
+        }
+    }
+    return lactions;
 }
 
 void MainWindow::setupLanguagesMenu()
@@ -1238,7 +1293,6 @@ void MainWindow::on_actionPreferences_triggered()
     frmPreferences *_pref;
     _pref = new frmPreferences(m_topEditorContainer, this);
     _pref->exec();
-
     _pref->deleteLater();
 }
 

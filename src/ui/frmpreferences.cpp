@@ -5,8 +5,12 @@
 #include "include/mainwindow.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
+#include "include/keygrabber.h"
 #include <QFileDialog>
 #include <QSortFilterProxyModel>
+#include <QInputDialog>
+#include <QTableWidgetItem>
+#include <QSharedPointer>
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -44,6 +48,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadLanguages(&s);
     loadColorSchemes(&s);
     loadTranslations(&s);
+    loadShortcuts(&s);
 
     ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
 
@@ -56,6 +61,67 @@ frmPreferences::~frmPreferences()
     delete ui;
     delete m_langsTempSettings;
     delete m_commonLanguageProperties;
+    delete m_shortcuts;
+}
+
+void frmPreferences::resetShortcuts()
+{
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+    int i = 0;
+    QMap<QString,QString>::iterator it;
+    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
+        kg->item(i,1)->setText(mw->getDefaultShortcut(m_shortcuts->key(kg->item(i,0)->text())));
+        i++;
+    }
+}
+
+void frmPreferences::loadShortcuts(QSettings* s)
+{
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+    m_shortcuts = new QMap<QString,QString>;
+    foreach(QAction* a, mw->getActions())
+    {
+        if(a->objectName().isEmpty())continue;
+        m_shortcuts->insert(a->objectName(),a->iconText());
+    }
+
+    kg = new keyGrabber();
+
+    //Build the interface
+    QWidget *container = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout();
+    QPushButton *resetDefaults = new QPushButton("Restore Defaults");
+    QObject::connect(resetDefaults,SIGNAL(clicked()),this,SLOT(resetShortcuts()));
+    resetDefaults->setFixedWidth(128);
+    layout->addWidget(kg);
+    layout->addWidget(resetDefaults);
+    container->setLayout(layout);
+    ui->stackedWidget->insertWidget(4,container);
+
+
+    kg->setRowCount(m_shortcuts->size());
+    QMap<QString,QString>::iterator it;
+    int i = 0;
+    s->beginGroup("Shortcuts");
+    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
+        kg->setItem(i,0,new QTableWidgetItem(it.value()));
+        kg->setItem(i,1,new QTableWidgetItem(s->value(it.key()).toString()));
+        i++;
+    }
+    s->endGroup();
+
+}
+
+void frmPreferences::saveShortcuts(QSettings* s)
+{
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+    int rows = kg->rowCount();
+    s->beginGroup("Shortcuts");
+    for(int i=0;i<rows;i++) {
+        s->setValue(m_shortcuts->key(kg->item(i,0)->text()),kg->item(i,1)->text());
+    }
+    s->endGroup();
+    mw->updateShortcuts();
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -76,7 +142,7 @@ void frmPreferences::on_buttonBox_accepted()
     saveLanguages(&s);
     saveColorScheme(&s);
     saveTranslation(&s);
-
+    saveShortcuts(&s);
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
 
     s.setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());

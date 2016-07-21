@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     Extensions/extensionsloader.cpp \
     globals.cpp \
     Extensions/Stubs/menuitemstub.cpp \
-    Extensions/installextension.cpp
+    Extensions/installextension.cpp \
+    keygrabber.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -124,7 +125,8 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/extensionsloader.h \
     include/globals.h \
     include/Extensions/Stubs/menuitemstub.h \
-    include/Extensions/installextension.h
+    include/Extensions/installextension.h \
+    include/keygrabber.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
