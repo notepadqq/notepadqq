@@ -79,7 +79,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    //fixKeyboardShortcuts();
+    fixKeyboardShortcuts();
     // Set popup for action_Open in toolbar
     QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
     btnActionOpen->setMenu(ui->menuRecent_Files);
@@ -428,17 +428,17 @@ void MainWindow::setupLanguagesMenu()
     }
 }
 
-//void MainWindow::fixKeyboardShortcuts()
-//{
-//    QList<QMenu*> lst;
-//    lst = ui->menuBar->findChildren<QMenu*>();
-//
-//    foreach (QMenu* m, lst)
-//    {
-//        addAction(m->menuAction());
-//        addActions(m->actions());
-//    }
-//}
+void MainWindow::fixKeyboardShortcuts()
+{
+    QList<QMenu*> lst;
+    lst = ui->menuBar->findChildren<QMenu*>();
+
+    foreach (QMenu* m, lst)
+    {
+        addAction(m->menuAction());
+        addActions(m->actions());
+    }
+}
 
 QUrl MainWindow::stringToUrl(QString fileName, QString workingDirectory)
 {
