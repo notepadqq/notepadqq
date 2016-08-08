@@ -144,6 +144,7 @@ RESOURCES += \
 TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
     ../translations/notepadqq_hu.ts \
+    ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_ru.ts
 
 
@@ -176,6 +177,8 @@ translationsTarget.commands = (cd \"$$PWD\" && \
                                   -qm \"$$APPDATADIR/translations/notepadqq_de.qm\" && \
                          $${LRELEASE} \"../translations/notepadqq_hu.ts\" \
                                   -qm \"$$APPDATADIR/translations/notepadqq_hu.qm\" && \
+                         $${LRELEASE} \"../translations/notepadqq_pl.ts\" \
+                                  -qm \"$$APPDATADIR/translations/notepadqq_pl.qm\" && \
                          $${LRELEASE} \"../translations/notepadqq_ru.ts\" \
                                   -qm \"$$APPDATADIR/translations/notepadqq_ru.qm\")
 
