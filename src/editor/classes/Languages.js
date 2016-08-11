@@ -21,7 +21,7 @@ var Languages = new function() {
             name: "ASN.1",
             mode: "asn.1",
             mime: "text/x-ttcn-asn",
-            fileExtensions: []
+            fileExtensions: ["asn", "asn1"]
         },
 
         "pgp": {
@@ -37,6 +37,13 @@ var Languages = new function() {
             mime: "text/x-asterisk",
             fileExtensions: ["agi"],
             fileNames: ["extensions.conf", "extensions_custom.conf", "extensions_general.conf", "extensions_globals.conf"]
+        },
+
+        "brainfuck": {
+            name: "Brainfuck",
+            mode: "brainfuck",
+            mime: "text/x-brainfuck",
+            fileExtensions: ["b", "bf"]
         },
 
         "c": {
@@ -85,7 +92,21 @@ var Languages = new function() {
             name: "Clojure",
             mode: "clojure",
             mime: "text/x-clojure",
-            fileExtensions: ["clj", "cljs", "cljx"]
+            fileExtensions: ["clj", "cljc", "cljx"]
+        },
+
+        "clojurescript": {
+            name: "ClojureScript",
+            mode: "clojure",
+            mime: "text/x-clojurescript",
+            fileExtensions: ["cljs"]
+        },
+
+        "closurestylesheets": {
+            name: "Closure Stylesheets (GSS)",
+            mode: "css",
+            mime: "text/x-gss",
+            fileExtensions: ["gss"]
         },
 
         "cmake": {
@@ -109,6 +130,13 @@ var Languages = new function() {
             mode: "commonlisp",
             mime: "text/x-common-lisp",
             fileExtensions: ["cl", "lisp"]
+        },
+
+        "crystal": {
+            name: "Crystal",
+            mode: "crystal",
+            mime: "text/x-crystal",
+            fileExtensions: ["cr"]
         },
 
         "cypher": {
@@ -196,11 +224,25 @@ var Languages = new function() {
             fileExtensions: []
         },
 
+        "edn": {
+            name: "edn",
+            mode: "clojure",
+            mime: "application/edn",
+            fileExtensions: ["edn"]
+        },
+
         "eiffel": {
             name: "Eiffel",
             mode: "eiffel",
             mime: "text/x-eiffel",
             fileExtensions: []
+        },
+
+        "elm": {
+            name: "Elm",
+            mode: "elm",
+            mime: "text/x-elm",
+            fileExtensions: ["elm"]
         },
 
         "erb": {
@@ -215,6 +257,20 @@ var Languages = new function() {
             mode: "erlang",
             mime: "text/x-erlang",
             fileExtensions: ["erl", "hrl"]
+        },
+
+        "factor": {
+            name: "Factor",
+            mode: "factor",
+            mime: "text/x-factor",
+            fileExtensions: ["factor"]
+        },
+
+        "fcl": {
+            name: "FCL",
+            mode: "fcl",
+            mime: "text/x-fcl",
+            fileExtensions: []
         },
 
         "forth": {
@@ -270,7 +326,7 @@ var Languages = new function() {
             name: "Groovy",
             mode: "groovy",
             mime: "text/x-groovy",
-            fileExtensions: ["gvy", "groovy"]
+            fileExtensions: ["gvy", "groovy", "gradle"]
         },
 
         "haml": {
@@ -285,6 +341,13 @@ var Languages = new function() {
             mode: "haskell",
             mime: "text/x-haskell",
             fileExtensions: ["has", "hs", "lhs", "lit"]
+        },
+
+        "haskellliterate": {
+            name: "Haskell (Literate)",
+            mode: "haskell-literate",
+            mime: "text/x-literate-haskell",
+            fileExtensions: ["lhs"]
         },
 
         "haxe": {
@@ -313,6 +376,13 @@ var Languages = new function() {
             mode: "htmlembedded",
             mime: "application/x-jsp",
             fileExtensions: ["jsp", "jspx", "jspf", "jst"]
+        },
+
+        "jsx": {
+            name: "JSX",
+            mode: "jsx",
+            mime: "text/jsx",
+            fileExtensions: ["jsx"]
         },
 
         "html": {
@@ -364,6 +434,13 @@ var Languages = new function() {
             fileExtensions: ["jsonld"]
         },
 
+        "twig": {
+            name: "Twig",
+            mode: "twig",
+            mime: "text/x-twig",
+            fileExtensions: []
+        },
+
         "typescript": {
             name: "TypeScript",
             mode: "javascript",
@@ -387,9 +464,9 @@ var Languages = new function() {
 
         "kotlin": {
             name: "Kotlin",
-            mode: "kotlin",
+            mode: "clike",
             mime: "text/x-kotlin",
-            fileExtensions: []
+            fileExtensions: ["kt"]
         },
 
         "less": {
@@ -436,6 +513,13 @@ var Languages = new function() {
             fileExtensions: ["md", "mkdn", "mdown", "markdn", "markdown"]
         },
 
+        "mbox": {
+            name: "mbox",
+            mode: "mbox",
+            mime: "application/mbox",
+            fileExtensions: ["mbox"]
+        },
+
         "mirc": {
             name: "mIRC",
             mode: "mirc",
@@ -454,7 +538,7 @@ var Languages = new function() {
             name: "MUMPS",
             mode: "mumps",
             mime: "text/x-mumps",
-            fileExtensions: ["mo"]
+            fileExtensions: ["mo", "mps"]
         },
 
         "nginx": {
@@ -462,6 +546,13 @@ var Languages = new function() {
             mode: "nginx",
             mime: "text/x-nginx-conf",
             fileExtensions: []
+        },
+
+        "nsis": {
+            name: "NSIS",
+            mode: "nsis",
+            mime: "text/x-nsis",
+            fileExtensions: ["nsh", "nsi"]
         },
 
         "ntriples": {
@@ -490,6 +581,13 @@ var Languages = new function() {
             mode: "octave",
             mime: "text/x-octave",
             fileExtensions: []
+        },
+
+        "oz": {
+            name: "Oz",
+            mode: "oz",
+            mime: "text/x-oz",
+            fileExtensions: ["oz"]
         },
 
         "pascal": {
@@ -535,11 +633,25 @@ var Languages = new function() {
             fileExtensions: ["pls"]
         },
 
+        "powershell": {
+            name: "PowerShell",
+            mode: "powershell",
+            mime: "application/x-powershell",
+            fileExtensions: ["ps1", "psd1", "psm1"]
+        },
+
         "properties": {
             name: "Properties files",
             mode: "properties",
             mime: "text/x-properties",
             fileExtensions: ["properties", "desktop", "theme", "ini", "la"]
+        },
+
+        "protobuf": {
+            name: "ProtoBuf",
+            mode: "protobuf",
+            mime: "text/x-protobuf",
+            fileExtensions: ["proto"]
         },
 
         "python": {
@@ -598,6 +710,13 @@ var Languages = new function() {
             mode: "rust",
             mime: "text/x-rustsrc",
             fileExtensions: ["rs"]
+        },
+
+        "sas": {
+            name: "SAS",
+            mode: "sas",
+            mime: "text/x-sas",
+            fileExtensions: ["sas"]
         },
 
         "sass": {
@@ -712,6 +831,20 @@ var Languages = new function() {
             fileExtensions: ["m", "nb"]
         },
 
+        "squirrel": {
+            name: "Squirrel",
+            mode: "clike",
+            mime: "text/x-squirrel",
+            fileExtensions: ["nut"]
+        },
+
+        "swift": {
+            name: "Swift",
+            mode: "swift",
+            mime: "text/x-swift",
+            fileExtensions: ["swift"]
+        },
+
         "stex": {
             name: "sTeX",
             mode: "stex",
@@ -786,7 +919,7 @@ var Languages = new function() {
         "troff": {
             name: "troff",
             mode: "troff",
-            mime: "troff",
+            mime: "text/troff",
             fileExtensions: ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
         },
 
@@ -794,7 +927,7 @@ var Languages = new function() {
             name: "TTCN",
             mode: "ttcn",
             mime: "text/x-ttcn",
-            fileExtensions: []
+            fileExtensions: ["ttcn", "ttcn3", "ttcnpp"]
         },
 
         "ttcn-cfg": {
@@ -832,6 +965,20 @@ var Languages = new function() {
             fileExtensions: ["v"]
         },
 
+        "vhdl": {
+            name: "VHDL",
+            mode: "vhdl",
+            mime: "text/x-vhdl",
+            fileExtensions: ["vhd", "vhdl"]
+        },
+
+        "web_idl": {
+            name: "Web IDL",
+            mode: "webidl",
+            mime: "text/x-webidl",
+            fileExtensions: ["webidl"]
+        },
+
         "xml": {
             name: "XML",
             mode: "xml",
@@ -847,6 +994,13 @@ var Languages = new function() {
             fileExtensions: ["xq", "xql", "xqm", "xquery", "xqy"]
         },
 
+        "yacas": {
+            name: "Yacas",
+            mode: "yacas",
+            mime: "text/x-yacas",
+            fileExtensions: ["ys"]
+        },
+
         "yaml": {
             name: "YAML",
             mode: "yaml",
@@ -859,6 +1013,27 @@ var Languages = new function() {
             mode: "z80",
             mime: "text/x-z80",
             fileExtensions: ["z80"]
+        },
+
+        "yacas": {
+            name: "mscgen",
+            mode: "mscgen",
+            mime: "text/x-mscgen",
+            fileExtensions: ["mscgen", "mscin", "msc"]
+        },
+
+        "yaml": {
+            name: "xu",
+            mode: "mscgen",
+            mime: "text/x-xu",
+            fileExtensions: ["xu"]
+        },
+
+        "z80": {
+            name: "msgenny",
+            mode: "mscgen",
+            mime: "text/x-msgenny",
+            fileExtensions: ["msgenny"]
         },
 
     }
