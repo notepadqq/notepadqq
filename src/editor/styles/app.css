@@ -1,6 +1,7 @@
 ﻿html {
     height: 100vh; /* Really needed? */
     overflow: hidden;
+    font-size: 12px;
 }
 
 body {
@@ -37,7 +38,7 @@ body {
     height: 100%;
     /*cursor: text;*/
     line-height: 1.3em;
-    font-family: "monospace";
+    font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
 }
 
 .CodeMirror-scroll {
