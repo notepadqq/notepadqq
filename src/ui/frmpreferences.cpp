@@ -74,15 +74,15 @@ void frmPreferences::resetShortcuts()
         i++;
     }
 }
-
 void frmPreferences::loadShortcuts(QSettings* s)
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
     m_shortcuts = new QMap<QString,QString>;
+
     foreach(QAction* a, mw->getActions())
     {
-        if(a->objectName().isEmpty())continue;
-        m_shortcuts->insert(a->objectName(),a->iconText());
+        if(a->objectName().isEmpty()) continue;
+        m_shortcuts->insert(a->objectName(), a->iconText());
     }
 
     kg = new keyGrabber();
@@ -98,17 +98,16 @@ void frmPreferences::loadShortcuts(QSettings* s)
     container->setLayout(layout);
     ui->stackedWidget->insertWidget(4,container);
 
-
-    kg->setRowCount(m_shortcuts->size());
-    QMap<QString,QString>::iterator it;
-    int i = 0;
+    QMapIterator<QString,QString> it(*m_shortcuts);
     s->beginGroup("Shortcuts");
-    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
-        kg->setItem(i,0,new QTableWidgetItem(it.value()));
-        kg->setItem(i,1,new QTableWidgetItem(s->value(it.key()).toString()));
-        i++;
+    while(it.hasNext()) {
+        it.next();
+        kg->insertRow(0);
+        kg->setItem(0,0,new QTableWidgetItem(it.value()));
+        kg->setItem(0,1,new QTableWidgetItem(s->value(it.key()).toString()));
     }
     s->endGroup();
+    kg->sortItems(0);
 
 }
 
