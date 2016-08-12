@@ -36,8 +36,6 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
     Languages.setLanguage(editor, data);
-
-
 });
 
 /*
