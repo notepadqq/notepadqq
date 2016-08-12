@@ -8,7 +8,6 @@
 #include <QSettings>
 #include <QUrlQuery>
 #include <QRegularExpression>
-#include <QDebug>
 
 namespace EditorNS
 {
@@ -232,7 +231,6 @@ namespace EditorNS
     void Editor::setLanguage(const QString &language)
     {
         sendMessage("C_CMD_SET_LANGUAGE", language);
-        sendMessage("C_CMD_REFRESH");
 	if (!m_customIndentationMode)
             setIndentationMode(language);
     }
