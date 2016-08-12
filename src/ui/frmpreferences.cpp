@@ -107,8 +107,10 @@ void frmPreferences::loadShortcuts(QSettings* s)
         kg->setItem(0,1,new QTableWidgetItem(s->value(it.key()).toString()));
     }
     s->endGroup();
-    kg->sortItems(0);
 
+    kg->sortItems(0);
+    kg->selectRow(0);
+    kg->checkConflicts();
 }
 
 void frmPreferences::saveShortcuts(QSettings* s)
