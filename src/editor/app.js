@@ -36,11 +36,7 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
     Languages.setLanguage(editor, data);
-    //Workaround for foldGutter failing to update on language change
-    if (editor.getOption("foldGutter") == true) {
-        editor.setOption("foldGutter",false);
-        editor.setOption("foldGutter",true);
-    }
+
 
 });
 
