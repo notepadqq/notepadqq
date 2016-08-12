@@ -1106,6 +1106,13 @@ var Languages = new function() {
             editor.setOption("mode", lang.mode);
             
         m_currentLanguage = languageId;
+
+        // Workaround for foldGutter failing to update on language change (#200)
+        if (editor.getOption("foldGutter") == true) {
+            editor.setOption("foldGutter", false);
+            editor.setOption("foldGutter", true);
+        }
+
         UiDriver.sendMessage("J_EVT_CURRENT_LANGUAGE_CHANGED", {id: languageId, name: lang.name});
     }
     
