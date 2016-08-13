@@ -43,7 +43,7 @@ private:
     QList<QMap<QString, QString>> m_langs;
     QVariantMap *m_commonLanguageProperties;
     Editor *m_previewEditor;
-    keyGrabber *kg;
+    KeyGrabber *kg;
 
     void loadLanguages(QSettings *s);
     void saveLanguages(QSettings *s);
