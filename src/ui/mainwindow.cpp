@@ -128,6 +128,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
 	ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
+    ui->actionShow_All_Characters->setChecked(m_settings->value("showAllSymbols",false).toBool());
 
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
@@ -621,7 +622,7 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
 {
     m_tabContextMenu->exec(point);
 }
-#include <QDebug>
+
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
 {
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
@@ -629,6 +630,18 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
         return true;
     });
     m_settings->setValue("showEOL",on);
+}
+
+void MainWindow::on_actionShow_All_Characters_triggered(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
+        editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
+        editor->setWhitespaceVisible(on);
+        return true;
+    });
+    m_settings->setValue("showAllSymbols",on);
+
 }
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
@@ -1021,8 +1034,14 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
-    editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
-    editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
+    if(ui->actionShow_All_Characters->isChecked()) {
+        editor->setTabsVisible(true);
+        editor->setEOLVisible(true);
+        editor->setWhitespaceVisible(true);
+    }else {
+        editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
+        editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
+    }
     editor->setOverwrite(m_overwrite);
 }
 
