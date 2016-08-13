@@ -66,6 +66,16 @@ UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, 
     editor.refresh();
 });
 
+UiDriver.registerEventHandler("C_CMD_SHOW_END_OF_LINE", function(msg, data, prevReturn) {
+    editor.setOption("showEOL",data == true);
+    editor.refresh();
+});
+
+UiDriver.registerEventHandler("C_CMD_SHOW_WHITESPACE", function(msg, data, prevReturn) {
+    editor.setOption("showWhitespace",data == true);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_INDENTATION_MODE", function(msg, data, prevReturn) {
     return { useTabs: editor.options.indentWithTabs, size: editor.options.indentUnit };
 });
@@ -192,6 +202,7 @@ UiDriver.registerEventHandler("C_CMD_SET_TABS_VISIBLE", function(msg, data, prev
     } else {
         $(".editor").removeClass("show-tabs");
     }
+    editor.execCommand("updateLineEndings");
 });
 
 /* Search with a specified regex. Automatically select the text when found.
@@ -257,8 +268,8 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
    (Helper function for search/replace & replace all.)
  */
 function HasGroupReuseTokens(replacement){
-	var groupReuseRegex = /\\([1-9])/g;
-	return (groupReuseRegex.exec(replacement) !== null);
+    var groupReuseRegex = /\\([1-9])/g;
+    return (groupReuseRegex.exec(replacement) !== null);
 }
 /*
    Substitute group reuse tokens (i.e. \1, \2, etc.) with 
@@ -269,28 +280,28 @@ function HasGroupReuseTokens(replacement){
    
 */
 function ApplyReusedGroups(replacement, groups){
-	//If we got match subgroups, see if we need to alter the replacement
-	for (var iReuseGroup = 1; iReuseGroup < groups.length; iReuseGroup ++){
-		//takes care of non-consecutive group reuse tokens,
-		//i.e. in "\1 \3" with no "\2", the "\3" is ignored 
-		groupToReuse = groups[iReuseGroup];
-		replacement = replacement.replace(new RegExp("\\\\"+iReuseGroup), groupToReuse);
-	}
-	var groupReuseRegex = /\\([1-9])/g;
-	//take care of all non-matched group reuse tokens (replace with empty string)
-	//this is the Notepad++ functionality
-	replacement = replacement.replace(groupReuseRegex,"");
-	return replacement;
+    //If we got match subgroups, see if we need to alter the replacement
+    for (var iReuseGroup = 1; iReuseGroup < groups.length; iReuseGroup ++){
+        //takes care of non-consecutive group reuse tokens,
+        //i.e. in "\1 \3" with no "\2", the "\3" is ignored 
+        groupToReuse = groups[iReuseGroup];
+        replacement = replacement.replace(new RegExp("\\\\"+iReuseGroup), groupToReuse);
+    }
+    var groupReuseRegex = /\\([1-9])/g;
+    //take care of all non-matched group reuse tokens (replace with empty string)
+    //this is the Notepad++ functionality
+    replacement = replacement.replace(groupReuseRegex,"");
+    return replacement;
 }
 
 /*
    Must match the definition of enum class SearchMode
-	 in src/ui/include/Search/searchhelpers.h
+     in src/ui/include/Search/searchhelpers.h
 */
 SearchMode = {
-	PlainText:1,
-	SpecialChars:2,
-	Regex:3
+    PlainText:1,
+    SpecialChars:2,
+    Regex:3
 }
 
 /* Replace the currently selected text, then search with a specified regex (calls C_FUN_SEARCH)
@@ -308,19 +319,19 @@ UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
     var regexStr = data[0];
     var regexModifiers = data[1];
     var forward = data[2];
-		var searchMode = Number(data[4]);
-	  if (editor.somethingSelected()) {
-    	var replacement = data[3];
-    	// Replace
-    	if(searchMode == SearchMode.Regex && HasGroupReuseTokens(replacement)){
-    		var searchRegex = new RegExp(regexStr, regexModifiers);
-    		groups = searchRegex.exec(editor.getSelection())
-    		if(groups !== null){//groups === null should never occur!
-    			editor.replaceSelection(ApplyReusedGroups(replacement,groups));
-    		}
-    	}else{
-    		editor.replaceSelection(replacement);
-    	}
+        var searchMode = Number(data[4]);
+      if (editor.somethingSelected()) {
+        var replacement = data[3];
+        // Replace
+        if(searchMode == SearchMode.Regex && HasGroupReuseTokens(replacement)){
+            var searchRegex = new RegExp(regexStr, regexModifiers);
+            groups = searchRegex.exec(editor.getSelection())
+            if(groups !== null){//groups === null should never occur!
+                editor.replaceSelection(ApplyReusedGroups(replacement,groups));
+            }
+        }else{
+            editor.replaceSelection(replacement);
+        }
     }
 
     // Find next/prev
@@ -331,7 +342,7 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
     var regexStr = data[0];
     var regexModifiers = data[1];
     var replacement = data[2];
-		var searchMode = Number(data[3]);
+        var searchMode = Number(data[3]);
     var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
 
     var count = 0;
@@ -343,7 +354,7 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
         count++;
         // Replace
         if(hasReuseTokens){
-        	searchCursor.replace(ApplyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
+            searchCursor.replace(ApplyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
         }else{
             searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
         }        
@@ -388,6 +399,7 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
     }
 
     editor.setOption("theme", data.name);
+    editor.execCommand('updateLineEndings');
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {

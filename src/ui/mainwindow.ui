@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -170,6 +170,7 @@
       <string>Show Symbol</string>
      </property>
      <addaction name="actionShow_Tabs"/>
+     <addaction name="actionShow_Spaces"/>
      <addaction name="actionShow_End_of_Line"/>
      <addaction name="actionShow_All_Characters"/>
      <addaction name="separator"/>
@@ -1054,6 +1055,17 @@
    </property>
    <property name="shortcut">
     <string>F11</string>
+   </property>
+  </action>
+  <action name="actionShow_Spaces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Spaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Spaces</string>
    </property>
   </action>
  </widget>

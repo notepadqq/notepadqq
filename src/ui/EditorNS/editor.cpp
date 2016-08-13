@@ -422,6 +422,16 @@ namespace EditorNS
         sendMessage("C_CMD_SET_LINE_WRAP", wrap);
     }
 
+    void Editor::setEOLVisible(const bool showeol)
+    {
+        sendMessage("C_CMD_SHOW_END_OF_LINE",showeol);
+    }
+
+    void Editor::setWhitespaceVisible(const bool showspace)
+    {
+        sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
+    }
+
     QPair<int, int> Editor::cursorPosition()
     {
         QList<QVariant> cursor = sendMessageWithResult("C_FUN_GET_CURSOR").toList();
