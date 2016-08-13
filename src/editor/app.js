@@ -66,6 +66,11 @@ UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, 
     editor.refresh();
 });
 
+UiDriver.registerEventHandler("C_CMD_SHOW_END_OF_LINE", function(msg, data, prevReturn) {
+    editor.setOption("showEOL",data == true);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_INDENTATION_MODE", function(msg, data, prevReturn) {
     return { useTabs: editor.options.indentWithTabs, size: editor.options.indentUnit };
 });

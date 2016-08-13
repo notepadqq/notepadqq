@@ -127,6 +127,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
+	ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
 
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
@@ -620,6 +621,15 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
 {
     m_tabContextMenu->exec(point);
 }
+#include <QDebug>
+void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setEOLVisible(on);
+        return true;
+    });
+    m_settings->setValue("showEOL",on);
+}
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
 {
@@ -1012,6 +1022,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
     editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
+    editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
     editor->setOverwrite(m_overwrite);
 }
 

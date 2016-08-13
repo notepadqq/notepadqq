@@ -179,6 +179,7 @@ private slots:
     void on_actionGo_to_line_triggered();
     void on_actionInstall_Extension_triggered();
     void on_actionFull_Screen_toggled(bool on);
+    void on_actionShow_End_of_Line_triggered(bool on);
 
 private:
     static QList<MainWindow*> m_instances;
