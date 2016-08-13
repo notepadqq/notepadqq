@@ -74,6 +74,7 @@ void frmPreferences::resetShortcuts()
         i++;
     }
 }
+
 void frmPreferences::loadShortcuts(QSettings* s)
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
@@ -85,7 +86,7 @@ void frmPreferences::loadShortcuts(QSettings* s)
         m_shortcuts->insert(a->objectName(), a->iconText());
     }
 
-    kg = new keyGrabber();
+    kg = new KeyGrabber();
 
     //Build the interface
     QWidget *container = new QWidget();
