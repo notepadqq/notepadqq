@@ -127,7 +127,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
     ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
-	ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
+    ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
     ui->actionShow_All_Characters->setChecked(m_settings->value("showAllSymbols",false).toBool());
 
     // Inserts at least an editor
