@@ -470,7 +470,6 @@ void MainWindow::restoreSession()
     }
 
     m_dontUpdateRecentDocs = true;
-    qDebug() << "start dont update";
 
     for(int i=0; i < tabFilePaths.size(); ++i){
         QUrl filePath = tabFilePaths[i].toUrl();
@@ -514,7 +513,6 @@ void MainWindow::restoreSession()
     }
 
     m_dontUpdateRecentDocs = false;
-    qDebug() << "end dont update";
 
     //If no tabs at all have been created, we'll delete the empty tab widget again.
     //A new one will be constructed later. This one could be re-used instead of deleted.
@@ -1713,13 +1711,7 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
     const int MAX_RECENT_ENTRIES = 10;
 
-    qDebug() << "document loaded" << m_dontUpdateRecentDocs;
-
-
-
     if(!m_dontUpdateRecentDocs){
-        qDebug() << "update recent";
-
         QUrl newUrl = editor->fileName();
         QList<QVariant> recentDocs = m_settings->value("recentDocuments", QList<QVariant>()).toList();
         recentDocs.insert(0, QVariant(newUrl));
