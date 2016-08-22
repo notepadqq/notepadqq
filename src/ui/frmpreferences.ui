@@ -86,7 +86,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -110,6 +110,13 @@
           <widget class="QCheckBox" name="chkWarnForDifferentIndentation">
            <property name="text">
             <string>Warn when the indentation doesn't match the settings</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkRememberSession">
+           <property name="text">
+            <string>Remember openened tabs when closing</string>
            </property>
           </widget>
          </item>
@@ -407,8 +414,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>568</width>
-              <height>396</height>
+              <width>565</width>
+              <height>389</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
