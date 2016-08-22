@@ -86,6 +86,8 @@ SOURCES += main.cpp\
     Extensions/Stubs/menuitemstub.cpp \
     Extensions/installextension.cpp \
     keygrabber.cpp \
+    Sessions/sessions.cpp \
+    Sessions/persistentcache.cpp \
     nqqsettings.cpp
 
 HEADERS  += include/mainwindow.h \
@@ -128,6 +130,8 @@ HEADERS  += include/mainwindow.h \
     include/Extensions/Stubs/menuitemstub.h \
     include/Extensions/installextension.h \
     include/keygrabber.h \
+    include/Sessions/sessions.h \
+    include/Sessions/persistentcache.h \
     include/nqqsettings.h
 
 FORMS    += mainwindow.ui \

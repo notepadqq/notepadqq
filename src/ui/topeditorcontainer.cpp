@@ -5,6 +5,10 @@ TopEditorContainer::TopEditorContainer(QWidget *parent) :
     QSplitter(parent), m_currentTabWidget(0)
 {
     setOrientation(Qt::Horizontal);
+
+    //Always add a first tabWidget to the container.
+    //This ensures m_currentTagWidget is never null
+    m_currentTabWidget = addTabWidget();
 }
 
 EditorTabWidget *TopEditorContainer::addTabWidget()
@@ -27,6 +31,16 @@ EditorTabWidget *TopEditorContainer::addTabWidget()
         emit tabBarDoubleClicked(tabWidget, index);
     });
 
+    //Resize all panes to be equally big.
+    const int currentViewCount = count();
+    const int tabSize = contentsRect().width() / currentViewCount;
+
+    QList<int> sizes;
+    for(int i=0; i<currentViewCount; ++i)
+        sizes << tabSize;
+
+    setSizes( sizes );
+
     return tabWidget;
 }
 
@@ -38,6 +52,23 @@ EditorTabWidget *TopEditorContainer::tabWidget(int index)
 EditorTabWidget *TopEditorContainer::currentTabWidget()
 {
     return m_currentTabWidget;
+}
+
+EditorTabWidget *TopEditorContainer::inactiveTabWidget(bool createIfNotExists)
+{
+    const int currentViewCount = count();
+
+    if(currentViewCount >= 2) {
+        //Two view panes are open. Pick the one not currently active.
+        int viewId = widget(1)==currentTabWidget() ? 0 : 1;
+        return tabWidget(viewId);
+    }
+
+    //Only one view pane is open.
+    if(createIfNotExists)
+        return addTabWidget();
+    else
+        return nullptr;
 }
 
 EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)

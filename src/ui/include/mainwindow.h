@@ -183,9 +183,12 @@ private slots:
     void on_actionShow_All_Characters_toggled(bool on);
     void on_actionShow_Spaces_triggered(bool on);
     void on_actionToggle_Smart_Indent_toggled(bool on);
+    void on_actionLoad_Session_triggered();
+    void on_actionSave_Session_triggered();
 
 private:
     static QList<MainWindow*> m_instances;
+
     Ui::MainWindow*       ui;
     TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;
@@ -204,6 +207,45 @@ private:
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+
+    /**
+     * @brief Set to true to temporarily disallow updating recent docs. This is useful
+     *        for loading files that shouldn't be remembered (such as cache files).
+     */
+    bool                m_dontUpdateRecentDocs = false;
+
+    /**
+     * @brief Saves a session as an XML file
+     * @param filePath Path to where the XML file should be created.
+     * @param cacheModifiedFiles If true, dirty tabs will be written into the cache directory.
+     *        Only use this for the remember-my-tabs feature. Multiple sessions writing to
+     *        the cache directory will end up in data loss.
+     * @return Whether the save has been successful.
+     */
+    bool                saveSession(QString filePath, bool cacheModifiedFiles);
+
+    /**
+     * @brief Loads a session XML file and restores all its tabs in the current window.
+     * @param filePath Path to where the XML file is located.
+     */
+    void                loadSession(QString filePath);
+
+    /**
+     * @brief Functions specifically to save/restore tabs to/from cache. These utilize
+     *        the saveSession and loadSession functions and also save all unsaved progress
+     *        in the cache.
+     */
+    bool                saveTabsToCache();
+    void                restoreTabsFromCache();
+
+    /**
+     * @brief Acts like closing all tabs, asking to the user for input before discarding
+     *        changes, etc. However, the tabs will remain opened. This can be used right
+     *        when the MainWindow received a close signal and actually closing all tabs
+     *        is unnecessary.
+     * @return Whether all files would have been properly closed.
+     */
+    bool                finalizeAllTabs();
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();

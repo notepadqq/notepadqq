@@ -75,7 +75,9 @@ public:
         NQQ_SETTING(SpacesVisisble,                 bool,       false)
         NQQ_SETTING(ShowEOL,                        bool,       false)
 
+        NQQ_SETTING(RememberTabsOnExit,             bool,       true)
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
+        NQQ_SETTING(LastSelectedSessionDir,         QString,    QString())
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())

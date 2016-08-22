@@ -16,6 +16,8 @@
 #include "include/frmlinenumberchooser.h"
 #include "include/Extensions/Stubs/windowstub.h"
 #include "include/Extensions/installextension.h"
+#include <include/Sessions/persistentcache.h>
+#include <include/Sessions/sessions.h>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QClipboard>
@@ -29,10 +31,7 @@
 #include <QDesktopServices>
 #include <QJsonArray>
 
-
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
-
-
 
 MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
@@ -44,7 +43,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-
 
     MainWindow::m_instances.append(this);
 
@@ -129,6 +127,12 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Initialize UI from settings
     initUI();
+
+
+    // We want to restore tabs only if the openeing window is the first one to be opened.
+    if (m_instances.size()==1 && m_settings.General.getRememberTabsOnExit()) {
+        restoreTabsFromCache();
+    }
 
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
@@ -358,6 +362,248 @@ void MainWindow::createStatusBar()
     scrollArea->setFixedHeight(frame->height());
 }
 
+
+bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
+{
+    std::vector<ViewData> viewData;
+
+    //Loop through all tabwidgets and their tabs
+    const int tabWidgetsCount = m_topEditorContainer->count();
+    for (int i = 0; i < tabWidgetsCount; i++) {
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
+        const int tabCount = tabWidget->count();
+
+        viewData.push_back( ViewData() );
+        ViewData& currentViewData = viewData.back();
+
+        for (int j = 0; j < tabCount; j++) {
+            Editor* editor = tabWidget->editor(j);
+            bool isClean = editor->isClean();
+            bool isOrphan = editor->fileName().isEmpty();
+
+            if (isOrphan && !cacheModifiedFiles)
+                continue; // Don't save temporary files if we're not caching tabs
+
+            TabData td;
+
+            if (!isClean && cacheModifiedFiles) {
+                // Tab is dirty, meaning it needs to be cached.
+                QUrl cacheFilePath = PersistentCache::createValidCacheName(tabWidget->tabText(j));
+
+                td.cacheFilePath = cacheFilePath.toLocalFile();
+
+                if (m_docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != saveFileResult_Saved) {
+                    return false;
+                }
+            } else if (isOrphan) {
+                // Since we didn't cache the file and it is an orphan, we won't save it in the session.
+                continue;
+            }
+            // Else tab is an openened unmodified file, we don't have to do anything special.
+
+            td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "" ;
+
+            // Finally save other misc information about the tab.
+            const auto& scrollPos = editor->scrollPosition();
+            td.scrollX = scrollPos.first;
+            td.scrollY = scrollPos.second;
+
+            td.active = tabWidget->currentEditor() == editor;
+
+            // If we're caching and there's a file opened in the tab we want to inform the
+            // user whether the file's contents have changed since Nqq was last opened.
+            // For this we save and later compare the modification date.
+            if (!isOrphan && cacheModifiedFiles) {
+                // As a special case, if the file has *already* changed we set the modification
+                // time to 1 so we always trigger the warning.
+                if (editor->fileOnDiskChanged())
+                    td.lastModified = 1;
+                else
+                    td.lastModified = QFileInfo(td.filePath).lastModified().toMSecsSinceEpoch();
+            }
+
+            currentViewData.tabs.push_back( td );
+
+        } // end for
+    } // end for
+
+    // Write all information to a session file
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
+
+    if (!file.isOpen())
+        return false;
+
+    SessionWriter sessionWriter(file);
+
+    for (const auto& view : viewData)
+        sessionWriter.addViewData(view);
+
+    return true;
+}
+
+void MainWindow::loadSession(QString filePath)
+{
+
+    QFile file(filePath);
+    file.open(QIODevice::ReadOnly);
+
+    if (!file.isOpen())
+        return;
+
+    SessionReader reader(file);
+
+    bool success = false;
+    const auto& views = reader.readData(&success);
+
+    if (!success || views.empty()) {
+        return;
+    }
+
+    m_dontUpdateRecentDocs = true;
+
+    int viewCounter = 0;
+    for (const auto& view : views) {
+        // Each new view must be created if it does not yet exist.
+        EditorTabWidget* tabW = m_topEditorContainer->tabWidget(viewCounter);
+        int activeIndex = 0;
+
+        if (!tabW)
+            tabW = m_topEditorContainer->addTabWidget();
+
+        viewCounter++;
+
+        for (const TabData& tab : view.tabs) {
+            const QFileInfo fileInfo(tab.filePath);
+            const bool fileExists = fileInfo.exists();
+            const bool cacheFileExists = QFileInfo(tab.cacheFilePath).exists();
+
+            const QUrl fileUrl = QUrl::fromLocalFile(tab.filePath);
+            const QUrl cacheFileUrl = QUrl::fromLocalFile(tab.cacheFilePath);
+
+            // This is the file to load the document from
+            const QUrl& loadUrl = cacheFileExists ? cacheFileUrl : fileUrl;
+
+            const bool success = m_docEngine->loadDocumentSilent(loadUrl, tabW);
+
+            if (!success)
+                continue;
+
+            int idx = tabW->findOpenEditorByUrl(loadUrl);
+
+            if (idx == -1)
+                continue;
+
+            // DocEngine sets the editor's fileName to loadUrl since this is where the file
+            // was loaded from. Since loadUrl could point to a cached file we reset it here.
+            Editor* editor = tabW->editor(idx);
+
+            if (cacheFileExists) {
+                editor->markDirty();
+                editor->setLanguageFromFileName();
+                // Since we loaded from cache we want to unmonitor the cache file.
+                m_docEngine->unmonitorDocument(editor);
+            }
+
+            if (fileExists) {
+                editor->setFileName(fileUrl);
+                m_docEngine->monitorDocument(editor);
+            } else {
+                editor->setFileName(QUrl());
+                tabW->setTabText(idx, getNewDocumentName());
+            }
+
+            // If we're loading an existing file from cache we want to inform the user whether
+            // the file has changed since Nqq was last closed. For this we can compare the
+            // file's last modification date.
+            if (fileExists && cacheFileExists && tab.lastModified != 0) {
+                auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
+
+                if(lastModified > tab.lastModified)
+                    editor->setFileOnDiskChanged(true);
+            }
+
+            if(tab.active) activeIndex = idx;
+
+            editor->setScrollPosition(tab.scrollX, tab.scrollY);
+            editor->clearFocus();
+
+        } // end for
+
+        tabW->clearFocus();
+
+        // In case a new tabwidget was created but no tabs were actually added to it,
+        // we'll attempt to re-use the widget for the next view.
+        if (tabW->count() == 0)
+            viewCounter--;
+        else // Otherwise we finish by making the right tab the currently open one.
+            tabW->setCurrentIndex(activeIndex);
+
+    } // end for
+
+    m_dontUpdateRecentDocs = false;
+
+    // Stop if we haven't added any views at all, otherwise we have to clean up after ourselves.
+    if (viewCounter <= 0)
+        return;
+
+    // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
+    EditorTabWidget* lastTabW = m_topEditorContainer->tabWidget( m_topEditorContainer->count() -1);
+    removeTabWidgetIfEmpty(lastTabW);
+
+    // Give focus to the last tab of the first tab widget.
+    EditorTabWidget* firstTabW = m_topEditorContainer->tabWidget(0);
+    Editor* lastEditor = firstTabW->editor(lastTabW->count()-1);
+
+    lastEditor->setFocus();
+    refreshEditorUiInfo(lastEditor);
+
+    return;
+}
+
+bool MainWindow::saveTabsToCache()
+{
+    // If clearCacheDir() returns false, the cache directory is not writeable.
+    // If saveSession() returns false, something went wrong. Most likely writing to the .xml file.
+    // In both cases we can present the same error message.
+    while (!PersistentCache::clearCacheDir() ||
+           !saveSession(PersistentCache::cacheSessionPath(), true)) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") + PersistentCache::cacheDirPath());
+        msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+        msgBox.setDefaultButton(QMessageBox::Retry);
+        msgBox.setIcon(QMessageBox::Critical);
+
+        if(msgBox.exec() == QMessageBox::Abort) return false;
+    }
+
+    return true;
+}
+
+void MainWindow::restoreTabsFromCache()
+{
+    loadSession(PersistentCache::cacheSessionPath());
+}
+
+bool MainWindow::finalizeAllTabs()
+{
+    //Close all tabs normally
+    int tabWidgetsCount = m_topEditorContainer->count();
+    for (int i = 0; i < tabWidgetsCount; i++) {
+        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
+        int tabCount = tabWidget->count();
+
+        for (int j = 0; j < tabCount; j++) {
+            int closeResult = closeTab(tabWidget, j, false, false);
+            if (closeResult == MainWindow::tabCloseResult_Canceled) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 QList<const QMenu*> MainWindow::getMenus() const {
     return ui->menuBar->findChildren<const QMenu*>(QString(), Qt::FindDirectChildrenOnly);
 }
@@ -451,8 +697,14 @@ QUrl MainWindow::stringToUrl(QString fileName, QString workingDirectory)
 
 void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments)
 {
+    const int currentlyOpenTabs = m_topEditorContainer->currentTabWidget()->count();
+
     if (arguments.count() == 0) {
-        ui->action_New->trigger();
+
+        if(currentlyOpenTabs==0){
+            ui->action_New->trigger();
+        }
+
         return;
     }
 
@@ -460,7 +712,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
 
     QStringList rawUrls = parser->positionalArguments();
 
-    if (rawUrls.count() < 1)
+    if (rawUrls.count() == 0 && currentlyOpenTabs == 0)
     {
         // Open a new empty document
         ui->action_New->trigger();
@@ -475,11 +727,6 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
         }
 
         EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
-        // Make sure we have a tabWidget: if not, create it.
-        if(tabW == 0) {
-            tabW = m_topEditorContainer->addTabWidget();
-        }
-
         m_docEngine->loadDocuments(files, tabW);
     }
 }
@@ -545,7 +792,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
         // switch to the previous tab or wrap around if first
         EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
         int prevTabIndex = (curTabWidget->currentIndex() + curTabWidget->count() - 1)
-                            % curTabWidget->count();
+                           % curTabWidget->count();
         curTabWidget->setCurrentIndex(prevTabIndex);
     } else {
         QMainWindow::keyPressEvent(ev);
@@ -592,11 +839,6 @@ QString MainWindow::getNewDocumentName()
 void MainWindow::on_action_New_triggered()
 {
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
-
-    // Make sure we have a tabWidget: if not, create it.
-    if(tabW == 0) {
-        tabW = m_topEditorContainer->addTabWidget();
-    }
 
     m_docEngine->addNewDocument(getNewDocumentName(), true, tabW);
 }
@@ -730,28 +972,7 @@ bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCod
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
     EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
-    EditorTabWidget *destTabWidget;
-
-    const int currentViewCount = m_topEditorContainer->count();
-
-    if(currentViewCount >= 2) {
-        //Two view panes are open. Pick the one not currently active.
-        int viewId = m_topEditorContainer->widget(1)==curTabWidget ? 0 : 1;
-        destTabWidget = m_topEditorContainer->tabWidget(viewId);
-
-    } else {
-        //Only one view pane is open. Add another one
-        destTabWidget = m_topEditorContainer->addTabWidget();
-
-        //And resize both panes to be equally big.
-        int tabSize = m_topEditorContainer->contentsRect().width() / currentViewCount;
-
-        QList<int> sizes;
-        sizes << tabSize;
-        sizes << tabSize;
-
-        m_topEditorContainer->setSizes( sizes );
-    }
+    EditorTabWidget *destTabWidget = m_topEditorContainer->inactiveTabWidget(true);
 
     destTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
 
@@ -768,14 +989,14 @@ void MainWindow::on_action_Open_triggered()
 {
     QUrl defaultUrl = currentEditor()->fileName();
     if (defaultUrl.isEmpty())
-            defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
+        defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
     QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
-                this,
-                tr("Open"),
-                defaultUrl,
-                tr("All files (*)"),
-                0, 0);
+                                this,
+                                tr("Open"),
+                                defaultUrl,
+                                tr("All files (*)"),
+                                0, 0);
 
     if (!fileNames.empty()) {
         m_docEngine->loadDocuments(fileNames,
@@ -789,7 +1010,7 @@ void MainWindow::on_actionOpen_Folder_triggered()
 {
     QUrl defaultUrl = currentEditor()->fileName();
     if (defaultUrl.isEmpty())
-            defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
+        defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
     // Select directory
     QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
@@ -860,7 +1081,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
     if (! (m_topEditorContainer->count() == 1 && tabWidget->count() == 1
-         && editor->fileName().isEmpty() && editor->isClean())) {
+           && editor->fileName().isEmpty() && editor->isClean())) {
 
         if(!force && !editor->isClean()) {
             tabWidget->setCurrentIndex(tab);
@@ -961,11 +1182,11 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
 {
     // Ask for a file name
     QString filename = QFileDialog::getSaveFileName(
-                this,
-                tr("Save as"),
-                getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
-                tr("Any file (*)"),
-                0, 0);
+                           this,
+                           tr("Save as"),
+                           getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
+                           tr("Any file (*)"),
+                           0, 0);
 
     if (filename != "") {
         m_settings.General.setLastSelectedDir(QFileInfo(filename).absolutePath());
@@ -982,7 +1203,7 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
 
     if (docFileName.isEmpty()) {
         return QUrl::fromLocalFile(m_settings.General.getLastSelectedDir()
-                + "/" + tabWidget->tabText(tab));
+                                   + "/" + tabWidget->tabText(tab));
     } else {
         return docFileName;
     }
@@ -1057,7 +1278,7 @@ void MainWindow::on_action_Paste_triggered()
 {
     // Normalize foreign text format
     QString text = QApplication::clipboard()->text()
-            .replace(QRegularExpression("\n|\r\n|\r"), "\n");
+                   .replace(QRegularExpression("\n|\r\n|\r"), "\n");
 
     currentEditor()->setSelectionsText(text.split("\n"));
 }
@@ -1140,8 +1361,8 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
         }
 
         m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                     .arg(cursor.first + 1)
-                                     .arg(cursor.second + 1));
+                                    .arg(cursor.first + 1)
+                                    .arg(cursor.second + 1));
 
         m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
     }
@@ -1164,8 +1385,8 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
             int tab = tabWidget->indexOf(editor);
             if (tab != -1) {
                 newTitle = QString("%1 - %2")
-                               .arg(tabWidget->tabText(tab))
-                               .arg(QApplication::applicationName());
+                           .arg(tabWidget->tabText(tab))
+                           .arg(QApplication::applicationName());
             }
         }
 
@@ -1185,9 +1406,9 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                            );
 
         newTitle = QString("%1 (%2) - %3")
-                       .arg(Notepadqq::fileNameFromUrl(editor->fileName()))
-                       .arg(path)
-                       .arg(QApplication::applicationName());
+                   .arg(Notepadqq::fileNameFromUrl(editor->fileName()))
+                   .arg(path)
+                   .arg(QApplication::applicationName());
 
     }
 
@@ -1272,24 +1493,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QMainWindow::closeEvent(event);
 
-    int tabWidgetsCount = m_topEditorContainer->count();
-    for(int i = 0; i < tabWidgetsCount; i++) {
-        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(i);
-        int tabCount = tabWidget->count();
+    // Only save tabs to cache if the closing window is the last one in the process.
+    bool followThrough = m_instances.size()==1 && m_settings.General.getRememberTabsOnExit() ?
+                             saveTabsToCache() :
+                             finalizeAllTabs();
 
-        for(int j = 0; j < tabCount; j++) {
-            int closeResult = closeTab(tabWidget, j, false, false);
-            if (closeResult == MainWindow::tabCloseResult_Canceled) {
-                // Cancel all
-                event->ignore();
-                return;
-            }
-        }
+    if (!followThrough) {
+        event->ignore();
+        return;
     }
 
     m_settings.MainWindow.setGeometry(saveGeometry());
     m_settings.MainWindow.setWindowState(saveState());
-
 
     // Disconnect signals to avoid handling events while
     // the UI is being destroyed.
@@ -1305,8 +1520,8 @@ void MainWindow::instantiateFrmSearchReplace()
 {
     if (!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(
-                            m_topEditorContainer,
-                            this);
+                                 m_topEditorContainer,
+                                 this);
 
         connect(m_frmSearchReplace, &frmSearchReplace::fileSearchResultFinished,
                 this, &MainWindow::on_fileSearchResultFinished);
@@ -1617,22 +1832,24 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
     const int MAX_RECENT_ENTRIES = 10;
 
-    QUrl newUrl = editor->fileName();
-    QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
-    recentDocs.insert(0, QVariant(newUrl));
+    if(!m_dontUpdateRecentDocs){
+        QUrl newUrl = editor->fileName();
+        QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
+        recentDocs.insert(0, QVariant(newUrl));
 
-    // Remove duplicates
-    for (int i = recentDocs.count() - 1; i >= 1; i--) {
-        if (newUrl == recentDocs[i].toUrl())
-            recentDocs.removeAt(i);
+        // Remove duplicates
+        for (int i = recentDocs.count() - 1; i >= 1; i--) {
+            if (newUrl == recentDocs[i].toUrl())
+                recentDocs.removeAt(i);
+        }
+
+        while (recentDocs.count() > MAX_RECENT_ENTRIES)
+            recentDocs.removeLast();
+
+        m_settings.General.setRecentDocuments(recentDocs);
+
+        updateRecentDocsInMenu();
     }
-
-    while (recentDocs.count() > MAX_RECENT_ENTRIES)
-        recentDocs.removeLast();
-
-    m_settings.General.setRecentDocuments(recentDocs);
-
-    updateRecentDocsInMenu();
 
     if (!wasAlreadyOpened) {
         if (m_settings.General.getWarnForDifferentIndentation()) {
@@ -1653,10 +1870,10 @@ void MainWindow::checkIndentationMode(Editor *editor)
         if (differentTabSpaces || differentSpaceSize) {
             // Show msg
             BannerIndentationDetected *banner = new BannerIndentationDetected(
-                        differentSpaceSize,
-                        detected,
-                        curr,
-                        this);
+                                                    differentSpaceSize,
+                                                    detected,
+                                                    curr,
+                                                    this);
             banner->setObjectName("indentationdetected");
 
             editor->insertBanner(banner);
@@ -1934,7 +2151,7 @@ void MainWindow::on_actionPrint_triggered()
     QPrinter printer(QPrinter::HighResolution);
     QPrintDialog dialog(&printer);
     if (dialog.exec() == QDialog::Accepted)
-          currentEditor()->print(&printer);
+        currentEditor()->print(&printer);
 }
 
 void MainWindow::on_actionPrint_Now_triggered()
@@ -2064,7 +2281,7 @@ void MainWindow::on_actionOpen_file_triggered()
         }
 
         m_docEngine->loadDocuments(urls,
-                               m_topEditorContainer->currentTabWidget());
+                                   m_topEditorContainer->currentTabWidget());
     }
 }
 
@@ -2118,7 +2335,6 @@ void MainWindow::on_actionMove_Line_Up_triggered()
 
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
-    //currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
 }
 
@@ -2225,4 +2441,65 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         editor->setSmartIndent(on);
         return true;
     });
+}
+
+void MainWindow::on_actionLoad_Session_triggered()
+{
+    QString recentFolder = QUrl::fromLocalFile(
+                               m_settings.General.getLastSelectedSessionDir())
+                               .toLocalFile();
+
+    QString fileName = QFileDialog::getOpenFileName(
+                           this,
+                           tr("Open Session..."),
+                           recentFolder,
+                           tr("Session file (*.xml);;Any file (*)"),
+                           0, 0);
+
+    if (fileName.isEmpty())
+        return;
+
+    m_settings.General.setLastSelectedSessionDir(QFileInfo(fileName).dir().absolutePath());
+    loadSession(fileName);
+}
+
+void MainWindow::on_actionSave_Session_triggered()
+{
+    QString recentFolder = QUrl::fromLocalFile(
+                               m_settings.General.getLastSelectedSessionDir())
+                               .toLocalFile();
+
+    QFileDialog dialog(this,
+                       tr("Save Session as..."),
+                       recentFolder,
+                       tr("Session file (*.xml);;Any file (*)"));
+
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("xml");
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+    if (!dialog.exec())
+        return;
+
+    QStringList fileNames = dialog.selectedFiles();
+
+    if (fileNames.empty())
+        return;
+
+    QString fileName = fileNames[0];
+
+    if (fileName.isEmpty())
+        return;
+
+    m_settings.General.setLastSelectedSessionDir(QFileInfo(fileName).dir().absolutePath());
+
+    // Do not try to cache sessions here. Only one session can ever be in the cache directory
+    // at any point in time.
+    if (saveSession(fileName, false)) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Error while trying to save this session. Please try a different file name."));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Critical);
+    }
 }
