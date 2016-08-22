@@ -186,6 +186,15 @@ private slots:
 
 private:
     static QList<MainWindow*> m_instances;
+
+    /**
+     * Only one window's tabs can be saved. m_sessionWindow will point
+     * to that one. It's generally the first window opened, but may be
+     * a different one depending on the user's actions.
+     * If the session window is not open, m_sessionWindow is nullptr.
+     */
+    static MainWindow*        m_sessionWindow;
+
     Ui::MainWindow*       ui;
     TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;
@@ -204,6 +213,23 @@ private:
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+
+    bool                   m_dontUpdateRecentDocs = false;
+
+    /**
+     * @brief Writes all dirty tabs to the cache as preparation of closing the active MainWindow.
+     * @return bool whether to continue closing the window
+     */
+    bool				saveSession();
+
+    /**
+     * @brief Closes all tabs in preparation of closing the active MainWindow.
+     *        Will ask the user what to do with dirty tabs. Basically the old
+     *        way of closing the window.
+     * @return bool whether to continue closing the window
+     */
+    bool				closeSession();
+    void				restoreSession();
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
