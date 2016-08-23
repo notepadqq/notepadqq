@@ -258,23 +258,15 @@ void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
 
 void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
 {
-    int openTabs = count();
-
     if (ev->button() == Qt::MiddleButton) {
         int index = tabBar()->tabAt(ev->pos());
 
         if (index != -1) {
             emit tabCloseRequested(index);
-
-            --openTabs;
-
-            //Closing the tab may result in the TabWidget being deleted if it was the last tab.
-            //In this case we must not use mouseReleaseEvent or other members anymore!
-            if(openTabs <= 0)
-                return;
+            ev->accept();
+            return;
         }
     }
-
 
     QTabWidget::mouseReleaseEvent(ev);
 }
