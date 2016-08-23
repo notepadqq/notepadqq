@@ -498,7 +498,7 @@ void MainWindow::restoreSession()
         //Then we load it if the file still exists.
         if(cachePath.isEmpty()){
             if(QFileInfo(filePath.toLocalFile()).exists()){
-                m_docEngine->loadDocument(filePath, tabW);
+                m_docEngine->loadDocumentSilent(filePath, tabW);
             }
 
             continue;
@@ -509,7 +509,7 @@ void MainWindow::restoreSession()
             continue;
         }
 
-        if( !m_docEngine->loadDocument(cachePath, tabW) ){
+        if( !m_docEngine->loadDocumentSilent(cachePath, tabW) ){
             continue;
         }
 
@@ -960,7 +960,8 @@ void MainWindow::on_action_Open_triggered()
                 this,
                 tr("Open"),
                 defaultUrl,
-                tr("All files (*)"),
+                tr("All files (*);;\
+                    Text files (*.txt *.xml *.ini *.h *.c *.hpp *.cpp)"),
                 0, 0);
 
     if (!fileNames.empty()) {
