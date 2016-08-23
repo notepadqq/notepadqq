@@ -873,8 +873,7 @@ void MainWindow::on_action_Open_triggered()
                 this,
                 tr("Open"),
                 defaultUrl,
-                tr("All files (*);;\
-                    Text files (*.txt *.xml *.ini *.h *.c *.hpp *.cpp)"),
+                tr("All files (*)"),
                 0, 0);
 
     if (!fileNames.empty()) {
