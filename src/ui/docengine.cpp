@@ -120,7 +120,6 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 {
     if(!fileNames.empty()) {
         if(rememberLastSelectedDir){
-            qDebug() << "remember remember the last of dictionarytember";
             NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
         }
 
