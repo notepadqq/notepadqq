@@ -150,7 +150,7 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
     s.setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
 
-    const Editor::Theme& newTheme = Editor::themeFromName( ui->cmbColorScheme->currentText() );
+    const Editor::Theme& newTheme = Editor::themeFromName( ui->cmbColorScheme->currentData().toString() );
 
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
@@ -216,12 +216,12 @@ void frmPreferences::loadColorSchemes(QSettings *s)
 {
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
-    ui->cmbColorScheme->addItem("Default");
+    ui->cmbColorScheme->addItem("Default", "Default");
 
     QString themeSetting = s->value("Appearance/ColorScheme", "").toString();
 
     for (Editor::Theme theme : themes) {
-        ui->cmbColorScheme->addItem(theme.name);
+        ui->cmbColorScheme->addItem(theme.name, theme.name); //First is display text, second is item data.
 
         if (themeSetting == theme.name) {
             ui->cmbColorScheme->setCurrentIndex(ui->cmbColorScheme->count() - 1);
@@ -286,7 +286,7 @@ void frmPreferences::saveLanguages(QSettings *s)
 
 void frmPreferences::saveColorScheme(QSettings *s)
 {
-    s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentText());
+    s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
@@ -367,7 +367,7 @@ void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 {
-    m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentText()));
+    m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
 }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)

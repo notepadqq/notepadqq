@@ -42,7 +42,13 @@ namespace EditorNS
 
         m_webView = new CustomQWebView(this);
 
+        QUrlQuery query;
+        query.addQueryItem("themePath", theme.path);
+        query.addQueryItem("themeName", theme.name);
+
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
+        url.setQuery(query);
+
         m_webView->setUrl(url);
 
         // To load the page in the background (http://stackoverflow.com/a/10520029):
@@ -69,7 +75,9 @@ namespace EditorNS
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
 
-        setTheme(theme);
+        //Workaround for one theme that does not work otherwise.
+        if(theme.name=="zenburn")
+            setTheme(theme);
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
