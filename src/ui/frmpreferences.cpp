@@ -46,7 +46,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkWarnForDifferentIndentation->setChecked(s.value("warnForDifferentIndentation", true).toBool());
 
     loadLanguages(&s);
-    loadColorSchemes(&s);
+    loadAppearanceTab(&s);
     loadTranslations(&s);
     loadShortcuts(&s);
 
@@ -126,6 +126,14 @@ void frmPreferences::saveShortcuts(QSettings* s)
     mw->updateShortcuts();
 }
 
+void frmPreferences::applyFontOverride()
+{
+    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+
+    m_previewEditor->applyFontOverride( font, size );
+}
+
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
 {
     int index = ui->treeWidget->indexOfTopLevelItem(current);
@@ -142,7 +150,7 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("warnForDifferentIndentation", ui->chkWarnForDifferentIndentation->isChecked());
 
     saveLanguages(&s);
-    saveColorScheme(&s);
+    saveAppearanceTab(&s);
     saveTranslation(&s);
     saveShortcuts(&s);
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
@@ -160,6 +168,10 @@ void frmPreferences::on_buttonBox_accepted()
 
             // Set new theme
             editor->setTheme(newTheme);
+
+            //Set font override
+            editor->applyGlobalFontOverride();
+
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
 
@@ -212,7 +224,7 @@ void frmPreferences::loadLanguages(QSettings *s)
     ui->cmbLanguages->currentIndexChanged(0);
 }
 
-void frmPreferences::loadColorSchemes(QSettings *s)
+void frmPreferences::loadAppearanceTab(QSettings *s)
 {
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
@@ -233,6 +245,20 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     // Avoid glitch where scrollbars are appearing for a moment
     QSize renderSize = ui->colorSchemePreviewFrame->size();
     m_previewEditor->forceRender(renderSize);
+
+
+    QString fontFamily = s->value("overrideFontFamily").toString();
+    if(!fontFamily.isEmpty()){
+        ui->chkOverrideFontFamily->setChecked(true);
+        QFont f(fontFamily);
+        ui->cmbFontFamilies->setCurrentFont(fontFamily);
+    }
+
+    int fontSize = s->value("overrideFontSize").toInt();
+    if( fontSize != 0){
+        ui->chkOverrideFontSize->setChecked(true);
+        ui->spnFontSize->setValue( fontSize );
+    }
 }
 
 void frmPreferences::loadTranslations(QSettings *s)
@@ -284,9 +310,18 @@ void frmPreferences::saveLanguages(QSettings *s)
     }
 }
 
-void frmPreferences::saveColorScheme(QSettings *s)
+void frmPreferences::saveAppearanceTab(QSettings *s)
 {
     s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
+
+    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+
+    Editor::setGlobalFontFamily( font );
+    Editor::setGlobalFontSize( size );
+
+    s->setValue("overrideFontFamily", font);
+    s->setValue("overrideFontSize", size);
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
@@ -368,6 +403,10 @@ void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 {
     m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
+
+    // Since any changes to the global font override data aren't saved yet we have to manually
+    // apply them to m_preview.
+    applyFontOverride();
 }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)
@@ -420,4 +459,26 @@ void frmPreferences::on_txtNodejs_textChanged(const QString &)
 void frmPreferences::on_txtNpm_textChanged(const QString &)
 {
     checkExecutableExists(ui->txtNpm);
+}
+
+void frmPreferences::on_chkOverrideFontFamily_toggled(bool checked)
+{
+    ui->cmbFontFamilies->setEnabled( checked );
+    applyFontOverride();
+}
+
+void frmPreferences::on_chkOverrideFontSize_toggled(bool checked)
+{
+    ui->spnFontSize->setEnabled( checked );
+    applyFontOverride();
+}
+
+void frmPreferences::on_spnFontSize_valueChanged(int /*arg1*/)
+{
+    applyFontOverride();
+}
+
+void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont& /*f*/)
+{
+    applyFontOverride();
 }
