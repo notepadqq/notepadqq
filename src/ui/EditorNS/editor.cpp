@@ -75,6 +75,10 @@ namespace EditorNS
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
 
+        //Workaround for one theme that does not work otherwise.
+        if(theme.name=="zenburn")
+            setTheme(theme);
+
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
