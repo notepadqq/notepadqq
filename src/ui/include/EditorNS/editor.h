@@ -233,6 +233,20 @@ namespace EditorNS
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
+
+        //Sets the global settings for fonts.
+        //This will not be automatically applied to all editors.
+        //For that, xx has to be called for each editor individually.
+        static void setGlobalFontFamily(QString fontFamily=QString());
+        static void setGlobalFontSize(int fontSize=0);
+
+        //Sets a specific font family/size for this editor.
+        //This will be applied immediately.
+        void applyFontOverride(QString fontFamily, int fontSize);
+
+        //Applies the global font settings for this editor.
+        void applyGlobalFontOverride();
+
         QTextCodec *codec() const;
 
         /**
@@ -289,6 +303,9 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
+
+        static QString m_forceOverrideFontFamily;
+        static int m_forceOverrideFontSize;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;

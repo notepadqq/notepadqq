@@ -397,6 +397,28 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
     editor.setOption("theme", data.name);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_FONT", function(msg, data, prevReturn) {
+
+    var fontSize = (data.size != "" && data.size>0) ? ("font-size:" + data.size + "px;") : "";
+
+    var fontFamily = data.family != "" ? ("font-family:'" + data.family + "';") : "";
+
+
+    var styleTag = document.getElementById('userFont');
+
+    if( styleTag  ){
+        styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
+        return true;
+    }else{
+        styleTag = document.createElement("style");
+        styleTag.id = 'userFont';
+        styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
+        document.getElementsByTagName("head")[0].appendChild( styleTag );
+        return true;
+    }
+
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
     editor.toggleOverwrite(data);
 });

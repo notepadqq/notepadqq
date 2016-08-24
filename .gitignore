@@ -18,3 +18,5 @@ build-notepadqq-Desktop*
 /src/ui/ui.pro.user
 /src/ui/ui.pro.user.*
 /notepadqq.pro.user
+
+.qmake.stash

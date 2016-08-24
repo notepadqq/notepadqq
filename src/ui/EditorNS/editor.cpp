@@ -14,6 +14,9 @@ namespace EditorNS
 
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
+    QString Editor::m_forceOverrideFontFamily = QString();
+    int Editor::m_forceOverrideFontSize = 0;
+
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
@@ -74,6 +77,8 @@ namespace EditorNS
                 &QWebFrame::javaScriptWindowObjectCleared,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
+
+        applyGlobalFontOverride();
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
@@ -487,6 +492,40 @@ namespace EditorNS
         m_endOfLineSequence = newLineSequence;
     }
 
+    void Editor::setGlobalFontFamily(QString fontFamily)
+    {
+        m_forceOverrideFontFamily = fontFamily;
+    }
+
+    void Editor::setGlobalFontSize(int fontSize)
+    {
+        m_forceOverrideFontSize = fontSize;
+    }
+
+    void Editor::applyFontOverride(QString fontFamily, int fontSize)
+    {
+        QMap<QString, QVariant> tmap;
+        tmap.insert("family", fontFamily);
+        tmap.insert("size", QString::number(fontSize));
+        auto ok = sendMessageWithResult("C_CMD_SET_FONT", tmap);
+
+        qDebug() << "fam: " << fontFamily << "size: " << fontSize << " result: " << ok;
+    }
+
+    void Editor::applyGlobalFontOverride()
+    {
+        applyFontOverride(m_forceOverrideFontFamily, m_forceOverrideFontSize);
+
+        /*QMap<QString, QVariant> tmap;
+        tmap.insert("family", m_forceOverrideFontFamily);
+        tmap.insert("size", QString::number(m_forceOverrideFontSize));
+
+        qDebug() << m_forceOverrideFontFamily << m_forceOverrideFontSize;
+
+        sendMessage("C_CMD_SET_FONT", tmap);*/
+        qDebug() << m_forceOverrideFontFamily << m_forceOverrideFontSize;
+    }
+
     QTextCodec *Editor::codec() const
     {
         return m_codec;
@@ -563,6 +602,8 @@ namespace EditorNS
         tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
+
+        applyGlobalFontOverride();
     }
 
     QList<Editor::Selection> Editor::selections()

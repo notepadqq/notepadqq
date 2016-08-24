@@ -46,7 +46,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkWarnForDifferentIndentation->setChecked(s.value("warnForDifferentIndentation", true).toBool());
 
     loadLanguages(&s);
-    loadColorSchemes(&s);
+    loadAppearanceTab(&s);
     loadTranslations(&s);
     loadShortcuts(&s);
 
@@ -142,7 +142,7 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("warnForDifferentIndentation", ui->chkWarnForDifferentIndentation->isChecked());
 
     saveLanguages(&s);
-    saveColorScheme(&s);
+    saveAppearanceTab(&s);
     saveTranslation(&s);
     saveShortcuts(&s);
     s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
@@ -212,7 +212,7 @@ void frmPreferences::loadLanguages(QSettings *s)
     ui->cmbLanguages->currentIndexChanged(0);
 }
 
-void frmPreferences::loadColorSchemes(QSettings *s)
+void frmPreferences::loadAppearanceTab(QSettings *s)
 {
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
@@ -233,6 +233,21 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     // Avoid glitch where scrollbars are appearing for a moment
     QSize renderSize = ui->colorSchemePreviewFrame->size();
     m_previewEditor->forceRender(renderSize);
+
+
+    QString fontFamily = s->value("overrideFontFamily").toString();
+    if(!fontFamily.isEmpty()){
+        ui->chkOverrideFontFamily->setChecked(true);
+        QFont f(fontFamily);
+        ui->cmbFontFamilies->setFont(f);
+    }
+
+    QString fontSize = s->value("overrideFontSize").toString();
+    //fontSize = "14";
+    if(!fontSize.isEmpty()){
+        ui->chkOverrideFontSize->setChecked(true);
+        ui->spnFontSize->setValue( fontSize.toInt() );
+    }
 }
 
 void frmPreferences::loadTranslations(QSettings *s)
@@ -284,7 +299,7 @@ void frmPreferences::saveLanguages(QSettings *s)
     }
 }
 
-void frmPreferences::saveColorScheme(QSettings *s)
+void frmPreferences::saveAppearanceTab(QSettings *s)
 {
     s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
 }
@@ -420,4 +435,30 @@ void frmPreferences::on_txtNodejs_textChanged(const QString &)
 void frmPreferences::on_txtNpm_textChanged(const QString &)
 {
     checkExecutableExists(ui->txtNpm);
+}
+
+void frmPreferences::on_chkOverrideFontFamily_toggled(bool checked)
+{
+    ui->cmbFontFamilies->setEnabled( checked );
+
+    if( checked )
+        ui->cmbFontFamilies->currentFontChanged( ui->cmbFontFamilies->currentFont() );
+}
+
+void frmPreferences::on_chkOverrideFontSize_toggled(bool checked)
+{
+    ui->spnFontSize->setEnabled( checked );
+
+    if( checked )
+        ui->spnFontSize->valueChanged( ui->spnFontSize->value() );
+}
+
+void frmPreferences::on_spnFontSize_valueChanged(int arg1)
+{
+    m_previewEditor->applyFontOverride(ui->cmbFontFamilies->currentFont().family(), arg1 );
+}
+
+void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont &f)
+{
+    m_previewEditor->applyFontOverride( f.family() , ui->spnFontSize->value() );
 }
