@@ -61,6 +61,8 @@ private:
     void saveTranslation(QSettings *s);
     void loadShortcuts(QSettings *s);
     void saveShortcuts(QSettings *s);
+
+    void applyFontOverride();
 };
 
 #endif // FRMPREFERENCES_H

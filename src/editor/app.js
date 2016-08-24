@@ -403,18 +403,16 @@ UiDriver.registerEventHandler("C_CMD_SET_FONT", function(msg, data, prevReturn) 
 
     var fontFamily = data.family != "" ? ("font-family:'" + data.family + "';") : "";
 
-
     var styleTag = document.getElementById('userFont');
 
-    if( styleTag  ){
+    if( styleTag  ){ 
         styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
-        return true;
+        styleTag.appendTo('head');
     }else{
         styleTag = document.createElement("style");
         styleTag.id = 'userFont';
         styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
         document.getElementsByTagName("head")[0].appendChild( styleTag );
-        return true;
     }
 
 });

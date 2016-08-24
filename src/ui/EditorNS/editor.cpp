@@ -508,22 +508,11 @@ namespace EditorNS
         tmap.insert("family", fontFamily);
         tmap.insert("size", QString::number(fontSize));
         auto ok = sendMessageWithResult("C_CMD_SET_FONT", tmap);
-
-        qDebug() << "fam: " << fontFamily << "size: " << fontSize << " result: " << ok;
     }
 
     void Editor::applyGlobalFontOverride()
     {
         applyFontOverride(m_forceOverrideFontFamily, m_forceOverrideFontSize);
-
-        /*QMap<QString, QVariant> tmap;
-        tmap.insert("family", m_forceOverrideFontFamily);
-        tmap.insert("size", QString::number(m_forceOverrideFontSize));
-
-        qDebug() << m_forceOverrideFontFamily << m_forceOverrideFontSize;
-
-        sendMessage("C_CMD_SET_FONT", tmap);*/
-        qDebug() << m_forceOverrideFontFamily << m_forceOverrideFontSize;
     }
 
     QTextCodec *Editor::codec() const

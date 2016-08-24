@@ -126,6 +126,14 @@ void frmPreferences::saveShortcuts(QSettings* s)
     mw->updateShortcuts();
 }
 
+void frmPreferences::applyFontOverride()
+{
+    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+
+    m_previewEditor->applyFontOverride( font, size );
+}
+
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
 {
     int index = ui->treeWidget->indexOfTopLevelItem(current);
@@ -239,14 +247,13 @@ void frmPreferences::loadAppearanceTab(QSettings *s)
     if(!fontFamily.isEmpty()){
         ui->chkOverrideFontFamily->setChecked(true);
         QFont f(fontFamily);
-        ui->cmbFontFamilies->setFont(f);
+        ui->cmbFontFamilies->setCurrentFont(fontFamily);
     }
 
-    QString fontSize = s->value("overrideFontSize").toString();
-    //fontSize = "14";
-    if(!fontSize.isEmpty()){
+    int fontSize = s->value("overrideFontSize").toInt();
+    if( fontSize != 0){
         ui->chkOverrideFontSize->setChecked(true);
-        ui->spnFontSize->setValue( fontSize.toInt() );
+        ui->spnFontSize->setValue( fontSize );
     }
 }
 
@@ -302,6 +309,15 @@ void frmPreferences::saveLanguages(QSettings *s)
 void frmPreferences::saveAppearanceTab(QSettings *s)
 {
     s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
+
+    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+
+    Editor::setGlobalFontFamily( font );
+    Editor::setGlobalFontSize( size );
+
+    s->setValue("overrideFontFamily", font);
+    s->setValue("overrideFontSize", size);
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
@@ -440,25 +456,21 @@ void frmPreferences::on_txtNpm_textChanged(const QString &)
 void frmPreferences::on_chkOverrideFontFamily_toggled(bool checked)
 {
     ui->cmbFontFamilies->setEnabled( checked );
-
-    if( checked )
-        ui->cmbFontFamilies->currentFontChanged( ui->cmbFontFamilies->currentFont() );
+    applyFontOverride();
 }
 
 void frmPreferences::on_chkOverrideFontSize_toggled(bool checked)
 {
     ui->spnFontSize->setEnabled( checked );
-
-    if( checked )
-        ui->spnFontSize->valueChanged( ui->spnFontSize->value() );
+    applyFontOverride();
 }
 
-void frmPreferences::on_spnFontSize_valueChanged(int arg1)
+void frmPreferences::on_spnFontSize_valueChanged(int /*arg1*/)
 {
-    m_previewEditor->applyFontOverride(ui->cmbFontFamilies->currentFont().family(), arg1 );
+    applyFontOverride();
 }
 
-void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont &f)
+void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont& /*f*/)
 {
-    m_previewEditor->applyFontOverride( f.family() , ui->spnFontSize->value() );
+    applyFontOverride();
 }
