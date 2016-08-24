@@ -168,6 +168,7 @@ void frmPreferences::on_buttonBox_accepted()
 
             // Set new theme
             editor->setTheme(newTheme);
+
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
 
@@ -399,6 +400,10 @@ void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 {
     m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
+
+    // Since any changes to the global font override data aren't saved yet we have to manually
+    // apply them to m_preview.
+    applyFontOverride();
 }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)

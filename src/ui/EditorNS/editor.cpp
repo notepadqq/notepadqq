@@ -507,7 +507,7 @@ namespace EditorNS
         QMap<QString, QVariant> tmap;
         tmap.insert("family", fontFamily);
         tmap.insert("size", QString::number(fontSize));
-        auto ok = sendMessageWithResult("C_CMD_SET_FONT", tmap);
+        sendMessage("C_CMD_SET_FONT", tmap);
     }
 
     void Editor::applyGlobalFontOverride()
