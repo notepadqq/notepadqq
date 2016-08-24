@@ -106,10 +106,6 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
         oldTooltip = source->tabToolTip(sourceTabIndex);
     }
 
-    QPalette pal = tabBar()->palette();
-        pal.setColor(QPalette::Text,QColor(255,0,255));
-        tabBar()->setPalette(pal);
-
     m_editorPointers.insert(editor.data(), editor);
     int index = addTab(editor.data(), create ? title : oldText);
 
