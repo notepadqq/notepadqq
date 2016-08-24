@@ -650,16 +650,25 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
     EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
     EditorTabWidget *destTabWidget;
 
-    if(m_topEditorContainer->count() >= 2) {
-        int viewId = 1;
-        if(m_topEditorContainer->widget(1) == curTabWidget) {
-            viewId = 0;
-        }
+    const int currentViewCount = m_topEditorContainer->count();
 
+    if(currentViewCount >= 2) {
+        //Two view panes are open. Pick the one not currently active.
+        int viewId = m_topEditorContainer->widget(1)==curTabWidget ? 0 : 1;
         destTabWidget = m_topEditorContainer->tabWidget(viewId);
 
     } else {
+        //Only one view pane is open. Add another one
         destTabWidget = m_topEditorContainer->addTabWidget();
+
+        //And resize both panes to be equally big.
+        int tabSize = m_topEditorContainer->contentsRect().width() / currentViewCount;
+
+        QList<int> sizes;
+        sizes << tabSize;
+        sizes << tabSize;
+
+        m_topEditorContainer->setSizes( sizes );
     }
 
     destTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
