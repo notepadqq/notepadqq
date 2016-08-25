@@ -211,6 +211,8 @@ namespace EditorNS
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
         Q_INVOKABLE QString language();
         Q_INVOKABLE void setLineWrap(const bool wrap);
+        Q_INVOKABLE void setEOLVisible(const bool showeol);
+        Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
 
         /**
          * @brief Get the current cursor position

@@ -141,7 +141,7 @@ private slots:
     void on_actionInterpret_as_UTF_8_without_BOM_triggered();
     void on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered();
     void on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered();
-    void on_actionShow_Tabs_toggled(bool on);
+    void on_actionShow_Tabs_triggered(bool on);
     void on_actionConvert_to_triggered();
     void on_actionIndentation_Default_settings_triggered();
     void on_actionIndentation_Custom_triggered();
@@ -179,6 +179,9 @@ private slots:
     void on_actionGo_to_line_triggered();
     void on_actionInstall_Extension_triggered();
     void on_actionFull_Screen_toggled(bool on);
+    void on_actionShow_End_of_Line_triggered(bool on);
+    void on_actionShow_All_Characters_toggled(bool on);
+    void on_actionShow_Spaces_triggered(bool on);
 
 private:
     static QList<MainWindow*> m_instances;
@@ -256,6 +259,9 @@ private:
     void                fixKeyboardShortcuts();
     void                instantiateFrmSearchReplace();
     QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
+
+    void initUI();
+    bool updateSymbols(bool on);
 };
 
 #endif // MAINWINDOW_H
