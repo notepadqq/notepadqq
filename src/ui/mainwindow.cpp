@@ -642,8 +642,6 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
 
 void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 {
-#include <QDebug>
-    qDebug() << "Triggered";
     if(on) {
         ui->actionShow_End_of_Line->setChecked(true);
         ui->actionShow_Tabs->setChecked(true);
