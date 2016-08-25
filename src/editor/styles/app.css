@@ -50,7 +50,7 @@ body {
 }
 
 .editor.show-tabs .cm-tab {
-    content: "\2192"
+    content: "\2192";
 }
 
 .editor.show-tabs .cm-tab::before
