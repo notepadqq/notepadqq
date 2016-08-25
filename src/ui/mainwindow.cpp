@@ -125,10 +125,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
             this, &MainWindow::on_resultMatchClicked);
 
     // Initialize UI from settings
-    ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
-    ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible", false).toBool());
-    ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
-    ui->actionShow_All_Characters->setChecked(m_settings->value("showAllSymbols",false).toBool());
+    initUI();
 
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
@@ -194,6 +191,17 @@ MainWindow *MainWindow::lastActiveInstance()
 TopEditorContainer *MainWindow::topEditorContainer()
 {
     return m_topEditorContainer;
+}
+
+void MainWindow::initUI()
+{
+    bool showAll = m_settings->value("showAllSymbols",false).toBool();
+    ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
+
+    //Simply emitting a signal here initializes actionShow_Tab and 
+    //actionShow_End_of_Line, due to how action_Show_All_Characters works.
+    ui->actionShow_All_Characters->setChecked(showAll);
+    emit on_actionShow_All_Characters_toggled(showAll);
 }
 
 void MainWindow::restoreWindowSettings()
@@ -632,14 +640,25 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
     m_settings->setValue("showEOL",on);
 }
 
-void MainWindow::on_actionShow_All_Characters_triggered(bool on)
+void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 {
+#include <QDebug>
+    qDebug() << "Triggered";
+    if(on) {
+        ui->actionShow_End_of_Line->setChecked(true);
+        ui->actionShow_Tabs->setChecked(true);
+    }else {
+        ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
+        ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible",false).toBool());
+    }
+
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
         editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
         editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
         editor->setWhitespaceVisible(on);
         return true;
     });
+
     m_settings->setValue("showAllSymbols",on);
 
 }
@@ -1805,7 +1824,7 @@ void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
 }
 
-void MainWindow::on_actionShow_Tabs_toggled(bool on)
+void MainWindow::on_actionShow_Tabs_triggered(bool on)
 {
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
         editor->setTabsVisible(on);
