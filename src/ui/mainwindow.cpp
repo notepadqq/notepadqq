@@ -631,12 +631,33 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
     m_tabContextMenu->exec(point);
 }
 
+void MainWindow::on_actionShow_Tabs_triggered(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setTabsVisible(on);
+        return true;
+    });
+    if(!on) ui->actionShow_All_Characters->setChecked(on);
+    m_settings->setValue("tabsVisible", on);
+}
+
+void MainWindow::on_actionShow_Spaces_triggered(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setWhitespaceVisible(on);
+        return true;
+    });
+    if(!on) ui->actionShow_All_Characters->setChecked(on);
+    m_settings->setValue("spacesVisible", on);
+}
+
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
 {
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
         editor->setEOLVisible(on);
         return true;
     });
+    if(!on) ui->actionShow_All_Characters->setChecked(on);
     m_settings->setValue("showEOL",on);
 }
 
@@ -645,9 +666,11 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
     if(on) {
         ui->actionShow_End_of_Line->setChecked(true);
         ui->actionShow_Tabs->setChecked(true);
+        ui->actionShow_Spaces->setChecked(true);
     }else {
         ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
         ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible",false).toBool());
+        ui->actionShow_Spaces->setChecked(m_settings->value("spacesVisible",false).toBool());
     }
 
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
@@ -1051,14 +1074,9 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
-    if(ui->actionShow_All_Characters->isChecked()) {
-        editor->setTabsVisible(true);
-        editor->setEOLVisible(true);
-        editor->setWhitespaceVisible(true);
-    }else {
-        editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
-        editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
-    }
+    editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
+    editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
+    editor->setWhitespaceVisible(ui->actionShow_Spaces->isChecked());
     editor->setOverwrite(m_overwrite);
 }
 
@@ -1820,15 +1838,6 @@ void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
-}
-
-void MainWindow::on_actionShow_Tabs_triggered(bool on)
-{
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
-        editor->setTabsVisible(on);
-        return true;
-    });
-    m_settings->setValue("tabsVisible", on);
 }
 
 void MainWindow::on_actionConvert_to_triggered()
