@@ -261,6 +261,7 @@ private:
     QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
 
     void initUI();
+    bool updateSymbols(bool on);
 };
 
 #endif // MAINWINDOW_H

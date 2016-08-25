@@ -631,14 +631,29 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
     m_tabContextMenu->exec(point);
 }
 
+bool MainWindow::updateSymbols(bool on)
+{
+    //Save the currently toggled symbols when deactivating Show_All_Characters using 
+    //one of the other available symbol actions.
+    if(!on && ui->actionShow_All_Characters->isChecked())
+    {
+        m_settings->setValue("tabsVisible",ui->actionShow_Tabs->isChecked());
+        m_settings->setValue("spacesVisible",ui->actionShow_Spaces->isChecked());
+        m_settings->setValue("showEOL",ui->actionShow_End_of_Line->isChecked());
+        ui->actionShow_All_Characters->setChecked(false);
+        return true;
+    }
+    return false;
+}
+
 void MainWindow::on_actionShow_Tabs_triggered(bool on)
 {
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
         editor->setTabsVisible(on);
         return true;
     });
-    if(!on) ui->actionShow_All_Characters->setChecked(on);
-    m_settings->setValue("tabsVisible", on);
+    if(!updateSymbols(on))
+        m_settings->setValue("tabsVisible", on);
 }
 
 void MainWindow::on_actionShow_Spaces_triggered(bool on)
@@ -647,8 +662,8 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
         editor->setWhitespaceVisible(on);
         return true;
     });
-    if(!on) ui->actionShow_All_Characters->setChecked(on);
-    m_settings->setValue("spacesVisible", on);
+    if(!updateSymbols(on))
+        m_settings->setValue("spacesVisible", on);
 }
 
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
@@ -657,8 +672,8 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
         editor->setEOLVisible(on);
         return true;
     });
-    if(!on) ui->actionShow_All_Characters->setChecked(on);
-    m_settings->setValue("showEOL",on);
+    if(!updateSymbols(on))
+        m_settings->setValue("showEOL",on);
 }
 
 void MainWindow::on_actionShow_All_Characters_toggled(bool on)
