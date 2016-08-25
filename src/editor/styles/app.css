@@ -50,9 +50,15 @@ body {
 }
 
 .editor.show-tabs .cm-tab {
-    background: url('../images/tab.png');
-    background-position: right;
-    background-repeat: no-repeat;
+    content: "\2192"
+}
+
+.editor.show-tabs .cm-tab::before
+{
+    content: "\2192";
+    position: relative;
+    left: 40%;
+    color: black;
 }
 
 /* Color of word highlight */

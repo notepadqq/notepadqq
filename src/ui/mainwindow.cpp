@@ -640,8 +640,19 @@ bool MainWindow::updateSymbols(bool on)
         m_settings->setValue("tabsVisible",ui->actionShow_Tabs->isChecked());
         m_settings->setValue("spacesVisible",ui->actionShow_Spaces->isChecked());
         m_settings->setValue("showEOL",ui->actionShow_End_of_Line->isChecked());
+        ui->actionShow_All_Characters->blockSignals(true);
         ui->actionShow_All_Characters->setChecked(false);
+        ui->actionShow_All_Characters->blockSignals(false);
+        m_settings->setValue("showAllSymbols",false);
         return true;
+    }else if(on && !ui->actionShow_All_Characters->isChecked())
+    {
+        bool showEOL = ui->actionShow_End_of_Line->isChecked();
+        bool showTabs = ui->actionShow_Tabs->isChecked();
+        bool showSpaces = ui->actionShow_Spaces->isChecked();
+        if(showEOL && showTabs && showSpaces) {
+            ui->actionShow_All_Characters->setChecked(true);
+        }
     }
     return false;
 }
@@ -683,9 +694,18 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         ui->actionShow_Tabs->setChecked(true);
         ui->actionShow_Spaces->setChecked(true);
     }else {
-        ui->actionShow_End_of_Line->setChecked(m_settings->value("showEOL",false).toBool());
-        ui->actionShow_Tabs->setChecked(m_settings->value("tabsVisible",false).toBool());
-        ui->actionShow_Spaces->setChecked(m_settings->value("spacesVisible",false).toBool());
+        bool showEOL = m_settings->value("showEOL",false).toBool();
+        bool showTabs = m_settings->value("tabsVisible",false).toBool();
+        bool showSpaces = m_settings->value("spacesVisible",false).toBool();
+
+        if(showEOL && showTabs && showSpaces) {
+            showEOL = !showEOL;
+            showTabs = !showTabs;
+            showSpaces = !showSpaces;
+        }
+        ui->actionShow_End_of_Line->setChecked(showEOL);
+        ui->actionShow_Tabs->setChecked(showTabs);
+        ui->actionShow_Spaces->setChecked(showSpaces);
     }
 
     m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {

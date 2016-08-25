@@ -202,6 +202,7 @@ UiDriver.registerEventHandler("C_CMD_SET_TABS_VISIBLE", function(msg, data, prev
     } else {
         $(".editor").removeClass("show-tabs");
     }
+    editor.execCommand("updateLineEndings");
 });
 
 /* Search with a specified regex. Automatically select the text when found.
