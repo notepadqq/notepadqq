@@ -38,7 +38,7 @@
             });
         }
     });
-    
+
     function add(cm) {
         var style = document.createElement('style');
         var colour = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
@@ -115,8 +115,10 @@
         var colour = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
         var endLines = getStyle('.cm-eol::after');
         var whiteSpace = getStyle('.cm-whitespace::before');
+        var tabChar = getStyle('.cm-tab::before');
         if(endLines) endLines.color = colour;
         if(whiteSpace) whiteSpace.color = colour;
+        if(tabChar) tabChar.color = colour;
     };
     
 });
