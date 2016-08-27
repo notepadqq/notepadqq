@@ -21,9 +21,16 @@
         if (prev && !val) {
             cm.setOption('flattenSpans', true);
             cm.removeOverlay('whitespace');
-            rm();
+            removeStyle('js-show-whitespace');
         } else if (!prev && val) {
-            add(cm);
+            var css = [
+                '.cm-whitespace::before {',
+                'content: "' + String.fromCharCode(183) + '";',
+                'color: ' + getCommentColor(cm) + ';',
+                'position:absolute;',
+                '}'].join('');
+            addStyle(cm, css, 'js-show-whitespace');
+
             cm.setOption('flattenSpans', false);
             cm.addOverlay({
                 name: 'whitespace',
@@ -39,56 +46,29 @@
         }
     });
 
-    function add(cm) {
-        var style = document.createElement('style');
-        var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
-        var spaceChar = String.fromCharCode(183);
-        var css = [
-            '.cm-whitespace::before {',
-            'content: "' + spaceChar + '";',
-            'color: ' + color + ';',
-            'position:absolute;',
-            '}'].join('');
-        style.type = 'text/css';
-        style.setAttribute('data-name', 'js-show-whitespace');
-        style.appendChild(document.createTextNode(css));
-        document.head.appendChild(style);
-    }
-
-    function rm() {
-        var style = document.querySelector('[data-name="js-show-whitespace"]');
-        document.head.removeChild(style);
-    }
-
     CodeMirror.defineOption("showEOL", false, function (cm, val, prev) {
         if (prev === CodeMirror.Init) {
             prev = false;
         }
 
         if (prev && !val) {
-            var style = document.querySelector('[data-name="js-show-eol"]');
-            document.head.removeChild(style);
+            removeStyle('js-show-eol');
             cm.off('renderLine', renderEOL);
         } else if (!prev && val) {
-            var style = document.createElement('style');
-            var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
             var css = [
                 '.cm-eol::after{',
-                'color: ' + color + ';',
+                'color: ' + getCommentColor(cm) + ';',
                 'display: inline-block;',
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(172) + '";',
                 '}'].join('');
-            style.type = 'text/css';
-            style.setAttribute('data-name', 'js-show-eol');
-            style.appendChild(document.createTextNode(css));
-            document.head.appendChild(style);
+            addStyle(cm, css, 'js-show-eol');
             cm.on('renderLine', renderEOL);
         }
     });
 
     function renderEOL(cm, line, elt) {
-        //Do not run on the last line.
+        // Do not run on the last line.
         if (cm.lineInfo(line).line == cm.lastLine()) return;
         elt.className += ' cm-eol';
     }
@@ -97,27 +77,20 @@
         if (prev === CodeMirror.Init) {
             prev = false;
         }
+
         if (prev && !val) {
-            var style = document.querySelector('[data-name="js-show-tab"]');
-            console.log(style)
-            document.head.removeChild(style);
+            removeStyle('js-show-tab');
         } else if (!prev && val) {
-            var style = document.createElement('style');
-            var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
             var css = [
                 '.cm-tab::before{',
-                'color: ' + color + ';',
+                'color: ' + getCommentColor(cm) + ';',
                 'display: inline-block;',
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(8594) + '";',
                 'position: relative;',
                 'left: 40%;',
                 '}'].join('');
-            style.type = 'text/css';
-            style.setAttribute('data-name', 'js-show-tab');
-            style.appendChild(document.createTextNode(css));
-            document.head.appendChild(style);
-            console.log(style)
+            addStyle(cm, css, 'js-show-tab');
         }
     });
 
@@ -139,8 +112,36 @@
         }
     }
 
+    /**
+     * Add a style rule for whitespaces, EOL or tabs.
+     * 
+     * @param cm          CodeMirror instance
+     * @param style       CSS rule
+     * @param styleName   Identifier for this style, so that we can reference it later (e.g. `js-show-whitespace`)
+     *                    Should not contain special characters other than a...z A...Z - _ 
+     */
+    function addStyle(cm, style, styleName) {
+        var styleEl = document.createElement('style');
+        styleEl.type = 'text/css';
+        styleEl.setAttribute('data-name', styleName);
+        styleEl.appendChild(document.createTextNode(style));
+        document.head.appendChild(styleEl);
+    }
+
+    /**
+     * Remove a style rule based on its identifier (see `addStyle()`)
+     */
+    function removeStyle(styleName) {
+        var style = document.querySelector('[data-name="' + styleName + '"]');
+        document.head.removeChild(style);
+    }
+
+    function getCommentColor(cm) {
+        return getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+    }
+
     CodeMirror.commands.updateLineEndings = function (cm) {
-        var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+        var color = getCommentColor();
         var endLines = getStyle('.cm-eol::after');
         var whiteSpace = getStyle('.cm-whitespace::before');
         var tabChar = getStyle('.cm-tab::before');
