@@ -26,7 +26,7 @@
             var css = [
                 '.cm-whitespace::before {',
                 'content: "' + String.fromCharCode(183) + '";',
-                'color: ' + getCommentColor(cm) + ';',
+                'opacity: 0.5;',
                 'position:absolute;',
                 '}'].join('');
             addStyle(cm, css, 'js-show-whitespace');
@@ -57,7 +57,7 @@
         } else if (!prev && val) {
             var css = [
                 '.cm-eol::after{',
-                'color: ' + getCommentColor(cm) + ';',
+                'opacity: 0.5;',
                 'display: inline-block;',
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(172) + '";',
@@ -83,7 +83,7 @@
         } else if (!prev && val) {
             var css = [
                 '.cm-tab::before{',
-                'color: ' + getCommentColor(cm) + ';',
+                'opacity: 0.5;',
                 'display: inline-block;',
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(8594) + '";',
@@ -94,29 +94,11 @@
         }
     });
 
-    function getStyle(selector) {
-        var regmatch = false;
-        if (selector instanceof RegExp) regmatch = true;
-        for (var i = 0; i < document.styleSheets.length; i++) {
-            var sheet = document.styleSheets[i];
-            for (var j = 0, k = sheet.cssRules.length; j < k; j++) {
-                var rule = sheet.cssRules[j];
-                if (rule.selectorText) {
-                    if (regmatch && rule.selectorText.match(selector)) {
-                        return rule.style;
-                    } else if (rule.selectorText.indexOf(selector) !== -1) {
-                        return rule.style;
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Add a style rule for whitespaces, EOL or tabs.
      * 
      * @param cm          CodeMirror instance
-     * @param style       CSS rule
+     * @param style       CSS rule (only one)
      * @param styleName   Identifier for this style, so that we can reference it later (e.g. `js-show-whitespace`)
      *                    Should not contain special characters other than a...z A...Z - _ 
      */
@@ -135,19 +117,5 @@
         var style = document.querySelector('[data-name="' + styleName + '"]');
         document.head.removeChild(style);
     }
-
-    function getCommentColor(cm) {
-        return getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
-    }
-
-    CodeMirror.commands.updateLineEndings = function (cm) {
-        var color = getCommentColor();
-        var endLines = getStyle('.cm-eol::after');
-        var whiteSpace = getStyle('.cm-whitespace::before');
-        var tabChar = getStyle('.cm-tab::before');
-        if (endLines) endLines.color = color;
-        if (whiteSpace) whiteSpace.color = color;
-        if (tabChar) tabChar.color = color;
-    };
 
 });
