@@ -41,38 +41,40 @@
 
     function add(cm) {
         var style = document.createElement('style');
-        var colour = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+        var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
         var spaceChar = String.fromCharCode(183);
         var css = [
             '.cm-whitespace::before {',
             'content: "' + spaceChar + '";',
-            'color: ' + colour + ';',
+            'color: ' + color + ';',
             'position:absolute;',
         '}'].join('');
         style.type = 'text/css';
-        style.setAttribute('data-name','js-show-invisibles');
+        style.setAttribute('data-name','js-show-whitespace');
         style.appendChild(document.createTextNode(css));
         document.head.appendChild(style);
     }
     
     function rm() {
-        var style = document.querySelector('[data-name="js-show-invisibles]');
+        var style = document.querySelector('[data-name="js-show-whitespace"]');
         document.head.removeChild(style);
     }
     
     CodeMirror.defineOption("showEOL", false, function(cm, val, prev) {
-        if (prev === CodeMirror.Init)
+        if (prev === CodeMirror.Init) {
             prev = false;
+        }
+        
         if(prev && !val) { 
             var style = document.querySelector('[data-name="js-show-eol"]');
             document.head.removeChild(style);
             cm.off('renderLine',renderEOL);
         }else if(!prev && val) {
             var style = document.createElement('style');
-            var colour = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+            var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
             var css = [
                 '.cm-eol::after{',
-                'color: ' + colour + ';',
+                'color: ' + color + ';',
                 'display: inline-block;',
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(172) +'";',
@@ -91,6 +93,34 @@
         if(cm.lineInfo(line).line == cm.lastLine())return;
         elt.className += ' cm-eol';
     }
+
+    CodeMirror.defineOption("showTab", false, function(cm, val, prev) {
+        if (prev === CodeMirror.Init) {
+            prev = false;
+        }
+        if(prev && !val) { 
+            var style = document.querySelector('[data-name="js-show-tab"]');
+            console.log(style)
+            document.head.removeChild(style);
+        }else if(!prev && val) {
+            var style = document.createElement('style');
+            var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+            var css = [
+                '.cm-tab::before{',
+                'color: ' + color + ';',
+                'display: inline-block;',
+                'pointer-events: none;',
+                'content: "' + String.fromCharCode(8594) +'";',
+                'position: relative;',
+                'left: 40%;',
+                '}'].join('');
+            style.type = 'text/css';
+            style.setAttribute('data-name','js-show-tab');
+            style.appendChild(document.createTextNode(css));
+            document.head.appendChild(style);
+            console.log(style)
+        }
+    });
 
     function getStyle(selector) 
     {
@@ -112,13 +142,13 @@
     }
 
     CodeMirror.commands.updateLineEndings = function(cm) {
-        var colour = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
+        var color = getStyle(new RegExp("\\.cm-s-" + cm.getOption('theme') + ".*cm-comment"))['color'];
         var endLines = getStyle('.cm-eol::after');
         var whiteSpace = getStyle('.cm-whitespace::before');
         var tabChar = getStyle('.cm-tab::before');
-        if(endLines) endLines.color = colour;
-        if(whiteSpace) whiteSpace.color = colour;
-        if(tabChar) tabChar.color = colour;
+        if(endLines) endLines.color = color;
+        if(whiteSpace) whiteSpace.color = color;
+        if(tabChar) tabChar.color = color;
     };
     
 });
