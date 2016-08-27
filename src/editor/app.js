@@ -66,16 +66,6 @@ UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, 
     editor.refresh();
 });
 
-UiDriver.registerEventHandler("C_CMD_SHOW_END_OF_LINE", function(msg, data, prevReturn) {
-    editor.setOption("showEOL",data == true);
-    editor.refresh();
-});
-
-UiDriver.registerEventHandler("C_CMD_SHOW_WHITESPACE", function(msg, data, prevReturn) {
-    editor.setOption("showWhitespace",data == true);
-    editor.refresh();
-});
-
 UiDriver.registerEventHandler("C_FUN_GET_INDENTATION_MODE", function(msg, data, prevReturn) {
     return { useTabs: editor.options.indentWithTabs, size: editor.options.indentUnit };
 });
@@ -196,13 +186,19 @@ UiDriver.registerEventHandler("C_CMD_SET_LINE_WRAP", function(msg, data, prevRet
     editor.setOption("lineWrapping", data == true);
 });
 
+UiDriver.registerEventHandler("C_CMD_SHOW_END_OF_LINE", function(msg, data, prevReturn) {
+    editor.setOption("showEOL", !!data);
+    editor.refresh();
+});
+
+UiDriver.registerEventHandler("C_CMD_SHOW_WHITESPACE", function(msg, data, prevReturn) {
+    editor.setOption("showWhitespace", !!data);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_TABS_VISIBLE", function(msg, data, prevReturn) {
-    if (data) {
-        $(".editor").addClass("show-tabs");
-    } else {
-        $(".editor").removeClass("show-tabs");
-    }
-    editor.execCommand("updateLineEndings");
+    editor.setOption("showTab", !!data);
+    editor.refresh();
 });
 
 /* Search with a specified regex. Automatically select the text when found.
@@ -399,7 +395,6 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
     }
 
     editor.setOption("theme", data.name);
-    editor.execCommand('updateLineEndings');
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
