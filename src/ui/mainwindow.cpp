@@ -195,11 +195,11 @@ TopEditorContainer *MainWindow::topEditorContainer()
 
 void MainWindow::initUI()
 {
-    bool showAll = m_settings->value("showAllSymbols",false).toBool();
+    bool showAll = m_settings->value("showAllSymbols", false).toBool();
     ui->actionWord_wrap->setChecked(m_settings->value("wordWrap", false).toBool());
 
-    //Simply emitting a signal here initializes actionShow_Tab and 
-    //actionShow_End_of_Line, due to how action_Show_All_Characters works.
+    // Simply emitting a signal here initializes actionShow_Tab and
+    // actionShow_End_of_Line, due to how action_Show_All_Characters works.
     ui->actionShow_All_Characters->setChecked(showAll);
     emit on_actionShow_All_Characters_toggled(showAll);
 }
@@ -633,27 +633,27 @@ void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget 
 
 bool MainWindow::updateSymbols(bool on)
 {
-    //Save the currently toggled symbols when deactivating Show_All_Characters using 
-    //one of the other available symbol actions.
-    if(!on && ui->actionShow_All_Characters->isChecked())
-    {
-        m_settings->setValue("tabsVisible",ui->actionShow_Tabs->isChecked());
-        m_settings->setValue("spacesVisible",ui->actionShow_Spaces->isChecked());
-        m_settings->setValue("showEOL",ui->actionShow_End_of_Line->isChecked());
+    // Save the currently toggled symbols when deactivating Show_All_Characters using
+    // one of the other available symbol actions.
+    if (!on && ui->actionShow_All_Characters->isChecked()) {
+        m_settings->setValue("tabsVisible", ui->actionShow_Tabs->isChecked());
+        m_settings->setValue("spacesVisible", ui->actionShow_Spaces->isChecked());
+        m_settings->setValue("showEOL", ui->actionShow_End_of_Line->isChecked());
         ui->actionShow_All_Characters->blockSignals(true);
         ui->actionShow_All_Characters->setChecked(false);
         ui->actionShow_All_Characters->blockSignals(false);
-        m_settings->setValue("showAllSymbols",false);
+        m_settings->setValue("showAllSymbols", false);
         return true;
-    }else if(on && !ui->actionShow_All_Characters->isChecked())
-    {
+
+    } else if (on && !ui->actionShow_All_Characters->isChecked()) {
         bool showEOL = ui->actionShow_End_of_Line->isChecked();
         bool showTabs = ui->actionShow_Tabs->isChecked();
         bool showSpaces = ui->actionShow_Spaces->isChecked();
-        if(showEOL && showTabs && showSpaces) {
+        if (showEOL && showTabs && showSpaces) {
             ui->actionShow_All_Characters->setChecked(true);
         }
     }
+
     return false;
 }
 
@@ -663,8 +663,9 @@ void MainWindow::on_actionShow_Tabs_triggered(bool on)
         editor->setTabsVisible(on);
         return true;
     });
-    if(!updateSymbols(on))
+    if (!updateSymbols(on)) {
         m_settings->setValue("tabsVisible", on);
+    }
 }
 
 void MainWindow::on_actionShow_Spaces_triggered(bool on)
@@ -673,8 +674,9 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
         editor->setWhitespaceVisible(on);
         return true;
     });
-    if(!updateSymbols(on))
+    if (!updateSymbols(on)) {
         m_settings->setValue("spacesVisible", on);
+    }
 }
 
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
@@ -683,26 +685,29 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
         editor->setEOLVisible(on);
         return true;
     });
-    if(!updateSymbols(on))
-        m_settings->setValue("showEOL",on);
+    if (!updateSymbols(on)) {
+        m_settings->setValue("showEOL", on);
+    }
 }
 
 void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 {
-    if(on) {
+    if (on) {
         ui->actionShow_End_of_Line->setChecked(true);
         ui->actionShow_Tabs->setChecked(true);
         ui->actionShow_Spaces->setChecked(true);
-    }else {
-        bool showEOL = m_settings->value("showEOL",false).toBool();
-        bool showTabs = m_settings->value("tabsVisible",false).toBool();
-        bool showSpaces = m_settings->value("spacesVisible",false).toBool();
 
-        if(showEOL && showTabs && showSpaces) {
+    } else {
+        bool showEOL = m_settings->value("showEOL", false).toBool();
+        bool showTabs = m_settings->value("tabsVisible", false).toBool();
+        bool showSpaces = m_settings->value("spacesVisible", false).toBool();
+
+        if (showEOL && showTabs && showSpaces) {
             showEOL = !showEOL;
             showTabs = !showTabs;
             showSpaces = !showSpaces;
         }
+
         ui->actionShow_End_of_Line->setChecked(showEOL);
         ui->actionShow_Tabs->setChecked(showTabs);
         ui->actionShow_Spaces->setChecked(showSpaces);
@@ -715,8 +720,7 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         return true;
     });
 
-    m_settings->setValue("showAllSymbols",on);
-
+    m_settings->setValue("showAllSymbols", on);
 }
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)

@@ -260,6 +260,9 @@ private:
     void                instantiateFrmSearchReplace();
     QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
 
+    /**
+     * @brief Initialize UI from settings
+     */
     void initUI();
     bool updateSymbols(bool on);
 };

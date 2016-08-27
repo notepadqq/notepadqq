@@ -267,7 +267,7 @@ UiDriver.registerEventHandler("C_FUN_SEARCH", function(msg, data, prevReturn) {
    group reuse tokens i.e. \1, \2, etc.
    (Helper function for search/replace & replace all.)
  */
-function HasGroupReuseTokens(replacement){
+function hasGroupReuseTokens(replacement){
     var groupReuseRegex = /\\([1-9])/g;
     return (groupReuseRegex.exec(replacement) !== null);
 }
@@ -279,7 +279,7 @@ function HasGroupReuseTokens(replacement){
    entry is the whole match and the rest are groups.
    
 */
-function ApplyReusedGroups(replacement, groups){
+function applyReusedGroups(replacement, groups){
     //If we got match subgroups, see if we need to alter the replacement
     for (var iReuseGroup = 1; iReuseGroup < groups.length; iReuseGroup ++){
         //takes care of non-consecutive group reuse tokens,
@@ -296,7 +296,7 @@ function ApplyReusedGroups(replacement, groups){
 
 /*
    Must match the definition of enum class SearchMode
-     in src/ui/include/Search/searchhelpers.h
+   in src/ui/include/Search/searchhelpers.h
 */
 SearchMode = {
     PlainText:1,
@@ -319,17 +319,17 @@ UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
     var regexStr = data[0];
     var regexModifiers = data[1];
     var forward = data[2];
-        var searchMode = Number(data[4]);
-      if (editor.somethingSelected()) {
+    var searchMode = Number(data[4]);
+    if (editor.somethingSelected()) {
         var replacement = data[3];
         // Replace
-        if(searchMode == SearchMode.Regex && HasGroupReuseTokens(replacement)){
+        if (searchMode == SearchMode.Regex && hasGroupReuseTokens(replacement)) {
             var searchRegex = new RegExp(regexStr, regexModifiers);
             groups = searchRegex.exec(editor.getSelection())
-            if(groups !== null){//groups === null should never occur!
-                editor.replaceSelection(ApplyReusedGroups(replacement,groups));
+            if (groups !== null) { //groups === null should never occur!
+                editor.replaceSelection(applyReusedGroups(replacement,groups));
             }
-        }else{
+        } else {
             editor.replaceSelection(replacement);
         }
     }
@@ -342,20 +342,20 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
     var regexStr = data[0];
     var regexModifiers = data[1];
     var replacement = data[2];
-        var searchMode = Number(data[3]);
+    var searchMode = Number(data[3]);
     var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
 
     var count = 0;
     var id = Math.round(Math.random() * 1000000) + "/" + Date.now();
     
-    var hasReuseTokens = HasGroupReuseTokens(replacement) && searchMode == SearchMode.Regex;
+    var hasReuseTokens = hasGroupReuseTokens(replacement) && searchMode == SearchMode.Regex;
 
     while (groups = searchCursor.findNext()) {
         count++;
         // Replace
-        if(hasReuseTokens){
-            searchCursor.replace(ApplyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
-        }else{
+        if (hasReuseTokens){
+            searchCursor.replace(applyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
+        } else {
             searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
         }        
     }
