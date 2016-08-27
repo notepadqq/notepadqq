@@ -13,7 +13,7 @@ If you're not a git master (who is?) take a look here to learn the common workfl
  * Make sure that your code respects the style conventions of the project. Look at the code around you: do you see
    spaces before parenthesis? Are brackets on their own line? Copy that! The most important thing is to be consistent.
  * One pull request is meant to contain just one fix/feature. Open another pull request if you have some other
-   unrelated changes to submit.
+   unrelated change to submit.
  * Make sure your pull request doesn't contain trivial, unwanted changes. For example, if you're working on a big feature
    and you happen to open Qt Designer and it increases the height of the window by 1px, please keep that out of the pull request.
    In general, keep the number of changes at the minimum necessary.
