@@ -96,6 +96,13 @@ bool DocEngine::loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget)
     return loadDocuments(files, tabWidget);
 }
 
+bool DocEngine::loadDocumentSilent(const QUrl& fileName, EditorTabWidget* tabWidget)
+{
+    QList<QUrl> files;
+    files.append(fileName);
+    return loadDocuments(files, tabWidget, false, nullptr, false, false);
+}
+
 bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab)
 {
     return reloadDocument(tabWidget, tab, nullptr, false);
@@ -109,10 +116,12 @@ bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *
     return loadDocuments(files, tabWidget, true, codec, bom);
 }
 
-bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom)
+bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom,  bool rememberLastSelectedDir)
 {
     if(!fileNames.empty()) {
-        m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
+        if(rememberLastSelectedDir){
+            m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
+        }
 
         // Used to know if the document that we're loading is
         // the first one in the list.

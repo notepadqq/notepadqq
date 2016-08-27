@@ -52,6 +52,7 @@ public:
 
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
     bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
+    bool loadDocumentSilent(const QUrl &fileName, EditorTabWidget *tabWidget);
     bool reloadDocument(EditorTabWidget *tabWidget, int tab);
     bool reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
@@ -76,7 +77,7 @@ private:
     bool read(QFile *file, Editor *editor);
     bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
-    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom);
+    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom, bool rememberLastSelectedDir=true);
 
     /**
      * @brief Write the provided Editor content to the specified IO device, using
