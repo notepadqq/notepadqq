@@ -264,6 +264,13 @@ private:
      * @brief Initialize UI from settings
      */
     void initUI();
+
+    /**
+     * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.
+     * @param on  `true` or `false` based on the calling element's toggle status.
+     * @return bool: `true` if `on` is `false` and Show_All_Characters is checked. False otherwise.
+     *               On a `true` return, default symbol saving behavior is modified.
+     */
     bool updateSymbols(bool on);
 };
 
