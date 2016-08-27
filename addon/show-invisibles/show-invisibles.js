@@ -88,7 +88,10 @@
                 'pointer-events: none;',
                 'content: "' + String.fromCharCode(8594) + '";',
                 'position: relative;',
-                'left: 40%;',
+                'width: 0;',
+                'left: calc(50% - 0.5ch);',
+                'transform: translate(-50%, 0);',
+                '-webkit-transform: translate(-50%, 0);',
                 '}'].join('');
             addStyle(cm, css, 'js-show-tab');
         }
