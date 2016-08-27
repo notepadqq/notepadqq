@@ -408,9 +408,16 @@ var Languages = new function() {
 
         "jade": {
             name: "Jade",
-            mode: "jade",
-            mime: "text/x-jade",
-            fileExtensions: []
+            mode: "pug",
+            mime: "text/x-pug",
+            fileExtensions: ["jade"]
+        },
+
+        "pug": {
+            name: "Pug",
+            mode: "pug",
+            mime: "text/x-pug",
+            fileExtensions: ["jade", "pug"]
         },
 
         "javascript": {

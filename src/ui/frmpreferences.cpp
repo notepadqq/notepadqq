@@ -152,29 +152,27 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
     s.setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
 
+    const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
+
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
         w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
         w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
 
+            // Set new theme
+            editor->setTheme(newTheme);
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
-
-            // Set theme
-            QMap<QString, QVariant> theme_map = ui->cmbColorScheme->currentData().toMap();
-            Editor::Theme theme;
-            theme.name = theme_map.value("name").toString();
-            theme.path = theme_map.value("path").toString();
-            editor->setTheme(theme);
-
-            // Invalidate already initialized editors in the buffer
-            editor->invalidateEditorBuffer();
-            editor->addEditorToBuffer();
 
             return true;
         });
     }
+
+    // Invalidate already initialized editors in the buffer and add a single new
+    // Editor to the buffer so we won't have an empty queue.
+    Editor::invalidateEditorBuffer();
+    Editor::addEditorToBuffer(1);
 
     accept();
 }
@@ -220,19 +218,12 @@ void frmPreferences::loadColorSchemes(QSettings *s)
 {
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
-    QMap<QString, QVariant> defaultTheme;
-    defaultTheme.insert("name", "default");
-    defaultTheme.insert("path", "");
-    ui->cmbColorScheme->addItem("Default", defaultTheme);
-    ui->cmbColorScheme->setCurrentIndex(0);
+    ui->cmbColorScheme->addItem("Default", "default");
 
     QString themeSetting = s->value("Appearance/ColorScheme", "").toString();
 
     for (Editor::Theme theme : themes) {
-        QMap<QString, QVariant> tmap;
-        tmap.insert("name", theme.name);
-        tmap.insert("path", theme.path);
-        ui->cmbColorScheme->addItem(theme.name, tmap);
+        ui->cmbColorScheme->addItem(theme.name, theme.name); // First is display text, second is item data.
 
         if (themeSetting == theme.name) {
             ui->cmbColorScheme->setCurrentIndex(ui->cmbColorScheme->count() - 1);
@@ -240,7 +231,6 @@ void frmPreferences::loadColorSchemes(QSettings *s)
     }
 
     ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
-    m_previewEditor->setTheme(Editor::themeFromName(themeSetting));
 
     // Avoid glitch where scrollbars are appearing for a moment
     QSize renderSize = ui->colorSchemePreviewFrame->size();
@@ -298,8 +288,7 @@ void frmPreferences::saveLanguages(QSettings *s)
 
 void frmPreferences::saveColorScheme(QSettings *s)
 {
-    QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
-    s->setValue("Appearance/ColorScheme", selected.value("name").toString());
+    s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
@@ -380,9 +369,7 @@ void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 {
-    QMap<QString, QVariant> selected = ui->cmbColorScheme->currentData().toMap();
-    QString name = selected.value("name").toString();
-    m_previewEditor->setTheme(Editor::themeFromName(name));
+    m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
 }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)

@@ -1,7 +1,7 @@
 /*
     Quick small script that initializes the page.
     This is run as soon as possible, so jQuery and other libraries
-    are not available.
+    might not be available.
 */
 
 var _initialized = false;

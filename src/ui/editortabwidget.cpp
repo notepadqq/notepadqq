@@ -260,8 +260,11 @@ void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
 {
     if (ev->button() == Qt::MiddleButton) {
         int index = tabBar()->tabAt(ev->pos());
+
         if (index != -1) {
             emit tabCloseRequested(index);
+            ev->accept();
+            return;
         }
     }
 
