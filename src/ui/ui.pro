@@ -19,7 +19,7 @@ OBJECTS_DIR = ../../out/build_data
 QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
 
 # clear "rpath" so that we can override Qt lib path via LD_LIBRARY_PATH
-QMAKE_RPATH=
+#QMAKE_RPATH=
 
 # Avoid automatic casts from QString to QUrl
 DEFINES += QT_NO_URL_CAST_FROM_STRING
@@ -39,7 +39,7 @@ isEmpty(DESTDIR) {
 }
 
 isEmpty(LRELEASE) {
-    LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    LRELEASE = lrelease # qtchooser -run-tool=lrelease -qt=5
 }
 
 APPDATADIR = "$$DESTDIR/../appdata"
