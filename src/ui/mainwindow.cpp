@@ -127,6 +127,14 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     initUI();
 
+    // Apply font settings. Best to do that before any editors are opened to prevent
+    // unneeded work. Otherwise we'd have to apply it to all editors currently created.
+    QString fontFam = m_settings->value("overrideFontFamily", "").toString();
+    int fontSz = m_settings->value("overrideFontSize", 0).toInt();
+
+    Editor::setGlobalFontFamily(fontFam);
+    Editor::setGlobalFontSize(fontSz);
+
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
     // From now on, there is at least an Editor and at least

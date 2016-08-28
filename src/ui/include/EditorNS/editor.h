@@ -233,6 +233,31 @@ namespace EditorNS
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
+        /**
+         * @brief Sets the global font family/size that is supposed to be 
+         *        used in all editors. These function will only store the
+         *        values as global overrides, not directly apply them to
+         *        any editors.
+         *        In order to actually apply these overrides to
+         *        an Editor, applyGlobalFontOverride() must be called.
+         * @param The desired override value. An empty string or 0 denote
+         *        no override.
+         */
+        static void setGlobalFontFamily(QString fontFamily=QString());
+        static void setGlobalFontSize(int fontSize=0);
+
+        /**
+         * @brief Applies a font family/size to the Editor.
+         * @param fontFamily the family to be applied. "" denotes no override.
+         * @param fontSize the size to be applied. 0 denotes no override.
+         */
+        void applyFontOverride(QString fontFamily, int fontSize);
+
+        /**
+         * @brief Applies the global font/family overrides to this editor.
+         */
+        void applyGlobalFontOverride();
+
         QTextCodec *codec() const;
 
         /**
@@ -289,6 +314,9 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
+
+        static QString m_forceOverrideFontFamily;
+        static int m_forceOverrideFontSize;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;

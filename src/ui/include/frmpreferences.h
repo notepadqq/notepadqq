@@ -35,6 +35,11 @@ private slots:
     void on_txtNodejs_textChanged(const QString &);
     void on_txtNpm_textChanged(const QString &);
     void resetShortcuts();
+    void on_chkOverrideFontFamily_toggled(bool checked);
+    void on_chkOverrideFontSize_toggled(bool checked);
+    void on_spnFontSize_valueChanged(int arg1);
+    void on_cmbFontFamilies_currentFontChanged(const QFont &f);
+
 private:
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
@@ -48,14 +53,16 @@ private:
     void loadLanguages(QSettings *s);
     void saveLanguages(QSettings *s);
     void setCurrentLanguageTempValue(QString key, QVariant value);
-    void loadColorSchemes(QSettings *s);
-    void saveColorScheme(QSettings *s);
+    void loadAppearanceTab(QSettings *s);
+    void saveAppearanceTab(QSettings *s);
     bool extensionBrowseRuntime(QLineEdit *lineEdit);
     void checkExecutableExists(QLineEdit *path);
     void loadTranslations(QSettings *s);
     void saveTranslation(QSettings *s);
     void loadShortcuts(QSettings *s);
     void saveShortcuts(QSettings *s);
+
+    void applyFontOverride();
 };
 
 #endif // FRMPREFERENCES_H
