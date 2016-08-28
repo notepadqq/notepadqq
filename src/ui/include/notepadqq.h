@@ -58,7 +58,6 @@ public:
     static const QString website;
     static QString copyright();
     static QString appDataPath(QString fileName = QString());
-    static QString tabCachePath(); /* Note: create the cache directory if it does not yet exist. */
     static QString editorPath();
     static QString extensionToolsPath();
     static QString nodejsPath();

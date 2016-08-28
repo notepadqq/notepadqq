@@ -184,6 +184,11 @@ private slots:
     void on_actionShow_Spaces_triggered(bool on);
     void on_actionToggle_Smart_Indent_toggled(bool on);
 
+
+	void on_actionLoad_Session_triggered();
+
+	void on_actionSave_Session_triggered();
+
 private:
     static QList<MainWindow*> m_instances;
 
@@ -193,7 +198,7 @@ private:
      * a different one depending on the user's actions.
      * If the session window is not open, m_sessionWindow is nullptr.
      */
-    static MainWindow*        m_sessionWindow;
+	static MainWindow*    m_sessionWindow;
 
     Ui::MainWindow*       ui;
     TopEditorContainer*   m_topEditorContainer;
@@ -214,23 +219,47 @@ private:
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
 
+    QMap<QString,QString>* m_defaultShortcuts;
+
+	/**
+	 * @brief Set to true to temporarily disallow updating recent docs. This is useful
+	 *        for loading files that shouldn't be remembered (such as cache files).
+	 */
     bool                   m_dontUpdateRecentDocs = false;
 
-    /**
-     * @brief Writes all dirty tabs to the cache as preparation of closing the active MainWindow.
-     * @return bool whether to continue closing the window
-     */
-    bool				saveSession();
 
-    /**
-     * @brief Closes all tabs in preparation of closing the active MainWindow.
-     *        Will ask the user what to do with dirty tabs. Basically the old
-     *        way of closing the window.
-     * @return bool whether to continue closing the window
-     */
-    bool				closeSession();
-    void				restoreSession();
+	/**
+	 * @brief Saves a session as an XML file
+	 * @param filePath Path to where the XML file should be created.
+	 * @param cacheModifiedFiles If true, dirty tabs will be written into the cache directory.
+	 *        Only use this for the remember-my-tabs feature. Multiple sessions writing to
+	 *        the cache directory will end up in data loss.
+	 * @return Whether the save has been successful.
+	 */
+	bool				saveSession(QString filePath, bool cacheModifiedFiles);
 
+	/**
+	 * @brief Loads a session XML file and restores all its tabs in the current window.
+	 * @param filePath Path to where the XML file is located.
+	 */
+	void				loadSession(QString filePath);
+
+	/**
+	 * @brief Functions specifically to save/restore tabs to/from cache. These utilize
+	 *        the saveSession and loadSession functions but also save all unsaved progress
+	 *        in the cache.
+	 */
+	bool				saveTabsToCache();
+	void                restoreTabsFromCache();
+
+	/**
+	 * @brief Closes all open tabs but asks the user for permission before discarding changes.
+	 * @return Whether all files have been properly closed.
+	 */
+	bool				closeAllTabs();
+
+
+    void                defaultShortcuts();
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);

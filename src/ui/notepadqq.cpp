@@ -34,17 +34,6 @@ QString Notepadqq::appDataPath(QString fileName)
     return def;
 }
 
-QString Notepadqq::tabCachePath()
-{
-    QString tabpath = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/tabCache");
-
-    //Create the directory if it does not yet exist.
-    //Does nothing if the dir exists.
-    QDir().mkpath(tabpath);
-
-    return tabpath;
-}
-
 QString Notepadqq::editorPath()
 {
     return appDataPath("editor/index.html");

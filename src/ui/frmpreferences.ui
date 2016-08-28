@@ -116,7 +116,7 @@
          <item>
           <widget class="QCheckBox" name="chkRememberSession">
            <property name="text">
-            <string>Remember openened tabs when closing</string>
+            <string>Remember openened tabs when closing Notepadqq</string>
            </property>
           </widget>
          </item>
@@ -471,8 +471,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>568</width>
-              <height>396</height>
+              <width>565</width>
+              <height>389</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
