@@ -198,7 +198,7 @@ private:
      * a different one depending on the user's actions.
      * If the session window is not open, m_sessionWindow is nullptr.
      */
-	static MainWindow*    m_sessionWindow;
+    static MainWindow*    m_sessionWindow;
 
     Ui::MainWindow*       ui;
     TopEditorContainer*   m_topEditorContainer;
@@ -221,11 +221,11 @@ private:
 
     QMap<QString,QString>* m_defaultShortcuts;
 
-	/**
+    /**
 	 * @brief Set to true to temporarily disallow updating recent docs. This is useful
 	 *        for loading files that shouldn't be remembered (such as cache files).
 	 */
-    bool                   m_dontUpdateRecentDocs = false;
+    bool            m_dontUpdateRecentDocs = false;
 
 
 	/**
@@ -236,27 +236,27 @@ private:
 	 *        the cache directory will end up in data loss.
 	 * @return Whether the save has been successful.
 	 */
-	bool				saveSession(QString filePath, bool cacheModifiedFiles);
+	bool            saveSession(QString filePath, bool cacheModifiedFiles);
 
 	/**
 	 * @brief Loads a session XML file and restores all its tabs in the current window.
 	 * @param filePath Path to where the XML file is located.
 	 */
-	void				loadSession(QString filePath);
+	void            loadSession(QString filePath);
 
 	/**
 	 * @brief Functions specifically to save/restore tabs to/from cache. These utilize
 	 *        the saveSession and loadSession functions but also save all unsaved progress
 	 *        in the cache.
 	 */
-	bool				saveTabsToCache();
-	void                restoreTabsFromCache();
+	bool            saveTabsToCache();
+	void            restoreTabsFromCache();
 
 	/**
 	 * @brief Closes all open tabs but asks the user for permission before discarding changes.
 	 * @return Whether all files have been properly closed.
 	 */
-	bool				closeAllTabs();
+	bool            closeAllTabs();
 
 
     void                defaultShortcuts();
