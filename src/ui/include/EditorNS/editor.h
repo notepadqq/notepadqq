@@ -233,17 +233,15 @@ namespace EditorNS
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
-
-        //Sets the global settings for fonts.
-        //This will not be automatically applied to all editors.
-        //For that, xx has to be called for each editor individually.
-
-
         /**
-         * @brief Sets the font family/size for all editors. A default
-         *        value (empty string or 0) denotes that the override is
-         *        disabled. In order to actually apply these overrides to
+         * @brief Sets the global font family/size that is supposed to be 
+         *        used in all editors. These function will only store the
+         *        values as global overrides, not directly apply them to
+         *        any editors.
+         *        In order to actually apply these overrides to
          *        an Editor, applyGlobalFontOverride() must be called.
+         * @param The desired override value. An empty string or 0 denote
+         *        no override.
          */
         static void setGlobalFontFamily(QString fontFamily=QString());
         static void setGlobalFontSize(int fontSize=0);
