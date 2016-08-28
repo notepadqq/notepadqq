@@ -237,14 +237,27 @@ namespace EditorNS
         //Sets the global settings for fonts.
         //This will not be automatically applied to all editors.
         //For that, xx has to be called for each editor individually.
+
+
+        /**
+         * @brief Sets the font family/size for all editors. A default
+         *        value (empty string or 0) denotes that the override is
+         *        disabled. In order to actually apply these overrides to
+         *        an Editor, applyGlobalFontOverride() must be called.
+         */
         static void setGlobalFontFamily(QString fontFamily=QString());
         static void setGlobalFontSize(int fontSize=0);
 
-        //Sets a specific font family/size for this editor.
-        //This will be applied immediately.
+        /**
+         * @brief Applies a font family/size to the Editor.
+         * @param fontFamily the family to be applied. "" denotes no override.
+         * @param fontSize the size to be applied. 0 denotes no override.
+         */
         void applyFontOverride(QString fontFamily, int fontSize);
 
-        //Applies the global font settings for this editor.
+        /**
+         * @brief Applies the global font/family overrides to this editor.
+         */
         void applyGlobalFontOverride();
 
         QTextCodec *codec() const;

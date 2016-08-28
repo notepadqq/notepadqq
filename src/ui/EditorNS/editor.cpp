@@ -591,8 +591,6 @@ namespace EditorNS
         tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
-
-        applyGlobalFontOverride();
     }
 
     QList<Editor::Selection> Editor::selections()

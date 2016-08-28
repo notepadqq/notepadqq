@@ -169,6 +169,9 @@ void frmPreferences::on_buttonBox_accepted()
             // Set new theme
             editor->setTheme(newTheme);
 
+            //Set font override
+            editor->applyGlobalFontOverride();
+
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
 

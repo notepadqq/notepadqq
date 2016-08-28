@@ -406,12 +406,11 @@ UiDriver.registerEventHandler("C_CMD_SET_FONT", function(msg, data, prevReturn) 
     var styleTag = document.getElementById('userFont');
 
     if( styleTag  ){ 
-        styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
-        styleTag.appendTo('head');
+        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + " }";
     }else{
         styleTag = document.createElement("style");
         styleTag.id = 'userFont';
-        styleTag.innerHTML = ".editor > .CodeMirror { " + fontFamily + fontSize + " }";
+        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + " }";
         document.getElementsByTagName("head")[0].appendChild( styleTag );
     }
 
