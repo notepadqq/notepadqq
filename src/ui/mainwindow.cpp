@@ -129,8 +129,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Apply font settings. Best to do that before any editors are opened to prevent
     // unneeded work. Otherwise we'd have to apply it to all editors currently created.
-    QString fontFam = m_settings->value("overrideFontFamily", "").toString();
-    int fontSz = m_settings->value("overrideFontSize", 0).toInt();
+    QString fontFam = m_settings->value("Appearance/OverrideFontFamily", "").toString();
+    int fontSz = m_settings->value("Appearance/OverrideFontSize", 0).toInt();
 
     Editor::setGlobalFontFamily(fontFam);
     Editor::setGlobalFontSize(fontSz);

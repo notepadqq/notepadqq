@@ -247,14 +247,14 @@ void frmPreferences::loadAppearanceTab(QSettings *s)
     m_previewEditor->forceRender(renderSize);
 
 
-    QString fontFamily = s->value("overrideFontFamily").toString();
+    QString fontFamily = s->value("Appearance/OverrideFontFamily").toString();
     if(!fontFamily.isEmpty()){
         ui->chkOverrideFontFamily->setChecked(true);
         QFont f(fontFamily);
         ui->cmbFontFamilies->setCurrentFont(fontFamily);
     }
 
-    int fontSize = s->value("overrideFontSize").toInt();
+    int fontSize = s->value("Appearance/OverrideFontSize").toInt();
     if( fontSize != 0){
         ui->chkOverrideFontSize->setChecked(true);
         ui->spnFontSize->setValue( fontSize );
@@ -320,8 +320,8 @@ void frmPreferences::saveAppearanceTab(QSettings *s)
     Editor::setGlobalFontFamily( font );
     Editor::setGlobalFontSize( size );
 
-    s->setValue("overrideFontFamily", font);
-    s->setValue("overrideFontSize", size);
+    s->setValue("Appearance/OverrideFontFamily", font);
+    s->setValue("Appearance/OverrideFontSize", size);
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
