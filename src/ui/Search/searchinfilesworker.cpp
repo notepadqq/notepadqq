@@ -139,7 +139,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         column = match.capturedStart();
         while (column != -1 && !match.captured().isEmpty()) {
             //Keep track of the true position of the buffer for replace functions.
-            int trueColumn = stream.pos()-line.length()+column-1;
+            int trueColumn = stream.pos() - line.length() + column - 1;
             //Limit line length
             if (line.length() > 1024) line = line.left(1024);
             structFileResult.results.append(buildResult(i, column, trueColumn, line, match.capturedLength()));
@@ -201,7 +201,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
             break;
         }
         int matchLen = match.capturedLength();
-        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column - lineStart.at(line), fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
+        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column, fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
         match = tmpRegExp.match(fullDoc, column + matchLen);
         column = match.capturedStart();
         m_matchCount++;
