@@ -92,8 +92,9 @@ void SearchInFilesWorker::run()
         } while (retry);
 
         FileSearchResult::FileResult structFileResult;
+
         // Run the search
-        if(m_regex.pattern().contains(QStringLiteral("\\n"))) {
+        if (m_regex.pattern().contains(QStringLiteral("\\n"))) {
             //Do multi-line regex
         }else {
             structFileResult = searchSingleLineRegExp(fileName,decodedText.text);
@@ -177,64 +178,4 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(int line, int column, 
 
     return res;
 }
-/*
-FileSearchResult::Result SearchInFilesWorker::buildResult(const QRegularExpressionMatch &match, QString *content)
-{
-    FileSearchResult::Result res;
-
-    // Regex used to detect newlines
-    static const QRegularExpression newLine("\n|\r\n|\r");
-
-    // Position (from byte 0) of the start of the found word
-    int capturedPosStart = match.capturedStart();
-
-    // Position (from byte 0) of the end of the found word
-    int capturedPosEnd = match.capturedEnd(match.lastCapturedIndex());
-
-    // Position (from byte 0) of the start of the first line of the found word
-    int firstLinePosStart = content->lastIndexOf(newLine, capturedPosStart) + 1;
-
-    // Position (from byte 0) of the end of the first line of the found word
-    //int firstLinePosEnd = content->indexOf(newLine, capturedPosStart);
-
-    // Position (from byte 0) of the start of the last line of the found word
-    int lastLinePosStart = content->lastIndexOf(newLine, capturedPosEnd - 1) + 1;
-
-    // Position (from byte 0) of the end of the last line of the found word
-    int lastLinePosEnd = content->indexOf(newLine, capturedPosStart);
-
-    // String composed by all the lines that contain the found word.
-    QString previewString = content->mid(firstLinePosStart, lastLinePosEnd - firstLinePosStart);
-
-    // All the lines in wholeLine
-    QStringList matchLines = previewString.split(newLine, QString::KeepEmptyParts);
-
-    // Number of the first line of the found word
-    int count1 = content->leftRef(firstLinePosStart).count("\r\n");
-    int count2 = content->leftRef(firstLinePosStart).count("\r");
-    int count3 = content->leftRef(firstLinePosStart).count("\n");
-    int firstLineNumber = qMax(count1, qMax(count2, count3));
-    int lastLineNumber = firstLineNumber + matchLines.count() - 1;
-
-    // Position (from the start of the first line) of the start of the found word
-    int capturedColStartInFirstLine = capturedPosStart - firstLinePosStart;
-
-    // Position (from the start of the last line) of the end of the found word.
-    int capturedColEndInLastLine = capturedPosEnd - lastLinePosStart;
-
-
-    // Result
-    res.previewBeforeMatch = previewString.mid(0, capturedColStartInFirstLine);
-    res.match = previewString.mid(capturedColStartInFirstLine, capturedPosEnd - capturedPosStart);
-    res.previewAfterMatch = previewString.mid(capturedColEndInLastLine);
-    res.matchStartLine = firstLineNumber;
-    res.matchStartCol = capturedColStartInFirstLine;
-    res.matchEndLine = lastLineNumber;
-    res.matchEndCol = capturedColEndInLastLine;
-    res.matchStartPosition = capturedPosStart;
-    res.matchEndPosition = capturedPosEnd;
-
-    return res;
-}
-*/
 
