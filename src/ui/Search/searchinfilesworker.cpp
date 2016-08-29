@@ -138,9 +138,11 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         match = m_regex.match(line);
         column = match.capturedStart();
         while (column != -1 && !match.captured().isEmpty()) {
-            // limit line length
+            //Keep track of the true position of the buffer for replace functions.
+            int trueColumn = stream.pos()-line.length()+column-1;
+            //Limit line length
             if (line.length() > 1024) line = line.left(1024);
-            structFileResult.results.append(buildResult(i, column, line, match.capturedLength()));
+            structFileResult.results.append(buildResult(i, column, trueColumn, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
@@ -199,7 +201,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
             break;
         }
         int matchLen = match.capturedLength();
-        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
+        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column - lineStart.at(line), fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
         match = tmpRegExp.match(fullDoc, column + matchLen);
         column = match.capturedStart();
         m_matchCount++;
@@ -221,7 +223,7 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
     return r;
 }
 
-FileSearchResult::Result SearchInFilesWorker::buildResult(int line, int column, const QString &lineContent, int matchLen)
+FileSearchResult::Result SearchInFilesWorker::buildResult(int line, int column, int absoluteColumn, const QString &lineContent, int matchLen)
 {
     FileSearchResult::Result res;
 
@@ -232,8 +234,8 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(int line, int column, 
     res.matchStartCol = column;
     res.matchEndLine = line;
     res.matchEndCol = column+matchLen;
-    res.matchStartPosition = 0;
-    res.matchEndPosition = lineContent.length();
+    res.matchStartPosition = absoluteColumn;
+    res.matchEndPosition = absoluteColumn+matchLen;
 
     return res;
 }
