@@ -14,9 +14,6 @@ namespace EditorNS
 
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
-    QString Editor::m_forceOverrideFontFamily = QString();
-    int Editor::m_forceOverrideFontSize = 0;
-
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
@@ -77,8 +74,6 @@ namespace EditorNS
                 &QWebFrame::javaScriptWindowObjectCleared,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
-
-        applyGlobalFontOverride();
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
@@ -492,27 +487,12 @@ namespace EditorNS
         m_endOfLineSequence = newLineSequence;
     }
 
-    void Editor::setGlobalFontFamily(QString fontFamily)
-    {
-        m_forceOverrideFontFamily = fontFamily;
-    }
-
-    void Editor::setGlobalFontSize(int fontSize)
-    {
-        m_forceOverrideFontSize = fontSize;
-    }
-
-    void Editor::applyFontOverride(QString fontFamily, int fontSize)
+    void Editor::setFont(QString fontFamily, int fontSize)
     {
         QMap<QString, QVariant> tmap;
-        tmap.insert("family", fontFamily);
+        tmap.insert("family", fontFamily == nullptr ? "" : fontFamily);
         tmap.insert("size", QString::number(fontSize));
         sendMessage("C_CMD_SET_FONT", tmap);
-    }
-
-    void Editor::applyGlobalFontOverride()
-    {
-        applyFontOverride(m_forceOverrideFontFamily, m_forceOverrideFontSize);
     }
 
     QTextCodec *Editor::codec() const

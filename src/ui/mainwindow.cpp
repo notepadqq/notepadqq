@@ -127,14 +127,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     initUI();
 
-    // Apply font settings. Best to do that before any editors are opened to prevent
-    // unneeded work. Otherwise we'd have to apply it to all editors currently created.
-    QString fontFam = m_settings->value("Appearance/OverrideFontFamily", "").toString();
-    int fontSz = m_settings->value("Appearance/OverrideFontSize", 0).toInt();
-
-    Editor::setGlobalFontFamily(fontFam);
-    Editor::setGlobalFontSize(fontSz);
-
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
     // From now on, there is at least an Editor and at least
@@ -1125,6 +1117,8 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
     editor->setWhitespaceVisible(ui->actionShow_Spaces->isChecked());
     editor->setOverwrite(m_overwrite);
+    editor->setFont(m_settings->value("Appearance/OverrideFontFamily", "").toString(),
+                    m_settings->value("Appearance/OverrideFontSize", 0).toInt());
 }
 
 void MainWindow::on_cursorActivity()

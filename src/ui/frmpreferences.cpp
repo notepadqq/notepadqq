@@ -126,12 +126,12 @@ void frmPreferences::saveShortcuts(QSettings* s)
     mw->updateShortcuts();
 }
 
-void frmPreferences::applyFontOverride()
+void frmPreferences::updatePreviewEditorFont()
 {
     QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
 
-    m_previewEditor->applyFontOverride( font, size );
+    m_previewEditor->setFont(font, size);
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -159,6 +159,8 @@ void frmPreferences::on_buttonBox_accepted()
     s.setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
 
     const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
+    const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
 
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
@@ -169,8 +171,8 @@ void frmPreferences::on_buttonBox_accepted()
             // Set new theme
             editor->setTheme(newTheme);
 
-            //Set font override
-            editor->applyGlobalFontOverride();
+            // Set font override
+            editor->setFont(fontFamily, fontSize);
 
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
@@ -248,16 +250,15 @@ void frmPreferences::loadAppearanceTab(QSettings *s)
 
 
     QString fontFamily = s->value("Appearance/OverrideFontFamily").toString();
-    if(!fontFamily.isEmpty()){
+    if (!fontFamily.isEmpty()) {
         ui->chkOverrideFontFamily->setChecked(true);
-        QFont f(fontFamily);
         ui->cmbFontFamilies->setCurrentFont(fontFamily);
     }
 
     int fontSize = s->value("Appearance/OverrideFontSize").toInt();
-    if( fontSize != 0){
+    if (fontSize != 0) {
         ui->chkOverrideFontSize->setChecked(true);
-        ui->spnFontSize->setValue( fontSize );
+        ui->spnFontSize->setValue(fontSize);
     }
 }
 
@@ -314,14 +315,10 @@ void frmPreferences::saveAppearanceTab(QSettings *s)
 {
     s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
 
-    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
-    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
-
-    Editor::setGlobalFontFamily( font );
-    Editor::setGlobalFontSize( size );
-
-    s->setValue("Appearance/OverrideFontFamily", font);
-    s->setValue("Appearance/OverrideFontSize", size);
+    QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    s->setValue("Appearance/OverrideFontFamily", fontFamily);
+    s->setValue("Appearance/OverrideFontSize", fontSize);
 }
 
 void frmPreferences::saveTranslation(QSettings *s)
@@ -403,10 +400,6 @@ void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
 {
     m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
-
-    // Since any changes to the global font override data aren't saved yet we have to manually
-    // apply them to m_preview.
-    applyFontOverride();
 }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)
@@ -463,22 +456,22 @@ void frmPreferences::on_txtNpm_textChanged(const QString &)
 
 void frmPreferences::on_chkOverrideFontFamily_toggled(bool checked)
 {
-    ui->cmbFontFamilies->setEnabled( checked );
-    applyFontOverride();
+    ui->cmbFontFamilies->setEnabled(checked);
+    updatePreviewEditorFont();
 }
 
 void frmPreferences::on_chkOverrideFontSize_toggled(bool checked)
 {
-    ui->spnFontSize->setEnabled( checked );
-    applyFontOverride();
+    ui->spnFontSize->setEnabled(checked);
+    updatePreviewEditorFont();
 }
 
 void frmPreferences::on_spnFontSize_valueChanged(int /*arg1*/)
 {
-    applyFontOverride();
+    updatePreviewEditorFont();
 }
 
 void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont& /*f*/)
 {
-    applyFontOverride();
+    updatePreviewEditorFont();
 }

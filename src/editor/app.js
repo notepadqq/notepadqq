@@ -399,7 +399,7 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
 
 UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn) {
     var fontSize = (data.size != "" && data.size > 0) ? ("font-size:" + (+data.size) + "px;") : "";
-    var fontFamily = data.family != "" ? ("font-family:'" + ('' + data.family).replace("'", "\\'") + "';") : "";
+    var fontFamily = data.family ? ("font-family:'" + ('' + data.family).replace("'", "\\'") + "';") : "";
 
     var styleTag = document.getElementById('userFont');
 
