@@ -28,11 +28,11 @@ signals:
 
     /**
      * @brief Currently unused, meant for a live-updating version of search results
-     * @param fileName
-     * @param line
-     * @param column
-     * @param lineContent
-     * @param matchLen
+     * @param `fileName`
+     * @param `line`
+     * @param `column`
+     * @param `lineContent`
+     * @param `matchLen`
      */
     //void matchFound(const QString &fileName, int line, int column, const QString &lineContent, int matchLen);
 
@@ -63,13 +63,33 @@ private:
     bool m_stop = false;
     QMutex m_stopMutex;
     QRegularExpression m_regex;
+
+   /**
+    * @brief Build FileSearchResult::Result object using the parameters given.
+    * @param `line`
+    * @param `column`
+    * @param `absoluteColumn`
+    * @param `lineContent`
+    * @param `matchLen`
+    * @return `FileSearchResult::Result` object to be used for final search results.
+    */
     FileSearchResult::Result buildResult(int line, int column, int absoluteColumn, const QString &lineContent, int matchLen);
    /**
     * @brief Perform a search using single line regular expression matching
-    * @param fileName
-    * @param data
+    * @param `fileName`
+    * @param `content`
+    * @return `FileSearchResult::FileResult` object containing all the matches
+    *         found in the file
     */
     FileSearchResult::FileResult searchSingleLineRegExp(const QString &fileName, QString content);
+
+   /**
+    * @brief Perform a search using multi line regular expression matching
+    * @param `fileName`
+    * @param `content`
+    * @return `FileSearchResult::FileResult` object containing all the matches
+    *         found in the file
+    */
     FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
 };
 
