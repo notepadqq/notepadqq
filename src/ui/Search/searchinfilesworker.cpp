@@ -144,7 +144,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         while (column != -1 && !match.captured().isEmpty()) {
             //Limit line length
             if (line.length() > 1024) line = line.left(1024);
-            structFileResult.results.append(buildResult(i, column, absoluteColumn+column, line, match.capturedLength()));
+            structFileResult.results.append(buildResult(i, column, absoluteColumn + column, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
@@ -194,7 +194,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         // search for the line number of the match
         int i;
         line = -1;
-        for (i=1; i<lineStart.size(); i++) {
+        for (i = 1; i < lineStart.size(); i++) {
             if (lineStart.at(i) > column) {
                 line = i-1;
                 break;
@@ -204,7 +204,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
             break;
         }
         int matchLen = match.capturedLength();
-        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column, fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
+        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column, fullDoc.mid(lineStart.at(line), column - lineStart.at(line)) + match.captured(), matchLen));
         match = tmpRegExp.match(fullDoc, column + matchLen);
         column = match.capturedStart();
         m_matchCount++;
