@@ -182,6 +182,10 @@ private slots:
     void on_actionShow_Spaces_triggered(bool on);
     void on_actionToggle_Smart_Indent_toggled(bool on);
 
+    void on_actionFile_Browser_triggered();
+
+    void on_actionTerminal_triggered();
+
 private:
     static QList<MainWindow*> m_instances;
     Ui::MainWindow*       ui;

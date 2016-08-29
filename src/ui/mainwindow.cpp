@@ -2221,4 +2221,26 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         editor->setSmartIndent(on);
         return true;
     });
+void MainWindow::on_actionFile_Browser_triggered()
+{
+    const QUrl tabUrl = m_topEditorContainer->currentTabWidget()->
+                        currentEditor()->fileName();
+
+    if (!tabUrl.isValid())
+        return;
+
+    //Get parent directory
+    const QDir parent = QFileInfo(tabUrl.toLocalFile()).absoluteDir();
+
+    QDesktopServices::openUrl( QUrl(parent.absolutePath()) );
+}
+
+void MainWindow::on_actionTerminal_triggered()
+{
+    QStringList args;
+    //args << "-e" << "sh" << "-c" << "cd /home/s3rius/Documents; exec bash";
+    //QProcess::startDetached("xterm", args);
+
+    //args << "--working-directory=/home/s3rius/Documents";
+    //QProcess::startDetached("gnome-terminal", args);
 }
