@@ -70,6 +70,7 @@ private:
     * @param data
     */
     FileSearchResult::FileResult searchSingleLineRegExp(const QString &fileName, QString content);
+    FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
 };
 
 #endif // SEARCHINFILESWORKER_H
