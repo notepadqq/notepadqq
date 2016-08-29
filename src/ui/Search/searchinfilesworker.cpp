@@ -190,7 +190,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         int i;
         line = -1;
         for (i=1; i<lineStart.size(); i++) {
-            if (lineStart[i] > column) {
+            if (lineStart.at(i) > column) {
                 line = i-1;
                 break;
             }
@@ -198,8 +198,9 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         if (line == -1) {
             break;
         }
-        structFileResult.results.append(buildResult(line, (column - lineStart[line]), fullDoc.mid(lineStart[line], column - lineStart[line])+match.captured(), match.capturedLength()));
-        match = tmpRegExp.match(fullDoc, column + match.capturedLength());
+        int matchLen = match.capturedLength();
+        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), fullDoc.mid(lineStart.at(line), column - lineStart.at(line))+match.captured(), matchLen));
+        match = tmpRegExp.match(fullDoc, column + matchLen);
         column = match.capturedStart();
         m_matchCount++;
         // NOTE: This sleep is here so that the main thread will get a chance to
