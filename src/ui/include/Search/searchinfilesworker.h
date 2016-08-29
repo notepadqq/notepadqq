@@ -63,7 +63,7 @@ private:
     bool m_stop = false;
     QMutex m_stopMutex;
     QRegularExpression m_regex;
-    FileSearchResult::Result buildResult(int line, int column, const QString &lineContent, int matchLen);
+    FileSearchResult::Result buildResult(int line, int column, int absoluteColumn, const QString &lineContent, int matchLen);
    /**
     * @brief Perform a search using single line regular expression matching
     * @param fileName
