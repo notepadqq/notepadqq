@@ -131,24 +131,27 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
     QTextStream stream (&content);
     QString line;
     int i = 0;
-    int column;
+    int column; 
+    int absoluteColumn = 0;
+    int eolSize = 1;
     QRegularExpressionMatch match;
+
+    if (content.indexOf("\r\n") != -1) eolSize = 2;
     while (!(line=stream.readLine()).isNull()) {
         if (m_stop) break;
         match = m_regex.match(line);
         column = match.capturedStart();
         while (column != -1 && !match.captured().isEmpty()) {
-            //Keep track of the true position of the buffer for replace functions.
-            int trueColumn = stream.pos() - line.length() + column - 1;
             //Limit line length
             if (line.length() > 1024) line = line.left(1024);
-            structFileResult.results.append(buildResult(i, column, trueColumn, line, match.capturedLength()));
+            structFileResult.results.append(buildResult(i, column, absoluteColumn+column, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
             if (m_matchCount%50) QThread::msleep(1);
         }
         i++;
+        absoluteColumn += line.length() + eolSize;
     }
     return structFileResult;
 
