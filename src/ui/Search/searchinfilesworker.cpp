@@ -142,8 +142,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         match = m_regex.match(line);
         column = match.capturedStart();
         while (column != -1 && match.hasMatch()) {
-            //Limit line length
-            if (lineLength > 1024) line = line.left(1024);
+            //Limit line length(Avoids OOM when reading binary files)
+            if (lineLength > 2048) line = line.left(2048);
             structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
