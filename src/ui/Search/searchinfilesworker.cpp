@@ -53,6 +53,7 @@ void SearchInFilesWorker::run()
     //int totalFileMatches = 0;
     // Number of files that contain matches
     //int totalFiles = 0;
+    bool multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
 
     while (it.hasNext()) {
         m_stopMutex.lock();
@@ -70,7 +71,6 @@ void SearchInFilesWorker::run()
         QFile f(fileName);
         DocEngine::DecodedText decodedText;
         bool retry;
-        bool multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
         do {
             retry = false;
             decodedText = DocEngine::readToString(&f);
