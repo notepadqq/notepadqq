@@ -61,6 +61,27 @@ frmPreferences::~frmPreferences()
     delete ui;
 }
 
+<<<<<<< 150cbe89aa0c2fa495e40fc1c21d127fd85a99ba
+=======
+
+void frmPreferences::loadExternalTools(QSettings* s)
+{
+    ui->txtNodejs->setText(s->value("Extensions/Runtime_Nodejs", "").toString());
+    ui->txtNpm->setText(s->value("Extensions/Runtime_Npm", "").toString());
+
+    ui->txtTerminalLaunchCmd->setText(s->value("ExternalTools/TerminalLaunchCmd", "").toString());
+}
+
+void frmPreferences::saveExternalTools(QSettings* s)
+{
+    s->setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
+    s->setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
+
+    s->setValue("ExternalTools/TerminalLaunchCmd", ui->txtTerminalLaunchCmd->text());
+}
+
+
+>>>>>>> Fixed some WS and annotation.
 void frmPreferences::resetShortcuts()
 {
     const int rows = m_keyGrabber->rowCount();

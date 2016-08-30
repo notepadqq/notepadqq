@@ -2221,6 +2221,7 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         editor->setSmartIndent(on);
         return true;
     });
+//Small helper to get the path of the parent directory.
 QString getParentOfUrl(const QUrl url){
     if(!url.isValid())
         return QString();

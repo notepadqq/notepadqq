@@ -184,6 +184,7 @@ private slots:
 
     void on_actionFile_Browser_triggered();
 
+    void on_actionFile_Browser_triggered();
     void on_actionTerminal_triggered();
 
 private:
