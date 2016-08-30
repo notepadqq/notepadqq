@@ -8,7 +8,6 @@
 
 #include <vector>
 
-
 struct TabData {
     QString filePath;
     QString cacheFilePath;
@@ -26,6 +25,7 @@ struct ViewData {
  */
 class SessionReader {
 public:
+
     SessionReader(QFile& input)
         : m_reader(&input) { }
 
@@ -40,7 +40,6 @@ public:
     std::vector<ViewData> readData(bool* outSuccess=nullptr);
 
     QString getError();
-
 
 private:
 

@@ -26,7 +26,7 @@ std::vector<ViewData> SessionReader::readData(bool* outSuccess) {
             m_reader.raiseError(QObject::tr("Error reading session file"));
     };
 
-    if(outSuccess != nullptr)
+    if (outSuccess != nullptr)
         *outSuccess = !m_reader.error();
 
     return result;
@@ -39,8 +39,8 @@ QString SessionReader::getError(){
 std::vector<ViewData> SessionReader::readViewData() {
     std::vector<ViewData> result;
 
-    while(m_reader.readNextStartElement()){
-        if(m_reader.name() == "View"){
+    while (m_reader.readNextStartElement()) {
+        if (m_reader.name() == "View") {
             ViewData vd;
             vd.tabs = readTabData();
             result.push_back(vd);
@@ -56,8 +56,8 @@ std::vector<ViewData> SessionReader::readViewData() {
 std::vector<TabData> SessionReader::readTabData() {
     std::vector<TabData> result;
 
-    while(m_reader.readNextStartElement()){
-        if(m_reader.name() == "Tab"){
+    while(m_reader.readNextStartElement()) {
+        if(m_reader.name() == "Tab") {
             const QXmlStreamAttributes& attrs = m_reader.attributes();
 
             TabData td;

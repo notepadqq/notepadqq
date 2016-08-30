@@ -1,5 +1,4 @@
-#include <include/Sessions/persistentcache.h>
-
+#include "include/Sessions/persistentcache.h"
 #include "include/notepadqq.h"
 
 
@@ -32,10 +31,10 @@ QUrl PersistentCache::createValidCacheName(const QString& fileName){
     QFileInfo fileInfo;
 
     //To prevent name collision, a random suffix will be appended to each file.
-    do{
+    do {
         cacheFile = QUrl::fromLocalFile(partialPath + "." + QString::number(rand()));
         fileInfo = QFileInfo(cacheFile.toLocalFile());
-    }while( fileInfo.exists() );
+    } while(fileInfo.exists());
 
     //Make sure an absolute file path is returned, otherwise there could be problems
     //with loading the files later.
