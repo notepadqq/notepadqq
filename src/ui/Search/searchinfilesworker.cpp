@@ -70,7 +70,7 @@ void SearchInFilesWorker::run()
         QFile f(fileName);
         DocEngine::DecodedText decodedText;
         bool retry;
-
+        bool multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
         do {
             retry = false;
             decodedText = DocEngine::readToString(&f);
@@ -94,7 +94,7 @@ void SearchInFilesWorker::run()
         FileSearchResult::FileResult structFileResult;
 
         // Run the search
-        if (m_regex.pattern().contains(QStringLiteral("\\n"))) {
+        if (multiLine) {
             structFileResult = searchMultiLineRegExp(fileName,decodedText.text);
         }else {
             structFileResult = searchSingleLineRegExp(fileName,decodedText.text);
