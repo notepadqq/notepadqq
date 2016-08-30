@@ -465,7 +465,7 @@
               <x>0</x>
               <y>0</y>
               <width>551</width>
-              <height>400</height>
+              <height>394</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -572,7 +572,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="lineEdit"/>
+                   <widget class="QLineEdit" name="txtTerminalLaunchCmd"/>
                   </item>
                  </layout>
                 </item>
@@ -582,7 +582,7 @@
                    <number>1</number>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body style=&quot; font-size:8pt;&quot;&gt;&lt;p&gt;Specify the launch command for your preferred terminal program. Use %s as a placeholder for the directory path argument. Examples:&lt;/p&gt;&lt;p&gt;gnome-terminal --working-directory=%s&lt;br/&gt;xterm -e sh -c &amp;quot;cd %s &amp;amp;&amp;amp; exec bash&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Specify the launch command for your preferred terminal program. Use %s as a placeholder for the directory path argument. Examples:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;gnome-terminal --working-directory=%s&lt;br/&gt;konsole --workdir=%s&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="scaledContents">
                    <bool>false</bool>

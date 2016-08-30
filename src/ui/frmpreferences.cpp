@@ -48,6 +48,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadAppearanceTab();
     loadTranslations();
     loadShortcuts();
+	loadExternalTools();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
 
@@ -96,7 +97,8 @@ void frmPreferences::on_buttonBox_accepted()
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
 
-    saveLanguages();
+    saveExternalTools();
+	saveLanguages();
     saveAppearanceTab();
     saveTranslation();
     saveShortcuts();
@@ -109,9 +111,11 @@ void frmPreferences::on_buttonBox_accepted()
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
 
+    const bool extensionsEnabled = Extensions::ExtensionsLoader::extensionRuntimePresent();
+
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
-        w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+        w->showExtensionsMenu(extensionsEnabled);
 
         w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
 

@@ -60,6 +60,8 @@ private:
 
     void loadLanguages();
     void saveLanguages();
+	void loadExternalTools();
+    void saveExternalTools();
     void loadAppearanceTab();
     void saveAppearanceTab();
     void loadTranslations();

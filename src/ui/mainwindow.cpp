@@ -2221,26 +2221,39 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         editor->setSmartIndent(on);
         return true;
     });
+QString getParentOfUrl(const QUrl url){
+    if(!url.isValid())
+        return QString();
+
+    const QDir parentDir = QFileInfo(url.toLocalFile()).absoluteDir();
+    return parentDir.absolutePath();
+}
+
 void MainWindow::on_actionFile_Browser_triggered()
 {
-    const QUrl tabUrl = m_topEditorContainer->currentTabWidget()->
-                        currentEditor()->fileName();
+    const QString parent = getParentOfUrl(m_topEditorContainer->currentTabWidget()->
+                                          currentEditor()->fileName());
 
-    if (!tabUrl.isValid())
+    if (parent.isEmpty())
         return;
 
-    //Get parent directory
-    const QDir parent = QFileInfo(tabUrl.toLocalFile()).absoluteDir();
-
-    QDesktopServices::openUrl( QUrl(parent.absolutePath()) );
+    QDesktopServices::openUrl( QUrl::fromLocalFile(parent) );
 }
 
 void MainWindow::on_actionTerminal_triggered()
 {
-    QStringList args;
-    //args << "-e" << "sh" << "-c" << "cd /home/s3rius/Documents; exec bash";
-    //QProcess::startDetached("xterm", args);
+    //Example of a launch command: "gnome-terminal --working-directory=%s"
+    const QString launchCmd = m_settings->value("ExternalTools/TerminalLaunchCmd").toString();
+    const QString parent = getParentOfUrl(m_topEditorContainer->currentTabWidget()->
+                                          currentEditor()->fileName());
 
-    //args << "--working-directory=/home/s3rius/Documents";
-    //QProcess::startDetached("gnome-terminal", args);
+    if (launchCmd.isEmpty() || parent.isEmpty())
+        return;
+
+    //Replace %s with the directory path put in quotes. This is necessary in case the path contains
+    //spaces.
+    QString cmd = launchCmd;
+    cmd.replace("%s", "\"" + parent + "\"");
+
+    QProcess::startDetached(cmd);
 }
