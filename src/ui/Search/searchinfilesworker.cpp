@@ -4,7 +4,7 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QThread>
-
+#include <QIODevice>
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
@@ -133,10 +133,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
     int i = 0;
     int column; 
     int absoluteColumn = 0;
-    int eolSize = 1;
     QRegularExpressionMatch match;
 
-    if (content.indexOf("\r\n") != -1) eolSize = 2;
     while (!(line=stream.readLine()).isNull()) {
         if (m_stop) break;
         match = m_regex.match(line);
@@ -148,10 +146,15 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
-            if (m_matchCount%50) QThread::msleep(1);
+            if (m_matchCount%50) QThread::usleep(1);
         }
         i++;
-        absoluteColumn += line.length() + eolSize;
+        absoluteColumn += line.length();
+
+        //Check line ending per line to be safe.
+        if (content.midRef(absoluteColumn,2) == "\r\n") absoluteColumn += 2;
+        else absoluteColumn++;
+        
     }
     return structFileResult;
 
