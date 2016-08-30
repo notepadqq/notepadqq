@@ -132,29 +132,28 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
     QString line;
     int i = 0;
     int column; 
-    int absoluteColumn = 0;
+    int streamPosition = 0;
+    int lineLength;
     QRegularExpressionMatch match;
 
     while (!(line=stream.readLine()).isNull()) {
         if (m_stop) break;
+        lineLength = line.length();
         match = m_regex.match(line);
         column = match.capturedStart();
-        while (column != -1 && !match.captured().isEmpty()) {
+        while (column != -1 && match.hasMatch()) {
             //Limit line length
-            if (line.length() > 1024) line = line.left(1024);
-            structFileResult.results.append(buildResult(i, column, absoluteColumn + column, line, match.capturedLength()));
+            if (lineLength > 1024) line = line.left(1024);
+            structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
-            if (m_matchCount%50==0) QThread::usleep(1);
+            if (m_matchCount%50) QThread::usleep(1);
         }
         i++;
-        absoluteColumn += line.length();
-
         //Check line ending per line to be safe.
-        if (content.midRef(absoluteColumn,2) == "\r\n") absoluteColumn += 2;
-        else absoluteColumn++;
-        
+        if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
+        else streamPosition += lineLength + 1; 
     }
     return structFileResult;
 
@@ -213,7 +212,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         m_matchCount++;
         // NOTE: This sleep is here so that the main thread will get a chance to
         // handle any stop button clicks if there are a lot of matches
-        if (m_matchCount%50==0) QThread::usleep(1);
+        if (m_matchCount%50) QThread::usleep(1);
     }
     
     return structFileResult;
