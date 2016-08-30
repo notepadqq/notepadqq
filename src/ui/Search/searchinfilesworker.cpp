@@ -146,7 +146,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
             m_matchCount++;
-            if (m_matchCount%50) QThread::usleep(1);
+            if (m_matchCount%50==0) QThread::usleep(1);
         }
         i++;
         absoluteColumn += line.length();
@@ -213,7 +213,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         m_matchCount++;
         // NOTE: This sleep is here so that the main thread will get a chance to
         // handle any stop button clicks if there are a lot of matches
-        if (m_matchCount%50) QThread::usleep(1);
+        if (m_matchCount%50==0) QThread::usleep(1);
     }
     
     return structFileResult;
