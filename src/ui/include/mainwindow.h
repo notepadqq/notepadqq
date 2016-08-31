@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include "include/topeditorcontainer.h"
 #include <QLabel>
-#include <QSettings>
 #include <QCloseEvent>
 #include "docengine.h"
 #include "include/Search/frmsearchreplace.h"
@@ -12,6 +11,7 @@
 #include "QtPrintSupport/QPrinter"
 #include "include/Search/filesearchresultswidget.h"
 #include "include/Extensions/extension.h"
+#include "include/nqqsettings.h"
 
 namespace Ui {
 class MainWindow;
@@ -65,7 +65,7 @@ public:
     void showExtensionsMenu(bool show);
     void updateShortcuts();
     QList<QAction*> getActions();
-    QString getDefaultShortcut(QString actionName);
+    //QString getDefaultShortcut(QString actionName);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -197,13 +197,13 @@ private:
     QLabel*               m_statusBar_EOLstyle;
     QLabel*               m_statusBar_textFormat;
     QLabel*               m_statusBar_overtypeNotify;
-    QSettings*            m_settings;
+    NqqSettings*          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
-    QMap<QString,QString>* m_defaultShortcuts;
+    //QMap<QString,QString>* m_defaultShortcuts;
 
     void                defaultShortcuts();
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);

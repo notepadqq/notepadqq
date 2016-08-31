@@ -4,9 +4,9 @@
 #include "include/EditorNS/editor.h"
 #include "include/singleapplication.h"
 #include "include/Extensions/extensionsloader.h"
+#include "include/nqqsettings.h"
 #include <QObject>
 #include <QFile>
-#include <QSettings>
 #include <QtGlobal>
 #include <QTranslator>
 
@@ -43,9 +43,10 @@ int main(int argc, char *argv[])
 
     forceDefaultSettings();
 
-    QSettings settings;
+    //QSettings settings;
+    NqqSettings settings;
 
-    QString langCode = settings.value("Localization", "en").toString();
+    QString langCode = settings.getLocalization();
 
     if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
@@ -122,7 +123,7 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    if (Notepadqq::oldQt() && settings.value("checkQtVersionAtStartup", true).toBool()) {
+    if (Notepadqq::oldQt() && settings.getCheckVersionAtStartup()) {
         Notepadqq::showQtVersionWarning(true, w);
     }
 

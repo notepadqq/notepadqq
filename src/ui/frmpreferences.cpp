@@ -16,7 +16,8 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     QDialog(parent),
     ui(new Ui::frmPreferences),
     m_topEditorContainer(topEditorContainer),
-    m_langsTempSettings(new QMap<QString, QVariant>())
+    m_langsTempSettings(new QMap<QString, QVariant>()),
+    m_settings( NqqSettings::getInstance() )
 {
     ui->setupUi(this);
 
@@ -40,7 +41,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
 
-    QSettings s;
+    QSettings& s = m_settings.m_settings;
 
     ui->chkCheckQtVersionAtStartup->setChecked(s.value("checkQtVersionAtStartup", true).toBool());
     ui->chkWarnForDifferentIndentation->setChecked(s.value("warnForDifferentIndentation", true).toBool());
@@ -66,25 +67,33 @@ frmPreferences::~frmPreferences()
 
 void frmPreferences::resetShortcuts()
 {
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
-    int i = 0;
-    QMap<QString,QString>::iterator it;
-    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
-        kg->item(i,1)->setText(mw->getDefaultShortcut(m_shortcuts->key(kg->item(i,0)->text())));
-        i++;
+    m_settings.resetAllShortcuts();
+
+
+    QMapIterator<QString,QString> it(*m_shortcuts);
+    int c=0;
+    while(it.hasNext()) {
+        it.next();
+        kg->setItem(c,0,new QTableWidgetItem(it.value()));
+        kg->setItem(c,1,new QTableWidgetItem(m_settings.getShortcut(it.key()).toString()));
+        kg->item(c,0)->setData(Qt::UserRole, it.key() );
+
+        ++c;
+
     }
+    kg->sortItems(0);
+    kg->selectRow(0);
+    kg->checkConflicts();
 }
 
 void frmPreferences::loadShortcuts(QSettings* s)
 {
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
     m_shortcuts = new QMap<QString,QString>;
 
-    foreach(QAction* a, mw->getActions())
-    {
-        if(a->objectName().isEmpty()) continue;
-        m_shortcuts->insert(a->objectName(), a->iconText());
+    for(const auto& it : m_settings.getAllShortcuts()){
+        m_shortcuts->insert(it.action->objectName(), it.action->iconText());
     }
+
 
     kg = new KeyGrabber();
 
@@ -100,15 +109,14 @@ void frmPreferences::loadShortcuts(QSettings* s)
     ui->stackedWidget->insertWidget(4,container);
 
     QMapIterator<QString,QString> it(*m_shortcuts);
-    s->beginGroup("Shortcuts");
     while(it.hasNext()) {
         it.next();
         kg->insertRow(0);
         kg->setItem(0,0,new QTableWidgetItem(it.value()));
-        kg->setItem(0,1,new QTableWidgetItem(s->value(it.key()).toString()));
-    }
-    s->endGroup();
+        kg->setItem(0,1,new QTableWidgetItem(m_settings.getShortcut(it.key()).toString()));
+        kg->item(0,0)->setData(Qt::UserRole, it.key() );
 
+    }
     kg->sortItems(0);
     kg->selectRow(0);
     kg->checkConflicts();
@@ -118,11 +126,11 @@ void frmPreferences::saveShortcuts(QSettings* s)
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
     int rows = kg->rowCount();
-    s->beginGroup("Shortcuts");
+    qDebug() << "saving";
+
     for(int i=0;i<rows;i++) {
-        s->setValue(m_shortcuts->key(kg->item(i,0)->text()),kg->item(i,1)->text());
+        m_settings.setShortcut(kg->item(i,0)->data(Qt::UserRole).toString(), QKeySequence::fromString(kg->item(i,1)->text()));
     }
-    s->endGroup();
     mw->updateShortcuts();
 }
 

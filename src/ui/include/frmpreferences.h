@@ -4,9 +4,9 @@
 #include <QDialog>
 #include <QTreeWidgetItem>
 #include <QTableWidgetItem>
-#include "QSettings"
 #include "include/topeditorcontainer.h"
 #include "include/keygrabber.h"
+#include "include/nqqsettings.h"
 
 namespace Ui {
 class frmPreferences;
@@ -41,6 +41,7 @@ private slots:
     void on_cmbFontFamilies_currentFontChanged(const QFont &f);
 
 private:
+    NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
     QMap<QString, QVariant> *m_langsTempSettings;
