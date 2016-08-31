@@ -12,11 +12,12 @@
 #include <QTableWidgetItem>
 #include <QSharedPointer>
 
+
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
+    m_settings( NqqSettings::getInstance() ),
     ui(new Ui::frmPreferences),
-    m_topEditorContainer(topEditorContainer),
-    m_langsTempSettings(new QMap<QString, QVariant>())
+    m_topEditorContainer(topEditorContainer)
 {
     ui->setupUi(this);
 
@@ -40,90 +41,36 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
 
-    QSettings s;
+    ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
+    ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
 
-    ui->chkCheckQtVersionAtStartup->setChecked(s.value("checkQtVersionAtStartup", true).toBool());
-    ui->chkWarnForDifferentIndentation->setChecked(s.value("warnForDifferentIndentation", true).toBool());
+    loadLanguages();
+    loadAppearanceTab();
+    loadTranslations();
+    loadShortcuts();
 
-    loadLanguages(&s);
-    loadAppearanceTab(&s);
-    loadTranslations(&s);
-    loadShortcuts(&s);
+    ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
 
-    ui->chkSearch_SearchAsIType->setChecked(s.value("Search/SearchAsIType", true).toBool());
-
-    ui->txtNodejs->setText(s.value("Extensions/Runtime_Nodejs", "").toString());
-    ui->txtNpm->setText(s.value("Extensions/Runtime_Npm", "").toString());
+    ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
+    ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
 }
 
 frmPreferences::~frmPreferences()
 {
     delete ui;
-    delete m_langsTempSettings;
-    delete m_commonLanguageProperties;
-    delete m_shortcuts;
 }
 
 void frmPreferences::resetShortcuts()
 {
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
-    int i = 0;
-    QMap<QString,QString>::iterator it;
-    for(it = m_shortcuts->begin();it != m_shortcuts->end();it++) {
-        kg->item(i,1)->setText(mw->getDefaultShortcut(m_shortcuts->key(kg->item(i,0)->text())));
-        i++;
-    }
-}
+    const int rows = m_keyGrabber->rowCount();
 
-void frmPreferences::loadShortcuts(QSettings* s)
-{
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
-    m_shortcuts = new QMap<QString,QString>;
-
-    foreach(QAction* a, mw->getActions())
-    {
-        if(a->objectName().isEmpty()) continue;
-        m_shortcuts->insert(a->objectName(), a->iconText());
-    }
-
-    kg = new KeyGrabber();
-
-    //Build the interface
-    QWidget *container = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout();
-    QPushButton *resetDefaults = new QPushButton("Restore Defaults");
-    QObject::connect(resetDefaults,SIGNAL(clicked()),this,SLOT(resetShortcuts()));
-    resetDefaults->setFixedWidth(128);
-    layout->addWidget(kg);
-    layout->addWidget(resetDefaults);
-    container->setLayout(layout);
-    ui->stackedWidget->insertWidget(4,container);
-
-    QMapIterator<QString,QString> it(*m_shortcuts);
-    s->beginGroup("Shortcuts");
-    while(it.hasNext()) {
-        it.next();
-        kg->insertRow(0);
-        kg->setItem(0,0,new QTableWidgetItem(it.value()));
-        kg->setItem(0,1,new QTableWidgetItem(s->value(it.key()).toString()));
-    }
-    s->endGroup();
-
-    kg->sortItems(0);
-    kg->selectRow(0);
-    kg->checkConflicts();
-}
-
-void frmPreferences::saveShortcuts(QSettings* s)
-{
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
-    int rows = kg->rowCount();
-    s->beginGroup("Shortcuts");
     for(int i=0;i<rows;i++) {
-        s->setValue(m_shortcuts->key(kg->item(i,0)->text()),kg->item(i,1)->text());
+        const QString& actionName = m_keyGrabber->item(i,0)->data(Qt::UserRole).toString();
+        const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(actionName);
+        m_keyGrabber->item(i,1)->setText(seq.toString());
     }
-    s->endGroup();
-    mw->updateShortcuts();
+
+    m_keyGrabber->checkConflicts();
 }
 
 void frmPreferences::updatePreviewEditorFont()
@@ -145,18 +92,18 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
 void frmPreferences::on_buttonBox_accepted()
 {
-    QSettings s;
-    s.setValue("checkQtVersionAtStartup", ui->chkCheckQtVersionAtStartup->isChecked());
-    s.setValue("warnForDifferentIndentation", ui->chkWarnForDifferentIndentation->isChecked());
 
-    saveLanguages(&s);
-    saveAppearanceTab(&s);
-    saveTranslation(&s);
-    saveShortcuts(&s);
-    s.setValue("Search/SearchAsIType", ui->chkSearch_SearchAsIType->isChecked());
+    m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
+    m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
 
-    s.setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
-    s.setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
+    saveLanguages();
+    saveAppearanceTab();
+    saveTranslation();
+    saveShortcuts();
+
+    m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
+    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
+    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
     const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
@@ -189,50 +136,56 @@ void frmPreferences::on_buttonBox_accepted()
     accept();
 }
 
-void frmPreferences::loadLanguages(QSettings *s)
+void frmPreferences::loadLanguages()
 {
-    m_commonLanguageProperties = new QVariantMap();
-    m_commonLanguageProperties->insert("tabSize", 4);
-    m_commonLanguageProperties->insert("indentWithSpaces", false);
+    QList<QMap<QString, QString>> langs = m_topEditorContainer->currentTabWidget()->currentEditor()->languages();
 
+    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
-    m_langs = m_topEditorContainer->currentTabWidget()->currentEditor()->languages();
+    //Add "Default" language into the list.
+    QMap<QString,QString> defaultMap;
+    defaultMap.insert("id", "default");
+    defaultMap.insert("name", "Default");
+    langs.push_front(defaultMap);
 
-    std::sort(m_langs.begin(), m_langs.end(), Editor::LanguageGreater());
+    //Add all languages to the comboBox and write their current settings to a temp list
+    for (int i = 0; i < langs.length(); i++) {
+        const QMap<QString, QString> &map = langs.at(i);
+        const QString langId = map.value("id", "");
 
-    ui->cmbLanguages->addItem("Default", QVariant(QString()));
-    QString keyPrefix = "Languages/";
-
-    for (QVariantMap::iterator prop = m_commonLanguageProperties->begin(); prop != m_commonLanguageProperties->end(); ++prop) {
-        m_langsTempSettings->insert(keyPrefix + prop.key(), s->value(keyPrefix + prop.key(), prop.value()));
-    }
-
-    for (int i = 0; i < m_langs.length(); i++) {
-        const QMap<QString, QString> &map = m_langs.at(i);
-
-        QString langId = map.value("id", "");
         ui->cmbLanguages->addItem(map.value("name", "?"), langId);
 
-        QString keyPrefix = "Languages/" + langId + "/";
+        LanguageSettings lang = {
+            langId,
+            m_settings.Languages.getTabSize(langId),
+            m_settings.Languages.getIndentWithSpaces(langId),
+            m_settings.Languages.getUseDefaultSettings(langId)
+        };
 
-        m_langsTempSettings->insert(keyPrefix + "useDefaultSettings", s->value(keyPrefix + "useDefaultSettings", true));
-
-        for (QVariantMap::iterator prop = m_commonLanguageProperties->begin(); prop != m_commonLanguageProperties->end(); ++prop) {
-            m_langsTempSettings->insert(keyPrefix + prop.key(), s->value(keyPrefix + prop.key(), prop.value()));
-        }
+        m_tempLangSettings.push_back(lang);
     }
 
     ui->cmbLanguages->setCurrentIndex(0);
     ui->cmbLanguages->currentIndexChanged(0);
 }
 
-void frmPreferences::loadAppearanceTab(QSettings *s)
+void frmPreferences::saveLanguages()
+{
+    //Write all temporary language settings back into the settings file.
+    for (auto&& lang : m_tempLangSettings) {
+        m_settings.Languages.setTabSize(lang.langId, lang.tabSize);
+        m_settings.Languages.setIndentWithSpaces(lang.langId, lang.indentWithSpaces);
+        m_settings.Languages.setUseDefaultSettings(lang.langId, lang.useDefaultSettings);
+    }
+}
+
+void frmPreferences::loadAppearanceTab()
 {
     QList<Editor::Theme> themes = m_topEditorContainer->currentTabWidget()->currentEditor()->themes();
 
     ui->cmbColorScheme->addItem("Default", "default");
 
-    QString themeSetting = s->value("Appearance/ColorScheme", "").toString();
+    QString themeSetting = m_settings.Appearance.getColorScheme();
 
     for (Editor::Theme theme : themes) {
         ui->cmbColorScheme->addItem(theme.name, theme.name); // First is display text, second is item data.
@@ -245,28 +198,38 @@ void frmPreferences::loadAppearanceTab(QSettings *s)
     ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
 
     // Avoid glitch where scrollbars are appearing for a moment
-    QSize renderSize = ui->colorSchemePreviewFrame->size();
+    const QSize renderSize = ui->colorSchemePreviewFrame->size();
     m_previewEditor->forceRender(renderSize);
 
-
-    QString fontFamily = s->value("Appearance/OverrideFontFamily").toString();
+    const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {
         ui->chkOverrideFontFamily->setChecked(true);
         ui->cmbFontFamilies->setCurrentFont(fontFamily);
     }
 
-    int fontSize = s->value("Appearance/OverrideFontSize").toInt();
+    const int fontSize = m_settings.Appearance.getOverrideFontSize();
     if (fontSize != 0) {
         ui->chkOverrideFontSize->setChecked(true);
         ui->spnFontSize->setValue(fontSize);
     }
 }
 
-void frmPreferences::loadTranslations(QSettings *s)
+void frmPreferences::saveAppearanceTab()
+{
+    m_settings.Appearance.setColorScheme(ui->cmbColorScheme->currentData().toString());
+
+    QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+
+    m_settings.Appearance.setOverrideFontFamily(fontFamily);
+    m_settings.Appearance.setOverrideFontSize(fontSize);
+}
+
+void frmPreferences::loadTranslations()
 {
     QList<QString> translations = Notepadqq::translations();
 
-    QString localizationSetting = s->value("Localization", "en").toString();
+    QString localizationSetting = m_settings.General.getLocalization();
 
     for (QString langCode : translations) {
         QString langName = QLocale::languageToString(QLocale(langCode).language());
@@ -289,42 +252,63 @@ void frmPreferences::loadTranslations(QSettings *s)
                     QLocale::languageToString(QLocale(localizationSetting).language()), Qt::DisplayRole));
 }
 
-void frmPreferences::saveLanguages(QSettings *s)
-{
-    QString keyPrefix = "Languages/";
-
-    for (QVariantMap::iterator prop = m_commonLanguageProperties->begin(); prop != m_commonLanguageProperties->end(); ++prop) {
-        s->setValue(keyPrefix + prop.key(), m_langsTempSettings->value(keyPrefix + prop.key()));
-    }
-
-    for (int i = 0; i < m_langs.length(); i++) {
-        const QMap<QString, QString> &map = m_langs.at(i);
-
-        QString langId = map.value("id", "");
-        QString keyPrefix = "Languages/" + langId + "/";
-
-        s->setValue(keyPrefix + "useDefaultSettings", m_langsTempSettings->value(keyPrefix + "useDefaultSettings"));
-
-        for (QVariantMap::iterator prop = m_commonLanguageProperties->begin(); prop != m_commonLanguageProperties->end(); ++prop) {
-            s->setValue(keyPrefix + prop.key(), m_langsTempSettings->value(keyPrefix + prop.key()));
-        }
-    }
-}
-
-void frmPreferences::saveAppearanceTab(QSettings *s)
-{
-    s->setValue("Appearance/ColorScheme", ui->cmbColorScheme->currentData().toString());
-
-    QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
-    int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
-    s->setValue("Appearance/OverrideFontFamily", fontFamily);
-    s->setValue("Appearance/OverrideFontSize", fontSize);
-}
-
-void frmPreferences::saveTranslation(QSettings *s)
+void frmPreferences::saveTranslation()
 {
     QMap<QString, QVariant> selected = ui->localizationComboBox->currentData().toMap();
-    s->setValue("Localization", selected.value("langCode").toString());
+    m_settings.General.setLocalization(selected.value("langCode").toString());
+}
+
+void frmPreferences::loadShortcuts()
+{
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+
+    auto&& allActions = mw->getActions();
+
+    //getActions() also returns actions like separators or menu entries that don't have any
+    //shortcuts. We can remove them based on their objectName and iconText.
+    for(auto&& action : allActions) {
+        if(!action->objectName().isEmpty() && !action->iconText().isEmpty())
+            m_actions[action->objectName()] = action;
+    }
+
+    m_keyGrabber = new KeyGrabber();
+
+
+    //Build the interface
+    QWidget *container = ui->pageShortcuts;
+    QVBoxLayout *layout = new QVBoxLayout();
+    QPushButton *resetDefaults = new QPushButton("Restore Defaults");
+    QObject::connect(resetDefaults, &QPushButton::clicked, this, &frmPreferences::resetShortcuts);
+    resetDefaults->setFixedWidth(128);
+    layout->addWidget(m_keyGrabber);
+    layout->addWidget(resetDefaults);
+    container->setLayout(layout);
+
+    //Add all shortcuts to the table
+    for(auto&& action : m_actions) {
+        m_keyGrabber->insertRow(0);
+        m_keyGrabber->setItem(0,0,new QTableWidgetItem(action->iconText()));
+        m_keyGrabber->setItem(0,1,new QTableWidgetItem(action->shortcut().toString()));
+        m_keyGrabber->item(0,0)->setData(Qt::UserRole, action->objectName() );
+    }
+
+    m_keyGrabber->sortItems(0);
+    m_keyGrabber->checkConflicts();
+}
+
+void frmPreferences::saveShortcuts()
+{
+    const int rows = m_keyGrabber->rowCount();
+
+    for(int i=0;i<rows;i++) {
+        const QString& actionName = m_keyGrabber->item(i,0)->data(Qt::UserRole).toString();
+        QAction* action = m_actions[actionName];
+        QKeySequence seq = m_keyGrabber->item(i,1)->text();
+
+        //Save new shortcut in settings as well as apply it to the QAction* object.
+        m_settings.Shortcuts.setShortcut(action->objectName(), seq);
+        action->setShortcut(seq);
+    }
 }
 
 void frmPreferences::on_buttonBox_rejected()
@@ -334,67 +318,40 @@ void frmPreferences::on_buttonBox_rejected()
 
 void frmPreferences::on_cmbLanguages_currentIndexChanged(int index)
 {
-    QVariant data = ui->cmbLanguages->itemData(index);
+    if(m_tempLangSettings.size() <= index)
+        return;
 
-    QString keyPrefix;
+    const LanguageSettings& ls = m_tempLangSettings[index];
 
-    if (data.isNull()) {
-        // General
-
+    if (ls.langId == "default") {
         // Hide "use default settings" checkbox, and enable the other stuff
         ui->chkLanguages_useDefaultSettings->setVisible(false);
         ui->frameLanguages->setEnabled(true);
-
-        keyPrefix = "Languages/";
     } else {
-        QString langId = data.toString();
-        keyPrefix = "Languages/" + langId + "/";
-
         // Show "use default settings" checkbox
         ui->chkLanguages_useDefaultSettings->setVisible(true);
-
-        // Load "use default settings" value
-        bool usingDefault = m_langsTempSettings->value(keyPrefix + "useDefaultSettings").toBool();
-        ui->chkLanguages_useDefaultSettings->setChecked(usingDefault);
-        ui->chkLanguages_useDefaultSettings->toggled(usingDefault);
+        ui->chkLanguages_useDefaultSettings->setChecked(ls.useDefaultSettings);
     }
 
-    ui->txtLanguages_TabSize->setValue(m_langsTempSettings->value(keyPrefix + "tabSize").toInt());
-    ui->chkLanguages_IndentWithSpaces->setChecked(m_langsTempSettings->value(keyPrefix + "indentWithSpaces").toBool());
+    ui->txtLanguages_TabSize->setValue(ls.tabSize);
+    ui->chkLanguages_IndentWithSpaces->setChecked(ls.indentWithSpaces);
 }
 
 void frmPreferences::on_chkLanguages_useDefaultSettings_toggled(bool checked)
 {
     ui->frameLanguages->setEnabled(!checked);
 
-    QVariant langId = ui->cmbLanguages->currentData();
-    if (langId.isNull() == false) {
-        QString keyPrefix = "Languages/" + langId.toString() + "/";
-        m_langsTempSettings->insert(keyPrefix + "useDefaultSettings", checked);
-    }
-}
-
-void frmPreferences::setCurrentLanguageTempValue(QString key, QVariant value)
-{
-    QVariant langId = ui->cmbLanguages->currentData();
-
-    QString keyPrefix;
-    if (langId.isNull())
-        keyPrefix = "Languages/";
-    else
-        keyPrefix = "Languages/" + langId.toString() + "/";
-
-    m_langsTempSettings->insert(keyPrefix + key, value);
+    m_tempLangSettings[ui->cmbLanguages->currentIndex()].useDefaultSettings = checked;
 }
 
 void frmPreferences::on_txtLanguages_TabSize_valueChanged(int value)
 {
-    setCurrentLanguageTempValue("tabSize", value);
+    m_tempLangSettings[ui->cmbLanguages->currentIndex()].tabSize = value;
 }
 
 void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
 {
-    setCurrentLanguageTempValue("indentWithSpaces", checked);
+    m_tempLangSettings[ui->cmbLanguages->currentIndex()].indentWithSpaces = checked;
 }
 
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)

@@ -4,9 +4,9 @@
 #include <QDialog>
 #include <QTreeWidgetItem>
 #include <QTableWidgetItem>
-#include "QSettings"
 #include "include/topeditorcontainer.h"
 #include "include/keygrabber.h"
+#include "include/nqqsettings.h"
 
 namespace Ui {
 class frmPreferences;
@@ -41,26 +41,34 @@ private slots:
     void on_cmbFontFamilies_currentFontChanged(const QFont &f);
 
 private:
+
+    struct LanguageSettings {
+        QString langId;
+        int tabSize;
+        bool indentWithSpaces;
+        bool useDefaultSettings;
+    };
+    QList<LanguageSettings> m_tempLangSettings;
+
+    KeyGrabber *m_keyGrabber;
+    QMap<QString,QAction*> m_actions;
+
+    NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
-    QMap<QString, QVariant> *m_langsTempSettings;
-    QMap<QString,QString> *m_shortcuts;
-    QList<QMap<QString, QString>> m_langs;
-    QVariantMap *m_commonLanguageProperties;
     Editor *m_previewEditor;
-    KeyGrabber *kg;
 
-    void loadLanguages(QSettings *s);
-    void saveLanguages(QSettings *s);
-    void setCurrentLanguageTempValue(QString key, QVariant value);
-    void loadAppearanceTab(QSettings *s);
-    void saveAppearanceTab(QSettings *s);
+    void loadLanguages();
+    void saveLanguages();
+    void loadAppearanceTab();
+    void saveAppearanceTab();
+    void loadTranslations();
+    void saveTranslation();
+    void loadShortcuts();
+    void saveShortcuts();
+
     bool extensionBrowseRuntime(QLineEdit *lineEdit);
     void checkExecutableExists(QLineEdit *path);
-    void loadTranslations(QSettings *s);
-    void saveTranslation(QSettings *s);
-    void loadShortcuts(QSettings *s);
-    void saveShortcuts(QSettings *s);
     void updatePreviewEditorFont();
 };
 
