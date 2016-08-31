@@ -142,8 +142,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         match = m_regex.match(line);
         column = match.capturedStart();
         while (column != -1 && match.hasMatch()) {
-            //Limit line length(Avoids OOM when reading binary files)
-            if (lineLength > 2048) line = line.left(2048);
+
             structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
             match = m_regex.match(line, column + match.capturedLength());
             column = match.capturedStart();
@@ -228,13 +227,16 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
     return r;
 }
 
-FileSearchResult::Result SearchInFilesWorker::buildResult(int line, int column, int absoluteColumn, const QString &lineContent, int matchLen)
+FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)
 {
     FileSearchResult::Result res;
-
-    res.previewBeforeMatch = lineContent.left(column);
+    if(column > 100) {
+        res.previewBeforeMatch = lineContent.mid(column-100,100);
+    }else {
+        res.previewBeforeMatch = lineContent.mid(0,column);
+    }
     res.match = lineContent.mid(column,matchLen);
-    res.previewAfterMatch = lineContent.mid(column + matchLen);
+    res.previewAfterMatch = lineContent.mid(column + matchLen,matchLen + 100);
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;

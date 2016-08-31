@@ -73,7 +73,11 @@ private:
     * @param `matchLen`
     * @return `FileSearchResult::Result` object to be used for final search results.
     */
-    FileSearchResult::Result buildResult(int line, int column, int absoluteColumn, const QString &lineContent, int matchLen);
+    FileSearchResult::Result buildResult(const int &line, 
+            const int &column, 
+            const int &absoluteColumn, 
+            const QString &lineContent, 
+            const int &matchLen);
    /**
     * @brief Perform a search using single line regular expression matching
     * @param `fileName`
