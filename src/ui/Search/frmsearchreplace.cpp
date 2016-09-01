@@ -755,7 +755,7 @@ void frmSearchReplace::addToReplaceHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getReplaceHistory();
-    addToHistory(history, string, ui->cmbSearch);
+    addToHistory(history, string, ui->cmbReplace);
     s.Search.setReplaceHistory(history);
 }
 
@@ -764,7 +764,7 @@ void frmSearchReplace::addToFileHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getFileHistory();
-    addToHistory(history, string, ui->cmbSearch);
+    addToHistory(history, string, ui->cmbLookIn);
     s.Search.setFileHistory(history);
 }
 
@@ -773,6 +773,6 @@ void frmSearchReplace::addToFilterHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getFilterHistory();
-    addToHistory(history, string, ui->cmbSearch);
+    addToHistory(history, string, ui->cmbFilter);
     s.Search.setFilterHistory(history);
 }
