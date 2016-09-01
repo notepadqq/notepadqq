@@ -237,7 +237,7 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
         res.previewBeforeMatch = lineContent.mid(0,column);
     }
     res.match = lineContent.mid(column,matchLen);
-    res.previewAfterMatch = lineContent.mid(column + matchLen,matchLen + 100);
+    res.previewAfterMatch = lineContent.mid(column + matchLen,matchLen + 50);
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;
