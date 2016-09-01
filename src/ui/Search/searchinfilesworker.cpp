@@ -21,7 +21,6 @@ SearchInFilesWorker::~SearchInFilesWorker()
 
 void SearchInFilesWorker::run()
 {
-    QString rawSearch = m_string;
     bool multiLine = false; 
     
     QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
@@ -29,7 +28,7 @@ void SearchInFilesWorker::run()
         if (m_searchOptions.MatchCase == false) {
             options |= QRegularExpression::CaseInsensitiveOption;
         }
-        rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
+        QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
         m_regex.optimize();
@@ -49,10 +48,7 @@ void SearchInFilesWorker::run()
     QDirIterator it(m_path, m_filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
 
     while (it.hasNext()) {
-        m_stopMutex.lock();
-        bool stop = m_stop;
-        m_stopMutex.unlock();
-        if (stop) {
+        if (m_stop) {
             emit finished(true);
             return;
         }
@@ -87,18 +83,13 @@ void SearchInFilesWorker::run()
         FileSearchResult::FileResult structFileResult;
 
         // Run the search
-        if (multiLine) {
-            structFileResult = searchMultiLineRegExp(fileName,decodedText.text);
-        }else {
-            structFileResult = searchSingleLineRegExp(fileName,decodedText.text);
-        }
-
+        if (multiLine) structFileResult = searchMultiLineRegExp(fileName,decodedText.text);
+        else structFileResult = searchSingleLineRegExp(fileName,&decodedText.text);
+        
         f.close();
 
         if (!structFileResult.results.isEmpty()) {
             structSearchResult.fileResults.append(structFileResult);
-
-            //totalFiles++;
         }
     }
 
@@ -116,19 +107,19 @@ void SearchInFilesWorker::stop()
     m_stopMutex.unlock();
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const QString &fileName, QString content)
+FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const QString &fileName, QString *content)
 {
     FileSearchResult::FileResult structFileResult;
     structFileResult.fileName = fileName;
 
-    QTextStream stream (&content);
+    QTextStream stream (content);
     QString line;
     int i = 0;
-    int column; 
+    int column;
     int streamPosition = 0;
     int lineLength;
 
-    //Regex for plain text is slow.  Different method for plaintext searching.
+    //Regex for plain text is slow, experimental plain text search for speed improvements.
     if(m_searchMode == SearchHelpers::SearchMode::PlainText) {
         Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
         int resultLength = m_string.length();
@@ -140,14 +131,15 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
             while(column != -1) {
                 if(m_stop) break;
                 structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
-                column = line.indexOf(m_string, column+resultLength, caseSensitive);
+                column = line.indexOf(m_string, column + resultLength, caseSensitive);
                 m_matchCount++;
                 if (m_matchCount%50) QThread::usleep(1);
             }
             i++;
-            if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
+            if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
             else streamPosition += lineLength + 1;
         }
+
     }else {
         QRegularExpressionMatch match;
         while (!(line=stream.readLine()).isNull()) {
@@ -165,7 +157,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
             }
             i++;
             //Check line ending per line to be safe.
-            if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
+            if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
             else streamPosition += lineLength + 1; 
         }
     }
