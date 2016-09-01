@@ -41,9 +41,11 @@ int main(int argc, char *argv[])
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
-    forceDefaultSettings();
 
+    NqqSettings::ensureBackwardsCompatibility();
     NqqSettings& settings = NqqSettings::getInstance();
+
+    forceDefaultSettings();
 
 
     QString langCode = settings.General.getLocalization();

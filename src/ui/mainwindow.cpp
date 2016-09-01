@@ -136,7 +136,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // an EditorTabWidget within m_topEditorContainer.
 
     // Set zoom from settings
-    qreal zoom = m_settings.General.getZoom();
+    const qreal zoom = m_settings.General.getZoom();
     for (int i = 0; i < m_topEditorContainer->count(); i++) {
         m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
     }
@@ -158,12 +158,18 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
-    // DEBUG: Add a second tabWidget
-    //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
-    defaultShortcuts();
-    updateShortcuts();
+    //Registers all actions so that NqqSettings knows their default and current shortcuts.
+    const QList<QAction*> allActions = getActions();
+    m_settings.Shortcuts.initShortcuts( allActions );
 
-    m_settings.Shortcuts.initShortcuts( getActions() );
+    //At this point, all actions still have their default shortcuts so we set all actions'
+    //shortcuts from settings.
+    for(QAction* a : allActions){
+        if(!a->objectName().isEmpty()){
+            QKeySequence shortcut = m_settings.Shortcuts.getShortcut(a->objectName());
+            a->setShortcut( shortcut );
+        }
+    }
 
     emit Notepadqq::getInstance().newWindow(this);
 }
@@ -349,77 +355,21 @@ void MainWindow::createStatusBar()
     scrollArea->setFixedHeight(frame->height());
 }
 
-//Store the default shortcuts on startup
-void MainWindow::defaultShortcuts()
-{
-    /*m_defaultShortcuts = new QMap<QString,QString>();
-    foreach(QAction* a, getActions()) {
-        if(!a->objectName().isEmpty()) m_defaultShortcuts->insert(a->objectName(),a->shortcut().toString());
-
-    }*/
-
-    //m_settings.General.initShortcuts( getActions() );
-
-}
-
-/*QString MainWindow::getDefaultShortcut(QString actionName)
-{
-    return m_defaultShortcuts->value(actionName);
-}*/
-
-void MainWindow::updateShortcuts()
-{
-    /*QSettings* settings = &m_settings.General.m_settings;
-
-    QList<QMenu*> lst;
-    QString action;
-    QString shortcut;
-    lst = ui->menuBar->findChildren<QMenu*>();*/
-
-    /*for(auto&& it : m_settings.General.getAllShortcuts()){
-        action = it.action->objectName();
-
-        shortcut = it.action->shortcut().toString()
-    }*/
-
-
-
-
-
-
-    //settings->beginGroup("Shortcuts");
-    /*foreach (QAction* a, getActions())
-    {
-        action = a->objectName();
-        if(settings->contains(action)){
-            shortcut = settings->value(action).toString();
-            a->setShortcut(shortcut);
-
-            //Initialize settings built into the editor by default
-        }else if(!a->shortcut().isEmpty()) {
-            settings->setValue(action,a->shortcut().toString());
-        }
-    }*/
-    //settings->endGroup();
-}
-
 //Return a list of all available action items in the menu
 QList<QAction*> MainWindow::getActions()
 {
-    QList<QMenu*> lst;
-    QList<QAction*> lactions;
-    QString action;
-    lst = ui->menuBar->findChildren<QMenu*>();
+    const QList<const QMenu*> list = ui->menuBar->findChildren<const QMenu*>();
+    QList<QAction*> allActions;
 
-    foreach (QMenu* m, lst)
-    {
-        if(m->title().compare("&Language")==0) continue;
-        foreach (QAction* a, m->actions())
-        {
-            lactions.append(a);
+    for(auto&& menu : list) {
+        if(menu->title() == "&Language") continue;
+
+        for(auto&& action : menu->actions()) {
+            allActions.append(action);
         }
     }
-    return lactions;
+
+    return allActions;
 }
 
 void MainWindow::setupLanguagesMenu()

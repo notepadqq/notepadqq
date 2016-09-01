@@ -50,12 +50,13 @@ private:
     };
     QList<LanguageSettings> m_tempLangSettings;
 
+    KeyGrabber *m_keyGrabber;
+    QMap<QString,QAction*> m_actions;
+
     NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
-    QMap<QString,QString> m_shortcuts;
     Editor *m_previewEditor;
-    KeyGrabber *m_keyGrabber;
 
     void loadLanguages();
     void saveLanguages();

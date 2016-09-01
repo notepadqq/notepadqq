@@ -62,21 +62,14 @@ frmPreferences::~frmPreferences()
 
 void frmPreferences::resetShortcuts()
 {
-    m_settings.Shortcuts.resetAllShortcuts();
+    const int rows = m_keyGrabber->rowCount();
 
-    QMapIterator<QString,QString> it(m_shortcuts);
-    int c=0;
-    while(it.hasNext()) {
-        it.next();
-        m_keyGrabber->setItem(c,0,new QTableWidgetItem(it.value()));
-        m_keyGrabber->setItem(c,1,new QTableWidgetItem(m_settings.Shortcuts.getShortcut(it.key()).toString()));
-        m_keyGrabber->item(c,0)->setData(Qt::UserRole, it.key() );
-
-        ++c;
-
+    for(int i=0;i<rows;i++) {
+        const QString& actionName = m_keyGrabber->item(i,0)->data(Qt::UserRole).toString();
+        const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(actionName);
+        m_keyGrabber->item(i,1)->setText(seq.toString());
     }
-    m_keyGrabber->sortItems(0);
-    m_keyGrabber->selectRow(0);
+
     m_keyGrabber->checkConflicts();
 }
 
@@ -267,14 +260,22 @@ void frmPreferences::saveTranslation()
 
 void frmPreferences::loadShortcuts()
 {
-    for(const auto& it : m_settings.Shortcuts.getAllShortcuts()){
-        m_shortcuts.insert(it.action->objectName(), it.action->iconText());
+    MainWindow* mw = qobject_cast<MainWindow*>(parent());
+
+    auto&& allActions = mw->getActions();
+
+    //getActions() also returns actions like separators or menu entries that don't have any
+    //shortcuts. We can remove them based on their objectName and iconText.
+    for(auto&& action : allActions) {
+        if(!action->objectName().isEmpty() && !action->iconText().isEmpty())
+            m_actions[action->objectName()] = action;
     }
 
     m_keyGrabber = new KeyGrabber();
 
+
     //Build the interface
-    QWidget *container = new QWidget();
+    QWidget *container = ui->page_5;
     QVBoxLayout *layout = new QVBoxLayout();
     QPushButton *resetDefaults = new QPushButton("Restore Defaults");
     QObject::connect(resetDefaults,SIGNAL(clicked()),this,SLOT(resetShortcuts()));
@@ -282,32 +283,32 @@ void frmPreferences::loadShortcuts()
     layout->addWidget(m_keyGrabber);
     layout->addWidget(resetDefaults);
     container->setLayout(layout);
-    ui->stackedWidget->insertWidget(4,container);
 
-    QMapIterator<QString,QString> it(m_shortcuts);
-    while(it.hasNext()) {
-        it.next();
+    //Add all shortcuts to the table
+    for(auto&& action : m_actions) {
         m_keyGrabber->insertRow(0);
-        m_keyGrabber->setItem(0,0,new QTableWidgetItem(it.value()));
-        m_keyGrabber->setItem(0,1,new QTableWidgetItem(m_settings.Shortcuts.getShortcut(it.key()).toString()));
-        m_keyGrabber->item(0,0)->setData(Qt::UserRole, it.key() );
-
+        m_keyGrabber->setItem(0,0,new QTableWidgetItem(action->iconText()));
+        m_keyGrabber->setItem(0,1,new QTableWidgetItem(action->shortcut().toString()));
+        m_keyGrabber->item(0,0)->setData(Qt::UserRole, action->objectName() );
     }
 
     m_keyGrabber->sortItems(0);
-    m_keyGrabber->selectRow(0);
     m_keyGrabber->checkConflicts();
 }
 
 void frmPreferences::saveShortcuts()
 {
-    MainWindow* mw = qobject_cast<MainWindow*>(parent());
-    int rows = m_keyGrabber->rowCount();
+    const int rows = m_keyGrabber->rowCount();
 
     for(int i=0;i<rows;i++) {
-        m_settings.Shortcuts.setShortcut(m_keyGrabber->item(i,0)->data(Qt::UserRole).toString(), QKeySequence::fromString(m_keyGrabber->item(i,1)->text()));
+        const QString& actionName = m_keyGrabber->item(i,0)->data(Qt::UserRole).toString();
+        QAction* action = m_actions[actionName];
+        QKeySequence seq = m_keyGrabber->item(i,1)->text();
+
+        //Save new shortcut in settings as well as apply it to the QAction* object.
+        m_settings.Shortcuts.setShortcut(action->objectName(), seq);
+        action->setShortcut(seq);
     }
-    mw->updateShortcuts();
 }
 
 void frmPreferences::on_buttonBox_rejected()

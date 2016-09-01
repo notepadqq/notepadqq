@@ -22,7 +22,14 @@
  * together. Because of a quick of QSettings, BEGIN_GENERAL_CATEGORY has to be used if the
  * keys are supposed to be written to the [General] section of the .ini file.
  *
+ * The BEGIN_CATEGORY macro automagically generates two member variables:
+ * [const QString _m_category] is the name of the category given to the macro.
+ * [QSettings _m_settings] is the QSettings objects from NqqSettings.
+ * It is a good idea to prefix all private members with _ when creating custom categories.
+ * This way they will be moved to the very bottom of the auto-complete list.
+ *
  * */
+
 
 #define NQQ_SETTING(Name, Type, Default) \
     Type get##Name() const { return _m_settings.value(_m_category+#Name,Default).value<Type>(); } \
@@ -74,6 +81,8 @@ public:
 
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
+
+        NQQ_SETTING(BackwardsCompatible,            bool,       false)
     END_CATEGORY(General)
 
     BEGIN_CATEGORY(Appearance)
@@ -88,7 +97,6 @@ public:
         NQQ_SETTING(ReplaceHistory, QStringList,    QStringList())
         NQQ_SETTING(FileHistory,    QStringList,    QStringList())
         NQQ_SETTING(FilterHistory,  QStringList,    QStringList())
-
     END_CATEGORY(Search)
 
     BEGIN_CATEGORY(Extensions)
@@ -108,97 +116,72 @@ public:
     END_CATEGORY(MainWindow)
 
 
-
     //A few of the more involved settings can't be handled like above.
     BEGIN_CATEGORY(Shortcuts)
 
-    struct ActionItem {
-        QAction* action = nullptr;
-        QKeySequence defaultSequence;
+        /**
+         * @brief Since default shortcuts aren't stored in the settings, we have to set them manually.
+         * @param actions List of actions that have or could have shortcuts.
+         */
+        void initShortcuts(const QList<QAction*>& actions){
+            for(QAction* a : actions){
+                if(a->objectName().isEmpty())
+                    return;
 
-        ActionItem(QAction* a, QKeySequence ks)
-            : action(a), defaultSequence(ks) {}
-
-        ActionItem(){}
-    };
-
-    //Shortcuts:
-    QMap<QString, ActionItem> m_shortcuts;
-    void initShortcuts(const QList<QAction*>& actions){
-        for(QAction* a : actions){
-            if(!a->objectName().isEmpty()){
-                QString shortcut = _m_settings.value("Shortcuts/" + a->objectName()).toString();
-
-                if(shortcut != "") a->setShortcut( shortcut );
-
-                m_shortcuts.insert( a->objectName(), ActionItem{a, a->shortcut()} );
+                QKeySequence shortcut = _m_settings.value("Shortcuts/" + a->objectName()).toString();
+                _m_shortcuts.insert( a->objectName(), _ActionItem{a->shortcut(), shortcut} );
             }
         }
 
-        qDebug() << "shortcuts init'd: " << m_shortcuts.size();
-    }
+        QKeySequence getDefaultShortcut(const QString& actionName) const {
+            auto it = _m_shortcuts.find(actionName);
 
-    QKeySequence getShortcut(const QString& actionName) const {
-        auto it = m_shortcuts.find(actionName);
+            if(it == _m_shortcuts.end())
+                return QKeySequence();
 
-        if(it != m_shortcuts.end())
-            return it.value().action->shortcut();
-        else
-            return QKeySequence();
-    }
+            return it.value().defaultSequence;
+        }
 
-    QKeySequence getShortcut(const QAction* action) const {
-        return getShortcut(action->objectName());
-    }
+        QKeySequence getShortcut(const QString& actionName) const {
+            auto it = _m_shortcuts.find(actionName);
 
-    void setShortcut(const QString& actionName, const QKeySequence& sequence){
-        auto it = m_shortcuts.find(actionName);
+            if(it == _m_shortcuts.end())
+                return QKeySequence();
 
-        if(it == m_shortcuts.end())
-            return;
+            return it.value().sequence;
+        }
 
-        it.value().action->setShortcut(sequence);
-        _m_settings.setValue("Shortcuts/" + actionName, sequence.toString());
-    }
+        void setShortcut(const QString& actionName, const QKeySequence& sequence){
+            auto it = _m_shortcuts.find(actionName);
 
-    void setShortcut(const QAction* action, const QKeySequence& sequence){
-        setShortcut(action->objectName(), sequence);
-    }
+            if(it == _m_shortcuts.end())
+                return;
 
-    const ActionItem& getShortcutInfo(const QString& actionName){
-        return m_shortcuts[actionName];
-    }
+            it.value().sequence = sequence;
+            _m_settings.setValue("Shortcuts/" + actionName, sequence.toString());
+        }
 
-    const QMap<QString, ActionItem>& getAllShortcuts() const {
-        return m_shortcuts;
-    }
-
-    /*void resetShortcut(){
-        auto it = m_shortcuts.find(actionName);
-
-        if(it != m_shortcuts.end())
-            it.value().action->setShortcut(it.value().defaultSequence);
-    }*/
-
-    void resetAllShortcuts(){
-        for(auto&& it : m_shortcuts)
-            it.action->setShortcut( it.defaultSequence );
-    }
+    private:
+        struct _ActionItem {
+            QKeySequence defaultSequence;
+            QKeySequence sequence;
+        };
+        QMap<QString, _ActionItem> _m_shortcuts;
 
     END_CATEGORY(Shortcuts)
 
+    /**
+     * @brief Some keys have changed since v0.53. To maintain compatibility, this function
+     *        parses through the QSettings file and fixes these entries.
+     *        Should be called once at program initiation, before getInstance() is called.
+     */
+    static void ensureBackwardsCompatibility();
 
-
-
-    static NqqSettings& getInstance(){
-        static NqqSettings settings;
-        return settings;
-    }
+    static NqqSettings& getInstance();
 
 private:
     QSettings _m_settings;
 
-private:
     NqqSettings(){}
     NqqSettings& operator=(NqqSettings&) = delete;
 };
