@@ -133,7 +133,6 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
                 structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
                 column = line.indexOf(m_string, column + resultLength, caseSensitive);
                 m_matchCount++;
-                if (m_matchCount%50) QThread::usleep(1);
             }
             i++;
             if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
