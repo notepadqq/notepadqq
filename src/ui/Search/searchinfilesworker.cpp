@@ -4,7 +4,6 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QThread>
-#include <QIODevice>
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
@@ -22,20 +21,20 @@ SearchInFilesWorker::~SearchInFilesWorker()
 
 void SearchInFilesWorker::run()
 {
-    // Search string converted to a regex
-    QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
-
+    QString rawSearch = m_string;
+    bool multiLine = false; 
+    
     QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
-    if (m_searchOptions.MatchCase == false) {
-        options |= QRegularExpression::CaseInsensitiveOption;
+    if(m_searchMode != SearchHelpers::SearchMode::PlainText) {
+        if (m_searchOptions.MatchCase == false) {
+            options |= QRegularExpression::CaseInsensitiveOption;
+        }
+        rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
+        m_regex.setPattern(rawSearch);
+        m_regex.setPatternOptions(options);
+        m_regex.optimize();
+        multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
     }
-
-    m_regex.setPattern(rawSearch);
-    m_regex.setPatternOptions(options);
-
-    //Pre-optimize here since we are typically going to be traversing many files.
-    m_regex.optimize();
-
 
     // Search result structure
     FileSearchResult::SearchResult structSearchResult;
@@ -48,12 +47,6 @@ void SearchInFilesWorker::run()
 
     // Iterator used to find files in the specified directory
     QDirIterator it(m_path, m_filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
-
-    // Total number of matches in all the files
-    //int totalFileMatches = 0;
-    // Number of files that contain matches
-    //int totalFiles = 0;
-    bool multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
 
     while (it.hasNext()) {
         m_stopMutex.lock();
@@ -134,25 +127,47 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
     int column; 
     int streamPosition = 0;
     int lineLength;
-    QRegularExpressionMatch match;
 
-    while (!(line=stream.readLine()).isNull()) {
-        if (m_stop) break;
-        lineLength = line.length();
-        match = m_regex.match(line);
-        column = match.capturedStart();
-        while (column != -1 && match.hasMatch()) {
+    //Regex for plain text is slow.  Different method for plaintext searching.
+    if(m_searchMode == SearchHelpers::SearchMode::PlainText) {
+        Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
+        int resultLength = m_string.length();
 
-            structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
-            match = m_regex.match(line, column + match.capturedLength());
-            column = match.capturedStart();
-            m_matchCount++;
-            if (m_matchCount%50) QThread::usleep(1);
+        while(!(line=stream.readLine()).isNull()) {
+            if(m_stop) break;
+            lineLength = line.length();
+            column = line.indexOf(m_string, 0, caseSensitive);
+            while(column != -1) {
+                if(m_stop) break;
+                structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
+                column = line.indexOf(m_string, column+resultLength, caseSensitive);
+                m_matchCount++;
+                if (m_matchCount%50) QThread::usleep(1);
+            }
+            i++;
+            if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
+            else streamPosition += lineLength + 1;
         }
-        i++;
-        //Check line ending per line to be safe.
-        if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
-        else streamPosition += lineLength + 1; 
+    }else {
+        QRegularExpressionMatch match;
+        while (!(line=stream.readLine()).isNull()) {
+            if (m_stop) break;
+            lineLength = line.length();
+            match = m_regex.match(line);
+            column = match.capturedStart();
+            while (column != -1 && match.hasMatch()) {
+                if(m_stop) break;
+                structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
+                match = m_regex.match(line, column + match.capturedLength());
+                column = match.capturedStart();
+                m_matchCount++;
+                if (m_matchCount%50) QThread::usleep(1);
+            }
+            i++;
+            //Check line ending per line to be safe.
+            if (content.midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
+            else streamPosition += lineLength + 1; 
+        }
     }
     return structFileResult;
 
