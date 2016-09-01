@@ -38,9 +38,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this)),
+    m_settings(NqqSettings::getInstance()),
     m_fileSearchResultsWidget(new FileSearchResultsWidget()),
-    m_workingDirectory(workingDirectory),
-    m_settings(NqqSettings::getInstance())
+    m_workingDirectory(workingDirectory)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);

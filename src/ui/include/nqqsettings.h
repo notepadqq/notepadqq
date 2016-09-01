@@ -7,37 +7,53 @@
 #include <QAction>
 #include <QDebug>
 
-//Macros to make defining settings easier.
+
+
+/*
+ * The use of NQQ_SETTING creates several functions:
+ * getXXX(), setXXX(value), resetXXX(), hasXXX()
+ *
+ * hasXXX() returns whether the setting exists or not.
+ *
+ * NQQ_SETTING_WITH_KEY creates the same functions, but inserts an additional key param.
+ * This is useful when there are a variable number of settings.
+ *
+ * BEGIN_CATEGORY and END_CATEGORY create a nested class that is used to group settings
+ * together. Because of a quick of QSettings, BEGIN_GENERAL_CATEGORY has to be used if the
+ * keys are supposed to be written to the [General] section of the .ini file.
+ *
+ * */
+
 #define NQQ_SETTING(Name, Type, Default) \
-    Type get##Name() const { return m_settings.value(m_category+#Name,Default).value<Type>(); } \
-    void set##Name(const Type& newValue) { m_settings.setValue(m_category+#Name, newValue); } \
-    Type reset##Name() { m_settings.setValue(m_category+#Name,Default); return Default; } \
-    bool has##Name() const { return m_settings.contains(m_category+#Name); }
+    Type get##Name() const { return _m_settings.value(_m_category+#Name,Default).value<Type>(); } \
+    void set##Name(const Type& newValue) { _m_settings.setValue(_m_category+#Name, newValue); } \
+    Type reset##Name() { _m_settings.setValue(_m_category+#Name,Default); return Default; } \
+    bool has##Name() const { return _m_settings.contains(_m_category+#Name); }
 
 #define NQQ_SETTING_WITH_KEY(Name, Type, Default) \
-    Type get##Name(const QString& key) const { return m_settings.value(m_category+key+"/"#Name,Default).value<Type>(); } \
-    void set##Name(const QString& key, const Type& newValue) { m_settings.setValue(m_category+key+"/"#Name, newValue); } \
-    Type reset##Name(const QString& key) { m_settings.setValue(m_category+key+"/"#Name,Default); return Default; } \
-    bool has##Name(const QString& key) const { return m_settings.contains(m_category+key+"/"#Name); }
+    Type get##Name(const QString& key) const { return _m_settings.value(_m_category+key+"/"#Name,Default).value<Type>(); } \
+    void set##Name(const QString& key, const Type& newValue) { _m_settings.setValue(_m_category+key+"/"#Name, newValue); } \
+    Type reset##Name(const QString& key) { _m_settings.setValue(_m_category+key+"/"#Name,Default); return Default; } \
+    bool has##Name(const QString& key) const { return _m_settings.contains(_m_category+key+"/"#Name); }
 
 #define BEGIN_CATEGORY(Name) \
     class _Category##Name { \
     private: \
-    QSettings& m_settings; \
-    const QString m_category = #Name"/"; \
+    QSettings& _m_settings; \
+    const QString _m_category = #Name"/"; \
     public: \
-    _Category##Name(QSettings& settings) : m_settings(settings) {} \
+    _Category##Name(QSettings& settings) : _m_settings(settings) {} \
 
 #define BEGIN_GENERAL_CATEGORY(Name) \
     class _Category##Name { \
     private: \
-    QSettings& m_settings; \
-    const QString m_category; \
+    QSettings& _m_settings; \
+    const QString _m_category; \
     public: \
-    _Category##Name(QSettings& settings) : m_settings(settings) {} \
+    _Category##Name(QSettings& settings) : _m_settings(settings) {} \
 
 #define END_CATEGORY(Name) \
-    }; _Category##Name Name = _Category##Name(m_settings);
+    }; _Category##Name Name = _Category##Name(_m_settings);
 
 class NqqSettings {
 
@@ -67,28 +83,28 @@ public:
     END_CATEGORY(Appearance)
 
     BEGIN_CATEGORY(Search)
-        NQQ_SETTING(SearchAsIType, bool, true)
-        NQQ_SETTING(SearchHistory, QStringList, QStringList())
-        NQQ_SETTING(ReplaceHistory, QStringList, QStringList())
-        NQQ_SETTING(FileHistory, QStringList, QStringList())
-        NQQ_SETTING(FilterHistory, QStringList, QStringList())
+        NQQ_SETTING(SearchAsIType,  bool,           true)
+        NQQ_SETTING(SearchHistory,  QStringList,    QStringList())
+        NQQ_SETTING(ReplaceHistory, QStringList,    QStringList())
+        NQQ_SETTING(FileHistory,    QStringList,    QStringList())
+        NQQ_SETTING(FilterHistory,  QStringList,    QStringList())
 
     END_CATEGORY(Search)
 
     BEGIN_CATEGORY(Extensions)
-        NQQ_SETTING(RuntimeNodeJS, QString, QString())
-        NQQ_SETTING(RuntimeNpm, QString, QString())
+        NQQ_SETTING(RuntimeNodeJS,  QString, QString())
+        NQQ_SETTING(RuntimeNpm,     QString, QString())
     END_CATEGORY(Extensions)
 
     BEGIN_CATEGORY(Languages)
-        NQQ_SETTING_WITH_KEY(IndentWithSpaces, bool, false)
-        NQQ_SETTING_WITH_KEY(TabSize, int, 4)
-        NQQ_SETTING_WITH_KEY(UseDefaultSettings, bool, true)
+        NQQ_SETTING_WITH_KEY(IndentWithSpaces,      bool,   false)
+        NQQ_SETTING_WITH_KEY(TabSize,               int,    4)
+        NQQ_SETTING_WITH_KEY(UseDefaultSettings,    bool,   true)
     END_CATEGORY(Languages)
 
     BEGIN_CATEGORY(MainWindow)
-        NQQ_SETTING(Geometry, QByteArray, QByteArray())
-        NQQ_SETTING(WindowState, QByteArray, QByteArray())
+        NQQ_SETTING(Geometry,       QByteArray, QByteArray())
+        NQQ_SETTING(WindowState,    QByteArray, QByteArray())
     END_CATEGORY(MainWindow)
 
 
@@ -111,7 +127,7 @@ public:
     void initShortcuts(const QList<QAction*>& actions){
         for(QAction* a : actions){
             if(!a->objectName().isEmpty()){
-                QString shortcut = m_settings.value("Shortcuts/" + a->objectName()).toString();
+                QString shortcut = _m_settings.value("Shortcuts/" + a->objectName()).toString();
 
                 if(shortcut != "") a->setShortcut( shortcut );
 
@@ -142,7 +158,7 @@ public:
             return;
 
         it.value().action->setShortcut(sequence);
-        m_settings.setValue("Shortcuts/" + actionName, sequence.toString());
+        _m_settings.setValue("Shortcuts/" + actionName, sequence.toString());
     }
 
     void setShortcut(const QAction* action, const QKeySequence& sequence){
@@ -180,8 +196,7 @@ public:
     }
 
 private:
-    QSettings m_settings;
-    //QString m_category;
+    QSettings _m_settings;
 
 private:
     NqqSettings(){}

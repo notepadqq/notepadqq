@@ -53,21 +53,21 @@ private:
     NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
-    QMap<QString,QString> *m_shortcuts;
-    QList<QMap<QString, QString>> m_langs;
+    QMap<QString,QString> m_shortcuts;
     Editor *m_previewEditor;
-    KeyGrabber *kg;
+    KeyGrabber *m_keyGrabber;
 
     void loadLanguages();
     void saveLanguages();
     void loadAppearanceTab();
     void saveAppearanceTab();
-    bool extensionBrowseRuntime(QLineEdit *lineEdit);
-    void checkExecutableExists(QLineEdit *path);
     void loadTranslations();
     void saveTranslation();
     void loadShortcuts();
     void saveShortcuts();
+
+    bool extensionBrowseRuntime(QLineEdit *lineEdit);
+    void checkExecutableExists(QLineEdit *path);
     void updatePreviewEditorFont();
 };
 
