@@ -230,8 +230,9 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)
 {
     FileSearchResult::Result res;
-    if(column > 100) {
-        res.previewBeforeMatch = lineContent.mid(column-100,100);
+
+    if(column > 50) {
+        res.previewBeforeMatch = lineContent.mid(column-50,50);
     }else {
         res.previewBeforeMatch = lineContent.mid(0,column);
     }
