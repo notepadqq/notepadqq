@@ -150,7 +150,7 @@ void forceDefaultSettings()
     // Use tabs to indent makefile by default
     if(!s.Languages.hasUseDefaultSettings("makefile")) {
         s.Languages.setUseDefaultSettings("makefile", false);
-        s.Languages.setIndentWithSpaces("makefile",true);
+        s.Languages.setIndentWithSpaces("makefile", false);
     }
 
     // Use two spaces to indent ruby by default

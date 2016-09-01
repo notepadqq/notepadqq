@@ -1,5 +1,9 @@
 #include "include/nqqsettings.h"
 
+#ifdef QT_DEBUG
+#include <QDebug>
+#endif
+
 void NqqSettings::ensureBackwardsCompatibility()
 {
     QSettings s;
@@ -10,7 +14,9 @@ void NqqSettings::ensureBackwardsCompatibility()
     if(keys.contains("BackwardsCompatible"))
             return;
 
+ #ifdef QT_DEBUG
     qDebug() << "Old settings detected. Replacing keys.";
+#endif
 
     auto replace = [&](const QString& newKey, const QString& oldKey) {
         s.setValue(newKey, s.value(oldKey));

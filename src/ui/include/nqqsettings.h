@@ -5,9 +5,6 @@
 #include <QString>
 #include <QList>
 #include <QAction>
-#include <QDebug>
-
-
 
 /*
  * The use of NQQ_SETTING creates several functions:
@@ -29,7 +26,6 @@
  * This way they will be moved to the very bottom of the auto-complete list.
  *
  * */
-
 
 #define NQQ_SETTING(Name, Type, Default) \
     Type get##Name() const { return _m_settings.value(_m_category+#Name,Default).value<Type>(); } \
