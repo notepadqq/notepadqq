@@ -39,7 +39,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this)),
     m_fileSearchResultsWidget(new FileSearchResultsWidget()),
-    m_workingDirectory(workingDirectory)
+    m_workingDirectory(workingDirectory),
+    m_settings(NqqSettings::getInstance())
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -48,11 +49,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     MainWindow::m_instances.append(this);
 
     // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
-    m_settings = &NqqSettings::getInstance();
-
     setCentralWidget(m_topEditorContainer);
 
-    m_docEngine = new DocEngine(&m_settings->m_settings, m_topEditorContainer);
+    m_docEngine = new DocEngine(m_topEditorContainer);
     connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
     connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
@@ -137,7 +136,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // an EditorTabWidget within m_topEditorContainer.
 
     // Set zoom from settings
-    qreal zoom = m_settings->getZoom();
+    qreal zoom = m_settings.General.getZoom();
     for (int i = 0; i < m_topEditorContainer->count(); i++) {
         m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
     }
@@ -164,7 +163,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     defaultShortcuts();
     updateShortcuts();
 
-    m_settings->initShortcuts( getActions() );
+    m_settings.Shortcuts.initShortcuts( getActions() );
 
     emit Notepadqq::getInstance().newWindow(this);
 }
@@ -202,8 +201,8 @@ TopEditorContainer *MainWindow::topEditorContainer()
 
 void MainWindow::initUI()
 {
-    bool showAll = m_settings->getShowAllSymbols();
-    ui->actionWord_wrap->setChecked(m_settings->getWordWrap());
+    bool showAll = m_settings.General.getShowAllSymbols();
+    ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
 
     // Simply emitting a signal here initializes actionShow_Tab and
     // actionShow_End_of_Line, due to how action_Show_All_Characters works.
@@ -213,11 +212,8 @@ void MainWindow::initUI()
 
 void MainWindow::restoreWindowSettings()
 {
-    QSettings* settings = &m_settings->m_settings;
-    settings->beginGroup("MainWindow");
-    restoreGeometry(settings->value("geometry").toByteArray());
-    restoreState(settings->value("windowState").toByteArray());
-    settings->endGroup();
+    restoreGeometry(m_settings.MainWindow.getGeometry());
+    restoreState(m_settings.MainWindow.getWindowState());
 }
 
 void MainWindow::loadIcons()
@@ -362,7 +358,7 @@ void MainWindow::defaultShortcuts()
 
     }*/
 
-    //m_settings->initShortcuts( getActions() );
+    //m_settings.General.initShortcuts( getActions() );
 
 }
 
@@ -373,14 +369,14 @@ void MainWindow::defaultShortcuts()
 
 void MainWindow::updateShortcuts()
 {
-    /*QSettings* settings = &m_settings->m_settings;
+    /*QSettings* settings = &m_settings.General.m_settings;
 
     QList<QMenu*> lst;
     QString action;
     QString shortcut;
     lst = ui->menuBar->findChildren<QMenu*>();*/
 
-    /*for(auto&& it : m_settings->getAllShortcuts()){
+    /*for(auto&& it : m_settings.General.getAllShortcuts()){
         action = it.action->objectName();
 
         shortcut = it.action->shortcut().toString()
@@ -662,13 +658,13 @@ bool MainWindow::updateSymbols(bool on)
     // Save the currently toggled symbols when deactivating Show_All_Characters using
     // one of the other available symbol actions.
     if (!on && ui->actionShow_All_Characters->isChecked()) {
-        m_settings->setTabsVisible(ui->actionShow_Tabs->isChecked());
-        m_settings->setSpacesVisisble(ui->actionShow_Spaces->isChecked());
-        m_settings->setShowEOL(ui->actionShow_End_of_Line->isChecked());
+        m_settings.General.setTabsVisible(ui->actionShow_Tabs->isChecked());
+        m_settings.General.setSpacesVisisble(ui->actionShow_Spaces->isChecked());
+        m_settings.General.setShowEOL(ui->actionShow_End_of_Line->isChecked());
         ui->actionShow_All_Characters->blockSignals(true);
         ui->actionShow_All_Characters->setChecked(false);
         ui->actionShow_All_Characters->blockSignals(false);
-        m_settings->setShowAllSymbols(false);
+        m_settings.General.setShowAllSymbols(false);
         return true;
 
     } else if (on && !ui->actionShow_All_Characters->isChecked()) {
@@ -690,7 +686,7 @@ void MainWindow::on_actionShow_Tabs_triggered(bool on)
         return true;
     });
     if (!updateSymbols(on)) {
-        m_settings->setTabsVisible(on);
+        m_settings.General.setTabsVisible(on);
     }
 }
 
@@ -701,7 +697,7 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
         return true;
     });
     if (!updateSymbols(on)) {
-        m_settings->setSpacesVisisble(on);
+        m_settings.General.setSpacesVisisble(on);
     }
 }
 
@@ -712,7 +708,7 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
         return true;
     });
     if (!updateSymbols(on)) {
-        m_settings->setShowEOL(on);
+        m_settings.General.setShowEOL(on);
     }
 }
 
@@ -724,9 +720,9 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         ui->actionShow_Spaces->setChecked(true);
 
     } else {
-        bool showEOL = m_settings->getShowEOL();
-        bool showTabs = m_settings->getTabsVisible();
-        bool showSpaces = m_settings->getSpacesVisisble();
+        bool showEOL = m_settings.General.getShowEOL();
+        bool showTabs = m_settings.General.getTabsVisible();
+        bool showSpaces = m_settings.General.getSpacesVisisble();
 
         if (showEOL && showTabs && showSpaces) {
             showEOL = !showEOL;
@@ -746,7 +742,7 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         return true;
     });
 
-    m_settings->setShowAllSymbols(on);
+    m_settings.General.setShowAllSymbols(on);
 }
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
@@ -814,7 +810,7 @@ void MainWindow::on_action_Open_triggered()
 {
     QUrl defaultUrl = currentEditor()->fileName();
     if (defaultUrl.isEmpty())
-            defaultUrl = QUrl::fromLocalFile(m_settings->getLastSelectedDir());
+            defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
     QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
                 this,
@@ -827,7 +823,7 @@ void MainWindow::on_action_Open_triggered()
         m_docEngine->loadDocuments(fileNames,
                                    m_topEditorContainer->currentTabWidget());
 
-        m_settings->setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
+        m_settings.General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
     }
 }
 
@@ -835,7 +831,7 @@ void MainWindow::on_actionOpen_Folder_triggered()
 {
     QUrl defaultUrl = currentEditor()->fileName();
     if (defaultUrl.isEmpty())
-            defaultUrl = QUrl::fromLocalFile(m_settings->getLastSelectedDir());
+            defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
     // Select directory
     QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
@@ -859,7 +855,7 @@ void MainWindow::on_actionOpen_Folder_triggered()
             m_docEngine->loadDocuments(fileNames,
                                        m_topEditorContainer->currentTabWidget());
 
-            m_settings->setLastSelectedDir(folder);
+            m_settings.General.setLastSelectedDir(folder);
 
         }
 
@@ -1014,7 +1010,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
                 0, 0);
 
     if (filename != "") {
-        m_settings->setLastSelectedDir(QFileInfo(filename).absolutePath());
+        m_settings.General.setLastSelectedDir(QFileInfo(filename).absolutePath());
         // Write
         return m_docEngine->saveDocument(tabWidget, tab, QUrl::fromLocalFile(filename), copy);
     } else {
@@ -1027,7 +1023,7 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
     QUrl docFileName = tabWidget->editor(tab)->fileName();
 
     if (docFileName.isEmpty()) {
-        return QUrl::fromLocalFile(m_settings->getLastSelectedDir()
+        return QUrl::fromLocalFile(m_settings.General.getLastSelectedDir()
                 + "/" + tabWidget->tabText(tab));
     } else {
         return docFileName;
@@ -1141,8 +1137,8 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
     editor->setWhitespaceVisible(ui->actionShow_Spaces->isChecked());
     editor->setOverwrite(m_overwrite);
-    editor->setFont(m_settings->getOverrideFontFamily(),
-                    m_settings->getOverrideFontSize());
+    editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
+                    m_settings.Appearance.getOverrideFontSize());
 }
 
 void MainWindow::on_cursorActivity()
@@ -1332,12 +1328,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
         }
     }
 
-    QSettings* settings = &m_settings->m_settings;
+    m_settings.MainWindow.setGeometry(saveGeometry());
+    m_settings.MainWindow.setWindowState(saveState());
 
-    settings->beginGroup("MainWindow");
-    settings->setValue("geometry", saveGeometry());
-    settings->setValue("windowState", saveState());
-    settings->endGroup();
 
     // Disconnect signals to avoid handling events while
     // the UI is being destroyed.
@@ -1526,7 +1519,7 @@ void MainWindow::on_actionPlain_text_triggered()
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
-    const qreal newZoom = m_settings->resetZoom();
+    const qreal newZoom = m_settings.General.resetZoom();
     m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
 }
 
@@ -1535,7 +1528,7 @@ void MainWindow::on_actionZoom_In_triggered()
     qreal curZoom = currentEditor()->zoomFactor();
     qreal newZoom = curZoom + 0.25;
     m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    m_settings->setZoom(newZoom);
+    m_settings.General.setZoom(newZoom);
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
@@ -1543,7 +1536,7 @@ void MainWindow::on_actionZoom_Out_triggered()
     qreal curZoom = currentEditor()->zoomFactor();
     qreal newZoom = curZoom - 0.25;
     m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    m_settings->setZoom(newZoom);
+    m_settings.General.setZoom(newZoom);
 }
 
 void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
@@ -1556,7 +1549,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
         // Increment/Decrement zoom factor by 0.1 at each step.
         qreal newZoom = curZoom + diff;
         tabWidget->setZoomFactor(newZoom);
-        m_settings->setZoom(newZoom);
+        m_settings.General.setZoom(newZoom);
     }
 }
 
@@ -1666,7 +1659,7 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     const int MAX_RECENT_ENTRIES = 10;
 
     QUrl newUrl = editor->fileName();
-    QList<QVariant> recentDocs = m_settings->getRecentDocuments();
+    QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
     recentDocs.insert(0, QVariant(newUrl));
 
     // Remove duplicates
@@ -1678,12 +1671,12 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     while (recentDocs.count() > MAX_RECENT_ENTRIES)
         recentDocs.removeLast();
 
-    m_settings->setRecentDocuments(recentDocs);
+    m_settings.General.setRecentDocuments(recentDocs);
 
     updateRecentDocsInMenu();
 
     if (!wasAlreadyOpened) {
-        if (m_settings->getWarnForDifferentIndentation()) {
+        if (m_settings.General.getWarnForDifferentIndentation()) {
             checkIndentationMode(editor);
         }
     }
@@ -1730,7 +1723,7 @@ void MainWindow::checkIndentationMode(Editor *editor)
 
 void MainWindow::updateRecentDocsInMenu()
 {
-    QList<QVariant> recentDocs = m_settings->getRecentDocuments();
+    QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
 
     ui->menuRecent_Files->clear();
 
@@ -1815,18 +1808,18 @@ void MainWindow::on_actionWord_wrap_toggled(bool on)
         editor->setLineWrap(on);
         return true;
     });
-    m_settings->setWordWrap(on);
+    m_settings.General.setWordWrap(on);
 }
 
 void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
 {
-    m_settings->resetRecentDocuments();
+    m_settings.General.resetRecentDocuments();
     updateRecentDocsInMenu();
 }
 
 void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 {
-    QList<QVariant> recentDocs = m_settings->getRecentDocuments();
+    QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
 
     QList<QUrl> convertedList;
     for (QVariant doc : recentDocs) {

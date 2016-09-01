@@ -6,7 +6,6 @@
 #include <QJsonObject>
 #include <QTime>
 #include <QDebug>
-#include <QSettings>
 
 namespace Extensions {
 

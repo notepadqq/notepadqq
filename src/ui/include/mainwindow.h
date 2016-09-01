@@ -197,7 +197,7 @@ private:
     QLabel*               m_statusBar_EOLstyle;
     QLabel*               m_statusBar_textFormat;
     QLabel*               m_statusBar_overtypeNotify;
-    NqqSettings*          m_settings;
+    NqqSettings&          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     FileSearchResultsWidget* m_fileSearchResultsWidget;

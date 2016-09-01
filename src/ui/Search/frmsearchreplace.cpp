@@ -3,7 +3,7 @@
 #include "ui_frmsearchreplace.h"
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QSettings>
+#include "include/nqqsettings.h"
 #include <QFileDialog>
 #include <QThread>
 #include <QCompleter>
@@ -25,14 +25,15 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->cmbSearch->completer()->setCaseSensitivity(Qt::CaseSensitive);
     ui->cmbReplace->completer()->setCaseSensitivity(Qt::CaseSensitive);
 
-    QSettings s;
-    ui->cmbSearch->addItems(s.value("Search/searchHistory", QStringList()).toStringList());
+    NqqSettings& s = NqqSettings::getInstance();
+
+    ui->cmbSearch->addItems(s.Search.getSearchHistory());
     ui->cmbSearch->setCurrentText("");
-    ui->cmbReplace->addItems(s.value("Search/replaceHistory", QStringList()).toStringList());
+    ui->cmbReplace->addItems(s.Search.getReplaceHistory());
     ui->cmbReplace->setCurrentText("");
-    ui->cmbLookIn->addItems(s.value("Search/fileHistory", QStringList()).toStringList());
+    ui->cmbLookIn->addItems(s.Search.getFileHistory());
     ui->cmbLookIn->setCurrentText("");
-    ui->cmbFilter->addItems(s.value("Search/filterHistory", QStringList()).toStringList());
+    ui->cmbFilter->addItems(s.Search.getFilterHistory());
     ui->cmbFilter->setCurrentText("");
 
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
@@ -657,9 +658,9 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
 
 void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 {
-    QSettings s;
+    NqqSettings& s = NqqSettings::getInstance();
 
-    if (s.value("Search/SearchAsIType", true).toBool()) {
+    if (s.Search.getSearchAsIType()) {
         if (ui->actionFind->isChecked()) {
             Editor *editor = currentEditor();
 
@@ -729,36 +730,49 @@ QStringList frmSearchReplace::fileFiltersFromUI()
     return filters;
 }
 
-void frmSearchReplace::addToHistory(QString string, QString type, QComboBox *comboBox)
-{
-    if (string != "") {
-        QSettings s;
-        QStringList history = s.value("Search/" + type + "History", QStringList()).toStringList();
-        history.prepend(string);
-        history.removeDuplicates();
-        history = history.mid(0, 10);
-        s.setValue("Search/" + type + "History", history);
-        comboBox->clear();
-        comboBox->addItems(history);
-    }
+void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
+    if(string.isEmpty())
+        return;
+
+    history.prepend(string);
+    history.removeDuplicates();
+    history = history.mid(0, 10);
+    comboBox->clear();
+    comboBox->addItems(history);
 }
 
 void frmSearchReplace::addToSearchHistory(QString string)
 {
-    addToHistory(string, "search", ui->cmbSearch);
+    NqqSettings& s = NqqSettings::getInstance();
+
+    auto history = s.Search.getSearchHistory();
+    addToHistory(history, string, ui->cmbSearch);
+    s.Search.setSearchHistory(history);
 }
 
 void frmSearchReplace::addToReplaceHistory(QString string)
 {
-    addToHistory(string, "replace", ui->cmbReplace);
+    NqqSettings& s = NqqSettings::getInstance();
+
+    auto history = s.Search.getReplaceHistory();
+    addToHistory(history, string, ui->cmbSearch);
+    s.Search.setReplaceHistory(history);
 }
 
 void frmSearchReplace::addToFileHistory(QString string)
 {
-    addToHistory(string, "file", ui->cmbLookIn);
+    NqqSettings& s = NqqSettings::getInstance();
+
+    auto history = s.Search.getFileHistory();
+    addToHistory(history, string, ui->cmbSearch);
+    s.Search.setFileHistory(history);
 }
 
 void frmSearchReplace::addToFilterHistory(QString string)
 {
-    addToHistory(string, "filter", ui->cmbFilter);
+    NqqSettings& s = NqqSettings::getInstance();
+
+    auto history = s.Search.getFilterHistory();
+    addToHistory(history, string, ui->cmbSearch);
+    s.Search.setFilterHistory(history);
 }

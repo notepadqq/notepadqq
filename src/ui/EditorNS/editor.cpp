@@ -1,11 +1,11 @@
 #include "include/EditorNS/editor.h"
 #include "include/notepadqq.h"
+#include "include/nqqsettings.h"
 #include <QWebFrame>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
-#include <QSettings>
 #include <QUrlQuery>
 #include <QRegularExpression>
 
@@ -17,9 +17,8 @@ namespace EditorNS
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
-        QSettings s;
 
-        QString themeName = s.value("Appearance/ColorScheme", "default").toString();
+        QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
         if (themeName == "")
             themeName = "default";
 
@@ -251,16 +250,15 @@ namespace EditorNS
         return setLanguageFromFileName(fileName().toString());
     }
 
-    void Editor::setIndentationMode(const QString &language)
+    void Editor::setIndentationMode(QString language)
     {
-        QSettings s;
-        QString keyPrefix = "Languages/" + language + "/";
+        NqqSettings& s = NqqSettings::getInstance();
 
-        if (s.value(keyPrefix + "useDefaultSettings", true).toBool())
-            keyPrefix = "Languages/";
+        if(s.Languages.getUseDefaultSettings(language))
+            language = "default";
 
-        setIndentationMode(!s.value(keyPrefix + "indentWithSpaces", false).toBool(),
-                           s.value(keyPrefix + "tabSize", 4).toInt());
+        setIndentationMode(!s.Languages.getIndentWithSpaces(language),
+                            s.Languages.getTabSize(language));
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size)

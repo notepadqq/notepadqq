@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
 
     forceDefaultSettings();
 
-    //QSettings settings;
-    NqqSettings settings;
+    NqqSettings& settings = NqqSettings::getInstance();
 
-    QString langCode = settings.getLocalization();
+
+    QString langCode = settings.General.getLocalization();
 
     if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    if (Notepadqq::oldQt() && settings.getCheckVersionAtStartup()) {
+    if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
         Notepadqq::showQtVersionWarning(true, w);
     }
 
@@ -143,18 +143,20 @@ void checkQtVersion()
 
 void forceDefaultSettings()
 {
-    QSettings settings;
+    NqqSettings& s = NqqSettings::getInstance();
 
     // Use tabs to indent makefile by default
-    if (!settings.contains("Languages/makefile/useDefaultSettings")) {
-        settings.setValue("Languages/makefile/useDefaultSettings", false);
-        settings.setValue("Languages/makefile/indentWithSpaces", false);
+    if(!s.Languages.hasUseDefaultSettings("makefile")) {
+        s.Languages.setUseDefaultSettings("makefile", false);
+        s.Languages.setIndentWithSpaces("makefile",true);
     }
 
     // Use two spaces to indent ruby by default
-    if (!settings.contains("Languages/ruby/useDefaultSettings")) {
-        settings.setValue("Languages/ruby/useDefaultSettings", false);
-        settings.setValue("Languages/ruby/tabSize", 2);
-        settings.setValue("Languages/ruby/indentWithSpaces", true);
+    if(!s.Languages.hasUseDefaultSettings("ruby")) {
+        s.Languages.setUseDefaultSettings("ruby", false);
+        s.Languages.setTabSize("ruby", 2);
+        s.Languages.setIndentWithSpaces("ruby",true);
     }
+
+
 }

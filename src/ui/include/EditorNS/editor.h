@@ -304,7 +304,7 @@ namespace EditorNS
         void fullConstructor(const Theme &theme);
 
         void setIndentationMode(const bool useTabs, const int size);
-        void setIndentationMode(const QString &language);
+        void setIndentationMode(QString language);
 
     private slots:
         void on_javaScriptWindowObjectCleared();
