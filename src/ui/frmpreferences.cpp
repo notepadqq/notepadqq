@@ -275,7 +275,7 @@ void frmPreferences::loadShortcuts()
 
 
     //Build the interface
-    QWidget *container = ui->page_5;
+    QWidget *container = ui->pageShortcuts;
     QVBoxLayout *layout = new QVBoxLayout();
     QPushButton *resetDefaults = new QPushButton("Restore Defaults");
     QObject::connect(resetDefaults, &QPushButton::clicked, this, &frmPreferences::resetShortcuts);

@@ -436,7 +436,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_5"/>
+       <widget class="QWidget" name="pageShortcuts"/>
        <widget class="QWidget" name="page_6">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">
