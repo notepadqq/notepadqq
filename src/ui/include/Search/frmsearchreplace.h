@@ -103,7 +103,6 @@ private:
      * @param operation
      */
     void displayThreadErrorMessageBox(const QString &message, int &operation);
-    void addToHistory(QString string, QString type, QComboBox *comboBox);
     void addToSearchHistory(QString string);
     void addToReplaceHistory(QString string);
     void addToFileHistory(QString string);

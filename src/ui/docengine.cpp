@@ -5,10 +5,10 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 #include "include/mainwindow.h"
+#include "include/nqqsettings.h"
 
-DocEngine::DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent) :
+DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
-    m_settings(settings),
     m_topEditorContainer(topEditorContainer),
     m_fsWatcher(new QFileSystemWatcher(this))
 {
@@ -112,7 +112,7 @@ bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *
 bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom)
 {
     if(!fileNames.empty()) {
-        m_settings->setValue("lastSelectedDir", QFileInfo(fileNames[0].toLocalFile()).absolutePath());
+        NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
 
         // Used to know if the document that we're loading is
         // the first one in the list.

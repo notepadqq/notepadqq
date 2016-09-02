@@ -2,7 +2,6 @@
 #define DOCENGINE_H
 
 #include <QObject>
-#include <QSettings>
 #include <QFileSystemWatcher>
 #include <QFile>
 #include <QUrl>
@@ -19,7 +18,7 @@ class DocEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit DocEngine(QSettings *settings, TopEditorContainer *topEditorContainer, QObject *parent = 0);
+    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = 0);
     ~DocEngine();
 
     struct DecodedText {
@@ -61,7 +60,6 @@ public:
     static bool writeFromString(QIODevice *io, const DecodedText &write);
 
 private:
-    QSettings *m_settings;
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
 

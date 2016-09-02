@@ -86,7 +86,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -436,6 +436,7 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="pageShortcuts"/>
        <widget class="QWidget" name="page_6">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">
@@ -463,8 +464,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>403</width>
-              <height>196</height>
+              <width>395</width>
+              <height>205</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
