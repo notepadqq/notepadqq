@@ -71,8 +71,6 @@ void NqqSettings::ensureBackwardsCompatibility()
 
         replace(newKey, key);
     }
-
-    s.setValue("BackwardsCompatible", true);
 }
 
 NqqSettings&NqqSettings::getInstance(){
