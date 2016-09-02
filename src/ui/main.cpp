@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
     NqqSettings::ensureBackwardsCompatibility();
     NqqSettings& settings = NqqSettings::getInstance();
+    settings.General.setNotepadqqVersion(POINTVERSION);
 
     forceDefaultSettings();
 

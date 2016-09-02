@@ -730,6 +730,17 @@ QStringList frmSearchReplace::fileFiltersFromUI()
     return filters;
 }
 
+/**
+ * @brief Helper function to modify a list of strings that serve as a history.
+ *        The provided string will be prepended to the history, and the history
+ *        will be given to the comboBox as the list of suggestions to display.
+ *        This only serves as a helper to reduce code duplication.
+ * @param history The current history list passed as a reference. This list will
+ *        have the string from the second parameter prepended to it after the function
+ *        finishes.
+ * @param string The string to add to the history.
+ * @param comboBox The QComboBox to receive the history as suggestions list.
+ */
 void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
     if(string.isEmpty())
         return;

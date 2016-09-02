@@ -278,7 +278,7 @@ void frmPreferences::loadShortcuts()
     QWidget *container = ui->page_5;
     QVBoxLayout *layout = new QVBoxLayout();
     QPushButton *resetDefaults = new QPushButton("Restore Defaults");
-    QObject::connect(resetDefaults,SIGNAL(clicked()),this,SLOT(resetShortcuts()));
+    QObject::connect(resetDefaults, &QPushButton::clicked, this, &frmPreferences::resetShortcuts);
     resetDefaults->setFixedWidth(128);
     layout->addWidget(m_keyGrabber);
     layout->addWidget(resetDefaults);

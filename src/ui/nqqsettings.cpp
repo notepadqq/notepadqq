@@ -1,4 +1,5 @@
 #include "include/nqqsettings.h"
+#include "include/notepadqq.h"
 
 #ifdef QT_DEBUG
 #include <QDebug>
@@ -8,14 +9,25 @@ void NqqSettings::ensureBackwardsCompatibility()
 {
     QSettings s;
 
+
+    //Check the Nqq version, if it's above 0.53.x we're using the old settings.
+    const QString nqqVersion = s.value("NotepadqqVersion").toString();
+    const QStringList versionList = nqqVersion.split(".");
+
+    //Only proceed with checking version if the key seems valid
+    if(versionList.size()==3){
+        const int minor = versionList[1].toInt();
+        const int revision = versionList[2].toInt();
+
+        //return if we're above x.53.0
+        if(minor>53 || (minor==53 && revision>0))
+            return;
+    }
+
     const QStringList keys = s.allKeys();
 
-    //If this string is in the settings we either have the new ini settings
-    if(keys.contains("BackwardsCompatible"))
-            return;
-
  #ifdef QT_DEBUG
-    qDebug() << "Old settings detected. Replacing keys.";
+    qDebug() << "Old Nqq version detected. Replacing keys.";
 #endif
 
     auto replace = [&](const QString& newKey, const QString& oldKey) {

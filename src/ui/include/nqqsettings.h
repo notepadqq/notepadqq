@@ -78,7 +78,7 @@ public:
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
 
-        NQQ_SETTING(BackwardsCompatible,            bool,       false)
+        NQQ_SETTING(NotepadqqVersion,               QString,    QString())
     END_CATEGORY(General)
 
     BEGIN_CATEGORY(Appearance)
