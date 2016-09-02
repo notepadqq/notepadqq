@@ -122,9 +122,14 @@ public:
         void initShortcuts(const QList<QAction*>& actions){
             for(QAction* a : actions){
                 if(a->objectName().isEmpty())
-                    return;
+                    continue;
 
-                QKeySequence shortcut = _m_settings.value("Shortcuts/" + a->objectName()).toString();
+                const QString key = "Shortcuts/" + a->objectName();
+
+                //Only update the current shortcut if it's actually set in the settings.
+                QKeySequence shortcut = _m_settings.contains(key) ?
+                                            _m_settings.value(key).toString() : a->shortcut();
+
                 _m_shortcuts.insert( a->objectName(), _ActionItem{a->shortcut(), shortcut} );
             }
         }
