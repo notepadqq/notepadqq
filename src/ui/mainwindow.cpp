@@ -2217,10 +2217,8 @@ void MainWindow::on_actionFull_Screen_toggled(bool on)
 
 void MainWindow::on_actionToggle_Smart_Indent_toggled(bool arg1)
 {
-    for (MainWindow *w : MainWindow::instances()) {
-        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
-            editor->setSmartIndent(arg1);
-            return true;
-        });
-    }
+    m_topEditorContainer->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
+        editor->setSmartIndent(arg1);
+        return true;
+    });
 }
