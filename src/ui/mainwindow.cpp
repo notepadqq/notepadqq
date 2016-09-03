@@ -159,6 +159,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     //this->topEditorContainer->addTabWidget()->addEditorTab(false, "test");
     defaultShortcuts();
     updateShortcuts();
+
+    //Register our meta types here
+    qRegisterMetaType<FileSearchResult::SearchResult>("SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
 }
 
