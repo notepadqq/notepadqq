@@ -33,7 +33,7 @@
 #include <QList>
 #include "include/mainwindow.h"
 
-#define POINTVERSION "0.53.0" // major.minor.revision
+#define POINTVERSION "0.53.1" // major.minor.revision
 
 #define COPYRIGHT_YEAR "2016"
 
