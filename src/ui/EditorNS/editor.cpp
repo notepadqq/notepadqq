@@ -254,7 +254,7 @@ namespace EditorNS
     {
         NqqSettings& s = NqqSettings::getInstance();
 
-        if(s.Languages.getUseDefaultSettings(language))
+        if (s.Languages.getUseDefaultSettings(language))
             language = "default";
 
         setIndentationMode(!s.Languages.getIndentWithSpaces(language),

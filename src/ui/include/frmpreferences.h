@@ -51,7 +51,7 @@ private:
     QList<LanguageSettings> m_tempLangSettings;
 
     KeyGrabber *m_keyGrabber;
-    QMap<QString,QAction*> m_actions;
+    QMap<QString, QAction*> m_actions;
 
     NqqSettings& m_settings;
     Ui::frmPreferences *ui;

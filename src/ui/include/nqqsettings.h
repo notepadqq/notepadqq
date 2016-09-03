@@ -120,8 +120,8 @@ public:
          * @param actions List of actions that have or could have shortcuts.
          */
         void initShortcuts(const QList<QAction*>& actions){
-            for(QAction* a : actions){
-                if(a->objectName().isEmpty())
+            for (QAction* a : actions){
+                if (a->objectName().isEmpty())
                     continue;
 
                 const QString key = "Shortcuts/" + a->objectName();
@@ -137,7 +137,7 @@ public:
         QKeySequence getDefaultShortcut(const QString& actionName) const {
             auto it = _m_shortcuts.find(actionName);
 
-            if(it == _m_shortcuts.end())
+            if (it == _m_shortcuts.end())
                 return QKeySequence();
 
             return it.value().defaultSequence;
@@ -146,7 +146,7 @@ public:
         QKeySequence getShortcut(const QString& actionName) const {
             auto it = _m_shortcuts.find(actionName);
 
-            if(it == _m_shortcuts.end())
+            if (it == _m_shortcuts.end())
                 return QKeySequence();
 
             return it.value().sequence;
@@ -155,7 +155,7 @@ public:
         void setShortcut(const QString& actionName, const QKeySequence& sequence){
             auto it = _m_shortcuts.find(actionName);
 
-            if(it == _m_shortcuts.end())
+            if (it == _m_shortcuts.end())
                 return;
 
             it.value().sequence = sequence;

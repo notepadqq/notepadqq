@@ -161,17 +161,17 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     //Registers all actions so that NqqSettings knows their default and current shortcuts.
     const QList<QAction*> allActions = getActions();
 
-    m_settings.Shortcuts.initShortcuts( allActions );
+    m_settings.Shortcuts.initShortcuts(allActions);
 
     //At this point, all actions still have their default shortcuts so we set all actions'
     //shortcuts from settings.
-    for(QAction* a : allActions){
-        if(a->objectName().isEmpty())
+    for (QAction* a : allActions){
+        if (a->objectName().isEmpty())
             continue;
 
         QKeySequence shortcut = m_settings.Shortcuts.getShortcut(a->objectName());
 
-        a->setShortcut( shortcut );
+        a->setShortcut(shortcut);
     }
 
     emit Notepadqq::getInstance().newWindow(this);
@@ -364,10 +364,11 @@ QList<QAction*> MainWindow::getActions()
     const QList<const QMenu*> list = ui->menuBar->findChildren<const QMenu*>();
     QList<QAction*> allActions;
 
-    for(auto&& menu : list) {
-        if(menu->title() == "&Language") continue;
+    for (auto&& menu : list) {
+        if (menu->title() == "&Language")
+            continue;
 
-        for(auto&& action : menu->actions()) {
+        for (auto&& action : menu->actions()) {
             allActions.append(action);
         }
     }

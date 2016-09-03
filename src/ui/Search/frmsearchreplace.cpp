@@ -742,7 +742,7 @@ QStringList frmSearchReplace::fileFiltersFromUI()
  * @param comboBox The QComboBox to receive the history as suggestions list.
  */
 void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
-    if(string.isEmpty())
+    if (string.isEmpty())
         return;
 
     history.prepend(string);
