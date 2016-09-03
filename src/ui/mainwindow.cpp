@@ -1093,6 +1093,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setOverwrite(m_overwrite);
     editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
                     m_settings.Appearance.getOverrideFontSize());
+    editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 
 void MainWindow::on_cursorActivity()
