@@ -48,7 +48,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadAppearanceTab();
     loadTranslations();
     loadShortcuts();
-	loadExternalTools();
+    loadExternalTools();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
 }
@@ -111,7 +111,7 @@ void frmPreferences::on_buttonBox_accepted()
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
 
     saveExternalTools();
-	saveLanguages();
+    saveLanguages();
     saveAppearanceTab();
     saveTranslation();
     saveShortcuts();
