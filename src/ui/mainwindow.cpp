@@ -2223,7 +2223,7 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
     });
 //Small helper to get the path of the parent directory.
 QString getParentOfUrl(const QUrl url){
-    if(!url.isValid())
+    if (!url.isValid())
         return QString();
 
     const QDir parentDir = QFileInfo(url.toLocalFile()).absoluteDir();
