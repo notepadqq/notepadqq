@@ -180,6 +180,7 @@ private slots:
     void on_actionShow_End_of_Line_triggered(bool on);
     void on_actionShow_All_Characters_toggled(bool on);
     void on_actionShow_Spaces_triggered(bool on);
+    void on_actionToggle_Smart_Indent_toggled(bool on);
 
 private:
     static QList<MainWindow*> m_instances;

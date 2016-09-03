@@ -109,6 +109,8 @@
      </property>
      <addaction name="actionIndentation_Default_settings"/>
      <addaction name="actionIndentation_Custom"/>
+     <addaction name="separator"/>
+     <addaction name="actionToggle_Smart_Indent"/>
     </widget>
     <widget class="QMenu" name="menuLine_Operations">
      <property name="title">
@@ -1066,6 +1068,17 @@
    </property>
    <property name="toolTip">
     <string>Show Spaces</string>
+   </property>
+  </action>
+  <action name="actionToggle_Smart_Indent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Smart Indent</string>
    </property>
   </action>
  </widget>

@@ -205,6 +205,7 @@ namespace EditorNS
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
 
+        Q_INVOKABLE void setSmartIndent(bool enabled);
         Q_INVOKABLE qreal zoomFactor() const;
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
