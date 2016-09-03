@@ -4,14 +4,16 @@
 #include <QObject>
 #include <QMutex>
 #include <QRegularExpression>
+#include <QThread>
 #include "include/Search/filesearchresult.h"
 #include "include/Search/searchhelpers.h"
 
 class SearchInFilesWorker : public QObject
 {
     Q_OBJECT
+    QThread workerThread;
 public:
-    explicit SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     ~SearchInFilesWorker();
 
     FileSearchResult::SearchResult getResult();
@@ -22,7 +24,7 @@ signals:
      * @param stopped if true, the worker did not complete its operations
      *        (e.g. because of an error or because it was manually stopped).
      */
-    void finished(bool stopped);
+    void finished(bool stopped, FileSearchResult::SearchResult result);
     void error(QString string);
     void progress(QString file);
 
@@ -97,4 +99,12 @@ private:
     FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
 };
 
+class SearchInFilesController : public QObject
+{
+    Q_OBJECT
+    QThread workerThread;
+public:
+    SearchInFilesController(QObject* parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    ~SearchInFilesController();
+};
 #endif // SEARCHINFILESWORKER_H

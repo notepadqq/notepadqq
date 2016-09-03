@@ -32,7 +32,7 @@ void FileSearchResultsWidget::setupActions()
     });
 }
 
-void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &searchResult)
+void FileSearchResultsWidget::addSearchResult(FileSearchResult::SearchResult searchResult)
 {
     // Row, in the model, relative to this search
     QList<QStandardItem *> searchRow;

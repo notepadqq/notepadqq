@@ -66,6 +66,7 @@ private:
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
 
+
     class SearchInFilesSession : public QObject {
     public:
         SearchInFilesSession(QObject *parent) : QObject(parent) { }
@@ -95,6 +96,7 @@ private:
     FileSearchResult::Result buildResult(const QRegularExpressionMatch &match, QString *content);
     QStringList fileFiltersFromUI();
 
+    SearchInFilesSession*  m_session;
     /**
      * @brief Displays the abort/retry/ignore message box for read and write errors
      *        in SearchInFilesWorker and ReplaceInFilesWorker.
@@ -102,7 +104,6 @@ private:
      * @param message
      * @param operation
      */
-    void displayThreadErrorMessageBox(const QString &message, int &operation);
     void addToHistory(QString string, QString type, QComboBox *comboBox);
     void addToSearchHistory(QString string);
     void addToReplaceHistory(QString string);
@@ -110,6 +111,11 @@ private:
     void addToFilterHistory(QString string);
 signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
+    void stopSearch();
+public slots:
+    void searchInFilesFinished(bool stopped, FileSearchResult::SearchResult result);
+    void searchInFilesUpdate(const QString &msg);
+    void displayThreadErrorMessageBox(const QString &message, int &operation);
 };
 
 #endif // FRMSEARCHREPLACE_H

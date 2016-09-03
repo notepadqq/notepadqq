@@ -4,6 +4,8 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QThread>
+#include <QDebug>
+
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
@@ -16,7 +18,7 @@ SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &p
 
 SearchInFilesWorker::~SearchInFilesWorker()
 {
-
+    qDebug() << "Worker";
 }
 
 void SearchInFilesWorker::run()
@@ -49,7 +51,7 @@ void SearchInFilesWorker::run()
 
     while (it.hasNext()) {
         if (m_stop) {
-            emit finished(true);
+            emit finished(true,structSearchResult);
             return;
         }
 
@@ -70,7 +72,7 @@ void SearchInFilesWorker::run()
                 emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
 
                 if (result == QMessageBox::StandardButton::Abort) {
-                    emit finished(true);
+                    emit finished(true, structSearchResult);
                     return;
                 } else if (result == QMessageBox::StandardButton::Retry) {
                     retry = true;
@@ -92,12 +94,10 @@ void SearchInFilesWorker::run()
             structSearchResult.fileResults.append(structFileResult);
         }
     }
-
-    m_resultMutex.lock();
     m_result = structSearchResult;
-    m_resultMutex.unlock();
 
-    emit finished(false);
+    emit finished(false, m_result);
+    return;
 }
 
 void SearchInFilesWorker::stop()
@@ -225,9 +225,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
 
 FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 {
-    FileSearchResult::SearchResult r;
     m_resultMutex.lock();
-    r = m_result;
+    FileSearchResult::SearchResult r = m_result;;
     m_resultMutex.unlock();
 
     return r;
@@ -254,3 +253,25 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
     return res;
 }
 
+
+SearchInFilesController::SearchInFilesController(QObject* parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
+{
+    SearchInFilesWorker *worker = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
+    worker->moveToThread(&workerThread);
+    connect(&workerThread, SIGNAL(started()),worker, SLOT(run()));
+    connect(worker, SIGNAL(error(QString)), parent, SLOT(searchInFilesUpdate(QString)));
+    connect(worker, SIGNAL(errorReadingFile(const QString&, int&)), parent, SLOT(displayThreadErrorMessageBox(const QString&, int&)), Qt::BlockingQueuedConnection);
+    connect(worker, SIGNAL(progress(QString)), parent, SLOT(searchInFilesUpdate(QString)));
+    connect(&workerThread,SIGNAL(finished()),worker,SLOT(deleteLater()));
+    connect(worker, SIGNAL(finished(bool, FileSearchResult::SearchResult)), parent, SLOT(searchInFilesFinished(bool, FileSearchResult::SearchResult)));
+    connect(parent, SIGNAL(stopSearch()),worker,SLOT(stop()));
+    connect(parent, SIGNAL(stopSearch()),this,SLOT(deleteLater()));
+    workerThread.start();
+}
+
+SearchInFilesController::~SearchInFilesController()
+{
+    qDebug() << "Controller";
+    workerThread.quit();
+    workerThread.wait();
+}

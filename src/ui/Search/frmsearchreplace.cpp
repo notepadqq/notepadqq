@@ -214,76 +214,40 @@ int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode search
     return count.toInt();
 }
 
+void frmSearchReplace::searchInFilesUpdate(const QString &err)
+{
+    if (m_session->msgBox != nullptr) {
+        m_session->msgBox->setText(err);
+    }
+}
+
+void frmSearchReplace::searchInFilesFinished(bool stopped, FileSearchResult::SearchResult result)
+{
+    if(!stopped) {
+        emit fileSearchResultFinished(result);
+    }
+    m_session->msgBox->hide();
+    m_session->msgBox->deleteLater();
+    m_session->msgBox = nullptr;
+}
+
+
 void frmSearchReplace::searchInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
-    cleanFindInFilesPtrs();
+//    cleanFindInFilesPtrs();
 
-    if (!string.isEmpty()) {
-        SearchInFilesSession *session = new SearchInFilesSession(this);
-        m_findInFilesPtrs.append(session);
+        m_session = new SearchInFilesSession(this);
 
-        session->msgBox = new dlgSearching(this);
-        session->msgBox->setTitle(tr("Searching..."));
-        session->msgBox->setWindowTitle(session->msgBox->title());
+        //A signal fires everytime msgBox is closed which will clean it up properly.
+        m_session->msgBox = new dlgSearching(this);
+        m_session->msgBox->setTitle(tr("Searching..."));
+        m_session->msgBox->setWindowTitle(m_session->msgBox->title());
 
-        session->threadSearch = new QThread();
-        session->workerSearch = new SearchInFilesWorker(string, path, filters, searchMode, searchOptions);
-        session->workerSearch->moveToThread(session->threadSearch);
-
-        connect(session->threadSearch, &QThread::started, session->workerSearch, &SearchInFilesWorker::run);
-
-        connect(session->workerSearch, &SearchInFilesWorker::error, this, [=](QString err){
-            if (session->msgBox != nullptr) {
-                session->msgBox->setTitle(tr("Error"));
-                session->msgBox->setText(err);
-            }
-        });
-
-        connect(session->workerSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
-
-        connect(session->workerSearch, &SearchInFilesWorker::progress, this, [=](QString file){
-            if (session->msgBox != nullptr)
-                session->msgBox->setText(QString("%1").arg(file));
-        });
-
-        connect(session->threadSearch, &QThread::finished, this, [=]{
-            session->threadSearch->deleteLater();
-            session->threadSearch = nullptr;
-        });
-
-        connect(session->workerSearch, &SearchInFilesWorker::finished, this, [=](bool stopped){
-            FileSearchResult::SearchResult result;
-
-            if (session->threadSearch != nullptr)
-                session->threadSearch->quit();
-
-            session->msgBox->hide();
-            session->msgBox->deleteLater();
-            session->msgBox = nullptr;
-
-            if (stopped) {
-                session->workerSearch->deleteLater();
-                session->workerSearch = nullptr;
-
-                return;
-            } else {
-                result = session->workerSearch->getResult();
-
-                session->workerSearch->deleteLater();
-                session->workerSearch = nullptr;
-            }
-
-            emit fileSearchResultFinished(result);
-        });
-
-        session->threadSearch->start();
-        session->msgBox->exec();
+        new SearchInFilesController(this, string, path, filters, searchMode, searchOptions);
+        m_session->msgBox->exec();
 
         // If we're here, the search finished or the user wants to cancel it.
-
-        if (session->workerSearch != nullptr)
-            session->workerSearch->stop();
-    }
+        emit stopSearch();
 }
 
 void frmSearchReplace::replaceInFiles(const QString &string, const QString &replacement, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
