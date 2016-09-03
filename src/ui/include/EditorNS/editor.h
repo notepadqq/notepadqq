@@ -204,6 +204,7 @@ namespace EditorNS
         void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
+        Q_INVOKABLE void setSmartIndent(bool enabled);
 
         Q_INVOKABLE qreal zoomFactor() const;
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
