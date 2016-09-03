@@ -2244,7 +2244,7 @@ void MainWindow::on_actionFile_Browser_triggered()
 void MainWindow::on_actionTerminal_triggered()
 {
     //Example of a launch command: "gnome-terminal --working-directory=%s"
-    const QString launchCmd = m_settings->value("ExternalTools/TerminalLaunchCmd").toString();
+    const QString launchCmd = m_settings.ExternalTools.getTerminalLaunchCmd();
     const QString parent = getParentOfUrl(m_topEditorContainer->currentTabWidget()->
                                           currentEditor()->fileName());
 

@@ -51,9 +51,6 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 	loadExternalTools();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
-
-    ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
-    ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
 }
 
 frmPreferences::~frmPreferences()
@@ -61,27 +58,22 @@ frmPreferences::~frmPreferences()
     delete ui;
 }
 
-<<<<<<< 150cbe89aa0c2fa495e40fc1c21d127fd85a99ba
-=======
-
-void frmPreferences::loadExternalTools(QSettings* s)
+void frmPreferences::loadExternalTools()
 {
-    ui->txtNodejs->setText(s->value("Extensions/Runtime_Nodejs", "").toString());
-    ui->txtNpm->setText(s->value("Extensions/Runtime_Npm", "").toString());
+    ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
+    ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
 
-    ui->txtTerminalLaunchCmd->setText(s->value("ExternalTools/TerminalLaunchCmd", "").toString());
+    ui->txtTerminalLaunchCmd->setText(m_settings.ExternalTools.getTerminalLaunchCmd());
 }
 
-void frmPreferences::saveExternalTools(QSettings* s)
+void frmPreferences::saveExternalTools()
 {
-    s->setValue("Extensions/Runtime_Nodejs", ui->txtNodejs->text());
-    s->setValue("Extensions/Runtime_Npm", ui->txtNpm->text());
+    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
+    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
-    s->setValue("ExternalTools/TerminalLaunchCmd", ui->txtTerminalLaunchCmd->text());
+    m_settings.ExternalTools.setTerminalLaunchCmd(ui->txtTerminalLaunchCmd->text());
 }
 
-
->>>>>>> Fixed some WS and annotation.
 void frmPreferences::resetShortcuts()
 {
     const int rows = m_keyGrabber->rowCount();
@@ -125,8 +117,6 @@ void frmPreferences::on_buttonBox_accepted()
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
-    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
-    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
     const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
