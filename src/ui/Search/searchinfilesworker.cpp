@@ -116,12 +116,12 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const QString &data
 
     if (index !=0) {
         charBefore = data.at(index-1);
-        if (!charBefore.isPunct() || !charBefore.isSpace() || !charBefore.isSymbol()) return false;
+        if (!charBefore.isPunct() && !charBefore.isSpace() && !charBefore.isSymbol()) return false;
     }
 
     if (index+matchLength != dataLength) {
         charAfter = data.at(index+matchLength);
-        if (!charAfter.isPunct() || !charAfter.isSpace() || !charAfter.isSymbol()) return false;
+        if (!charAfter.isPunct() && !charAfter.isSpace() && !charAfter.isSymbol()) return false;
     }
 
             
