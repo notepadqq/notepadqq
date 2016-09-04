@@ -1093,6 +1093,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setOverwrite(m_overwrite);
     editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
                     m_settings.Appearance.getOverrideFontSize());
+    editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 
 void MainWindow::on_cursorActivity()
@@ -2212,4 +2213,12 @@ void MainWindow::on_actionFull_Screen_toggled(bool on)
             showNormal();
         }
     }
+}
+
+void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
+        editor->setSmartIndent(on);
+        return true;
+    });
 }

@@ -301,6 +301,11 @@ namespace EditorNS
         return m_customIndentationMode;
     }
 
+    void Editor::setSmartIndent(bool enabled)
+    {
+        sendMessage("C_CMD_SET_SMART_INDENT", enabled);
+    }
+
     void Editor::setValue(const QString &value)
     {
         sendMessage("C_CMD_SET_VALUE", value);
