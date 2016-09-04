@@ -113,22 +113,19 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const QString &data
     QChar charAfter;
     int matchLength = match.length();
     int dataLength = data.length();
-    bool result = false;
 
     if (index !=0) {
         charBefore = data.at(index-1);
-        if(charBefore.isPunct() || charBefore.isSpace() || charBefore.isSymbol()) result = true;
-        else return false;
+        if (!charBefore.isPunct() || !charBefore.isSpace() || !charBefore.isSymbol()) return false;
     }
 
-    if(index+matchLength != dataLength) {
+    if (index+matchLength != dataLength) {
         charAfter = data.at(index+matchLength);
-        if(charAfter.isPunct() || charAfter.isSpace() || charAfter.isSymbol()) result = true;
-        else return false;
+        if (!charAfter.isPunct() || !charAfter.isSpace() || !charAfter.isSymbol()) return false;
     }
 
             
-    return result;
+    return true;
 }
 
 FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const QString &fileName, QString *content)
@@ -144,12 +141,12 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
     int lineLength;
 
     //Regex for plain text is slow, experimental plain text search for speed improvements.
-    if(m_searchMode == SearchHelpers::SearchMode::PlainText) {
+    if (m_searchMode == SearchHelpers::SearchMode::PlainText) {
         Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
         int resultLength = m_string.length();
 
         while (!(line=stream.readLine()).isNull()) {
-            if(m_stop) break;
+            if (m_stop) break;
             lineLength = line.length();
             column = line.indexOf(m_string, 0, caseSensitive);
             while (column != -1) {
@@ -177,7 +174,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
             match = m_regex.match(line);
             column = match.capturedStart();
             while (column != -1 && match.hasMatch()) {
-                if(m_stop) break;
+                if (m_stop) break;
                 structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
                 match = m_regex.match(line, column + match.capturedLength());
                 column = match.capturedStart();
@@ -267,7 +264,7 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
 {
     FileSearchResult::Result res;
 
-    if(column > 50) {
+    if (column > 50) {
         res.previewBeforeMatch = lineContent.mid(column-50,50);
     }else {
         res.previewBeforeMatch = lineContent.mid(0,column);
