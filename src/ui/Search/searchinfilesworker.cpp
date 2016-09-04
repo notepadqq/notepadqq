@@ -107,6 +107,30 @@ void SearchInFilesWorker::stop()
     m_stopMutex.unlock();
 }
 
+bool SearchInFilesWorker::matchesWholeWord(const int &index, const QString &data, const QString &match)
+{
+    QChar charBefore;
+    QChar charAfter;
+    int matchLength = match.length();
+    int dataLength = data.length();
+    bool result = false;
+
+    if (index !=0) {
+        charBefore = data.at(index-1);
+        if(charBefore.isPunct() || charBefore.isSpace() || charBefore.isSymbol()) result = true;
+        else return false;
+    }
+
+    if(index+matchLength != dataLength) {
+        charAfter = data.at(index+matchLength);
+        if(charAfter.isPunct() || charAfter.isSpace() || charAfter.isSymbol()) result = true;
+        else return false;
+    }
+
+            
+    return result;
+}
+
 FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const QString &fileName, QString *content)
 {
     FileSearchResult::FileResult structFileResult;
@@ -124,13 +148,19 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
         Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
         int resultLength = m_string.length();
 
-        while(!(line=stream.readLine()).isNull()) {
+        while (!(line=stream.readLine()).isNull()) {
             if(m_stop) break;
             lineLength = line.length();
             column = line.indexOf(m_string, 0, caseSensitive);
-            while(column != -1) {
-                if(m_stop) break;
-                structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
+            while (column != -1) {
+                if (m_stop) break;
+                if (m_searchOptions.MatchWholeWord) {
+                    if (matchesWholeWord(column, line, m_string)) {
+                        structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
+                    }
+                }else {
+                    structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
+                }
                 column = line.indexOf(m_string, column + resultLength, caseSensitive);
                 m_matchCount++;
             }

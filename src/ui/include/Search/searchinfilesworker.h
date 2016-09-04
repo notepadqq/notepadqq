@@ -95,6 +95,7 @@ private:
     *         found in the file
     */
     FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
+    bool matchesWholeWord(const int &index, const QString &data, const QString &match);
 };
 
 #endif // SEARCHINFILESWORKER_H
