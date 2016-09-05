@@ -216,9 +216,6 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         match = tmpRegExp.match(fullDoc, column + matchLen);
         column = match.capturedStart();
         m_matchCount++;
-        // NOTE: This sleep is here so that the main thread will get a chance to
-        // handle any stop button clicks if there are a lot of matches
-        if (m_matchCount%50) QThread::usleep(1);
     }
     
     return structFileResult;
