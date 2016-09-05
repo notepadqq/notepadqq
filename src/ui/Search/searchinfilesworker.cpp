@@ -34,7 +34,7 @@ void SearchInFilesWorker::run()
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
         m_regex.optimize();
-        multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
+        multiLine = true;
     }
 
 
@@ -166,55 +166,31 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString
 
 FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, QString content)
 {
+    m_regex.setPatternOptions(m_regex.patternOptions() | QRegularExpression::MultilineOption);
     FileSearchResult::FileResult structFileResult;
     structFileResult.fileName = fileName;
-
+    
     int column = 0;
     int line = 0;
-    static QString fullDoc;
-    static QVector<int> lineStart;
+    QString fullDoc;
+    QVector<int> lineStart;
     QRegularExpression tmpRegExp = m_regex;
 
     QTextStream stream (&content);
     fullDoc = stream.readAll();
-    fullDoc.remove(QLatin1Char('\r'));
 
-    lineStart.clear();
     lineStart << 0;
     for (int i=0; i<fullDoc.size()-1; i++) {
         if (fullDoc[i] == QLatin1Char('\n')) {
             lineStart << i+1;
         }
     }
-    if (tmpRegExp.pattern().endsWith(QStringLiteral("$"))) {
-        fullDoc += QLatin1Char('\n');
-        QString newPatern = tmpRegExp.pattern();
-        newPatern.replace(QStringLiteral("$"), QStringLiteral("(?=\\n)"));
-        tmpRegExp.setPattern(newPatern);
-    }
 
     QRegularExpressionMatch match;
-    match = tmpRegExp.match(fullDoc);
+    match = m_regex.match(fullDoc);
     column = match.capturedStart();
-    while (column != -1 && !match.captured().isEmpty()) {
-        if (m_stop) break;
-        // search for the line number of the match
-        int i;
-        line = -1;
-        for (i = 1; i < lineStart.size(); i++) {
-            if (lineStart.at(i) > column) {
-                line = i-1;
-                break;
-            }
-        }
-        if (line == -1) {
-            break;
-        }
-        int matchLen = match.capturedLength();
-        structFileResult.results.append(buildResult(line, (column - lineStart.at(line)), column, fullDoc.mid(lineStart.at(line), column - lineStart.at(line)) + match.captured(), matchLen));
-        match = tmpRegExp.match(fullDoc, column + matchLen);
-        column = match.capturedStart();
-        m_matchCount++;
+    while(column != -1 && match.hasMatch()) {
+        
     }
     
     return structFileResult;
