@@ -95,14 +95,6 @@ private:
     *         found in the file
     */
     FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
-
-   /**
-    * @brief Boundary check `match` at `index` to ensure it isn't part of another word
-    * @param `index`
-    * @param `data`
-    * @param `match`
-    * @return bool value based on results of the string test.
-    */
     bool matchesWholeWord(const int &index, const QString &data, const QString &match);
 };
 
