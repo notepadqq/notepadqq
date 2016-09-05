@@ -92,6 +92,15 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
 void frmPreferences::on_buttonBox_accepted()
 {
+    if(m_keyGrabber->findConflicts()){
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
+        msgBox.exec();
+        return;
+    }
+
 
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
