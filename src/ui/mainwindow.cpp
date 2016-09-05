@@ -135,7 +135,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     initUI();
 
 
-    if( m_sessionWindow == this && m_settings->value("rememberSession", true).toBool() ){
+    if( m_sessionWindow == this && m_settings.General.getRememberTabsOnExit() ){
         restoreTabsFromCache();
     }
 
@@ -384,15 +384,15 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
         for (int j = 0; j < tabCount; j++) {
             Editor* editor = tabWidget->editor(j);
             bool isClean = editor->isClean();
-            bool isEmpty = editor->fileName().isEmpty();
+            bool isOrphan = editor->fileName().isEmpty();
 
-            if( isEmpty && !cacheModifiedFiles)
+            if( isOrphan && !cacheModifiedFiles)
                 continue; //Don't save temporary files if caching isn't allowed
 
             TabData td;
 
-            if (!isClean) {
-                //Tab is dirty, meaning it needs to be cached.
+            if (!isClean && cacheModifiedFiles) {
+                //Tab is dirty, meaning it needs to be cached (if caching is allowed).
                 QUrl cacheFilePath = PersistentCache::createValidCacheName(tabWidget->tabText(j));
 
                 td.cacheFilePath = cacheFilePath.toLocalFile();
@@ -400,13 +400,13 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
                 if (m_docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != saveFileResult_Saved) {
                     return false;
                 }
-            } else if(isEmpty) {
-                //Tab is clean and empty, do not store empty tabs.
+            } else if(isOrphan) {
+                //Since we didn't cache the file and it is an orphan, we won't save it in the session.
                 continue;
             }
             //Else tab is an openened unmodified file, we don't have to do anything special.
 
-            td.filePath = !isEmpty ? editor->fileName().toLocalFile() : "" ;
+            td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "" ;
 
             const auto& scrollPos = editor->scrollPosition();
             td.scrollX = scrollPos.first;
@@ -561,8 +561,6 @@ bool MainWindow::closeAllTabs()
 
 QList<const QMenu*> MainWindow::getMenus() const {
     return ui->menuBar->findChildren<const QMenu*>(QString(), Qt::FindDirectChildrenOnly);
-}
-
 //Return a list of all available action items in the menu
 QList<QAction*> MainWindow::getActions() const
 {
@@ -1448,7 +1446,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QMainWindow::closeEvent(event);
 
-    bool followThrough = m_sessionWindow == this && m_settings->value("rememberSession",true).toBool() ?
+    bool followThrough = m_sessionWindow == this && m_settings.General.getRememberTabsOnExit() ?
                              saveTabsToCache() :
                              closeAllTabs();
 
@@ -2402,7 +2400,9 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
 
 void MainWindow::on_actionLoad_Session_triggered()
 {
-    QString recentFolder = QUrl::fromLocalFile(m_settings->value("lastSelectedSessionDir", ".").toString()).toLocalFile();
+    QString recentFolder = QUrl::fromLocalFile(
+                               m_settings.General.getLastSelectedSessionDir()
+                               ).toLocalFile();
 
     QString fileName = QFileDialog::getOpenFileName(
                 this,
@@ -2415,8 +2415,7 @@ void MainWindow::on_actionLoad_Session_triggered()
         if (!fileName.endsWith(".xml"))
             fileName += ".xml";
 
-        m_settings->setValue("lastSelectedSessionDir",
-                           QFileInfo(fileName).dir().absolutePath());
+        m_settings.General.setLastSelectedSessionDir(QFileInfo(fileName).dir().absolutePath());
 
 
         loadSession(fileName);
@@ -2425,7 +2424,9 @@ void MainWindow::on_actionLoad_Session_triggered()
 
 void MainWindow::on_actionSave_Session_triggered()
 {
-    QString recentFolder = QUrl::fromLocalFile(m_settings->value("lastSelectedSessionDir", ".").toString()).toLocalFile();
+    QString recentFolder = QUrl::fromLocalFile(
+                               m_settings.General.getLastSelectedSessionDir()
+                               ).toLocalFile();
 
     QFileDialog dialog(this,
                        tr("Save Session as..."),
@@ -2446,11 +2447,11 @@ void MainWindow::on_actionSave_Session_triggered()
 
     QString fileName = fileNames[0];
 
-    if (fileName != "") {
-        m_settings->setValue("lastSelectedSessionDir",
-                           QFileInfo(fileName).dir().absolutePath());
+    if (fileName.isEmpty())
+        return;
 
-        //Do *not* try to cache just any session.
-        saveSession(fileName, false);
-    }
+    m_settings.General.setLastSelectedSessionDir(QFileInfo(fileName).dir().absolutePath());
+
+    //Do *not* try to cache just any session.
+    saveSession(fileName, false);
 }
