@@ -62,15 +62,15 @@ frmPreferences::~frmPreferences()
 
 void frmPreferences::resetShortcuts()
 {
-    const int rows = m_keyGrabber->rowCount();
+    auto& bindings = m_keyGrabber->getAllBindings();
 
-    for (int i = 0; i < rows; i++) {
-        const QString& actionName = m_keyGrabber->item(i, 0)->data(Qt::UserRole).toString();
-        const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(actionName);
-        m_keyGrabber->item(i, 1)->setText(seq.toString());
+    for (auto& item : bindings) {
+        const QString& objName = item.getAction()->objectName();
+        const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(objName);
+        item.setText(seq.toString());
     }
 
-    m_keyGrabber->checkConflicts();
+    m_keyGrabber->checkForConflicts();
 }
 
 void frmPreferences::updatePreviewEditorFont()
@@ -92,6 +92,20 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
 void frmPreferences::on_buttonBox_accepted()
 {
+    if(m_keyGrabber->hasConflicts()){
+        //Try our best to show the error to the user immediately.
+        ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
+        m_keyGrabber->scrollToConflict();
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
+        msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
+        msgBox.exec();
+        return;
+    }
+
 
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
@@ -262,17 +276,14 @@ void frmPreferences::loadShortcuts()
 {
     MainWindow* mw = qobject_cast<MainWindow*>(parent());
 
-    auto&& allActions = mw->getActions();
-
-    // getActions() also returns actions like separators or menu entries that don't have any
-    // shortcuts. We can remove them based on their objectName and iconText.
-    for (auto&& action : allActions) {
-        if (!action->objectName().isEmpty() && !action->iconText().isEmpty())
-            m_actions[action->objectName()] = action;
-    }
-
     m_keyGrabber = new KeyGrabber();
 
+    const auto& menus = mw->getMenus();
+
+    //addMenus() intentionally skips the Language menu since it would just clutter up everything.
+    m_keyGrabber->addMenus(menus);
+    m_keyGrabber->expandAll();
+    m_keyGrabber->checkForConflicts();
 
     // Build the interface
     QWidget *container = ui->pageShortcuts;
@@ -283,31 +294,18 @@ void frmPreferences::loadShortcuts()
     layout->addWidget(m_keyGrabber);
     layout->addWidget(resetDefaults);
     container->setLayout(layout);
-
-    // Add all shortcuts to the table
-    for (auto&& action : m_actions) {
-        m_keyGrabber->insertRow(0);
-        m_keyGrabber->setItem(0, 0, new QTableWidgetItem(action->iconText()));
-        m_keyGrabber->setItem(0, 1, new QTableWidgetItem(action->shortcut().toString()));
-        m_keyGrabber->item(0, 0)->setData(Qt::UserRole, action->objectName());
-    }
-
-    m_keyGrabber->sortItems(0);
-    m_keyGrabber->checkConflicts();
 }
 
 void frmPreferences::saveShortcuts()
 {
-    const int rows = m_keyGrabber->rowCount();
+    auto& bindings = m_keyGrabber->getAllBindings();
 
-    for (int i = 0; i < rows; i++) {
-        const QString& actionName = m_keyGrabber->item(i, 0)->data(Qt::UserRole).toString();
-        QAction *action = m_actions[actionName];
-        QKeySequence seq = m_keyGrabber->item(i, 1)->text();
+    for (auto& item : bindings) {
+        const QString& objName = item.getAction()->objectName();
+        QKeySequence seq = item.text();
 
-        // Save new shortcut in settings as well as apply it to the QAction* object.
-        m_settings.Shortcuts.setShortcut(action->objectName(), seq);
-        action->setShortcut(seq);
+        m_settings.Shortcuts.setShortcut(objName, seq);
+        item.getAction()->setShortcut(seq);
     }
 }
 
