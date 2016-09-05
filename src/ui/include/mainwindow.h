@@ -63,7 +63,9 @@ public:
     QSharedPointer<Editor> currentEditorSharedPtr();
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
-    QList<QAction*> getActions();
+
+    QList<QAction*> getActions() const;
+    QList<const QMenu*> getMenus() const ;
 
 protected:
     void closeEvent(QCloseEvent *event);

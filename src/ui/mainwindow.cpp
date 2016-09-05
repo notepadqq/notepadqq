@@ -358,8 +358,12 @@ void MainWindow::createStatusBar()
     scrollArea->setFixedHeight(frame->height());
 }
 
+QList<const QMenu*> MainWindow::getMenus() const {
+    return ui->menuBar->findChildren<const QMenu*>(QString(), Qt::FindDirectChildrenOnly);
+}
+
 //Return a list of all available action items in the menu
-QList<QAction*> MainWindow::getActions()
+QList<QAction*> MainWindow::getActions() const
 {
     const QList<const QMenu*> list = ui->menuBar->findChildren<const QMenu*>();
     QList<QAction*> allActions;

@@ -2,71 +2,84 @@
 #include <QHeaderView>
 #include <QPainter>
 
-KeyGrabber::KeyGrabber(QWidget* parent) : QTableWidget(parent)
+#include <QDebug>
+#include <QMenu>
+
+KeyGrabber::KeyGrabber(QWidget* parent) : QTreeWidget(parent)
 {
-    horizontalHeader()->setStretchLastSection(true);
-    horizontalHeader()->setDefaultSectionSize(200);
-    verticalHeader()->setVisible(false);
-    verticalHeader()->sectionResizeMode(QHeaderView::Fixed);
-    verticalHeader()->setDefaultSectionSize(20);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
-    setAlternatingRowColors(true);
     setColumnCount(2);
-    setHorizontalHeaderItem(0, new QTableWidgetItem("Action"));
-    setHorizontalHeaderItem(1, new QTableWidgetItem("Keyboard Shortcut"));
-    connect(this, &QTableWidget::itemChanged, this, &KeyGrabber::itemChanged);
+    setColumnWidth(0, 400);
+    setAlternatingRowColors(true);
+    setHeaderLabels(QStringList() << "Action" << "Keyboard Shortcut");
+
+    connect(this, &QTreeWidget::itemChanged, this, &KeyGrabber::itemChanged);
 }
 
-void KeyGrabber::itemChanged(QTableWidgetItem*)
+void KeyGrabber::itemChanged(QTreeWidgetItem*)
 {
-    // Don't do anything if it isn't active.
-    if (!currentItem()) {
+    // Don't do anything if it isn't active or we're in the middle of testing for conflicts
+    // since item->setBackground() emits an itemChanged signal.
+    if (!currentItem() || m_testingForConflicts) {
         return;
     }
 
-    m_conflicts.clear();
-    checkConflicts();
+    findConflicts();
 }
 
-void KeyGrabber::checkConflicts()
+bool KeyGrabber::findConflicts()
 {
-    int rows = rowCount();
-    QStringList dupes;
-    for (int i = 0; i < rows; i++) {
-        dupes.append(item(i, 1)->text());
-    }
+    m_testingForConflicts = true;
 
-    for (int i = 0; i < dupes.size(); i++) {
-        if (dupes.at(i).isEmpty()) {
+    //Find conflicts among shortcuts. We take a list of all shortcuts, sort them, then
+    //walk through them and compare them for equality.
+    QList<NodeItem> allNodes = m_allActions;
+    qSort(allNodes.begin(), allNodes.end(), [](const NodeItem& a, const NodeItem&b ) {
+        return a.treeItem->text(1) < b.treeItem->text(1);
+    });
+
+    for(const auto& n : allNodes)
+        n.treeItem->setBackground(1, QBrush());
+
+    bool foundConflict = false;
+
+    for (int i=0; i<allNodes.count()-1; ++i) {
+        QTreeWidgetItem* current = allNodes[i].treeItem;
+        QTreeWidgetItem* next = allNodes[i+1].treeItem;
+
+        if(current->text(1).isEmpty())
             continue;
-        }
 
-        QString search = dupes.at(i);
-        int x = dupes.indexOf(search, i+1);
-        while (x != -1) {
-            m_conflicts.insert(i);
-            m_conflicts.insert(x);
-            x = dupes.indexOf(search, x+1);
+        if(current->text(1) == next->text(1)){
+            current->setBackground(1, QBrush(QColor(255,100,100,64)));
+            next->setBackground(1, QBrush(QColor(255,100,100,64)));
+            foundConflict = true;
         }
+    }
+
+    m_testingForConflicts = false;
+
+    return foundConflict;
+}
+
+void KeyGrabber::addMenus(const QList<const QMenu*>& listOfMenus)
+{
+    for(const QMenu* menu : listOfMenus) {
+
+        if(menu->objectName() == "menu_Language")
+            continue;
+
+        auto item = new QTreeWidgetItem();
+        item->setText(0, menu->menuAction()->iconText());
+
+        populateNode(item, menu);
+
+        addTopLevelItem(item);
     }
 }
 
-void KeyGrabber::paintEvent(QPaintEvent* event)
+QList<KeyGrabber::NodeItem>& KeyGrabber::getAllBindings()
 {
-    QTableWidget::paintEvent(event);
-    QPainter p(viewport());
-    p.setPen(QColor(255, 200, 200, 255));
-
-    QSetIterator<int> it(m_conflicts);
-    while (it.hasNext()) {
-        int current = it.next();
-        QRect rect = visualItemRect(item(current, 1));
-        p.drawRect(rect);
-        p.fillRect(rect, QBrush(QColor(255, 100, 100, 64)));
-        viewport()->update();
-    }
+    return m_allActions;
 }
 
 void KeyGrabber::keyPressEvent(QKeyEvent* event)
@@ -80,9 +93,15 @@ void KeyGrabber::keyPressEvent(QKeyEvent* event)
         switch(event->key()) {
             case Qt::Key_Up:
             case Qt::Key_Down:
-                QTableWidget::keyPressEvent(event);
+                QTreeWidget::keyPressEvent(event);
                 return;
         }
+    }
+
+    const QVariant& data = currentItem()->data(0, Qt::UserRole);
+    if(!data.isValid()) {
+        QTreeWidget::keyPressEvent(event);
+        return;
     }
 
     if (modifiers & Qt::ControlModifier) grab.append("Ctrl+");
@@ -139,7 +158,7 @@ void KeyGrabber::keyPressEvent(QKeyEvent* event)
             if (modifiers) {
                 grab.append(key);
             } else {
-                item(currentRow(), 1)->setText("");
+                currentItem()->setText(1, "");
                 return;
             }
             break;
@@ -151,5 +170,38 @@ void KeyGrabber::keyPressEvent(QKeyEvent* event)
             break;
     }
 
-    item(currentRow(), 1)->setText(grab);
+    currentItem()->setText(1, grab);
+}
+
+void KeyGrabber::populateNode(QTreeWidgetItem*& rootItem, const QMenu* menu) {
+    for (QAction* action : menu->actions()) {
+
+        if(action->isSeparator())
+            continue;
+
+        if(action->menu()) {
+            //If the action is a sub-menu, we add a new tree node and populate it with
+            //The children of this menu
+            auto item = new QTreeWidgetItem();
+            item->setText(0, action->iconText());
+            populateNode(item, action->menu());
+            rootItem->addChild(item);
+        }else{
+            //Any action that does not have an object name or label won't be added.
+            //This way we exclude things such as the entries in the recent documents
+            //list.
+            if(action->objectName().isEmpty() || action->iconText().isEmpty())
+                continue;
+
+            auto item = new QTreeWidgetItem();
+            item->setText(0, action->iconText());
+            item->setText(1, action->shortcut().toString());
+            //Every action that can have a shortcut gets this user value set to 'true'.
+            //This is used in keyPressEvent to figure out whether to read the key evts.
+            item->setData(0, Qt::UserRole, true);
+            rootItem->addChild(item);
+
+            m_allActions.push_back( NodeItem {action, item} );
+        }
+    }
 }
