@@ -21,9 +21,11 @@ SearchInFilesWorker::~SearchInFilesWorker()
 
 void SearchInFilesWorker::run()
 {
-    bool multiLine = false; 
-    
+    bool multiLine = false;  
+    FileSearchResult::SearchResult searchResult;
     QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
+    QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
+
     if(m_searchMode != SearchHelpers::SearchMode::PlainText) {
         if (m_searchOptions.MatchCase == false) {
             options |= QRegularExpression::CaseInsensitiveOption;
@@ -35,25 +37,19 @@ void SearchInFilesWorker::run()
         multiLine = m_regex.pattern().contains(QStringLiteral("\\n"));
     }
 
-    // Search result structure
-    FileSearchResult::SearchResult structSearchResult;
-    structSearchResult.search = m_string;
 
-    QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
     if (m_searchOptions.IncludeSubDirs) {
         dirIteratorOptions |= QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
     }
-
-    // Iterator used to find files in the specified directory
+    
     QDirIterator it(m_path, m_filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
-
     while (it.hasNext()) {
         if (m_stop) {
             emit finished(true);
             return;
         }
 
-        QString fileName = it.next();
+        const QString fileName = it.next();
         emit progress(fileName);
 
         // Read the file into a string.
@@ -79,23 +75,16 @@ void SearchInFilesWorker::run()
                 }
             }
         } while (retry);
-
-        FileSearchResult::FileResult structFileResult;
-
-        // Run the search
-        if (multiLine) structFileResult = searchMultiLineRegExp(fileName,decodedText.text);
-        else structFileResult = searchSingleLineRegExp(fileName,&decodedText.text);
-        
         f.close();
 
-        if (!structFileResult.results.isEmpty()) {
-            structSearchResult.fileResults.append(structFileResult);
-        }
-    }
+        FileSearchResult::FileResult fileResult;
 
-    m_resultMutex.lock();
-    m_result = structSearchResult;
-    m_resultMutex.unlock();
+        if (multiLine) fileResult = searchMultiLineRegExp(fileName,decodedText.text);
+        else fileResult = searchSingleLine(fileName,&decodedText.text);
+        if (!fileResult.results.isEmpty()) searchResult.fileResults.append(fileResult);
+    }
+    searchResult.search = m_string;
+    m_result = searchResult;
 
     emit finished(false);
 }
@@ -109,55 +98,44 @@ void SearchInFilesWorker::stop()
 
 bool SearchInFilesWorker::matchesWholeWord(const int &index, const QString &data, const QString &match)
 {
-    QChar charBefore;
-    QChar charAfter;
+    QChar boundary;
     int matchLength = match.length();
-    int dataLength = data.length();
 
     if (index !=0) {
-        charBefore = data.at(index-1);
-        if (!charBefore.isPunct() && !charBefore.isSpace() && !charBefore.isSymbol()) return false;
+        boundary = data.at(index-1);
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
     }
-
-    if (index+matchLength != dataLength) {
-        charAfter = data.at(index+matchLength);
-        if (!charAfter.isPunct() && !charAfter.isSpace() && !charAfter.isSymbol()) return false;
+    if (data.length() != index+matchLength) {
+        boundary = data.at(index+matchLength);
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
     }
-
-            
     return true;
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const QString &fileName, QString *content)
+FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString &fileName, QString *content)
 {
-    FileSearchResult::FileResult structFileResult;
-    structFileResult.fileName = fileName;
+    FileSearchResult::FileResult fileResult;
 
     QTextStream stream (content);
     QString line;
+
     int i = 0;
     int column;
     int streamPosition = 0;
     int lineLength;
 
-    //Regex for plain text is slow, experimental plain text search for speed improvements.
+    fileResult.fileName = fileName;
     if (m_searchMode == SearchHelpers::SearchMode::PlainText) {
         Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
         int resultLength = m_string.length();
 
-        while (!(line=stream.readLine()).isNull()) {
-            if (m_stop) break;
+        while (!(line=stream.readLine()).isNull() && !m_stop) {
+            bool hasResult = true;
             lineLength = line.length();
             column = line.indexOf(m_string, 0, caseSensitive);
-            while (column != -1) {
-                if (m_stop) break;
-                if (m_searchOptions.MatchWholeWord) {
-                    if (matchesWholeWord(column, line, m_string)) {
-                        structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
-                    }
-                }else {
-                    structFileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
-                }
+            while (column != -1 && !m_stop) {
+                if (m_searchOptions.MatchWholeWord) hasResult = matchesWholeWord(column, line, m_string);
+                if (hasResult) fileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
                 column = line.indexOf(m_string, column + resultLength, caseSensitive);
                 m_matchCount++;
             }
@@ -168,26 +146,22 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLineRegExp(const Q
 
     }else {
         QRegularExpressionMatch match;
-        while (!(line=stream.readLine()).isNull()) {
-            if (m_stop) break;
+        while (!(line=stream.readLine()).isNull() && !m_stop) {
             lineLength = line.length();
             match = m_regex.match(line);
             column = match.capturedStart();
-            while (column != -1 && match.hasMatch()) {
-                if (m_stop) break;
-                structFileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
+            while (column != -1 && match.hasMatch() && !m_stop) {
+                fileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
                 match = m_regex.match(line, column + match.capturedLength());
                 column = match.capturedStart();
                 m_matchCount++;
-                if (m_matchCount%50) QThread::usleep(1);
             }
             i++;
-            //Check line ending per line to be safe.
             if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
             else streamPosition += lineLength + 1; 
         }
     }
-    return structFileResult;
+    return fileResult;
 
 }
 

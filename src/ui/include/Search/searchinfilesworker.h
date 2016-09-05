@@ -85,7 +85,7 @@ private:
     * @return `FileSearchResult::FileResult` object containing all the matches
     *         found in the file
     */
-    FileSearchResult::FileResult searchSingleLineRegExp(const QString &fileName, QString *content);
+    FileSearchResult::FileResult searchSingleLine(const QString &fileName, QString *content);
 
    /**
     * @brief Perform a search using multi line regular expression matching
