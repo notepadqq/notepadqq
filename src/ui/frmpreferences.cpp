@@ -93,16 +93,16 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 void frmPreferences::on_buttonBox_accepted()
 {
     if(m_keyGrabber->hasConflicts()){
+        //Try our best to show the error to the user immediately.
+        ui->treeWidget->setCurrentItem( ui->treeWidget->topLevelItem(4) );
+        m_keyGrabber->scrollToConflict();
+
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
         msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
         msgBox.exec();
-
-        ui->treeWidget->setCurrentItem( ui->treeWidget->topLevelItem(4) );
-        m_keyGrabber->scrollToConflict();
-
         return;
     }
 
