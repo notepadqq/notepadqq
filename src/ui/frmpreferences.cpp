@@ -94,8 +94,7 @@ void frmPreferences::on_buttonBox_accepted()
 {
     if(m_keyGrabber->hasConflicts()){
         //Try our best to show the error to the user immediately.
-        ui->stackedWidget->setCurrentWidget( ui->pageShortcuts );
-        ui->treeWidget->setCurrentItem( ui->treeWidget->topLevelItem( ui->stackedWidget->currentIndex() ) );
+        ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
         m_keyGrabber->scrollToConflict();
 
         QMessageBox msgBox;
