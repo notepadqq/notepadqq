@@ -55,26 +55,26 @@ void SearchInFilesWorker::run()
         // Read the file into a string.
         QFile f(fileName);
         DocEngine::DecodedText decodedText;
-        bool retry = true;
-
-        decodedText = DocEngine::readToString(&f);
-        while(decodedText.error && retry) {
+        bool retry;
+        do {
             retry = false;
-            // Error reading from file: show message box
-            int result = QMessageBox::StandardButton::NoButton;
-            emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
-            switch(result) {
-                case QMessageBox::StandardButton::Abort:
+            decodedText = DocEngine::readToString(&f);
+            if (decodedText.error) {
+                // Error reading from file: show message box
+
+                int result = QMessageBox::StandardButton::NoButton;
+                emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
+
+                if (result == QMessageBox::StandardButton::Abort) {
                     emit finished(true);
                     return;
-                case QMessageBox::StandardButton::Retry:
+                } else if (result == QMessageBox::StandardButton::Retry) {
                     retry = true;
-                    break;
-                default:
-                    break;
+                } else {
+                    continue;
+                }
             }
-            break;
-        }
+        } while (retry);
         f.close();
 
         FileSearchResult::FileResult fileResult;
@@ -165,7 +165,6 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString
 
 }
 
-//TODO: Cleanup and optimize searchMultiLineRegExp
 FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, QString content)
 {
     FileSearchResult::FileResult structFileResult;
