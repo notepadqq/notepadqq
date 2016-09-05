@@ -1087,6 +1087,8 @@
    </property>
    <property name="text">
     <string>Enable Smart Indent</string>
+   </property>
+  </action>
   <action name="actionFile_Browser">
    <property name="text">
     <string>File Browser</string>
