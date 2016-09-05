@@ -11,9 +11,19 @@ public:
 
     /**
      * @brief findConflicts Checks the entire tree for conflicting shortcuts.
-     * @return true if conflicts were found, false otherwise.
      */
-    bool findConflicts();
+    void checkForConflicts();
+
+    /**
+     * @brief hasConflicts
+     * @return true if there is at least one conflict in the keyboard mapping.
+     */
+    bool hasConflicts() const;
+
+    /**
+     * @brief scrollToConflict Moves the view to the first conflicting action.
+     */
+    void scrollToConflict();
 
     /**
      * @brief addMenus Traverses the list of menus and adds the contained actions to
@@ -64,6 +74,7 @@ private:
 
     QList<NodeItem> m_allActions;
     bool m_testingForConflicts = false;
+    QTreeWidgetItem* m_firstConflict = nullptr;
 };
 
 #endif

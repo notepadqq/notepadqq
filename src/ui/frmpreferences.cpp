@@ -70,7 +70,7 @@ void frmPreferences::resetShortcuts()
         item.setText(seq.toString());
     }
 
-    m_keyGrabber->findConflicts();
+    m_keyGrabber->checkForConflicts();
 }
 
 void frmPreferences::updatePreviewEditorFont()
@@ -92,12 +92,17 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
 void frmPreferences::on_buttonBox_accepted()
 {
-    if(m_keyGrabber->findConflicts()){
+    if(m_keyGrabber->hasConflicts()){
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
         msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
         msgBox.exec();
+
+        ui->treeWidget->setCurrentItem( ui->treeWidget->topLevelItem(4) );
+        m_keyGrabber->scrollToConflict();
+
         return;
     }
 
@@ -278,7 +283,7 @@ void frmPreferences::loadShortcuts()
     //addMenus() intentionally skips the Language menu since it would just clutter up everything.
     m_keyGrabber->addMenus(menus);
     m_keyGrabber->expandAll();
-    m_keyGrabber->findConflicts();
+    m_keyGrabber->checkForConflicts();
 
     // Build the interface
     QWidget *container = ui->pageShortcuts;

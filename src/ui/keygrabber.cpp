@@ -10,9 +10,22 @@ KeyGrabber::KeyGrabber(QWidget* parent) : QTreeWidget(parent)
     setColumnCount(2);
     setColumnWidth(0, 400);
     setAlternatingRowColors(true);
-    setHeaderLabels(QStringList() << "Action" << "Keyboard Shortcut");
+    setHeaderLabels(QStringList() << tr("Action") << tr("Keyboard Shortcut"));
 
     connect(this, &QTreeWidget::itemChanged, this, &KeyGrabber::itemChanged);
+}
+
+bool KeyGrabber::hasConflicts() const
+{
+    return m_firstConflict != nullptr;
+}
+
+void KeyGrabber::scrollToConflict()
+{
+    if(!m_firstConflict)
+        return;
+
+    scrollTo(indexFromItem(m_firstConflict));
 }
 
 void KeyGrabber::itemChanged(QTreeWidgetItem*)
@@ -23,10 +36,10 @@ void KeyGrabber::itemChanged(QTreeWidgetItem*)
         return;
     }
 
-    findConflicts();
+    checkForConflicts();
 }
 
-bool KeyGrabber::findConflicts()
+void KeyGrabber::checkForConflicts()
 {
     m_testingForConflicts = true;
 
@@ -40,7 +53,7 @@ bool KeyGrabber::findConflicts()
     for(const auto& n : allNodes)
         n.treeItem->setBackground(1, QBrush());
 
-    bool foundConflict = false;
+    m_firstConflict = nullptr;
 
     for (int i=0; i<allNodes.count()-1; ++i) {
         QTreeWidgetItem* current = allNodes[i].treeItem;
@@ -52,13 +65,13 @@ bool KeyGrabber::findConflicts()
         if(current->text(1) == next->text(1)){
             current->setBackground(1, QBrush(QColor(255,100,100,64)));
             next->setBackground(1, QBrush(QColor(255,100,100,64)));
-            foundConflict = true;
+
+            if(!m_firstConflict)
+                m_firstConflict = current;
         }
     }
 
     m_testingForConflicts = false;
-
-    return foundConflict;
 }
 
 void KeyGrabber::addMenus(const QList<const QMenu*>& listOfMenus)
