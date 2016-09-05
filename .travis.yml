@@ -1,0 +1,10 @@
+language: cpp
+dist: xenial
+os:
+  - linux
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools libqt5websockets5-dev
+script:
+  - ./configure
+  - make
