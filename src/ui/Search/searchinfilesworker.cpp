@@ -96,10 +96,9 @@ void SearchInFilesWorker::stop()
     m_stopMutex.unlock();
 }
 
-bool SearchInFilesWorker::matchesWholeWord(const int &index, const QString &data, const QString &match)
+bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
 {
     QChar boundary;
-    int matchLength = match.length();
 
     if (index !=0) {
         boundary = data.at(index-1);
@@ -127,16 +126,16 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString
     fileResult.fileName = fileName;
     if (m_searchMode == SearchHelpers::SearchMode::PlainText) {
         Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        int resultLength = m_string.length();
+        int matchLength = m_string.length();
 
         while (!(line=stream.readLine()).isNull() && !m_stop) {
             bool hasResult = true;
             lineLength = line.length();
             column = line.indexOf(m_string, 0, caseSensitive);
             while (column != -1 && !m_stop) {
-                if (m_searchOptions.MatchWholeWord) hasResult = matchesWholeWord(column, line, m_string);
-                if (hasResult) fileResult.results.append(buildResult(i, column, streamPosition + column, line, resultLength));
-                column = line.indexOf(m_string, column + resultLength, caseSensitive);
+                if (m_searchOptions.MatchWholeWord) hasResult = matchesWholeWord(column, matchLength, line);
+                if (hasResult) fileResult.results.append(buildResult(i, column, streamPosition + column, line, matchLength));
+                column = line.indexOf(m_string, column + matchLength, caseSensitive);
                 m_matchCount++;
             }
             i++;

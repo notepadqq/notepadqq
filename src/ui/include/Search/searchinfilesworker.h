@@ -22,7 +22,7 @@ signals:
      * @param stopped if true, the worker did not complete its operations
      *        (e.g. because of an error or because it was manually stopped).
      */
-    void finished(biol stopped);
+    void finished(bool stopped);
     void error(QString string);
     void progress(QString file);
 
@@ -102,7 +102,7 @@ private:
     * @param `match`
     * @return bool value based on results of the string test.
     */
-    bool matchesWholeWord(const int &index, const QString &data, const QString &match);
+    bool matchesWholeWord(const int &index, const int &matchLength, const QString &data);
 };
 
 #endif // SEARCHINFILESWORKER_H
