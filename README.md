@@ -1,6 +1,8 @@
 Notepadqq
 =========
 
+[![Build Status](https://travis-ci.org/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.org/notepadqq/notepadqq)
+
 Build
 -----
 
