@@ -24,6 +24,6 @@ void NotepadqqTest::editorPathIsHtml()
     QVERIFY(Notepadqq::editorPath().endsWith(".html"));
 }
 
-QTEST_MAIN(NotepadqqTest)
+QTEST_GUILESS_MAIN(NotepadqqTest)
 
 #include "tst_notepadqqtest.moc"
