@@ -206,6 +206,19 @@
     </message>
 </context>
 <context>
+    <name>KeyGrabber</name>
+    <message>
+        <location filename="../ui/keygrabber.cpp" line="13"/>
+        <source>Action</source>
+        <translation>Akcja</translation>
+    </message>
+    <message>
+        <location filename="../ui/keygrabber.cpp" line="13"/>
+        <source>Keyboard Shortcut</source>
+        <translation>Skrót klawiaturowy</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../ui/mainwindow.ui" line="14"/>
@@ -1037,144 +1050,144 @@
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="339"/>
-        <location filename="../ui/mainwindow.cpp" line="578"/>
+        <location filename="../ui/mainwindow.cpp" line="582"/>
         <source>INS</source>
         <translation>WSTAW</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="576"/>
+        <location filename="../ui/mainwindow.cpp" line="580"/>
         <source>OVR</source>
         <translation>NADPIS</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="585"/>
+        <location filename="../ui/mainwindow.cpp" line="589"/>
         <source>new %1</source>
         <translation>nowy %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="711"/>
+        <location filename="../ui/mainwindow.cpp" line="715"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>Twoje zmiany do %1 zostaną odrzucone.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="712"/>
+        <location filename="../ui/mainwindow.cpp" line="716"/>
         <source>Reload</source>
         <translation>Odśwież</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="771"/>
+        <location filename="../ui/mainwindow.cpp" line="775"/>
         <source>Open</source>
         <translation>Otwórz</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="773"/>
+        <location filename="../ui/mainwindow.cpp" line="777"/>
         <source>All files (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="791"/>
+        <location filename="../ui/mainwindow.cpp" line="795"/>
         <source>Open Folder</source>
         <translation>Otwórz folder</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="831"/>
+        <location filename="../ui/mainwindow.cpp" line="835"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Czy chcesz zapisać zmiany do «%1»? </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="832"/>
+        <location filename="../ui/mainwindow.cpp" line="836"/>
         <source>Don&apos;t Save</source>
         <translation>Nie zapisuj</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="835"/>
+        <location filename="../ui/mainwindow.cpp" line="839"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Czy chcesz zapisać zmiany do «%1» przed zamknięciem?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="839"/>
+        <location filename="../ui/mainwindow.cpp" line="843"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Jeśli nie zapiszesz dokonanych zmian, to utracisz je na zawsze.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="939"/>
+        <location filename="../ui/mainwindow.cpp" line="943"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>Plik na dysku został zmieniony od ostatniego odczytu.
 Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="942"/>
+        <location filename="../ui/mainwindow.cpp" line="946"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>Zapisanie pliku może spowodować utratę danych zewnętrznych.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="961"/>
+        <location filename="../ui/mainwindow.cpp" line="965"/>
         <source>Save as</source>
         <translation>Zapisz jako</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="963"/>
+        <location filename="../ui/mainwindow.cpp" line="967"/>
         <source>Any file (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1127"/>
+        <location filename="../ui/mainwindow.cpp" line="1131"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1 znaków, %2 linii</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1138"/>
+        <location filename="../ui/mainwindow.cpp" line="1142"/>
         <source>Ln %1, col %2</source>
         <translation>Linia %1, Kol %2</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1142"/>
+        <location filename="../ui/mainwindow.cpp" line="1146"/>
         <source>Sel %1 (%2)</source>
         <translation>Zazn %1 (%2) </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1206"/>
+        <location filename="../ui/mainwindow.cpp" line="1210"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1209"/>
+        <location filename="../ui/mainwindow.cpp" line="1213"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1212"/>
+        <location filename="../ui/mainwindow.cpp" line="1216"/>
         <source>Old Mac</source>
         <translation>Stary MAC</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1219"/>
+        <location filename="../ui/mainwindow.cpp" line="1223"/>
         <source>%1 w/o BOM</source>
         <translation>%1 bez BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1699"/>
+        <location filename="../ui/mainwindow.cpp" line="1703"/>
         <source>No recent files</source>
         <translation>Brak ostatnio używanych plików</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1863"/>
+        <location filename="../ui/mainwindow.cpp" line="1867"/>
         <source>Convert to:</source>
         <translation>Konwertuj na format:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1877"/>
+        <location filename="../ui/mainwindow.cpp" line="1881"/>
         <source>Reload as:</source>
         <translation>Odśwież jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1919"/>
+        <location filename="../ui/mainwindow.cpp" line="1923"/>
         <source>Interpret as:</source>
         <translation>Interpretuj jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2189"/>
+        <location filename="../ui/mainwindow.cpp" line="2193"/>
         <source>Extension</source>
         <translation>Rozszerzenie</translation>
     </message>
@@ -1182,12 +1195,12 @@ Czy chcesz go zapisać mimo to?</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="367"/>
+        <location filename="../ui/frmpreferences.cpp" line="365"/>
         <source>Restart required</source>
         <translation>Wymagany restart</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="368"/>
+        <location filename="../ui/frmpreferences.cpp" line="366"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
         <translation>Musisz zrestartować Notepadqq, by były widoczne efekty zmiany lokalizacji.</translation>
     </message>
@@ -1468,7 +1481,17 @@ Czy chcesz go zapisać mimo to?</translation>
         <translation>UWAGA: wsparcie dla rozszerzeń jest EKSPERYMENTALNE.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="374"/>
+        <location filename="../ui/frmpreferences.cpp" line="103"/>
+        <source>Keyboard shortcut conflict</source>
+        <translation>Konflikt skrótu klawiaturowego</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.cpp" line="104"/>
+        <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
+        <translation>Ten sam skrót klawiaturowy jest przypisany do dwóch lub więcej akcji. Te konflikty muszą być rozwiązane przed zapisaniem zmian.</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.cpp" line="372"/>
         <source>Browse</source>
         <translation>Przeglądaj</translation>
     </message>
