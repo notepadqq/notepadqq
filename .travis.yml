@@ -1,5 +1,6 @@
 language: cpp
-dist: xenial
+dist: trusty
+sudo: required
 os:
   - linux
 before_install:
@@ -7,4 +8,4 @@ before_install:
   - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
 script:
   - ./configure && make
-  - (cd src/ui-tests && qmake && make && ./ui-tests)
+  - ./src/ui-tests/ui-tests
