@@ -97,7 +97,7 @@ void SearchInFilesWorker::stop()
 
 bool SearchInFilesWorker::isMultilineMatch(const QString &pattern)
 {
-    return pattern.contains(QRegExp("\\\\r|\\\\n|\\\\[xX]0[aA]|\\\\[xX]0[Dd]"));
+    return pattern.contains(QRegExp("\\\\[rn]|\\\\[xX]0[aAdD]"));
 }
 
 bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
