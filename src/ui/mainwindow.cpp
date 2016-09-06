@@ -561,6 +561,8 @@ bool MainWindow::closeAllTabs()
 
 QList<const QMenu*> MainWindow::getMenus() const {
     return ui->menuBar->findChildren<const QMenu*>(QString(), Qt::FindDirectChildrenOnly);
+}
+
 //Return a list of all available action items in the menu
 QList<QAction*> MainWindow::getActions() const
 {
