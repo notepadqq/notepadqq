@@ -183,11 +183,8 @@ private slots:
     void on_actionShow_All_Characters_toggled(bool on);
     void on_actionShow_Spaces_triggered(bool on);
     void on_actionToggle_Smart_Indent_toggled(bool on);
-
-
-	void on_actionLoad_Session_triggered();
-
-	void on_actionSave_Session_triggered();
+    void on_actionLoad_Session_triggered();
+    void on_actionSave_Session_triggered();
 
 private:
     static QList<MainWindow*> m_instances;
@@ -254,7 +251,6 @@ private:
 	 * @return Whether all files have been properly closed.
 	 */
     bool                closeAllTabs();
-
 
     void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();

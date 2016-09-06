@@ -13,6 +13,7 @@ struct TabData {
     QString cacheFilePath;
     int scrollX = 0;
     int scrollY = 0;
+    qint64 lastModified = 0;
 };
 
 struct ViewData {
@@ -21,7 +22,6 @@ struct ViewData {
 
 /**
  * @brief Provides a convenience class to read session .xml files.
- *
  */
 class SessionReader {
 public:
@@ -31,10 +31,8 @@ public:
 
     /**
      * @brief Completely read the session data
-     *
      * @param outSuccess pass a pointer to bool here to be informed about whether
-     * the reading process has encountered any errors.
-     *
+     *        the reading process has encountered any errors.
      * @return The data read from the session file.
      */
     std::vector<ViewData> readData(bool* outSuccess=nullptr);
@@ -69,7 +67,7 @@ public:
 
     /**
      * @brief Write ViewData to the session file. ViewData is the representation of a
-     * TabWidget and its tabs.
+     *        TabWidget and its tabs.
      *
      * @param The ViewData to be written.
      */

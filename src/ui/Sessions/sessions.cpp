@@ -3,14 +3,14 @@
 /* Session XML structure:
  *
  * <Notepadqq>
- *		<View>
- *			<Tab filePath="xxx" .../>
- *			<Tab filePath="xxx" ...b/>
- *		</View>
- *		<View>
- *			...
- *		</View>
- *		...
+ *      <View>
+ *          <Tab filePath="xxx" .../>
+ *          <Tab filePath="xxx" ...b/>
+ *      </View>
+ *      <View>
+ *          ...
+ *      </View>
+ *      ...
  * <Notepadqq>
  *
  * */
@@ -65,6 +65,7 @@ std::vector<TabData> SessionReader::readTabData() {
             td.cacheFilePath = attrs.value("cacheFilePath").toString();
             td.scrollX = attrs.value("scrollX").toString().toInt();
             td.scrollY = attrs.value("scrollY").toString().toInt();
+            td.lastModified = attrs.value("lastModified").toLongLong();
             result.push_back(td);
 
             m_reader.readElementText();
@@ -109,6 +110,12 @@ void SessionWriter::addTabData(const TabData& td){
     attrs.push_back( QXmlStreamAttribute("cacheFilePath", td.cacheFilePath) );
     attrs.push_back( QXmlStreamAttribute("scrollX", QString::number(td.scrollX)) );
     attrs.push_back( QXmlStreamAttribute("scrollY", QString::number(td.scrollY)) );
+
+    //lastModified is only used for tabs that are cached, so let's not write it to the xml file
+    //unless it's actually useful.
+    if(td.lastModified != 0)
+        attrs.push_back( QXmlStreamAttribute("lastModified", QString::number(td.lastModified)) );
+
     m_writer.writeAttributes(attrs);
 
     m_writer.writeEndElement();
