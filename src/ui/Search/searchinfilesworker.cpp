@@ -169,15 +169,13 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString
 
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, const QString &content)
+FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, QString &content)
 {
     FileSearchResult::FileResult fileResult;
     fileResult.fileName = fileName;
     
     int column = 0;
     int line = 0;
-    int lastLine = 0;
-    QString fullDoc;
     QVector<int> lineStart;
     QRegularExpressionMatch match;
 
@@ -193,7 +191,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
     }
 
     m_regex.setPatternOptions(m_regex.patternOptions() | QRegularExpression::MultilineOption);
-    match = m_regex.match(fullDoc);
+    match = m_regex.match(content);
     column = match.capturedStart();
     while(column != -1 && match.hasMatch()) {
         //Get the current line we are working on.
@@ -203,8 +201,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
                 break;
             }
         }
-        fileResult.results.append(buildResult(line, column, column, fullDoc, match.capturedLength()));
-        match = m_regex.match(fullDoc,column + match.capturedLength());
+        fileResult.results.append(buildResult(line, column, column, content, match.capturedLength()));
+        match = m_regex.match(content, column + match.capturedLength());
         column = match.capturedStart();
     }
     
