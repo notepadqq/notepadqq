@@ -86,7 +86,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -116,7 +116,7 @@
          <item>
           <widget class="QCheckBox" name="chkRememberSession">
            <property name="text">
-            <string>Remember openened tabs when closing Notepadqq</string>
+            <string>Remember open tabs when closing Notepadqq</string>
            </property>
           </widget>
          </item>
