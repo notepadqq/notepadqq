@@ -8,8 +8,7 @@ TopEditorContainer::TopEditorContainer(QWidget *parent) :
 
     //Always add a first tabWidget to the container.
     //This ensures m_currentTagWidget is never null
-    auto tab = addTabWidget();
-    tab->setCurrentIndex(0);
+    m_currentTabWidget = addTabWidget();
 }
 
 EditorTabWidget *TopEditorContainer::addTabWidget()

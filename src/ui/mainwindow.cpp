@@ -425,9 +425,6 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
                     td.lastModified = QFileInfo(td.filePath).lastModified().toMSecsSinceEpoch();
             }
 
-
-
-
             currentViewData.tabs.push_back( td );
 
         } //end for
