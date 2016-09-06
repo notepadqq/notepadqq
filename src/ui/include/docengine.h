@@ -51,7 +51,18 @@ public:
 
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
     bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
+
+    /**
+     * @brief loadDocumentSilent Works exactly like loadDocument() except that the
+     *        LastSelectedDir setting will not be set to the parent of the document
+     *        to be loaded. Use this function to load files that you do not wish
+     *        the user to be informed about their origin (such as cached files).
+     * @param fileName Path to the text file to be opened.
+     * @param tabWidget The new editor will be added to this TabWidget
+     * @return Always true.
+     */
     bool loadDocumentSilent(const QUrl &fileName, EditorTabWidget *tabWidget);
+
     bool reloadDocument(EditorTabWidget *tabWidget, int tab);
     bool reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
@@ -75,6 +86,21 @@ private:
     bool read(QFile *file, Editor *editor);
     bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
+
+    /**
+     * @brief loadDocuments
+     * @param fileNames
+     * @param tabWidget
+     * @param reload
+     * @param codec
+     * @param bom
+     * @param rememberLastSelectedDir if true, will remember the parent directory of the loaded
+     *        documents as the "last selected dir". This setting is used to display the default
+     *        folder that is shown in the FileDialog when opening files/folders.
+     *        Set this to false to transparently load files (e.g. from a cache directory).
+     *        Default is true.
+     * @return
+     */
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom, bool rememberLastSelectedDir=true);
 
     /**

@@ -570,7 +570,7 @@ void MainWindow::restoreTabsFromCache()
     loadSession(PersistentCache::cacheSessionPath());
 }
 
-bool MainWindow::closeAllTabs()
+bool MainWindow::finalizeAllTabs()
 {
     //Close all tabs normally
     int tabWidgetsCount = m_topEditorContainer->count();
@@ -1479,7 +1479,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     bool followThrough = m_sessionWindow == this && m_settings.General.getRememberTabsOnExit() ?
                              saveTabsToCache() :
-                             closeAllTabs();
+                             finalizeAllTabs();
 
     if( !followThrough ){
         event->ignore();
@@ -2437,9 +2437,9 @@ void MainWindow::on_actionLoad_Session_triggered()
 
     QString fileName = QFileDialog::getOpenFileName(
                 this,
-                "Open Session...",
+                tr("Open Session..."),
                 recentFolder,
-                "Session file (*.xml);;Any file (*)",
+                tr("Session file (*.xml);;Any file (*)"),
                 0, 0);
 
     if (fileName != "") {
