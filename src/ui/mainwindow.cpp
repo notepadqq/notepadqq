@@ -416,8 +416,16 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
             //If we're caching and there's a file opened in the tab we want to inform the
             //user whether the file's contents have changed since Nqq was last opened.
             //For this we save and later compare the modification date.
-            if(!isOrphan && cacheModifiedFiles)
-                td.lastModified = QFileInfo(td.filePath).lastModified().toMSecsSinceEpoch();
+            if(!isOrphan && cacheModifiedFiles){
+                //As a special case, if the file has *already* changed we set the modification
+                //time to 1 so we always trigger the warning.
+                if(editor->fileOnDiskChanged())
+                    td.lastModified = 1;
+                else
+                    td.lastModified = QFileInfo(td.filePath).lastModified().toMSecsSinceEpoch();
+            }
+
+
 
 
             currentViewData.tabs.push_back( td );
