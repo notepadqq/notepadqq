@@ -34,7 +34,7 @@ void SearchInFilesWorker::run()
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
         m_regex.optimize();
-        multiLine = true;
+        multiLine = isMultilineMatch(m_regex.pattern());
     }
 
 
@@ -94,6 +94,11 @@ void SearchInFilesWorker::stop()
     m_stopMutex.lock();
     m_stop = true;
     m_stopMutex.unlock();
+}
+
+bool SearchInFilesWorker::isMultilineMatch(const QString &pattern)
+{
+    return pattern.contains(QRegExp("\\\\r|\\\\n|\\\\[xX]0[aA]|\\\\[xX]0[Dd]"));
 }
 
 bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
@@ -164,36 +169,46 @@ FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString
 
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, QString content)
+FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, const QString &content)
 {
-    m_regex.setPatternOptions(m_regex.patternOptions() | QRegularExpression::MultilineOption);
-    FileSearchResult::FileResult structFileResult;
-    structFileResult.fileName = fileName;
+    FileSearchResult::FileResult fileResult;
+    fileResult.fileName = fileName;
     
     int column = 0;
     int line = 0;
+    int lastLine = 0;
     QString fullDoc;
     QVector<int> lineStart;
-    QRegularExpression tmpRegExp = m_regex;
-
-    QTextStream stream (&content);
-    fullDoc = stream.readAll();
+    QRegularExpressionMatch match;
 
     lineStart << 0;
-    for (int i=0; i<fullDoc.size()-1; i++) {
-        if (fullDoc[i] == QLatin1Char('\n')) {
+    //Determine line endings and add them to a list.
+    for (int i=0; i<content.size()-1; i++) {
+        if (content.midRef(i,2) == "\r\n") {
+            lineStart << i+2;
+            i++;
+        }else if(content.at(i) == '\r' || content.at(i) == '\n') {
             lineStart << i+1;
         }
     }
 
-    QRegularExpressionMatch match;
+    m_regex.setPatternOptions(m_regex.patternOptions() | QRegularExpression::MultilineOption);
     match = m_regex.match(fullDoc);
     column = match.capturedStart();
     while(column != -1 && match.hasMatch()) {
-        
+        //Get the current line we are working on.
+        for(int i=0; i < lineStart.length(); i++){
+            if(lineStart[i] > column) {
+                line = i-1;
+                break;
+            }
+        }
+        fileResult.results.append(buildResult(line, column, column, fullDoc, match.capturedLength()));
+        match = m_regex.match(fullDoc,column + match.capturedLength());
+        column = match.capturedStart();
     }
     
-    return structFileResult;
+    return fileResult;
 }
 
 FileSearchResult::SearchResult SearchInFilesWorker::getResult()

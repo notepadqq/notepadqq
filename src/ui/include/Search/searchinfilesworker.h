@@ -94,7 +94,7 @@ private:
     * @return `FileSearchResult::FileResult` object containing all the matches
     *         found in the file
     */
-    FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString content);
+    FileSearchResult::FileResult searchMultiLineRegExp(const QString &fileName, QString &content);
    /**
     * @brief Boundary check `match` at `index` to ensure it isn't part of another word
     * @param `index`
@@ -103,6 +103,13 @@ private:
     * @return bool value based on results of the string test.
     */
     bool matchesWholeWord(const int &index, const int &matchLength, const QString &data);
+
+   /*
+    * @brief Check pattern content to determine if a multiline pattern exists.
+    * @param `pattern`
+    * @return bool value based on results of the string test.
+    */
+    bool isMultilineMatch(const QString &pattern);
 };
 
 #endif // SEARCHINFILESWORKER_H
