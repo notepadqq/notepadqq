@@ -1,0 +1,4 @@
+*.moc
+*.o
+Makefile
+ui-tests
