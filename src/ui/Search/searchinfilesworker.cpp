@@ -33,7 +33,6 @@ void SearchInFilesWorker::run()
         QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
-        m_regex.optimize();
         multiLine = isMultilineMatch(m_regex.pattern());
     }
 
