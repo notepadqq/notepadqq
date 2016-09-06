@@ -535,7 +535,7 @@ void MainWindow::loadSession(QString filePath)
     if(viewCounter <= 0)
         return;
 
-    //If the last tabwidget still has no tabs in it at this point, we'll just have to delete it.
+    //If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = m_topEditorContainer->tabWidget( m_topEditorContainer->count() -1);
     if (lastTabW->count() == 0)
         delete lastTabW;
