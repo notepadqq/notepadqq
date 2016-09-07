@@ -25,7 +25,7 @@ void SearchInFilesWorker::run()
     FileSearchResult::SearchResult searchResult;
     searchResult.search = m_string;
 
-    QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
+    QFlags<QRegularExpression::PatternOption> options = QRegularExpression::MultilineOption;
     QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
 
     if (m_searchMode == SearchHelpers::SearchMode::Regex) {
