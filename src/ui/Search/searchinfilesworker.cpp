@@ -21,19 +21,22 @@ SearchInFilesWorker::~SearchInFilesWorker()
 
 void SearchInFilesWorker::run()
 {
-    bool multiLine = false;  
     FileSearchResult::SearchResult searchResult;
+    searchResult.search = m_string;
+
     QFlags<QRegularExpression::PatternOption> options = QRegularExpression::NoPatternOption;
     QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
 
-    if(m_searchMode != SearchHelpers::SearchMode::PlainText) {
+    if (m_searchMode == SearchHelpers::SearchMode::Regex) {
         if (m_searchOptions.MatchCase == false) {
             options |= QRegularExpression::CaseInsensitiveOption;
         }
         QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
-        multiLine = isMultilineMatch(m_regex.pattern());
+    }else if(m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
+        QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
+        m_string = unescapeString(m_string);
     }
 
 
@@ -77,12 +80,10 @@ void SearchInFilesWorker::run()
         f.close();
 
         FileSearchResult::FileResult fileResult;
-
-        if (multiLine) fileResult = searchMultiLineRegExp(fileName,decodedText.text);
-        else fileResult = searchSingleLine(fileName,&decodedText.text);
+        if (m_searchMode == SearchHelpers::SearchMode::Regex) fileResult = searchRegExp(fileName, decodedText.text);
+        else fileResult = searchPlainText(fileName, decodedText.text);
         if (!fileResult.results.isEmpty()) searchResult.fileResults.append(fileResult);
     }
-    searchResult.search = m_string;
     m_result = searchResult;
 
     emit finished(false);
@@ -95,10 +96,6 @@ void SearchInFilesWorker::stop()
     m_stopMutex.unlock();
 }
 
-bool SearchInFilesWorker::isMultilineMatch(const QString &pattern)
-{
-    return pattern.contains(QRegExp("\\\\[rn]|\\\\[xX]0[aAdD]"));
-}
 
 bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
 {
@@ -115,95 +112,59 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLen
     return true;
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchSingleLine(const QString &fileName, QString *content)
+FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString &fileName, const QString &content)
 {
     FileSearchResult::FileResult fileResult;
-
-    QTextStream stream (content);
-    QString line;
-
-    int i = 0;
-    int column;
-    int streamPosition = 0;
-    int lineLength;
-
     fileResult.fileName = fileName;
-    if (m_searchMode == SearchHelpers::SearchMode::PlainText) {
-        Qt::CaseSensitivity caseSensitive = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        int matchLength = m_string.length();
+    Qt::CaseSensitivity caseSense = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive; 
+    QVector<int> linePosition = getLinePositions(content);
 
-        while (!(line=stream.readLine()).isNull() && !m_stop) {
-            bool hasResult = true;
-            lineLength = line.length();
-            column = line.indexOf(m_string, 0, caseSensitive);
-            while (column != -1 && !m_stop) {
-                if (m_searchOptions.MatchWholeWord) hasResult = matchesWholeWord(column, matchLength, line);
-                if (hasResult) fileResult.results.append(buildResult(i, column, streamPosition + column, line, matchLength));
-                column = line.indexOf(m_string, column + matchLength, caseSensitive);
-                m_matchCount++;
+    const int totalLines = linePosition.length();
+    const int matchLength = m_string.length();
+    bool hasResult;
+    int column = 0;
+    int line = 0;
+    while((column = content.indexOf(m_string, column, caseSense)) != -1 && !m_stop) {
+        hasResult = m_searchOptions.MatchWholeWord ? matchesWholeWord(column, matchLength, content) : true;
+        if(hasResult) {
+            for(int i = line;i < totalLines; i++) {
+                if(linePosition[i] > column) {
+                    line = i-1;
+                    if(hasResult) fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
+                    break;
+                }
             }
-            i++;
-            if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
-            else streamPosition += lineLength + 1;
         }
-
-    }else {
-        QRegularExpressionMatch match;
-        while (!(line=stream.readLine()).isNull() && !m_stop) {
-            lineLength = line.length();
-            match = m_regex.match(line);
-            column = match.capturedStart();
-            while (column != -1 && match.hasMatch() && !m_stop) {
-                fileResult.results.append(buildResult(i, column, streamPosition + column, line, match.capturedLength()));
-                match = m_regex.match(line, column + match.capturedLength());
-                column = match.capturedStart();
-                m_matchCount++;
-            }
-            i++;
-            if (content->midRef(streamPosition + lineLength, 2) == "\r\n") streamPosition += lineLength + 2;
-            else streamPosition += lineLength + 1; 
-        }
+        column += matchLength;
     }
-    return fileResult;
 
+    return fileResult;
 }
 
-FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QString &fileName, QString &content)
+FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fileName, const QString &content)
 {
+    m_regex.optimize();
     FileSearchResult::FileResult fileResult;
     fileResult.fileName = fileName;
     
     int column = 0;
     int line = 0;
-    QVector<int> lineStart;
+    QVector<int> linePosition = getLinePositions(content);
     QRegularExpressionMatch match;
-
-    lineStart << 0;
-    //Determine line endings and add them to a list.
-    for (int i=0; i<content.size()-1; i++) {
-        if (content.midRef(i,2) == "\r\n") {
-            lineStart << i+2;
-            i++;
-        }else if(content.at(i) == '\r' || content.at(i) == '\n') {
-            lineStart << i+1;
-        }
-    }
 
     match = m_regex.match(content);
     column = match.capturedStart();
-    while(column != -1 && match.hasMatch()) {
-        //Get the current line we are working on.
-        for(int i=0; i < lineStart.length(); i++){
-            if(lineStart[i] > column) {
+    while (column != -1 && match.hasMatch() && !m_stop) {
+        for (int i=line; i < linePosition.length(); i++){
+            if (linePosition[i] > column) {
                 line = i-1;
-                fileResult.results.append(buildResult(line, column - lineStart[line], column, content, match.capturedLength()));
+                fileResult.results.append(buildResult(line, column - linePosition[line], column, content, match.capturedLength()));
                 break;
             }
         }
         match = m_regex.match(content, column + match.capturedLength());
         column = match.capturedStart();
     }
-    
     return fileResult;
 }
 
@@ -217,19 +178,68 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
     return r;
 }
 
+//TODO: Faster way to build line data.
+QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
+{
+    const int dataSize = data.size();
+    QVector<int> linePosition;
+
+    linePosition << 0;
+    for (int i = 0; i < dataSize; i++) {
+        if (data[i] == '\r' && data[i+1] == '\n') {
+            linePosition << i+2;
+            i++;
+        }else if (data[i] == '\r' || data[i] == '\n') {
+            linePosition << i+1;
+        }
+    }
+
+    linePosition << data.size();
+    return linePosition;
+}
+
+QString SearchInFilesWorker::unescapeString(const QString &data)
+{ 
+    int dataLength = data.size()-1;
+    QString unescaped;
+    QChar c;
+    for(int i = 0; i < dataLength; i++) {
+        c = data[i];
+        if(c == '\\' && i != dataLength) {
+            i++;
+            if(data[i] == 'a') c = '\a';
+            else if(data[i] == 'b') c = '\b';
+            else if(data[i] == 'f') c = '\f';
+            else if(data[i] == 'n') c = '\n';
+            else if(data[i] == 'r') c = '\r';
+            else if(data[i] == 't') c = '\t';
+            else if(data[i] == 'v') c = '\v';
+            else if(data[i] == 'x' && i+2 <= dataLength) {
+                int nHex = data.mid(++i, 2).toInt(0, 16);
+                c = QChar(nHex);
+                i += 2;
+            }else if(data[i] == 'u' && i+4 <= dataLength) {
+                int nHex = data.mid(++i,4).toInt(0, 16);
+                c = QChar(nHex);
+                i += 4;
+            }
+        }
+        unescaped.append(c);
+    }
+    return unescaped;
+}
+
 FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)
 {
     FileSearchResult::Result res;
-    bool multiLine = lineContent.contains('\n') || lineContent.contains('\r');
-    int displayColumn = multiLine ? absoluteColumn : column;
 
-    if (displayColumn > 50) {
-        res.previewBeforeMatch = lineContent.mid(displayColumn-50,50);
+    if (absoluteColumn > 50) {
+        res.previewBeforeMatch = lineContent.mid(absoluteColumn-50,50);
     }else {
-        res.previewBeforeMatch = lineContent.mid(0,displayColumn);
+        res.previewBeforeMatch = lineContent.mid(0,absoluteColumn);
     }
-    res.match = lineContent.mid(displayColumn,matchLen);
-    res.previewAfterMatch = lineContent.mid(displayColumn + matchLen,matchLen + 50);
+    res.match = lineContent.mid(absoluteColumn,matchLen);
+    res.previewAfterMatch = lineContent.mid(absoluteColumn + matchLen,matchLen + 50);
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;
