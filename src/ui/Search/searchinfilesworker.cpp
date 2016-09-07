@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QMessageBox>
 #include <QThread>
+
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
@@ -91,9 +92,8 @@ void SearchInFilesWorker::run()
 
 void SearchInFilesWorker::stop()
 {
-    m_stopMutex.lock();
+    QMutexLocker locker(&m_stopMutex);
     m_stop = true;
-    m_stopMutex.unlock();
 }
 
 FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString &fileName, const QString &content)
@@ -168,10 +168,9 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLen
 
 FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 {
+    QMutexLocker locker(&m_resultMutex);
     FileSearchResult::SearchResult r;
-    m_resultMutex.lock();
     r = m_result;
-    m_resultMutex.unlock();
 
     return r;
 }
