@@ -15,10 +15,33 @@ SearchResultsItemDelegate::~SearchResultsItemDelegate()
 
 QString SearchResultsItemDelegate::getFileResultFormattedLine(const FileSearchResult::Result &result)
 {
-    QString richTextLine = result.previewBeforeMatch.toHtmlEscaped()
+    QString clippedBefore;
+    QString clippedAfter;
+    bool clipBeforeFound = false;
+    bool clipAfterFound = false;
+    //Clip results to current line data.
+    for(int i = result.previewBeforeMatch.size();i > 0; i--) {
+        if(result.previewBeforeMatch[i] == '\r' || result.previewBeforeMatch[i] == '\n') {
+            clippedBefore = result.previewBeforeMatch.mid(i+1);
+            clipBeforeFound = true;
+            break;
+        }
+    }
+
+    for(int i = 0;i < result.previewAfterMatch.size(); i++) {
+        if(result.previewAfterMatch[i] == '\r' || result.previewAfterMatch[i] == '\n') {
+            clippedAfter = result.previewAfterMatch.mid(0,i-1);
+            clipAfterFound = true;
+            break;
+        }
+    }
+
+    if(!clipBeforeFound)clippedBefore = result.previewBeforeMatch;
+    if(!clipAfterFound) clippedAfter = result.previewAfterMatch;
+    QString richTextLine = clippedBefore.toHtmlEscaped()
             + "<span style=\"background-color: #ffef0b; color: black;\">"
             + result.match.toHtmlEscaped()
-            + "</span>" + result.previewAfterMatch.toHtmlEscaped();
+            + "</span>" + clippedAfter.toHtmlEscaped();
 
     return QString("Line %1: %2").arg(result.matchStartLine + 1).arg(richTextLine);
 }
