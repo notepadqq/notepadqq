@@ -2,26 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hu_HU">
 <context>
-    <name>DocEngine</name>
-    <message>
-        <location filename="../ui/docengine.cpp" line="167"/>
-        <source>Error trying to open &quot;%1&quot;</source>
-        <translation>Hiba történt a(z) &quot;%1&quot; megnyitásakor</translation>
-    </message>
-    <message>
-        <location filename="../ui/docengine.cpp" line="242"/>
-        <location filename="../ui/docengine.cpp" line="437"/>
-        <source>Protocol not supported for file &quot;%1&quot;.</source>
-        <translation>A protokoll nem támogatja a(z) &quot;%1&quot; fájlt.</translation>
-    </message>
-    <message>
-        <location filename="../ui/docengine.cpp" line="397"/>
-        <source>Error trying to write to &quot;%1&quot;</source>
-        <translation>Hiba a(z) &quot;%1&quot; írása közben</translation>
-    </message>
-</context>
-<context>
-    <name>EditorNS::BannerFileChanged</name>
+    <name>BannerFileChanged</name>
     <message>
         <location filename="../ui/EditorNS/bannerfilechanged.cpp" line="13"/>
         <source>This file has been changed outside of Notepadqq.</source>
@@ -39,7 +20,7 @@
     </message>
 </context>
 <context>
-    <name>EditorNS::BannerFileRemoved</name>
+    <name>BannerFileRemoved</name>
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="13"/>
         <source>This file has been deleted from the file system.</source>
@@ -57,7 +38,7 @@
     </message>
 </context>
 <context>
-    <name>EditorNS::BannerIndentationDetected</name>
+    <name>BannerIndentationDetected</name>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="18"/>
         <source>This file is indented with %1, but your current settings specify to use %2.</source>
@@ -102,7 +83,26 @@
     </message>
 </context>
 <context>
-    <name>Extensions::Extension</name>
+    <name>DocEngine</name>
+    <message>
+        <location filename="../ui/docengine.cpp" line="167"/>
+        <source>Error trying to open &quot;%1&quot;</source>
+        <translation>Hiba történt a(z) &quot;%1&quot; megnyitásakor</translation>
+    </message>
+    <message>
+        <location filename="../ui/docengine.cpp" line="242"/>
+        <location filename="../ui/docengine.cpp" line="437"/>
+        <source>Protocol not supported for file &quot;%1&quot;.</source>
+        <translation>A protokoll nem támogatja a(z) &quot;%1&quot; fájlt.</translation>
+    </message>
+    <message>
+        <location filename="../ui/docengine.cpp" line="397"/>
+        <source>Error trying to write to &quot;%1&quot;</source>
+        <translation>Hiba a(z) &quot;%1&quot; írása közben</translation>
+    </message>
+</context>
+<context>
+    <name>Extension</name>
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="22"/>
         <source>name missing or invalid</source>
@@ -126,6 +126,42 @@
 </context>
 <context>
     <name>Extensions::InstallExtension</name>
+    <message>
+        <location filename="../ui/Extensions/installextension.cpp" line="177"/>
+        <source>Error</source>
+        <translation>Hiba</translation>
+    </message>
+    <message>
+        <location filename="../ui/Extensions/installextension.cpp" line="177"/>
+        <source>Unsupported runtime: %1</source>
+        <translation>Nem támogatott futtatókörnyezet: %1</translation>
+    </message>
+</context>
+<context>
+    <name>FileSearchResultsWidget</name>
+    <message>
+        <location filename="../ui/Search/filesearchresultswidget.cpp" line="29"/>
+        <source>Clear</source>
+        <translation>Törlés</translation>
+    </message>
+</context>
+<context>
+    <name>InstallExtension</name>
+    <message>
+        <location filename="../ui/Extensions/installextension.ui" line="14"/>
+        <source>Install Extension</source>
+        <translation>Bővítmény telepítése</translation>
+    </message>
+    <message>
+        <location filename="../ui/Extensions/installextension.ui" line="102"/>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <location filename="../ui/Extensions/installextension.ui" line="109"/>
+        <source>Install</source>
+        <translation>Telepítés</translation>
+    </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="42"/>
         <source>Version %1, %2</source>
@@ -167,42 +203,6 @@
         <location filename="../ui/Extensions/installextension.cpp" line="116"/>
         <source>The extension has been successfully installed!</source>
         <translation>A bővítmény telepítése sikeresen befejeződött!</translation>
-    </message>
-    <message>
-        <location filename="../ui/Extensions/installextension.cpp" line="177"/>
-        <source>Error</source>
-        <translation>Hiba</translation>
-    </message>
-    <message>
-        <location filename="../ui/Extensions/installextension.cpp" line="177"/>
-        <source>Unsupported runtime: %1</source>
-        <translation>Nem támogatott futtatókörnyezet: %1</translation>
-    </message>
-</context>
-<context>
-    <name>FileSearchResultsWidget</name>
-    <message>
-        <location filename="../ui/Search/filesearchresultswidget.cpp" line="29"/>
-        <source>Clear</source>
-        <translation>Törlés</translation>
-    </message>
-</context>
-<context>
-    <name>InstallExtension</name>
-    <message>
-        <location filename="../ui/Extensions/installextension.ui" line="14"/>
-        <source>Install Extension</source>
-        <translation>Bővítmény telepítése</translation>
-    </message>
-    <message>
-        <location filename="../ui/Extensions/installextension.ui" line="102"/>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <location filename="../ui/Extensions/installextension.ui" line="109"/>
-        <source>Install</source>
-        <translation>Telepítés</translation>
     </message>
 </context>
 <context>
