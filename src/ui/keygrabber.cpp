@@ -22,8 +22,9 @@ bool KeyGrabber::hasConflicts() const
 
 void KeyGrabber::scrollToConflict()
 {
-    if(!m_firstConflict)
+    if (!m_firstConflict) {
         return;
+    }
 
     scrollTo(indexFromItem(m_firstConflict));
 }
@@ -43,31 +44,34 @@ void KeyGrabber::checkForConflicts()
 {
     m_testingForConflicts = true;
 
-    //Find conflicts among shortcuts. We take a list of all shortcuts, sort them, then
-    //walk through them and compare them for equality.
+    // Find conflicts among shortcuts. We take a list of all shortcuts, sort them, then
+    // walk through them and compare them for equality.
     QList<NodeItem> allNodes = m_allActions;
     qSort(allNodes.begin(), allNodes.end(), [](const NodeItem& a, const NodeItem&b ) {
         return a.treeItem->text(1) < b.treeItem->text(1);
     });
 
-    for(const auto& n : allNodes)
+    for (const auto& n : allNodes) {
         n.treeItem->setBackground(1, QBrush());
+    }
 
     m_firstConflict = nullptr;
 
-    for (int i=0; i<allNodes.count()-1; ++i) {
+    for (int i = 0; i < allNodes.count() - 1; i++) {
         QTreeWidgetItem* current = allNodes[i].treeItem;
         QTreeWidgetItem* next = allNodes[i+1].treeItem;
 
-        if(current->text(1).isEmpty())
+        if (current->text(1).isEmpty()) {
             continue;
+        }
 
-        if(current->text(1) == next->text(1)){
-            current->setBackground(1, QBrush(QColor(255,100,100,64)));
-            next->setBackground(1, QBrush(QColor(255,100,100,64)));
+        if (current->text(1) == next->text(1)){
+            current->setBackground(1, QBrush(QColor(255, 100, 100, 64)));
+            next->setBackground(1, QBrush(QColor(255, 100, 100, 64)));
 
-            if(!m_firstConflict)
+            if (!m_firstConflict) {
                 m_firstConflict = current;
+            }
         }
     }
 
@@ -76,10 +80,11 @@ void KeyGrabber::checkForConflicts()
 
 void KeyGrabber::addMenus(const QList<const QMenu*>& listOfMenus)
 {
-    for(const QMenu* menu : listOfMenus) {
+    for (const QMenu* menu : listOfMenus) {
 
-        if(menu->objectName() == "menu_Language")
+        if (menu->objectName() == "menu_Language") {
             continue;
+        }
 
         auto item = new QTreeWidgetItem();
         item->setText(0, menu->menuAction()->iconText());
@@ -189,28 +194,29 @@ void KeyGrabber::keyPressEvent(QKeyEvent* event)
 void KeyGrabber::populateNode(QTreeWidgetItem*& rootItem, const QMenu* menu) {
     for (QAction* action : menu->actions()) {
 
-        if(action->isSeparator())
+        if (action->isSeparator()) {
             continue;
 
-        if(action->menu()) {
-            //If the action is a sub-menu, we add a new tree node and populate it with
-            //The children of this menu
+        } else if (action->menu()) {
+            // If the action is a sub-menu, we add a new tree node and populate it with
+            // The children of this menu
             auto item = new QTreeWidgetItem();
             item->setText(0, action->iconText());
             populateNode(item, action->menu());
             rootItem->addChild(item);
-        }else{
-            //Any action that does not have an object name or label won't be added.
-            //This way we exclude things such as the entries in the recent documents
-            //list.
-            if(action->objectName().isEmpty() || action->iconText().isEmpty())
+        } else {
+            // Any action that does not have an object name or label won't be added.
+            // This way we exclude things such as the entries in the recent documents
+            // list.
+            if (action->objectName().isEmpty() || action->iconText().isEmpty()) {
                 continue;
+            }
 
             auto item = new QTreeWidgetItem();
             item->setText(0, action->iconText());
             item->setText(1, action->shortcut().toString());
-            //Every action that can have a shortcut gets this user value set to 'true'.
-            //This is used in keyPressEvent to figure out whether to read the key evts.
+            // Every action that can have a shortcut gets this user value set to 'true'.
+            // This is used in keyPressEvent to figure out whether to read the key evts.
             item->setData(0, Qt::UserRole, true);
             rootItem->addChild(item);
 
