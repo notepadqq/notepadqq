@@ -196,10 +196,10 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         for(int i=0; i < lineStart.length(); i++){
             if(lineStart[i] > column) {
                 line = i-1;
+                fileResult.results.append(buildResult(line, column - lineStart[line], column, content, match.capturedLength()));
                 break;
             }
         }
-        fileResult.results.append(buildResult(line, column, column, content, match.capturedLength()));
         match = m_regex.match(content, column + match.capturedLength());
         column = match.capturedStart();
     }
@@ -220,14 +220,16 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)
 {
     FileSearchResult::Result res;
+    bool multiLine = lineContent.contains('\n') || lineContent.contains('\r');
+    int displayColumn = multiLine ? absoluteColumn : column;
 
-    if (column > 50) {
-        res.previewBeforeMatch = lineContent.mid(column-50,50);
+    if (displayColumn > 50) {
+        res.previewBeforeMatch = lineContent.mid(displayColumn-50,50);
     }else {
-        res.previewBeforeMatch = lineContent.mid(0,column);
+        res.previewBeforeMatch = lineContent.mid(0,displayColumn);
     }
-    res.match = lineContent.mid(column,matchLen);
-    res.previewAfterMatch = lineContent.mid(column + matchLen,matchLen + 50);
+    res.match = lineContent.mid(displayColumn,matchLen);
+    res.previewAfterMatch = lineContent.mid(displayColumn + matchLen,matchLen + 50);
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;
