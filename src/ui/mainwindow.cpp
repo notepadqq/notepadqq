@@ -548,8 +548,8 @@ void MainWindow::loadSession(QString filePath)
     removeTabWidgetIfEmpty(lastTabW);
 
     //Give focus to the last tab of the first tab widget.
-    lastTabW = m_topEditorContainer->tabWidget(0);
-    Editor* lastEditor = lastTabW->editor(lastTabW->count()-1);
+    EditorTabWidget* firstTabW = m_topEditorContainer->tabWidget(0);
+    Editor* lastEditor = firstTabW->editor(lastTabW->count()-1);
 
     lastEditor->setFocus();
     refreshEditorUiInfo(lastEditor);
