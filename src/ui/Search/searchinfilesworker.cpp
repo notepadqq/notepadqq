@@ -189,7 +189,6 @@ FileSearchResult::FileResult SearchInFilesWorker::searchMultiLineRegExp(const QS
         }
     }
 
-    m_regex.setPatternOptions(m_regex.patternOptions() | QRegularExpression::MultilineOption);
     match = m_regex.match(content);
     column = match.capturedStart();
     while(column != -1 && match.hasMatch()) {
