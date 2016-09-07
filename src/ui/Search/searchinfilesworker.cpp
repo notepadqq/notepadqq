@@ -34,7 +34,7 @@ void SearchInFilesWorker::run()
         QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
-    }else if(m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
+    }else if (m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
         QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_string = unescapeString(m_string);
     }
@@ -96,22 +96,6 @@ void SearchInFilesWorker::stop()
     m_stopMutex.unlock();
 }
 
-
-bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
-{
-    QChar boundary;
-
-    if (index !=0) {
-        boundary = data.at(index-1);
-        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
-    }
-    if (data.length() != index+matchLength) {
-        boundary = data.at(index+matchLength);
-        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
-    }
-    return true;
-}
-
 FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString &fileName, const QString &content)
 {
     FileSearchResult::FileResult fileResult;
@@ -124,13 +108,13 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
     bool hasResult;
     int column = 0;
     int line = 0;
-    while((column = content.indexOf(m_string, column, caseSense)) != -1 && !m_stop) {
+    while ((column = content.indexOf(m_string, column, caseSense)) != -1 && !m_stop) {
         hasResult = m_searchOptions.MatchWholeWord ? matchesWholeWord(column, matchLength, content) : true;
-        if(hasResult) {
-            for(int i = line;i < totalLines; i++) {
-                if(linePosition[i] > column) {
+        if (hasResult) {
+            for (int i = line;i < totalLines; i++) {
+                if (linePosition[i] > column) {
                     line = i-1;
-                    if(hasResult) fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
+                    if (hasResult) fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
                     break;
                 }
             }
@@ -167,6 +151,21 @@ FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fi
     return fileResult;
 }
 
+bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLength, const QString &data)
+{
+    QChar boundary;
+
+    if (index !=0) {
+        boundary = data[index-1];
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
+    }
+    if (data.length() != index+matchLength) {
+        boundary = data[index+matchLength];
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
+    }
+    return true;
+}
+
 FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 {
     FileSearchResult::SearchResult r;
@@ -177,7 +176,6 @@ FileSearchResult::SearchResult SearchInFilesWorker::getResult()
     return r;
 }
 
-//TODO: Faster way to build line data.
 QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
 {
     const int dataSize = data.size();
@@ -199,25 +197,25 @@ QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
 
 QString SearchInFilesWorker::unescapeString(const QString &data)
 { 
-    int dataLength = data.size()-1;
+    int dataLength = data.size();
     QString unescaped;
     QChar c;
-    for(int i = 0; i < dataLength; i++) {
+    for (int i = 0; i < dataLength; i++) {
         c = data[i];
-        if(c == '\\' && i != dataLength) {
+        if (c == '\\' && i != dataLength) {
             i++;
-            if(data[i] == 'a') c = '\a';
-            else if(data[i] == 'b') c = '\b';
-            else if(data[i] == 'f') c = '\f';
-            else if(data[i] == 'n') c = '\n';
-            else if(data[i] == 'r') c = '\r';
-            else if(data[i] == 't') c = '\t';
-            else if(data[i] == 'v') c = '\v';
-            else if(data[i] == 'x' && i+2 <= dataLength) {
+            if (data[i] == 'a') c = '\a';
+            else if (data[i] == 'b') c = '\b';
+            else if (data[i] == 'f') c = '\f';
+            else if (data[i] == 'n') c = '\n';
+            else if (data[i] == 'r') c = '\r';
+            else if (data[i] == 't') c = '\t';
+            else if (data[i] == 'v') c = '\v';
+            else if (data[i] == 'x' && i+2 <= dataLength) {
                 int nHex = data.mid(++i, 2).toInt(0, 16);
                 c = QChar(nHex);
                 i += 2;
-            }else if(data[i] == 'u' && i+4 <= dataLength) {
+            }else if (data[i] == 'u' && i+4 <= dataLength) {
                 int nHex = data.mid(++i,4).toInt(0, 16);
                 c = QChar(nHex);
                 i += 4;
