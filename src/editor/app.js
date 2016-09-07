@@ -426,6 +426,10 @@ UiDriver.registerEventHandler("C_CMD_SET_FOCUS", function(msg, data, prevReturn)
     editor.focus();
 });
 
+UiDriver.registerEventHandler("C_CMD_BLUR", function(msg, data, prevReturn) {
+    document.activeElement.blur();
+});
+
 UiDriver.registerEventHandler("C_FUN_DETECT_INDENTATION_MODE", function(msg, data, prevReturn) {
     var len = editor.lineCount();
     var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space

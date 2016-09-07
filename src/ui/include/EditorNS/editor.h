@@ -148,6 +148,11 @@ namespace EditorNS
         Q_INVOKABLE void setFocus();
 
         /**
+             * @brief Remove the focus from the editor.
+             */
+        Q_INVOKABLE void clearFocus();
+
+        /**
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */

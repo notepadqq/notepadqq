@@ -160,6 +160,12 @@ namespace EditorNS
         sendMessage("C_CMD_SET_FOCUS");
     }
 
+    void Editor::clearFocus()
+    {
+        m_webView->clearFocus();
+        sendMessage("C_CMD_BLUR");
+    }
+
     /**
      * Automatically converts local relative file names to absolute ones.
      */
