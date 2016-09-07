@@ -222,7 +222,6 @@ QString SearchInFilesWorker::unescapeString(const QString &data)
         }
         unescaped.append(c);
     }
-    qDebug() << unescaped;
     return unescaped;
 }
 
