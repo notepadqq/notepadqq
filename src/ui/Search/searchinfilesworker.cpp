@@ -143,7 +143,6 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
 
 FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fileName, const QString &content)
 {
-    m_regex.optimize();
     FileSearchResult::FileResult fileResult;
     fileResult.fileName = fileName;
     
