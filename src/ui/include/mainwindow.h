@@ -189,14 +189,6 @@ private slots:
 private:
     static QList<MainWindow*> m_instances;
 
-    /**
-     * Only one window's tabs can be saved. m_sessionWindow will point
-     * to that one. It's generally the first window opened, but may be
-     * a different one depending on the user's actions.
-     * If the session window is not open, m_sessionWindow is nullptr.
-     */
-    static MainWindow*    m_sessionWindow;
-
     Ui::MainWindow*       ui;
     TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;

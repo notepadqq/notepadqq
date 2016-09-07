@@ -19,7 +19,7 @@ std::vector<ViewData> SessionReader::readData(bool* outSuccess) {
     std::vector<ViewData> result;
 
     if (m_reader.readNextStartElement()) {
-        if (m_reader.name() == "Notepadqq"){
+        if (m_reader.name() == "Notepadqq") {
             result = readViewData();
         }
         else
@@ -56,8 +56,8 @@ std::vector<ViewData> SessionReader::readViewData() {
 std::vector<TabData> SessionReader::readTabData() {
     std::vector<TabData> result;
 
-    while(m_reader.readNextStartElement()) {
-        if(m_reader.name() == "Tab") {
+    while (m_reader.readNextStartElement()) {
+        if (m_reader.name() == "Tab") {
             const QXmlStreamAttributes& attrs = m_reader.attributes();
 
             TabData td;
@@ -92,11 +92,12 @@ SessionWriter::~SessionWriter(){
 }
 
 void SessionWriter::addViewData(const ViewData& vd){
-    if(vd.tabs.empty()) return;
+    if (vd.tabs.empty())
+        return;
 
     m_writer.writeStartElement("View");
 
-    for(auto&& tab : vd.tabs)
+    for (auto&& tab : vd.tabs)
         addTabData(tab);
 
     m_writer.writeEndElement();
@@ -106,15 +107,15 @@ void SessionWriter::addTabData(const TabData& td){
     m_writer.writeStartElement("Tab");
 
     QXmlStreamAttributes attrs;
-    attrs.push_back( QXmlStreamAttribute("filePath", td.filePath) );
-    attrs.push_back( QXmlStreamAttribute("cacheFilePath", td.cacheFilePath) );
-    attrs.push_back( QXmlStreamAttribute("scrollX", QString::number(td.scrollX)) );
-    attrs.push_back( QXmlStreamAttribute("scrollY", QString::number(td.scrollY)) );
+    attrs.push_back(QXmlStreamAttribute("filePath", td.filePath));
+    attrs.push_back(QXmlStreamAttribute("cacheFilePath", td.cacheFilePath));
+    attrs.push_back(QXmlStreamAttribute("scrollX", QString::number(td.scrollX)));
+    attrs.push_back(QXmlStreamAttribute("scrollY", QString::number(td.scrollY)));
 
-    //lastModified is only used for tabs that are cached, so let's not write it to the xml file
-    //unless it's actually useful.
-    if(td.lastModified != 0)
-        attrs.push_back( QXmlStreamAttribute("lastModified", QString::number(td.lastModified)) );
+    // lastModified is only used for tabs that are cached, so let's not write it to the xml file
+    // unless it's actually useful.
+    if (td.lastModified != 0)
+        attrs.push_back(QXmlStreamAttribute("lastModified", QString::number(td.lastModified)));
 
     m_writer.writeAttributes(attrs);
 
