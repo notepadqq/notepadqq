@@ -213,15 +213,16 @@ QString SearchInFilesWorker::unescapeString(const QString &data)
             else if (data[i] == 'x' && i+2 <= dataLength) {
                 int nHex = data.mid(++i, 2).toInt(0, 16);
                 c = QChar(nHex);
-                i += 2;
+                i += 1;
             }else if (data[i] == 'u' && i+4 <= dataLength) {
                 int nHex = data.mid(++i,4).toInt(0, 16);
                 c = QChar(nHex);
-                i += 4;
+                i += 3;
             }
         }
         unescaped.append(c);
     }
+    qDebug() << unescaped;
     return unescaped;
 }
 
