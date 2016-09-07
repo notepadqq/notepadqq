@@ -524,8 +524,11 @@ void MainWindow::loadSession(QString filePath)
             }
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
+            editor->clearFocus();
 
         } //end for
+
+        tabW->clearFocus();
 
         //In case a new tabwidget was created but no tabs were actually added to it,
         //we'll attempt to re-use the widget for the next view.
@@ -543,6 +546,13 @@ void MainWindow::loadSession(QString filePath)
     //If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = m_topEditorContainer->tabWidget( m_topEditorContainer->count() -1);
     removeTabWidgetIfEmpty(lastTabW);
+
+    //Give focus to the last tab of the first tab widget.
+    lastTabW = m_topEditorContainer->tabWidget(0);
+    Editor* lastEditor = lastTabW->editor(lastTabW->count()-1);
+
+    lastEditor->setFocus();
+    refreshEditorUiInfo(lastEditor);
 
     return;
 }
