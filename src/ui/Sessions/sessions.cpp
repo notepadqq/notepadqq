@@ -5,13 +5,22 @@
  * <Notepadqq>
  *      <View>
  *          <Tab filePath="xxx" .../>
- *          <Tab filePath="xxx" ...b/>
+ *          <Tab filePath="xxx" .../>
  *      </View>
  *      <View>
  *          ...
  *      </View>
  *      ...
  * <Notepadqq>
+ *
+ *
+ * All currently available attributes for <Tab>:
+ * -> string filePath - path to the file if it exists
+ * -> string cacheFilePath - path to the cache file if it exists
+ * -> int scrollX - horizontal scroll position
+ * -> int scrollY - vertical scroll position
+ * -> long int lastModified - optional, last modification date (in msecs since epoch) of the file point to in filePath
+ * -> int active - optional, value is "1" if this tab is the open one in the tabview, otherwise "0".
  *
  * */
 
@@ -63,9 +72,11 @@ std::vector<TabData> SessionReader::readTabData() {
             TabData td;
             td.filePath = attrs.value("filePath").toString();
             td.cacheFilePath = attrs.value("cacheFilePath").toString();
-            td.scrollX = attrs.value("scrollX").toString().toInt();
-            td.scrollY = attrs.value("scrollY").toString().toInt();
+            td.scrollX = attrs.value("scrollX").toInt();
+            td.scrollY = attrs.value("scrollY").toInt();
             td.lastModified = attrs.value("lastModified").toLongLong();
+            td.active = attrs.value("active").toInt() != 0;
+
             result.push_back(td);
 
             m_reader.readElementText();
@@ -112,10 +123,13 @@ void SessionWriter::addTabData(const TabData& td){
     attrs.push_back(QXmlStreamAttribute("scrollX", QString::number(td.scrollX)));
     attrs.push_back(QXmlStreamAttribute("scrollY", QString::number(td.scrollY)));
 
-    // lastModified is only used for tabs that are cached, so let's not write it to the xml file
-    // unless it's actually useful.
+    // A few attributes aren't often used, so we'll only write them into the file if they're
+    // set to a non-default value as to not clutter up the xml file.
     if (td.lastModified != 0)
         attrs.push_back(QXmlStreamAttribute("lastModified", QString::number(td.lastModified)));
+
+    if (td.active)
+        attrs.push_back(QXmlStreamAttribute("active", "1"));
 
     m_writer.writeAttributes(attrs);
 

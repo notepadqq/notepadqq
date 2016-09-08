@@ -13,6 +13,7 @@ struct TabData {
     QString cacheFilePath;
     int scrollX = 0;
     int scrollY = 0;
+    bool active = false;
     qint64 lastModified = 0;
 };
 

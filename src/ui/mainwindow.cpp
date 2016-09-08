@@ -408,6 +408,8 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
 
+            td.active = tabWidget->currentEditor() == editor;
+
             // If we're caching and there's a file opened in the tab we want to inform the
             // user whether the file's contents have changed since Nqq was last opened.
             // For this we save and later compare the modification date.
@@ -463,6 +465,8 @@ void MainWindow::loadSession(QString filePath)
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
         EditorTabWidget* tabW = m_topEditorContainer->tabWidget(viewCounter);
+        int activeIndex = 0;
+
         if (!tabW)
             tabW = m_topEditorContainer->addTabWidget();
 
@@ -518,6 +522,8 @@ void MainWindow::loadSession(QString filePath)
                     editor->setFileOnDiskChanged(true);
             }
 
+            if(tab.active) activeIndex = idx;
+
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
             editor->clearFocus();
 
@@ -529,6 +535,8 @@ void MainWindow::loadSession(QString filePath)
         // we'll attempt to re-use the widget for the next view.
         if (tabW->count() == 0)
             viewCounter--;
+        else // Otherwise we finish by making the right tab the currently open one.
+            tabW->setCurrentIndex(activeIndex);
 
     } // end for
 
