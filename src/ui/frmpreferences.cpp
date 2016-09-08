@@ -48,16 +48,30 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadAppearanceTab();
     loadTranslations();
     loadShortcuts();
+    loadExternalTools();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
-
-    ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
-    ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
 }
 
 frmPreferences::~frmPreferences()
 {
     delete ui;
+}
+
+void frmPreferences::loadExternalTools()
+{
+    ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
+    ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
+
+    ui->txtTerminalLaunchCmd->setText(m_settings.ExternalTools.getTerminalLaunchCmd());
+}
+
+void frmPreferences::saveExternalTools()
+{
+    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
+    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
+
+    m_settings.ExternalTools.setTerminalLaunchCmd(ui->txtTerminalLaunchCmd->text());
 }
 
 void frmPreferences::resetShortcuts()
@@ -110,22 +124,23 @@ void frmPreferences::on_buttonBox_accepted()
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
 
+    saveExternalTools();
     saveLanguages();
     saveAppearanceTab();
     saveTranslation();
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
-    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
-    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
     const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
 
+    const bool extensionsEnabled = Extensions::ExtensionsLoader::extensionRuntimePresent();
+
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
-        w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+        w->showExtensionsMenu(extensionsEnabled);
 
         w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
 

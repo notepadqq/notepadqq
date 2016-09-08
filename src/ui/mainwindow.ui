@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -54,6 +54,13 @@
       <string>Recent Files</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuShow_Containing_Folder_in">
+     <property name="title">
+      <string>Show Containing Folder in</string>
+     </property>
+     <addaction name="actionFile_Browser"/>
+     <addaction name="actionTerminal"/>
+    </widget>
     <addaction name="action_New"/>
     <addaction name="action_Open"/>
     <addaction name="actionOpen_Folder"/>
@@ -63,6 +70,7 @@
     <addaction name="actionSave_a_Copy_As"/>
     <addaction name="actionSave_All"/>
     <addaction name="actionRename"/>
+    <addaction name="menuShow_Containing_Folder_in"/>
     <addaction name="actionClose"/>
     <addaction name="actionC_lose_All"/>
     <addaction name="actionClose_All_BUT_Current_Document"/>
@@ -1079,6 +1087,16 @@
    </property>
    <property name="text">
     <string>Enable Smart Indent</string>
+   </property>
+  </action>
+  <action name="actionFile_Browser">
+   <property name="text">
+    <string>File Browser</string>
+   </property>
+  </action>
+  <action name="actionTerminal">
+   <property name="text">
+    <string>Terminal</string>
    </property>
   </action>
  </widget>

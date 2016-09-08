@@ -2226,3 +2226,41 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         return true;
     });
 }
+
+//Small helper to get the path of the parent directory.
+QString getParentOfUrl(const QUrl url) {
+    if (!url.isValid())
+        return QString();
+
+    const QDir parentDir = QFileInfo(url.toLocalFile()).absoluteDir();
+    return parentDir.absolutePath();
+}
+
+void MainWindow::on_actionFile_Browser_triggered()
+{
+    const QString parent = getParentOfUrl(m_topEditorContainer->currentTabWidget()->
+                                          currentEditor()->fileName());
+
+    if (parent.isEmpty())
+        return;
+
+    QDesktopServices::openUrl( QUrl::fromLocalFile(parent) );
+}
+
+void MainWindow::on_actionTerminal_triggered()
+{
+    //Example of a launch command: "gnome-terminal --working-directory=%s"
+    const QString launchCmd = m_settings.ExternalTools.getTerminalLaunchCmd();
+    const QString parent = getParentOfUrl(m_topEditorContainer->currentTabWidget()->
+                                          currentEditor()->fileName());
+
+    if (launchCmd.isEmpty() || parent.isEmpty())
+        return;
+
+    //Replace %s with the directory path put in quotes. This is necessary in case the path contains
+    //spaces.
+    QString cmd = launchCmd;
+    cmd.replace("%s", "\"" + parent + "\"");
+
+    QProcess::startDetached(cmd);
+}

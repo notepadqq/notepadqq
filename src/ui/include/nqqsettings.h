@@ -100,6 +100,10 @@ public:
         NQQ_SETTING(RuntimeNpm,     QString, QString())
     END_CATEGORY(Extensions)
 
+    BEGIN_CATEGORY(ExternalTools)
+        NQQ_SETTING(TerminalLaunchCmd,  QString,    QString())
+    END_CATEGORY(ExternalTools)
+
     BEGIN_CATEGORY(Languages)
         NQQ_SETTING_WITH_KEY(IndentWithSpaces,      bool,   false)
         NQQ_SETTING_WITH_KEY(TabSize,               int,    4)
