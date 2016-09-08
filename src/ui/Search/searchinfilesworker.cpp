@@ -254,6 +254,30 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
     res.matchStartPosition = absoluteColumn;
     res.matchEndPosition = absoluteColumn + matchLen;
 
+    // Efficiently cut leading lines from previewBeforeMatch
+    {
+        int i;
+        for (i = res.previewBeforeMatch.length() - 1; i >= 0; i--) {
+            if (res.previewBeforeMatch[i] == '\r' || res.previewBeforeMatch[i] == '\n') {
+                break;
+            }
+        }
+        res.previewBeforeMatch = res.previewBeforeMatch.mid(i);
+    }
+
+    // Efficiently cut trailing lines from previewAfterMatch
+    {
+        int i, pos = -1;
+        for (i = 0; i < res.previewAfterMatch.length(); i++) {
+            if (res.previewAfterMatch[i] == '\r' || res.previewAfterMatch[i] == '\n') {
+                pos = i;
+                break;
+            }
+        }
+        res.previewAfterMatch = res.previewAfterMatch.mid(0, pos);
+    }
+
+
     return res;
 }
 
