@@ -431,12 +431,13 @@ bool MainWindow::saveSession(QString filePath, bool cacheModifiedFiles)
     QFile file(filePath);
     file.open(QIODevice::WriteOnly);
 
-    if (file.isOpen()) {
-        SessionWriter sessionWriter(file);
+    if (!file.isOpen())
+        return false;
 
-        for (const auto& view : viewData)
-            sessionWriter.addViewData(view);
-    }
+    SessionWriter sessionWriter(file);
+
+    for (const auto& view : viewData)
+        sessionWriter.addViewData(view);
 
     return true;
 }
@@ -562,11 +563,14 @@ void MainWindow::loadSession(QString filePath)
 
 bool MainWindow::saveTabsToCache()
 {
-    //Make sure the cache directory exists
-    while (!PersistentCache::clearCacheDir()) {
+    // If clearCacheDir() returns false, the cache directory is not writeable.
+    // If saveSession() returns false, something went wrong. Most likely writing to the .xml file.
+    // In both cases we can present the same error message.
+    while (!PersistentCache::clearCacheDir() ||
+           !saveSession(PersistentCache::cacheSessionPath(), true)) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setText(tr("Could not create cache directory. Please ensure the following directory is accessible:\n\n") + PersistentCache::cacheDirPath());
+        msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") + PersistentCache::cacheDirPath());
         msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
         msgBox.setDefaultButton(QMessageBox::Retry);
         msgBox.setIcon(QMessageBox::Critical);
@@ -574,7 +578,7 @@ bool MainWindow::saveTabsToCache()
         if(msgBox.exec() == QMessageBox::Abort) return false;
     }
 
-    return saveSession(PersistentCache::cacheSessionPath(), true);
+    return true;
 }
 
 void MainWindow::restoreTabsFromCache()
@@ -2489,6 +2493,13 @@ void MainWindow::on_actionSave_Session_triggered()
 
     m_settings.General.setLastSelectedSessionDir(QFileInfo(fileName).dir().absolutePath());
 
-    // Do *not* try to cache just any session.
-    saveSession(fileName, false);
+    // Do not try to cache sessions here. Only one session can ever be in the cache directory
+    // at any point in time.
+    if (saveSession(fileName, false)) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Error while trying to save this session. Please try a different file name."));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Critical);
+    }
 }
