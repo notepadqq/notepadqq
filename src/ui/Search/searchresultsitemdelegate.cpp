@@ -30,7 +30,7 @@ QString SearchResultsItemDelegate::getFileResultFormattedLine(const FileSearchRe
 
     for(int i = 0;i < result.previewAfterMatch.size(); i++) {
         if(result.previewAfterMatch[i] == '\r' || result.previewAfterMatch[i] == '\n') {
-            clippedAfter = result.previewAfterMatch.mid(0,i-1);
+            clippedAfter = result.previewAfterMatch.mid(0,i);
             clipAfterFound = true;
             break;
         }
