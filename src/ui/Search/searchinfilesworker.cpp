@@ -3,7 +3,6 @@
 #include "include/docengine.h"
 #include <QDirIterator>
 #include <QMessageBox>
-#include <QThread>
 
 SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
@@ -35,8 +34,8 @@ void SearchInFilesWorker::run()
         QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
-    }else if (m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
-        QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
+
+    } else if (m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
         m_string = unescapeString(m_string);
     }
 
@@ -81,9 +80,15 @@ void SearchInFilesWorker::run()
         f.close();
 
         FileSearchResult::FileResult fileResult;
-        if (m_searchMode == SearchHelpers::SearchMode::Regex) fileResult = searchRegExp(fileName, decodedText.text);
-        else fileResult = searchPlainText(fileName, decodedText.text);
-        if (!fileResult.results.isEmpty()) searchResult.fileResults.append(fileResult);
+        if (m_searchMode == SearchHelpers::SearchMode::Regex) {
+            fileResult = searchRegExp(fileName, decodedText.text);
+        } else {
+            fileResult = searchPlainText(fileName, decodedText.text);
+        }
+
+        if (!fileResult.results.isEmpty()) {
+            searchResult.fileResults.append(fileResult);
+        }
     }
     m_result = searchResult;
 
@@ -111,10 +116,12 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
     while ((column = content.indexOf(m_string, column, caseSense)) != -1 && !m_stop) {
         hasResult = m_searchOptions.MatchWholeWord ? matchesWholeWord(column, matchLength, content) : true;
         if (hasResult) {
-            for (int i = line;i < totalLines; i++) {
+            for (int i = line; i < totalLines; i++) {
                 if (linePosition[i] > column) {
                     line = i-1;
-                    if (hasResult) fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
+                    if (hasResult) {
+                        fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
+                    }
                     break;
                 }
             }
@@ -138,7 +145,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fi
     match = m_regex.match(content);
     column = match.capturedStart();
     while (column != -1 && match.hasMatch() && !m_stop) {
-        for (int i=line; i < linePosition.length(); i++){
+        for (int i = line; i < linePosition.length(); i++){
             if (linePosition[i] > column) {
                 line = i-1;
                 fileResult.results.append(buildResult(line, column - linePosition[line], column, content, match.capturedLength()));
@@ -155,13 +162,17 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLen
 {
     QChar boundary;
 
-    if (index !=0) {
+    if (index != 0) {
         boundary = data[index-1];
-        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) {
+            return false;
+        }
     }
     if (data.length() != index+matchLength) {
         boundary = data[index+matchLength];
-        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) return false;
+        if (!boundary.isPunct() && !boundary.isSpace() && !boundary.isSymbol()) {
+            return false;
+        }
     }
     return true;
 }
@@ -185,7 +196,7 @@ QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
         if (data[i] == '\r' && data[i+1] == '\n') {
             linePosition << i+2;
             i++;
-        }else if (data[i] == '\r' || data[i] == '\n') {
+        } else if (data[i] == '\r' || data[i] == '\n') {
             linePosition << i+1;
         }
     }
@@ -214,7 +225,7 @@ QString SearchInFilesWorker::unescapeString(const QString &data)
                 int nHex = data.mid(++i, 2).toInt(0, 16);
                 c = QChar(nHex);
                 i += 1;
-            }else if (data[i] == 'u' && i+4 <= dataLength) {
+            } else if (data[i] == 'u' && i+4 <= dataLength) {
                 int nHex = data.mid(++i,4).toInt(0, 16);
                 c = QChar(nHex);
                 i += 3;
@@ -230,18 +241,18 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
     FileSearchResult::Result res;
 
     if (absoluteColumn > 50) {
-        res.previewBeforeMatch = lineContent.mid(absoluteColumn-50,50);
-    }else {
-        res.previewBeforeMatch = lineContent.mid(0,absoluteColumn);
+        res.previewBeforeMatch = lineContent.mid(absoluteColumn-50, 50);
+    } else {
+        res.previewBeforeMatch = lineContent.mid(0, absoluteColumn);
     }
-    res.match = lineContent.mid(absoluteColumn,matchLen);
-    res.previewAfterMatch = lineContent.mid(absoluteColumn + matchLen,matchLen + 50);
+    res.match = lineContent.mid(absoluteColumn, matchLen);
+    res.previewAfterMatch = lineContent.mid(absoluteColumn + matchLen, matchLen + 50);
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;
-    res.matchEndCol = column+matchLen;
+    res.matchEndCol = column + matchLen;
     res.matchStartPosition = absoluteColumn;
-    res.matchEndPosition = absoluteColumn+matchLen;
+    res.matchEndPosition = absoluteColumn + matchLen;
 
     return res;
 }
