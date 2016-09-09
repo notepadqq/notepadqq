@@ -76,7 +76,6 @@ private:
         SearchInFilesWorker*   threadSearch = nullptr;
         ReplaceInFilesWorker*  threadReplace = nullptr;
         dlgSearching*          msgBox = nullptr;
-        bool                   replaceMode = false;
     };
 
     SearchInFilesSession* m_session = nullptr;

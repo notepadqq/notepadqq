@@ -4,7 +4,6 @@
 QString SearchString::toRaw(const QString &data, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
     QString rawSearch = data;
-
     if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
         rawSearch = toRegex(data, searchOptions.MatchWholeWord);
         rawSearch = rawSearch.replace("\\\\", "\\");
@@ -17,12 +16,10 @@ QString SearchString::toRaw(const QString &data, const SearchHelpers::SearchMode
 
 QString SearchString::toRegex(const QString &data, bool matchWholeWord)
 {
-    // Transform it into a regex, but make sure to escape special chars
     QString regex = QRegularExpression::escape(data);
-
-    if (matchWholeWord)
+    if (matchWholeWord) {
         regex = "\\b" + regex + "\\b";
-
+    }
     return regex;
 }
 
