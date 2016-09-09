@@ -177,7 +177,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
         a->setShortcut(shortcut);
     }
-
+    //Register our meta types for signal/slot calls here.
+    qRegisterMetaType<FileSearchResult::SearchResult>("FileSearchResult::SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
 }
 

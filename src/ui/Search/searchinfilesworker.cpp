@@ -1,22 +1,22 @@
 #include "include/Search/searchinfilesworker.h"
-#include "include/Search/frmsearchreplace.h"
+#include "include/Search/searchstring.h"
 #include "include/docengine.h"
 #include <QDirIterator>
 #include <QMessageBox>
 
-SearchInFilesWorker::SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
+SearchInFilesWorker::SearchInFilesWorker(QObject* parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
     : m_string(string),
       m_path(path),
       m_filters(filters),
       m_searchMode(searchMode),
       m_searchOptions(searchOptions)
 {
-
+    setParent(parent);
 }
 
 SearchInFilesWorker::~SearchInFilesWorker()
 {
-
+    qDebug() << "Finished";
 }
 
 void SearchInFilesWorker::run()
@@ -31,12 +31,12 @@ void SearchInFilesWorker::run()
         if (m_searchOptions.MatchCase == false) {
             options |= QRegularExpression::CaseInsensitiveOption;
         }
-        QString rawSearch = frmSearchReplace::rawSearchString(m_string, m_searchMode, m_searchOptions);
+        QString rawSearch = SearchString::toRaw(m_string, m_searchMode, m_searchOptions);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
 
     } else if (m_searchMode == SearchHelpers::SearchMode::SpecialChars) {
-        m_string = unescapeString(m_string);
+        m_string = SearchString::unescape(m_string);
     }
 
 
@@ -47,7 +47,6 @@ void SearchInFilesWorker::run()
     QDirIterator it(m_path, m_filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
     while (it.hasNext()) {
         if (m_stop) {
-            emit finished(true);
             return;
         }
 
@@ -68,7 +67,6 @@ void SearchInFilesWorker::run()
                 emit errorReadingFile(tr("Error reading %1").arg(fileName), result);
 
                 if (result == QMessageBox::StandardButton::Abort) {
-                    emit finished(true);
                     return;
                 } else if (result == QMessageBox::StandardButton::Retry) {
                     retry = true;
@@ -92,12 +90,12 @@ void SearchInFilesWorker::run()
     }
     m_result = searchResult;
 
-    emit finished(false);
+    emit resultReady(m_result);
 }
 
 void SearchInFilesWorker::stop()
 {
-    QMutexLocker locker(&m_stopMutex);
+    QMutexLocker locker(&m_mutex);
     m_stop = true;
 }
 
@@ -179,7 +177,7 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLen
 
 FileSearchResult::SearchResult SearchInFilesWorker::getResult()
 {
-    QMutexLocker locker(&m_resultMutex);
+    QMutexLocker locker(&m_mutex);
     FileSearchResult::SearchResult r;
     r = m_result;
 
@@ -203,37 +201,6 @@ QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
 
     linePosition << data.size();
     return linePosition;
-}
-
-QString SearchInFilesWorker::unescapeString(const QString &data)
-{ 
-    int dataLength = data.size();
-    QString unescaped;
-    QChar c;
-    for (int i = 0; i < dataLength; i++) {
-        c = data[i];
-        if (c == '\\' && i != dataLength) {
-            i++;
-            if (data[i] == 'a') c = '\a';
-            else if (data[i] == 'b') c = '\b';
-            else if (data[i] == 'f') c = '\f';
-            else if (data[i] == 'n') c = '\n';
-            else if (data[i] == 'r') c = '\r';
-            else if (data[i] == 't') c = '\t';
-            else if (data[i] == 'v') c = '\v';
-            else if (data[i] == 'x' && i+2 <= dataLength) {
-                int nHex = data.mid(++i, 2).toInt(0, 16);
-                c = QChar(nHex);
-                i += 1;
-            } else if (data[i] == 'u' && i+4 <= dataLength) {
-                int nHex = data.mid(++i,4).toInt(0, 16);
-                c = QChar(nHex);
-                i += 3;
-            }
-        }
-        unescaped.append(c);
-    }
-    return unescaped;
 }
 
 FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)

@@ -34,13 +34,15 @@ public:
      */
     void findFromUI(bool forward, bool searchFromStart = false);
     void replaceFromUI(bool forward, bool searchFromStart = false);
-
-    static QString rawSearchString(QString search, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
-    static QString plainTextToRegex(QString text, bool matchWholeWord);
-
     void cleanFindInFilesPtrs();
 protected:
     void keyPressEvent(QKeyEvent *evt);
+
+public slots:
+    void displayThreadErrorMessageBox(const QString &message, int &operation);
+    void handleSearchResult(const FileSearchResult::SearchResult &result);
+    void handleError(const QString &e);
+    void handleProgress(const QString &file, bool replace = false);
 
 private slots:
     void on_btnFindNext_clicked();
@@ -70,17 +72,16 @@ private:
     public:
         SearchInFilesSession(QObject *parent) : QObject(parent) { }
 
-        QThread*               threadSearch = nullptr;
-        SearchInFilesWorker*   workerSearch = nullptr;
-        QThread*               threadReplace = nullptr;
-        ReplaceInFilesWorker*  workerReplace = nullptr;
+        SearchInFilesWorker*   threadSearch = nullptr;
+        ReplaceInFilesWorker*  threadReplace = nullptr;
         dlgSearching*          msgBox = nullptr;
     };
 
+    SearchInFilesSession* m_session = nullptr;
     QList<SearchInFilesSession*> m_findInFilesPtrs;
 
     Editor*                currentEditor();
-
+    void handleSearchCleanup();
     void search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
     void replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
     int replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
@@ -102,13 +103,14 @@ private:
      * @param message
      * @param operation
      */
-    void displayThreadErrorMessageBox(const QString &message, int &operation);
     void addToSearchHistory(QString string);
     void addToReplaceHistory(QString string);
     void addToFileHistory(QString string);
     void addToFilterHistory(QString string);
 signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
+    void stopSearchInFiles();
+    void stopReplaceInFiles();
 };
 
 #endif // FRMSEARCHREPLACE_H

@@ -70,6 +70,7 @@ SOURCES += main.cpp\
     Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
     Search/searchinfilesworker.cpp \
+    Search/searchstring.cpp \
     Search/replaceinfilesworker.cpp \
     Search/dlgsearching.cpp \
     Search/searchresultsitemdelegate.cpp \
@@ -115,6 +116,7 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchinfilesworker.h \
     include/Search/replaceinfilesworker.h \
     include/Search/searchhelpers.h \
+    include/Search/searchstring.h \
     include/Search/dlgsearching.h \
     include/Search/searchresultsitemdelegate.h \
     include/Extensions/extension.h \
