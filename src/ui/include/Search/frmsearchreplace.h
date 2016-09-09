@@ -40,9 +40,11 @@ protected:
 
 public slots:
     void displayThreadErrorMessageBox(const QString &message, int &operation);
+    void handleReplaceResult(int replaceCount, int fileCount, bool stopped);
     void handleSearchResult(const FileSearchResult::SearchResult &result);
     void handleError(const QString &e);
     void handleProgress(const QString &file, bool replace = false);
+    void handleReplaceInFiles(const FileSearchResult::SearchResult &result);
 
 private slots:
     void on_btnFindNext_clicked();
@@ -71,22 +73,23 @@ private:
     class SearchInFilesSession : public QObject {
     public:
         SearchInFilesSession(QObject *parent) : QObject(parent) { }
-
         SearchInFilesWorker*   threadSearch = nullptr;
         ReplaceInFilesWorker*  threadReplace = nullptr;
         dlgSearching*          msgBox = nullptr;
+        bool                   replaceMode = false;
     };
 
     SearchInFilesSession* m_session = nullptr;
     QList<SearchInFilesSession*> m_findInFilesPtrs;
 
     Editor*                currentEditor();
-    void handleSearchCleanup();
+    void sessionCleanup();
+    bool confirmReplaceInFiles(const QString &path, const QStringList &filters);
     void search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
     void replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
     int replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
     int selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
-    void searchInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    void searchReplaceInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions, bool replaceMode = false);
     void replaceInFiles(const QString &string, const QString &replacement, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     void setCurrentTab(Tabs tab);
     void manualSizeAdjust();

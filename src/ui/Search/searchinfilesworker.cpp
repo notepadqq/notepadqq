@@ -16,7 +16,6 @@ SearchInFilesWorker::SearchInFilesWorker(QObject* parent, const QString &string,
 
 SearchInFilesWorker::~SearchInFilesWorker()
 {
-    qDebug() << "Finished";
 }
 
 void SearchInFilesWorker::run()

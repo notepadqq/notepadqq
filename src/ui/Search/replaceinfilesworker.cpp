@@ -5,11 +5,11 @@
 #include <QTextStream>
 #include <QMessageBox>
 
-ReplaceInFilesWorker::ReplaceInFilesWorker(const FileSearchResult::SearchResult &searchResult, const QString &replacement)
+ReplaceInFilesWorker::ReplaceInFilesWorker(QObject* parent, const FileSearchResult::SearchResult &searchResult, const QString &replacement)
     : m_searchResult(searchResult),
       m_replacement(replacement)
 {
-
+    setParent(parent);
 }
 
 ReplaceInFilesWorker::~ReplaceInFilesWorker()
@@ -17,31 +17,15 @@ ReplaceInFilesWorker::~ReplaceInFilesWorker()
 
 }
 
-QPair<int, int> ReplaceInFilesWorker::getResult()
+void ReplaceInFilesWorker::sendResults()
 {
-    QPair<int, int> result;
-
-    m_resultMutex.lock();
-    result.first = m_numOfOccurrencesReplaced;
-    result.second = m_numOfFilesReplaced;
-    m_resultMutex.unlock();
-
-    return result;
+    emit resultReady(m_replaceCount, m_fileCount, m_stop);
 }
 
 void ReplaceInFilesWorker::run()
 {
     for (FileSearchResult::FileResult fileResult : m_searchResult.fileResults) {
         emit progress(fileResult.fileName);
-
-        m_stopMutex.lock();
-        bool stop = m_stop;
-        m_stopMutex.unlock();
-        if (stop) {
-            emit finished(true);
-            return;
-        }
-
         QFile f(fileResult.fileName);
         DocEngine::DecodedText decodedText;
         bool retry;
@@ -56,7 +40,7 @@ void ReplaceInFilesWorker::run()
                 emit errorReadingFile(tr("Error reading %1").arg(fileResult.fileName), result);
 
                 if (result == QMessageBox::StandardButton::Abort) {
-                    emit finished(true);
+                    sendResults();
                     return;
                 } else if (result == QMessageBox::StandardButton::Retry) {
                     retry = true;
@@ -66,11 +50,8 @@ void ReplaceInFilesWorker::run()
             }
         } while (retry);
 
-        m_stopMutex.lock();
-        stop = m_stop;
-        m_stopMutex.unlock();
-        if (stop) {
-            emit finished(true);
+        if (m_stop) {
+            sendResults();
             return;
         }
 
@@ -78,6 +59,10 @@ void ReplaceInFilesWorker::run()
 
         // Replace in reverse order to make sure all the positions are still valid after each iteration.
         for (int i = fileResult.results.count() - 1; i >= 0; i--) {
+            if (m_stop) {
+                sendResults();
+                return;
+            }
             FileSearchResult::Result result = fileResult.results[i];
             decodedText.text.replace(result.matchStartPosition, result.matchEndPosition - result.matchStartPosition, m_replacement);
             tmpNumReplaced++;
@@ -99,7 +84,7 @@ void ReplaceInFilesWorker::run()
                     emit errorReadingFile(tr("Error writing %1").arg(fileResult.fileName), result);
 
                     if (result == QMessageBox::StandardButton::Abort) {
-                        emit finished(true);
+                        sendResults(); 
                         return;
                     } else if (result == QMessageBox::StandardButton::Retry) {
                         retry = true;
@@ -110,20 +95,16 @@ void ReplaceInFilesWorker::run()
             } while (retry);
 
             if (fileWritten) {
-                m_resultMutex.lock();
-                m_numOfFilesReplaced++;
-                m_numOfOccurrencesReplaced += tmpNumReplaced;
-                m_resultMutex.unlock();
+                m_fileCount++;
+                m_replaceCount += tmpNumReplaced;
             }
         }
     }
-
-    emit finished(false);
+    sendResults();
 }
 
 void ReplaceInFilesWorker::stop()
 {
-    m_stopMutex.lock();
+    QMutexLocker locker(&m_mutex);
     m_stop = true;
-    m_stopMutex.unlock();
 }
