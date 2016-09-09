@@ -35,7 +35,7 @@ signals:
     * @brief Report progress to main thread.
     * @param QString file: The file currently being processed.
     */
-    void progress(const QString& file, bool replace = false);
+    void progress(const QString& file, const bool replace = false);
 
     /**
      * @brief Error reading a file. You can handle this signal
