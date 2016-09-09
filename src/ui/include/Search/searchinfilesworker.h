@@ -12,9 +12,8 @@ class SearchInFilesWorker : public QThread
 {
     Q_OBJECT
 public:
-    SearchInFilesWorker(QObject *parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    explicit SearchInFilesWorker(QObject *parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     ~SearchInFilesWorker();
-    FileSearchResult::SearchResult getResult();
     void run();
 
 signals:

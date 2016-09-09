@@ -174,15 +174,6 @@ bool SearchInFilesWorker::matchesWholeWord(const int &index, const int &matchLen
     return true;
 }
 
-FileSearchResult::SearchResult SearchInFilesWorker::getResult()
-{
-    QMutexLocker locker(&m_mutex);
-    FileSearchResult::SearchResult r;
-    r = m_result;
-
-    return r;
-}
-
 QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
 {
     const int dataSize = data.size();
