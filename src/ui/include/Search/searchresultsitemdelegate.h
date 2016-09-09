@@ -23,13 +23,13 @@ public:
         ResultTypeMatch
     };
    
-   /*
+   /**
     * @brief Get the current `index` row item type.
     * @return `SearchResultsItemDelegate::ResultType`: The result type of `index`.
     */
     static SearchResultsItemDelegate::ResultType rowItemType(const QModelIndex &index);
 
-   /*
+   /**
     * @brief Populate result items.
     * @param `item`:             The item to populate.
     * @param `result`:           The result to populate `item` with.
@@ -41,7 +41,7 @@ public:
     static void fillFileResultRowItem(QStandardItem *item, const FileSearchResult::FileResult &fileResult, const int matches);
     static void fillSearchResultRowItem(QStandardItem *item, const FileSearchResult::SearchResult &searchResult, const int totalFileMatches, const int totalFiles);
 
-   /*
+   /**
     * @brief Retrieve result data.
     * @param `index`: The index to use for retrieving result data.
     * @return `FileSearchResult::Result/FileResult`: The data at `index`.

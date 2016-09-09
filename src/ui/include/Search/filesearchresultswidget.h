@@ -15,7 +15,7 @@ public:
     FileSearchResultsWidget(QWidget *parent = 0);
     ~FileSearchResultsWidget();
    
-   /*
+   /**
     * @brief Add search results to the results widget.
     * @param `searchResult`:  The search results to be added.
     */
@@ -29,13 +29,13 @@ private:
     SearchResultsItemDelegate* m_treeViewHTMLDelegate;
     QAction* m_actionClear;
 
-   /*
+   /**
     * @brief Set up UI actions.
     */
     void setupActions();
 
 signals:
-   /*
+   /**
     * @brief Handle match result being clicked.
     * @param `file`:  The file result struct to use.
     * @param `match`: The match result struct to use.

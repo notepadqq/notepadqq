@@ -26,12 +26,12 @@ public:
     explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
     ~frmSearchReplace();
 
-   /*
+   /**
     * @brief Sets the currently displayed tab.
     * @param `defaultTab`: The tab to change our display to.
     */
     void show(Tabs defaultTab);
-   /*
+   /**
     * @brief Sets the search input text to value specified in `string`.
     * @param `string`: Value to change the search input text to.
     */
@@ -69,23 +69,23 @@ public slots:
     * @param `stopped`:       Bool value which determines how we display results.
     */
     void handleReplaceResult(int replaceCount, int fileCount, bool stopped);
-   /*
+   /**
     * @brief Display results from SearchInFilesWorker thread.
     * @param `result`: FileSearchResult::SearchResult struct to generate the display from.
     */
     void handleSearchResult(const FileSearchResult::SearchResult &result);
-   /*
+   /**
     * @brief Handle general error message from thread.
     * @param `e`: The error message received.
     */
     void handleError(const QString &e);
-   /*
+   /**
     * @brief Handle progress report from thread.
     * @param `file`: Current file being worked on.
     * @param `replace`: Bool value which determines how we display progress.
     */
     void handleProgress(const QString &file, bool replace = false);
-   /*
+   /**
     * @brief Starts ReplaceInFilesWorker thread if we started the search in replaceMode.
     * @param `result`: FileSearchResult::SearchResult struct to work on.
     */
@@ -126,22 +126,22 @@ private:
     SearchInFilesSession* m_session = nullptr;
     QList<SearchInFilesSession*> m_findInFilesPtrs;
 
-   /*
+   /**
     * @brief Get the current editor.
     */
     Editor*                currentEditor();
-   /*
+   /**
     * @brief Clean up Search in file sessions.
     */
     void sessionCleanup();
-   /*
+   /**
     * @brief Ask for confirmation for replacing in files.
     * @param `path`:    The directory path being worked on.
     * @param `filters`: The filters that will be applied.
     * @return `bool`:   The result of the request.
     */
     bool confirmReplaceInFiles(const QString &path, const QStringList &filters);
-   /*
+   /**
     * @brief Perform a search within the current document.
     * @param `string`:        The string to search for.
     * @param `searchMode`:    Search mode to use.
@@ -149,7 +149,7 @@ private:
     * @param `searchOptions`: Search options to use.
     */
     void search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
-   /*
+   /**
     * @brief Perform a replace within the current document.
     * @param `string`:        The string to search for.
     * @param `replacement`:   The string which will replace `string`.
@@ -158,7 +158,7 @@ private:
     * @param `searchOptions`: Search options to use.
     */
     void replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions);
-   /*
+   /**
     * @brief Perform a full document replace within the current document.
     * @param `string`:        The string to search for.
     * @param `replacement`:   The string which will replace `string`.
@@ -166,7 +166,7 @@ private:
     * @param `searchOptions`: Search options to use.
     */
     int replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
-   /*
+   /**
     * @brief Select all instances of `string` within the current document.
     * @param `string`:        The string to search for.
     * @param `searchMode`:    Search mode to use.
@@ -174,7 +174,7 @@ private:
     * @param `searchOptions`: Search options to use.
     */
     int selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
-   /*
+   /**
     * @brief Perform a search or replacement of `string` within the selected `path`.
     * @param `string`:        The string to be searched for.
     * @param `path`:          The directory path to work in.
@@ -184,32 +184,32 @@ private:
     * @param `replaceMode`:   Replace found occurrences if true.
     */
     void searchReplaceInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions, bool replaceMode = false);
-   /*
+   /**
     * @brief Sets the current tab.
     * @param `tab`: The tab to be set to.
     */
     void setCurrentTab(Tabs tab);
-   /*
+   /**
     * @brief Adjust the size of the frmSearchReplace window.
     */
     void manualSizeAdjust();
-   /*
+   /**
     * @brief Retrieve search options from UI.
     * @return `SearchHelpers::SearchOptions`: The UI search options.
     */
     SearchHelpers::SearchOptions searchOptionsFromUI();
-   /*
+   /**
     * @brief Retrieve search mode from UI.
     * @return `SearchHelpers::SearchMode`: The UI search mode.
     */
     SearchHelpers::SearchMode searchModeFromUI();
-   /*
+   /**
     * @brief Apply regex modifiers based on UI options.
     * @param `searchOptions`: The search options to use.
     * @return `QString`: Modified string based on `searchOptions`.
     */
     QString regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions);
-   /*
+   /**
     * @brief Retrieve file filters from UI.
     * @return `QStringList`: List of current UI file filters.
     */
