@@ -13,11 +13,14 @@
 class ReplaceInFilesWorker : public QThread
 {
     Q_OBJECT
+
 public:
     explicit ReplaceInFilesWorker(QObject* parent, const FileSearchResult::SearchResult &searchResult, const QString &replacement);
     ~ReplaceInFilesWorker();
     void run();
+
 signals:
+
     /**
      * @brief The worker finished its work.
      * @param stopped if true, the worker did not complete its operations
@@ -48,17 +51,6 @@ signals:
      */
     void errorReadingFile(const QString &message, int &operation);
 
-    /**
-     * @brief Error writing a file. You can handle this signal
-     *        and show a message box asking the user to abort/retry/ignore.
-     *        Assign the result of the message box to "operation".
-     *        Make sure to connect to this signal with
-     *        Qt::BlockingQueuedConnection
-     * @param message
-     * @param operation
-     */
-    void errorWritingFile(const QString &message, int &operation);
-
 public slots:
     void stop();
 
@@ -69,6 +61,11 @@ private:
     bool m_stop = false;
     int m_fileCount = 0;
     int m_replaceCount = 0;
+
+   /**
+    * @brief Build results from `m_fileCount` and `m_replaceCount` and emit
+    *        a signal containing them.
+    */
     void sendResults();
 };
 

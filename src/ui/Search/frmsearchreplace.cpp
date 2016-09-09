@@ -263,7 +263,6 @@ void frmSearchReplace::handleReplaceInFiles(const FileSearchResult::SearchResult
     connect(m_session->threadReplace, SIGNAL(finished()), m_session->threadReplace, SLOT(deleteLater()));
     connect(m_session->threadReplace, &ReplaceInFilesWorker::error, this, &frmSearchReplace::handleError);
     connect(m_session->threadReplace, &ReplaceInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
-    connect(m_session->threadReplace, &ReplaceInFilesWorker::errorWritingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
     connect(m_session->threadReplace, &ReplaceInFilesWorker::progress, this, &frmSearchReplace::handleProgress);
     connect(m_session->threadReplace, &ReplaceInFilesWorker::resultReady, this, &frmSearchReplace::handleReplaceResult);
     connect(this, &frmSearchReplace::stopReplaceInFiles, m_session->threadReplace, &ReplaceInFilesWorker::stop, Qt::DirectConnection);
