@@ -10,7 +10,6 @@ QString SearchString::toRaw(const QString &data, const SearchHelpers::SearchMode
     } else if (searchMode == SearchHelpers::SearchMode::PlainText){
         rawSearch = toRegex(data, searchOptions.MatchWholeWord);
     }
-
     return rawSearch;
 }
 
@@ -25,7 +24,7 @@ QString SearchString::toRegex(const QString &data, bool matchWholeWord)
 
 QString SearchString::unescape(const QString &data)
 { 
-    int dataLength = data.size();
+    const int dataLength = data.size();
     QString unescaped;
     QChar c;
     for (int i = 0; i < dataLength; i++) {
