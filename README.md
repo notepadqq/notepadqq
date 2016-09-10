@@ -1,6 +1,7 @@
 Notepadqq
 =========
 
+[![GitHub contributors](https://img.shields.io/github/contributors/notepadqq/notepadqq.svg?maxAge=2592000)](https://github.com/notepadqq/notepadqq)
 [![Build Status](https://travis-ci.org/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.org/notepadqq/notepadqq)
 
 Build
