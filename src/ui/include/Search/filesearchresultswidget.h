@@ -40,7 +40,7 @@ signals:
     * @param `file`:  The file result struct to use.
     * @param `match`: The match result struct to use.
     */
-    void resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
+    void resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol);
 
 protected:
     void contextMenuEvent(QContextMenuEvent *e);

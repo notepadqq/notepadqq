@@ -83,11 +83,15 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
 void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
 {
     int type = SearchResultsItemDelegate::rowItemType(index);
-
+    QPoint start = SearchResultsItemDelegate::resultRowStartData(index);
+    QPoint end   = SearchResultsItemDelegate::resultRowEndData(index);
     if (type == SearchResultsItemDelegate::ResultTypeMatch) {
         emit resultMatchClicked(
                     SearchResultsItemDelegate::fileResultRowData(index.parent()),
-                    SearchResultsItemDelegate::resultRowData(index));
+                    start.x(),
+                    start.y(),
+                    end.x(),
+                    end.y());
     }
 }
 

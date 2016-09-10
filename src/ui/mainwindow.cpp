@@ -2339,9 +2339,9 @@ void MainWindow::on_actionMove_Line_Down_triggered()
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
 }
 
-void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match)
+void MainWindow::on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol)
 {
-    QUrl url = stringToUrl(file.fileName);
+    QUrl url = stringToUrl(fileName);
     m_docEngine->loadDocument(url,
                               m_topEditorContainer->currentTabWidget());
 
@@ -2353,7 +2353,7 @@ void MainWindow::on_resultMatchClicked(const FileSearchResult::FileResult &file,
     EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
     Editor *editor = tabW->editor(pos.second);
 
-    editor->setSelection(match.matchStartLine, match.matchStartCol, match.matchEndLine, match.matchEndCol);
+    editor->setSelection(startLine, startCol, endLine, endCol);
 
     editor->setFocus();
 }

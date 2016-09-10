@@ -167,7 +167,7 @@ private slots:
     void on_actionMove_Line_Up_triggered();
     void on_actionMove_Line_Down_triggered();
     void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
-    void on_resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
+    void on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol);
     void on_actionTrim_Trailing_Space_triggered();
     void on_actionTrim_Leading_Space_triggered();
     void on_actionTrim_Leading_and_Trailing_Space_triggered();

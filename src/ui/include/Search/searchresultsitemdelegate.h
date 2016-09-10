@@ -16,6 +16,7 @@ public:
 
     static const int RESULT_TYPE_ROLE = Qt::UserRole + 1;
     static const int RESULT_DATA_ROLE = Qt::UserRole + 2;
+    static const int RESULT_DATA_EX_ROLE = Qt::UserRole + 3;
 
     enum ResultType {
         ResultTypeError,
@@ -46,8 +47,9 @@ public:
     * @param `index`: The index to use for retrieving result data.
     * @return `FileSearchResult::Result/FileResult`: The data at `index`.
     */
-    static FileSearchResult::Result resultRowData(const QModelIndex &index);
-    static FileSearchResult::FileResult fileResultRowData(const QModelIndex &index);
+    static QPoint resultRowStartData(const QModelIndex &index);
+    static QPoint resultRowEndData(const QModelIndex &index);
+    static QString fileResultRowData(const QModelIndex &index);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
