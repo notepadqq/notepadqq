@@ -1520,7 +1520,7 @@ Wollen Sie dennoch speichern?</translation>
         <location filename="../ui/frmpreferences.ui" line="537"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>ACHTUNG: die Unterstützung für
-Erweiterungen ist EXPERIMENTAL.</translation>
+Erweiterungen ist EXPERIMENTELL.</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="104"/>
