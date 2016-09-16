@@ -82,7 +82,7 @@ void KeyGrabber::addMenus(const QList<const QMenu*>& listOfMenus)
 {
     for (const QMenu* menu : listOfMenus) {
 
-        if (menu->objectName() == "menu_Language") {
+        if (menu->objectName() == "menu_Language" || menu->objectName().isEmpty()) {
             continue;
         }
 
@@ -199,7 +199,11 @@ void KeyGrabber::populateNode(QTreeWidgetItem*& rootItem, const QMenu* menu) {
 
         } else if (action->menu()) {
             // If the action is a sub-menu, we add a new tree node and populate it with
-            // The children of this menu
+            // the children of this menu. Exceptions that should not be added can be
+            // specified here.
+            if (action->menu()->objectName() == "menuRecent_Files")
+                continue;
+
             auto item = new QTreeWidgetItem();
             item->setText(0, action->iconText());
             populateNode(item, action->menu());
