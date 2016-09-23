@@ -100,6 +100,17 @@ void frmSearchReplace::setSearchText(QString string)
     ui->cmbSearch->setCurrentText(string);
 }
 
+void frmSearchReplace::toggleReplaceInSelection(bool enabled)
+{
+    ui->chkReplaceInSelection->setEnabled(enabled);
+    if (!enabled)
+    {
+        ui->chkReplaceInSelection->setChecked(false);
+    }
+
+    manualSizeAdjust();
+}
+
 void frmSearchReplace::setCurrentTab(Tabs tab)
 {
     if (tab == TabSearch) {
@@ -201,6 +212,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelp
     data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
 		data.append(QString::number(static_cast<int>(searchMode)));
+    data.append(ui->chkReplaceInSelection->isChecked());
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
@@ -570,6 +582,7 @@ void frmSearchReplace::on_actionReplace_toggled(bool on)
     ui->btnReplacePrev->setVisible(on);
     ui->cmbReplace->setVisible(on);
     ui->lblReplace->setVisible(on);
+	ui->chkReplaceInSelection->setVisible(on);
 
     ui->cmbSearch->setFocus();
 
