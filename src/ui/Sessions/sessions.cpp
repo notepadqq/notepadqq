@@ -234,6 +234,7 @@ bool saveSession(MainWindow *window, QString sessionPath, QString cacheDirPath)
 
     QDir cacheDir;
 
+    // Clear the cache directory by deleting and recreating it.
     if (cacheModifiedFiles) {
         cacheDir = QDir(cacheDirPath);
 
@@ -246,10 +247,7 @@ bool saveSession(MainWindow *window, QString sessionPath, QString cacheDirPath)
 
         if(!success)
             return false;
-
-        qDebug() << "Writing to: " << cacheDir.absolutePath();
     }
-
 
     std::vector<ViewData> viewData;
 
@@ -348,8 +346,6 @@ void loadSession(MainWindow *window, QString sessionPath)
         return;
     }
 
-    //m_dontUpdateRecentDocs = true;
-
     int viewCounter = 0;
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
@@ -428,8 +424,6 @@ void loadSession(MainWindow *window, QString sessionPath)
             tabW->setCurrentIndex(activeIndex);
 
     } // end for
-
-    //m_dontUpdateRecentDocs = false;
 
     // Stop if we haven't added any views at all, otherwise we have to clean up after ourselves.
     if (viewCounter <= 0)
