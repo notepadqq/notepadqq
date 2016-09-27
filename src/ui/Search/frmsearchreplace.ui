@@ -335,7 +335,7 @@
        </widget>
       </item>
 	  <item row="2" column="3">
-       <widget class="QCheckBox" name="chkReplaceInSelection">
+       <widget class="QCheckBox" name="chkSearchReplaceInSelection">
         <property name="text">
          <string>In selection</string>
         </property>

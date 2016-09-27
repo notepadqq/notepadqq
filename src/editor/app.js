@@ -334,14 +334,7 @@ UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
     return Search(regexStr, regexModifiers, forward);
 });
 
-UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) {
-    var regexStr = data[0];
-    var regexModifiers = data[1];
-    var replacement = data[2];
-    var searchMode = Number(data[3]);
-    var inSelection = data[4];
-    
-    function before(firstpos, secondpos) {
+function before(firstpos, secondpos) {
         if (firstpos.line < secondpos.line) {
             return true;
         } else if (firstpos.line == secondpos.line && firstpos.ch <= secondpos.ch) {
@@ -350,6 +343,13 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
         
         return false;
     }
+
+UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) {
+    var regexStr = data[0];
+    var regexModifiers = data[1];
+    var replacement = data[2];
+    var searchMode = Number(data[3]);
+    var inSelection = data[4];
     
     var searchCursor =
          editor.getSearchCursor(new RegExp(regexStr, regexModifiers), inSelection ? editor.getCursor("from") : undefined, false);
@@ -366,7 +366,7 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
             searchCursor.replace(applyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
         } else {
             searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
-        }        
+        }           
     }
 
     return count;
@@ -375,12 +375,14 @@ UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevRetur
 UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, prevReturn) {
     var regexStr = data[0];
     var regexModifiers = data[1];
-    var searchCursor = editor.getSearchCursor(new RegExp(regexStr, regexModifiers), undefined, false);
+    var inSelection = data[2];
+    var searchCursor = 
+        editor.getSearchCursor(new RegExp(regexStr, regexModifiers), inSelection? editor.getCursor("from") : undefined, false);
 
     var count = 0;
     var selections = [];
 
-    while (searchCursor.findNext()) {
+    while (searchCursor.findNext() && (!inSelection || before(searchCursor.to(), editor.getCursor("to")))) {
         count++;
 
         selections.push({anchor: searchCursor.from(), head: searchCursor.to()});

@@ -36,7 +36,11 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->cmbFilter->addItems(s.Search.getFilterHistory());
     ui->cmbFilter->setCurrentText("");
 
-    connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
+    connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, [=](const QString & text) {
+        if (!ui->chkSearchReplaceInSelection->isChecked()) {
+            on_searchStringEdited(text);
+        }
+    });
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, [=]() {
         if (ui->actionFind_in_files->isChecked()) {
             on_btnFindAll_clicked();
@@ -100,15 +104,20 @@ void frmSearchReplace::setSearchText(QString string)
     ui->cmbSearch->setCurrentText(string);
 }
 
-void frmSearchReplace::toggleReplaceInSelection(bool enabled)
+void frmSearchReplace::toggleSearchReplaceInSelection(bool enabled)
 {
-    ui->chkReplaceInSelection->setEnabled(enabled);
+    ui->chkSearchReplaceInSelection->setEnabled(enabled);
     if (!enabled)
     {
-        ui->chkReplaceInSelection->setChecked(false);
+        ui->chkSearchReplaceInSelection->setChecked(false);
     }
 
     manualSizeAdjust();
+}
+
+void frmSearchReplace::setSearchReplaceInSelection(bool checked)
+{
+    ui->chkSearchReplaceInSelection->setChecked(checked);
 }
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
@@ -212,7 +221,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelp
     data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
 		data.append(QString::number(static_cast<int>(searchMode)));
-    data.append(ui->chkReplaceInSelection->isChecked());
+    data.append(ui->chkSearchReplaceInSelection->isChecked());
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
@@ -223,6 +232,7 @@ int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode search
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
     data.append(regexModifiersFromSearchOptions(searchOptions));
+    data.append(ui->chkSearchReplaceInSelection->isChecked());
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
@@ -582,7 +592,6 @@ void frmSearchReplace::on_actionReplace_toggled(bool on)
     ui->btnReplacePrev->setVisible(on);
     ui->cmbReplace->setVisible(on);
     ui->lblReplace->setVisible(on);
-	ui->chkReplaceInSelection->setVisible(on);
 
     ui->cmbSearch->setFocus();
 

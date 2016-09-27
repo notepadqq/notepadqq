@@ -27,7 +27,8 @@ public:
     ~frmSearchReplace();
     void show(Tabs defaultTab);
     void setSearchText(QString string);
-    void toggleReplaceInSelection(bool enabled);
+    void toggleSearchReplaceInSelection(bool enabled);
+    void setSearchReplaceInSelection(bool checked);
 
     /**
      * @brief Runs a "find next" or "find prev", taking the options from the UI
