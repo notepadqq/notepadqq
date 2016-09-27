@@ -76,8 +76,8 @@ public:
         NQQ_SETTING(ShowEOL,                        bool,       false)
 
         NQQ_SETTING(RememberTabsOnExit,             bool,       true)
-        NQQ_SETTING(EnableAutosaving,               bool,       false) // True if Nqq was closed normally, false otherwise.
-        NQQ_SETTING(ProperShutdown,                 bool,       true)
+        NQQ_SETTING(EnableAutosaving,               bool,       false)
+        NQQ_SETTING(ProperShutdown,                 bool,       true) // True if Nqq was closed normally, false otherwise.
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
         NQQ_SETTING(LastSelectedSessionDir,         QString,    QString())
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
