@@ -253,7 +253,10 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
         if(!success)
             return false;
+
+        qDebug() << "Writing to: " << cacheDir.absolutePath();
     }
+
 
     std::vector<ViewData> viewData;
 
@@ -349,6 +352,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         return;
     }
 
+    //m_dontUpdateRecentDocs = true;
+
     int viewCounter = 0;
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
@@ -429,6 +434,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             tabW->setCurrentIndex(activeIndex);
 
     } // end for
+
+    //m_dontUpdateRecentDocs = false;
 
     // Stop if we haven't added any views at all, otherwise we have to clean up after ourselves.
     if (viewCounter <= 0)
