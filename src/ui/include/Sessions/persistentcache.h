@@ -13,23 +13,22 @@ public:
     static QString cacheSessionPath();
 
     /**
-     * @brief Returns the path to where the cache is located.
-     *        Note the the cache directory will be created if it does not yet exist.
+     * @brief Returns the path to the directory that contains the tab cache.
      */
     static QString cacheDirPath();
 
     /**
-     * @brief Deletes the contents of the cache directory.
+     * @brief Returns the path to the directory that contains the autosave cache.
      */
-    static bool clearCacheDir();
+    static QString autosaveDirPath();
 
     /**
-     * @brief Generates a QUrl to a location within the cache directory.
-     * @param fileName The file name for the file. This must be a *file name*,
-     *        not a *file path*.
-     * @return QUrl to a location within the cache directory, file guaranteed not to exist yet.
+     * @brief Generates a QUrl to a file within the a directory.
+     * @param parent The parent directory for the file.
+     * @param fileName The file name for the file.
+     * @return QUrl to a location within the the directory, file guaranteed not to exist yet.
      */
-    static QUrl createValidCacheName(const QString& fileName);
+    static QUrl createValidCacheName(const QDir& parent, const QString& fileName);
 };
 
 #endif // PERSISTENTCACHE_H

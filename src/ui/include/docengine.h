@@ -152,7 +152,15 @@ signals:
 
     void documentReloaded(EditorTabWidget *tabWidget, int tab);
 
-    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened);
+    /**
+     * @brief The document has been successfully loaded.
+     * @param tabWidget The TabWidget that contains the loaded doc.
+     * @param tab The tab index of the loaded doc.
+     * @param wasAlreadyOpened True if the document was only reloaded.
+     * @param updateRecentDocuments True if the document should be remembered
+     *        as a recently opened file.
+     */
+    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
 
 public slots:
 
