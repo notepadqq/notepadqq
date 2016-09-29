@@ -26,8 +26,8 @@
 		<file alias="16x16/media-record.png">icons/notepadqq/16x16/media-record.png</file>
 		<file alias="16x16/media-seek-forward.png">icons/notepadqq/16x16/media-seek-forward.png</file>
 		<file alias="scalable/notepadqq.svg">icons/notepadqq/scalable/notepadqq.svg</file>
-                <file alias="16x16/document-saved.png">icons/notepadqq/16x16/document-saved.png</file>
-                <file alias="16x16/document-unsaved.png">icons/notepadqq/16x16/document-unsaved.png</file>
+		<file alias="16x16/document-saved.png">icons/notepadqq/16x16/document-saved.png</file>
+		<file alias="16x16/document-unsaved.png">icons/notepadqq/16x16/document-unsaved.png</file>
 		<file alias="16x16/preferences-other.png">icons/notepadqq/16x16/preferences-other.png</file>
 		<file alias="16x16/show-special-chars.png">icons/notepadqq/16x16/show-special-chars.png</file>
 		<file alias="16x16/word-wrap.png">icons/notepadqq/16x16/word-wrap.png</file>
