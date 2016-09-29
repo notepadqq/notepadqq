@@ -69,6 +69,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->actionFind_in_files->setChecked(true);
 
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
+    ui->chkSearchReplaceInSelection->toggled(ui->chkSearchReplaceInSelection->isChecked());
 
     setCurrentTab(TabSearch);
 }
@@ -647,6 +648,16 @@ void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
         ui->groupAdvanced->hide();
 
     manualSizeAdjust();
+}
+
+void frmSearchReplace::on_chkSearchReplaceInSelection_toggled(bool checked)
+{
+    ui->btnFindNext->setEnabled(!checked);
+    ui->btnFindPrev->setEnabled(!checked);
+    ui->btnReplaceNext->setEnabled(!checked);
+    ui->btnReplacePrev->setEnabled(!checked);
+
+    manualSizeAdjust(); 
 }
 
 void frmSearchReplace::on_radSearchWithRegex_toggled(bool checked)

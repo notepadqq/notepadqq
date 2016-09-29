@@ -55,6 +55,7 @@ private slots:
     void on_actionReplace_toggled(bool on);
     void on_actionFind_in_files_toggled(bool on);
     void on_chkShowAdvanced_toggled(bool checked);
+    void on_chkSearchReplaceInSelection_toggled(bool checked);
     void on_radSearchWithRegex_toggled(bool checked);
     void on_radSearchPlainText_toggled(bool checked);
     void on_radSearchWithSpecialChars_toggled(bool checked);

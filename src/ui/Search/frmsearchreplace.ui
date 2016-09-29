@@ -477,6 +477,7 @@
   <tabstop>btnReplaceNext</tabstop>
   <tabstop>btnReplaceAll</tabstop>
   <tabstop>btnFindAll</tabstop>
+  <tabstop>chkSearchReplaceInSelection</tabstop>
  </tabstops>
  <resources>
   <include location="../resources.qrc"/>
