@@ -218,9 +218,9 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
 void EditorTabWidget::setSavedIcon(int index, bool saved)
 {
     if (saved)
-        this->setTabIcon(index, IconProvider::fromTheme("notepadqq-document-saved"));
+        this->setTabIcon(index, IconProvider::fromTheme("document-saved"));
     else
-        this->setTabIcon(index, IconProvider::fromTheme("notepadqq-document-unsaved"));
+        this->setTabIcon(index, IconProvider::fromTheme("document-unsaved"));
 }
 
 void EditorTabWidget::setTabBarHidden(bool yes)
