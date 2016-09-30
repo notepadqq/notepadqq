@@ -323,7 +323,7 @@
           <property name="frameShadow">
             <enum>QFrame::Plain</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <widget class="QPushButton" name="btnSelectAll">
               <property name="text">

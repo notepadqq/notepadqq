@@ -293,6 +293,11 @@ private:
     QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
     QString             getNewDocumentName();
+
+    /**
+    * @brief Open the Search / replace / search in files window.
+    * @param tab Which tab to open
+    */
     void                showSearchReplace(frmSearchReplace::Tabs tab);
 
     /**
