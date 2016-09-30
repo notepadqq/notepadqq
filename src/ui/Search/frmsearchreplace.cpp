@@ -105,17 +105,6 @@ void frmSearchReplace::setSearchText(QString string)
     ui->cmbSearch->setCurrentText(string);
 }
 
-void frmSearchReplace::toggleSearchReplaceInSelection(bool enabled)
-{
-    ui->chkSearchReplaceInSelection->setEnabled(enabled);
-    if (!enabled)
-    {
-        ui->chkSearchReplaceInSelection->setChecked(false);
-    }
-
-    manualSizeAdjust();
-}
-
 void frmSearchReplace::setSearchReplaceInSelection(bool checked)
 {
     ui->chkSearchReplaceInSelection->setChecked(checked);
@@ -622,6 +611,8 @@ void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
     ui->btnFindNext->setVisible(!on);
     ui->btnFindPrev->setVisible(!on);
     ui->btnSelectAll->setVisible(!on);
+    ui->chkSearchReplaceInSelection->setVisible(!on);
+    ui->frameSearchReplaceAll->setVisible(!on);
 
     ui->cmbSearch->setFocus();
 

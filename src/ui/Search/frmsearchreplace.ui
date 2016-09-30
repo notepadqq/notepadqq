@@ -294,16 +294,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="btnSelectAll">
-        <property name="text">
-         <string>Select all</string>
-        </property>
-        <property name="autoDefault">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
+      
       <item row="1" column="1">
        <widget class="QPushButton" name="btnReplacePrev">
         <property name="text">
@@ -324,22 +315,44 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
-       <widget class="QPushButton" name="btnReplaceAll">
-        <property name="text">
-         <string>Replace all</string>
-        </property>
-        <property name="autoDefault">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-	  <item row="2" column="3">
-       <widget class="QCheckBox" name="chkSearchReplaceInSelection">
-        <property name="text">
-         <string>In selection</string>
-        </property>
-       </widget>
+      <item row="0" column="3" rowspan="3">
+        <widget class="QFrame" name="frameSearchReplaceAll">
+          <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QPushButton" name="btnSelectAll">
+              <property name="text">
+               <string>Select all</string>
+              </property>
+              <property name="autoDefault">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnReplaceAll">
+              <property name="text">
+               <string>Replace all</string>
+              </property>
+              <property name="autoDefault">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+      	    <item>
+             <widget class="QCheckBox" name="chkSearchReplaceInSelection">
+              <property name="text">
+               <string>In selection</string>
+              </property>
+             </widget>
+            </item>
+          </layout>
+        </widget>
       </item>
       <item row="2" column="1">
        <widget class="QLabel" name="lblSpacer1">

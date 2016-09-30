@@ -2296,7 +2296,6 @@ void MainWindow::showSearchReplace(frmSearchReplace::Tabs tab)
 
     QStringList sel = currentEditor()->selectedTexts();
     bool selected = sel.length() > 0 && sel[0].length() > 0;
-    m_frmSearchReplace->toggleSearchReplaceInSelection(selected);
     if (selected) {
         bool multiline = sel[0].contains("\n");
         m_frmSearchReplace->setSearchReplaceInSelection(multiline);

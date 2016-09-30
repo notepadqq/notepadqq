@@ -27,7 +27,6 @@ public:
     ~frmSearchReplace();
     void show(Tabs defaultTab);
     void setSearchText(QString string);
-    void toggleSearchReplaceInSelection(bool enabled);
     void setSearchReplaceInSelection(bool checked);
 
     /**
