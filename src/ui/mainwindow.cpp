@@ -160,6 +160,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     setupLanguagesMenu();
+    setupRunMenu();
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
@@ -1939,6 +1940,37 @@ void MainWindow::on_actionInterpret_as_triggered()
 
     dialog->deleteLater();
 }
+#include <QDebug>
+void MainWindow::setupRunMenu()
+{
+    QHash <QString, QString> runners = m_settings.Run.getCommands();
+    QHashIterator<QString, QString> i(runners);
+    ui->menuRun->clear();
+    while (i.hasNext()) {
+        i.next();
+        QAction *a = ui->menuRun->addAction(i.key());
+        a->setData(i.value());
+        connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
+    }
+}
+
+void MainWindow::runCommand()
+{
+    QAction *a = qobject_cast<QAction*>(sender());
+    Editor *editor = currentEditor();
+    QString cmd = a->data().toString();
+    QUrl url = currentEditor()->fileName();
+    QStringList selection = editor->selectedTexts();
+    if (!url.isEmpty()) {
+        cmd.replace("\%fullpath\%", url.toString(QUrl::None));
+        cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
+        cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+    }
+    if(!selection.first().isEmpty()) {
+        cmd.replace("\%selection\%",selection.first());
+    }
+    QProcess::startDetached(cmd);
+}
 
 void MainWindow::on_actionPrint_triggered()
 {
@@ -1953,27 +1985,7 @@ void MainWindow::on_actionPrint_Now_triggered()
     QPrinter printer(QPrinter::HighResolution);
     currentEditor()->print(&printer);
 }
-
-void MainWindow::on_actionLaunch_in_Firefox_triggered()
-{
-    QUrl fileName = currentEditor()->fileName();
-    if (!fileName.isEmpty()) {
-        QStringList args;
-        args << fileName.toString(QUrl::None);
-        QProcess::startDetached("firefox", args);
-    }
-}
-
-void MainWindow::on_actionLaunch_in_Chromium_triggered()
-{
-    QUrl fileName = currentEditor()->fileName();
-    if (!fileName.isEmpty()) {
-        QStringList args;
-        args << fileName.toString(QUrl::None);
-        QProcess::startDetached("chromium-browser", args);
-    }
-}
-
+/*
 void MainWindow::on_actionLaunch_in_Chrome_triggered()
 {
     QUrl fileName = currentEditor()->fileName();
@@ -1983,7 +1995,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
         QProcess::startDetached("google-chrome", args);
     }
 }
-
+*/
 QStringList MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
@@ -2014,21 +2026,6 @@ void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
         QUrl phpHelp = QUrl(searchUrl.arg(QString(QUrl::toPercentEncoding(term))));
         QDesktopServices::openUrl(phpHelp);
     }
-}
-
-void MainWindow::on_actionGet_php_help_triggered()
-{
-    currentWordOnlineSearch("https://php.net/%1");
-}
-
-void MainWindow::on_actionGoogle_Search_triggered()
-{
-    currentWordOnlineSearch("https://www.google.com/?#q=%1");
-}
-
-void MainWindow::on_actionWikipedia_Search_triggered()
-{
-    currentWordOnlineSearch("https://en.wikipedia.org/?search=%1");
 }
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()

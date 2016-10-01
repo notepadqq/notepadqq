@@ -69,7 +69,8 @@ int main(int argc, char *argv[])
     } else {
         settings.General.setLocalization("en");
     }
-
+#include <QDebug>
+    qDebug() << qApp->applicationDirPath() << qApp->applicationName().toLower();
     // Check for "run-and-exit" options like -h or -v
     Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
 

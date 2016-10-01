@@ -30,6 +30,14 @@ public:
     static MainWindow * lastActiveInstance();
 
     /**
+     * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
+     */
+    enum saveFileResult {
+         saveFileResult_Saved       /** The file was saved  */
+        ,saveFileResult_Canceled    /** The save process was canceled */
+    };
+
+    /**
      * Describes the result of a tab closing process.
      */
     enum tabCloseResult {
@@ -49,8 +57,6 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
-    void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
-
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
     Editor*   currentEditor();
@@ -61,11 +67,6 @@ public:
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const ;
 
-    DocEngine*  getDocEngine() const;
-
-public slots:
-    void refreshEditorUiInfo(Editor *editor);
-
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *e);
@@ -74,6 +75,7 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -147,12 +149,6 @@ private slots:
     void on_actionInterpret_as_triggered();
     void on_actionPrint_triggered();
     void on_actionPrint_Now_triggered();
-    void on_actionLaunch_in_Firefox_triggered();
-    void on_actionLaunch_in_Chromium_triggered();
-    void on_actionLaunch_in_Chrome_triggered();
-    void on_actionGet_php_help_triggered();
-    void on_actionGoogle_Search_triggered();
-    void on_actionWikipedia_Search_triggered();
     void on_actionOpen_a_New_Window_triggered();
     void on_actionOpen_in_New_Window_triggered();
     void on_actionMove_to_New_Window_triggered();
@@ -211,6 +207,7 @@ private:
      *        saves all unsaved progress in the cache.
      */
     bool                saveTabsToCache();
+    void                restoreTabsFromCache();
 
     /**
      * @brief Acts like closing all tabs, asking to the user for input before discarding
@@ -221,6 +218,7 @@ private:
      */
     bool                finalizeAllTabs();
 
+    void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
@@ -265,6 +263,7 @@ private:
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
+    QString             getNewDocumentName();
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248

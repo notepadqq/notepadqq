@@ -172,7 +172,42 @@ public:
         QMap<QString, _ActionItem> _m_shortcuts;
 
     END_CATEGORY(Shortcuts)
+    BEGIN_CATEGORY(Run)
+        void resetCommands()
+        {
+            _m_settings.beginGroup("Run");
+            _m_settings.remove("");
+            _m_settings.endGroup();
+            _m_runcommands.clear();
+        }
 
+        QHash <QString, QString> getCommands()
+        {
+            QHash <QString, QString> ret;
+            _m_settings.beginGroup("Run");
+            QStringList groups = _m_settings.childGroups();
+            for (int i = 0; i < groups.size(); ++i) {
+                _m_settings.beginGroup(groups.at(i));
+                const QString& name = _m_settings.value("name","").toString();
+                const QString& cmd = _m_settings.value("command","").toString();
+                ret.insert(name, cmd);
+                _m_settings.endGroup();
+            }
+            _m_settings.endGroup();
+            return ret;
+        }
+        
+        void setCommand(const QString &cmdName, const QString &cmdRun)
+        {
+            _m_settings.beginGroup("Run");
+            const int pos = _m_settings.childGroups().size()+1;
+            QString group = "c" + QString::number(pos);
+            _m_settings.setValue(group + "/name", cmdName);
+            _m_settings.setValue(group + "/command", cmdRun);
+            _m_settings.endGroup();
+        }
+
+    END_CATEGORY(Run)
     /**
      * @brief Some keys have changed since v0.53. To maintain compatibility, this function
      *        parses through the QSettings file and fixes these entries.

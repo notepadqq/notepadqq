@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -250,16 +250,6 @@
     </property>
     <addaction name="action_Run"/>
     <addaction name="separator"/>
-    <addaction name="actionLaunch_in_Firefox"/>
-    <addaction name="actionLaunch_in_Chrome"/>
-    <addaction name="actionLaunch_in_Chromium"/>
-    <addaction name="actionGet_php_help"/>
-    <addaction name="actionGoogle_Search"/>
-    <addaction name="actionWikipedia_Search"/>
-    <addaction name="actionOpen_file"/>
-    <addaction name="actionOpen_in_another_window"/>
-    <addaction name="separator"/>
-    <addaction name="actionModify_Shortcut_Delete_Command"/>
    </widget>
    <widget class="QMenu" name="menu_Window">
     <property name="title">
