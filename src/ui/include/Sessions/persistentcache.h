@@ -18,11 +18,6 @@ public:
     static QString cacheDirPath();
 
     /**
-     * @brief Returns the path to the directory that contains the autosave cache.
-     */
-    static QString autosaveDirPath();
-
-    /**
      * @brief Generates a QUrl to a file within the a directory.
      * @param parent The parent directory for the file.
      * @param fileName The file name for the file.
