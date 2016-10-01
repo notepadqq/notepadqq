@@ -151,9 +151,7 @@ QList<QString> Notepadqq::translations()
 {
     QList<QString> out;
 
-    QString translationsPath = appDataPath();
-    translationsPath.append("/translations");
-    QDir dir(translationsPath);
+    QDir dir(":/translations");
     QStringList fileNames = dir.entryList(QStringList("notepadqq_*.qm"));
 
     // FIXME this can be removed if we create a .qm file for English too, which should exist for consistency purposes

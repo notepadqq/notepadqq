@@ -64,16 +64,7 @@ int main(int argc, char *argv[])
     if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
                         QString("_"),
-                        QString("%1/../appdata/translations")
-                        .arg(qApp->applicationDirPath()))) {
-        a.installTranslator(&translator);
-    } else if (translator.load(QLocale(langCode),
-                               QString("%1").arg(qApp->applicationName().toLower()),
-                               QString("_"),
-                               // The Notepadqq binary gets installed at /usr/lib/notepadqq/notepadqq-bin
-                               QString("%1/../../share/%2/translations")
-                               .arg(qApp->applicationDirPath())
-                               .arg(qApp->applicationName().toLower()))) {
+                        QString(":/translations"))) {
         a.installTranslator(&translator);
     } else {
         settings.General.setLocalization("en");

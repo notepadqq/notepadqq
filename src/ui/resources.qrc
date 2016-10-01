@@ -35,4 +35,11 @@
 		<file alias="16x16/zoom-original.png">icons/notepadqq/16x16/zoom-original.png</file>
 		<file alias="16x16/zoom-out.png">icons/notepadqq/16x16/zoom-out.png</file>
     </qresource>
+    <qresource prefix="/translations">
+        <file alias="notepadqq_de.qm">../translations/notepadqq_de.qm</file>
+        <file alias="notepadqq_fr.qm">../translations/notepadqq_fr.qm</file>
+        <file alias="notepadqq_hu.qm">../translations/notepadqq_hu.qm</file>
+        <file alias="notepadqq_pl.qm">../translations/notepadqq_pl.qm</file>
+        <file alias="notepadqq_ru.qm">../translations/notepadqq_ru.qm</file>
+    </qresource>
 </RCC>

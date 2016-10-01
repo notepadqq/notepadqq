@@ -47,6 +47,8 @@ BINDIR = "$$DESTDIR/../bin"
 
 INSTALLFILESDIR = ../../support_files
 
+CURRFILE = $$PWD/ui.pro
+
 SOURCES += main.cpp\
     mainwindow.cpp \
     topeditorcontainer.cpp \
@@ -155,6 +157,9 @@ TRANSLATIONS = \
     ../translations/notepadqq_ru.ts
 
 
+# Build translations so that qmake doesn't complain about missing files in resources.qrc
+system($${LRELEASE} \"$${CURRFILE}\")
+
 ### EXTRA TARGETS ###
 
 # Copy the editor in the "shared" folder
@@ -177,19 +182,9 @@ launchTarget.commands = (cd \"$$PWD\" && \
                          $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
                          chmod 755 \"$$BINDIR/notepadqq\")
 
+# Rebuild translations
 translationsTarget.target = make_translations
-translationsTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$APPDATADIR/translations\" && \
-                         $${LRELEASE} \"../translations/notepadqq_de.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_de.qm\" && \
-                         $${LRELEASE} \"../translations/notepadqq_fr.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_fr.qm\" && \
-                         $${LRELEASE} \"../translations/notepadqq_hu.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_hu.qm\" && \
-                         $${LRELEASE} \"../translations/notepadqq_pl.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_pl.qm\" && \
-                         $${LRELEASE} \"../translations/notepadqq_ru.ts\" \
-                                  -qm \"$$APPDATADIR/translations/notepadqq_ru.qm\")
+translationsTarget.commands = ($${LRELEASE} \"$${CURRFILE}\")
 
 QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget translationsTarget
 PRE_TARGETDEPS += make_editor make_extensionTools make_launch make_translations
@@ -229,12 +224,10 @@ unix {
     # Make sure that the folders exists, otherwise qmake won't create the misc_data install rule
     system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")
     system($${QMAKE_MKDIR} \"$$APPDATADIR/extension_tools\")
-    system($${QMAKE_MKDIR} \"$$APPDATADIR/translations\")
 
     misc_data.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/"
     misc_data.files += "$$APPDATADIR/editor"
     misc_data.files += "$$APPDATADIR/extension_tools"
-    misc_data.files += "$$APPDATADIR/translations"
 
     launch.path = "$$INSTALL_ROOT$$PREFIX/bin/"
     launch.files += "$$BINDIR/notepadqq"
