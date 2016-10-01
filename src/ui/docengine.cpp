@@ -144,7 +144,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                             tabW->setCurrentIndex(openPos.second);
                         }
 
-                        emit documentLoaded(tabW, openPos.second, true);
+                        emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
                         continue;
                     }
                 }
@@ -238,7 +238,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 if (reload) {
                     emit documentReloaded(tabWidget, tabIndex);
                 } else {
-                    emit documentLoaded(tabWidget, tabIndex, false);
+                    emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
                 }
 
             } else if (fileNames[i].isEmpty()) {
