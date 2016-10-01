@@ -6,7 +6,6 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
 #include "include/keygrabber.h"
-#include "include/Sessions/autosave.h"
 #include <QFileDialog>
 #include <QSortFilterProxyModel>
 #include <QInputDialog>
@@ -45,7 +44,6 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
-    ui->chkEnableAutosave->setChecked(m_settings.General.getEnableAutosaving());
 
     loadLanguages();
     loadAppearanceTab();
@@ -113,12 +111,6 @@ void frmPreferences::on_buttonBox_accepted()
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
-    m_settings.General.setEnableAutosaving(ui->chkEnableAutosave->isChecked());
-
-    if (m_settings.General.getEnableAutosaving())
-        Autosave::enableAutosave();
-    else
-        Autosave::disableAutosave();
 
     saveLanguages();
     saveAppearanceTab();
