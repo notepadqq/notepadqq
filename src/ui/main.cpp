@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
 
     forceDefaultSettings();
 
-    //Initialize from system locale on first run
+    //Initialize from system locale on first run, if no system locale is
+    //set, our default will be used instead.
     if (settings.General.getFirstRun()) {
         QLocale locale;
         //ISO 639 dictates language code will always be 2 letters
