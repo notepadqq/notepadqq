@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     } else if (translator.load(QLocale(langCode),
                                QString("%1").arg(qApp->applicationName().toLower()),
                                QString("_"),
-                               QString("%1/../share/%2/translations")
+                               QString("%1/../../share/%2/translations")
                                .arg(qApp->applicationDirPath())
                                .arg(qApp->applicationName().toLower()))) {
         a.installTranslator(&translator);
