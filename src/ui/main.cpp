@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QtGlobal>
 #include <QTranslator>
+#include <QLocale>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -21,7 +22,6 @@ void loadExtensions();
 int main(int argc, char *argv[])
 {
     QTranslator translator;
-
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
     __aet_timer.start();
@@ -48,9 +48,17 @@ int main(int argc, char *argv[])
 
     forceDefaultSettings();
 
+    //Initialize from system locale on first run
+    if (settings.General.getFirstRun()) {
+        QLocale locale;
+        //ISO 639 dictates language code will always be 2 letters
+        if (locale.name().size() >= 2) {
+            settings.General.setLocalization(locale.name().left(2));
+        }
+        settings.General.setFirstRun(false);
+    }
 
     QString langCode = settings.General.getLocalization();
-
     if (translator.load(QLocale(langCode),
                         QString("%1").arg(qApp->applicationName().toLower()),
                         QString("_"),
@@ -60,10 +68,13 @@ int main(int argc, char *argv[])
     } else if (translator.load(QLocale(langCode),
                                QString("%1").arg(qApp->applicationName().toLower()),
                                QString("_"),
-                               QString("%1/../../share/%2/translations")
+                               QString("%1/../share/%2/translations")
                                .arg(qApp->applicationDirPath())
                                .arg(qApp->applicationName().toLower()))) {
         a.installTranslator(&translator);
+    } else {
+        //Language translations probably don't exist, default to en
+        settings.General.setLocalization("en");
     }
 
     // Check for "run-and-exit" options like -h or -v
