@@ -50,13 +50,14 @@ int main(int argc, char *argv[])
 
     //Initialize from system locale on first run, if no system locale is
     //set, our default will be used instead.
-    if (settings.General.getFirstRun()) {
+    if (settings.General.getLocalization().isEmpty()) {
         QLocale locale;
         //ISO 639 dictates language code will always be 2 letters
         if (locale.name().size() >= 2) {
             settings.General.setLocalization(locale.name().left(2));
+        } else {
+            settings.General.setLocalization("en");
         }
-        settings.General.setFirstRun(false);
     }
 
     QString langCode = settings.General.getLocalization();
@@ -74,7 +75,6 @@ int main(int argc, char *argv[])
                                .arg(qApp->applicationName().toLower()))) {
         a.installTranslator(&translator);
     } else {
-        //Language translations probably don't exist, default to en
         settings.General.setLocalization("en");
     }
 
