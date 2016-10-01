@@ -132,7 +132,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     if (    m_instances.size()==1 && // this window is the first one to be opened,
             m_settings.General.getRememberTabsOnExit() // and the Remember-tabs option is enabled
     ) {
-        Sessions::loadSession(this, PersistentCache::cacheSessionPath());
+        Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
     }
 
     // Inserts at least an editor
@@ -366,7 +366,7 @@ void MainWindow::createStatusBar()
 bool MainWindow::saveTabsToCache()
 {
     // If saveSession() returns false, something went wrong. Most likely writing to the .xml file.
-    while (!Sessions::saveSession(this, PersistentCache::cacheSessionPath(), PersistentCache::cacheDirPath())) {
+    while (!Sessions::saveSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath(), PersistentCache::cacheDirPath())) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") + PersistentCache::cacheDirPath());
@@ -629,17 +629,11 @@ void MainWindow::toggleOverwrite()
     }
 }
 
-QString MainWindow::getNewDocumentName()
-{
-    static int num = 1; // FIXME maybe find a smarter way
-    return tr("new %1").arg(num++);
-}
-
 void MainWindow::on_action_New_triggered()
 {
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
-    m_docEngine->addNewDocument(getNewDocumentName(), true, tabW);
+    m_docEngine->addNewDocument(m_docEngine->getNewDocumentName(), true, tabW);
 }
 
 void MainWindow::setCurrentEditorLanguage(QString language)
@@ -888,11 +882,11 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
             if(ret == QMessageBox::Save) {
                 // Save
                 int saveResult = save(tabWidget, tab);
-                if(saveResult == MainWindow::saveFileResult_Canceled)
+                if(saveResult == DocEngine::saveFileResult_Canceled)
                 {
                     // The user canceled the "save dialog". Let's ignore the close event.
                     result = MainWindow::tabCloseResult_Canceled;
-                } else if(saveResult == MainWindow::saveFileResult_Saved)
+                } else if(saveResult == DocEngine::saveFileResult_Saved)
                 {
                     if (remove) m_docEngine->closeDocument(tabWidget, tab);
                     result = MainWindow::tabCloseResult_Saved;
@@ -970,7 +964,7 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
             msgBox.setDefaultButton(QMessageBox::Cancel);
             int ret = msgBox.exec();
             if (ret == QMessageBox::Cancel)
-                return MainWindow::saveFileResult_Canceled;
+                return DocEngine::saveFileResult_Canceled;
         }
 
         return m_docEngine->saveDocument(tabWidget, tab, editor->fileName());
@@ -992,7 +986,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
         // Write
         return m_docEngine->saveDocument(tabWidget, tab, QUrl::fromLocalFile(filename), copy);
     } else {
-        return MainWindow::saveFileResult_Canceled;
+        return DocEngine::saveFileResult_Canceled;
     }
 }
 
@@ -1592,7 +1586,7 @@ void MainWindow::on_actionSave_All_triggered()
         } else {
             tabWidget->setCurrentIndex(editorId);
             int result = save(tabWidget, editorId);
-            return (result != saveFileResult_Canceled);
+            return (result != DocEngine::saveFileResult_Canceled);
         }
     });
 }
@@ -1759,7 +1753,7 @@ void MainWindow::on_actionRename_triggered()
     QUrl oldFilename = tabW->currentEditor()->fileName();
     int result = saveAs(tabW, tabW->currentIndex(), false);
 
-    if (result == saveFileResult_Saved && !oldFilename.isEmpty()) {
+    if (result == DocEngine::saveFileResult_Saved && !oldFilename.isEmpty()) {
 
         if (QFileInfo(oldFilename.toLocalFile()) != QFileInfo(tabW->currentEditor()->fileName().toLocalFile())) {
 
@@ -2098,7 +2092,7 @@ void MainWindow::on_actionOpen_in_another_window_triggered()
 void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 {
     if (tab == -1) {
-        m_docEngine->addNewDocument(getNewDocumentName(), true, tabWidget);
+        m_docEngine->addNewDocument(m_docEngine->getNewDocumentName(), true, tabWidget);
     }
 }
 
@@ -2260,7 +2254,7 @@ void MainWindow::on_actionLoad_Session_triggered()
 
     m_settings.General.setLastSelectedSessionDir(QFileInfo(filePath).dir().absolutePath());
 
-    Sessions::loadSession(this, filePath);
+    Sessions::loadSession(m_docEngine, m_topEditorContainer, filePath);
 }
 
 void MainWindow::on_actionSave_Session_triggered()
@@ -2293,7 +2287,7 @@ void MainWindow::on_actionSave_Session_triggered()
 
     m_settings.General.setLastSelectedSessionDir(QFileInfo(filePath).dir().absolutePath());
 
-    if (Sessions::saveSession(this, filePath)) {
+    if (Sessions::saveSession(m_docEngine, m_topEditorContainer, filePath)) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setText(tr("Error while trying to save this session. Please try a different file name."));

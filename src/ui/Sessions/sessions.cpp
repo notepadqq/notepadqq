@@ -7,7 +7,8 @@
 
 #include <vector>
 
-#include "include/mainwindow.h"
+#include "include/docengine.h"
+#include "include/topeditorcontainer.h"
 #include "include/Sessions/persistentcache.h"
 
 
@@ -226,10 +227,8 @@ void SessionWriter::addTabData(const TabData& td){
 
 namespace Sessions {
 
-bool saveSession(MainWindow *window, QString sessionPath, QString cacheDirPath)
+bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath)
 {
-    const auto& editorContainer = window->topEditorContainer();
-    const auto& docEngine = window->getDocEngine();
     const bool cacheModifiedFiles = !cacheDirPath.isEmpty();
 
     QDir cacheDir;
@@ -276,7 +275,7 @@ bool saveSession(MainWindow *window, QString sessionPath, QString cacheDirPath)
 
                 td.cacheFilePath = cacheFilePath.toLocalFile();
 
-                if (docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != MainWindow::saveFileResult_Saved) {
+                if (docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != DocEngine::saveFileResult_Saved) {
                     return false;
                 }
             } else if (isOrphan) {
@@ -326,11 +325,8 @@ bool saveSession(MainWindow *window, QString sessionPath, QString cacheDirPath)
     return true;
 }
 
-void loadSession(MainWindow *window, QString sessionPath)
+void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath)
 {
-    const auto& editorContainer = window->topEditorContainer();
-    const auto& docEngine = window->getDocEngine();
-
     QFile file(sessionPath);
     file.open(QIODevice::ReadOnly);
 
@@ -394,7 +390,7 @@ void loadSession(MainWindow *window, QString sessionPath)
                 docEngine->monitorDocument(editor);
             } else {
                 editor->setFileName(QUrl());
-                tabW->setTabText(idx, window->getNewDocumentName());
+                tabW->setTabText(idx, docEngine->getNewDocumentName());
             }
 
             // If we're loading an existing file from cache we want to inform the user whether
@@ -431,14 +427,17 @@ void loadSession(MainWindow *window, QString sessionPath)
 
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
-    window->removeTabWidgetIfEmpty(lastTabW);
+    lastTabW->removeTabWidgetIfEmpty();
 
     // Give focus to the last tab of the first tab widget.
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
     Editor* lastEditor = firstTabW->editor(lastTabW->count()-1);
-
     lastEditor->setFocus();
-    window->refreshEditorUiInfo(lastEditor);
+
+    // This triggers `TopEditorContainer::on_currentTabChanged` and eventually
+    // `MainWindow::on_currentEditorChanged` which calls refreshEditorUiInfo() to
+    // get rid of the titlebar display bug when loading files from cache.
+    firstTabW->currentChanged(lastTabW->count()-1);
 
     return;
 }

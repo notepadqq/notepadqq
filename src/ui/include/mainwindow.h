@@ -30,14 +30,6 @@ public:
     static MainWindow * lastActiveInstance();
 
     /**
-     * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
-     */
-    enum saveFileResult {
-         saveFileResult_Saved       /** The file was saved  */
-        ,saveFileResult_Canceled    /** The save process was canceled */
-    };
-
-    /**
      * Describes the result of a tab closing process.
      */
     enum tabCloseResult {
@@ -70,7 +62,6 @@ public:
     QList<const QMenu*> getMenus() const ;
 
     DocEngine*  getDocEngine() const;
-    QString     getNewDocumentName();
 
 public slots:
     void refreshEditorUiInfo(Editor *editor);
