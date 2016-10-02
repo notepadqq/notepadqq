@@ -27,6 +27,12 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
     return tab;
 }
 
+QString DocEngine::getNewDocumentName() const
+{
+    static int num = 1; // FIXME maybe find a smarter way
+    return tr("new %1").arg(num++);
+}
+
 DocEngine::DecodedText DocEngine::readToString(QFile *file)
 {
     return readToString(file, nullptr, false);
@@ -144,7 +150,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                             tabW->setCurrentIndex(openPos.second);
                         }
 
-                        emit documentLoaded(tabW, openPos.second, true);
+                        emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
                         continue;
                     }
                 }
@@ -238,7 +244,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 if (reload) {
                     emit documentReloaded(tabWidget, tabIndex);
                 } else {
-                    emit documentLoaded(tabWidget, tabIndex, false);
+                    emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
                 }
 
             } else if (fileNames[i].isEmpty()) {
@@ -411,7 +417,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 int ret = msgBox.exec();
                 if(ret == QMessageBox::Abort) {
                     monitorDocument(editor);
-                    return MainWindow::saveFileResult_Canceled;
+                    return DocEngine::saveFileResult_Canceled;
                 } else if(ret == QMessageBox::Retry) {
                     continue;
                 }
@@ -437,7 +443,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
             emit documentSaved(tabWidget, tab);
         }
 
-        return MainWindow::saveFileResult_Saved;
+        return DocEngine::saveFileResult_Saved;
 
     } else {
         // FIXME ERROR
@@ -446,7 +452,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(outFileName.toDisplayString()));
         msgBox.exec();
 
-        return MainWindow::saveFileResult_Canceled;
+        return DocEngine::saveFileResult_Canceled;
     }
 }
 

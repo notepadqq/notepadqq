@@ -30,14 +30,6 @@ public:
     static MainWindow * lastActiveInstance();
 
     /**
-     * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
-     */
-    enum saveFileResult {
-         saveFileResult_Saved       /** The file was saved  */
-        ,saveFileResult_Canceled    /** The save process was canceled */
-    };
-
-    /**
      * Describes the result of a tab closing process.
      */
     enum tabCloseResult {
@@ -57,6 +49,8 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
+    void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
+
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
     Editor*   currentEditor();
@@ -67,6 +61,11 @@ public:
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const ;
 
+    DocEngine*  getDocEngine() const;
+
+public slots:
+    void refreshEditorUiInfo(Editor *editor);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent *e);
@@ -75,7 +74,6 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
-    void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -122,7 +120,7 @@ private slots:
     void on_bannerRemoved(QWidget *banner);
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
-    void on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened);
+    void on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
@@ -209,34 +207,10 @@ private:
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
 
     /**
-     * @brief Set to true to temporarily disallow updating recent docs. This is useful
-     *        for loading files that shouldn't be remembered (such as cache files).
-     */
-    bool                m_dontUpdateRecentDocs = false;
-
-    /**
-     * @brief Saves a session as an XML file
-     * @param filePath Path to where the XML file should be created.
-     * @param cacheModifiedFiles If true, dirty tabs will be written into the cache directory.
-     *        Only use this for the remember-my-tabs feature. Multiple sessions writing to
-     *        the cache directory will end up in data loss.
-     * @return Whether the save has been successful.
-     */
-    bool                saveSession(QString filePath, bool cacheModifiedFiles);
-
-    /**
-     * @brief Loads a session XML file and restores all its tabs in the current window.
-     * @param filePath Path to where the XML file is located.
-     */
-    void                loadSession(QString filePath);
-
-    /**
-     * @brief Functions specifically to save/restore tabs to/from cache. These utilize
-     *        the saveSession and loadSession functions and also save all unsaved progress
-     *        in the cache.
+     * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and
+     *        saves all unsaved progress in the cache.
      */
     bool                saveTabsToCache();
-    void                restoreTabsFromCache();
 
     /**
      * @brief Acts like closing all tabs, asking to the user for input before discarding
@@ -247,7 +221,6 @@ private:
      */
     bool                finalizeAllTabs();
 
-    void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
@@ -292,7 +265,6 @@ private:
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
-    QString             getNewDocumentName();
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248

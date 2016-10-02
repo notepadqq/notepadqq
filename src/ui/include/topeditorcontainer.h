@@ -45,6 +45,7 @@ public:
      */
     void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
     void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
+
 private:
     EditorTabWidget *m_currentTabWidget;
 
