@@ -19,6 +19,8 @@
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
 #include <QFileDialog>
+#include <QLineEdit>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QClipboard>
 #include <QUrl>
@@ -1943,17 +1945,23 @@ void MainWindow::on_actionInterpret_as_triggered()
 #include <QDebug>
 void MainWindow::setupRunMenu()
 {
-    QHash <QString, QString> runners = m_settings.Run.getCommands();
-    QHashIterator<QString, QString> i(runners);
+    QMap <QString, QString> runners = m_settings.Run.getCommands();
+    QMapIterator<QString, QString> i(runners);
     ui->menuRun->clear();
+
+    QAction *a = ui->menuRun->addAction(tr("Run..."));
+    connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
+    ui->menuRun->addSeparator();
+
     while (i.hasNext()) {
         i.next();
-        QAction *a = ui->menuRun->addAction(i.key());
+        a = ui->menuRun->addAction(i.key());
         a->setData(i.value());
+        a->setObjectName("RunCmd"+a->text());
         connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
     }
     ui->menuRun->addSeparator();
-    QAction *a = ui->menuRun->addAction(tr("Modify Run Commands"));
+    a = ui->menuRun->addAction(tr("Modify Run Commands"));
     connect(a, SIGNAL(triggered()), this, SLOT(modifyRunCommands()));
 
 }
@@ -1961,14 +1969,31 @@ void MainWindow::setupRunMenu()
 void MainWindow::modifyRunCommands()
 {
     RunPreferences p;
-    p.exec();
+    if(p.exec() == 1) {
+        setupRunMenu();
+    }
 }
 
 void MainWindow::runCommand()
 {
     QAction *a = qobject_cast<QAction*>(sender());
+    QString cmd;
+
+    if (a->data().toString().size()) {
+        cmd = a->data().toString();
+    } else {
+        bool ok;
+        //TODO: Nicer command input, with save option.
+        cmd = QInputDialog::getText(this, tr("Enter command text"),
+                                    tr("Command:"), QLineEdit::Normal,
+                                    "", &ok);
+        if(!ok || cmd.isEmpty()) {
+            return;
+        }
+    }
+
     Editor *editor = currentEditor();
-    QString cmd = a->data().toString();
+
     QUrl url = currentEditor()->fileName();
     QStringList selection = editor->selectedTexts();
     if (!url.isEmpty()) {
@@ -1979,7 +2004,9 @@ void MainWindow::runCommand()
     if(!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
     }
-    QProcess::startDetached(cmd);
+    if(!QProcess::startDetached(cmd)) {
+        
+    }
 }
 
 void MainWindow::on_actionPrint_triggered()

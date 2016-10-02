@@ -180,9 +180,9 @@ public:
             _m_settings.endGroup();
         }
 
-        QHash <QString, QString> getCommands()
+        QMap <QString, QString> getCommands()
         {
-            QHash <QString, QString> ret;
+            QMap <QString, QString> ret;
             _m_settings.beginGroup("Run");
             QStringList groups = _m_settings.childGroups();
             for (int i = 0; i < groups.size(); ++i) {
