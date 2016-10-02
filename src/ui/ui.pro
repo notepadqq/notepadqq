@@ -91,7 +91,8 @@ SOURCES += main.cpp\
     keygrabber.cpp \
     Sessions/sessions.cpp \
     Sessions/persistentcache.cpp \
-    nqqsettings.cpp
+    nqqsettings.cpp \  
+    runpreferences.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -136,7 +137,8 @@ HEADERS  += include/mainwindow.h \
     include/keygrabber.h \
     include/Sessions/sessions.h \
     include/Sessions/persistentcache.h \
-    include/nqqsettings.h
+    include/nqqsettings.h \
+    include/runpreferences.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

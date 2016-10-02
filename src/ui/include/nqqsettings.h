@@ -178,7 +178,6 @@ public:
             _m_settings.beginGroup("Run");
             _m_settings.remove("");
             _m_settings.endGroup();
-            _m_runcommands.clear();
         }
 
         QHash <QString, QString> getCommands()

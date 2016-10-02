@@ -1952,6 +1952,16 @@ void MainWindow::setupRunMenu()
         a->setData(i.value());
         connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
     }
+    ui->menuRun->addSeparator();
+    QAction *a = ui->menuRun->addAction(tr("Modify Run Commands"));
+    connect(a, SIGNAL(triggered()), this, SLOT(modifyRunCommands()));
+
+}
+
+void MainWindow::modifyRunCommands()
+{
+    RunPreferences p;
+    p.exec();
 }
 
 void MainWindow::runCommand()

@@ -66,6 +66,7 @@ public:
 
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const ;
+    void setupRunMenu();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -75,6 +76,8 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void runCommand();
+    void modifyRunCommands();
     void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
