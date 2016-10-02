@@ -833,7 +833,9 @@ void MainWindow::toggleOverwrite()
 QString MainWindow::getNewDocumentName()
 {
     static int num = 1; // FIXME maybe find a smarter way
-    return tr("new %1").arg(num++);
+    QString f = tr("new");
+    f.append(QString(" %1").args(num++));
+    return f;
 }
 
 void MainWindow::on_action_New_triggered()
