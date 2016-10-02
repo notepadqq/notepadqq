@@ -261,7 +261,6 @@ private:
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
-    QString             getNewDocumentName();
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
