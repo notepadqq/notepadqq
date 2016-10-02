@@ -30,14 +30,6 @@ public:
     static MainWindow * lastActiveInstance();
 
     /**
-     * Describes the result of a save process. For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
-     */
-    enum saveFileResult {
-         saveFileResult_Saved       /** The file was saved  */
-        ,saveFileResult_Canceled    /** The save process was canceled */
-    };
-
-    /**
      * Describes the result of a tab closing process.
      */
     enum tabCloseResult {
@@ -57,6 +49,8 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
+    void removeTabWidgetIfEmpty(EditorTabWidget* tabWidget);
+
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
     Editor*   currentEditor();
@@ -66,6 +60,9 @@ public:
 
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const ;
+
+    DocEngine* getDocEngine() const;
+
     void setupRunMenu();
 
 protected:
@@ -221,7 +218,6 @@ private:
      */
     bool                finalizeAllTabs();
 
-    void                removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
     void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
