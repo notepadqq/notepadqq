@@ -303,7 +303,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="229"/>
         <source>&amp;Language</source>
-        <translation>&amp;Langue</translation>
+        <translation>&amp;Langage</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="236"/>
@@ -1411,7 +1411,7 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="66"/>
         <source>Languages</source>
-        <translation>Langues</translation>
+        <translation>Langages</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="71"/>
