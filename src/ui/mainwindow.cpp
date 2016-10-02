@@ -834,7 +834,7 @@ QString MainWindow::getNewDocumentName()
 {
     static int num = 1; // FIXME maybe find a smarter way
     QString f = tr("new");
-    f.append(QString(" %1").args(num++));
+    f.append(QString(" %1").arg(num++));
     return f;
 }
 
