@@ -49,7 +49,7 @@ public:
 
     TopEditorContainer *topEditorContainer();
 
-    void removeTabWidgetIfEmpty(EditorTabWidget* tabWidget);
+    void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
@@ -61,9 +61,10 @@ public:
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const ;
 
-    DocEngine* getDocEngine() const;
-
+    DocEngine*  getDocEngine() const;
     void setupRunMenu();
+public slots:
+    void refreshEditorUiInfo(Editor *editor);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -75,7 +76,6 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -207,7 +207,6 @@ private:
      *        saves all unsaved progress in the cache.
      */
     bool                saveTabsToCache();
-    void                restoreTabsFromCache();
 
     /**
      * @brief Acts like closing all tabs, asking to the user for input before discarding
