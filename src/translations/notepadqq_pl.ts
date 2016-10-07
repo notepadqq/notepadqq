@@ -85,18 +85,23 @@
 <context>
     <name>DocEngine</name>
     <message>
-        <location filename="../ui/docengine.cpp" line="176"/>
+        <location filename="../ui/docengine.cpp" line="33"/>
+        <source>new %1</source>
+        <translation>nowy %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/docengine.cpp" line="182"/>
         <source>Error trying to open &quot;%1&quot;</source>
         <translation>Błąd podczas próby otwarcia &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="251"/>
-        <location filename="../ui/docengine.cpp" line="446"/>
+        <location filename="../ui/docengine.cpp" line="257"/>
+        <location filename="../ui/docengine.cpp" line="452"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
         <translation>Protokół nieobsługiwany dla pliku &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="406"/>
+        <location filename="../ui/docengine.cpp" line="412"/>
         <source>Error trying to write to &quot;%1&quot;</source>
         <translation>Błąd podczas próby zapisu do &quot;%1&quot;</translation>
     </message>
@@ -1049,173 +1054,172 @@
         <translation>Włącz inteligentne wcięcie</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="343"/>
-        <location filename="../ui/mainwindow.cpp" line="829"/>
+        <location filename="../ui/mainwindow.cpp" line="344"/>
+        <location filename="../ui/mainwindow.cpp" line="628"/>
         <source>INS</source>
         <translation>WSTAW</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="573"/>
+        <location filename="../ui/mainwindow.cpp" line="372"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
         <translation>Błąd poczas próby zapisu sesji. Upewnij się, że następujący katalog jest dostępny.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="827"/>
+        <location filename="../ui/mainwindow.cpp" line="626"/>
         <source>OVR</source>
         <translation>NADPIS</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="836"/>
         <source>new %1</source>
-        <translation>nowy %1</translation>
+        <translation type="vanished">nowy %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="957"/>
+        <location filename="../ui/mainwindow.cpp" line="750"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>Twoje zmiany do %1 zostaną odrzucone.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="958"/>
+        <location filename="../ui/mainwindow.cpp" line="751"/>
         <source>Reload</source>
         <translation>Odśwież</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="996"/>
+        <location filename="../ui/mainwindow.cpp" line="789"/>
         <source>Open</source>
         <translation>Otwórz</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="998"/>
+        <location filename="../ui/mainwindow.cpp" line="791"/>
         <source>All files (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1016"/>
+        <location filename="../ui/mainwindow.cpp" line="809"/>
         <source>Open Folder</source>
         <translation>Otwórz katalog</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1056"/>
+        <location filename="../ui/mainwindow.cpp" line="849"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Czy chcesz zapisać zmiany do «%1»? </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1057"/>
+        <location filename="../ui/mainwindow.cpp" line="850"/>
         <source>Don&apos;t Save</source>
         <translation>Nie zapisuj</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1060"/>
+        <location filename="../ui/mainwindow.cpp" line="853"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Czy chcesz zapisać zmiany do «%1» przed zamknięciem?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1064"/>
+        <location filename="../ui/mainwindow.cpp" line="857"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Jeśli nie zapiszesz dokonanych zmian, to utracisz je na zawsze.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1164"/>
+        <location filename="../ui/mainwindow.cpp" line="957"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>Plik na dysku został zmieniony od ostatniego odczytu.
 Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1167"/>
+        <location filename="../ui/mainwindow.cpp" line="960"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>Zapisanie pliku może spowodować utratę danych zewnętrznych.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1186"/>
+        <location filename="../ui/mainwindow.cpp" line="979"/>
         <source>Save as</source>
         <translation>Zapisz jako</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1188"/>
+        <location filename="../ui/mainwindow.cpp" line="981"/>
         <source>Any file (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1352"/>
+        <location filename="../ui/mainwindow.cpp" line="1145"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1 znaków, %2 linii</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1363"/>
+        <location filename="../ui/mainwindow.cpp" line="1156"/>
         <source>Ln %1, col %2</source>
         <translation>Linia %1, Kol %2</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1367"/>
+        <location filename="../ui/mainwindow.cpp" line="1160"/>
         <source>Sel %1 (%2)</source>
         <translation>Zazn %1 (%2) </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1431"/>
+        <location filename="../ui/mainwindow.cpp" line="1224"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1434"/>
+        <location filename="../ui/mainwindow.cpp" line="1227"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1437"/>
+        <location filename="../ui/mainwindow.cpp" line="1230"/>
         <source>Old Mac</source>
         <translation>Stary MAC</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1444"/>
+        <location filename="../ui/mainwindow.cpp" line="1237"/>
         <source>%1 w/o BOM</source>
         <translation>%1 bez BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1920"/>
+        <location filename="../ui/mainwindow.cpp" line="1713"/>
         <source>No recent files</source>
         <translation>Brak ostatnio używanych plików</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2084"/>
+        <location filename="../ui/mainwindow.cpp" line="1877"/>
         <source>Convert to:</source>
         <translation>Konwertuj na format:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2098"/>
+        <location filename="../ui/mainwindow.cpp" line="1891"/>
         <source>Reload as:</source>
         <translation>Odśwież jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2140"/>
+        <location filename="../ui/mainwindow.cpp" line="1933"/>
         <source>Interpret as:</source>
         <translation>Interpretuj jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2409"/>
+        <location filename="../ui/mainwindow.cpp" line="2202"/>
         <source>Extension</source>
         <translation>Rozszerzenie</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2454"/>
+        <location filename="../ui/mainwindow.cpp" line="2247"/>
         <source>Open Session...</source>
         <translation>Otwórz sesję...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2456"/>
-        <location filename="../ui/mainwindow.cpp" line="2475"/>
+        <location filename="../ui/mainwindow.cpp" line="2249"/>
+        <location filename="../ui/mainwindow.cpp" line="2269"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Plik sesji (*.xml);;Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2473"/>
+        <location filename="../ui/mainwindow.cpp" line="2267"/>
         <source>Save Session as...</source>
         <translation>Zapisz sesję jako...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2501"/>
+        <location filename="../ui/mainwindow.cpp" line="2293"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Błąd podczas próby zapisu sesji. Proszę wybrać inną nazwę pliku.</translation>
     </message>
@@ -1268,7 +1272,7 @@ Czy chcesz go zapisać mimo to?</translation>
         <translation>Nie pokazuj tego ostrzeżenia ponownie </translation>
     </message>
     <message>
-        <location filename="../ui/Sessions/sessions.cpp" line="35"/>
+        <location filename="../ui/Sessions/sessions.cpp" line="124"/>
         <source>Error reading session file</source>
         <translation>Błąd podczas odczytu pliku sesji</translation>
     </message>
