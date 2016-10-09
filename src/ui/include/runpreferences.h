@@ -35,6 +35,10 @@ public:
             const QStyleOptionViewItem &option, const QModelIndex &index);
 private:
     QIcon openIcon;
+    QIcon rmIcon;
+
+signals:
+    void needsRemoval();
 };
 
 #endif

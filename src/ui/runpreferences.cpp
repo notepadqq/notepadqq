@@ -19,22 +19,13 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     QHBoxLayout *h2 = new QHBoxLayout;
     QHBoxLayout *h3 = new QHBoxLayout;
     m_commands = new QTableWidget(1, 2);
-
-    // Adjust the font to be slightly larger in table cells.
-    QFont cmdFont = m_commands->font();
-    int cmdFontSize = m_settings.Appearance.getOverrideFontSize();
-    if (!cmdFontSize) {
-        cmdFontSize = cmdFont.pointSize() + 2;
-    }
-    cmdFont.setPointSize(cmdFontSize);
-    m_commands->setFont(cmdFont);
+    RunDelegate* delegate = new RunDelegate(this);
 
     QStringList headers = (QStringList() << tr("Text") << tr("Command"));
 
-    // 
     QHeaderView *vh = m_commands->verticalHeader();
-    vh->sectionResizeMode(QHeaderView::ResizeToContents);
-//    vh->setDefaultSectionSize(QFontMetrics(cmdFont).height() + 4);
+    vh->sectionResizeMode(QHeaderView::QHeaderView::Fixed);
+    vh->setDefaultSectionSize(20);
 
     QHeaderView *hh = m_commands->horizontalHeader();
     hh->setStretchLastSection(true);
@@ -44,12 +35,9 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     v1->addWidget(m_commands);
     v1->addItem(h3);
     
-    QPushButton *btnRm   = new QPushButton(tr("Remove"));
     QPushButton *btnOk   = new QPushButton(tr("OK"));
     QPushButton *btnCancel = new QPushButton(tr("Cancel"));
     QShortcut *keyDelete = new QShortcut(QKeySequence("Delete"), this);
-    h1->addWidget(btnRm);
-    h1->setAlignment(Qt::AlignLeft); 
     h2->addWidget(btnOk);
     h2->addWidget(btnCancel);
     h2->setAlignment(Qt::AlignRight);
@@ -58,11 +46,10 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
 
     setLayout(v1);
 
-    connect(btnRm, SIGNAL(clicked()), this, SLOT(slotRemove()));
     connect(keyDelete, SIGNAL(activated()), this, SLOT(slotRemove()));
     connect(btnOk, SIGNAL(clicked()), this, SLOT(slotOk()));
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()));
-
+    connect(delegate, SIGNAL(needsRemoval()), this, SLOT(slotRemove()));
     connect(m_commands, SIGNAL(cellChanged(int, int)), this, SLOT(slotInitCell(int, int)));
 
 
@@ -73,7 +60,7 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     m_commands->setSortingEnabled(false);
     m_commands->setHorizontalHeaderLabels(headers);
     m_commands->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_commands->setItemDelegate(new RunDelegate(this));
+    m_commands->setItemDelegate(delegate);
     m_commands->setRowCount(cmdData.size() + 1);
 
     int workRow = 0;
@@ -159,7 +146,8 @@ void RunPreferences::slotRemove()
 
 RunDelegate::RunDelegate(QObject *parent)
     : QStyledItemDelegate(parent),
-      openIcon(IconProvider::fromTheme("document-open"))
+      openIcon(IconProvider::fromTheme("document-open")),
+      rmIcon(IconProvider::fromTheme("edit-delete"))
 {
 }
 
@@ -169,17 +157,28 @@ void RunDelegate::paint(QPainter *painter,
 {   
     if (index.column() == 1) {
         painter->save();
-        QStyleOptionButton btn;
+        QStyleOptionButton btnOpen;
         QRect r = option.rect;
         int x, y;
+        x = r.left() + r.width() - 32;
+        y = r.top();
+        btnOpen.rect = QRect(x, y, 16, 16);
+        btnOpen.icon = openIcon;
+        btnOpen.iconSize = QSize(14, 14);
+        btnOpen.state = QStyle::State_Enabled;
+        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, index.data(Qt::EditRole).toString());
+        option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnOpen, painter);
+
+        QStyleOptionButton btnRm;
         x = r.left() + r.width() - 16;
         y = r.top();
-        btn.rect = QRect(x, y, 16, 16);
-        btn.icon = openIcon;
-        btn.iconSize = QSize(14, 14);
-        btn.state = QStyle::State_Enabled;
+        btnRm.rect = QRect(x, y, 16, 16);
+        btnRm.icon = rmIcon;
+        btnRm.iconSize = QSize(14, 14);
+        btnRm.state = QStyle::State_Enabled;
         painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, index.data(Qt::EditRole).toString());
-        option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btn, painter);
+        option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnRm, painter);
+
         painter->restore();
     } else {
         QStyledItemDelegate::paint(painter, option, index);
@@ -198,7 +197,7 @@ bool RunDelegate::editorEvent(QEvent *event,
             int clickY = e->y();
             int x, y;
             QRect r = option.rect;
-            x = r.left() + r.width() - 16;
+            x = r.left() + r.width() - 32;
             y = r.top();
             if (clickX > x && clickX < x + 16) {
                 if (clickY > y && clickY < y + 16) {
@@ -210,6 +209,17 @@ bool RunDelegate::editorEvent(QEvent *event,
                     return true;
                 }
             }
+
+            x = r.left() + r.width() - 16;
+            y = r.top();
+            if (clickX > x && clickX < x + 16) {
+                if (clickY > y && clickY < y + 16) {
+                    emit needsRemoval();
+                    return true;
+                }
+            }
+ 
+
         }
     }
     return false;
