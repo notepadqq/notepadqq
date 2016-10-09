@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QFileDialog>
 #include <QSortFilterProxyModel>
+#include <QShortcut>
 #include "include/runpreferences.h"
 #include "include/iconprovider.h"
 
@@ -19,12 +20,21 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     QHBoxLayout *h3 = new QHBoxLayout;
     m_commands = new QTableWidget(1, 2);
 
+    // Adjust the font to be slightly larger in table cells.
+    QFont cmdFont = m_commands->font();
+    int cmdFontSize = m_settings.Appearance.getOverrideFontSize();
+    if (!cmdFontSize) {
+        cmdFontSize = cmdFont.pointSize() + 2;
+    }
+    cmdFont.setPointSize(cmdFontSize);
+    m_commands->setFont(cmdFont);
+
     QStringList headers = (QStringList() << tr("Text") << tr("Command"));
 
+    // 
     QHeaderView *vh = m_commands->verticalHeader();
-    vh->sectionResizeMode(QHeaderView::Fixed);
-    vh->setDefaultSectionSize(16);
-    vh->setMaximumSectionSize(16);
+    vh->sectionResizeMode(QHeaderView::ResizeToContents);
+//    vh->setDefaultSectionSize(QFontMetrics(cmdFont).height() + 4);
 
     QHeaderView *hh = m_commands->horizontalHeader();
     hh->setStretchLastSection(true);
@@ -35,8 +45,9 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     v1->addItem(h3);
     
     QPushButton *btnRm   = new QPushButton(tr("Remove"));
-    QPushButton *btnOk   = new QPushButton(tr("Okay"));
+    QPushButton *btnOk   = new QPushButton(tr("OK"));
     QPushButton *btnCancel = new QPushButton(tr("Cancel"));
+    QShortcut *keyDelete = new QShortcut(QKeySequence("Delete"), this);
     h1->addWidget(btnRm);
     h1->setAlignment(Qt::AlignLeft); 
     h2->addWidget(btnOk);
@@ -48,10 +59,12 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     setLayout(v1);
 
     connect(btnRm, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(keyDelete, SIGNAL(activated()), this, SLOT(slotRemove()));
     connect(btnOk, SIGNAL(clicked()), this, SLOT(slotOk()));
     connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()));
 
     connect(m_commands, SIGNAL(cellChanged(int, int)), this, SLOT(slotInitCell(int, int)));
+
 
     QMap <QString, QString> cmdData = m_settings.Run.getCommands();
     QSortFilterProxyModel *pModel = new QSortFilterProxyModel(this);
@@ -61,7 +74,7 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     m_commands->setHorizontalHeaderLabels(headers);
     m_commands->setSelectionMode(QAbstractItemView::SingleSelection);
     m_commands->setItemDelegate(new RunDelegate(this));
-    m_commands->setRowCount(cmdData.size()+1);
+    m_commands->setRowCount(cmdData.size() + 1);
 
     int workRow = 0;
     QMapIterator<QString, QString> it(cmdData);
@@ -100,11 +113,34 @@ void RunPreferences::slotOk()
 
 void RunPreferences::slotInitCell(int row, int)
 {
+    QTableWidgetItem* iText = m_commands->item(row, 0);
+    QTableWidgetItem* iCmd = m_commands->item(row, 1);
+    if (!iText || !iCmd) {
+        return;
+    }
+
     if (m_commands->rowCount() - 1 == row) {
-        if (!m_commands->item(row, 0) || !m_commands->item(row, 1)) {
-            return;
+        if (iText->text().length() && iCmd->text().length()) {
+            m_commands->setRowCount(row + 2);
+        } else if (row == m_commands->rowCount() - 2) {
+            m_commands->setRowCount(row + 1);
         }
-        m_commands->setRowCount(row + 2);
+    } else if (m_commands->rowCount() - 2 == row) {
+        // Check to see if we can remove the last row safely.
+        if (!iText->text().length() || !iCmd->text().length()) {
+            int rmLast = 0;
+            QTableWidgetItem* iLastText = m_commands->item(row + 1, 0);
+            QTableWidgetItem* iLastCmd = m_commands->item(row + 1, 1);
+            if (!iLastText || !iLastText->text().length()) {
+                rmLast++;
+            }
+            if (!iLastCmd || !iLastCmd->text().length()) {
+                rmLast++;
+            }
+            if (rmLast == 2) {
+                m_commands->setRowCount(row + 1);
+            }
+        }
     }
 }
 
@@ -113,6 +149,11 @@ void RunPreferences::slotRemove()
     int row = m_commands->currentRow();
     if (m_commands->rowCount() > 1) {
         m_commands->removeRow(row);
+    } else {
+        if(m_commands->item(0, 0) && m_commands->item(0, 1)) {
+            m_commands->item(0, 0)->setText("");
+            m_commands->item(0, 1)->setText("");
+        }
     }
 }
 
