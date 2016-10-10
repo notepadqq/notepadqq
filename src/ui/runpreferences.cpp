@@ -159,9 +159,10 @@ void RunDelegate::paint(QPainter *painter,
         painter->save();
         QStyleOptionButton btnOpen;
         QRect r = option.rect;
+        r.setWidth(r.width());
         int x, y;
         x = r.left() + r.width() - 32;
-        y = r.top();
+        y = r.top() + 2;
         btnOpen.rect = QRect(x, y, 16, 16);
         btnOpen.icon = openIcon;
         btnOpen.iconSize = QSize(14, 14);
@@ -171,12 +172,11 @@ void RunDelegate::paint(QPainter *painter,
 
         QStyleOptionButton btnRm;
         x = r.left() + r.width() - 16;
-        y = r.top();
+        y = r.top() + 2;
         btnRm.rect = QRect(x, y, 16, 16);
         btnRm.icon = rmIcon;
         btnRm.iconSize = QSize(14, 14);
         btnRm.state = QStyle::State_Enabled;
-        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, index.data(Qt::EditRole).toString());
         option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnRm, painter);
 
         painter->restore();
