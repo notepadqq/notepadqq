@@ -31,6 +31,7 @@
  * -> string cacheFilePath - path to the cache file if it exists
  * -> int scrollX - horizontal scroll position
  * -> int scrollY - vertical scroll position
+ * -> string language - the display language of the document.
  * -> long int lastModified - optional, last modification date (in msecs since epoch) of the file point to in filePath
  * -> int active - optional, value is "1" if this tab is the open one in the tabview, otherwise "0".
  *
@@ -43,6 +44,7 @@ struct TabData {
     int scrollX = 0;
     int scrollY = 0;
     bool active = false;
+    QString language;
     qint64 lastModified = 0;
 };
 
@@ -163,6 +165,7 @@ std::vector<TabData> SessionReader::readTabData() {
             td.cacheFilePath = attrs.value("cacheFilePath").toString();
             td.scrollX = attrs.value("scrollX").toInt();
             td.scrollY = attrs.value("scrollY").toInt();
+            td.language = attrs.value("language").toString();
             td.lastModified = attrs.value("lastModified").toLongLong();
             td.active = attrs.value("active").toInt() != 0;
 
@@ -214,6 +217,9 @@ void SessionWriter::addTabData(const TabData& td){
 
     // A few attributes aren't often used, so we'll only write them into the file if they're
     // set to a non-default value as to not clutter up the xml file.
+    if (!td.language.isEmpty())
+        attrs.push_back(QXmlStreamAttribute("language", td.language));
+
     if (td.lastModified != 0)
         attrs.push_back(QXmlStreamAttribute("lastModified", QString::number(td.lastModified)));
 
@@ -290,8 +296,8 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             const auto& scrollPos = editor->scrollPosition();
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
-
             td.active = tabWidget->currentEditor() == editor;
+            td.language = editor->language();
 
             // If we're caching and there's a file opened in the tab we want to inform the
             // user whether the file's contents have changed since Nqq was last opened.
@@ -404,6 +410,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             }
 
             if(tab.active) activeIndex = idx;
+
+            if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
             editor->clearFocus();
