@@ -1,20 +1,20 @@
 #ifndef SEARCHINFILESWORKER_H
 #define SEARCHINFILESWORKER_H
 
+#include "include/Search/filesearchresult.h"
+#include "include/Search/searchhelpers.h"
 #include <QObject>
 #include <QMutex>
 #include <QRegularExpression>
-#include "include/Search/filesearchresult.h"
-#include "include/Search/searchhelpers.h"
+#include <QThread>
 
-class SearchInFilesWorker : public QObject
+class SearchInFilesWorker : public QThread
 {
     Q_OBJECT
 public:
-    explicit SearchInFilesWorker(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
+    explicit SearchInFilesWorker(QObject *parent, const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
     ~SearchInFilesWorker();
-
-    FileSearchResult::SearchResult getResult();
+    void run();
 
 signals:
 
@@ -24,8 +24,18 @@ signals:
      *        (e.g. because of an error or because it was manually stopped).
      */
     void finished(bool stopped);
+
+   /**
+    * @brief The worker encountered an error.
+    * @param QString string: The error message received.
+    */
     void error(QString string);
-    void progress(QString file);
+
+   /**
+    * @brief Report progress to main thread.
+    * @param QString file: The file currently being processed.
+    */
+    void progress(const QString& file, const bool replace = false);
 
     /**
      * @brief Error reading a file. You can handle this signal
@@ -38,21 +48,27 @@ signals:
      */
     void errorReadingFile(const QString &message, int &operation);
 
+   /**
+    * @brief Report to main thread that results are ready to be processed.
+    */
+    void resultReady(const FileSearchResult::SearchResult &result);
+
 public slots:
-    void run();
+   /**
+    * @brief Stop the search
+    */
     void stop();
 
 private:
+    QMutex  m_mutex;
+    QRegularExpression m_regex;
     QString m_string;
     QString m_path;
     QStringList m_filters;
     SearchHelpers::SearchMode m_searchMode;
     SearchHelpers::SearchOptions m_searchOptions;
     FileSearchResult::SearchResult m_result;
-    QMutex m_resultMutex;
-    QMutex m_stopMutex;
     bool m_stop = false;
-    QRegularExpression m_regex;
 
     /**
      * @brief Build FileSearchResult::Result object using the parameters given.
@@ -102,13 +118,6 @@ private:
      * @return QVector<int> containing line beginning positions.
      */
     QVector<int> getLinePositions(const QString &data);
-
-    /**
-     * @brief Unescapes a string to allow searching for \n, \r, \t, etc.
-     * @param `data`
-     * @return QString with character sequences unescaped.
-     */
-    QString unescapeString(const QString &data);
 };
 
 #endif // SEARCHINFILESWORKER_H

@@ -25,9 +25,12 @@ QString SearchResultsItemDelegate::getFileResultFormattedLine(const FileSearchRe
 
 void SearchResultsItemDelegate::fillResultRowItem(QStandardItem *item, const FileSearchResult::Result &result)
 {
+    QPoint start(result.matchStartLine, result.matchStartCol);
+    QPoint end(result.matchEndLine, result.matchEndCol);
     item->setText(getFileResultFormattedLine(result));
     item->setData(SearchResultsItemDelegate::ResultTypeMatch, SearchResultsItemDelegate::RESULT_TYPE_ROLE);
-    item->setData(result, SearchResultsItemDelegate::RESULT_DATA_ROLE);
+    item->setData(start, SearchResultsItemDelegate::RESULT_DATA_ROLE);
+    item->setData(end, SearchResultsItemDelegate::RESULT_DATA_EX_ROLE);
 }
 
 void SearchResultsItemDelegate::fillFileResultRowItem(QStandardItem *item, const FileSearchResult::FileResult &fileResult, const int matches)
@@ -36,7 +39,7 @@ void SearchResultsItemDelegate::fillFileResultRowItem(QStandardItem *item, const
                         .arg(fileResult.fileName.toHtmlEscaped())
                         .arg(matches));
     item->setData(SearchResultsItemDelegate::ResultTypeFile, SearchResultsItemDelegate::RESULT_TYPE_ROLE);
-    item->setData(fileResult, SearchResultsItemDelegate::RESULT_DATA_ROLE);
+    item->setData(fileResult.fileName, SearchResultsItemDelegate::RESULT_DATA_ROLE);
 }
 
 void SearchResultsItemDelegate::fillSearchResultRowItem(QStandardItem *item, const FileSearchResult::SearchResult &searchResult, const int totalFileMatches, const int totalFiles)
@@ -56,16 +59,22 @@ SearchResultsItemDelegate::ResultType SearchResultsItemDelegate::rowItemType(con
     return static_cast<ResultType>(type);
 }
 
-FileSearchResult::Result SearchResultsItemDelegate::resultRowData(const QModelIndex &index)
+QPoint SearchResultsItemDelegate::resultRowStartData(const QModelIndex &index)
 {
     QVariant data = index.data(SearchResultsItemDelegate::RESULT_DATA_ROLE);
-    return data.value<FileSearchResult::Result>();
+    return data.value<QPoint>();
 }
 
-FileSearchResult::FileResult SearchResultsItemDelegate::fileResultRowData(const QModelIndex &index)
+QPoint SearchResultsItemDelegate::resultRowEndData(const QModelIndex &index)
+{
+    QVariant data = index.data(SearchResultsItemDelegate::RESULT_DATA_EX_ROLE);
+    return data.value<QPoint>();
+}
+
+QString SearchResultsItemDelegate::fileResultRowData(const QModelIndex &index)
 {
     QVariant data = index.data(SearchResultsItemDelegate::RESULT_DATA_ROLE);
-    return data.value<FileSearchResult::FileResult>();
+    return data.value<QString>();
 }
 
 void SearchResultsItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex &index) const

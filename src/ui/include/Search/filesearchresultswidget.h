@@ -14,6 +14,11 @@ class FileSearchResultsWidget : public QTreeView
 public:
     FileSearchResultsWidget(QWidget *parent = 0);
     ~FileSearchResultsWidget();
+   
+   /**
+    * @brief Add search results to the results widget.
+    * @param `searchResult`:  The search results to be added.
+    */
     void addSearchResult(const FileSearchResult::SearchResult &searchResult);
 
 private slots:
@@ -23,10 +28,19 @@ private:
     QStandardItemModel*   m_filesFindResultsModel;
     SearchResultsItemDelegate* m_treeViewHTMLDelegate;
     QAction* m_actionClear;
+
+   /**
+    * @brief Set up UI actions.
+    */
     void setupActions();
 
 signals:
-    void resultMatchClicked(const FileSearchResult::FileResult &file, const FileSearchResult::Result &match);
+   /**
+    * @brief Handle match result being clicked.
+    * @param `file`:  The file result struct to use.
+    * @param `match`: The match result struct to use.
+    */
+    void resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol);
 
 protected:
     void contextMenuEvent(QContextMenuEvent *e);
