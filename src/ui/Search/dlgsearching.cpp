@@ -42,5 +42,5 @@ QString dlgSearching::text() const
 
 void dlgSearching::on_btnCancel_clicked()
 {
-    reject();
+    accept();
 }

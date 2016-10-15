@@ -35,8 +35,7 @@ void FileSearchResultsWidget::setupActions()
 void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResult &searchResult)
 {
     // Row, in the model, relative to this search
-    QList<QStandardItem *> searchRow;
-    searchRow << new QStandardItem();
+    QStandardItem *searchRow = new QStandardItem();
 
     // Total number of matches in all the files
     int totalFileMatches = 0;
@@ -48,28 +47,26 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
         totalFiles++;
 
         // Row, in the model, relative to this file
-        QList<QStandardItem *> fileRow;
-        fileRow << new QStandardItem();
+        QStandardItem *fileRow = new QStandardItem();
 
         int curFileMatches = 0;
 
         for (FileSearchResult::Result result : fileResult.results)
         {
-            QList<QStandardItem *> lineRow;
-            lineRow << new QStandardItem();
-            SearchResultsItemDelegate::fillResultRowItem(lineRow[0], result);
-            fileRow[0]->appendRow(lineRow);
+            QStandardItem *lineRow = new QStandardItem();
+            SearchResultsItemDelegate::fillResultRowItem(lineRow, result);
+            fileRow->appendRow(lineRow);
 
             curFileMatches++;
             totalFileMatches++;
         }
 
-        SearchResultsItemDelegate::fillFileResultRowItem(fileRow[0], fileResult, curFileMatches);
-        searchRow[0]->appendRow(fileRow);
+        SearchResultsItemDelegate::fillFileResultRowItem(fileRow, fileResult, curFileMatches);
+        searchRow->appendRow(fileRow);
     }
 
 
-    SearchResultsItemDelegate::fillSearchResultRowItem(searchRow[0], searchResult, totalFileMatches, totalFiles);
+    SearchResultsItemDelegate::fillSearchResultRowItem(searchRow, searchResult, totalFileMatches, totalFiles);
 
     QStandardItem *root = m_filesFindResultsModel->invisibleRootItem();
     root->insertRow(0, searchRow);
@@ -86,11 +83,15 @@ void FileSearchResultsWidget::addSearchResult(const FileSearchResult::SearchResu
 void FileSearchResultsWidget::on_doubleClicked(const QModelIndex &index)
 {
     int type = SearchResultsItemDelegate::rowItemType(index);
-
+    QPoint start = SearchResultsItemDelegate::resultRowStartData(index);
+    QPoint end   = SearchResultsItemDelegate::resultRowEndData(index);
     if (type == SearchResultsItemDelegate::ResultTypeMatch) {
         emit resultMatchClicked(
                     SearchResultsItemDelegate::fileResultRowData(index.parent()),
-                    SearchResultsItemDelegate::resultRowData(index));
+                    start.x(),
+                    start.y(),
+                    end.x(),
+                    end.y());
     }
 }
 
