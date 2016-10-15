@@ -427,7 +427,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
-    lastTabW->removeTabWidgetIfEmpty();
+    lastTabW->deleteIfEmpty();
 
     // Give focus to the last tab of the first tab widget.
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);

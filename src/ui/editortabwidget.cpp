@@ -215,12 +215,12 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
     }
 }
 
-void EditorTabWidget::removeTabWidgetIfEmpty()
+void EditorTabWidget::deleteIfEmpty()
 {
-    EditorTabWidget::removeTabWidgetIfEmpty(this);
+    EditorTabWidget::deleteIfEmpty(this);
 }
 
-void EditorTabWidget::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
+void EditorTabWidget::deleteIfEmpty(EditorTabWidget *tabWidget) {
     if(tabWidget->count() == 0) {
         delete tabWidget;
     }
