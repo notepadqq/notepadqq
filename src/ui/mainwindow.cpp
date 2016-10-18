@@ -2005,8 +2005,10 @@ void MainWindow::runCommand()
     if(!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
     }
-    if(!QProcess::startDetached(cmd)) {
-        
+    QString exe("/usr/bin/bash");
+    QStringList args;
+    args << "-c" <<  cmd;
+    if(!QProcess::startDetached(exe, args)) {
     }
 }
 
