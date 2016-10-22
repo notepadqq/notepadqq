@@ -167,6 +167,7 @@ void RunDelegate::paint(QPainter *painter,
         const QStyleOptionViewItem& option,
         const QModelIndex& index) const
 {   
+        
     if (index.column() == 1) {
         painter->save();
         QStyleOptionButton btnOpen;
@@ -185,8 +186,13 @@ void RunDelegate::paint(QPainter *painter,
         QString editText = fm.elidedText(index.data(Qt::EditRole).toString(),
                 Qt::ElideRight,
                 r.width());
-        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, editText);
 
+        QPen oldPen = painter->pen();
+        if (option.state & QStyle::State_Selected) {
+            painter->setPen(QPen(QColor(option.palette.highlightedText().color())));
+        }
+        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, editText);
+        painter->setPen(oldPen);
         option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnOpen, painter);
 
         QStyleOptionButton btnRm;
