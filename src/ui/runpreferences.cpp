@@ -134,12 +134,14 @@ void RunPreferences::slotInitCell(int row, int)
 void RunPreferences::slotRemove()
 {
     int row = m_commands->currentRow();
-    if (m_commands->rowCount() > 1) {
+    if (m_commands->rowCount() > 1 && row != m_commands->rowCount() - 1) {
         m_commands->removeRow(row);
     } else {
-        if(m_commands->item(0, 0) && m_commands->item(0, 1)) {
-            m_commands->item(0, 0)->setText("");
-            m_commands->item(0, 1)->setText("");
+        if (m_commands->item(row, 0)) {
+            m_commands->item(row, 0)->setText("");
+        }
+        if (m_commands->item(row, 1)) {
+            m_commands->item(row, 1)->setText("");
         }
     }
 }
@@ -159,7 +161,6 @@ void RunDelegate::paint(QPainter *painter,
         painter->save();
         QStyleOptionButton btnOpen;
         QRect r = option.rect;
-        r.setWidth(r.width());
         int x, y;
         x = r.left() + r.width() - 32;
         y = r.top() + 2;
@@ -167,12 +168,19 @@ void RunDelegate::paint(QPainter *painter,
         btnOpen.icon = openIcon;
         btnOpen.iconSize = QSize(14, 14);
         btnOpen.state = QStyle::State_Enabled;
-        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, index.data(Qt::EditRole).toString());
+        r.setWidth(r.width() - 32);
+        
+        // Elide Text
+        QFontMetrics fm(option.font);
+        QString editText = fm.elidedText(index.data(Qt::EditRole).toString(),
+                Qt::ElideRight,
+                r.width());
+        painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, editText);
+
         option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnOpen, painter);
 
         QStyleOptionButton btnRm;
-        x = r.left() + r.width() - 16;
-        y = r.top() + 2;
+        x += 16;
         btnRm.rect = QRect(x, y, 16, 16);
         btnRm.icon = rmIcon;
         btnRm.iconSize = QSize(14, 14);
