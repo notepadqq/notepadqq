@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QHeaderView>
-#include <QDebug>
+#include <QLabel>
 #include <QPushButton>
 #include <QPainter>
 #include <QFileDialog>
@@ -14,30 +14,40 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     QDialog(parent, f),
     m_settings(NqqSettings::getInstance())
 {
-    QVBoxLayout *v1 = new QVBoxLayout;
-    QHBoxLayout *h1 = new QHBoxLayout;
-    QHBoxLayout *h2 = new QHBoxLayout;
-    QHBoxLayout *h3 = new QHBoxLayout;
+    QVBoxLayout* v1 = new QVBoxLayout;
+    QHBoxLayout* h1 = new QHBoxLayout;
+    QHBoxLayout* h2 = new QHBoxLayout;
+    QHBoxLayout* h3 = new QHBoxLayout;
     m_commands = new QTableWidget(1, 2);
     RunDelegate* delegate = new RunDelegate(this);
 
     QStringList headers = (QStringList() << tr("Text") << tr("Command"));
 
-    QHeaderView *vh = m_commands->verticalHeader();
+    QHeaderView* vh = m_commands->verticalHeader();
     vh->sectionResizeMode(QHeaderView::QHeaderView::Fixed);
     vh->setDefaultSectionSize(20);
 
-    QHeaderView *hh = m_commands->horizontalHeader();
+    QHeaderView* hh = m_commands->horizontalHeader();
     hh->setStretchLastSection(true);
 
     setMinimumSize(500, 200);
 
+    QLabel* info = new QLabel(tr("\
+    <h3>Special placeholders</h3><ul>\
+    <li><em>\%fullpath\%</em> - Full path of the currently active file.</li>\
+    <li><em>\%directory\%</em> - Directory of the currently active file.</li>\
+    <li><em>\%filename\%</em> - Name of the currently active file.</li>\
+    <li><em>\%selection\%</em> - Currently selected text.</li>\
+    </ul>"));
+    info->setTextFormat(Qt::RichText);
+
+    v1->addWidget(info);
     v1->addWidget(m_commands);
     v1->addItem(h3);
     
-    QPushButton *btnOk   = new QPushButton(tr("OK"));
-    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
-    QShortcut *keyDelete = new QShortcut(QKeySequence("Delete"), this);
+    QPushButton* btnOk   = new QPushButton(tr("OK"));
+    QPushButton* btnCancel = new QPushButton(tr("Cancel"));
+    QShortcut* keyDelete = new QShortcut(QKeySequence("Delete"), this);
     h2->addWidget(btnOk);
     h2->addWidget(btnCancel);
     h2->setAlignment(Qt::AlignRight);
@@ -54,7 +64,7 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
 
 
     QMap <QString, QString> cmdData = m_settings.Run.getCommands();
-    QSortFilterProxyModel *pModel = new QSortFilterProxyModel(this);
+    QSortFilterProxyModel* pModel = new QSortFilterProxyModel(this);
     pModel->setSourceModel(m_commands->model());
     m_commands->setAlternatingRowColors(true);
     m_commands->setSortingEnabled(false);

@@ -1943,7 +1943,7 @@ void MainWindow::on_actionInterpret_as_triggered()
 
     dialog->deleteLater();
 }
-#include <QDebug>
+
 void MainWindow::setupRunMenu()
 {
     QMap <QString, QString> runners = m_settings.Run.getCommands();
