@@ -62,7 +62,7 @@ public:
     QList<const QMenu*> getMenus() const ;
 
     DocEngine*  getDocEngine() const;
-    void setupRunMenu();
+    void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
 

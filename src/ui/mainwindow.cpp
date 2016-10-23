@@ -18,7 +18,7 @@
 #include "include/Extensions/installextension.h"
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
-#include "include/runpreferences.h"
+#include "include/nqqrun.h"
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -163,7 +163,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     setupLanguagesMenu();
-    setupRunMenu();
+    generateRunMenu();
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
@@ -1944,7 +1944,7 @@ void MainWindow::on_actionInterpret_as_triggered()
     dialog->deleteLater();
 }
 
-void MainWindow::setupRunMenu()
+void MainWindow::generateRunMenu()
 {
     QMap <QString, QString> runners = m_settings.Run.getCommands();
     QMapIterator<QString, QString> i(runners);
@@ -1969,9 +1969,9 @@ void MainWindow::setupRunMenu()
 
 void MainWindow::modifyRunCommands()
 {
-    RunPreferences p;
+    NqqRun::RunPreferences p;
     if(p.exec() == 1) {
-        setupRunMenu();
+        generateRunMenu();
     }
 }
 
@@ -1983,16 +1983,19 @@ void MainWindow::runCommand()
     if (a->data().toString().size()) {
         cmd = a->data().toString();
     } else {
-        bool ok;
-        //TODO: Nicer command input, with save option.
-        cmd = QInputDialog::getText(this, tr("Enter command text"),
-                                    tr("Command:"), QLineEdit::Normal,
-                                    "", &ok);
-        if(!ok || cmd.isEmpty()) {
+        NqqRun::RunDialog rd;
+        int ok = rd.exec();
+
+        if (rd.saved()) {
+            generateRunMenu();
+        }
+
+        if (!ok) {
             return;
         }
-    }
 
+        cmd = rd.getCommandInput();
+    }
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
@@ -2005,8 +2008,9 @@ void MainWindow::runCommand()
     if(!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
     }
-    cmd.replace("\\\"","\"\"\"");
-    if(!QProcess::startDetached(cmd)) {
+    QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
+    cmd = args.takeFirst();
+    if(!QProcess::startDetached(cmd, args)) {
         
     }
 }

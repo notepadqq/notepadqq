@@ -1,12 +1,14 @@
 #ifndef _RUNPREFERENCES_H_
 #define _RUNPREFERENCES_H_
 #include <QDialog>
-#include <QTableWidget>
-#include "include/nqqsettings.h"
+#include <QLineEdit>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QStyledItemDelegate>
+#include <QTableWidget>
+#include "include/nqqsettings.h"
 
+namespace NqqRun {
 class RunPreferences : public QDialog
 {
     Q_OBJECT
@@ -41,4 +43,24 @@ signals:
     void needsRemoval();
 };
 
+class RunDialog : public QDialog
+{
+    Q_OBJECT
+private:
+    NqqSettings &m_settings;
+    QLineEdit* m_command;
+    bool m_saved;
+
+public:
+    RunDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    ~RunDialog();
+    QString getCommandInput();
+    bool saved();
+    static QStringList parseCommandString(QString cmd);
+
+private slots:
+    void slotSave();
+};
+
+};
 #endif

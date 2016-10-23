@@ -1,14 +1,17 @@
 #include <QApplication>
-#include <QVBoxLayout>
-#include <QHeaderView>
-#include <QLabel>
-#include <QPushButton>
-#include <QPainter>
 #include <QFileDialog>
-#include <QSortFilterProxyModel>
+#include <QHeaderView>
+#include <QInputDialog>
+#include <QLabel>
+#include <QPainter>
+#include <QPushButton>
 #include <QShortcut>
-#include "include/runpreferences.h"
+#include <QSortFilterProxyModel>
+#include <QVBoxLayout>
+#include "include/nqqrun.h"
 #include "include/iconprovider.h"
+
+using namespace NqqRun;
 
 RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     QDialog(parent, f),
@@ -249,3 +252,142 @@ bool RunDelegate::editorEvent(QEvent *event,
     return false;
 }
 
+RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
+    QDialog(parent, f),
+    m_settings(NqqSettings::getInstance()),
+    m_saved(false)
+{
+    setMinimumSize(300, 100);
+
+    QVBoxLayout* v1 = new QVBoxLayout;
+    QHBoxLayout* h1 = new QHBoxLayout;
+    QHBoxLayout* h2 = new QHBoxLayout;
+    QHBoxLayout* h3 = new QHBoxLayout;
+
+    m_command = new QLineEdit(this);
+
+    v1->addWidget(m_command);
+    v1->addLayout(h3);
+
+    QPushButton *btnOK = new QPushButton(tr("OK"));
+    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
+    QPushButton *btnSave = new QPushButton(tr("Save..."));
+
+    h1->addWidget(btnSave);
+    h1->setAlignment(Qt::AlignLeft);
+    h2->addWidget(btnCancel);
+    h2->addWidget(btnOK);
+    h2->setAlignment(Qt::AlignRight);
+    h3->addLayout(h1);
+    h3->addLayout(h2);
+
+    setLayout(v1);
+
+    connect(btnOK, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(btnSave, SIGNAL(clicked()), this, SLOT(slotSave()));
+    connect(m_command, SIGNAL(returnPressed()), this, SLOT(accept()));
+}
+
+RunDialog::~RunDialog()
+{
+}
+
+void RunDialog::slotSave()
+{
+    bool ok;
+    QString name = QInputDialog::getText(this, 
+            tr("Choose the name to be displayed in the run menu."),
+            tr("Command Name:"),
+            QLineEdit::Normal,
+            m_command->text(), 
+            &ok);
+    if (ok && !name.isEmpty() && !m_command->text().isEmpty()) {
+        m_settings.Run.setCommand(name, m_command->text());
+    }
+}
+
+bool RunDialog::saved()
+{
+    return m_saved;
+}
+
+QString RunDialog::getCommandInput()
+{
+    return m_command->text();
+}
+
+QStringList RunDialog::parseCommandString(QString cmd) {
+    QStringList parts;
+    const char OUT = '\0';
+    char quote = OUT;
+    QString curr = "";
+    for (int i = 0; i < cmd.length(); i++) {
+        if (cmd[i] == '"') {
+            if (quote == '"') {
+                quote = OUT;
+                parts.append(curr);
+                curr = "";
+            } else if (quote == '\'') {
+                curr += '"';
+            } else {
+                quote = '"';
+            }
+
+        } else if (cmd[i] == '\'') {
+            if (quote == '\'') {
+                quote = OUT;
+                parts.append(curr);
+                curr = "";
+            } else if (quote == '"') {
+                curr += '\'';
+            } else {
+                quote = '\'';
+            }
+
+        } else if (cmd[i] == '\\') {
+
+            if (i+1 < cmd.length()) {
+                i++;
+                if (quote == '\'') {
+                    if (cmd[i] == '\'') {
+                        curr += '\'';
+                    } else {
+                        curr += '\\';
+                        curr += cmd[i];
+                    }
+                } else if (quote == '"') {
+                    if (cmd[i] == '"') {
+                        curr += '"';
+                    } else if (cmd[i] == '\\') {
+                        curr += '\\';
+                    } else {
+                        curr += '\\';
+                        curr += cmd[i];
+                    }
+                } else {
+                    curr += cmd[i];
+                }
+            } else {
+                curr += '\\';
+            }
+
+        } else if (cmd[i] == ' ') {
+            if (quote == OUT) {
+                if (curr.length() > 0) {
+                    parts.append(curr);
+                    curr = "";
+                }
+            } else {
+                curr += ' ';
+            }
+        } else {
+            curr += cmd[i];
+        }
+    }
+    if (curr.length() > 0) {
+        parts.append(curr);
+    }
+
+    return parts;
+}
