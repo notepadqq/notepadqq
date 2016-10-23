@@ -1,5 +1,5 @@
-#ifndef _RUNPREFERENCES_H_
-#define _RUNPREFERENCES_H_
+#ifndef _NQQRUN_H_
+#define _NQQRUN_H_
 #include <QDialog>
 #include <QLineEdit>
 #include <QMouseEvent>
