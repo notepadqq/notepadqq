@@ -39,6 +39,8 @@ private slots:
     void on_chkOverrideFontSize_toggled(bool checked);
     void on_spnFontSize_valueChanged(int arg1);
     void on_cmbFontFamilies_currentFontChanged(const QFont &f);
+    void on_chkOverrideLineHeight_toggled(bool checked);
+    void on_spnLineHeight_valueChanged(double arg1);
 
 private:
 

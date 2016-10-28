@@ -87,6 +87,7 @@ public:
         NQQ_SETTING(ColorScheme,        QString,    "")
         NQQ_SETTING(OverrideFontFamily, QString,    "")
         NQQ_SETTING(OverrideFontSize,   int,        0)
+        NQQ_SETTING(OverrideLineHeight, double,     0)
     END_CATEGORY(Appearance)
 
     BEGIN_CATEGORY(Search)
