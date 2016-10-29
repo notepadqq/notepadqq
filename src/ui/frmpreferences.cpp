@@ -81,6 +81,16 @@ void frmPreferences::updatePreviewEditorFont()
     const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
 
     m_previewEditor->setFont(font, size, lineHeight);
+
+    const auto selections = m_previewEditor->selections();
+    if(selections.empty())
+        return;
+
+    const auto sel = selections.first();
+    qDebug() << "ok";
+    //m_previewEditor->setSelection(0,0,0,0);
+    m_previewEditor->setSelection(sel.from.line, sel.from.column, sel.to.line, sel.to.column);
+    qDebug() << "ok";
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
