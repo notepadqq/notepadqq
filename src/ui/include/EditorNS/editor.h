@@ -245,7 +245,7 @@ namespace EditorNS
          *                   nullptr denote no override.
          * @param fontSize the size to be applied. 0 denotes no override.
          */
-        void setFont(QString fontFamily, int fontSize);
+        void setFont(QString fontFamily, int fontSize, double lineHeight);
 
         QTextCodec *codec() const;
 

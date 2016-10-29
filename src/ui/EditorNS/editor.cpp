@@ -496,11 +496,12 @@ namespace EditorNS
         m_endOfLineSequence = newLineSequence;
     }
 
-    void Editor::setFont(QString fontFamily, int fontSize)
+    void Editor::setFont(QString fontFamily, int fontSize, double lineHeight)
     {
         QMap<QString, QVariant> tmap;
         tmap.insert("family", fontFamily == nullptr ? "" : fontFamily);
         tmap.insert("size", QString::number(fontSize));
+        tmap.insert("lineHeight", QString::number(lineHeight,'f',2));
         sendMessage("C_CMD_SET_FONT", tmap);
     }
 

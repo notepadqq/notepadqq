@@ -76,10 +76,15 @@ void frmPreferences::resetShortcuts()
 
 void frmPreferences::updatePreviewEditorFont()
 {
-    QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
-    int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    const int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
 
-    m_previewEditor->setFont(font, size);
+    m_previewEditor->setFont(font, size, lineHeight);
+
+    // Re-setting language also updates the position of text selection. If not done, selected text
+    // would often glitch out when changing the font causes the position of text characters to change.
+    m_previewEditor->setLanguage(m_previewEditor->language());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -124,6 +129,7 @@ void frmPreferences::on_buttonBox_accepted()
     const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
 
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
@@ -135,7 +141,7 @@ void frmPreferences::on_buttonBox_accepted()
             editor->setTheme(newTheme);
 
             // Set font override
-            editor->setFont(fontFamily, fontSize);
+            editor->setFont(fontFamily, fontSize, lineHeight);
 
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->language());
@@ -228,17 +234,25 @@ void frmPreferences::loadAppearanceTab()
         ui->chkOverrideFontSize->setChecked(true);
         ui->spnFontSize->setValue(fontSize);
     }
+
+    const double lineHeight = m_settings.Appearance.getOverrideLineHeight();
+    if (lineHeight != 0) {
+        ui->chkOverrideLineHeight->setChecked(true);
+        ui->spnLineHeight->setValue(lineHeight);
+    }
 }
 
 void frmPreferences::saveAppearanceTab()
 {
     m_settings.Appearance.setColorScheme(ui->cmbColorScheme->currentData().toString());
 
-    QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
-    int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
 
     m_settings.Appearance.setOverrideFontFamily(fontFamily);
     m_settings.Appearance.setOverrideFontSize(fontSize);
+    m_settings.Appearance.setOverrideLineHeight(lineHeight);
 }
 
 void frmPreferences::loadTranslations()
@@ -429,6 +443,17 @@ void frmPreferences::on_spnFontSize_valueChanged(int /*arg1*/)
 }
 
 void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont& /*f*/)
+{
+    updatePreviewEditorFont();
+}
+
+void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
+{
+    ui->spnLineHeight->setEnabled(checked);
+    updatePreviewEditorFont();
+}
+
+void frmPreferences::on_spnLineHeight_valueChanged(double arg1)
 {
     updatePreviewEditorFont();
 }
