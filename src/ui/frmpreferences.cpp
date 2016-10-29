@@ -82,15 +82,9 @@ void frmPreferences::updatePreviewEditorFont()
 
     m_previewEditor->setFont(font, size, lineHeight);
 
-    const auto selections = m_previewEditor->selections();
-    if(selections.empty())
-        return;
-
-    const auto sel = selections.first();
-    qDebug() << "ok";
-    //m_previewEditor->setSelection(0,0,0,0);
-    m_previewEditor->setSelection(sel.from.line, sel.from.column, sel.to.line, sel.to.column);
-    qDebug() << "ok";
+    // Re-setting language also updates the position of text selection. If not done, selected text
+    // would often glitch out when changing the font causes the position of text characters to change.
+    m_previewEditor->setLanguage(m_previewEditor->language());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
