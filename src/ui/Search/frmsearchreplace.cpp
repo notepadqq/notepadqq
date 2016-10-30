@@ -446,7 +446,6 @@ void frmSearchReplace::on_actionReplace_toggled(bool on)
 void frmSearchReplace::on_actionFind_toggled(bool /*on*/)
 {
     ui->cmbSearch->setFocus();
-
     manualSizeAdjust();
 }
 
@@ -463,6 +462,7 @@ void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
     ui->lblSpacer1->setVisible(on);
     ui->btnReplaceAllInFiles->setVisible(on);
     ui->chkIncludeSubdirs->setVisible(on);
+    ui->btnCount->setVisible(!on);
     ui->btnFindNext->setVisible(!on);
     ui->btnFindPrev->setVisible(!on);
     ui->btnSelectAll->setVisible(!on);
@@ -653,4 +653,27 @@ void frmSearchReplace::addToFilterHistory(QString string)
     auto history = s.Search.getFilterHistory();
     addToHistory(history, string, ui->cmbFilter);
     s.Search.setFilterHistory(history);
+}
+
+void frmSearchReplace::on_btnCount_clicked()
+{
+    const QString searchString = ui->cmbSearch->currentText();
+    const SearchHelpers::SearchMode searchMode = searchModeFromUI();
+    const SearchHelpers::SearchOptions searchOptions = searchOptionsFromUI();
+    const QString rawSearch = SearchString::toRaw(searchString, searchMode, searchOptions);
+
+    if(searchString.isEmpty())
+        return;
+
+    Editor* editor = currentEditor();
+    QList<QVariant> data = QList<QVariant>();
+    data.append(rawSearch);
+    data.append(regexModifiersFromSearchOptions(searchOptions));
+
+    const auto retVal = editor->sendMessageWithResult("C_FUN_COUNT", QVariant::fromValue(data));
+
+    if(!retVal.isValid())
+        return;
+
+    ui->btnCount->setText(retVal.toString() + tr(" found"));
 }
