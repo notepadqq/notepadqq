@@ -1054,20 +1054,20 @@
         <translation>Włącz inteligentne wcięcie</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="344"/>
-        <location filename="../ui/mainwindow.cpp" line="628"/>
+        <location filename="../ui/mainwindow.cpp" line="345"/>
+        <location filename="../ui/mainwindow.cpp" line="629"/>
         <source>INS</source>
         <translation>WSTAW</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="372"/>
+        <location filename="../ui/mainwindow.cpp" line="373"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
         <translation>Błąd poczas próby zapisu sesji. Upewnij się, że następujący katalog jest dostępny.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="626"/>
+        <location filename="../ui/mainwindow.cpp" line="627"/>
         <source>OVR</source>
         <translation>NADPIS</translation>
     </message>
@@ -1076,150 +1076,150 @@
         <translation type="vanished">nowy %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="750"/>
+        <location filename="../ui/mainwindow.cpp" line="751"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>Twoje zmiany do %1 zostaną odrzucone.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="751"/>
+        <location filename="../ui/mainwindow.cpp" line="752"/>
         <source>Reload</source>
         <translation>Odśwież</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="789"/>
+        <location filename="../ui/mainwindow.cpp" line="790"/>
         <source>Open</source>
         <translation>Otwórz</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="791"/>
+        <location filename="../ui/mainwindow.cpp" line="792"/>
         <source>All files (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="809"/>
+        <location filename="../ui/mainwindow.cpp" line="810"/>
         <source>Open Folder</source>
         <translation>Otwórz katalog</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="849"/>
+        <location filename="../ui/mainwindow.cpp" line="850"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Czy chcesz zapisać zmiany do «%1»? </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="850"/>
+        <location filename="../ui/mainwindow.cpp" line="851"/>
         <source>Don&apos;t Save</source>
         <translation>Nie zapisuj</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="853"/>
+        <location filename="../ui/mainwindow.cpp" line="854"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Czy chcesz zapisać zmiany do «%1» przed zamknięciem?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="857"/>
+        <location filename="../ui/mainwindow.cpp" line="858"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Jeśli nie zapiszesz dokonanych zmian, to utracisz je na zawsze.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="957"/>
+        <location filename="../ui/mainwindow.cpp" line="958"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>Plik na dysku został zmieniony od ostatniego odczytu.
 Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="960"/>
+        <location filename="../ui/mainwindow.cpp" line="961"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>Zapisanie pliku może spowodować utratę danych zewnętrznych.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="979"/>
+        <location filename="../ui/mainwindow.cpp" line="980"/>
         <source>Save as</source>
         <translation>Zapisz jako</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="981"/>
+        <location filename="../ui/mainwindow.cpp" line="982"/>
         <source>Any file (*)</source>
         <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1145"/>
+        <location filename="../ui/mainwindow.cpp" line="1147"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1 znaków, %2 linii</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1156"/>
+        <location filename="../ui/mainwindow.cpp" line="1158"/>
         <source>Ln %1, col %2</source>
         <translation>Linia %1, Kol %2</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1160"/>
+        <location filename="../ui/mainwindow.cpp" line="1162"/>
         <source>Sel %1 (%2)</source>
         <translation>Zazn %1 (%2) </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1224"/>
+        <location filename="../ui/mainwindow.cpp" line="1226"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1227"/>
+        <location filename="../ui/mainwindow.cpp" line="1229"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1230"/>
+        <location filename="../ui/mainwindow.cpp" line="1232"/>
         <source>Old Mac</source>
         <translation>Stary MAC</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1237"/>
+        <location filename="../ui/mainwindow.cpp" line="1239"/>
         <source>%1 w/o BOM</source>
         <translation>%1 bez BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1713"/>
+        <location filename="../ui/mainwindow.cpp" line="1715"/>
         <source>No recent files</source>
         <translation>Brak ostatnio używanych plików</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1877"/>
+        <location filename="../ui/mainwindow.cpp" line="1879"/>
         <source>Convert to:</source>
         <translation>Konwertuj na format:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1891"/>
+        <location filename="../ui/mainwindow.cpp" line="1893"/>
         <source>Reload as:</source>
         <translation>Odśwież jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1933"/>
+        <location filename="../ui/mainwindow.cpp" line="1935"/>
         <source>Interpret as:</source>
         <translation>Interpretuj jako:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2202"/>
+        <location filename="../ui/mainwindow.cpp" line="2204"/>
         <source>Extension</source>
         <translation>Rozszerzenie</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2247"/>
+        <location filename="../ui/mainwindow.cpp" line="2249"/>
         <source>Open Session...</source>
         <translation>Otwórz sesję...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2249"/>
-        <location filename="../ui/mainwindow.cpp" line="2269"/>
+        <location filename="../ui/mainwindow.cpp" line="2251"/>
+        <location filename="../ui/mainwindow.cpp" line="2271"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Plik sesji (*.xml);;Wszystkie pliki (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2267"/>
+        <location filename="../ui/mainwindow.cpp" line="2269"/>
         <source>Save Session as...</source>
         <translation>Zapisz sesję jako...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2293"/>
+        <location filename="../ui/mainwindow.cpp" line="2295"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Błąd podczas próby zapisu sesji. Proszę wybrać inną nazwę pliku.</translation>
     </message>
@@ -1227,12 +1227,12 @@ Czy chcesz go zapisać mimo to?</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="367"/>
+        <location filename="../ui/frmpreferences.cpp" line="381"/>
         <source>Restart required</source>
         <translation>Wymagany restart</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="368"/>
+        <location filename="../ui/frmpreferences.cpp" line="382"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
         <translation>Musisz zrestartować Notepadqq, by były widoczne efekty zmiany lokalizacji.</translation>
     </message>
@@ -1272,7 +1272,7 @@ Czy chcesz go zapisać mimo to?</translation>
         <translation>Nie pokazuj tego ostrzeżenia ponownie </translation>
     </message>
     <message>
-        <location filename="../ui/Sessions/sessions.cpp" line="124"/>
+        <location filename="../ui/Sessions/sessions.cpp" line="126"/>
         <source>Error reading session file</source>
         <translation>Błąd podczas odczytu pliku sesji</translation>
     </message>
@@ -1280,12 +1280,12 @@ Czy chcesz go zapisać mimo to?</translation>
 <context>
     <name>ReplaceInFilesWorker</name>
     <message>
-        <location filename="../ui/Search/replaceinfilesworker.cpp" line="56"/>
+        <location filename="../ui/Search/replaceinfilesworker.cpp" line="40"/>
         <source>Error reading %1</source>
         <translation>Błąd podczas odczytu %1</translation>
     </message>
     <message>
-        <location filename="../ui/Search/replaceinfilesworker.cpp" line="99"/>
+        <location filename="../ui/Search/replaceinfilesworker.cpp" line="84"/>
         <source>Error writing %1</source>
         <translation>Błąd podczas zapisu %1</translation>
     </message>
@@ -1293,7 +1293,7 @@ Czy chcesz go zapisać mimo to?</translation>
 <context>
     <name>SearchInFilesWorker</name>
     <message>
-        <location filename="../ui/Search/searchinfilesworker.cpp" line="68"/>
+        <location filename="../ui/Search/searchinfilesworker.cpp" line="66"/>
         <source>Error reading %1</source>
         <translation>Błąd podczas zapisu %1</translation>
     </message>
@@ -1467,73 +1467,83 @@ Czy chcesz go zapisać mimo to?</translation>
         <translation>Zmień rozmiar czcionki</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="271"/>
+        <location filename="../ui/frmpreferences.ui" line="269"/>
+        <source>Override Line Height</source>
+        <translation>Zmień wysokość wiersza</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="285"/>
+        <source>em</source>
+        <translation>em</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="306"/>
         <source>Preview</source>
         <translation>Podgląd</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="354"/>
+        <location filename="../ui/frmpreferences.ui" line="389"/>
         <source>Tab size:</source>
         <translation>Wielkość tabulatora:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="367"/>
+        <location filename="../ui/frmpreferences.ui" line="402"/>
         <source>Use spaces instead of tabs</source>
         <translation>Używaj spacji zamiast tabulatorów</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="391"/>
+        <location filename="../ui/frmpreferences.ui" line="426"/>
         <source>Use default settings</source>
         <translation>Używaj domyślnych ustawień</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="427"/>
+        <location filename="../ui/frmpreferences.ui" line="462"/>
         <source>Search as I type</source>
         <translation>Wyszukuj, gdy piszę</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="482"/>
+        <location filename="../ui/frmpreferences.ui" line="517"/>
         <source>Node.js runtime</source>
         <translation>Środowisko uruchomieniowe Node.js</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="488"/>
+        <location filename="../ui/frmpreferences.ui" line="523"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
         <translation>Wspierane wersje Node: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="495"/>
+        <location filename="../ui/frmpreferences.ui" line="530"/>
         <source>Node.js path:</source>
         <translation>Ścieżka do Node.js:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="507"/>
-        <location filename="../ui/frmpreferences.ui" line="528"/>
+        <location filename="../ui/frmpreferences.ui" line="542"/>
+        <location filename="../ui/frmpreferences.ui" line="563"/>
         <source>Browse...</source>
         <translation>Przeglądaj...</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="516"/>
+        <location filename="../ui/frmpreferences.ui" line="551"/>
         <source>NPM path:</source>
         <translation>Ścieżka do NPM:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="537"/>
+        <location filename="../ui/frmpreferences.ui" line="572"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>UWAGA: wsparcie dla rozszerzeń jest EKSPERYMENTALNE.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="104"/>
+        <location filename="../ui/frmpreferences.cpp" line="109"/>
         <source>Keyboard shortcut conflict</source>
         <translation>Konflikt skrótu klawiaturowego</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="105"/>
+        <location filename="../ui/frmpreferences.cpp" line="110"/>
         <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
         <translation>Ten sam skrót klawiaturowy jest przypisany do dwóch lub więcej akcji. Te konflikty muszą być rozwiązane przed zapisaniem zmian.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="374"/>
+        <location filename="../ui/frmpreferences.cpp" line="388"/>
         <source>Browse</source>
         <translation>Przeglądaj</translation>
     </message>
@@ -1557,7 +1567,7 @@ Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="76"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="699"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="566"/>
         <source>Look in</source>
         <translation>Szukaj w</translation>
     </message>
@@ -1618,7 +1628,7 @@ Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="300"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="559"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="426"/>
         <source>Select all</source>
         <translation>Zaznacz wszystko</translation>
     </message>
@@ -1635,7 +1645,7 @@ Czy chcesz go zapisać mimo to?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="330"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="383"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="547"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="414"/>
         <source>Replace all</source>
         <translation>Zamień wszystko</translation>
     </message>
@@ -1671,63 +1681,68 @@ Czy chcesz go zapisać mimo to?</translation>
         <translation>Znajdź w plikach</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="227"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="312"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="300"/>
         <source>Searching...</source>
         <translation>Wyszukiwanie...</translation>
     </message>
     <message>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="208"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="238"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="324"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="372"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="437"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="296"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="408"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="412"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="226"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="230"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="279"/>
         <source>Replace in files</source>
         <translation>Zamień w plikach</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="297"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="280"/>
         <source>Are you sure you want to replace all occurrences in %1 for file types %2?</source>
         <translation>Czy jesteś pewny(a), że chcesz zamienić wszystkie wystąpienia w %1 dla typów plików %2? </translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="333"/>
         <source>Searching in %1</source>
-        <translation>Wyszukiwanie w %1</translation>
+        <translation type="vanished">Wyszukiwanie w %1</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="362"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="260"/>
         <source>Replacing...</source>
         <translation>Zamienianie...</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="383"/>
         <source>Replacing in %1</source>
-        <translation>Zamienianie w %1</translation>
+        <translation type="vanished">Zamienianie w %1</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="409"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="227"/>
         <source>%1 occurrences replaced in %2 files.</source>
         <translation>%1 wystąpień zamienionych w %2 plikach.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="413"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="231"/>
         <source>%1 occurrences replaced in %2 files, but the replacement has been canceled before it could finish.</source>
         <translation>%1 wystąpień zamienionych w %2 plikach, ale zamiana została anulowana przed jej ukończeniem.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="547"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="247"/>
+        <source>Replacing in </source>
+        <translation>Zamienianie w</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="249"/>
+        <source>Searching in </source>
+        <translation>Wyszukiwanie w</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="414"/>
         <source>%1 occurrences have been replaced.</source>
         <translation>%1 wystąpień zostało zamienionych.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="559"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="426"/>
         <source>No results found</source>
         <translation>Brak wyników</translation>
     </message>
