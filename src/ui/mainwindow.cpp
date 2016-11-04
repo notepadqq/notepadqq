@@ -1111,7 +1111,8 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setWhitespaceVisible(ui->actionShow_Spaces->isChecked());
     editor->setOverwrite(m_overwrite);
     editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
-                    m_settings.Appearance.getOverrideFontSize());
+                    m_settings.Appearance.getOverrideFontSize(),
+                    m_settings.Appearance.getOverrideLineHeight());
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 

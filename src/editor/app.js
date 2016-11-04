@@ -400,15 +400,16 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
 UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn) {
     var fontSize = (data.size != "" && data.size > 0) ? ("font-size:" + (+data.size) + "px;") : "";
     var fontFamily = data.family ? ("font-family:'" + ('' + data.family).replace("'", "\\'") + "';") : "";
-
+    var lineHeight = (data.lineHeight != "" && data.lineHeight > 0) ? ("line-height:" + (+data.lineHeight) + "em;") : "";
+    
     var styleTag = document.getElementById('userFont');
 
     if (styleTag) {
-        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + " }";
+        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + lineHeight + " }";
     } else {
         styleTag = document.createElement("style");
         styleTag.id = 'userFont';
-        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + " }";
+        styleTag.innerHTML = "div.editor > .CodeMirror { " + fontFamily + fontSize + lineHeight + " }";
         document.getElementsByTagName("head")[0].appendChild(styleTag);
     }
 });

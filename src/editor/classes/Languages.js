@@ -513,6 +513,13 @@ var Languages = new function() {
             fileNames: ["Makefile", "Makefile.in", "GNUmakefile", "rules"]
         },
 
+        "mariadb": {
+            name: "MariaDB",
+            mode: "sql",
+            mime: "text/x-mariadb",
+            fileExtensions: []
+        },
+        
         "markdown": {
             name: "Markdown",
             mode: "markdown",
@@ -520,6 +527,14 @@ var Languages = new function() {
             fileExtensions: ["md", "mkdn", "mdown", "markdn", "markdown"]
         },
 
+        
+        "mathematica": {
+            name: "Mathematica",
+            mode: "mathematica",
+            mime: "text/x-mathematica",
+            fileExtensions: ["m", "nb"]
+        },
+        
         "mbox": {
             name: "mbox",
             mode: "mbox",
@@ -527,6 +542,13 @@ var Languages = new function() {
             fileExtensions: ["mbox"]
         },
 
+        "mscgen": {
+            name: "mscgen",
+            mode: "mscgen",
+            mime: "text/x-mscgen",
+            fileExtensions: ["mscgen", "mscin", "msc"]
+        },
+        
         "mirc": {
             name: "mIRC",
             mode: "mirc",
@@ -540,7 +562,14 @@ var Languages = new function() {
             mime: "text/x-modelica",
             fileExtensions: ["mo"]
         },
-
+                
+        "msgenny": {
+            name: "msgenny",
+            mode: "mscgen",
+            mime: "text/x-msgenny",
+            fileExtensions: ["msgenny"]
+        },
+        
         "mumps": {
             name: "MUMPS",
             mode: "mumps",
@@ -824,20 +853,6 @@ var Languages = new function() {
             fileExtensions: ["sql", "myd"]
         },
 
-        "mariadb": {
-            name: "MariaDB",
-            mode: "sql",
-            mime: "text/x-mariadb",
-            fileExtensions: []
-        },
-
-        "mathematica": {
-            name: "Mathematica",
-            mode: "mathematica",
-            mime: "text/x-mathematica",
-            fileExtensions: ["m", "nb"]
-        },
-
         "squirrel": {
             name: "Squirrel",
             mode: "clike",
@@ -1015,34 +1030,19 @@ var Languages = new function() {
             fileExtensions: ["yaml", "yml"]
         },
 
+        "xu": {
+            name: "xu",
+            mode: "xu",
+            mime: "text/x-xu",
+            fileExtensions: ["xu"]
+        },
+		
         "z80": {
             name: "Z80",
             mode: "z80",
             mime: "text/x-z80",
-            fileExtensions: ["z80"]
+            fileExtensions: ["z80", "asm"]
         },
-
-        "yacas": {
-            name: "mscgen",
-            mode: "mscgen",
-            mime: "text/x-mscgen",
-            fileExtensions: ["mscgen", "mscin", "msc"]
-        },
-
-        "yaml": {
-            name: "xu",
-            mode: "mscgen",
-            mime: "text/x-xu",
-            fileExtensions: ["xu"]
-        },
-
-        "z80": {
-            name: "msgenny",
-            mode: "mscgen",
-            mime: "text/x-msgenny",
-            fileExtensions: ["msgenny"]
-        },
-
     }
 
     this.languageByFileName = function(editor, filename) {
