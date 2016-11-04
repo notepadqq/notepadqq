@@ -91,9 +91,10 @@ int main(int argc, char *argv[])
                 win->openCommandLineProvidedUrls(workingDirectory, arguments);
 
                 // Activate the window
+                win->hide();
+                win->show();
                 win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
                 win->raise();
-                win->show();
                 win->activateWindow();
             }
         }
