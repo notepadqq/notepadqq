@@ -1951,7 +1951,7 @@ void MainWindow::generateRunMenu()
     ui->menuRun->clear();
     
     QAction *a = ui->menuRun->addAction(tr("Run..."));
-    connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
+    connect(a, &QAction::triggered, this, &MainWindow::runCommand);
     ui->menuRun->addSeparator();
 
     while (i.hasNext()) {
@@ -1959,11 +1959,11 @@ void MainWindow::generateRunMenu()
         a = ui->menuRun->addAction(i.key());
         a->setData(i.value());
         a->setObjectName("RunCmd"+a->text());
-        connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
+        connect(a, &QAction::triggered, this, &MainWindow::runCommand);
     }
     ui->menuRun->addSeparator();
     a = ui->menuRun->addAction(tr("Modify Run Commands"));
-    connect(a, SIGNAL(triggered()), this, SLOT(modifyRunCommands()));
+    connect(a, &QAction::triggered, this, &MainWindow::modifyRunCommands);
 }
 
 void MainWindow::modifyRunCommands()
@@ -1995,6 +1995,7 @@ void MainWindow::runCommand()
 
         cmd = rd.getCommandInput();
     }
+
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
@@ -2008,9 +2009,11 @@ void MainWindow::runCommand()
         cmd.replace("\%selection\%",selection.first());
     }
     QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
-    cmd = args.takeFirst();
-    if(!QProcess::startDetached(cmd, args)) {
+    if (!args.isEmpty()) {
+        cmd = args.takeFirst();
+        if(!QProcess::startDetached(cmd, args)) {
         
+        }
     }
 }
 

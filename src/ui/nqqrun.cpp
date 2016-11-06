@@ -18,41 +18,37 @@ using namespace NqqRun;
 RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     QDialog(parent, f),
     m_settings(NqqSettings::getInstance())
-{
-    QVBoxLayout* v1 = new QVBoxLayout;
-    QHBoxLayout* h1 = new QHBoxLayout;
-    QHBoxLayout* h2 = new QHBoxLayout;
-    QHBoxLayout* h3 = new QHBoxLayout;
-    m_commands = new QTableWidget(1, 2);
-    RunDelegate* delegate = new RunDelegate(this);
+{ 
+    QVBoxLayout *v1 = new QVBoxLayout;
+    QHBoxLayout *h1 = new QHBoxLayout;
+    QHBoxLayout *h2 = new QHBoxLayout;
+    QHBoxLayout *h3 = new QHBoxLayout;
+    QPushButton *btnOk   = new QPushButton(tr("OK"));
+    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
+    RunDelegate *delegate = new RunDelegate(this);
+    QShortcut *keyDelete = new QShortcut(QKeySequence("Delete"), this);
 
-    QStringList headers = (QStringList() << tr("Text") << tr("Command"));
-
-    QHeaderView* vh = m_commands->verticalHeader();
-    vh->sectionResizeMode(QHeaderView::QHeaderView::Fixed);
-    vh->setDefaultSectionSize(20);
-
-    QHeaderView* hh = m_commands->horizontalHeader();
-    hh->setStretchLastSection(true);
-
-    setMinimumSize(500, 200);
-
-    QLabel* info = new QLabel(tr("\
+    QLabel *info = new QLabel(tr("\
     <h3>Special placeholders</h3><ul>\
     <li><em>\%fullpath\%</em> - Full path of the currently active file.</li>\
     <li><em>\%directory\%</em> - Directory of the currently active file.</li>\
     <li><em>\%filename\%</em> - Name of the currently active file.</li>\
     <li><em>\%selection\%</em> - Currently selected text.</li>\
     </ul>"));
-    info->setTextFormat(Qt::RichText);
+
+    m_commands = new QTableWidget(1, 2);
+
+    QHeaderView *vh = m_commands->verticalHeader();
+    QHeaderView *hh = m_commands->horizontalHeader();
+    vh->sectionResizeMode(QHeaderView::QHeaderView::Fixed);
+    vh->setDefaultSectionSize(20);
+    hh->setStretchLastSection(true);
+
 
     v1->addWidget(info);
     v1->addWidget(m_commands);
     v1->addItem(h3);
     
-    QPushButton* btnOk   = new QPushButton(tr("OK"));
-    QPushButton* btnCancel = new QPushButton(tr("Cancel"));
-    QShortcut* keyDelete = new QShortcut(QKeySequence("Delete"), this);
     h2->addWidget(btnOk);
     h2->addWidget(btnCancel);
     h2->setAlignment(Qt::AlignRight);
@@ -60,35 +56,36 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     h3->addItem(h2);
 
     setLayout(v1);
-
-    connect(keyDelete, SIGNAL(activated()), this, SLOT(slotRemove()));
-    connect(btnOk, SIGNAL(clicked()), this, SLOT(slotOk()));
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(delegate, SIGNAL(needsRemoval()), this, SLOT(slotRemove()));
-    connect(m_commands, SIGNAL(cellChanged(int, int)), this, SLOT(slotInitCell(int, int)));
-
-
+    setMinimumSize(500, 200);
+    
     QMap <QString, QString> cmdData = m_settings.Run.getCommands();
-    QSortFilterProxyModel* pModel = new QSortFilterProxyModel(this);
+    QSortFilterProxyModel *pModel = new QSortFilterProxyModel(this);
     pModel->setSourceModel(m_commands->model());
+
     m_commands->setAlternatingRowColors(true);
     m_commands->setSortingEnabled(false);
-    m_commands->setHorizontalHeaderLabels(headers);
+    m_commands->setHorizontalHeaderLabels((QStringList() << tr("Text") << tr("Command")));
     m_commands->setSelectionMode(QAbstractItemView::SingleSelection);
     m_commands->setItemDelegate(delegate);
     m_commands->setRowCount(cmdData.size() + 1);
-    vh->setSectionsMovable(true);
+
     int workRow = 0;
     QMapIterator<QString, QString> it(cmdData);
     while(it.hasNext())
     {
         it.next();
-        QTableWidgetItem* item = new QTableWidgetItem(it.key());
+        QTableWidgetItem *item = new QTableWidgetItem(it.key());
         m_commands->setItem(workRow, 0, item);
         item = new QTableWidgetItem(it.value());
         m_commands->setItem(workRow, 1, item);
         workRow++;
     }
+
+    connect(keyDelete, &QShortcut::activated, this, &RunPreferences::slotRemove);
+    connect(btnOk, &QPushButton::clicked, this, &RunPreferences::slotOk);
+    connect(btnCancel, &QPushButton::clicked, this, &RunPreferences::reject);
+    connect(delegate, &RunDelegate::needsRemoval, this, &RunPreferences::slotRemove);
+    connect(m_commands, &QTableWidget::cellChanged, this, &RunPreferences::slotInitCell);
 }
 
 RunPreferences::~RunPreferences()
@@ -115,8 +112,8 @@ void RunPreferences::slotOk()
 
 void RunPreferences::slotInitCell(int row, int)
 {
-    QTableWidgetItem* iText = m_commands->item(row, 0);
-    QTableWidgetItem* iCmd = m_commands->item(row, 1);
+    QTableWidgetItem *iText = m_commands->item(row, 0);
+    QTableWidgetItem *iCmd = m_commands->item(row, 1);
     if (!iText || !iCmd) {
         return;
     }
@@ -169,8 +166,8 @@ RunDelegate::RunDelegate(QObject *parent)
 }
 
 void RunDelegate::paint(QPainter *painter, 
-        const QStyleOptionViewItem& option,
-        const QModelIndex& index) const
+        const QStyleOptionViewItem &option,
+        const QModelIndex &index) const
 {   
         
     if (index.column() == 1) {
@@ -258,20 +255,14 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     QDialog(parent, f),
     m_settings(NqqSettings::getInstance()),
     m_saved(false)
-{
-    setMinimumSize(300, 100);
-
+{    
     QVBoxLayout* v1 = new QVBoxLayout;
     QHBoxLayout* h1 = new QHBoxLayout;
     QHBoxLayout* h2 = new QHBoxLayout;
     QHBoxLayout* h3 = new QHBoxLayout;
-
-    m_command = new QLineEdit(this);
-
-    m_status = new QLabel;
-    QPalette palette = m_status->palette();
-    palette.setColor(m_status->foregroundRole(), Qt::darkGreen);
-    m_status->setPalette(palette);
+    QPushButton *btnOK = new QPushButton(tr("OK"));
+    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
+    QPushButton *btnSave = new QPushButton(tr("Save..."));
 
     QLabel* info = new QLabel(tr("\
     <h3>Special placeholders</h3><ul>\
@@ -280,13 +271,17 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     <li><em>\%filename\%</em> - Name of the currently active file.</li>\
     <li><em>\%selection\%</em> - Currently selected text.</li>\
     </ul>"));
+
+    m_command = new QLineEdit(this);
+    m_status = new QLabel;
+
+    QPalette palette = m_status->palette();
+    palette.setColor(m_status->foregroundRole(), Qt::darkGreen);
+    m_status->setPalette(palette);
+
     v1->addWidget(info);
     v1->addWidget(m_command);
     v1->addLayout(h3);
-
-    QPushButton *btnOK = new QPushButton(tr("OK"));
-    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
-    QPushButton *btnSave = new QPushButton(tr("Save..."));
 
     h1->addWidget(btnSave);
     h1->addWidget(m_status);
@@ -298,11 +293,12 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     h3->addLayout(h2);
 
     setLayout(v1);
+    setMinimumSize(300, 100);
 
-    connect(btnOK, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(btnSave, SIGNAL(clicked()), this, SLOT(slotSave()));
-    connect(m_command, SIGNAL(returnPressed()), this, SLOT(accept()));
+    connect(btnOK, &QPushButton::clicked, this, &RunDialog::accept);
+    connect(btnCancel, &QPushButton::clicked, this, &RunDialog::reject);
+    connect(btnSave, &QPushButton::clicked, this, &RunDialog::slotSave);
+    connect(m_command, &QLineEdit::returnPressed, this, &RunDialog::accept);
 }
 
 RunDialog::~RunDialog()
@@ -332,7 +328,7 @@ void RunDialog::slotSave()
         a->setEndValue(0);
         a->setEasingCurve(QEasingCurve::Linear);
         a->start(QPropertyAnimation::DeleteWhenStopped);
-        connect(a, SIGNAL(finished()), this, SLOT(slotHideStatus()));
+        connect(a, &QPropertyAnimation::finished, this, &RunDialog::slotHideStatus);
     }
 }
 

@@ -15,7 +15,7 @@ class RunPreferences : public QDialog
     Q_OBJECT
 
 private:
-    NqqSettings& m_settings;
+    NqqSettings &m_settings;
     QTableWidget *m_commands;
 public:
     RunPreferences(QWidget *parent = 0, Qt::WindowFlags f = 0);
