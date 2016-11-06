@@ -103,7 +103,7 @@ void RunPreferences::slotOk()
         }
         const QString &cmdName = m_commands->item(i, 0)->text();
         const QString &cmdData = m_commands->item(i, 1)->text();
-        if(cmdName.size() && cmdData.size()) {
+        if (cmdName.size() && cmdData.size()) {
             m_settings.Run.setCommand(cmdName, cmdData);
         }
     }
@@ -128,8 +128,8 @@ void RunPreferences::slotInitCell(int row, int)
         // Check to see if we can remove the last row safely.
         if (!iText->text().length() || !iCmd->text().length()) {
             int rmLast = 0;
-            QTableWidgetItem* iLastText = m_commands->item(row + 1, 0);
-            QTableWidgetItem* iLastCmd = m_commands->item(row + 1, 1);
+            QTableWidgetItem *iLastText = m_commands->item(row + 1, 0);
+            QTableWidgetItem *iLastCmd = m_commands->item(row + 1, 1);
             if (!iLastText || !iLastText->text().length()) {
                 rmLast++;
             }
@@ -256,15 +256,15 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     m_settings(NqqSettings::getInstance()),
     m_saved(false)
 {    
-    QVBoxLayout* v1 = new QVBoxLayout;
-    QHBoxLayout* h1 = new QHBoxLayout;
-    QHBoxLayout* h2 = new QHBoxLayout;
-    QHBoxLayout* h3 = new QHBoxLayout;
+    QVBoxLayout *v1 = new QVBoxLayout;
+    QHBoxLayout *h1 = new QHBoxLayout;
+    QHBoxLayout *h2 = new QHBoxLayout;
+    QHBoxLayout *h3 = new QHBoxLayout;
     QPushButton *btnOK = new QPushButton(tr("OK"));
     QPushButton *btnCancel = new QPushButton(tr("Cancel"));
     QPushButton *btnSave = new QPushButton(tr("Save..."));
 
-    QLabel* info = new QLabel(tr("\
+    QLabel *info = new QLabel(tr("\
     <h3>Special placeholders</h3><ul>\
     <li><em>\%fullpath\%</em> - Full path of the currently active file.</li>\
     <li><em>\%directory\%</em> - Directory of the currently active file.</li>\
