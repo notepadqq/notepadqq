@@ -1,9 +1,11 @@
 #include <QApplication>
+#include <QEasingCurve>
 #include <QFileDialog>
 #include <QHeaderView>
 #include <QInputDialog>
-#include <QLabel>
+#include <QGraphicsOpacityEffect>
 #include <QPainter>
+#include <QPropertyAnimation>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSortFilterProxyModel>
@@ -75,7 +77,7 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     m_commands->setSelectionMode(QAbstractItemView::SingleSelection);
     m_commands->setItemDelegate(delegate);
     m_commands->setRowCount(cmdData.size() + 1);
-
+    vh->setSectionsMovable(true);
     int workRow = 0;
     QMapIterator<QString, QString> it(cmdData);
     while(it.hasNext())
@@ -266,6 +268,19 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
 
     m_command = new QLineEdit(this);
 
+    m_status = new QLabel;
+    QPalette palette = m_status->palette();
+    palette.setColor(m_status->foregroundRole(), Qt::darkGreen);
+    m_status->setPalette(palette);
+
+    QLabel* info = new QLabel(tr("\
+    <h3>Special placeholders</h3><ul>\
+    <li><em>\%fullpath\%</em> - Full path of the currently active file.</li>\
+    <li><em>\%directory\%</em> - Directory of the currently active file.</li>\
+    <li><em>\%filename\%</em> - Name of the currently active file.</li>\
+    <li><em>\%selection\%</em> - Currently selected text.</li>\
+    </ul>"));
+    v1->addWidget(info);
     v1->addWidget(m_command);
     v1->addLayout(h3);
 
@@ -274,6 +289,7 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     QPushButton *btnSave = new QPushButton(tr("Save..."));
 
     h1->addWidget(btnSave);
+    h1->addWidget(m_status);
     h1->setAlignment(Qt::AlignLeft);
     h2->addWidget(btnCancel);
     h2->addWidget(btnOK);
@@ -304,7 +320,25 @@ void RunDialog::slotSave()
             &ok);
     if (ok && !name.isEmpty() && !m_command->text().isEmpty()) {
         m_settings.Run.setCommand(name, m_command->text());
+        m_saved = 1;
+
+        //Graphical fade for save state
+        m_status->setText(tr("Command saved..."));
+        QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(m_status);
+        m_status->setGraphicsEffect(eff);
+        QPropertyAnimation *a = new QPropertyAnimation(eff, "opacity");
+        a->setDuration(10000);
+        a->setStartValue(5);
+        a->setEndValue(0);
+        a->setEasingCurve(QEasingCurve::Linear);
+        a->start(QPropertyAnimation::DeleteWhenStopped);
+        connect(a, SIGNAL(finished()), this, SLOT(slotHideStatus()));
     }
+}
+
+void RunDialog::slotHideStatus()
+{
+    m_status->setText("");
 }
 
 bool RunDialog::saved()

@@ -1,6 +1,7 @@
 #ifndef _NQQRUN_H_
 #define _NQQRUN_H_
 #include <QDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPaintEvent>
@@ -48,7 +49,8 @@ class RunDialog : public QDialog
     Q_OBJECT
 private:
     NqqSettings &m_settings;
-    QLineEdit* m_command;
+    QLabel *m_status;
+    QLineEdit *m_command;
     bool m_saved;
 
 public:
@@ -60,6 +62,7 @@ public:
 
 private slots:
     void slotSave();
+    void slotHideStatus();
 };
 
 };

@@ -1949,7 +1949,7 @@ void MainWindow::generateRunMenu()
     QMap <QString, QString> runners = m_settings.Run.getCommands();
     QMapIterator<QString, QString> i(runners);
     ui->menuRun->clear();
-
+    
     QAction *a = ui->menuRun->addAction(tr("Run..."));
     connect(a, SIGNAL(triggered()), this, SLOT(runCommand()));
     ui->menuRun->addSeparator();
@@ -1964,7 +1964,6 @@ void MainWindow::generateRunMenu()
     ui->menuRun->addSeparator();
     a = ui->menuRun->addAction(tr("Modify Run Commands"));
     connect(a, SIGNAL(triggered()), this, SLOT(modifyRunCommands()));
-
 }
 
 void MainWindow::modifyRunCommands()
@@ -1985,7 +1984,7 @@ void MainWindow::runCommand()
     } else {
         NqqRun::RunDialog rd;
         int ok = rd.exec();
-
+        
         if (rd.saved()) {
             generateRunMenu();
         }
