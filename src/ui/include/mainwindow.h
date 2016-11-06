@@ -62,7 +62,7 @@ public:
     QList<const QMenu*> getMenus() const ;
 
     DocEngine*  getDocEngine() const;
-
+    void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
 
@@ -74,6 +74,8 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void runCommand();
+    void modifyRunCommands();
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -147,12 +149,6 @@ private slots:
     void on_actionInterpret_as_triggered();
     void on_actionPrint_triggered();
     void on_actionPrint_Now_triggered();
-    void on_actionLaunch_in_Firefox_triggered();
-    void on_actionLaunch_in_Chromium_triggered();
-    void on_actionLaunch_in_Chrome_triggered();
-    void on_actionGet_php_help_triggered();
-    void on_actionGoogle_Search_triggered();
-    void on_actionWikipedia_Search_triggered();
     void on_actionOpen_a_New_Window_triggered();
     void on_actionOpen_in_New_Window_triggered();
     void on_actionMove_to_New_Window_triggered();

@@ -18,7 +18,10 @@
 #include "include/Extensions/installextension.h"
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
+#include "include/nqqrun.h"
 #include <QFileDialog>
+#include <QLineEdit>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QClipboard>
 #include <QUrl>
@@ -160,6 +163,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     setupLanguagesMenu();
+    generateRunMenu();
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
@@ -1941,6 +1945,79 @@ void MainWindow::on_actionInterpret_as_triggered()
     dialog->deleteLater();
 }
 
+void MainWindow::generateRunMenu()
+{
+    QMap <QString, QString> runners = m_settings.Run.getCommands();
+    QMapIterator<QString, QString> i(runners);
+    ui->menuRun->clear();
+    
+    QAction *a = ui->menuRun->addAction(tr("Run..."));
+    connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+    ui->menuRun->addSeparator();
+
+    while (i.hasNext()) {
+        i.next();
+        a = ui->menuRun->addAction(i.key());
+        a->setData(i.value());
+        a->setObjectName("RunCmd"+a->text());
+        connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+    }
+    ui->menuRun->addSeparator();
+    a = ui->menuRun->addAction(tr("Modify Run Commands"));
+    connect(a, &QAction::triggered, this, &MainWindow::modifyRunCommands);
+}
+
+void MainWindow::modifyRunCommands()
+{
+    NqqRun::RunPreferences p;
+    if(p.exec() == 1) {
+        generateRunMenu();
+    }
+}
+
+void MainWindow::runCommand()
+{
+    QAction *a = qobject_cast<QAction*>(sender());
+    QString cmd;
+
+    if (a->data().toString().size()) {
+        cmd = a->data().toString();
+    } else {
+        NqqRun::RunDialog rd;
+        int ok = rd.exec();
+        
+        if (rd.saved()) {
+            generateRunMenu();
+        }
+
+        if (!ok) {
+            return;
+        }
+
+        cmd = rd.getCommandInput();
+    }
+
+    Editor *editor = currentEditor();
+
+    QUrl url = currentEditor()->fileName();
+    QStringList selection = editor->selectedTexts();
+    if (!url.isEmpty()) {
+        cmd.replace("\%fullpath\%", url.toString(QUrl::None));
+        cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
+        cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+    }
+    if(!selection.first().isEmpty()) {
+        cmd.replace("\%selection\%",selection.first());
+    }
+    QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
+    if (!args.isEmpty()) {
+        cmd = args.takeFirst();
+        if(!QProcess::startDetached(cmd, args)) {
+        
+        }
+    }
+}
+
 void MainWindow::on_actionPrint_triggered()
 {
     QPrinter printer(QPrinter::HighResolution);
@@ -1954,27 +2031,7 @@ void MainWindow::on_actionPrint_Now_triggered()
     QPrinter printer(QPrinter::HighResolution);
     currentEditor()->print(&printer);
 }
-
-void MainWindow::on_actionLaunch_in_Firefox_triggered()
-{
-    QUrl fileName = currentEditor()->fileName();
-    if (!fileName.isEmpty()) {
-        QStringList args;
-        args << fileName.toString(QUrl::None);
-        QProcess::startDetached("firefox", args);
-    }
-}
-
-void MainWindow::on_actionLaunch_in_Chromium_triggered()
-{
-    QUrl fileName = currentEditor()->fileName();
-    if (!fileName.isEmpty()) {
-        QStringList args;
-        args << fileName.toString(QUrl::None);
-        QProcess::startDetached("chromium-browser", args);
-    }
-}
-
+/*
 void MainWindow::on_actionLaunch_in_Chrome_triggered()
 {
     QUrl fileName = currentEditor()->fileName();
@@ -1984,7 +2041,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
         QProcess::startDetached("google-chrome", args);
     }
 }
-
+*/
 QStringList MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
@@ -2015,21 +2072,6 @@ void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
         QUrl phpHelp = QUrl(searchUrl.arg(QString(QUrl::toPercentEncoding(term))));
         QDesktopServices::openUrl(phpHelp);
     }
-}
-
-void MainWindow::on_actionGet_php_help_triggered()
-{
-    currentWordOnlineSearch("https://php.net/%1");
-}
-
-void MainWindow::on_actionGoogle_Search_triggered()
-{
-    currentWordOnlineSearch("https://www.google.com/?#q=%1");
-}
-
-void MainWindow::on_actionWikipedia_Search_triggered()
-{
-    currentWordOnlineSearch("https://en.wikipedia.org/?search=%1");
 }
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
