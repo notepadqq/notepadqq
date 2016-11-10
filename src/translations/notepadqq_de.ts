@@ -85,18 +85,23 @@
 <context>
     <name>DocEngine</name>
     <message>
-        <location filename="../ui/docengine.cpp" line="176"/>
+        <location filename="../ui/docengine.cpp" line="33"/>
+        <source>new %1</source>
+        <translation type="unfinished">neu %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/docengine.cpp" line="182"/>
         <source>Error trying to open &quot;%1&quot;</source>
         <translation>Fehler beim Versuch &quot;%1&quot; zu öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="251"/>
-        <location filename="../ui/docengine.cpp" line="446"/>
+        <location filename="../ui/docengine.cpp" line="257"/>
+        <location filename="../ui/docengine.cpp" line="452"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
         <translation>Protokoll wird durch die Datei &quot;%1&quot; nicht unterstützt.</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="406"/>
+        <location filename="../ui/docengine.cpp" line="412"/>
         <source>Error trying to write to &quot;%1&quot;</source>
         <translation>Fehler beim Versuch in die Datei &quot;%1&quot; zu schreiben</translation>
     </message>
@@ -321,742 +326,742 @@
         <translation>Starte</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="266"/>
+        <location filename="../ui/mainwindow.ui" line="256"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenster</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="272"/>
+        <location filename="../ui/mainwindow.ui" line="262"/>
         <source>Extensions</source>
         <translation>Erweiterungen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="291"/>
+        <location filename="../ui/mainwindow.ui" line="281"/>
         <source>Toolbar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="335"/>
+        <location filename="../ui/mainwindow.ui" line="325"/>
         <source>Find result</source>
         <translation>Finde Ergebnis</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="359"/>
+        <location filename="../ui/mainwindow.ui" line="349"/>
         <source>&amp;Open...</source>
         <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="362"/>
+        <location filename="../ui/mainwindow.ui" line="352"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="367"/>
+        <location filename="../ui/mainwindow.ui" line="357"/>
         <source>&amp;New</source>
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="370"/>
+        <location filename="../ui/mainwindow.ui" line="360"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="375"/>
+        <location filename="../ui/mainwindow.ui" line="365"/>
         <source>Reload from Disk</source>
         <translation>Erneut laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="380"/>
+        <location filename="../ui/mainwindow.ui" line="370"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="383"/>
+        <location filename="../ui/mainwindow.ui" line="373"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="388"/>
+        <location filename="../ui/mainwindow.ui" line="378"/>
         <source>Save &amp;As...</source>
         <translation>Speichern &amp;unter...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="391"/>
+        <location filename="../ui/mainwindow.ui" line="381"/>
         <source>Save As...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="394"/>
+        <location filename="../ui/mainwindow.ui" line="384"/>
         <source>Ctrl+Alt+S</source>
         <translation>Ctrl+Alt+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="399"/>
+        <location filename="../ui/mainwindow.ui" line="389"/>
         <source>Save a Copy As...</source>
         <translation>Kopie speichern als...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="404"/>
+        <location filename="../ui/mainwindow.ui" line="394"/>
         <source>Sav&amp;e All</source>
         <translation>&amp;Alles speichern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="407"/>
+        <location filename="../ui/mainwindow.ui" line="397"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="412"/>
+        <location filename="../ui/mainwindow.ui" line="402"/>
         <source>Rename...</source>
         <translation>Umbenennen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="417"/>
+        <location filename="../ui/mainwindow.ui" line="407"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="420"/>
+        <location filename="../ui/mainwindow.ui" line="410"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="425"/>
+        <location filename="../ui/mainwindow.ui" line="415"/>
         <source>C&amp;lose All</source>
         <translation>A&amp;lles schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="430"/>
+        <location filename="../ui/mainwindow.ui" line="420"/>
         <source>Close All BUT Current Document</source>
         <translation>Alles außer aktuellem Dokument schließen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="435"/>
+        <location filename="../ui/mainwindow.ui" line="425"/>
         <source>Load Session...</source>
         <translation>Sitzung laden...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="440"/>
+        <location filename="../ui/mainwindow.ui" line="430"/>
         <source>Save Session...</source>
         <translation>Sitzung speichern...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="445"/>
+        <location filename="../ui/mainwindow.ui" line="435"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="448"/>
+        <location filename="../ui/mainwindow.ui" line="438"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="456"/>
+        <location filename="../ui/mainwindow.ui" line="446"/>
         <source>Print Now</source>
         <translation>Jetzt drucken</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="464"/>
+        <location filename="../ui/mainwindow.ui" line="454"/>
         <source>Open All Recent Files</source>
         <translation>Lade alle zuletzt geöffneten Dokumente</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="469"/>
+        <location filename="../ui/mainwindow.ui" line="459"/>
         <source>Empty Recent Files List</source>
         <translation>Leere Liste zuletzt geöffneter Dokumente</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="474"/>
+        <location filename="../ui/mainwindow.ui" line="464"/>
         <source>E&amp;xit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="477"/>
+        <location filename="../ui/mainwindow.ui" line="467"/>
         <source>Alt+F4</source>
         <translation>Alt+F4</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="482"/>
+        <location filename="../ui/mainwindow.ui" line="472"/>
         <source>&amp;Undo</source>
         <translation>&amp;Rückgängig</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="485"/>
+        <location filename="../ui/mainwindow.ui" line="475"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="490"/>
+        <location filename="../ui/mainwindow.ui" line="480"/>
         <source>&amp;Redo</source>
         <translation>&amp;Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="493"/>
+        <location filename="../ui/mainwindow.ui" line="483"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="498"/>
+        <location filename="../ui/mainwindow.ui" line="488"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Ausschneiden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="501"/>
+        <location filename="../ui/mainwindow.ui" line="491"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="506"/>
+        <location filename="../ui/mainwindow.ui" line="496"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="509"/>
+        <location filename="../ui/mainwindow.ui" line="499"/>
         <source>Ctrl+C</source>
         <translation>Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="514"/>
+        <location filename="../ui/mainwindow.ui" line="504"/>
         <source>&amp;Paste</source>
         <translation>&amp;Einfügen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="517"/>
+        <location filename="../ui/mainwindow.ui" line="507"/>
         <source>Ctrl+V</source>
         <translation>Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="522"/>
+        <location filename="../ui/mainwindow.ui" line="512"/>
         <source>&amp;Delete</source>
         <translation>&amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="525"/>
+        <location filename="../ui/mainwindow.ui" line="515"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="530"/>
+        <location filename="../ui/mainwindow.ui" line="520"/>
         <source>Select &amp;All</source>
         <translation>Alles &amp;markieren</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="533"/>
+        <location filename="../ui/mainwindow.ui" line="523"/>
         <source>Ctrl+A</source>
         <translation>Ctrl+A</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="538"/>
+        <location filename="../ui/mainwindow.ui" line="528"/>
         <source>About Notepadqq...</source>
         <translation>Über Notepadqq...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="541"/>
+        <location filename="../ui/mainwindow.ui" line="531"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="546"/>
+        <location filename="../ui/mainwindow.ui" line="536"/>
         <source>About Qt...</source>
         <translation>Über Qt...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="554"/>
+        <location filename="../ui/mainwindow.ui" line="544"/>
         <source>Windows Format</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="565"/>
+        <location filename="../ui/mainwindow.ui" line="555"/>
         <source>UNIX / OS X Format</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="573"/>
+        <location filename="../ui/mainwindow.ui" line="563"/>
         <source>Old Mac Format</source>
         <translation>Mac (klassisch)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="581"/>
+        <location filename="../ui/mainwindow.ui" line="571"/>
         <source>Show End of Line</source>
         <translation>Zeilenende anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="589"/>
+        <location filename="../ui/mainwindow.ui" line="579"/>
         <source>Show Tabs</source>
         <translation>Tabulatoren anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="597"/>
+        <location filename="../ui/mainwindow.ui" line="587"/>
         <source>Show All Characters</source>
         <translation>Alle Schriftzeichen anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="608"/>
+        <location filename="../ui/mainwindow.ui" line="598"/>
         <source>Show Indent Guide</source>
         <translation>Hilfe zur Einrückung anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="616"/>
+        <location filename="../ui/mainwindow.ui" line="606"/>
         <source>Show Wrap Symbol</source>
         <translation>Umbruchsymbol anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="624"/>
+        <location filename="../ui/mainwindow.ui" line="614"/>
         <source>Word wrap</source>
         <translation>Zeilenumbruch</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="632"/>
+        <location filename="../ui/mainwindow.ui" line="622"/>
         <source>Text Direction RTL</source>
         <translation>Textrichtung rechts nach links</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="637"/>
+        <location filename="../ui/mainwindow.ui" line="627"/>
         <source>Copy Full Path to Clipboard</source>
         <translation>Kopiere Pfad in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="642"/>
+        <location filename="../ui/mainwindow.ui" line="632"/>
         <source>Copy Filename to Clipboard</source>
         <translation>Kopiere Dateiname in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="647"/>
+        <location filename="../ui/mainwindow.ui" line="637"/>
         <source>Copy Directory to Clipboard</source>
         <translation>Kopiere Verzeichnis in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="652"/>
+        <location filename="../ui/mainwindow.ui" line="642"/>
         <source>Zoom &amp;In</source>
         <translation>Ver&amp;größern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="655"/>
+        <location filename="../ui/mainwindow.ui" line="645"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="660"/>
+        <location filename="../ui/mainwindow.ui" line="650"/>
         <source>Zoom &amp;Out</source>
         <translation>Ver&amp;kleinern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="663"/>
+        <location filename="../ui/mainwindow.ui" line="653"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="668"/>
+        <location filename="../ui/mainwindow.ui" line="658"/>
         <source>Restore Default Zoom</source>
         <translation>Standartgröße</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="671"/>
+        <location filename="../ui/mainwindow.ui" line="661"/>
         <source>Ctrl+0</source>
         <translation>Ctrl+0</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="676"/>
+        <location filename="../ui/mainwindow.ui" line="666"/>
         <source>Move to Other View</source>
         <translation>Zu anderer Ansicht verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="681"/>
+        <location filename="../ui/mainwindow.ui" line="671"/>
         <source>Clone to Other View</source>
         <translation>Zu anderer Ansicht klonen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="686"/>
+        <location filename="../ui/mainwindow.ui" line="676"/>
         <source>Move to a New Window</source>
         <translation>In ein neues Fenster verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="691"/>
+        <location filename="../ui/mainwindow.ui" line="681"/>
         <source>Open in a New Window</source>
         <translation>Öffne in neuem Fenster</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="696"/>
+        <location filename="../ui/mainwindow.ui" line="686"/>
         <source>&amp;Start Recording</source>
         <translation>&amp;Aufnahme starten</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="707"/>
+        <location filename="../ui/mainwindow.ui" line="697"/>
         <source>&amp;Stop Recording</source>
         <translation>&amp;Aufnahme beenden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="718"/>
+        <location filename="../ui/mainwindow.ui" line="708"/>
         <source>&amp;Playback</source>
         <translation>&amp;Wiedergabe</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="729"/>
+        <location filename="../ui/mainwindow.ui" line="719"/>
         <source>Save Currently Recorded Macro</source>
         <translation>Aufgenommenes Makro speichern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="737"/>
+        <location filename="../ui/mainwindow.ui" line="727"/>
         <source>Run a Macro Multiple Times...</source>
         <translation>Lasse ein Makro mehrfach laufen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="745"/>
+        <location filename="../ui/mainwindow.ui" line="735"/>
         <source>Trim Trailing and save</source>
         <translatorcomment>Trailing spaces?</translatorcomment>
         <translation>Entferne Leerzeichen vom Zeilenende und speichere</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="750"/>
+        <location filename="../ui/mainwindow.ui" line="740"/>
         <source>Modify Shortcut/Delete Macro...</source>
         <translation>Bearbeite Kürzel / Lösche Makro...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="755"/>
+        <location filename="../ui/mainwindow.ui" line="745"/>
         <source>UPPERCASE</source>
         <translation>GROSSBUCHSTABEN</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="758"/>
+        <location filename="../ui/mainwindow.ui" line="748"/>
         <source>Ctrl+Shift+U</source>
         <translation>Ctrl+Shift+U</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="763"/>
+        <location filename="../ui/mainwindow.ui" line="753"/>
         <source>lowercase</source>
         <translation>kleinbuchstaben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="766"/>
+        <location filename="../ui/mainwindow.ui" line="756"/>
         <source>Ctrl+U</source>
         <translation>Ctrl+U</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="771"/>
+        <location filename="../ui/mainwindow.ui" line="761"/>
         <source>Convert to UTF-8</source>
         <translation>Nach UTF-8 umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="776"/>
+        <location filename="../ui/mainwindow.ui" line="766"/>
         <source>Convert to UTF-16BE (UCS-2 Big Endian)</source>
         <translation>Nach UTF-16BE (UCS-2 Big Endian) umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="781"/>
+        <location filename="../ui/mainwindow.ui" line="771"/>
         <source>Convert to UTF-16LE (UCS-2 Little Endian)</source>
         <translation>Nach UTF-16LE (UCS-2 Little Endian) umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="786"/>
+        <location filename="../ui/mainwindow.ui" line="776"/>
         <source>Convert to UTF-8 without BOM</source>
         <translation>Nach UTF-8 ohne BOM umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="791"/>
+        <location filename="../ui/mainwindow.ui" line="781"/>
         <source>&amp;Run...</source>
         <translation>&amp;Ausführen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="796"/>
+        <location filename="../ui/mainwindow.ui" line="786"/>
         <source>Launch in Firefox</source>
         <translation>Starte in Firefox</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="801"/>
+        <location filename="../ui/mainwindow.ui" line="791"/>
         <source>Launch in Chromium</source>
         <translation>Starte in Chromium</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="806"/>
+        <location filename="../ui/mainwindow.ui" line="796"/>
         <source>Get PHP help</source>
         <translation>Hilfe zu PHP</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="811"/>
+        <location filename="../ui/mainwindow.ui" line="801"/>
         <source>Google Search</source>
         <translation>Auf Google suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="816"/>
+        <location filename="../ui/mainwindow.ui" line="806"/>
         <source>Wikipedia Search</source>
         <translation>Auf Wikipedia suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="821"/>
+        <location filename="../ui/mainwindow.ui" line="811"/>
         <source>Open file(s)</source>
         <translation>Datei(en) öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="826"/>
+        <location filename="../ui/mainwindow.ui" line="816"/>
         <source>Open file(s) in a new window</source>
         <translation>Datei(en) in neuem Fenster öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="831"/>
+        <location filename="../ui/mainwindow.ui" line="821"/>
         <source>Modify Shortcut / Delete Command...</source>
         <translation>Bearbeite Kürzel / Lösche Befehl...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="836"/>
+        <location filename="../ui/mainwindow.ui" line="826"/>
         <source>Preferences...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="841"/>
+        <location filename="../ui/mainwindow.ui" line="831"/>
         <source>&amp;Find...</source>
         <translation>&amp;Suchen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="844"/>
+        <location filename="../ui/mainwindow.ui" line="834"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="849"/>
+        <location filename="../ui/mainwindow.ui" line="839"/>
         <source>Find &amp;Next</source>
         <translation>&amp;Nächsten suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="852"/>
+        <location filename="../ui/mainwindow.ui" line="842"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="857"/>
+        <location filename="../ui/mainwindow.ui" line="847"/>
         <source>Find &amp;Previous</source>
         <translation>&amp;Vorherigen suchen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="860"/>
+        <location filename="../ui/mainwindow.ui" line="850"/>
         <source>Shift+F3</source>
         <translation>Shift+F3</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="865"/>
+        <location filename="../ui/mainwindow.ui" line="855"/>
         <source>Plain text</source>
         <translation>Einfacher Text</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="870"/>
+        <location filename="../ui/mainwindow.ui" line="860"/>
         <source>Replace...</source>
         <translation>Ersetzen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="873"/>
+        <location filename="../ui/mainwindow.ui" line="863"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="878"/>
+        <location filename="../ui/mainwindow.ui" line="868"/>
         <source>Reload file interpreted as...</source>
         <translation>Lade Datei erneut mit folgender Kodierung...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="883"/>
+        <location filename="../ui/mainwindow.ui" line="873"/>
         <source>Convert to...</source>
         <translation>Umwandeln nach...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="888"/>
+        <location filename="../ui/mainwindow.ui" line="878"/>
         <source>Interpret as UTF-16BE (UCS-2 Big Endian)</source>
         <translation>Interpretiere als UTF-16BE (UCS-2 Big Endian)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="893"/>
+        <location filename="../ui/mainwindow.ui" line="883"/>
         <source>Interpret as UTF-8 without BOM</source>
         <translation>Interpretiere als UTF-8 ohne BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="898"/>
+        <location filename="../ui/mainwindow.ui" line="888"/>
         <source>Interpret as UTF-8</source>
         <translation>Interpretiere als UTF-8</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="903"/>
+        <location filename="../ui/mainwindow.ui" line="893"/>
         <source>Interpret as UTF-16LE (UCS-2 Little Endian)</source>
         <translation>Interpretiere als UTF-16LE (UCS-2 Little Endian)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="914"/>
+        <location filename="../ui/mainwindow.ui" line="904"/>
         <source>Default settings</source>
         <translation>Standarteinstellungen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="922"/>
+        <location filename="../ui/mainwindow.ui" line="912"/>
         <source>Custom...</source>
         <translation>Benutzerdefiniert...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="927"/>
+        <location filename="../ui/mainwindow.ui" line="917"/>
         <source>Interpret as...</source>
         <translation>Interpretiere als...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="932"/>
+        <location filename="../ui/mainwindow.ui" line="922"/>
         <source>Launch in Chrome</source>
         <translation>Öffne in Chrome</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="937"/>
+        <location filename="../ui/mainwindow.ui" line="927"/>
         <source>Open a New Window</source>
         <translation>Öffne neues Fenster</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="942"/>
+        <location filename="../ui/mainwindow.ui" line="932"/>
         <source>Find in Files...</source>
         <translation>Suche in Dateien...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="945"/>
+        <location filename="../ui/mainwindow.ui" line="935"/>
         <source>Ctrl+Shift+F</source>
         <translation>Ctrl+Shift+F</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="950"/>
+        <location filename="../ui/mainwindow.ui" line="940"/>
         <source>Delete Current Line</source>
         <translation>Lösche aktuelle Zeile</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="953"/>
+        <location filename="../ui/mainwindow.ui" line="943"/>
         <source>Delete the current line</source>
         <translation>Lösche die aktuelle Zeile</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="956"/>
+        <location filename="../ui/mainwindow.ui" line="946"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="961"/>
+        <location filename="../ui/mainwindow.ui" line="951"/>
         <source>Duplicate Current Line</source>
         <translation>Dupliziere aktuelle Zeile</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="964"/>
+        <location filename="../ui/mainwindow.ui" line="954"/>
         <source>Duplicate the current line</source>
         <translation>Dupliziere die aktuelle Zeile</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="967"/>
+        <location filename="../ui/mainwindow.ui" line="957"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="972"/>
+        <location filename="../ui/mainwindow.ui" line="962"/>
         <source>Move Line Up</source>
         <translation>Zeile nach oben verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="975"/>
+        <location filename="../ui/mainwindow.ui" line="965"/>
         <source>Move the current line up</source>
         <translation>Aktuelle Zeile nach oben verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="978"/>
+        <location filename="../ui/mainwindow.ui" line="968"/>
         <source>Ctrl+Shift+Up</source>
         <translation>Ctrl+Shift+Up</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="983"/>
+        <location filename="../ui/mainwindow.ui" line="973"/>
         <source>Move Line Down</source>
         <translation>Zeile nach unten verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="986"/>
+        <location filename="../ui/mainwindow.ui" line="976"/>
         <source>Move the current line down</source>
         <translation>Aktuelle Zeile nach unten verschieben</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="989"/>
+        <location filename="../ui/mainwindow.ui" line="979"/>
         <source>Ctrl+Shift+Down</source>
         <translation>Ctrl+Shift+Down</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="994"/>
-        <location filename="../ui/mainwindow.ui" line="997"/>
+        <location filename="../ui/mainwindow.ui" line="984"/>
+        <location filename="../ui/mainwindow.ui" line="987"/>
         <source>Trim Trailing Space</source>
         <translation>Entferne Leerzeichen von Zeilenende</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1002"/>
-        <location filename="../ui/mainwindow.ui" line="1005"/>
+        <location filename="../ui/mainwindow.ui" line="992"/>
+        <location filename="../ui/mainwindow.ui" line="995"/>
         <source>Trim Leading Space</source>
         <translation>Entferne Leerzeichen von Zeilenanfang</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1010"/>
+        <location filename="../ui/mainwindow.ui" line="1000"/>
         <source>Trim Leading and Trailing Space</source>
         <translation>Entferne Leerzeichen von Zeilende und -anfang</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1015"/>
+        <location filename="../ui/mainwindow.ui" line="1005"/>
         <source>EOL to Space</source>
         <translation>Zeilenden in Leerzeichen umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1020"/>
+        <location filename="../ui/mainwindow.ui" line="1010"/>
         <source>TAB to Space</source>
         <translation>Tabulatoren in Leerzeichen umwandeln</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1025"/>
+        <location filename="../ui/mainwindow.ui" line="1015"/>
         <source>Space to TAB (All)</source>
         <translation>Leerzeichen in Tabulatoren (alle)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1030"/>
+        <location filename="../ui/mainwindow.ui" line="1020"/>
         <source>Space to TAB (Leading)</source>
         <translation>Leerzeichen in Tabulatoren (Zeilenanfang)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1035"/>
+        <location filename="../ui/mainwindow.ui" line="1025"/>
         <source>Open Folder...</source>
         <translation>Verzeichnis öffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1040"/>
+        <location filename="../ui/mainwindow.ui" line="1030"/>
         <source>Go to line...</source>
         <translation>Gehe zu Zeile...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1043"/>
+        <location filename="../ui/mainwindow.ui" line="1033"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1048"/>
+        <location filename="../ui/mainwindow.ui" line="1038"/>
         <source>Install Extension...</source>
         <translation>Erweiterung installieren...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1056"/>
+        <location filename="../ui/mainwindow.ui" line="1046"/>
         <source>Full Screen</source>
         <translation>Vollbild</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1059"/>
+        <location filename="../ui/mainwindow.ui" line="1049"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1067"/>
-        <location filename="../ui/mainwindow.ui" line="1070"/>
+        <location filename="../ui/mainwindow.ui" line="1057"/>
+        <location filename="../ui/mainwindow.ui" line="1060"/>
         <source>Show Spaces</source>
         <translation>Zeige Leerzeichen an</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1081"/>
+        <location filename="../ui/mainwindow.ui" line="1071"/>
         <source>Enable Smart Indent</source>
         <translation>Schalte &quot;Smart Indent&quot; ein</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="343"/>
-        <location filename="../ui/mainwindow.cpp" line="829"/>
+        <location filename="../ui/mainwindow.cpp" line="349"/>
+        <location filename="../ui/mainwindow.cpp" line="633"/>
         <source>INS</source>
         <translation>EINF</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="573"/>
+        <location filename="../ui/mainwindow.cpp" line="377"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
@@ -1065,162 +1070,241 @@
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="827"/>
+        <location filename="../ui/mainwindow.cpp" line="631"/>
         <source>OVR</source>
         <translation>ÜBS</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="836"/>
-        <source>new %1</source>
-        <translation>neu %1</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.cpp" line="957"/>
+        <location filename="../ui/mainwindow.cpp" line="755"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>Ihre Änderungen in &quot;%1&quot; werden verworfen.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="958"/>
+        <location filename="../ui/mainwindow.cpp" line="756"/>
         <source>Reload</source>
         <translation>Erneut laden</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="996"/>
+        <location filename="../ui/mainwindow.cpp" line="794"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="998"/>
+        <location filename="../ui/mainwindow.cpp" line="796"/>
         <source>All files (*)</source>
         <translation>Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1016"/>
+        <location filename="../ui/mainwindow.cpp" line="814"/>
         <source>Open Folder</source>
         <translation>Öffne Verzeichnis</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1056"/>
+        <location filename="../ui/mainwindow.cpp" line="854"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Wollen Sie die Änderungen an &quot;%1&quot; speichern?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1057"/>
+        <location filename="../ui/mainwindow.cpp" line="855"/>
         <source>Don&apos;t Save</source>
         <translation>Nicht speichern</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1060"/>
+        <location filename="../ui/mainwindow.cpp" line="858"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Wollen Sie vor dem Schließen die Änderungen an &quot;%1&quot; speichern?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1064"/>
+        <location filename="../ui/mainwindow.cpp" line="862"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Falls Sie Ihre Änderungen nicht speichern, gehen diese für immer verloren.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1164"/>
+        <location filename="../ui/mainwindow.cpp" line="962"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>Die Datei wurde seit ihrem letzen Einlesen verändert.
 Wollen Sie dennoch speichern?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1167"/>
+        <location filename="../ui/mainwindow.cpp" line="965"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>Die Datei zu speichern könnte den Verlust externer Daten bedeuten.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1186"/>
+        <location filename="../ui/mainwindow.cpp" line="984"/>
         <source>Save as</source>
         <translation>Speichern als</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1188"/>
+        <location filename="../ui/mainwindow.cpp" line="986"/>
         <source>Any file (*)</source>
         <translation>Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1352"/>
+        <location filename="../ui/mainwindow.cpp" line="1151"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1 Zeichen, %2 Zeilen</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1363"/>
+        <location filename="../ui/mainwindow.cpp" line="1162"/>
         <source>Ln %1, col %2</source>
         <translation>Z. %1, Sp. %2</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1367"/>
+        <location filename="../ui/mainwindow.cpp" line="1166"/>
         <source>Sel %1 (%2)</source>
         <translation>Mark. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1431"/>
+        <location filename="../ui/mainwindow.cpp" line="1230"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1434"/>
+        <location filename="../ui/mainwindow.cpp" line="1233"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1437"/>
+        <location filename="../ui/mainwindow.cpp" line="1236"/>
         <source>Old Mac</source>
         <translation>Mac (klassisch)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1444"/>
+        <location filename="../ui/mainwindow.cpp" line="1243"/>
         <source>%1 w/o BOM</source>
         <translation>%1 o. BOM</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1920"/>
+        <location filename="../ui/mainwindow.cpp" line="1719"/>
         <source>No recent files</source>
         <translation>Keine zuletzt geöffneten Dateien</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2084"/>
+        <location filename="../ui/mainwindow.cpp" line="1883"/>
         <source>Convert to:</source>
         <translation>Umwandeln nach:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2098"/>
+        <location filename="../ui/mainwindow.cpp" line="1897"/>
         <source>Reload as:</source>
         <translation>Erneut laden als:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2140"/>
+        <location filename="../ui/mainwindow.cpp" line="1939"/>
         <source>Interpret as:</source>
         <translation>Interpretiere als:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2409"/>
+        <location filename="../ui/mainwindow.cpp" line="1954"/>
+        <source>Run...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="1966"/>
+        <source>Modify Run Commands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="2246"/>
         <source>Extension</source>
         <translation>Erweiterung</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2454"/>
+        <location filename="../ui/mainwindow.cpp" line="2291"/>
         <source>Open Session...</source>
         <translation>Sitzung öffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2456"/>
-        <location filename="../ui/mainwindow.cpp" line="2475"/>
+        <location filename="../ui/mainwindow.cpp" line="2293"/>
+        <location filename="../ui/mainwindow.cpp" line="2313"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Gespeicherte Sitzung (*.xml);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2473"/>
+        <location filename="../ui/mainwindow.cpp" line="2311"/>
         <source>Save Session as...</source>
         <translation>Speichere Sitzung als...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2501"/>
+        <location filename="../ui/mainwindow.cpp" line="2337"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Sitzung konnte nicht gespeichert werden. Versuchen Sie einen anderen Dateinamen.</translation>
+    </message>
+</context>
+<context>
+    <name>NqqRun::RunDelegate</name>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="231"/>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NqqRun::RunDialog</name>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="263"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="264"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="265"/>
+        <source>Save...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="267"/>
+        <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="312"/>
+        <source>Choose the name to be displayed in the run menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="313"/>
+        <source>Command Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="322"/>
+        <source>Command saved...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NqqRun::RunPreferences</name>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="26"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="27"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="31"/>
+        <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="67"/>
+        <source>Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="67"/>
+        <source>Command</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1261,17 +1345,17 @@ Wollen Sie dennoch speichern?</translation>
         <translation>Diese Warnung nicht erneut anzeigen</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="367"/>
+        <location filename="../ui/frmpreferences.cpp" line="381"/>
         <source>Restart required</source>
         <translation>Neustart erforderlich</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="368"/>
+        <location filename="../ui/frmpreferences.cpp" line="382"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
         <translation>Sie müssen Notepadqq erneut starten um die Einstellungen zu übernehmen.</translation>
     </message>
     <message>
-        <location filename="../ui/Sessions/sessions.cpp" line="35"/>
+        <location filename="../ui/Sessions/sessions.cpp" line="126"/>
         <source>Error reading session file</source>
         <translation>Sitzung konnte nicht geladen werden</translation>
     </message>
@@ -1279,12 +1363,12 @@ Wollen Sie dennoch speichern?</translation>
 <context>
     <name>ReplaceInFilesWorker</name>
     <message>
-        <location filename="../ui/Search/replaceinfilesworker.cpp" line="56"/>
+        <location filename="../ui/Search/replaceinfilesworker.cpp" line="40"/>
         <source>Error reading %1</source>
         <translation>Fehler beim Lesen von %1</translation>
     </message>
     <message>
-        <location filename="../ui/Search/replaceinfilesworker.cpp" line="99"/>
+        <location filename="../ui/Search/replaceinfilesworker.cpp" line="84"/>
         <source>Error writing %1</source>
         <translation>Fehler beim Schreiben von %1</translation>
     </message>
@@ -1292,7 +1376,7 @@ Wollen Sie dennoch speichern?</translation>
 <context>
     <name>SearchInFilesWorker</name>
     <message>
-        <location filename="../ui/Search/searchinfilesworker.cpp" line="68"/>
+        <location filename="../ui/Search/searchinfilesworker.cpp" line="66"/>
         <source>Error reading %1</source>
         <translation>Fehler beim Lesen von %1</translation>
     </message>
@@ -1466,74 +1550,84 @@ Wollen Sie dennoch speichern?</translation>
         <translation>Verwende Schriftgröße</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="271"/>
+        <location filename="../ui/frmpreferences.ui" line="269"/>
+        <source>Override Line Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="285"/>
+        <source>em</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="306"/>
         <source>Preview</source>
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="354"/>
+        <location filename="../ui/frmpreferences.ui" line="389"/>
         <source>Tab size:</source>
         <translation>Tabulatorengröße:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="367"/>
+        <location filename="../ui/frmpreferences.ui" line="402"/>
         <source>Use spaces instead of tabs</source>
         <translation>Benutze Leerzeichen anstelle von Tabulatoren</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="391"/>
+        <location filename="../ui/frmpreferences.ui" line="426"/>
         <source>Use default settings</source>
         <translation>Standarteinstellungen verwenden</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="427"/>
+        <location filename="../ui/frmpreferences.ui" line="462"/>
         <source>Search as I type</source>
         <translation>Als I-Typ suchen</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="482"/>
+        <location filename="../ui/frmpreferences.ui" line="517"/>
         <source>Node.js runtime</source>
         <translation>Node.js Laufzeit</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="488"/>
+        <location filename="../ui/frmpreferences.ui" line="523"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
         <translation>Unterstützte Node-Versionen: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="495"/>
+        <location filename="../ui/frmpreferences.ui" line="530"/>
         <source>Node.js path:</source>
         <translation>Pfad zu Node.js:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="507"/>
-        <location filename="../ui/frmpreferences.ui" line="528"/>
+        <location filename="../ui/frmpreferences.ui" line="542"/>
+        <location filename="../ui/frmpreferences.ui" line="563"/>
         <source>Browse...</source>
         <translation>Durchsuchen...</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="516"/>
+        <location filename="../ui/frmpreferences.ui" line="551"/>
         <source>NPM path:</source>
         <translation>Pfad zu NPM:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="537"/>
+        <location filename="../ui/frmpreferences.ui" line="572"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>ACHTUNG: die Unterstützung für
 Erweiterungen ist EXPERIMENTELL.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="104"/>
+        <location filename="../ui/frmpreferences.cpp" line="109"/>
         <source>Keyboard shortcut conflict</source>
         <translation>Tastenkürzel bereits in Verwendung</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="105"/>
+        <location filename="../ui/frmpreferences.cpp" line="110"/>
         <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
         <translation>Zwei oder mehr Aktionen verwenden dasselbe Tastenkürzel. Einstellungen können erst gespeichert werden, wenn der Konflikt behoben wurde.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="374"/>
+        <location filename="../ui/frmpreferences.cpp" line="388"/>
         <source>Browse</source>
         <translation>Durchsuchen</translation>
     </message>
@@ -1557,7 +1651,7 @@ Erweiterungen ist EXPERIMENTELL.</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="76"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="699"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="572"/>
         <source>Look in</source>
         <translation>Suche in</translation>
     </message>
@@ -1618,7 +1712,7 @@ Erweiterungen ist EXPERIMENTELL.</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="300"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="559"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="432"/>
         <source>Select all</source>
         <translation>Alle markieren</translation>
     </message>
@@ -1635,7 +1729,7 @@ Erweiterungen ist EXPERIMENTELL.</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="330"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="383"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="547"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="420"/>
         <source>Replace all</source>
         <translation>Alle ersetzen</translation>
     </message>
@@ -1671,63 +1765,60 @@ Erweiterungen ist EXPERIMENTELL.</translation>
         <translation>In Dateien suchen</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="227"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="312"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="306"/>
         <source>Searching...</source>
         <translation>Suche...</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="238"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="324"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="372"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="437"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="214"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="244"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="296"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="408"/>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="412"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="232"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="236"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="285"/>
         <source>Replace in files</source>
         <translation>In Dateien ersetzen</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="297"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="286"/>
         <source>Are you sure you want to replace all occurrences in %1 for file types %2?</source>
         <translation>Sind Sie sicher, dass Sie alle Treffer in %1 for den Dateityp %2 ersetzen wollen?</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="333"/>
-        <source>Searching in %1</source>
-        <translation>Ersetze in %1</translation>
-    </message>
-    <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="362"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="266"/>
         <source>Replacing...</source>
         <translation>Ersetze...</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="383"/>
-        <source>Replacing in %1</source>
-        <translation>Ersetze in %1</translation>
-    </message>
-    <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="409"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="233"/>
         <source>%1 occurrences replaced in %2 files.</source>
         <translation>%1 Treffer in %2 Datei(en) ersetzt.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="413"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="237"/>
         <source>%1 occurrences replaced in %2 files, but the replacement has been canceled before it could finish.</source>
         <translation>%1 Treffer in %2 Datei(en) ersetzt, der Vorgang wurde jedoch abgebrochen bevor er beendet werden konnte.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="547"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="253"/>
+        <source>Replacing in </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="255"/>
+        <source>Searching in </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="420"/>
         <source>%1 occurrences have been replaced.</source>
         <translation>%1 Treffer wurde(n) ersetzt.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/frmsearchreplace.cpp" line="559"/>
+        <location filename="../ui/Search/frmsearchreplace.cpp" line="432"/>
         <source>No results found</source>
         <translation>Keine Übereinstimmungen gefunden</translation>
     </message>
