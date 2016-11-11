@@ -158,7 +158,8 @@ TRANSLATIONS = \
     ../translations/notepadqq_fr.ts \
     ../translations/notepadqq_hu.ts \
     ../translations/notepadqq_pl.ts \
-    ../translations/notepadqq_ru.ts
+    ../translations/notepadqq_ru.ts \
+    ../translations/notepadqq_sv.ts
 
 
 # Build translations so that qmake doesn't complain about missing files in resources.qrc
