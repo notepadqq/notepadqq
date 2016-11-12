@@ -1064,7 +1064,7 @@
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
-        <translation>Błąd poczas próby zapisu sesji. Upewnij się, że następujący katalog jest dostępny.</translation>
+        <translation>Błąd poczas próby zapisu sesji. Upewnij się, że następujący katalog jest dostępny:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="631"/>
@@ -1196,12 +1196,12 @@ Czy chcesz go zapisać mimo to?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1954"/>
         <source>Run...</source>
-        <translation type="unfinished"></translation>
+        <translation>Uruchom...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1966"/>
         <source>Modify Run Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmodyfikuj komendy uruchamiania</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2246"/>
@@ -1235,7 +1235,7 @@ Czy chcesz go zapisać mimo to?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="231"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz plik</translation>
     </message>
 </context>
 <context>
@@ -1243,37 +1243,37 @@ Czy chcesz go zapisać mimo to?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="263"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="264"/>
         <source>Cancel</source>
-        <translation type="unfinished">Anuluj</translation>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="265"/>
         <source>Save...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz...</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="267"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Specjalne symbole zastępcze&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Pełna ścieżka do aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Katalog aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Nazwa aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Aktualnie zaznaczony tekst.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="312"/>
         <source>Choose the name to be displayed in the run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz nazwę, która będzie wyświetlana w menu uruchamiania.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="313"/>
         <source>Command Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa polecenia:</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="322"/>
         <source>Command saved...</source>
-        <translation type="unfinished"></translation>
+        <translation>Polecenie zapisane...</translation>
     </message>
 </context>
 <context>
@@ -1281,27 +1281,27 @@ Czy chcesz go zapisać mimo to?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="26"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="27"/>
         <source>Cancel</source>
-        <translation type="unfinished">Anuluj</translation>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="31"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Specjalne symbole zastępcze&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Pełna ścieżka do aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Katalog aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Nazwa aktualnie aktywnego pliku.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Aktualnie zaznaczony tekst.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekst</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Polecenie</translation>
     </message>
 </context>
 <context>
