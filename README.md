@@ -15,7 +15,7 @@ Build
 
 #### Get the source
 
-    $ git clone https://github.com/notepadqq/notepadqq.git
+    $ git clone --recursive https://github.com/notepadqq/notepadqq.git
     $ cd notepadqq
 
 #### Build it
