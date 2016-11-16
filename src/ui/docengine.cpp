@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QTextStream>
 #include <QCoreApplication>
 #include "include/mainwindow.h"
 #include "include/nqqsettings.h"
