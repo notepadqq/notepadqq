@@ -21,3 +21,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: notepadqq/notepadqq
+    tags: true
