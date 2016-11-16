@@ -10,7 +10,7 @@ script:
   - "./configure && make"
   - "./src/ui-tests/ui-tests"
 before_deploy:
-  - "tar -zcf notepadqq-x86_64.tar.gz out/release"
+  - "tar -zcf notepadqq-${TRAVIS_TAG:-${TRAVIS_COMMIT}}-x86_64.tar.gz out/release"
 deploy:
   provider: releases
   api_key:
