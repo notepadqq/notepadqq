@@ -4,6 +4,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QFile>
+#include <QDateTime>
 
 #include <vector>
 

@@ -6,6 +6,7 @@
 #include <QJsonParseError>
 #include <QProcess>
 #include <QDir>
+#include <QDebug>
 
 namespace Extensions {
 

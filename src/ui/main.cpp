@@ -10,6 +10,7 @@
 #include <QtGlobal>
 #include <QTranslator>
 #include <QLocale>
+#include <QDateTime>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>

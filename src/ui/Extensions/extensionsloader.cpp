@@ -2,6 +2,7 @@
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
 #include <QDirIterator>
+#include <QDateTime>
 
 namespace Extensions {
 
