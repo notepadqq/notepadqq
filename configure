@@ -1,8 +1,8 @@
 #!/bin/sh
 # Don't set `-e'!
 
-test -n "$QMAKE"    || QMAKE="qtchooser -run-tool=qmake -qt=5"
-test -n "$LRELEASE" || LRELEASE="qtchooser -run-tool=lrelease -qt=5"
+test -n "$QMAKE"    || QMAKE="qmake-qt5"
+test -n "$LRELEASE" || LRELEASE="lrelease"
 test -n "$MAKE"     || MAKE="make"
 test -n "$CXX"      || CXX="c++"
 
