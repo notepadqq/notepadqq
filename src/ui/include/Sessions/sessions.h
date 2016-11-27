@@ -2,86 +2,32 @@
 #define SESSIONS_H
 
 #include <QString>
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
-#include <QFile>
 
-#include <vector>
+class DocEngine;
+class TopEditorContainer;
 
-struct TabData {
-    QString filePath;
-    QString cacheFilePath;
-    int scrollX = 0;
-    int scrollY = 0;
-    bool active = false;
-    qint64 lastModified = 0;
-};
-
-struct ViewData {
-    std::vector<TabData> tabs;
-};
+namespace Sessions {
 
 /**
- * @brief Provides a convenience class to read session .xml files.
+ * @brief Saves a session as an XML file
+ * @param docEngine The DocEngine that will be used to save all tabs to disk.
+ * @param editorContainer The TopEditorContainer whose views and tabs will be saved.
+ * @param sessionPath Path to where the XML file should be created.
+ * @param cacheDirPath Path to the directory where modified files will be written to. If
+ *        left empty, no files will be cached. All prior files inside the cache directory
+ *        will be deleted.
+ * @return Whether the save has been successful.
  */
-class SessionReader {
-public:
-
-    SessionReader(QFile& input)
-        : m_reader(&input) { }
-
-    /**
-     * @brief Completely read the session data
-     * @param outSuccess pass a pointer to bool here to be informed about whether
-     *        the reading process has encountered any errors.
-     * @return The data read from the session file.
-     */
-    std::vector<ViewData> readData(bool* outSuccess=nullptr);
-
-    QString getError();
-
-private:
-
-    /**
-     * @brief Helper functions to read specific parts of the xml structure
-     */
-    std::vector<ViewData> readViewData();
-    std::vector<TabData> readTabData();
-
-    QXmlStreamReader m_reader;
-};
-
+bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath=QString());
 
 /**
- * @brief Provides a convenience class to write session .xml files.
- *
- * Note that a SessionWriter object must be successfully destroyed
- * in order to complete the writing process. (Aka the destructor must
- * be called)
+ * @brief Loads a session XML file and restores all its tabs in the specified window.
+ * @param docEngine The DocEngine used to load all files.
+ * @param editorContainer The TopEditorContainer which will receive all newly crated Tabs.
+ * @param sessionPath Path to where the XML file is located.
  */
-class SessionWriter {
-public:
+void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath);
 
-    SessionWriter(QFile& destination);
-
-    ~SessionWriter();
-
-    /**
-     * @brief Write ViewData to the session file. ViewData is the representation of a
-     *        TabWidget and its tabs.
-     *
-     * @param The ViewData to be written.
-     */
-    void addViewData(const ViewData& vd);
-
-
-private:
-    /**
-     * @brief Helper function to write specific parts of the xml structure
-     */
-    void addTabData(const TabData& td);
-
-    QXmlStreamWriter m_writer;
-};
+} // namespace Autosave
 
 #endif // SESSIONS_H

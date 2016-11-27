@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de_DE">
+<TS version="2.1" language="sv">
 <context>
     <name>BannerFileChanged</name>
     <message>
         <location filename="../ui/EditorNS/bannerfilechanged.cpp" line="13"/>
         <source>This file has been changed outside of Notepadqq.</source>
-        <translation>Die Datei wurde außerhalb von Notepadqq verändert.</translation>
+        <translation>Denna fil har ändrats utanför Notepadqq.</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerfilechanged.cpp" line="15"/>
         <source>Reload</source>
-        <translation>Erneut laden</translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerfilechanged.cpp" line="18"/>
         <source>Ignore</source>
-        <translation>Ignorieren</translation>
+        <translation>Ignorera</translation>
     </message>
 </context>
 <context>
@@ -24,17 +24,17 @@
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="13"/>
         <source>This file has been deleted from the file system.</source>
-        <translation>Die Datei ist vom Datenträger gelöscht worden.</translation>
+        <translation>Denna fil har tagits bort från filsystemet.</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="15"/>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation>Spara</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="18"/>
         <source>Ignore</source>
-        <translation>Ignorieren</translation>
+        <translation>Ignorera</translation>
     </message>
 </context>
 <context>
@@ -42,44 +42,44 @@
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="18"/>
         <source>This file is indented with %1, but your current settings specify to use %2.</source>
-        <translation>Diese Datei verwendet %1 für den Einzug, laut Ihren Einstellungen sollten es %2 sein.</translation>
+        <translation>Denna fil har indrag med %1, men dina aktuella inställningar specificerar användning av %2.</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>spaces</source>
-        <translation>Leerzeichen</translation>
+        <translation>blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>tabs</source>
-        <translation>Tabulatoren</translation>
+        <translation>tabbar</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="22"/>
         <source>Use spaces</source>
-        <translation>Benutze Leerzeichen</translation>
+        <translation>Använd blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="27"/>
         <source>Use tabs</source>
-        <translation>Benutze Tabulatoren</translation>
+        <translation>Använd tabbar</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="31"/>
         <source>This file is indented with %1 spaces, but your current settings specify to use %2 spaces.</source>
-        <translation>Diese Datei verwendet %1 Leerzeichen für den Einzug, laut Ihren Einstellungen sollten es %2 sein.</translation>
+        <translation>Denna fil har indrag med %1 blanksteg, men dina aktuella inställningar specificerar användning av %2 blanksteg.</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="34"/>
         <source>Use %1 spaces</source>
-        <translation>Benutze %1 Leerzeichen</translation>
+        <translation>Använd %1 blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="38"/>
         <source>Ignore</source>
-        <translation>Ignorieren</translation>
+        <translation>Ignorera</translation>
     </message>
 </context>
 <context>
@@ -87,23 +87,23 @@
     <message>
         <location filename="../ui/docengine.cpp" line="33"/>
         <source>new %1</source>
-        <translation type="unfinished">neu %1</translation>
+        <translation>ny %1</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="182"/>
         <source>Error trying to open &quot;%1&quot;</source>
-        <translation>Fehler beim Versuch &quot;%1&quot; zu öffnen</translation>
+        <translation>Kunde inte öppna &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="257"/>
         <location filename="../ui/docengine.cpp" line="452"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
-        <translation>Protokoll wird durch die Datei &quot;%1&quot; nicht unterstützt.</translation>
+        <translation>Protokollet stöds inte av &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="412"/>
         <source>Error trying to write to &quot;%1&quot;</source>
-        <translation>Fehler beim Versuch in die Datei &quot;%1&quot; zu schreiben</translation>
+        <translation>Kunde inte skriva till &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -111,22 +111,22 @@
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="22"/>
         <source>name missing or invalid</source>
-        <translation>ungültiger oder fehlender Name</translation>
+        <translation>namn saknas eller är ogiltigt</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="50"/>
         <source>unable to read nqq-manifest.json</source>
-        <translation>kann nqq-manifest.json nicht lesen</translation>
+        <translation>Kan inte läsa nqq-manifest.json</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="97"/>
         <source>failed to start. Check your runtime: %1</source>
-        <translation>Konnte nicht gestartet werden. Überprüfen Sie Ihre Laufzeitumgebung: %1</translation>
+        <translation>kunde inte starta. kontrollera din runtime: %1</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="106"/>
         <source>Failed to load %1: %2</source>
-        <translation>Konnte %1 nicht laden: %2</translation>
+        <translation>Kunde inte läsa in %1: %2</translation>
     </message>
 </context>
 <context>
@@ -134,12 +134,12 @@
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="177"/>
         <source>Error</source>
-        <translation>Fehler</translation>
+        <translation>Fel</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="177"/>
         <source>Unsupported runtime: %1</source>
-        <translation>Nicht.unterstützte Laufzeit: %1</translation>
+        <translation>Runtime saknar stöd. %1</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     <message>
         <location filename="../ui/Search/filesearchresultswidget.cpp" line="29"/>
         <source>Clear</source>
-        <translation>Löschen</translation>
+        <translation>Rensa</translation>
     </message>
 </context>
 <context>
@@ -155,17 +155,17 @@
     <message>
         <location filename="../ui/Extensions/installextension.ui" line="14"/>
         <source>Install Extension</source>
-        <translation>Erweiterung installieren</translation>
+        <translation>Installera tillägg</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.ui" line="102"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.ui" line="109"/>
         <source>Install</source>
-        <translation>Installieren</translation>
+        <translation>Installera</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="42"/>
@@ -176,38 +176,38 @@
         <location filename="../ui/Extensions/installextension.cpp" line="43"/>
         <location filename="../ui/Extensions/installextension.cpp" line="52"/>
         <source>unknown version</source>
-        <translation>Version unbekannt</translation>
+        <translation>okänd version</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="44"/>
         <source>unknown author</source>
-        <translation>Autor unbekannt</translation>
+        <translation>okänd utvecklare</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="54"/>
         <source>(current version is %1)</source>
-        <translation>(aktuelle Version ist %1)</translation>
+        <translation>(aktuell version är %1)</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="55"/>
         <source>Update</source>
-        <translation>Aktualisieren</translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="104"/>
         <location filename="../ui/Extensions/installextension.cpp" line="126"/>
         <source>Error installing the extension</source>
-        <translation>Fehler beim Installieren der Erweiterung</translation>
+        <translation>Kunde inte installera tillägget</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="115"/>
         <source>Extension installed</source>
-        <translation>Erweiterung installiert</translation>
+        <translation>Tillägget installerat</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="116"/>
         <source>The extension has been successfully installed!</source>
-        <translation>Die Erweiterung ist erfolgreich installiert worden!</translation>
+        <translation>Tillägget har installerats korrekt!</translation>
     </message>
 </context>
 <context>
@@ -215,12 +215,12 @@
     <message>
         <location filename="../ui/keygrabber.cpp" line="13"/>
         <source>Action</source>
-        <translation>Aktion</translation>
+        <translation>Åtgärd</translation>
     </message>
     <message>
         <location filename="../ui/keygrabber.cpp" line="13"/>
         <source>Keyboard Shortcut</source>
-        <translation>Tastenkürzel</translation>
+        <translation>Tangenbordsgenväg</translation>
     </message>
 </context>
 <context>
@@ -233,62 +233,62 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="50"/>
         <source>&amp;File</source>
-        <translation>&amp;Datei</translation>
+        <translation>&amp;Arkiv</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="54"/>
         <source>Recent Files</source>
-        <translation>Zuletzt geöffnet</translation>
+        <translation>Tidigare filer</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="81"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Bearbeiten</translation>
+        <translation>&amp;Redigera</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="85"/>
         <source>End of line</source>
-        <translation>Format Zeilenende</translation>
+        <translation>Radslut</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="93"/>
         <source>Copy to Clipboard</source>
-        <translation>Kopiere in Zwischenablage</translation>
+        <translation>Kopiera till urklipp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="101"/>
         <source>Convert Case to</source>
-        <translation>Ändere Schreibweise in</translation>
+        <translation>Konvertera skiftläge till</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="108"/>
         <source>Indentation</source>
-        <translation>Einrückung</translation>
+        <translation>Indrag</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="117"/>
         <source>Line Operations</source>
-        <translation>Zeilen bearbeiten</translation>
+        <translation>Radåtgärder</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="126"/>
         <source>Blank Operations</source>
-        <translation>Leerzeichen bearbeiten</translation>
+        <translation>Blankstegsåtgärder</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="155"/>
         <source>&amp;Search</source>
-        <translation>&amp;Suche</translation>
+        <translation>&amp;Sök</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="168"/>
         <source>&amp;View</source>
-        <translation>&amp;Ansicht</translation>
+        <translation>&amp;Visa</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="172"/>
         <source>Show Symbol</source>
-        <translation>Symbole anzeigen</translation>
+        <translation>Visa symbol</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="184"/>
@@ -298,22 +298,22 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="192"/>
         <source>Move/Clone Current Document</source>
-        <translation>Verschiebe/Klone Dokument</translation>
+        <translation>Flytta/Klona aktuellt dokument</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="211"/>
         <source>Encoding</source>
-        <translation>Zeichenkodierung</translation>
+        <translation>Teckentabell</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="229"/>
         <source>&amp;Language</source>
-        <translation>&amp;Sprache</translation>
+        <translation>S&amp;pråk</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="236"/>
         <source>Se&amp;ttings</source>
-        <translation>&amp;Einstellungen</translation>
+        <translation>&amp;Inställningar</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="242"/>
@@ -323,32 +323,32 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="249"/>
         <source>Run</source>
-        <translation>Starte</translation>
+        <translation>Kör</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="256"/>
         <source>&amp;Window</source>
-        <translation>&amp;Fenster</translation>
+        <translation>&amp;Fönster</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="262"/>
         <source>Extensions</source>
-        <translation>Erweiterungen</translation>
+        <translation>Tillägg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="281"/>
         <source>Toolbar</source>
-        <translation>Werkzeugleiste</translation>
+        <translation>Verktygsfält</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="325"/>
         <source>Find result</source>
-        <translation>Finde Ergebnis</translation>
+        <translation>Sökresultat</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="349"/>
         <source>&amp;Open...</source>
-        <translation>Ö&amp;ffnen...</translation>
+        <translation>&amp;Öppna</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="352"/>
@@ -358,7 +358,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="357"/>
         <source>&amp;New</source>
-        <translation>&amp;Neu</translation>
+        <translation>&amp;Nytt</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="360"/>
@@ -368,12 +368,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="365"/>
         <source>Reload from Disk</source>
-        <translation>Erneut laden</translation>
+        <translation>Läs om från disk</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="370"/>
         <source>&amp;Save</source>
-        <translation>&amp;Speichern</translation>
+        <translation>&amp;Spara</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="373"/>
@@ -383,12 +383,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="378"/>
         <source>Save &amp;As...</source>
-        <translation>Speichern &amp;unter...</translation>
+        <translation>Sp&amp;ara som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="381"/>
         <source>Save As...</source>
-        <translation>Speichern unter...</translation>
+        <translation>Spara som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="384"/>
@@ -398,12 +398,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="389"/>
         <source>Save a Copy As...</source>
-        <translation>Kopie speichern als...</translation>
+        <translation>Spara en kopia som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="394"/>
         <source>Sav&amp;e All</source>
-        <translation>&amp;Alles speichern</translation>
+        <translation>S&amp;para alla</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="397"/>
@@ -413,12 +413,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="402"/>
         <source>Rename...</source>
-        <translation>Umbenennen...</translation>
+        <translation>Byt namn ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="407"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="410"/>
@@ -428,27 +428,27 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="415"/>
         <source>C&amp;lose All</source>
-        <translation>A&amp;lles schließen</translation>
+        <translation>S&amp;täng alla</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="420"/>
         <source>Close All BUT Current Document</source>
-        <translation>Alles außer aktuellem Dokument schließen</translation>
+        <translation>Stäng alla UTOM aktuellt dokument</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="425"/>
         <source>Load Session...</source>
-        <translation>Sitzung laden...</translation>
+        <translation>Läs in session ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="430"/>
         <source>Save Session...</source>
-        <translation>Sitzung speichern...</translation>
+        <translation>Spara session ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="435"/>
         <source>Print...</source>
-        <translation>Drucken...</translation>
+        <translation>Skriv ut ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="438"/>
@@ -458,22 +458,22 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="446"/>
         <source>Print Now</source>
-        <translation>Jetzt drucken</translation>
+        <translation>Skriv ut nu</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="454"/>
         <source>Open All Recent Files</source>
-        <translation>Lade alle zuletzt geöffneten Dokumente</translation>
+        <translation>Öppna alla tidigare filer</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="459"/>
         <source>Empty Recent Files List</source>
-        <translation>Leere Liste zuletzt geöffneter Dokumente</translation>
+        <translation>Töm listan över tidigare filer</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="464"/>
         <source>E&amp;xit</source>
-        <translation>&amp;Beenden</translation>
+        <translation>A&amp;vsluta</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="467"/>
@@ -483,7 +483,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="472"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Rückgängig</translation>
+        <translation>&amp;Ångra</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="475"/>
@@ -493,7 +493,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="480"/>
         <source>&amp;Redo</source>
-        <translation>&amp;Wiederherstellen</translation>
+        <translation>&amp;Upprepa</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="483"/>
@@ -503,7 +503,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="488"/>
         <source>Cu&amp;t</source>
-        <translation>&amp;Ausschneiden</translation>
+        <translation>Klipp u&amp;t</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="491"/>
@@ -513,7 +513,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="496"/>
         <source>&amp;Copy</source>
-        <translation>&amp;Kopieren</translation>
+        <translation>&amp;Kopiera</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="499"/>
@@ -523,7 +523,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="504"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Einfügen</translation>
+        <translation>Klistra &amp;in</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="507"/>
@@ -533,7 +533,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="512"/>
         <source>&amp;Delete</source>
-        <translation>&amp;Löschen</translation>
+        <translation>Ta &amp;bort</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="515"/>
@@ -543,7 +543,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="520"/>
         <source>Select &amp;All</source>
-        <translation>Alles &amp;markieren</translation>
+        <translation>Markera &amp;alla</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="523"/>
@@ -553,7 +553,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="528"/>
         <source>About Notepadqq...</source>
-        <translation>Über Notepadqq...</translation>
+        <translation>Om Notepadqq ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="531"/>
@@ -563,77 +563,77 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="536"/>
         <source>About Qt...</source>
-        <translation>Über Qt...</translation>
+        <translation>Om Qt ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="544"/>
         <source>Windows Format</source>
-        <translation>Windows</translation>
+        <translation>Windows-format</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="555"/>
         <source>UNIX / OS X Format</source>
-        <translation>UNIX / OS X</translation>
+        <translation>UNIX- / OSX-format</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="563"/>
         <source>Old Mac Format</source>
-        <translation>Mac (klassisch)</translation>
+        <translation>Gammalt Mac-format</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="571"/>
         <source>Show End of Line</source>
-        <translation>Zeilenende anzeigen</translation>
+        <translation>Visa radslut</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="579"/>
         <source>Show Tabs</source>
-        <translation>Tabulatoren anzeigen</translation>
+        <translation>Visa tabbar</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="587"/>
         <source>Show All Characters</source>
-        <translation>Alle Schriftzeichen anzeigen</translation>
+        <translation>Visa alla tecken</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="598"/>
         <source>Show Indent Guide</source>
-        <translation>Hilfe zur Einrückung anzeigen</translation>
+        <translation>Visa indragsguide</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="606"/>
         <source>Show Wrap Symbol</source>
-        <translation>Umbruchsymbol anzeigen</translation>
+        <translation>Visa radbrytningssymbol</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="614"/>
         <source>Word wrap</source>
-        <translation>Zeilenumbruch</translation>
+        <translation>Radbrytning</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="622"/>
         <source>Text Direction RTL</source>
-        <translation>Textrichtung rechts nach links</translation>
+        <translation>Textrikting RTL</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="627"/>
         <source>Copy Full Path to Clipboard</source>
-        <translation>Kopiere Pfad in die Zwischenablage</translation>
+        <translation>Kopiera fullständig sökväg till urklipp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="632"/>
         <source>Copy Filename to Clipboard</source>
-        <translation>Kopiere Dateiname in die Zwischenablage</translation>
+        <translation>Kopiera filnamn till urklipp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="637"/>
         <source>Copy Directory to Clipboard</source>
-        <translation>Kopiere Verzeichnis in die Zwischenablage</translation>
+        <translation>Kopiera mapp till urklipp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="642"/>
         <source>Zoom &amp;In</source>
-        <translation>Ver&amp;größern</translation>
+        <translation>Zooma &amp;in</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="645"/>
@@ -643,7 +643,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="650"/>
         <source>Zoom &amp;Out</source>
-        <translation>Ver&amp;kleinern</translation>
+        <translation>Zooma &amp;ut</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="653"/>
@@ -653,7 +653,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="658"/>
         <source>Restore Default Zoom</source>
-        <translation>Standartgröße</translation>
+        <translation>Återställ standardzoom</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="661"/>
@@ -663,63 +663,62 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="666"/>
         <source>Move to Other View</source>
-        <translation>Zu anderer Ansicht verschieben</translation>
+        <translation>Flytta till annan vy</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="671"/>
         <source>Clone to Other View</source>
-        <translation>Zu anderer Ansicht klonen</translation>
+        <translation>Klona till annan vy</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="676"/>
         <source>Move to a New Window</source>
-        <translation>In ein neues Fenster verschieben</translation>
+        <translation>Flytta till nytt fönster</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="681"/>
         <source>Open in a New Window</source>
-        <translation>Öffne in neuem Fenster</translation>
+        <translation>Öppna i nytt fönster</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="686"/>
         <source>&amp;Start Recording</source>
-        <translation>&amp;Aufnahme starten</translation>
+        <translation>&amp;Starta inspelning</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="697"/>
         <source>&amp;Stop Recording</source>
-        <translation>&amp;Aufnahme beenden</translation>
+        <translation>&amp;Stoppa inspelning</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="708"/>
         <source>&amp;Playback</source>
-        <translation>&amp;Wiedergabe</translation>
+        <translation>&amp;Uppspelning</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="719"/>
         <source>Save Currently Recorded Macro</source>
-        <translation>Aufgenommenes Makro speichern</translation>
+        <translation>Spara aktuellt inspelat makro</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="727"/>
         <source>Run a Macro Multiple Times...</source>
-        <translation>Lasse ein Makro mehrfach laufen...</translation>
+        <translation>Kör ett makro flera gånger ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="735"/>
         <source>Trim Trailing and save</source>
-        <translatorcomment>Trailing spaces?</translatorcomment>
-        <translation>Entferne Leerzeichen vom Zeilenende und speichere</translation>
+        <translation>Trimma avslut och spara</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="740"/>
         <source>Modify Shortcut/Delete Macro...</source>
-        <translation>Bearbeite Kürzel / Lösche Makro...</translation>
+        <translation>Ändra genväg / Ta bort makro ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="745"/>
         <source>UPPERCASE</source>
-        <translation>GROSSBUCHSTABEN</translation>
+        <translation>VERSALER</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="748"/>
@@ -729,7 +728,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="753"/>
         <source>lowercase</source>
-        <translation>kleinbuchstaben</translation>
+        <translation>gemener</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="756"/>
@@ -739,77 +738,77 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="761"/>
         <source>Convert to UTF-8</source>
-        <translation>Nach UTF-8 umwandeln</translation>
+        <translation>Konvertera till UTF-8</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="766"/>
         <source>Convert to UTF-16BE (UCS-2 Big Endian)</source>
-        <translation>Nach UTF-16BE (UCS-2 Big Endian) umwandeln</translation>
+        <translation>Konvertera till UTF-16BE (UCS-2 Big Endian)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="771"/>
         <source>Convert to UTF-16LE (UCS-2 Little Endian)</source>
-        <translation>Nach UTF-16LE (UCS-2 Little Endian) umwandeln</translation>
+        <translation>Konvertera till UTF-16LE (UCS-2 Little Endian)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="776"/>
         <source>Convert to UTF-8 without BOM</source>
-        <translation>Nach UTF-8 ohne BOM umwandeln</translation>
+        <translation>Konvertera till UTF-8 utan BOM</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="781"/>
         <source>&amp;Run...</source>
-        <translation>&amp;Ausführen...</translation>
+        <translation>&amp;Kör ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="786"/>
         <source>Launch in Firefox</source>
-        <translation>Starte in Firefox</translation>
+        <translation>Starta i Firefox</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="791"/>
         <source>Launch in Chromium</source>
-        <translation>Starte in Chromium</translation>
+        <translation>Starta i Chromium</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="796"/>
         <source>Get PHP help</source>
-        <translation>Hilfe zu PHP</translation>
+        <translation>Få PHP-hjälp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="801"/>
         <source>Google Search</source>
-        <translation>Auf Google suchen</translation>
+        <translation>Google sök</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="806"/>
         <source>Wikipedia Search</source>
-        <translation>Auf Wikipedia suchen</translation>
+        <translation>Wikipedia sök</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="811"/>
         <source>Open file(s)</source>
-        <translation>Datei(en) öffnen</translation>
+        <translation>Öppna fil(er)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="816"/>
         <source>Open file(s) in a new window</source>
-        <translation>Datei(en) in neuem Fenster öffnen</translation>
+        <translation>Öppna fil(er) i nytt fönster</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="821"/>
         <source>Modify Shortcut / Delete Command...</source>
-        <translation>Bearbeite Kürzel / Lösche Befehl...</translation>
+        <translation>Ändra genväg / Ta bort kommando ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="826"/>
         <source>Preferences...</source>
-        <translation>Einstellungen...</translation>
+        <translation>Inställningar ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="831"/>
         <source>&amp;Find...</source>
-        <translation>&amp;Suchen...</translation>
+        <translation>S&amp;ök ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="834"/>
@@ -819,7 +818,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="839"/>
         <source>Find &amp;Next</source>
-        <translation>&amp;Nächsten suchen</translation>
+        <translation>Sök &amp;nästa</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="842"/>
@@ -829,7 +828,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="847"/>
         <source>Find &amp;Previous</source>
-        <translation>&amp;Vorherigen suchen</translation>
+        <translation>Sök fö&amp;regående</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="850"/>
@@ -839,12 +838,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="855"/>
         <source>Plain text</source>
-        <translation>Einfacher Text</translation>
+        <translation>Oformaterad text</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="860"/>
         <source>Replace...</source>
-        <translation>Ersetzen...</translation>
+        <translation>Ersätt ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="863"/>
@@ -854,62 +853,62 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="868"/>
         <source>Reload file interpreted as...</source>
-        <translation>Lade Datei erneut mit folgender Kodierung...</translation>
+        <translation>Läs om fil, tolkad som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="873"/>
         <source>Convert to...</source>
-        <translation>Umwandeln nach...</translation>
+        <translation>Konvertera till ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="878"/>
         <source>Interpret as UTF-16BE (UCS-2 Big Endian)</source>
-        <translation>Interpretiere als UTF-16BE (UCS-2 Big Endian)</translation>
+        <translation>Tolka som UTF-16BE (UCS-2 Big Endian)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="883"/>
         <source>Interpret as UTF-8 without BOM</source>
-        <translation>Interpretiere als UTF-8 ohne BOM</translation>
+        <translation>Tolka som UTF-8 utan BOM</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="888"/>
         <source>Interpret as UTF-8</source>
-        <translation>Interpretiere als UTF-8</translation>
+        <translation>Tolka som UTF-8</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="893"/>
         <source>Interpret as UTF-16LE (UCS-2 Little Endian)</source>
-        <translation>Interpretiere als UTF-16LE (UCS-2 Little Endian)</translation>
+        <translation>Tolka som UTF-16LE (UCS-2 Little Endian)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="904"/>
         <source>Default settings</source>
-        <translation>Standarteinstellungen</translation>
+        <translation>Standardinställningar</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="912"/>
         <source>Custom...</source>
-        <translation>Benutzerdefiniert...</translation>
+        <translation>Anpassa ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="917"/>
         <source>Interpret as...</source>
-        <translation>Interpretiere als...</translation>
+        <translation>Tolka som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="922"/>
         <source>Launch in Chrome</source>
-        <translation>Öffne in Chrome</translation>
+        <translation>Starta i Chrome</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="927"/>
         <source>Open a New Window</source>
-        <translation>Öffne neues Fenster</translation>
+        <translation>Öppna i nytt fönster</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="932"/>
         <source>Find in Files...</source>
-        <translation>Suche in Dateien...</translation>
+        <translation>Sök i filer ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="935"/>
@@ -919,12 +918,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="940"/>
         <source>Delete Current Line</source>
-        <translation>Lösche aktuelle Zeile</translation>
+        <translation>Ta bort aktuell rad</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="943"/>
         <source>Delete the current line</source>
-        <translation>Lösche die aktuelle Zeile</translation>
+        <translation>Ta bort den aktuella raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="946"/>
@@ -934,12 +933,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="951"/>
         <source>Duplicate Current Line</source>
-        <translation>Dupliziere aktuelle Zeile</translation>
+        <translation>Klona aktuell rad</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="954"/>
         <source>Duplicate the current line</source>
-        <translation>Dupliziere die aktuelle Zeile</translation>
+        <translation>Klona den aktuella raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="957"/>
@@ -949,27 +948,27 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="962"/>
         <source>Move Line Up</source>
-        <translation>Zeile nach oben verschieben</translation>
+        <translation>Flytta upp raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="965"/>
         <source>Move the current line up</source>
-        <translation>Aktuelle Zeile nach oben verschieben</translation>
+        <translation>Flytta upp den aktuella raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="968"/>
         <source>Ctrl+Shift+Up</source>
-        <translation>Ctrl+Shift+Up</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="973"/>
         <source>Move Line Down</source>
-        <translation>Zeile nach unten verschieben</translation>
+        <translation>Flytta ner raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="976"/>
         <source>Move the current line down</source>
-        <translation>Aktuelle Zeile nach unten verschieben</translation>
+        <translation>Flytta ner den aktuella raden</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="979"/>
@@ -980,48 +979,48 @@
         <location filename="../ui/mainwindow.ui" line="984"/>
         <location filename="../ui/mainwindow.ui" line="987"/>
         <source>Trim Trailing Space</source>
-        <translation>Entferne Leerzeichen von Zeilenende</translation>
+        <translation>Trimma avslutande blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="992"/>
         <location filename="../ui/mainwindow.ui" line="995"/>
         <source>Trim Leading Space</source>
-        <translation>Entferne Leerzeichen von Zeilenanfang</translation>
+        <translation>Trimma inledande blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1000"/>
         <source>Trim Leading and Trailing Space</source>
-        <translation>Entferne Leerzeichen von Zeilende und -anfang</translation>
+        <translation>Trimma inledande och avslutande blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1005"/>
         <source>EOL to Space</source>
-        <translation>Zeilenden in Leerzeichen umwandeln</translation>
+        <translation>Radslut till blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1010"/>
         <source>TAB to Space</source>
-        <translation>Tabulatoren in Leerzeichen umwandeln</translation>
+        <translation>TAB till blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1015"/>
         <source>Space to TAB (All)</source>
-        <translation>Leerzeichen in Tabulatoren (alle)</translation>
+        <translation>Blanksteg till TAB (alla)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1020"/>
         <source>Space to TAB (Leading)</source>
-        <translation>Leerzeichen in Tabulatoren (Zeilenanfang)</translation>
+        <translation>Blanksteg till TAB (inledande)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1025"/>
         <source>Open Folder...</source>
-        <translation>Verzeichnis öffnen...</translation>
+        <translation>Öppna mapp ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1030"/>
         <source>Go to line...</source>
-        <translation>Gehe zu Zeile...</translation>
+        <translation>Gå till rad ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1033"/>
@@ -1031,12 +1030,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1038"/>
         <source>Install Extension...</source>
-        <translation>Erweiterung installieren...</translation>
+        <translation>Installera tillägg ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1046"/>
         <source>Full Screen</source>
-        <translation>Vollbild</translation>
+        <translation>Helskärm</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1049"/>
@@ -1047,114 +1046,114 @@
         <location filename="../ui/mainwindow.ui" line="1057"/>
         <location filename="../ui/mainwindow.ui" line="1060"/>
         <source>Show Spaces</source>
-        <translation>Zeige Leerzeichen an</translation>
+        <translation>Visa blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1071"/>
         <source>Enable Smart Indent</source>
-        <translation>Schalte &quot;Smart Indent&quot; ein</translation>
+        <translation>Aktivera smart indrag</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="349"/>
         <location filename="../ui/mainwindow.cpp" line="633"/>
         <source>INS</source>
-        <translation>EINF</translation>
+        <translation>INS</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="377"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
-        <translation>Sitzung konnte nicht gespeichert werden. Schreibrechte für folgendes Verzeichnis werden benötigt:
+        <translation>Kunde inte spara den här sessionen. Tillse att följande mapp är tillgänglig:
 
 </translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="631"/>
         <source>OVR</source>
-        <translation>ÜBS</translation>
+        <translation>OVR</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="755"/>
         <source>Your changes to «%1» will be discarded.</source>
-        <translation>Ihre Änderungen in &quot;%1&quot; werden verworfen.</translation>
+        <translation>Dina ändringar i «%1» kommer att kasseras.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="756"/>
         <source>Reload</source>
-        <translation>Erneut laden</translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="794"/>
         <source>Open</source>
-        <translation>Öffnen</translation>
+        <translation>Öppna</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="796"/>
         <source>All files (*)</source>
-        <translation>Alle Dateien (*)</translation>
+        <translation>Alla filer (*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="814"/>
         <source>Open Folder</source>
-        <translation>Öffne Verzeichnis</translation>
+        <translation>Öppna mapp</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="854"/>
         <source>Do you want to save changes to «%1»?</source>
-        <translation>Wollen Sie die Änderungen an &quot;%1&quot; speichern?</translation>
+        <translation>Vill du spara ändringar i «%1»?</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="855"/>
         <source>Don&apos;t Save</source>
-        <translation>Nicht speichern</translation>
+        <translation>Spara inte</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="858"/>
         <source>Do you want to save changes to «%1» before closing?</source>
-        <translation>Wollen Sie vor dem Schließen die Änderungen an &quot;%1&quot; speichern?</translation>
+        <translation>Vill du spara ändringar i «%1» innan stängning?</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="862"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
-        <translation>Falls Sie Ihre Änderungen nicht speichern, gehen diese für immer verloren.</translation>
+        <translation>Om du inte sparar dina ändringar, förloras dom för alltid.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="962"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
-        <translation>Die Datei wurde seit ihrem letzen Einlesen verändert.
-Wollen Sie dennoch speichern?</translation>
+        <translation>Filen på disk, har ändrats sedan senaste inläsning.
+Vill du spara den i alla fall?</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="965"/>
         <source>Saving the file might cause loss of external data.</source>
-        <translation>Die Datei zu speichern könnte den Verlust externer Daten bedeuten.</translation>
+        <translation>Att spara filen kan innebära extern dataförlust.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="984"/>
         <source>Save as</source>
-        <translation>Speichern als</translation>
+        <translation>Spara som</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="986"/>
         <source>Any file (*)</source>
-        <translation>Alle Dateien (*)</translation>
+        <translation>Alla filer (*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1151"/>
         <source>%1 chars, %2 lines</source>
-        <translation>%1 Zeichen, %2 Zeilen</translation>
+        <translation>%1 tecken, %2 rader</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1162"/>
         <source>Ln %1, col %2</source>
-        <translation>Z. %1, Sp. %2</translation>
+        <translation>Rad %1, kol %2</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1166"/>
         <source>Sel %1 (%2)</source>
-        <translation>Mark. %1 (%2)</translation>
+        <translation>Markerat %1 (%2)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1230"/>
@@ -1169,68 +1168,68 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1236"/>
         <source>Old Mac</source>
-        <translation>Mac (klassisch)</translation>
+        <translation>Gammal Mac</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1243"/>
         <source>%1 w/o BOM</source>
-        <translation>%1 o. BOM</translation>
+        <translation>%1 utan BOM</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1719"/>
         <source>No recent files</source>
-        <translation>Keine zuletzt geöffneten Dateien</translation>
+        <translation>Inga tidigare filer</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1883"/>
         <source>Convert to:</source>
-        <translation>Umwandeln nach:</translation>
+        <translation>Konvertera till:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1897"/>
         <source>Reload as:</source>
-        <translation>Erneut laden als:</translation>
+        <translation>Läs om som:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1939"/>
         <source>Interpret as:</source>
-        <translation>Interpretiere als:</translation>
+        <translation>Tolka som:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1954"/>
         <source>Run...</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1966"/>
         <source>Modify Run Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifiera körkommandon</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2246"/>
         <source>Extension</source>
-        <translation>Erweiterung</translation>
+        <translation>Tillägg</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2291"/>
         <source>Open Session...</source>
-        <translation>Sitzung öffnen...</translation>
+        <translation>Öppna session ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2293"/>
         <location filename="../ui/mainwindow.cpp" line="2313"/>
         <source>Session file (*.xml);;Any file (*)</source>
-        <translation>Gespeicherte Sitzung (*.xml);;Alle Dateien (*)</translation>
+        <translation>Sessionsfil (*.xml);;Alla filer (*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2311"/>
         <source>Save Session as...</source>
-        <translation>Speichere Sitzung als...</translation>
+        <translation>Spara session som ...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2337"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
-        <translation>Sitzung konnte nicht gespeichert werden. Versuchen Sie einen anderen Dateinamen.</translation>
+        <translation>Kunde inte spara den här sessionen. Försök med ett annat filnamn.</translation>
     </message>
 </context>
 <context>
@@ -1238,7 +1237,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="231"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna fil</translation>
     </message>
 </context>
 <context>
@@ -1246,37 +1245,37 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="263"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="264"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="265"/>
         <source>Save...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ...</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="267"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Speciella platshållare&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Fullständig sökväg till aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Lagringsmapp för aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Namn på aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Aktuell markerad text.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="312"/>
         <source>Choose the name to be displayed in the run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj namn att visa i kommandomenyn.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="313"/>
         <source>Command Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommandonamn:</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="322"/>
         <source>Command saved...</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommandot sparat ...</translation>
     </message>
 </context>
 <context>
@@ -1284,27 +1283,27 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="26"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="27"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="31"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Speciella platshållare&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Fullständig sökväg till aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Mapp för aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Namn på aktiv fil.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Aktuell markerad text.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommando</translation>
     </message>
 </context>
 <context>
@@ -1317,47 +1316,47 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/notepadqq.cpp" line="81"/>
         <source>Open a new window in an existing instance of %1.</source>
-        <translation>Öffne neues Fenster in vorhandener Instanz von %1.</translation>
+        <translation>Öppna ett nytt fönster i en befintlig instans av %1.</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="86"/>
         <source>Files to open.</source>
-        <translation>Zu öffnende Dateien.</translation>
+        <translation>Filer att öppna</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="113"/>
         <source>You are using an old version of Qt (%1)</source>
-        <translation>Sie verwenden eine alte Version von Qt (%1)</translation>
+        <translation>Du använder en gammal version av Qt (%1)</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="115"/>
         <source>Notepadqq will try to do its best, but &lt;b&gt;some things will not work properly&lt;/b&gt;.</source>
-        <translation>Notepadqq wird sein Bestes versuchen, dennoch könnte &lt;b&gt;nicht alles reibungslos funktionieren&lt;/b&gt;.</translation>
+        <translation>Notepadqq försöker göra sitt bästa, men &lt;b&gt;vissa saker kommer inte att fungera korrekt&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="116"/>
         <source>Install a newer Qt version (&amp;ge; %1) from the official repositories of your distribution.&lt;br&gt;&lt;br&gt;If it&apos;s not available, download Qt (&amp;ge; %1) from %2 and install it to &quot;%3&quot; or to &quot;%4&quot;.</source>
-        <translation>Installieren Sie eine neuere Version von Qt (&amp;ge; %1) aus den offiziellen Paketquellen Ihrer Distribution.&lt;br&gt;&lt;br&gt;Falls diese nicht verfügbar sein sollte, laden Sie Qt (&amp;ge; %1) von %2 herunter und installieren Sie es nach &quot;%3&quot; oder &quot;%4&quot;.</translation>
+        <translation>Installera en nyare Qt-version (&amp;ge; %1) från det officiella förrådet för din distribution.&lt;br&gt;&lt;br&gt;Om det inte finns tillgängligt, kan du ladda ner Qt (&amp;ge; %1) från %2 och installera den i &quot;%3&quot; eller i &quot;%4&quot;.</translation>
     </message>
     <message>
         <location filename="../ui/notepadqq.cpp" line="130"/>
         <source>Don&apos;t show me this warning again</source>
-        <translation>Diese Warnung nicht erneut anzeigen</translation>
+        <translation>Visa inte denna varning igen</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="381"/>
         <source>Restart required</source>
-        <translation>Neustart erforderlich</translation>
+        <translation>Omstart krävs</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="382"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
-        <translation>Sie müssen Notepadqq erneut starten um die Einstellungen zu übernehmen.</translation>
+        <translation>Du måste starta om Notepadqq för att tillämpa språkändringen.</translation>
     </message>
     <message>
         <location filename="../ui/Sessions/sessions.cpp" line="126"/>
         <source>Error reading session file</source>
-        <translation>Sitzung konnte nicht geladen werden</translation>
+        <translation>Kunde inte läsa sessionsfilen</translation>
     </message>
 </context>
 <context>
@@ -1365,12 +1364,12 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/Search/replaceinfilesworker.cpp" line="40"/>
         <source>Error reading %1</source>
-        <translation>Fehler beim Lesen von %1</translation>
+        <translation>Kunde inte läsa %1</translation>
     </message>
     <message>
         <location filename="../ui/Search/replaceinfilesworker.cpp" line="84"/>
         <source>Error writing %1</source>
-        <translation>Fehler beim Schreiben von %1</translation>
+        <translation>Kunde inte skriva %1</translation>
     </message>
 </context>
 <context>
@@ -1378,7 +1377,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/Search/searchinfilesworker.cpp" line="66"/>
         <source>Error reading %1</source>
-        <translation>Fehler beim Lesen von %1</translation>
+        <translation>Kunde inte läsa %1</translation>
     </message>
 </context>
 <context>
@@ -1391,7 +1390,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/Search/dlgsearching.ui" line="77"/>
         <source>&amp;Cancel</source>
-        <translation>&amp;Abbrechen</translation>
+        <translation>&amp;Avbryt</translation>
     </message>
 </context>
 <context>
@@ -1404,22 +1403,22 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmabout.ui" line="39"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation>Stäng</translation>
     </message>
     <message>
         <location filename="../ui/frmabout.ui" line="108"/>
         <source>License</source>
-        <translation>Lizenz</translation>
+        <translation>Licens</translation>
     </message>
     <message>
         <location filename="../ui/frmabout.cpp" line="23"/>
         <source>Contributors:</source>
-        <translation>Mitwirkende:</translation>
+        <translation>Medhjälpare:</translation>
     </message>
     <message>
         <location filename="../ui/frmabout.cpp" line="23"/>
         <source>GitHub Contributors</source>
-        <translation>Mitwirkende auf GitHub</translation>
+        <translation>GitHub-medhjälpare</translation>
     </message>
 </context>
 <context>
@@ -1427,12 +1426,12 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmencodingchooser.ui" line="17"/>
         <source>Encoding</source>
-        <translation>Kodierung</translation>
+        <translation>Kodning</translation>
     </message>
     <message>
         <location filename="../ui/frmencodingchooser.ui" line="30"/>
         <source>Encoding:</source>
-        <translation>Kodierung:</translation>
+        <translation>Kodning:</translation>
     </message>
 </context>
 <context>
@@ -1440,22 +1439,22 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmindentationmode.ui" line="14"/>
         <source>Indentation</source>
-        <translation>Zeileneinzug</translation>
+        <translation>Indrag</translation>
     </message>
     <message>
         <location filename="../ui/frmindentationmode.ui" line="26"/>
         <source>Tabs</source>
-        <translation>Tabulatoren</translation>
+        <translation>Tabbar</translation>
     </message>
     <message>
         <location filename="../ui/frmindentationmode.ui" line="36"/>
         <source>Spaces</source>
-        <translation>Leerzeichen</translation>
+        <translation>Blanksteg</translation>
     </message>
     <message>
         <location filename="../ui/frmindentationmode.ui" line="60"/>
         <source>Indentation width:</source>
-        <translation>Breite des Einzugs:</translation>
+        <translation>Indragsbredd</translation>
     </message>
 </context>
 <context>
@@ -1464,12 +1463,12 @@ Wollen Sie dennoch speichern?</translation>
         <location filename="../ui/frmlinenumberchooser.ui" line="14"/>
         <location filename="../ui/frmlinenumberchooser.ui" line="24"/>
         <source>Go to line</source>
-        <translation>Gehe zu Zeile</translation>
+        <translation>Gå till rad</translation>
     </message>
     <message>
         <location filename="../ui/frmlinenumberchooser.ui" line="53"/>
         <source>Line number:</source>
-        <translation>Zeilennummer:</translation>
+        <translation>Radnummer:</translation>
     </message>
 </context>
 <context>
@@ -1477,7 +1476,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="14"/>
         <source>Preferences</source>
-        <translation>Einstellungen</translation>
+        <translation>Inställningar</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="51"/>
@@ -1487,149 +1486,148 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="56"/>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation>Allmänt</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="61"/>
         <source>Appearance</source>
-        <translation>Erscheinungsbild</translation>
+        <translation>Utseende</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="66"/>
         <source>Languages</source>
-        <translation>Sprachen</translation>
+        <translation>Språk</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="71"/>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Sök</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="76"/>
         <source>Shortcuts</source>
-        <translation>Tastenkürzel</translation>
+        <translation>Genvägar</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="81"/>
         <source>Extensions</source>
-        <translation>Erweiterungen</translation>
+        <translation>Tillägg</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="105"/>
         <source>Check Qt version at startup</source>
-        <translation>Qt-Version beim Start überprüfen</translation>
+        <translation>Kontrollera Qt-version vid uppstart</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="112"/>
         <source>Warn when the indentation doesn&apos;t match the settings</source>
-        <translation>Warnen falls Einzug nicht mit Einstellungen übereinstimmt</translation>
+        <translation>Varna om indrag inte stämmer med inställningarna</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="119"/>
         <source>Remember open tabs when closing Notepadqq</source>
-        <translation>Merke geöffnete Reiter beim Schließen von Notepadqq</translation>
+        <translation>Kom ihåg öppna flikar när Notepadqq avslutas</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="128"/>
         <source>Localization:</source>
-        <translation>Sprache:</translation>
+        <translation>Språk:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="185"/>
         <source>Color scheme:</source>
-        <translation>Farbschema:</translation>
+        <translation>Färgschema:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="217"/>
         <source>Override Font Family</source>
-        <translation>Verwende Schriftart</translation>
+        <translation>Anpassat teckensnitt</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="240"/>
         <source>Override Font Size</source>
-        <translation>Verwende Schriftgröße</translation>
+        <translation>Anpassad teckenstorlek</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="269"/>
         <source>Override Line Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Anpassad radhöjd</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="285"/>
         <source>em</source>
-        <translation type="unfinished"></translation>
+        <translation>em</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="306"/>
         <source>Preview</source>
-        <translation>Vorschau</translation>
+        <translation>Förhandsgranskning</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="389"/>
         <source>Tab size:</source>
-        <translation>Tabulatorengröße:</translation>
+        <translation>Tabbstorlek:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="402"/>
         <source>Use spaces instead of tabs</source>
-        <translation>Benutze Leerzeichen anstelle von Tabulatoren</translation>
+        <translation>Använd blanksteg istället för tabbar</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="426"/>
         <source>Use default settings</source>
-        <translation>Standarteinstellungen verwenden</translation>
+        <translation>Använd standardinställningar</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="462"/>
         <source>Search as I type</source>
-        <translation>Als I-Typ suchen</translation>
+        <translation>Sök när jag skriver</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="517"/>
         <source>Node.js runtime</source>
-        <translation>Node.js Laufzeit</translation>
+        <translation>Node.js runtime</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="523"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
-        <translation>Unterstützte Node-Versionen: 0.10, 0.11, 0.12</translation>
+        <translation>Node-versioner som stöds: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="530"/>
         <source>Node.js path:</source>
-        <translation>Pfad zu Node.js:</translation>
+        <translation>Sökväg till Node.js:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="542"/>
         <location filename="../ui/frmpreferences.ui" line="563"/>
         <source>Browse...</source>
-        <translation>Durchsuchen...</translation>
+        <translation>Bläddra ...</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="551"/>
         <source>NPM path:</source>
-        <translation>Pfad zu NPM:</translation>
+        <translation>Sökväg till NPM:</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="572"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
-        <translation>ACHTUNG: die Unterstützung für
-Erweiterungen ist EXPERIMENTELL.</translation>
+        <translation>Varning! Tilläggsstödet är EXPERIMENTELLT.</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="109"/>
         <source>Keyboard shortcut conflict</source>
-        <translation>Tastenkürzel bereits in Verwendung</translation>
+        <translation>Genvägskonflikt</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="110"/>
         <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
-        <translation>Zwei oder mehr Aktionen verwenden dasselbe Tastenkürzel. Einstellungen können erst gespeichert werden, wenn der Konflikt behoben wurde.</translation>
+        <translation>Två eller flera åtärder delar samma tangenbordsgenväg. Dessa konflikter måste lösas innan du kan spara dina inställningar.</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="388"/>
         <source>Browse</source>
-        <translation>Durchsuchen</translation>
+        <translation>Bläddra</translation>
     </message>
 </context>
 <context>
@@ -1637,23 +1635,23 @@ Erweiterungen ist EXPERIMENTELL.</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="14"/>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation>Sök</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="50"/>
         <source>Find</source>
-        <translation>Suche</translation>
+        <translation>Sök</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="63"/>
         <source>Replace with</source>
-        <translation>Ersetze mit</translation>
+        <translation>Ersätt med</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="76"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="572"/>
         <source>Look in</source>
-        <translation>Suche in</translation>
+        <translation>Sök i</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="89"/>
@@ -1668,159 +1666,159 @@ Erweiterungen ist EXPERIMENTELL.</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="195"/>
         <source>Include subdirectories</source>
-        <translation>Unterverzeichnisse mit einbeziehen</translation>
+        <translation>Inkludera undermappar</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="202"/>
         <source>Show advanced options</source>
-        <translation>Erweiterte Optionen einblenden</translation>
+        <translation>Visa avancerade alternativ</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="209"/>
         <source>Advanced</source>
-        <translation>Erweitert</translation>
+        <translation>Avancerat</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="215"/>
         <source>Search plain text</source>
-        <translation>Einfache Textsuche</translation>
+        <translation>Sök oformaterad text</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="241"/>
         <source>Match whole word only</source>
-        <translation>Nach ganzen Worten suchen</translation>
+        <translation>Matcha endast hela ord</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="248"/>
         <source>Match case</source>
-        <translation>Groß-/Kleinschreibung beachten</translation>
+        <translation>Skiftlägeskänsligt</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="255"/>
         <source>Search with special characters (\n, \r, \t, \0, \u..., \x...)</source>
-        <translation>Spezielle Zeichen einbeziehen (\n, \r, \t, \0, \u..., \x...)</translation>
+        <translation>Sök med specialtecken (\n, \r, \t, \0, \u..., \x...)</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="262"/>
         <source>Search with regular expressions</source>
-        <translation>Reguläre Ausdrücke verwenden</translation>
+        <translation>Sök med Regular Expression</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="290"/>
         <source>Find ⇩</source>
-        <translation>Suche ⇩</translation>
+        <translation>Sök ⇩</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="300"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="432"/>
         <source>Select all</source>
-        <translation>Alle markieren</translation>
+        <translation>Markera alla</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="310"/>
         <source>Replace ⇧</source>
-        <translation>Ersetze ⇧</translation>
+        <translation>Ersätt ⇧</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="320"/>
         <source>Replace ⇩</source>
-        <translation>Ersetze ⇩</translation>
+        <translation>Ersätt ⇩</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="330"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="383"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="420"/>
         <source>Replace all</source>
-        <translation>Alle ersetzen</translation>
+        <translation>Ersätt alla</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="347"/>
         <source>Find all</source>
-        <translation>Alle suchen</translation>
+        <translation>Sök alla</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="357"/>
         <source>Find ⇧</source>
-        <translation>Suche ⇧</translation>
+        <translation>Sök ⇧</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="396"/>
         <source>Toolbar</source>
-        <translation>Wergzeugleiste</translation>
+        <translation>Verktygsfält</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="430"/>
         <source>&amp;Replace</source>
-        <translation>&amp;Ersetzen</translation>
+        <translation>&amp;Ersätt</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="438"/>
         <source>&amp;Find</source>
-        <translation>&amp;Suchen</translation>
+        <translation>&amp;Sök</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="446"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="449"/>
         <source>Find in files</source>
-        <translation>In Dateien suchen</translation>
+        <translation>Sök i filer</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="306"/>
         <source>Searching...</source>
-        <translation>Suche...</translation>
+        <translation>Söker ...</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="214"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="244"/>
         <source>Error</source>
-        <translation>Fehler</translation>
+        <translation>Fel</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="232"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="236"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="285"/>
         <source>Replace in files</source>
-        <translation>In Dateien ersetzen</translation>
+        <translation>Ersätt i filer</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="286"/>
         <source>Are you sure you want to replace all occurrences in %1 for file types %2?</source>
-        <translation>Sind Sie sicher, dass Sie alle Treffer in %1 for den Dateityp %2 ersetzen wollen?</translation>
+        <translation>Vill du verkligen ersätta alla förekomster i %1 för filtyperna %2?</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="266"/>
         <source>Replacing...</source>
-        <translation>Ersetze...</translation>
+        <translation>Ersätter ...</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="233"/>
         <source>%1 occurrences replaced in %2 files.</source>
-        <translation>%1 Treffer in %2 Datei(en) ersetzt.</translation>
+        <translation>%1 förekomster ersatta i %2 filer.</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="237"/>
         <source>%1 occurrences replaced in %2 files, but the replacement has been canceled before it could finish.</source>
-        <translation>%1 Treffer in %2 Datei(en) ersetzt, der Vorgang wurde jedoch abgebrochen bevor er beendet werden konnte.</translation>
+        <translation>%1 förekomster ersatta i %2 filer, men ersättandet avbröts innan det var slutfört.</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="253"/>
         <source>Replacing in </source>
-        <translation type="unfinished"></translation>
+        <translation>Ersätter i </translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="255"/>
         <source>Searching in </source>
-        <translation type="unfinished"></translation>
+        <translation>Söker i </translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="420"/>
         <source>%1 occurrences have been replaced.</source>
-        <translation>%1 Treffer wurde(n) ersetzt.</translation>
+        <translation>%1 förekomster har ersatts.</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="432"/>
         <source>No results found</source>
-        <translation>Keine Übereinstimmungen gefunden</translation>
+        <translation>Inga sökträffar hittade</translation>
     </message>
 </context>
 </TS>

@@ -10,6 +10,7 @@
 #include <QtGlobal>
 #include <QTranslator>
 #include <QLocale>
+#include <QDateTime>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -69,7 +70,6 @@ int main(int argc, char *argv[])
     } else {
         settings.General.setLocalization("en");
     }
-
     // Check for "run-and-exit" options like -h or -v
     Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
 
@@ -91,9 +91,10 @@ int main(int argc, char *argv[])
                 win->openCommandLineProvidedUrls(workingDirectory, arguments);
 
                 // Activate the window
+                win->hide();
+                win->show();
                 win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
                 win->raise();
-                win->show();
                 win->activateWindow();
             }
         }

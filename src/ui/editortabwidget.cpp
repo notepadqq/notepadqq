@@ -215,6 +215,17 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
     }
 }
 
+void EditorTabWidget::deleteIfEmpty()
+{
+    EditorTabWidget::deleteIfEmpty(this);
+}
+
+void EditorTabWidget::deleteIfEmpty(EditorTabWidget *tabWidget) {
+    if(tabWidget->count() == 0) {
+        delete tabWidget;
+    }
+}
+
 void EditorTabWidget::setSavedIcon(int index, bool saved)
 {
     if (saved)

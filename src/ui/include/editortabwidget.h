@@ -36,6 +36,17 @@ public:
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &zoomFactor);
 
+    /**
+     * @brief deleteIfEmpty Deletes the TabWidget if it has no tabs.
+     */
+    void deleteIfEmpty();
+
+    /**
+     * @brief deleteIfEmpty Deletes the given TabWidget if it has no tabs.
+     * @param tabWidget
+     */
+    static void deleteIfEmpty(EditorTabWidget *tabWidget);
+
 private:
     // Smart pointers to the editors within this TabWidget
     QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;

@@ -29,6 +29,15 @@ public:
     };
 
     /**
+     * Describes the result of a save process.
+     * For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
+     */
+    enum saveFileResult {
+         saveFileResult_Saved       /** The file was saved  */
+        ,saveFileResult_Canceled    /** The save process was canceled */
+    };
+
+    /**
      * @brief Saves a document to the file system.
      * @param tabWidget tabWidget where the document is
      * @param tab tab of the tabWidget that identifies the document
@@ -70,6 +79,12 @@ public:
     static DocEngine::DecodedText readToString(QFile *file);
     static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
     static bool writeFromString(QIODevice *io, const DecodedText &write);
+
+    /**
+     * @brief getNewDocumentName
+     * @return Returns a QString with a fitting name for a new document tab.
+     */
+    QString getNewDocumentName() const;
 
 private:
     TopEditorContainer *m_topEditorContainer;
@@ -152,7 +167,15 @@ signals:
 
     void documentReloaded(EditorTabWidget *tabWidget, int tab);
 
-    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened);
+    /**
+     * @brief The document has been successfully loaded.
+     * @param tabWidget The TabWidget that contains the loaded doc.
+     * @param tab The tab index of the loaded doc.
+     * @param wasAlreadyOpened True if the document was only reloaded.
+     * @param updateRecentDocuments True if the document should be remembered
+     *        as a recently opened file.
+     */
+    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
 
 public slots:
 

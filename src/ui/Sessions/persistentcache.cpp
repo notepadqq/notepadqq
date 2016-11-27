@@ -8,25 +8,13 @@ QString PersistentCache::cacheSessionPath() {
 
 QString PersistentCache::cacheDirPath() {
     static QString tabpath = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/tabCache");
-
-    // Create the directory if it does not yet exist.
-    // Does nothing if the dir exists.
-    QDir().mkpath(tabpath);
-
     return tabpath;
 }
 
-bool PersistentCache::clearCacheDir() {
-    QDir cacheDir(cacheDirPath());
-    cacheDir.removeRecursively(); // Clear cache
-    cacheDir = cacheDirPath(); // Recreate cache folder
-
-    return cacheDir.exists();
-}
-
-QUrl PersistentCache::createValidCacheName(const QString& fileName){
+QUrl PersistentCache::createValidCacheName(const QDir& parent, const QString &fileName)
+{
     QUrl cacheFile;
-    QString partialPath = cacheDirPath() + "/" + fileName;
+    QString partialPath = parent.absolutePath() + "/" + fileName;
     QFileInfo fileInfo;
 
     // To prevent name collision, a random suffix will be appended to each file.
