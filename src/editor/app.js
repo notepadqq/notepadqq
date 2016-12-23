@@ -543,26 +543,93 @@ UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_SPACE", function(msg, data, pr
     editLines(function (x) { return x.replace(/^\s+/, ""); });
 });
 
+var tabToSpaceCounter = 0;
+function tabToSpaceHelper(match, offset, tabSize) {
+    /*
+        string.replace() does not update the string inbetween invokations of this update function.
+        Since we replace a single tab with multiple spaces we've got to keep track of the extra
+        string length outselves. tabToSpaceCounter holds the number of extra spaces we've added.
+     */
+    var trueOffset = offset + tabToSpaceCounter
+    
+    var numSpaces = tabSize - (trueOffset % tabSize)
+    
+    // Since the original tab is replaced by a space we only need numSpaces-1 new spaces
+    tabToSpaceCounter += numSpaces-1;
+
+    // Generate the whitespace. Sadly " ".repeat(numSpaces) does not work with this js interpreter.
+    var space = "";
+    for (var i = 0; i< numSpaces; i++)
+        space += " ";
+
+    return space;
+}
+
 UiDriver.registerEventHandler("C_CMD_TAB_TO_SPACE", function(msg, data, prevReturn) {
     editLines(function (x) {
-        return x.replace(/\t/g, (function(tabSize) {
-            var result = "";
-            for (var i = 0; i< tabSize; i++) {
-                result += " ";
-            }
-            return result;
-        })(
-            editor.getOption("tabSize")
-        ));
+        tabToSpaceCounter = 0
+        var tabSz = editor.getOption("tabSize")
+
+        return x.replace(/\t/g, function(match, offset) {
+            return tabToSpaceHelper(match, offset, tabSz)
+        });
+
     });
 });
 
+var spaceToTabCounter = 0;
+function spaceToTabHelper(match, offset, tabSize) {  
+    // Like with tabToSpace, we need to keep track of the inserted/deleted character count.
+    var start = offset + spaceToTabCounter
+    var len = match.length
+    var result = ""
+
+    // Search for the first tab line manually
+    var leading = tabSize - (start % tabSize)
+    if (len >= leading) {
+        result += "\t"
+        len -= leading
+    }
+    
+    // then replace spaces with tabs
+    while(len>=tabSize) {
+        result += "\t"
+        len -= tabSize
+    }
+    
+    // finally add spaces if we can't add tabs anymore
+    while(len>0) {
+        result += " "
+        len -= 1
+    }
+    
+    spaceToTabCounter -= (match.length - result.length)
+    
+    return result
+}
+
 UiDriver.registerEventHandler("C_CMD_SPACE_TO_TAB_ALL", function(msg, data, prevReturn) {
-    editLines(function (x) { return x.replace(/ /g, "\t"); });
+    editLines(function (x) {
+        spaceToTabCounter = 0
+        var tabSz = editor.getOption("tabSize")
+
+        return x.replace(/ +/g, function(match, offset) {
+            return spaceToTabHelper(match, offset, tabSz)
+        });
+
+    });
 });
 
 UiDriver.registerEventHandler("C_CMD_SPACE_TO_TAB_LEADING", function(msg, data, prevReturn) {
-    editLines(function (x) { return x.replace(/^\s+/g, function(m){ return m.replace(/\s/g, "\t");}); });
+    editLines(function (x) {
+        spaceToTabCounter = 0
+        var tabSz = editor.getOption("tabSize")
+
+        return x.replace(/^ +/g, function(match, offset) {
+            return spaceToTabHelper(match, offset, tabSz)
+        });
+
+    });
 });
 
 function editLines(funct){
