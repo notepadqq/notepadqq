@@ -87,7 +87,7 @@
     <message>
         <location filename="../ui/docengine.cpp" line="33"/>
         <source>new %1</source>
-        <translation type="unfinished">nouveau %1</translation>
+        <translation>nouveau %1</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="182"/>
@@ -1197,12 +1197,12 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1954"/>
         <source>Run...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exécuter...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1966"/>
         <source>Modify Run Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier les commandes Exécuter</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2246"/>
@@ -1236,7 +1236,7 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="231"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un fichier</translation>
     </message>
 </context>
 <context>
@@ -1244,37 +1244,37 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="263"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="264"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="265"/>
         <source>Save...</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer...</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="267"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Spécifiques&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Chemin complet du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Répertoire du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Nom du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Texte actuellement sélectionné.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="312"/>
         <source>Choose the name to be displayed in the run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez le nom à afficher dans le menu Exécuter.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="313"/>
         <source>Command Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la commande :</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="322"/>
         <source>Command saved...</source>
-        <translation type="unfinished"></translation>
+        <translation>Commande enregistrée...</translation>
     </message>
 </context>
 <context>
@@ -1282,27 +1282,27 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="26"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="27"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="31"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Spécifiques&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Chemin complet du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Répertoire du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Nom du fichier actif.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Texte actuellement sélectionné.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Commande</translation>
     </message>
 </context>
 <context>
@@ -1550,12 +1550,12 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="269"/>
         <source>Override Line Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer le hauteur de ligne</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="285"/>
         <source>em</source>
-        <translation type="unfinished"></translation>
+        <translation>em</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="306"/>
@@ -1802,12 +1802,12 @@ Voulez-vous tout de même l&apos;enregistrer ?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="253"/>
         <source>Replacing in </source>
-        <translation type="unfinished"></translation>
+        <translation>Remplace dans </translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="255"/>
         <source>Searching in </source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche dans </translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="420"/>
