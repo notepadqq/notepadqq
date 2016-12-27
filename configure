@@ -117,7 +117,7 @@ test $? -eq 0 && echo "$QMAKE" || \
 printf "checking for lrelease... "
 $LRELEASE -help 2>/dev/null 1>/dev/null
 test $? -eq 0 && echo "$LRELEASE" || \
-    errorExit "not found!\n  Try to run configure with \`--lrelease /path/to/lrelease-executable'."
+    errorExit "not found!\n  Try to run configure with \`--lrelease /path/to/lrelease-executable'." 1
 
 check c++ "$CXX" 1
 
