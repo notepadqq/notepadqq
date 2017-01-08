@@ -157,6 +157,7 @@ TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
     ../translations/notepadqq_fr.ts \
     ../translations/notepadqq_hu.ts \
+    ../translations/notepadqq_it.ts \
     ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_ru.ts \
     ../translations/notepadqq_sv.ts
