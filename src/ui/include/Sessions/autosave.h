@@ -1,25 +1,49 @@
 #ifndef AUTOSAVE_H
 #define AUTOSAVE_H
 
-namespace Autosave {
+#include <QTimer>
+#include <QString>
+#include <tuple>
+#include <vector>
 
-/**
- * @brief restoreFromAutosave Reads the autosave sessions and recreates
- *        all windows and their tabs.
- */
-void restoreFromAutosave();
+namespace EditorNS{
+class Editor;
+}
+class MainWindow;
 
-/**
- * @brief enableAutosave Starts periodic autosaving.
- */
-void enableAutosave();
+class Autosave {
+public:
 
-/**
- * @brief disableAutosave Stops periodic autosaving.
- */
-void disableAutosave();
+    /**
+     * @brief restoreFromAutosave Reads the autosave sessions and recreates
+     *        all windows and their tabs.
+     */
+    static void restoreFromAutosave();
 
-} // namespace Autosave
+    /**
+     * @brief enableAutosave Starts periodic autosaving.
+     */
+    static void enableAutosave();
 
+    /**
+     * @brief disableAutosave Stops periodic autosaving.
+     */
+    static void disableAutosave();
+
+private:
+    // Interval between autosaves, in milliseconds.
+    static const int AUTOSAVE_INTERVAL = 5000;
+
+    static QTimer s_autosaveTimer;
+
+    struct WindowData {
+        MainWindow* ptr;
+        std::vector<std::pair<EditorNS::Editor*, int>> editors;
+    };
+
+    static std::vector<WindowData> s_autosaveData;
+
+    static void executeAutosave();
+};
 
 #endif // AUTOSAVE_H

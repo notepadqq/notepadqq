@@ -46,6 +46,11 @@ public:
     void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
     void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
 
+    /**
+     * @brief Returns the number of editors in all of the TopEditorWidget's children.
+     */
+    int getNumEditors();
+
 private:
     EditorTabWidget *m_currentTabWidget;
 

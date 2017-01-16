@@ -14,7 +14,8 @@ QString PersistentCache::cacheDirPath() {
 QString PersistentCache::autosaveDirPath() {
     static QString path = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/autosaveCache");
     return path;
-{
+}
+
 QUrl PersistentCache::createValidCacheName(const QDir& parent, const QString &fileName)
 {
     QUrl cacheFile;

@@ -34,6 +34,10 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
     return isCleanOrForced(changeGeneration);
 });
 
+UiDriver.registerEventHandler("C_FUN_GET_HISTORY_GENERATION", function(msg, data, prevReturn) {
+    return editor.getHistoryGeneration();
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
     Languages.setLanguage(editor, data);
 });
