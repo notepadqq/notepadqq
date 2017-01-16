@@ -137,7 +137,6 @@ void Autosave::restoreFromAutosave()
         wnd->show();
     }
 
-
 }
 
 void Autosave::enableAutosave()
