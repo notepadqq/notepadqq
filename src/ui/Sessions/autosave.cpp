@@ -30,12 +30,12 @@ void Autosave::executeAutosave() {
         const QString cachePath = autosavePath + QString("/window_%1").arg(ptrToInt);
         QDir(cachePath).removeRecursively();
 
-        qDebug() << "Removing" << cachePath;
+        //qDebug() << "Removing" << cachePath;
 
         return true;
     }), s_autosaveData.end());
 
-    qDebug() << "Num wndItems: " << s_autosaveData.size();
+    //qDebug() << "Num wndItems: " << s_autosaveData.size();
 
     // Step 2: Add window data of all newly created windows
     for (const auto& wnd : windows) {
@@ -49,7 +49,7 @@ void Autosave::executeAutosave() {
         WindowData w{ w.ptr, {} };
         w.ptr = wnd;
 
-        qDebug() << "Adding window" << w.ptr;
+        //qDebug() << "Adding window" << w.ptr;
 
         s_autosaveData.push_back( std::move(w) );
     }
@@ -65,11 +65,9 @@ void Autosave::executeAutosave() {
         const auto needsSaving = [wndItem](TopEditorContainer* top){
             bool success = true;
 
-            top->forEachEditor([wndItem, &ok](int,int,EditorTabWidget*,Editor* ed) {
+            top->forEachEditor([wndItem, &success](int,int,EditorTabWidget*,Editor* ed) {
                 const auto& editors = wndItem.editors;
                 auto eit = std::find_if(editors.begin(), editors.end(), [&](const std::pair<Editor*, int> p) {
-                    qDebug() << "Found" << p.first << p.second << ed->getHistoryGeneration();
-
                     return p.first == ed && p.second == ed->getHistoryGeneration();
                 });
 
@@ -87,9 +85,9 @@ void Autosave::executeAutosave() {
         // to one of the editors.
         if (wndItem.editors.size() != wnd->topEditorContainer()->getNumEditors() || needsSaving(wnd->topEditorContainer())) {
 
-            auto sz  =wndItem.editors.size() != wnd->topEditorContainer()->getNumEditors();
-            auto sa = sadf(wnd->topEditorContainer());
-            qDebug() << "Saving session" << wndItem.ptr << ". Reason:" << sz <<  sa;
+            //auto sz  =wndItem.editors.size() != wnd->topEditorContainer()->getNumEditors();
+            //auto sa = needsSaving(wnd->topEditorContainer());
+            //qDebug() << "Saving session" << wndItem.ptr << ". Reason:" << sz <<  sa;
 
             // Save this MainWindow as a session inside the autosave path.
             // MainWindow's address is used to have a unique path name.
@@ -114,7 +112,7 @@ void Autosave::executeAutosave() {
                 return true;
             });
 
-            qDebug() << "Updated window" << wndItem.ptr << "with" << wndItem.editors.size() << "editors";
+            //qDebug() << "Updated window" << wndItem.ptr << "with" << wndItem.editors.size() << "editors";
         }
 
     }
