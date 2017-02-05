@@ -9,18 +9,18 @@ void NqqSettings::ensureBackwardsCompatibility()
 {
     QSettings s;
 
-
-    // Check the Nqq version, if it's above 0.53.x we're using the old settings.
+    // Check the Nqq version, if it's below 0.53.0 we're using the old settings.
     const QString nqqVersion = s.value("NotepadqqVersion").toString();
     const QStringList versionList = nqqVersion.split(".");
 
     // Only proceed with checking version if the key seems valid
     if (versionList.size() == 3){
+        const int major = versionList[0].toInt();
         const int minor = versionList[1].toInt();
         const int revision = versionList[2].toInt();
 
-        //return if we're above x.53.0
-        if (minor > 53 || (minor == 53 && revision > 0))
+        // return if we're above 0.53.0
+        if (major > 0 || minor > 53 || (minor == 53 && revision > 0))
             return;
     }
 
