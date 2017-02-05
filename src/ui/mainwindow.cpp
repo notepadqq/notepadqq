@@ -1096,7 +1096,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     Editor *editor = tabWidget->editor(tab);
     
     // If the tab is not newly opened but only transferred (e.g. with "Move to other View") it may
-    // have a banner attached to it. We need to connect previous signals to prevent
+    // have a banner attached to it. We need to disconnect previous signals to prevent
     // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
