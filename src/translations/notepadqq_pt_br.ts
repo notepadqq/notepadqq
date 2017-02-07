@@ -29,12 +29,12 @@
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="15"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Salvar</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerfileremoved.cpp" line="18"/>
         <source>Ignore</source>
-        <translation>Ignorer</translation>
+        <translation>Ignorar</translation>
     </message>
 </context>
 <context>
@@ -48,13 +48,13 @@
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>spaces</source>
-        <translation>espaces</translation>
+        <translation>espaço</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="20"/>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="25"/>
         <source>tabs</source>
-        <translation>tabulations</translation>
+        <translation>tabs</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="22"/>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="27"/>
         <source>Use tabs</source>
-        <translation>Utiliser des tabulations</translation>
+        <translation>Utilizar tabs</translation>
     </message>
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="31"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../ui/EditorNS/bannerindentationdetected.cpp" line="38"/>
         <source>Ignore</source>
-        <translation>Ignorer</translation>
+        <translation>Ignorar</translation>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../ui/docengine.cpp" line="33"/>
         <source>new %1</source>
-        <translation>nouveau %1</translation>
+        <translation>novo %1</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="182"/>
@@ -126,7 +126,7 @@
     <message>
         <location filename="../ui/Extensions/extension.cpp" line="106"/>
         <source>Failed to load %1: %2</source>
-        <translation>Impossible de charger %1 : %2</translation>
+        <translation>Falha ao carregar %1 : %2</translation>
     </message>
 </context>
 <context>
@@ -134,7 +134,7 @@
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="177"/>
         <source>Error</source>
-        <translation>Erreur</translation>
+        <translation>Erro</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="177"/>
@@ -160,17 +160,17 @@
     <message>
         <location filename="../ui/Extensions/installextension.ui" line="102"/>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.ui" line="109"/>
         <source>Install</source>
-        <translation>Installer</translation>
+        <translation>Instalar</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="42"/>
         <source>Version %1, %2</source>
-        <translation>Version %1, %2</translation>
+        <translation>Versão %1, %2</translation>
     </message>
     <message>
         <location filename="../ui/Extensions/installextension.cpp" line="43"/>
