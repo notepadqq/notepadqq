@@ -414,7 +414,7 @@ namespace EditorNS
     {
         if (banner != m_webView && m_layout->indexOf(banner) >= 0) {
             m_layout->removeWidget(banner);
-            emit bannerRemoved(banner);
+            banner->deleteLater();
         }
     }
 
