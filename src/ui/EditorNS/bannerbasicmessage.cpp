@@ -25,10 +25,14 @@ namespace EditorNS
         m_message = new QLabel(this);
 
         m_message->setStyleSheet(".QLabel { margin-left: 5px; margin-right: 10px; color: white } ");
-        m_message->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        m_layout->addWidget(m_message);
+        m_message->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_message->setMinimumWidth(150);
+        m_message->setMaximumHeight( fontMetrics().height() * 6 );
 
-        m_layout->addStretch(1);
+        m_message->setWordWrap(true);
+
+        m_layout->addWidget(m_message,1);
+        m_layout->addStretch(0);
 
         m_topWidget->setLayout(m_layout);
         setLayout(topLayout);
@@ -37,6 +41,7 @@ namespace EditorNS
     void BannerBasicMessage::setMessage(QString text)
     {
         m_message->setText(text);
+        m_message->setMaximumWidth( fontMetrics().width(text)+30 );
     }
 
     void BannerBasicMessage::setImportance(Importance importance)
@@ -57,7 +62,7 @@ namespace EditorNS
         QPushButton *button = new QPushButton(this);
         button->setText(text);
         button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->insertWidget(m_layout->count() - 1, button);
+        m_layout->insertWidget(m_layout->count()-1, button);
 
         button->setStyleSheet("QPushButton { border: 1px solid white; background: transparent; padding: 5px; color: white }"
                               "QPushButton:hover { background: rgba(0, 0, 0, 60); }"
