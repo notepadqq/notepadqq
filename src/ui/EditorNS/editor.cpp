@@ -204,6 +204,11 @@ namespace EditorNS
         sendMessage("C_CMD_MARK_DIRTY");
     }
 
+    int Editor::getHistoryGeneration()
+    {
+        return sendMessageWithResult("C_FUN_GET_HISTORY_GENERATION", 0).toInt();
+    }
+
     QList<QMap<QString, QString>> Editor::languages()
     {
         QMap<QString, QVariant> languages =

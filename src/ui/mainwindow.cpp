@@ -19,6 +19,7 @@
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
 #include "include/nqqrun.h"
+#include "include/Sessions/autosave.h"
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -133,7 +134,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // We want to restore tabs only if...
     if (    m_instances.size()==1 && // this window is the first one to be opened,
-            m_settings.General.getRememberTabsOnExit() // and the Remember-tabs option is enabled
+            m_settings.General.getRememberTabsOnExit() && // the Remember-tabs option is enabled
+            (m_settings.General.getProperShutdown() || !m_settings.General.getEnableAutosaving()) // and no restoration from the autosave feature is going on
     ) {
         Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
     }

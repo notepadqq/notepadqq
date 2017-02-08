@@ -181,6 +181,7 @@ namespace EditorNS
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
+        Q_INVOKABLE int getHistoryGeneration();
         QList<QMap<QString, QString> > languages();
 
         /**

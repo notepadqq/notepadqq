@@ -11,6 +11,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QDateTime>
+#include "include/Sessions/autosave.h"
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -123,8 +124,23 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    MainWindow *w = new MainWindow(QApplication::arguments(), 0);
-    w->show();
+    if(settings.General.getEnableAutosaving() && !settings.General.getProperShutdown()) {
+        Autosave::restoreFromAutosave();
+    }
+
+    // If no autosave session was restored, or if the session was completely empty, we new up
+    // a new Window, otherwise there is at least one window open already.
+    MainWindow* wnd = nullptr;
+
+    if (MainWindow::instances().isEmpty()) {
+        wnd = new MainWindow(QApplication::arguments(), 0);
+        wnd->show();
+    } else {
+        wnd = MainWindow::instances().back();
+    }
+
+    if (settings.General.getEnableAutosaving())
+        Autosave::enableAutosave();
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
@@ -132,10 +148,16 @@ int main(int argc, char *argv[])
 #endif
 
     if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
-        Notepadqq::showQtVersionWarning(true, w);
+        Notepadqq::showQtVersionWarning(true, wnd);
     }
 
-    return a.exec();
+    // The ProperShutdown variable indicates whether Nqq was closed normally or crashed/etc.
+    // If it is 'false' then a.exec() never returned.
+    settings.General.setProperShutdown(false);
+    const auto retVal = a.exec();
+    settings.General.setProperShutdown(true);
+
+    return retVal;
 }
 
 void checkQtVersion()
