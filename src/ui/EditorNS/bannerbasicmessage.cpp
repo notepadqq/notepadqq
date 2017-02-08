@@ -30,10 +30,8 @@ namespace EditorNS
         m_message->setMaximumHeight( fontMetrics().height() * 6 );
 
         m_message->setWordWrap(true);
-        m_message->setScaledContents(true);
 
         m_layout->addWidget(m_message,1);
-
         m_layout->addStretch(0);
 
         m_topWidget->setLayout(m_layout);
