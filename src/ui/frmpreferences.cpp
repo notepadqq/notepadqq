@@ -127,7 +127,7 @@ void frmPreferences::on_buttonBox_clicked(QAbstractButton *button)
 
 void frmPreferences::on_buttonBox_accepted()
 {
-    if(applySettings())
+    if (applySettings())
         accept();
 }
 
@@ -137,13 +137,13 @@ void frmPreferences::loadLanguages()
 
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
-    //Add "Default" language into the list.
+    // Add "Default" language into the list.
     QMap<QString,QString> defaultMap;
     defaultMap.insert("id", "default");
     defaultMap.insert("name", "Default");
     langs.push_front(defaultMap);
 
-    //Add all languages to the comboBox and write their current settings to a temp list
+    // Add all languages to the comboBox and write their current settings to a temp list
     for (int i = 0; i < langs.length(); i++) {
         const QMap<QString, QString> &map = langs.at(i);
         const QString langId = map.value("id", "");
@@ -166,7 +166,7 @@ void frmPreferences::loadLanguages()
 
 void frmPreferences::saveLanguages()
 {
-    //Write all temporary language settings back into the settings file.
+    // Write all temporary language settings back into the settings file.
     for (auto&& lang : m_tempLangSettings) {
         m_settings.Languages.setTabSize(lang.langId, lang.tabSize);
         m_settings.Languages.setIndentWithSpaces(lang.langId, lang.indentWithSpaces);
@@ -313,7 +313,7 @@ void frmPreferences::saveShortcuts()
 
 bool frmPreferences::applySettings()
 {
-    if(m_keyGrabber->hasConflicts()){
+    if (m_keyGrabber->hasConflicts()) {
         //Try our best to show the error to the user immediately.
         ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
         m_keyGrabber->scrollToConflict();
