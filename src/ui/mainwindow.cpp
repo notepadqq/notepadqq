@@ -350,7 +350,7 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_textFormat = label;
     connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
-        ui->menu_Encoding->exec( QCursor::pos() );
+        ui->menu_Encoding->exec(QCursor::pos());
     });
 
     label = new QLabel(tr("INS"), this);
