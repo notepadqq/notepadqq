@@ -12,6 +12,8 @@ namespace Ui {
 class frmPreferences;
 }
 
+class QAbstractButton;
+
 class frmPreferences : public QDialog
 {
     Q_OBJECT
@@ -34,7 +36,8 @@ private slots:
     void on_btnNpmBrowse_clicked();
     void on_txtNodejs_textChanged(const QString &);
     void on_txtNpm_textChanged(const QString &);
-    void resetShortcuts();
+    void resetSelectedShortcuts();
+    void resetAllShortcuts();
     void on_chkOverrideFontFamily_toggled(bool checked);
     void on_chkOverrideFontSize_toggled(bool checked);
     void on_spnFontSize_valueChanged(int arg1);
@@ -42,7 +45,10 @@ private slots:
     void on_chkOverrideLineHeight_toggled(bool checked);
     void on_spnLineHeight_valueChanged(double arg1);
 
+    void on_buttonBox_clicked(QAbstractButton *button);
+
 private:
+    static int s_lastSelectedTab;
 
     struct LanguageSettings {
         QString langId;
@@ -67,6 +73,12 @@ private:
     void saveTranslation();
     void loadShortcuts();
     void saveShortcuts();
+
+    /**
+     * @brief applySettings Applies all user-set settings.
+     * @return True if settings were successfully changed
+     */
+    bool applySettings();
 
     bool extensionBrowseRuntime(QLineEdit *lineEdit);
     void checkExecutableExists(QLineEdit *path);
