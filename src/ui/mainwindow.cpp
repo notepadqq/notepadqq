@@ -299,13 +299,17 @@ void MainWindow::createStatusBar()
     QLabel *label;
     QMargins tmpMargins;
 
-    label = new QLabel("File Format", this);
+    label = new ClickableLabel("File Format", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(150);
     tmpMargins = label->contentsMargins();
     label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_fileFormat = label;
+    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
+        ui->menu_Language->exec( QCursor::pos() );
+    });
+
 
     label = new QLabel("Ln 0, col 0", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -338,13 +342,16 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_EOLstyle = label;
 
-    label = new QLabel("Encoding", this);
+    label = new ClickableLabel("Encoding", this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     label->setMinimumWidth(118);
     tmpMargins = label->contentsMargins();
     label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
     layout->addWidget(label);
     m_statusBar_textFormat = label;
+    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
+        ui->menu_Encoding->exec(QCursor::pos());
+    });
 
     label = new QLabel(tr("INS"), this);
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -1028,7 +1035,7 @@ QAction * MainWindow::addExtensionMenuItem(QString extensionId, QString text)
         // Create the menu for the extension if it doesn't exist yet.
         if (!m_extensionMenus.contains(extension)) {
             QMenu *menu = new QMenu(extension->name(), this);
-            ui->menuExtensions->addMenu(menu);
+            ui->menu_Extensions->addMenu(menu);
             m_extensionMenus.insert(extension, menu);
         }
 
@@ -1865,21 +1872,25 @@ void MainWindow::on_actionUTF_16LE_triggered()
 void MainWindow::on_actionInterpret_as_UTF_8_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
+    refreshEditorUiInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_8_without_BOM_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
+    refreshEditorUiInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
+    refreshEditorUiInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
+    refreshEditorUiInfo(currentEditor());
 }
 
 void MainWindow::on_actionConvert_to_triggered()
@@ -1956,21 +1967,21 @@ void MainWindow::generateRunMenu()
 {
     QMap <QString, QString> runners = m_settings.Run.getCommands();
     QMapIterator<QString, QString> i(runners);
-    ui->menuRun->clear();
+    ui->menu_Run->clear();
     
-    QAction *a = ui->menuRun->addAction(tr("Run..."));
+    QAction *a = ui->menu_Run->addAction(tr("Run..."));
     connect(a, &QAction::triggered, this, &MainWindow::runCommand);
-    ui->menuRun->addSeparator();
+    ui->menu_Run->addSeparator();
 
     while (i.hasNext()) {
         i.next();
-        a = ui->menuRun->addAction(i.key());
+        a = ui->menu_Run->addAction(i.key());
         a->setData(i.value());
         a->setObjectName("RunCmd"+a->text());
         connect(a, &QAction::triggered, this, &MainWindow::runCommand);
     }
-    ui->menuRun->addSeparator();
-    a = ui->menuRun->addAction(tr("Modify Run Commands"));
+    ui->menu_Run->addSeparator();
+    a = ui->menu_Run->addAction(tr("Modify Run Commands"));
     connect(a, &QAction::triggered, this, &MainWindow::modifyRunCommands);
 }
 
@@ -2260,7 +2271,7 @@ void MainWindow::on_actionInstall_Extension_triggered()
 
 void MainWindow::showExtensionsMenu(bool show)
 {
-    ui->menuExtensions->menuAction()->setVisible(show);
+    ui->menu_Extensions->menuAction()->setVisible(show);
 }
 
 void MainWindow::on_actionFull_Screen_toggled(bool on)

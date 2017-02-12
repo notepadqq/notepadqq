@@ -82,7 +82,7 @@
     </property>
     <widget class="QMenu" name="menuEOL_Conversion">
      <property name="title">
-      <string>End of line</string>
+      <string>&amp;End of line</string>
      </property>
      <addaction name="actionWindows_Format"/>
      <addaction name="actionUNIX_Format"/>
@@ -90,7 +90,7 @@
     </widget>
     <widget class="QMenu" name="menuCopy_to_Clipboard">
      <property name="title">
-      <string>Copy to Clipboard</string>
+      <string>C&amp;opy to Clipboard</string>
      </property>
      <addaction name="actionCurrent_Full_File_path_to_Clipboard"/>
      <addaction name="actionCurrent_Filename_to_Clipboard"/>
@@ -98,14 +98,14 @@
     </widget>
     <widget class="QMenu" name="menuConvert_Case_to">
      <property name="title">
-      <string>Convert Case to</string>
+      <string>Co&amp;nvert Case to</string>
      </property>
      <addaction name="actionUPPERCASE"/>
      <addaction name="actionLowercase"/>
     </widget>
     <widget class="QMenu" name="menuIndentation">
      <property name="title">
-      <string>Indentation</string>
+      <string>&amp;Indentation</string>
      </property>
      <addaction name="actionIndentation_Default_settings"/>
      <addaction name="actionIndentation_Custom"/>
@@ -114,7 +114,7 @@
     </widget>
     <widget class="QMenu" name="menuLine_Operations">
      <property name="title">
-      <string>Line Operations</string>
+      <string>&amp;Line Operations</string>
      </property>
      <addaction name="actionDuplicate_Line"/>
      <addaction name="actionDelete_Line"/>
@@ -123,7 +123,7 @@
     </widget>
     <widget class="QMenu" name="menuBlank_Operations">
      <property name="title">
-      <string>Blank Operations</string>
+      <string>&amp;Blank Operations</string>
      </property>
      <addaction name="actionTrim_Trailing_Space"/>
      <addaction name="actionTrim_Leading_Space"/>
@@ -169,7 +169,7 @@
     </property>
     <widget class="QMenu" name="menuShow_Symbol">
      <property name="title">
-      <string>Show Symbol</string>
+      <string>&amp;Show Symbol</string>
      </property>
      <addaction name="actionShow_Tabs"/>
      <addaction name="actionShow_Spaces"/>
@@ -181,7 +181,7 @@
     </widget>
     <widget class="QMenu" name="menuZoom">
      <property name="title">
-      <string>Zoom</string>
+      <string>&amp;Zoom</string>
      </property>
      <addaction name="actionZoom_In"/>
      <addaction name="actionZoom_Out"/>
@@ -189,7 +189,7 @@
     </widget>
     <widget class="QMenu" name="menuMove_Clone_Current_Document">
      <property name="title">
-      <string>Move/Clone Current Document</string>
+      <string>&amp;Move/Clone Current Document</string>
      </property>
      <addaction name="actionMove_to_Other_View"/>
      <addaction name="actionClone_to_Other_View"/>
@@ -206,9 +206,9 @@
     <addaction name="separator"/>
     <addaction name="actionFull_Screen"/>
    </widget>
-   <widget class="QMenu" name="menuEncoding">
+   <widget class="QMenu" name="menu_Encoding">
     <property name="title">
-     <string>Encoding</string>
+     <string>En&amp;coding</string>
     </property>
     <addaction name="actionInterpret_as_UTF_8"/>
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
@@ -231,22 +231,22 @@
     <addaction name="actionPlain_text"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuSe_ttings">
+   <widget class="QMenu" name="menu_Settings">
     <property name="title">
-     <string>Se&amp;ttings</string>
+     <string>Settin&amp;gs</string>
     </property>
     <addaction name="actionPreferences"/>
    </widget>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menu_Help">
     <property name="title">
      <string>&amp;?</string>
     </property>
     <addaction name="actionAbout_Qt"/>
     <addaction name="actionAbout_Notepadqq"/>
    </widget>
-   <widget class="QMenu" name="menuRun">
+   <widget class="QMenu" name="menu_Run">
     <property name="title">
-     <string>Run</string>
+     <string>&amp;Run</string>
     </property>
     <addaction name="action_Run"/>
     <addaction name="separator"/>
@@ -257,9 +257,9 @@
     </property>
     <addaction name="actionOpen_a_New_Window"/>
    </widget>
-   <widget class="QMenu" name="menuExtensions">
+   <widget class="QMenu" name="menu_Extensions">
     <property name="title">
-     <string>Extensions</string>
+     <string>E&amp;xtensions</string>
     </property>
     <addaction name="actionInstall_Extension"/>
     <addaction name="separator"/>
@@ -268,13 +268,13 @@
    <addaction name="menu_Edit"/>
    <addaction name="menu_Search"/>
    <addaction name="menu_View"/>
-   <addaction name="menuEncoding"/>
+   <addaction name="menu_Encoding"/>
    <addaction name="menu_Language"/>
-   <addaction name="menuSe_ttings"/>
-   <addaction name="menuRun"/>
-   <addaction name="menuExtensions"/>
+   <addaction name="menu_Settings"/>
+   <addaction name="menu_Run"/>
+   <addaction name="menu_Extensions"/>
    <addaction name="menu_Window"/>
-   <addaction name="menu"/>
+   <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="windowTitle">
@@ -322,7 +322,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockFileSearchResults">
    <property name="windowTitle">
-    <string>Find result</string>
+    <string>Find res&amp;ult</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -362,7 +362,7 @@
   </action>
   <action name="actionReload_from_Disk">
    <property name="text">
-    <string>Reload from Disk</string>
+    <string>&amp;Reload from Disk</string>
    </property>
   </action>
   <action name="actionSave">
@@ -386,7 +386,7 @@
   </action>
   <action name="actionSave_a_Copy_As">
    <property name="text">
-    <string>Save a Copy As...</string>
+    <string>Sa&amp;ve a Copy As...</string>
    </property>
   </action>
   <action name="actionSave_All">
@@ -399,12 +399,12 @@
   </action>
   <action name="actionRename">
    <property name="text">
-    <string>Rename...</string>
+    <string>Rena&amp;me...</string>
    </property>
   </action>
   <action name="actionClose">
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -417,7 +417,7 @@
   </action>
   <action name="actionClose_All_BUT_Current_Document">
    <property name="text">
-    <string>Close All BUT Current Document</string>
+    <string>Close All &amp;BUT Current Document</string>
    </property>
   </action>
   <action name="actionLoad_Session">
@@ -432,7 +432,7 @@
   </action>
   <action name="actionPrint">
    <property name="text">
-    <string>Print...</string>
+    <string>&amp;Print...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -443,7 +443,7 @@
   </action>
   <action name="actionPrint_Now">
    <property name="text">
-    <string>Print Now</string>
+    <string>Pr&amp;int Now</string>
    </property>
    <property name="visible">
     <bool>false</bool>
@@ -525,7 +525,7 @@
   </action>
   <action name="actionAbout_Notepadqq">
    <property name="text">
-    <string>About Notepadqq...</string>
+    <string>About &amp;Notepadqq...</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -533,7 +533,7 @@
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
-    <string>About Qt...</string>
+    <string>&amp;About Qt...</string>
    </property>
   </action>
   <action name="actionWindows_Format">
@@ -541,7 +541,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Windows Format</string>
+    <string>&amp;Windows Format</string>
    </property>
   </action>
   <action name="actionUNIX_Format">
@@ -552,7 +552,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>UNIX / OS X Format</string>
+    <string>&amp;UNIX / OS X Format</string>
    </property>
   </action>
   <action name="actionMac_Format">
@@ -560,7 +560,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Old Mac Format</string>
+    <string>&amp;Old Mac Format</string>
    </property>
   </action>
   <action name="actionShow_End_of_Line">
@@ -568,7 +568,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show End of Line</string>
+    <string>Show &amp;End of Line</string>
    </property>
   </action>
   <action name="actionShow_Tabs">
@@ -576,7 +576,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Tabs</string>
+    <string>&amp;Show Tabs</string>
    </property>
   </action>
   <action name="actionShow_All_Characters">
@@ -584,7 +584,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show All Characters</string>
+    <string>Show All &amp;Characters</string>
    </property>
   </action>
   <action name="actionShow_Indent_Guide">
@@ -595,7 +595,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Indent Guide</string>
+    <string>Show &amp;Indent Guide</string>
    </property>
   </action>
   <action name="actionShow_Wrap_Symbol">
@@ -603,7 +603,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Wrap Symbol</string>
+    <string>Show &amp;Wrap Symbol</string>
    </property>
   </action>
   <action name="actionWord_wrap">
@@ -611,7 +611,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Word wrap</string>
+    <string>&amp;Word wrap</string>
    </property>
   </action>
   <action name="actionText_Direction_RTL">
@@ -619,22 +619,22 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Text Direction RTL</string>
+    <string>&amp;Text Direction RTL</string>
    </property>
   </action>
   <action name="actionCurrent_Full_File_path_to_Clipboard">
    <property name="text">
-    <string>Copy Full Path to Clipboard</string>
+    <string>&amp;Copy Full Path to Clipboard</string>
    </property>
   </action>
   <action name="actionCurrent_Filename_to_Clipboard">
    <property name="text">
-    <string>Copy Filename to Clipboard</string>
+    <string>Copy &amp;Filename to Clipboard</string>
    </property>
   </action>
   <action name="actionCurrent_Directory_Path_to_Clipboard">
    <property name="text">
-    <string>Copy Directory to Clipboard</string>
+    <string>Copy &amp;Directory to Clipboard</string>
    </property>
   </action>
   <action name="actionZoom_In">
@@ -655,7 +655,7 @@
   </action>
   <action name="actionRestore_Default_Zoom">
    <property name="text">
-    <string>Restore Default Zoom</string>
+    <string>&amp;Restore Default Zoom</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
@@ -663,22 +663,22 @@
   </action>
   <action name="actionMove_to_Other_View">
    <property name="text">
-    <string>Move to Other View</string>
+    <string>&amp;Move to Other View</string>
    </property>
   </action>
   <action name="actionClone_to_Other_View">
    <property name="text">
-    <string>Clone to Other View</string>
+    <string>&amp;Clone to Other View</string>
    </property>
   </action>
   <action name="actionMove_to_New_Window">
    <property name="text">
-    <string>Move to a New Window</string>
+    <string>Move to a &amp;New Window</string>
    </property>
   </action>
   <action name="actionOpen_in_New_Window">
    <property name="text">
-    <string>Open in a New Window</string>
+    <string>&amp;Open in a New Window</string>
    </property>
   </action>
   <action name="action_Start_Recording">
@@ -742,7 +742,7 @@
   </action>
   <action name="actionUPPERCASE">
    <property name="text">
-    <string>UPPERCASE</string>
+    <string>&amp;UPPERCASE</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+U</string>
@@ -750,7 +750,7 @@
   </action>
   <action name="actionLowercase">
    <property name="text">
-    <string>lowercase</string>
+    <string>&amp;lowercase</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
@@ -758,22 +758,22 @@
   </action>
   <action name="actionUTF_8">
    <property name="text">
-    <string>Convert to UTF-8</string>
+    <string>&amp;Convert to UTF-8</string>
    </property>
   </action>
   <action name="actionUTF_16BE">
    <property name="text">
-    <string>Convert to UTF-16BE (UCS-2 Big Endian)</string>
+    <string>Convert to UTF-&amp;16BE (UCS-2 Big Endian)</string>
    </property>
   </action>
   <action name="actionUTF_16LE">
    <property name="text">
-    <string>Convert to UTF-16LE (UCS-2 Little Endian)</string>
+    <string>Convert to UTF-16LE (UCS-&amp;2 Little Endian)</string>
    </property>
   </action>
   <action name="actionUTF_8_without_BOM">
    <property name="text">
-    <string>Convert to UTF-8 without BOM</string>
+    <string>Convert to &amp;UTF-8 without BOM</string>
    </property>
   </action>
   <action name="action_Run">
@@ -823,7 +823,7 @@
   </action>
   <action name="actionPreferences">
    <property name="text">
-    <string>Preferences...</string>
+    <string>&amp;Preferences...</string>
    </property>
   </action>
   <action name="actionSearch">
@@ -852,12 +852,12 @@
   </action>
   <action name="actionPlain_text">
    <property name="text">
-    <string>Plain text</string>
+    <string>&amp;Plain text</string>
    </property>
   </action>
   <action name="actionReplace">
    <property name="text">
-    <string>Replace...</string>
+    <string>&amp;Replace...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
@@ -865,32 +865,32 @@
   </action>
   <action name="actionReload_file_interpreted_as">
    <property name="text">
-    <string>Reload file interpreted as...</string>
+    <string>&amp;Reload file interpreted as...</string>
    </property>
   </action>
   <action name="actionConvert_to">
    <property name="text">
-    <string>Convert to...</string>
+    <string>C&amp;onvert to...</string>
    </property>
   </action>
   <action name="actionInterpret_as_UTF_16BE_UCS_2_Big_Endian">
    <property name="text">
-    <string>Interpret as UTF-16BE (UCS-2 Big Endian)</string>
+    <string>Interpret as UTF-16BE (UCS-2 &amp;Big Endian)</string>
    </property>
   </action>
   <action name="actionInterpret_as_UTF_8_without_BOM">
    <property name="text">
-    <string>Interpret as UTF-8 without BOM</string>
+    <string>Interpret as UTF-&amp;8 without BOM</string>
    </property>
   </action>
   <action name="actionInterpret_as_UTF_8">
    <property name="text">
-    <string>Interpret as UTF-8</string>
+    <string>&amp;Interpret as UTF-8</string>
    </property>
   </action>
   <action name="actionInterpret_as_UTF_16LE_UCS_2_Little_Endian">
    <property name="text">
-    <string>Interpret as UTF-16LE (UCS-2 Little Endian)</string>
+    <string>Interpret as UTF-16LE (UCS-2 &amp;Little Endian)</string>
    </property>
   </action>
   <action name="actionIndentation_Default_settings">
@@ -901,7 +901,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Default settings</string>
+    <string>&amp;Default settings</string>
    </property>
   </action>
   <action name="actionIndentation_Custom">
@@ -909,12 +909,12 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Custom...</string>
+    <string>&amp;Custom...</string>
    </property>
   </action>
   <action name="actionInterpret_as">
    <property name="text">
-    <string>Interpret as...</string>
+    <string>I&amp;nterpret as...</string>
    </property>
   </action>
   <action name="actionLaunch_in_Chrome">
@@ -924,12 +924,12 @@
   </action>
   <action name="actionOpen_a_New_Window">
    <property name="text">
-    <string>Open a New Window</string>
+    <string>&amp;Open a New Window</string>
    </property>
   </action>
   <action name="actionFind_in_Files">
    <property name="text">
-    <string>Find in Files...</string>
+    <string>Find &amp;in Files...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
@@ -937,7 +937,7 @@
   </action>
   <action name="actionDelete_Line">
    <property name="text">
-    <string>Delete Current Line</string>
+    <string>Delete &amp;Current Line</string>
    </property>
    <property name="toolTip">
     <string>Delete the current line</string>
@@ -948,7 +948,7 @@
   </action>
   <action name="actionDuplicate_Line">
    <property name="text">
-    <string>Duplicate Current Line</string>
+    <string>&amp;Duplicate Current Line</string>
    </property>
    <property name="toolTip">
     <string>Duplicate the current line</string>
@@ -959,7 +959,7 @@
   </action>
   <action name="actionMove_Line_Up">
    <property name="text">
-    <string>Move Line Up</string>
+    <string>&amp;Move Line Up</string>
    </property>
    <property name="toolTip">
     <string>Move the current line up</string>
@@ -970,7 +970,7 @@
   </action>
   <action name="actionMove_Line_Down">
    <property name="text">
-    <string>Move Line Down</string>
+    <string>Move &amp;Line Down</string>
    </property>
    <property name="toolTip">
     <string>Move the current line down</string>
@@ -981,7 +981,7 @@
   </action>
   <action name="actionTrim_Trailing_Space">
    <property name="text">
-    <string>Trim Trailing Space</string>
+    <string>&amp;Trim Trailing Space</string>
    </property>
    <property name="toolTip">
     <string>Trim Trailing Space</string>
@@ -989,7 +989,7 @@
   </action>
   <action name="actionTrim_Leading_Space">
    <property name="text">
-    <string>Trim Leading Space</string>
+    <string>Trim &amp;Leading Space</string>
    </property>
    <property name="toolTip">
     <string>Trim Leading Space</string>
@@ -997,37 +997,37 @@
   </action>
   <action name="actionTrim_Leading_and_Trailing_Space">
    <property name="text">
-    <string>Trim Leading and Trailing Space</string>
+    <string>T&amp;rim Leading and Trailing Space</string>
    </property>
   </action>
   <action name="actionEOL_to_Space">
    <property name="text">
-    <string>EOL to Space</string>
+    <string>&amp;EOL to Space</string>
    </property>
   </action>
   <action name="actionTAB_to_Space">
    <property name="text">
-    <string>TAB to Space</string>
+    <string>TA&amp;B to Space</string>
    </property>
   </action>
   <action name="actionSpace_to_TAB_All">
    <property name="text">
-    <string>Space to TAB (All)</string>
+    <string>&amp;Space to TAB (All)</string>
    </property>
   </action>
   <action name="actionSpace_to_TAB_Leading">
    <property name="text">
-    <string>Space to TAB (Leading)</string>
+    <string>S&amp;pace to TAB (Leading)</string>
    </property>
   </action>
   <action name="actionOpen_Folder">
    <property name="text">
-    <string>Open Folder...</string>
+    <string>Open &amp;Folder...</string>
    </property>
   </action>
   <action name="actionGo_to_line">
    <property name="text">
-    <string>Go to line...</string>
+    <string>&amp;Go to line...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
@@ -1035,7 +1035,7 @@
   </action>
   <action name="actionInstall_Extension">
    <property name="text">
-    <string>Install Extension...</string>
+    <string>&amp;Install Extension...</string>
    </property>
   </action>
   <action name="actionFull_Screen">
@@ -1043,7 +1043,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Full Screen</string>
+    <string>&amp;Full Screen</string>
    </property>
    <property name="shortcut">
     <string>F11</string>
@@ -1054,7 +1054,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Spaces</string>
+    <string>S&amp;how Spaces</string>
    </property>
    <property name="toolTip">
     <string>Show Spaces</string>
@@ -1068,7 +1068,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Enable Smart Indent</string>
+    <string>&amp;Enable Smart Indent</string>
    </property>
   </action>
  </widget>
