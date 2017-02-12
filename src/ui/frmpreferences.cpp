@@ -75,8 +75,6 @@ void frmPreferences::resetAllShortcuts() {
     m_keyGrabber->checkForConflicts();
 }
 
-#include <QDebug>
-
 void frmPreferences::resetSelectedShortcuts()
 {
     auto& bindings = m_keyGrabber->getAllBindings();
