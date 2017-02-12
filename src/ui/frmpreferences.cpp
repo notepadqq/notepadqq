@@ -82,7 +82,7 @@ void frmPreferences::resetSelectedShortcut()
 
     // Search for the selected item and set its key sequence to the default one.
     for (auto& item : bindings) {
-        if( currItem != item.getTreeItem() ) continue;
+        if (currItem != item.getTreeItem()) continue;
 
         const QString& objName = item.getAction()->objectName();
         const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(objName);
@@ -121,7 +121,7 @@ void frmPreferences::on_buttonBox_clicked(QAbstractButton *button)
 {
     // Accept and Reject buttons are handled separately. Other buttons need to use this generic clicked() event.
 
-    if( button == ui->buttonBox->button(QDialogButtonBox::Apply) )
+    if (button == ui->buttonBox->button(QDialogButtonBox::Apply))
         applySettings();
 }
 
