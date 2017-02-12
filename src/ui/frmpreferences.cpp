@@ -75,7 +75,7 @@ void frmPreferences::resetAllShortcuts() {
     m_keyGrabber->checkForConflicts();
 }
 
-void frmPreferences::resetSelectedShortcuts()
+void frmPreferences::resetSelectedShortcut()
 {
     auto& bindings = m_keyGrabber->getAllBindings();
     auto currItem = m_keyGrabber->currentItem();
@@ -119,10 +119,10 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
 void frmPreferences::on_buttonBox_clicked(QAbstractButton *button)
 {
-    if( button != ui->buttonBox->button(QDialogButtonBox::Apply) )
-        return;
+    // Accept and Reject buttons are handled separately. Other buttons need to use this generic clicked() event.
 
-    applySettings();
+    if( button == ui->buttonBox->button(QDialogButtonBox::Apply) )
+        applySettings();
 }
 
 void frmPreferences::on_buttonBox_accepted()
@@ -282,7 +282,7 @@ void frmPreferences::loadShortcuts()
     QPushButton *resetSelected = new QPushButton("Reset Seleted");
     QPushButton *resetAll = new QPushButton("Reset All");
 
-    QObject::connect(resetSelected, &QPushButton::clicked, this, &frmPreferences::resetSelectedShortcuts);
+    QObject::connect(resetSelected, &QPushButton::clicked, this, &frmPreferences::resetSelectedShortcut);
     QObject::connect(resetAll, &QPushButton::clicked, this, &frmPreferences::resetAllShortcuts);
 
     resetSelected->setFixedWidth(144);

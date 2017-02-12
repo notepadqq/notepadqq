@@ -36,7 +36,7 @@ private slots:
     void on_btnNpmBrowse_clicked();
     void on_txtNodejs_textChanged(const QString &);
     void on_txtNpm_textChanged(const QString &);
-    void resetSelectedShortcuts();
+    void resetSelectedShortcut();
     void resetAllShortcuts();
     void on_chkOverrideFontFamily_toggled(bool checked);
     void on_chkOverrideFontSize_toggled(bool checked);
@@ -48,6 +48,9 @@ private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
 private:
+    /**
+     * @brief s_lastSelectedTab Contains the index of the last selected preferences tab. Default is 0.
+     */
     static int s_lastSelectedTab;
 
     struct LanguageSettings {
