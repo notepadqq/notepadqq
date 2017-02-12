@@ -88,7 +88,7 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="page">
+       <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <property name="topMargin">
           <number>9</number>
@@ -149,7 +149,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_3">
+       <widget class="QWidget" name="pageAppearance">
         <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,1">
          <property name="leftMargin">
           <number>9</number>
@@ -336,7 +336,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_2">
+       <widget class="QWidget" name="pageLanguages">
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <property name="leftMargin">
           <number>9</number>
@@ -445,7 +445,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_4">
+       <widget class="QWidget" name="pageSearch">
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="topMargin">
           <number>9</number>
@@ -479,7 +479,7 @@
         </layout>
        </widget>
        <widget class="QWidget" name="pageShortcuts"/>
-       <widget class="QWidget" name="page_6">
+       <widget class="QWidget" name="pageExtensions">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">
           <number>9</number>
@@ -618,7 +618,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

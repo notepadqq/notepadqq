@@ -46,6 +46,7 @@ public:
 
     public:
         QAction* getAction() { return action; }
+        QTreeWidgetItem* getTreeItem() { return treeItem; }
 
         void setText(QString seq) { treeItem->setText(1,seq); }
         QString text() const { return treeItem->text(1); }

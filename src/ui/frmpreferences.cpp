@@ -11,7 +11,9 @@
 #include <QInputDialog>
 #include <QTableWidgetItem>
 #include <QSharedPointer>
+#include <QDialogButtonBox>
 
+int frmPreferences::s_lastSelectedTab = 0;
 
 frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QDialog(parent),
@@ -39,7 +41,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
                               );
 
     // Select first item in treeWidget
-    ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(0));
+    ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
     ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
@@ -61,14 +63,31 @@ frmPreferences::~frmPreferences()
     delete ui;
 }
 
-void frmPreferences::resetShortcuts()
-{
+void frmPreferences::resetAllShortcuts() {
     auto& bindings = m_keyGrabber->getAllBindings();
 
     for (auto& item : bindings) {
         const QString& objName = item.getAction()->objectName();
         const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(objName);
         item.setText(seq.toString());
+    }
+
+    m_keyGrabber->checkForConflicts();
+}
+
+void frmPreferences::resetSelectedShortcut()
+{
+    auto& bindings = m_keyGrabber->getAllBindings();
+    auto currItem = m_keyGrabber->currentItem();
+
+    // Search for the selected item and set its key sequence to the default one.
+    for (auto& item : bindings) {
+        if (currItem != item.getTreeItem()) continue;
+
+        const QString& objName = item.getAction()->objectName();
+        const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(objName);
+        item.setText(seq.toString());
+        break;
     }
 
     m_keyGrabber->checkForConflicts();
@@ -93,69 +112,23 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
 
     if (index != -1) {
         ui->stackedWidget->setCurrentIndex(index);
+        s_lastSelectedTab = index;
     }
+}
+
+
+void frmPreferences::on_buttonBox_clicked(QAbstractButton *button)
+{
+    // Accept and Reject buttons are handled separately. Other buttons need to use this generic clicked() event.
+
+    if (button == ui->buttonBox->button(QDialogButtonBox::Apply))
+        applySettings();
 }
 
 void frmPreferences::on_buttonBox_accepted()
 {
-    if(m_keyGrabber->hasConflicts()){
-        //Try our best to show the error to the user immediately.
-        ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
-        m_keyGrabber->scrollToConflict();
-
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
-        msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
-        msgBox.exec();
-        return;
-    }
-
-
-    m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
-    m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
-    m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
-
-    saveLanguages();
-    saveAppearanceTab();
-    saveTranslation();
-    saveShortcuts();
-
-    m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
-    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
-    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
-
-    const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
-    const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
-    const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
-    const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
-
-    // Apply changes to currently opened editors
-    for (MainWindow *w : MainWindow::instances()) {
-        w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
-
-        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
-
-            // Set new theme
-            editor->setTheme(newTheme);
-
-            // Set font override
-            editor->setFont(fontFamily, fontSize, lineHeight);
-
-            // Reset language-dependent settings (e.g. tab settings)
-            editor->setLanguage(editor->language());
-
-            return true;
-        });
-    }
-
-    // Invalidate already initialized editors in the buffer and add a single new
-    // Editor to the buffer so we won't have an empty queue.
-    Editor::invalidateEditorBuffer();
-    Editor::addEditorToBuffer(1);
-
-    accept();
+    if (applySettings())
+        accept();
 }
 
 void frmPreferences::loadLanguages()
@@ -164,13 +137,13 @@ void frmPreferences::loadLanguages()
 
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
-    //Add "Default" language into the list.
+    // Add "Default" language into the list.
     QMap<QString,QString> defaultMap;
     defaultMap.insert("id", "default");
     defaultMap.insert("name", "Default");
     langs.push_front(defaultMap);
 
-    //Add all languages to the comboBox and write their current settings to a temp list
+    // Add all languages to the comboBox and write their current settings to a temp list
     for (int i = 0; i < langs.length(); i++) {
         const QMap<QString, QString> &map = langs.at(i);
         const QString langId = map.value("id", "");
@@ -193,7 +166,7 @@ void frmPreferences::loadLanguages()
 
 void frmPreferences::saveLanguages()
 {
-    //Write all temporary language settings back into the settings file.
+    // Write all temporary language settings back into the settings file.
     for (auto&& lang : m_tempLangSettings) {
         m_settings.Languages.setTabSize(lang.langId, lang.tabSize);
         m_settings.Languages.setIndentWithSpaces(lang.langId, lang.indentWithSpaces);
@@ -304,11 +277,24 @@ void frmPreferences::loadShortcuts()
     // Build the interface
     QWidget *container = ui->pageShortcuts;
     QVBoxLayout *layout = new QVBoxLayout();
-    QPushButton *resetDefaults = new QPushButton("Restore Defaults");
-    QObject::connect(resetDefaults, &QPushButton::clicked, this, &frmPreferences::resetShortcuts);
-    resetDefaults->setFixedWidth(128);
+    QHBoxLayout *btnLayout = new QHBoxLayout();
+
+    QPushButton *resetSelected = new QPushButton("Reset Seleted");
+    QPushButton *resetAll = new QPushButton("Reset All");
+
+    QObject::connect(resetSelected, &QPushButton::clicked, this, &frmPreferences::resetSelectedShortcut);
+    QObject::connect(resetAll, &QPushButton::clicked, this, &frmPreferences::resetAllShortcuts);
+
+    resetSelected->setFixedWidth(144);
+    resetAll->setFixedWidth(128);
+
+    btnLayout->addWidget(resetSelected);
+    btnLayout->addWidget(resetAll);
+    btnLayout->addStretch(1);
+
     layout->addWidget(m_keyGrabber);
-    layout->addWidget(resetDefaults);
+    layout->addLayout(btnLayout);
+
     container->setLayout(layout);
 }
 
@@ -323,6 +309,68 @@ void frmPreferences::saveShortcuts()
         m_settings.Shortcuts.setShortcut(objName, seq);
         item.getAction()->setShortcut(seq);
     }
+}
+
+bool frmPreferences::applySettings()
+{
+    if (m_keyGrabber->hasConflicts()) {
+        //Try our best to show the error to the user immediately.
+        ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
+        m_keyGrabber->scrollToConflict();
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
+        msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
+        msgBox.exec();
+        return false;
+    }
+
+
+    m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
+    m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
+    m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
+
+    saveLanguages();
+    saveAppearanceTab();
+    saveTranslation();
+    saveShortcuts();
+
+    m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
+    m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
+    m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
+
+    const Editor::Theme& newTheme = Editor::themeFromName(ui->cmbColorScheme->currentData().toString());
+    const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
+    const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
+    const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
+
+    // Apply changes to currently opened editors
+    for (MainWindow *w : MainWindow::instances()) {
+        w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+
+        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
+
+            // Set new theme
+            editor->setTheme(newTheme);
+
+            // Set font override
+            editor->setFont(fontFamily, fontSize, lineHeight);
+
+            // Reset language-dependent settings (e.g. tab settings)
+            editor->setLanguage(editor->language());
+
+            return true;
+        });
+    }
+
+    // Invalidate already initialized editors in the buffer and add a single new
+    // Editor to the buffer so we won't have an empty queue.
+    Editor::invalidateEditorBuffer();
+    Editor::addEditorToBuffer(1);
+
+    return true;
 }
 
 void frmPreferences::on_buttonBox_rejected()
