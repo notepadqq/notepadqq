@@ -160,6 +160,7 @@ TRANSLATIONS = \
     ../translations/notepadqq_it.ts \
     ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_ru.ts \
+    ../translations/notepadqq_sl.ts \
     ../translations/notepadqq_sv.ts
 
 
