@@ -406,9 +406,17 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (fileExists && cacheFileExists && tab.lastModified != 0) {
                 auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
 
-                if(lastModified > tab.lastModified)
+                if (lastModified > tab.lastModified) {
                     editor->setFileOnDiskChanged(true);
+                }
             }
+
+            // If the orig. file does not exist but *should* exist, we inform the user of its removal.
+            if (!fileExists && !fileUrl.isEmpty()) {
+                editor->setFileOnDiskChanged(true);
+                emit docEngine->fileOnDiskChanged(tabW, idx, true);
+            }
+
 
             if(tab.active) activeIndex = idx;
 
