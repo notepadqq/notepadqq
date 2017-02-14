@@ -21,21 +21,28 @@ find_package(Qt5WebKitWidgets REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
-if(Qt5Core_FOUND)
-    message("Qt5Core found: Version ${Qt5Core_VERSION_STRING}")
-endif()
 
 # Initialize git submodules if git is available
 find_package(Git)
 if(GIT_FOUND)
-  message("git found: ${GIT_EXECUTABLE}")
-  if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-      message("Initializing submodules.")
-      execute_process(COMMAND "${GIT_EXECUTABLE}" submodule init)
-      execute_process(COMMAND "${GIT_EXECUTABLE}" submodule update)
-  endif()
+    message("git found: ${GIT_EXECUTABLE}")
+    if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+        message("Initializing submodules.")
+        execute_process(COMMAND "${GIT_EXECUTABLE}" submodule init)
+        execute_process(COMMAND "${GIT_EXECUTABLE}" submodule update)
+    endif()
 endif()
 
+
+set (cmdir "${CMAKE_SOURCE_DIR}/src/editor/libs/codemirror")
+set (cmerror "Error: CodeMirror submodule not available at '${cmdir}'! Make sure you downloaded the source code using\
+ git as specified in README.md.")
+
+file(GLOB cmresult ${cmdir})
+list(LENGTH cmresult cmempty)
+if(NOT EXISTS ${cmdir} OR cmempty EQUAL 0)
+    message(FATAL_ERROR ${cmerror})
+endif()
 
 # Installation instructions
 install(DIRECTORY support_files/icons/ DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons)
