@@ -745,6 +745,10 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
 {
+    // Don't do anything if there is no file to reload from.
+    if (tabWidget->editor(tab)->fileName().isEmpty())
+        return false;
+
     if (!tabWidget->editor(tab)->isClean()) {
         QMessageBox msgBox(this);
         QString name = tabWidget->tabText(tab).toHtmlEscaped();
@@ -1899,6 +1903,11 @@ void MainWindow::on_actionConvert_to_triggered()
 void MainWindow::on_actionReload_file_interpreted_as_triggered()
 {
     Editor *editor = currentEditor();
+
+    // Don't do anything if there is no file to reload from.
+    if (editor->fileName().isEmpty())
+        return;
+
     frmEncodingChooser *dialog = new frmEncodingChooser(this);
     dialog->setEncoding(editor->codec());
     dialog->setInfoText(tr("Reload as:"));
