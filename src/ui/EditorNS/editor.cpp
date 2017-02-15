@@ -1,13 +1,22 @@
 #include "include/EditorNS/editor.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
-#include <QWebFrame>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
 #include <QUrlQuery>
 #include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#ifdef USE_QTWEBENGINE
+    #include <QWebEngineSettings>
+    #include <QtWebChannel/QWebChannel>
+#else
+    #include <QWebFrame>
+#endif
 
 namespace EditorNS
 {
@@ -37,7 +46,7 @@ namespace EditorNS
         connect(m_jsToCppProxy,
                 &JsToCppProxy::messageReceived,
                 this,
-                &Editor::on_proxyMessageReceived);
+                &Editor::on_proxyMessageReceived, Qt::QueuedConnection);
 
         m_webView = new CustomQWebView(this);
 
@@ -48,6 +57,7 @@ namespace EditorNS
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
 
+        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         m_webView->setUrl(url);
 
         // To load the page in the background (http://stackoverflow.com/a/10520029):
@@ -55,6 +65,17 @@ namespace EditorNS
         //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
         //m_webView->setContent(content.toUtf8());
 
+
+#ifdef USE_QTWEBENGINE
+//        m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); //FIXME
+
+        QWebEngineSettings *pageSettings = m_webView->page()->settings();
+        #ifdef QT_DEBUG
+//        pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); //FIXME
+        #endif
+        pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
+
+#else
         m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
         QWebSettings *pageSettings = m_webView->page()->settings();
@@ -62,17 +83,23 @@ namespace EditorNS
         pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
         #endif
         pageSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
-
+#endif
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(0);
         m_layout->addWidget(m_webView, 1);
         setLayout(m_layout);
-
+#ifdef USE_QTWEBENGINE
+		connect(m_webView->page(),
+                &QWebEnginePage::loadFinished,
+                this,
+                &Editor::on_javaScriptWindowObjectCleared);
+#else
         connect(m_webView->page()->mainFrame(),
                 &QWebFrame::javaScriptWindowObjectCleared,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
+#endif
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
@@ -128,8 +155,7 @@ namespace EditorNS
 
     void Editor::on_javaScriptWindowObjectCleared()
     {
-        m_webView->page()->mainFrame()->
-                addToJavaScriptWindowObject("cpp_ui_driver", m_jsToCppProxy);
+        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
     }
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
@@ -356,12 +382,25 @@ namespace EditorNS
     {
         waitAsyncLoad();
 
-        QString funCall = "UiDriver.messageReceived('" +
-                jsStringEscape(msg) + "');";
+        QString msgData = "null";
+        QJsonValue jsonData = QJsonValue::fromVariant(data);
+        if (jsonData.isArray()) {
+            msgData = QJsonDocument(jsonData.toArray()).toJson();
+        } else if (jsonData.isBool()) {
+            msgData = jsonData.toBool() ? "true" : "false";
+        } else if (jsonData.isDouble()) {
+            msgData = QString::number(jsonData.toDouble());
+        } else if (jsonData.isObject()) {
+            msgData = QString(QJsonDocument(jsonData.toObject()).toJson());
+        } else if (jsonData.isString()) {
+            msgData = "'" + jsStringEscape(jsonData.toString()) + "'";
+        } else if (jsonData.isUndefined()) {
+            msgData = "undefined";
+        }
 
-        m_jsToCppProxy->setMsgData(data);
+        QString funCall = QString("UiDriver.messageReceived('%1', %2);").arg(jsStringEscape(msg)).arg(msgData);
 
-        return m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
+        return m_webView->evaluateJavaScript(funCall);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg)
@@ -618,6 +657,7 @@ namespace EditorNS
 
     void Editor::forceRender(QSize size)
     {
+#ifndef USE_QTWEBENGINE
         QWebPage *page = m_webView->page();
 
         page->setViewportSize(size);
@@ -626,6 +666,7 @@ namespace EditorNS
         QPainter painter(&image);
 
         page->mainFrame()->render(&painter);
+#endif
     }
 
     void Editor::setTabsVisible(bool visible)
@@ -656,7 +697,7 @@ namespace EditorNS
     void Editor::print(QPrinter *printer)
     {
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
-        m_webView->print(printer);
+        //m_webView->print(printer); // FIXME
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 

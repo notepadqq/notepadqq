@@ -8,6 +8,7 @@
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
+#include <QPrinter>
 
 namespace EditorNS
 {
@@ -35,7 +36,7 @@ namespace EditorNS
              *        be called from the C++ part
              * @param data
              */
-        void setMsgData(QVariant data) { m_msgData = data; }
+//        void setMsgData(QVariant data) { m_msgData = data; }
 
         /**
              * @brief Get the message data set by setMsgData(). This
@@ -43,6 +44,10 @@ namespace EditorNS
              */
         Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
 
+    public slots:
+        Q_INVOKABLE void receiveMessage(QString msg, QVariant data) {
+            emit messageReceived(msg, data);
+        }
     signals:
         /**
              * @brief A JavaScript message has been received.
