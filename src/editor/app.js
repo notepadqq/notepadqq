@@ -384,17 +384,23 @@ UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevRet
 
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
     if (data.path != "") {
+        var link = undefined;
         var stylesheet = $("link[href='" + data.path + "']");
         if (stylesheet.length > 0) {
             // Stylesheet already exists, move it to the bottom
             stylesheet.appendTo('head');
         } else {
             // Add the stylesheet
-            addStylesheet(data.path);
+            link = addStylesheet(data.path);
         }
     }
-
-    editor.setOption("theme", data.name);
+    if (link === undefined) {
+            editor.setOption("theme", data.name);
+    }else {
+        link.onload = function() {
+            editor.setOption("theme", data.name);
+        }
+    }
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn) {
