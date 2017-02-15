@@ -1234,6 +1234,10 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     ui->actionMove_to_New_Window->setEnabled(isClean);
     ui->actionOpen_in_New_Window->setEnabled(isClean);
 
+    bool allowReloading = !editor->fileName().isEmpty();
+    ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
+    ui->actionReload_from_Disk->setEnabled(allowReloading);
+
     // EOL
     QString eol = editor->endOfLineSequence();
     if (eol == "\r\n") {
@@ -1903,11 +1907,6 @@ void MainWindow::on_actionConvert_to_triggered()
 void MainWindow::on_actionReload_file_interpreted_as_triggered()
 {
     Editor *editor = currentEditor();
-
-    // Don't do anything if there is no file to reload from.
-    if (editor->fileName().isEmpty())
-        return;
-
     frmEncodingChooser *dialog = new frmEncodingChooser(this);
     dialog->setEncoding(editor->codec());
     dialog->setInfoText(tr("Reload as:"));
