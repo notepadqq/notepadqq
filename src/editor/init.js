@@ -15,6 +15,7 @@ function addStylesheet(path) {
     link.media = "screen,print";
 
     document.getElementsByTagName("head")[0].appendChild(link);
+    return link;
 }
 
 function init()
