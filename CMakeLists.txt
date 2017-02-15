@@ -43,7 +43,8 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/appdata/translations src/editor src/extens
 install(FILES images/notepadqq.svg DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps)
 install(FILES support_files/shortcuts/notepadqq.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 install(FILES support_files/manpage/notepadqq.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
-install(FILES CONTRIBUTORS.md CONTRIBUTING.md DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME})
+#install(FILES CONTRIBUTORS.md CONTRIBUTING.md DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/${PROJECT_NAME})
+
 #Set some permissions since the "binary" is actually a script
 install(FILES support_files/launch/notepadqq PERMISSIONS 
     OWNER_EXECUTE 
