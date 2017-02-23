@@ -57,7 +57,7 @@ var Languages = new function() {
             name: "C++",
             mode: "clike",
             mime: "text/x-c++src",
-            fileExtensions: ["cc", "cp", "cpp", "c++", "cxx", "hh", "hpp", "hxx", "h++", "ii", "ino"]
+            fileExtensions: ["cc", "cp", "cpp", "c++", "cxx", "hh", "hpp", "hxx", "h++", "ii", "ino", "moc"]
         },
 
         "cobol": {
