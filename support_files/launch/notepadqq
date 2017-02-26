@@ -27,6 +27,10 @@ if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
 elif [ -f "$SCRIPTPATH"/../lib/notepadqq-bin ]; then
     # Nqq is not installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq-bin "$@"
+elif [ -f "$SCRIPTPATH"/../../usr/libexec/notepadqq/notepadqq-bin ]; then
+    # Nqq installed via rpm package (Fedora):
+    # Script is installed in /usr/libexec/notepadqq folder for comply with FHS and run without changing much
+    exec "$SCRIPTPATH"/../../usr/libexec/notepadqq/notepadqq-bin "$@"
 else
     # Nqq is installed via deb package:
     # this script is in the same directory as the binary file.
