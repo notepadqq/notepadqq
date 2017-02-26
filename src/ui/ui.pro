@@ -39,7 +39,7 @@ isEmpty(DESTDIR) {
 }
 
 isEmpty(LRELEASE) {
-    LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    LRELEASE = lrelease
 }
 
 APPDATADIR = "$$DESTDIR/../appdata"
