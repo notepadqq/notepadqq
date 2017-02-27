@@ -55,6 +55,7 @@ namespace EditorNS
              * @param data Message data
              */
         void messageReceived(QString msg, QVariant data);
+        void sendMsg(QString msg, QString data);
     };
 
 
@@ -316,7 +317,7 @@ namespace EditorNS
 
         void setIndentationMode(const bool useTabs, const int size);
         void setIndentationMode(QString language);
-
+        QString makeMessageData(const QVariant &data);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
@@ -341,7 +342,7 @@ namespace EditorNS
         void editorReady();
 
         void currentLanguageChanged(QString id, QString name);
-
+       
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
