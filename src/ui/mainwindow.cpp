@@ -752,6 +752,10 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
 {
+    // Don't do anything if there is no file to reload from.
+    if (tabWidget->editor(tab)->fileName().isEmpty())
+        return false;
+
     if (!tabWidget->editor(tab)->isClean()) {
         QMessageBox msgBox(this);
         QString name = tabWidget->tabText(tab).toHtmlEscaped();
@@ -1236,6 +1240,10 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     ui->actionRename->setEnabled(!fileName.isEmpty());
     ui->actionMove_to_New_Window->setEnabled(isClean);
     ui->actionOpen_in_New_Window->setEnabled(isClean);
+
+    bool allowReloading = !editor->fileName().isEmpty();
+    ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
+    ui->actionReload_from_Disk->setEnabled(allowReloading);
 
     // EOL
     QString eol = editor->endOfLineSequence();
