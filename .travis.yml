@@ -11,13 +11,19 @@ before_install:
 script:
   - "./configure && make"
   - "./src/ui-tests/ui-tests"
+  - "git clone --recursive https://github.com/notepadqq/notepadqq.git notepadqq-${NQQ_VERSION}-source"
+  - "(cd notepadqq-${NQQ_VERSION}-source && rm -rf .git* .travis.yml)"
+  - "(cd notepadqq-${NQQ_VERSION}-source/src/editor/libs/codemirror && rm -f .git* .npmignore .travis.yml)"
 before_deploy:
   - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
+  - "tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source"
 deploy:
   provider: releases
   api_key:
     secure: OCEuXR1a2dDHKKQpnOeSoeWZeL0clf0eVUZt5QbrnkyvL3/iUHXjYbdVBEGrbuldffLy9YOC63viqh/r7Ak+7k/suG1BxwGczbvtMBvRyUOOI48YX90Ss+JUcpvJVNLoirDqA1hPMho5Rmydu+DFRlpjADfg3KtZZZA+8Xz8Uek=
-  file: "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
+  file:
+    - "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
+    - "notepadqq-${NQQ_VERSION}-source.tar.gz"
   skip_cleanup: true
   on:
     repo: notepadqq/notepadqq
