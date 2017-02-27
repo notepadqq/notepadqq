@@ -48,7 +48,11 @@ Notepadqq is available from an [official PPA](https://launchpad.net/~notepadqq-t
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
 #### Arch Linux
-You can install different versions of the package from AUR:
+Notepadqq is available from Arch's [community repositories](https://www.archlinux.org/packages/community/x86_64/notepadqq/). To install using pacman:
+
+    sudo pacman -S notepadqq
+
+Alternatively it can be found in the AUR:
 
  * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
  * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)

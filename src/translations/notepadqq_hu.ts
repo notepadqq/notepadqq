@@ -1198,12 +1198,12 @@ Biztosan menteni szeretné?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1954"/>
         <source>Run...</source>
-        <translation type="unfinished"></translation>
+        <translation>Futtatás...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1966"/>
         <source>Modify Run Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Futattási parancsok módosítása</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2246"/>
@@ -1237,7 +1237,7 @@ Biztosan menteni szeretné?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="231"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fájl megnyitása</translation>
     </message>
 </context>
 <context>
@@ -1245,37 +1245,37 @@ Biztosan menteni szeretné?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="263"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="264"/>
         <source>Cancel</source>
-        <translation type="unfinished">Mégse</translation>
+        <translation>Mégse</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="265"/>
         <source>Save...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mentés...</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="267"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Speciális helyőrzők&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%teljes elérési út%&lt;/em&gt; - A jelenleg aktív fájl teljes elérési útja.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%könyvtár%&lt;/em&gt; - A jelenleg aktív fájlt tartalmazó könyvtár.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%fájlnév%&lt;/em&gt; - A jelenleg aktív fájl neve.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%kijelölés%&lt;/em&gt; - Aktuálisan kijelölt szöveg.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="312"/>
         <source>Choose the name to be displayed in the run menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>A futás menüben megjelenítendő név kiválasztása.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="313"/>
         <source>Command Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Parancsnév:</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="322"/>
         <source>Command saved...</source>
-        <translation type="unfinished"></translation>
+        <translation>Parancs elmentve...</translation>
     </message>
 </context>
 <context>
@@ -1283,27 +1283,27 @@ Biztosan menteni szeretné?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="26"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="27"/>
         <source>Cancel</source>
-        <translation type="unfinished">Mégse</translation>
+        <translation>Mégse</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="31"/>
         <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>    &lt;h3&gt;Speciális helyőrzők&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%teljes elérési út%&lt;/em&gt; - A jelenleg aktív fájl teljes elérési útja.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%könyvtár%&lt;/em&gt; - A jelenleg aktív fájlt tartalmazó könyvtár.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%fájlnév%&lt;/em&gt; - A jelenleg aktív fájl neve.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%kijelölés%&lt;/em&gt; - Aktuálisan kijelölt szöveg.&lt;/li&gt;    &lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Szöveg</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="67"/>
         <source>Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Parancs</translation>
     </message>
 </context>
 <context>

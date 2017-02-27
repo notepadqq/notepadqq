@@ -17,7 +17,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 CONFIG += c++11
 
-TARGET = notepadqq-bin
+!macx: TARGET = notepadqq-bin
+macx: TARGET = notepadqq
+
 TEMPLATE = app
 
 RCC_DIR = ../../out/build_data
@@ -39,20 +41,28 @@ win32: CMD_FULLDELETE = del /F /S /Q
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
         message(Debug build)
-        DESTDIR = ../../out/debug/lib
+        !macx: DESTDIR = ../../out/debug/lib
+        macx: DESTDIR = ../../out/debug
     }
     CONFIG(release, debug|release) {
         message(Release build)
-        DESTDIR = ../../out/release/lib
+        !macx: DESTDIR = ../../out/release/lib
+        macx: DESTDIR = ../../out/release
     }
 }
 
 isEmpty(LRELEASE) {
-    LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    !macx: LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    macx: LRELEASE = lrelease
 }
 
-APPDATADIR = "$$DESTDIR/../appdata"
-BINDIR = "$$DESTDIR/../bin"
+!macx {
+    APPDATADIR = "$$DESTDIR/../appdata"
+    BINDIR = "$$DESTDIR/../bin"
+}
+macx {
+    APPDATADIR = "$$DESTDIR/$${TARGET}.app/Contents/Resources"
+}
 
 INSTALLFILESDIR = ../../support_files
 
@@ -192,21 +202,26 @@ extensionToolsTarget.commands = (cd \"$$PWD\" && \
                            cd \"../extension_tools\" && \
                            $(MAKE) DESTDIR=\"$$APPDATADIR/extension_tools\")
 
-launchTarget.target = make_launch
-launchTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$BINDIR/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
-                         chmod 755 \"$$BINDIR/notepadqq\")
-
 # Rebuild translations
 translationsTarget.target = make_translations
 translationsTarget.commands = ($${LRELEASE} \"$${CURRFILE}\")
 
-QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget translationsTarget
-PRE_TARGETDEPS += make_editor make_extensionTools make_launch make_translations
+QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget translationsTarget
+PRE_TARGETDEPS += make_editor make_extensionTools make_translations
+
+unix:!macx {
+    launchTarget.target = make_launch
+    launchTarget.commands = (cd \"$$PWD\" && \
+                             $${QMAKE_MKDIR} \"$$BINDIR/\" && \
+                             $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
+                             chmod 755 \"$$BINDIR/notepadqq\")
+
+    QMAKE_EXTRA_TARGETS += launchTarget
+    PRE_TARGETDEPS += make_launch
+}
 
 ### INSTALL ###
-unix {
+unix:!macx {
     isEmpty(PREFIX) {
         PREFIX = /usr/local
     }

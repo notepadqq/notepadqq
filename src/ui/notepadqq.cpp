@@ -19,8 +19,13 @@ QString Notepadqq::copyright()
 
 QString Notepadqq::appDataPath(QString fileName)
 {
+#ifdef Q_OS_MACX
+    QString def = QString("%1/../Resources/").
+            arg(qApp->applicationDirPath());
+#else
     QString def = QString("%1/../appdata/").
             arg(qApp->applicationDirPath());
+#endif
 
     if(!QDir(def).exists())
         def = QString("%1/../../share/%2/").

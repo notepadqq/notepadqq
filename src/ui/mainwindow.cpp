@@ -282,6 +282,7 @@ void MainWindow::createStatusBar()
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    scrollArea->setStyleSheet("* { background: transparent; }");
 
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::NoFrame);
