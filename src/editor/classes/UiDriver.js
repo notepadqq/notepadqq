@@ -41,16 +41,6 @@ var UiDriver = new function() {
         return (typeof cpp_ui_driver === 'undefined')
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        new QWebChannel(qt.webChannelTransport, function (_channel) {
-            channel = _channel;
-            // Send the messages in the queue
-            for (var i = 0; i < msgQueue.length; i++) {
-                _this.sendMessage(msgQueue[i][0], msgQueue[i][1]);
-            }
-            msgQueue = [];
-        });
-    });
 
     this.sendMessage = function(msg, data) {
         if (usingQtWebChannel()) {
@@ -98,4 +88,17 @@ var UiDriver = new function() {
 
         return prevReturn;
     }
+    document.addEventListener("DOMContentLoaded", function () {
+        new QWebChannel(qt.webChannelTransport, function (_channel) {
+            channel = _channel;
+            // Send the messages in the queue
+            for (var i = 0; i < msgQueue.length; i++) {
+                _this.sendMessage(msgQueue[i][0], msgQueue[i][1]);
+            }
+            channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
+                _this.messageReceived(msg, data);});
+            msgQueue = [];
+        });
+    });
+
 }
