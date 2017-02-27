@@ -46,7 +46,7 @@ namespace EditorNS
         connect(m_jsToCppProxy,
                 &JsToCppProxy::messageReceived,
                 this,
-                &Editor::on_proxyMessageReceived, Qt::QueuedConnection);
+                &Editor::on_proxyMessageReceived);
 
         m_webView = new CustomQWebView(this);
 
@@ -104,9 +104,10 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
-        // TODO Display a message if a javascript error gets triggered.
-        // Right now, if there's an error in the javascript code, we
-        // get stuck waiting a J_EVT_READY that will never come.
+        // Wait for the page to load entirely before displaying
+        QEventLoop loop;
+        connect(m_webView->page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
+        loop.exec();
     }
 
     QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
@@ -368,20 +369,8 @@ namespace EditorNS
                 .replace("\b", "\\b");
     }
 
-    void Editor::sendMessage(const QString &msg, const QVariant &data)
+    QString Editor::makeMessageData(const QVariant& data)
     {
-        sendMessageWithResult(msg, data);
-    }
-
-    void Editor::sendMessage(const QString &msg)
-    {
-        sendMessage(msg, 0);
-    }
-
-    QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
-    {
-        waitAsyncLoad();
-
         QString msgData = "null";
         QJsonValue jsonData = QJsonValue::fromVariant(data);
         if (jsonData.isArray()) {
@@ -397,10 +386,27 @@ namespace EditorNS
         } else if (jsonData.isUndefined()) {
             msgData = "undefined";
         }
+        return msgData;
+    }
 
-        QString funCall = QString("UiDriver.messageReceived('%1', %2);").arg(jsStringEscape(msg)).arg(msgData);
+    void Editor::sendMessage(const QString &msg, const QVariant &data)
+    {
+        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
+    }
 
-        return m_webView->evaluateJavaScript(funCall);
+    void Editor::sendMessage(const QString &msg)
+    {
+        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(0));
+    }
+
+    QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
+    {
+        //waitAsyncLoad();
+
+
+        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
+        QVariant v = 0;
+        return v;
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg)
