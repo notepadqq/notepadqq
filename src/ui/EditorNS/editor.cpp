@@ -404,11 +404,10 @@ namespace EditorNS
     {
         qDebug() << "Creating lock for: " << msg;
 
-        QMutexLocker locker(&m_processMutex);
         waitAsyncLoad();
 
         QEventLoop l;
-        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit, Qt::DirectConnection);
+        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit);
 
         emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
         qDebug() << "Waiting on Reply for: " << msg;
