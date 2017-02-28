@@ -716,5 +716,5 @@ $(document).ready(function () {
         UiDriver.handleMessageInternally("J_EVT_GOT_FOCUS");
     });
 
-    UiDriver.sendMessage("J_EVT_READY", null);
+    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
 });
