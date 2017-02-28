@@ -98,13 +98,6 @@ var UiDriver = new function() {
             console.error("Not using QtWebChannel: "+ msg);
             data = cpp_ui_driver.getMsgData();
         }
-        
-        /*if(msg == "C_CMD_SET_VALUE") {
-            console.error("Killing this execution.");
-            channel.objects.cpp_ui_driver.makeReplyReady();
-            return null;
-        }*/
-        
 
         // Only one of the handlers (the last that gets
         // called) can return a value. So, to each handler
@@ -124,8 +117,6 @@ var UiDriver = new function() {
         if(prevReturn !== undefined) {
             console.error("Setting return data for: "+ msg);
             _this.setReturnData(prevReturn);
-            //channel.objects.cpp_ui_driver.makeReplyReady();
-            //channel.objects.cpp_ui_driver.m_result = "";
         }else {
             console.error("Making reply for: "+ msg);
             channel.objects.cpp_ui_driver.makeReplyReady();

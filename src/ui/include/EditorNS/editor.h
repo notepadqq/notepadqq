@@ -48,7 +48,7 @@ namespace EditorNS
         Q_INVOKABLE QVariant getResult() { return m_result; }
         void setResult(QVariant data) { m_result = data;}
         void resetResult() {}
-		Q_PROPERTY(QVariant m_result READ getResult WRITE setResult NOTIFY replyReady RESET resetResult)
+        Q_PROPERTY(QVariant m_result READ getResult WRITE setResult NOTIFY replyReady RESET resetResult)
     public slots:
         Q_INVOKABLE void receiveMessage(QString msg, QVariant data) {
             emit messageReceived(msg, data);
@@ -353,7 +353,7 @@ namespace EditorNS
         void editorReady();
 
         void currentLanguageChanged(QString id, QString name);
-       
+
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);

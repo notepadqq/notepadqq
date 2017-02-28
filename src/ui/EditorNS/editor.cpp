@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QTimer>
 
 #ifdef USE_QTWEBENGINE
     #include <QWebEngineSettings>
