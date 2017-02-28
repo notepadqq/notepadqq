@@ -146,7 +146,7 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
-    return [cur.line, cur.ch];
+    UiDriver.setReturnData([cur.line, cur.ch]);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
