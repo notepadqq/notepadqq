@@ -15,7 +15,7 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
    You'll generally want to use this function instead of
    CodeMirror.isClean()
 */
- function isCleanOrForced(generation) {
+function isCleanOrForced(generation) {
     return !forceDirty && editor.isClean(generation);
 }
 
@@ -146,7 +146,6 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
-    //UiDriver.setReturnData([cur.line, cur.ch]);
     return [cur.line, cur.ch];
     
 });
