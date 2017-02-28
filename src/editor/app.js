@@ -22,11 +22,7 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    
-
     UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
-
-    
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
