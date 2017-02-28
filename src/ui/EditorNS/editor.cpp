@@ -90,7 +90,7 @@ namespace EditorNS
         m_layout->addWidget(m_webView, 1);
         setLayout(m_layout);
 #ifdef USE_QTWEBENGINE
-		connect(m_webView->page(),
+        connect(m_webView->page(),
                 &QWebEnginePage::loadFinished,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
@@ -147,6 +147,7 @@ namespace EditorNS
     void Editor::waitAsyncLoad()
     {
         if (!m_loaded) {
+            qDebug() << "Not yet loaded, wait async.";
             QEventLoop loop;
             connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
             // Block until a J_EVT_READY message is received
@@ -401,14 +402,19 @@ namespace EditorNS
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
+        qDebug() << "Creating lock for: " << msg;
+
         QMutexLocker locker(&m_processMutex);
         waitAsyncLoad();
+
         QEventLoop l;
         connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit, Qt::DirectConnection);
         emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
+
         qDebug() << "Waiting on Reply for: " << msg;
         l.exec();
-        qDebug() << "Finished waiting.";
+        qDebug() << "Finished waiting for:" << msg;
+
         return m_jsToCppProxy->getResult();
     }
 

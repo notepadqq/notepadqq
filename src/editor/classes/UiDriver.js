@@ -77,10 +77,23 @@ var UiDriver = new function() {
         channel.objects.cpp_ui_driver.makeReplyReady();
         channel.objects.cpp_ui_driver.m_result = "";
     }
+    
+    this.handleMessageInternally = function(msg, data) {
+        console.error("Received internal message: "+ msg);
+
+        if (handlers[msg] !== undefined) {
+            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
+            handlers[msg].forEach(function(handler) {
+                console.error("Foreach: "+ handler);
+            });
+        }
+ 
+    }
 
     this.messageReceived = function(msg, data) {
         console.error("Received message: "+ msg);
         if (!usingQtWebChannel()) {
+            console.error("Not using QtWebChannel: "+ msg);
             data = cpp_ui_driver.getMsgData();
         }
 
@@ -90,13 +103,18 @@ var UiDriver = new function() {
         var prevReturn = undefined;
 
         if (handlers[msg] !== undefined) {
+            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
             handlers[msg].forEach(function(handler) {
+                console.error("Foreach: "+ handler);
                 prevReturn = handler(msg, data, prevReturn);
             });
         }
+        
         if(prevReturn !== undefined) {
+            console.error("Setting return data for: "+ msg);
             _this.setReturnData(prevReturn);
         }else {
+            console.error("Making reply for: "+ msg);
             channel.objects.cpp_ui_driver.makeReplyReady();
         }
         return prevReturn;
