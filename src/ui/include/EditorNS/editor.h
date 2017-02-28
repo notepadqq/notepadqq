@@ -63,7 +63,7 @@ namespace EditorNS
              * @param data Message data
              */
         void messageReceived(QString msg, QVariant data);
-        void sendMsg(QString msg, QString data);
+        void sendMsg(QString msg, QVariant data);
         void replyReady();
     };
 

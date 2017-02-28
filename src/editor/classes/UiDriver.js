@@ -101,7 +101,6 @@ var UiDriver = new function() {
         // called) can return a value. So, to each handler
         // we provide the previous handler's return value.
         var prevReturn = undefined;
-
         if (handlers[msg] !== undefined) {
             console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
             handlers[msg].forEach(function(handler) {
@@ -129,6 +128,7 @@ var UiDriver = new function() {
             //    console.error(msgQueue);
             }
             channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
+                console.error("READING DATA BLAHLSDFJDLDFDAS: " + data);
                 _this.messageReceived(msg, data);
             });
         });

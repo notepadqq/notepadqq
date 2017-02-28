@@ -409,8 +409,8 @@ namespace EditorNS
 
         QEventLoop l;
         connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit, Qt::DirectConnection);
-        emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
 
+        emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
         qDebug() << "Waiting on Reply for: " << msg;
         l.exec();
         qDebug() << "Finished waiting for:" << msg;
