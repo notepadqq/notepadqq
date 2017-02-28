@@ -15,19 +15,23 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
    You'll generally want to use this function instead of
    CodeMirror.isClean()
 */
-function isCleanOrForced(generation) {
+ function isCleanOrForced(generation) {
     return !forceDirty && editor.isClean(generation);
 }
 
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    
+
+    UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+
+    
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
     forceDirty = true;
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -146,7 +150,9 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
-    UiDriver.setReturnData([cur.line, cur.ch]);
+    //UiDriver.setReturnData([cur.line, cur.ch]);
+    return [cur.line, cur.ch];
+    
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
@@ -707,7 +713,7 @@ $(document).ready(function () {
     });
 
     editor.on("focus", function() {
-        UiDriver.sendMessage("J_EVT_GOT_FOCUS");
+        UiDriver.handleMessageInternally("J_EVT_GOT_FOCUS");
     });
 
     UiDriver.sendMessage("J_EVT_READY", null);
