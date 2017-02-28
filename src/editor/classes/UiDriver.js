@@ -99,11 +99,11 @@ var UiDriver = new function() {
             data = cpp_ui_driver.getMsgData();
         }
         
-        if(msg == "C_CMD_SET_VALUE") {
+        /*if(msg == "C_CMD_SET_VALUE") {
             console.error("Killing this execution.");
             channel.objects.cpp_ui_driver.makeReplyReady();
             return null;
-        }
+        }*/
         
 
         // Only one of the handlers (the last that gets

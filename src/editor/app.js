@@ -704,12 +704,12 @@ $(document).ready(function () {
     changeGeneration = editor.changeGeneration(true);
 
     editor.on("change", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
-        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+        UiDriver.handleMessageInternally("J_EVT_CONTENT_CHANGED");
+        UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY");
+        UiDriver.handleMessageInternally("J_EVT_CURSOR_ACTIVITY");
     });
 
     editor.on("focus", function() {
