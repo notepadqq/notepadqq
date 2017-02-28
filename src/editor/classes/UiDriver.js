@@ -51,12 +51,13 @@ var UiDriver = new function() {
                 msgQueue.push([msg, data]);
                 return;
             }
-
+            console.log("Reply data: " + msg);
             if (data !== null && data !== undefined) {
                 channel.objects.cpp_ui_driver.receiveMessage(msg, data, function(ret) { console.error(msg + " sent to c++ (async)") });
             } else {
                 channel.objects.cpp_ui_driver.receiveMessage(msg, "", function(ret) { console.error(msg + " sent to c++ (async)") });
             }
+            channel.objects.cpp_ui_driver.makeReplyReady();
         } else {
             // QtWebKit
             cpp_ui_driver.receiveMessage(msg, data);
@@ -70,7 +71,15 @@ var UiDriver = new function() {
         handlers[msg].push(handler);
     }
 
+    this.setReturnData = function(data) {
+        console.error("Setting return data to: " + data);
+        channel.objects.cpp_ui_driver.m_result = data;
+        channel.objects.cpp_ui_driver.makeReplyReady();
+        channel.objects.cpp_ui_driver.m_result = "";
+    }
+
     this.messageReceived = function(msg, data) {
+        console.error("Received message: "+ msg);
         if (!usingQtWebChannel()) {
             data = cpp_ui_driver.getMsgData();
         }
@@ -85,19 +94,25 @@ var UiDriver = new function() {
                 prevReturn = handler(msg, data, prevReturn);
             });
         }
-
+        if(prevReturn !== undefined) {
+            _this.setReturnData(prevReturn);
+        }else {
+            channel.objects.cpp_ui_driver.makeReplyReady();
+        }
         return prevReturn;
     }
     document.addEventListener("DOMContentLoaded", function () {
         new QWebChannel(qt.webChannelTransport, function (_channel) {
             channel = _channel;
             // Send the messages in the queue
-            for (var i = 0; i < msgQueue.length; i++) {
-                _this.sendMessage(msgQueue[i][0], msgQueue[i][1]);
+            while (msgQueue.length) {
+                var cur = msgQueue.shift();
+                _this.sendMessage(cur[0], cur[1]);
+            //    console.error(msgQueue);
             }
             channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
-                _this.messageReceived(msg, data);});
-            msgQueue = [];
+                _this.messageReceived(msg, data);
+            });
         });
     });
 

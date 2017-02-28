@@ -4,12 +4,14 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QObject>
 #include <QVariant>
+#include <QJsonValue>
 #include <QQueue>
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
 #include <QPrinter>
-
+#include <QMutex>
+#include <QMutexLocker>
 namespace EditorNS
 {
 
@@ -27,7 +29,7 @@ namespace EditorNS
 
     private:
         QVariant m_msgData;
-
+        QVariant m_result;
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
 
@@ -43,10 +45,16 @@ namespace EditorNS
              *        method should be called from the JavaScript part.
              */
         Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
-
+        Q_INVOKABLE QVariant getResult() { return m_result; }
+        void setResult(QVariant data) { m_result = data;}
+        void resetResult() {}
+        Q_PROPERTY(QVariant m_result READ getResult WRITE setResult NOTIFY replyReady RESET resetResult);
     public slots:
         Q_INVOKABLE void receiveMessage(QString msg, QVariant data) {
             emit messageReceived(msg, data);
+        }
+        Q_INVOKABLE void makeReplyReady() {
+            emit replyReady();
         }
     signals:
         /**
@@ -56,6 +64,7 @@ namespace EditorNS
              */
         void messageReceived(QString msg, QVariant data);
         void sendMsg(QString msg, QString data);
+        void replyReady();
     };
 
 
@@ -75,6 +84,8 @@ namespace EditorNS
     class Editor : public QWidget
     {
         Q_OBJECT
+    private:
+            QMutex m_processMutex;
     public:
 
         struct Theme {

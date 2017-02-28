@@ -85,7 +85,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
         editor->setEndOfLineSequence("\r");
 
     editor->setValue(decoded.text);
-    editor->sendMessage("C_CMD_CLEAR_HISTORY");
+    //editor->sendMessage("C_CMD_CLEAR_HISTORY");
     editor->markClean();
 
     return true;

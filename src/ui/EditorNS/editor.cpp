@@ -391,22 +391,25 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
+        sendMessageWithResult(msg, data);
     }
 
     void Editor::sendMessage(const QString &msg)
     {
-        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(0));
+        sendMessageWithResult(msg, 0);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        //waitAsyncLoad();
-
-
-        m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
-        QVariant v = 0;
-        return v;
+        QMutexLocker locker(&m_processMutex);
+        waitAsyncLoad();
+        QEventLoop l;
+        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit, Qt::DirectConnection);
+        emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), makeMessageData(data));
+        qDebug() << "Waiting on Reply for: " << msg;
+        l.exec();
+        qDebug() << "Finished waiting.";
+        return m_jsToCppProxy->getResult();
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg)
