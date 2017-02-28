@@ -82,9 +82,7 @@ var UiDriver = new function() {
         console.error("Received internal message: "+ msg);
 
         if (handlers[msg] !== undefined) {
-            
             console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
-        
             handlers[msg].forEach(function(handler) {
                 console.error("Foreach: "+ handler);
             });
@@ -105,9 +103,7 @@ var UiDriver = new function() {
         var prevReturn = undefined;
 
         if (handlers[msg] !== undefined) {
-            
             console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
-        
             handlers[msg].forEach(function(handler) {
                 console.error("Foreach: "+ handler);
                 prevReturn = handler(msg, data, prevReturn);
