@@ -12,6 +12,7 @@
 #include <QPrinter>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QEventLoop>
 namespace EditorNS
 {
 
@@ -85,7 +86,7 @@ namespace EditorNS
     {
         Q_OBJECT
     private:
-            QMutex m_processMutex;
+            QEventLoop m_processLoop;
     public:
 
         struct Theme {

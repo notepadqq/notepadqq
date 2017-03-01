@@ -47,9 +47,9 @@ namespace EditorNS
                 &JsToCppProxy::messageReceived,
                 this,
                 &Editor::on_proxyMessageReceived);
+        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
 
         m_webView = new CustomQWebView(this);
-
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
@@ -66,7 +66,6 @@ namespace EditorNS
         //m_webView->setContent(content.toUtf8());
 
 
-#ifdef USE_QTWEBENGINE
 //        m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); //FIXME
 
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
@@ -75,39 +74,26 @@ namespace EditorNS
         #endif
         pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
 
-#else
-        m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-
-        QWebSettings *pageSettings = m_webView->page()->settings();
-        #ifdef QT_DEBUG
-        pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-        #endif
-        pageSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
-#endif
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(0);
         m_layout->addWidget(m_webView, 1);
         setLayout(m_layout);
-#ifdef USE_QTWEBENGINE
+        
         connect(m_webView->page(),
                 &QWebEnginePage::loadFinished,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
-#else
-        connect(m_webView->page()->mainFrame(),
-                &QWebFrame::javaScriptWindowObjectCleared,
-                this,
-                &Editor::on_javaScriptWindowObjectCleared);
-#endif
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
         // Wait for the page to load entirely before displaying
+        // FIXME: Need
         QEventLoop loop;
         connect(m_webView->page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
         loop.exec();
+        //m_webView->show();
     }
 
     QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
@@ -147,7 +133,6 @@ namespace EditorNS
     void Editor::waitAsyncLoad()
     {
         if (!m_loaded) {
-            qDebug() << "Not yet loaded, wait async.";
             QEventLoop loop;
             connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
             // Block until a J_EVT_READY message is received
@@ -370,50 +355,21 @@ namespace EditorNS
                 .replace("\b", "\\b");
     }
 
-    QString Editor::makeMessageData(const QVariant& data)
-    {
-        QString msgData = "null";
-        QJsonValue jsonData = QJsonValue::fromVariant(data);
-        if (jsonData.isArray()) {
-            msgData = QJsonDocument(jsonData.toArray()).toJson();
-        } else if (jsonData.isBool()) {
-            msgData = jsonData.toBool() ? "true" : "false";
-        } else if (jsonData.isDouble()) {
-            msgData = QString::number(jsonData.toDouble());
-        } else if (jsonData.isObject()) {
-            msgData = QString(QJsonDocument(jsonData.toObject()).toJson());
-        } else if (jsonData.isString()) {
-            msgData = "'" + jsStringEscape(jsonData.toString()) + "'";
-        } else if (jsonData.isUndefined()) {
-            msgData = "undefined";
-        }
-        return msgData;
-    }
-
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-        sendMessageWithResult(msg, data);
+        m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
+    //    sendMessageWithResult(msg, data);
     }
 
     void Editor::sendMessage(const QString &msg)
     {
-        sendMessageWithResult(msg, 0);
+        sendMessage(msg, 0);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        qDebug() << "Creating lock for: " << msg;
-
-        waitAsyncLoad();
-
-        QEventLoop l;
-        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &l, &QEventLoop::quit);
-
         emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
-        qDebug() << "Waiting on Reply for: " << msg;
-        l.exec();
-        qDebug() << "Finished waiting for:" << msg;
-
+        m_processLoop.exec();
         return m_jsToCppProxy->getResult();
     }
 
