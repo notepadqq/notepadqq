@@ -429,7 +429,7 @@ UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevRet
 
 UiDriver.registerEventHandler("C_CMD_SET_SMART_INDENT", function(msg, data, prevReturn) {
     editor.options.smartIndent = data;
-    return data;
+    //return data;
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_FOCUS", function(msg, data, prevReturn) {

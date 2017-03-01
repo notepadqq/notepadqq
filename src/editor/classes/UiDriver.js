@@ -114,7 +114,7 @@ var UiDriver = new function() {
             _this.setReturnData(prevReturn);
         }else {
             console.error("Making reply for: "+ msg);
-            channel.objects.cpp_ui_driver.makeReplyReady();
+            //channel.objects.cpp_ui_driver.makeReplyReady();
         }
         return prevReturn;
     }
