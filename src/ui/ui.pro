@@ -163,6 +163,8 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     resources.qrc
 
+ICON = ../../images/notepadqq.icns
+
 TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
     ../translations/notepadqq_fr.ts \
