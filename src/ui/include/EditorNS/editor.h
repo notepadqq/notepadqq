@@ -282,6 +282,7 @@ namespace EditorNS
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
+        void on_cursorActivity() { emit cursorActivity(); }
 
     signals:
         void messageReceived(QString msg, QVariant data);

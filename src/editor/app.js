@@ -706,6 +706,8 @@ $(document).ready(function () {
 
     editor.on("cursorActivity", function(instance, changeObj) {
         UiDriver.handleMessageInternally("J_EVT_CURSOR_ACTIVITY");
+        var cur = instance.getCursor();
+        UiDriver.proxy.cursor = [cur.line, cur.ch];
     });
 
     editor.on("focus", function() {

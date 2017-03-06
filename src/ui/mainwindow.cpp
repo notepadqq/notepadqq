@@ -1144,7 +1144,7 @@ void MainWindow::on_cursorActivity()
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
-
+    qDebug() << "Made it here";
     if (currentEditor() == editor) {
         refreshEditorUiCursorInfo(editor);
     }
