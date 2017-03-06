@@ -4,16 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webkitwidgets printsupport network
-
-greaterThan(QT_MAJOR_VERSION, 4) {
-    greaterThan(QT_MINOR_VERSION, 3) {
-        # Qt >= 5.4
-        QT -= webkitwidgets
-        QT += webenginewidgets webchannel
-        DEFINES += USE_QTWEBENGINE
-    }
-}
+QT       += core gui svg widgets webenginewidgets webchannel printsupport network
 
 CONFIG += c++11
 

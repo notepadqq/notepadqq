@@ -7,29 +7,23 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#ifdef USE_QTWEBENGINE
 #include <QWebChannel>
 #include <QUuid>
-#else
-#include <QWebFrame>
-#endif
 
 namespace EditorNS
 {
 
     CustomQWebView::CustomQWebView(QWidget *parent) :
-        WEBVIEWNAME(parent)
+        QWebEngineView(parent)
     {
-#ifdef USE_QTWEBENGINE
         QWebChannel *channel = new QWebChannel(page());
         page()->setWebChannel(channel);
-#endif
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        WEBVIEWNAME::wheelEvent(ev);
+        QWebEngineView::wheelEvent(ev);
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -39,7 +33,7 @@ namespace EditorNS
             ev->ignore();
             break;
         default:
-            WEBVIEWNAME::keyPressEvent(ev);
+            QWebEngineView::keyPressEvent(ev);
         }
     }
 
@@ -49,13 +43,12 @@ namespace EditorNS
             ev->ignore();
             emit urlsDropped(ev->mimeData()->urls());
         } else {
-            WEBVIEWNAME::dropEvent(ev);
+            QWebEngineView::dropEvent(ev);
         }
     }
 
     QVariant CustomQWebView::evaluateJavaScript(const QString &expr)
     {
-#ifdef USE_QTWEBENGINE
         QUuid currId = QUuid::createUuid();
         QEventLoop loop;
         connect(this, &CustomQWebView::JavascriptEvaluated, &loop, [currId, &loop](QUuid requestId) {
@@ -73,9 +66,6 @@ namespace EditorNS
         loop.exec();
 
         return result;
-#else
-        return page()->mainFrame()->evaluateJavaScript(expr);
-#endif
     }
 
     QString CustomQWebView::jsStringEscape(QString str) const {
@@ -90,10 +80,6 @@ namespace EditorNS
 
     void CustomQWebView::connectJavaScriptObject(QString name, QObject *obj)
     {
-#ifdef USE_QTWEBENGINE
         page()->webChannel()->registerObject(name, obj);
-#else
-        page()->mainFrame()->addToJavaScriptWindowObject(name, obj);
-#endif
     }
 }
