@@ -367,6 +367,9 @@ namespace EditorNS
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
+        if(m_processLoop.isRunning())
+            throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
+
         emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
         m_processLoop.exec();
         return m_jsToCppProxy->getResult();
