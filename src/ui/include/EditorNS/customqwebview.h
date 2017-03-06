@@ -2,27 +2,18 @@
 #define CUSTOMQWEBVIEW_H
 
 #include <QWheelEvent>
-
-#ifdef USE_QTWEBENGINE
 #include <QWebEngineView>
 #include <QQueue>
 #include <QUuid>
-#define WEBVIEWNAME QWebEngineView
-#else
-#include <QWebView>
-#define WEBVIEWNAME QWebView
-#endif
 
 namespace EditorNS
 {
 
-    class CustomQWebView : public WEBVIEWNAME
+    class CustomQWebView : public QWebEngineView
     {
         Q_OBJECT
         QString jsStringEscape(QString str) const;
-#ifdef USE_QTWEBENGINE
         QQueue<int> m_jsRequests;
-#endif
     public:
         explicit CustomQWebView(QWidget *parent = 0);
 

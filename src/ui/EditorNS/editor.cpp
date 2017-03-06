@@ -11,12 +11,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#ifdef USE_QTWEBENGINE
-    #include <QWebEngineSettings>
-    #include <QtWebChannel/QWebChannel>
-#else
-    #include <QWebFrame>
-#endif
+#include <QWebEngineSettings>
+#include <QtWebChannel/QWebChannel>
 
 namespace EditorNS
 {
@@ -634,6 +630,8 @@ namespace EditorNS
 
     void Editor::forceRender(QSize size)
     {
+        // FIXME Not needed anymore?
+/*
 #ifndef USE_QTWEBENGINE
         QWebPage *page = m_webView->page();
 
@@ -644,6 +642,7 @@ namespace EditorNS
 
         page->mainFrame()->render(&painter);
 #endif
+*/
     }
 
     void Editor::setTabsVisible(bool visible)
