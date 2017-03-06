@@ -112,13 +112,9 @@ var UiDriver = new function() {
         if(prevReturn !== undefined) {
             console.error("Setting return data for: "+ msg);
             _this.setReturnData(prevReturn);
-        }else {
-            console.error("Making reply for: "+ msg);
-            //channel.objects.cpp_ui_driver.makeReplyReady();
         }
         return prevReturn;
-    }
-    document.addEventListener("DOMContentLoaded", function () {
+    }  
         new QWebChannel(qt.webChannelTransport, function (_channel) {
             channel = _channel;
             // Send the messages in the queue
@@ -128,10 +124,9 @@ var UiDriver = new function() {
             //    console.error(msgQueue);
             }
             channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
-                console.error("READING DATA BLAHLSDFJDLDFDAS: " + data);
                 _this.messageReceived(msg, data);
             });
         });
-    });
-
 }
+
+

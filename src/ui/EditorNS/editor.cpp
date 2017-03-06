@@ -89,7 +89,6 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
         // Wait for the page to load entirely before displaying
-        // FIXME: Need
         QEventLoop loop;
         connect(m_webView->page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
         loop.exec();
