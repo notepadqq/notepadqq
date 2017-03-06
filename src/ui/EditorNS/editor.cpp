@@ -44,7 +44,7 @@ namespace EditorNS
                 this,
                 &Editor::on_proxyMessageReceived);
         connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
-
+        connect(m_jsToCppProxy, &JsToCppProxy::cursorActivity, this, &Editor::on_cursorActivity);
         m_webView = new CustomQWebView(this);
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -455,7 +455,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::cursorPosition()
     {
-        QList<QVariant> cursor = sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        QList<QVariant> cursor = m_jsToCppProxy->getCursor().toList();
         return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
     }
 

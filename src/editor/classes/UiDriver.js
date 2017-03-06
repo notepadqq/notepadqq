@@ -73,7 +73,7 @@ var UiDriver = new function() {
 
     this.setReturnData = function(data) {
         console.error("Setting return data to: " + data);
-        channel.objects.cpp_ui_driver.m_result = data;
+        channel.objects.cpp_ui_driver.result = data;
     }
     
     this.handleMessageInternally = function(msg, data) {
