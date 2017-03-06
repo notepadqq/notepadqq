@@ -87,6 +87,7 @@ namespace EditorNS
         Q_OBJECT
     private:
             QEventLoop m_processLoop;
+            void initContextMenu();
     public:
 
         struct Theme {

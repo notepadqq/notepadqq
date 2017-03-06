@@ -60,18 +60,9 @@ namespace EditorNS
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         m_webView->setUrl(url);
 
-        // To load the page in the background (http://stackoverflow.com/a/10520029):
-        // (however, no noticeable improvement here on an i5, september 2014)
-        //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
-        //m_webView->setContent(content.toUtf8());
-
-
-//        m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); //FIXME
-
+        initContextMenu();
+        
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
-        #ifdef QT_DEBUG
-//        pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); //FIXME
-        #endif
         pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
 
         m_layout = new QVBoxLayout(this);
@@ -88,12 +79,26 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
+
         // Wait for the page to load entirely before displaying
         QEventLoop loop;
         connect(m_webView->page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
         loop.exec();
         //m_webView->show();
     }
+
+
+    void Editor::initContextMenu()
+    {
+        m_webView->setContextMenuPolicy(
+                Qt::ContextMenuPolicy::ActionsContextMenu);
+        QWebEnginePage* page = m_webView->page();
+        m_webView->addAction(page->action(QWebEnginePage::Cut));
+        m_webView->addAction(page->action(QWebEnginePage::Copy));
+        m_webView->addAction(page->action(QWebEnginePage::Paste));
+        m_webView->addAction(page->action(QWebEnginePage::SelectAll));
+    }
+
 
     QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
     {
