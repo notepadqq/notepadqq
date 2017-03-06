@@ -57,7 +57,6 @@ var UiDriver = new function() {
             } else {
                 channel.objects.cpp_ui_driver.receiveMessage(msg, "", function(ret) { console.error(msg + " sent to c++ (async)") });
             }
-            channel.objects.cpp_ui_driver.makeReplyReady();
         } else {
             // QtWebKit
             cpp_ui_driver.receiveMessage(msg, data);
@@ -74,8 +73,6 @@ var UiDriver = new function() {
     this.setReturnData = function(data) {
         console.error("Setting return data to: " + data);
         channel.objects.cpp_ui_driver.m_result = data;
-        channel.objects.cpp_ui_driver.makeReplyReady();
-        channel.objects.cpp_ui_driver.m_result = "";
     }
     
     this.handleMessageInternally = function(msg, data) {

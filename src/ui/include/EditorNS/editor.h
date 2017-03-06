@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include "include/EditorNS/customqwebview.h"
+#include "include/EditorNS/jsproxy.h"
 #include <QObject>
 #include <QVariant>
 #include <QJsonValue>
@@ -15,59 +16,6 @@
 #include <QEventLoop>
 namespace EditorNS
 {
-
-    /**
-         * @brief An Object injectable into the javascript page, that allows
-         *        the javascript code to send messages to an Editor object.
-         *        It also allows the js instance to retrieve message data information.
-         *
-         * Note that this class is only needed for the current Editor
-         * implementation, that uses QWebView.
-         */
-    class JsToCppProxy : public QObject
-    {
-        Q_OBJECT
-
-    private:
-        QVariant m_msgData;
-        QVariant m_result;
-    public:
-        JsToCppProxy(QObject *parent) : QObject(parent) { }
-
-        /**
-             * @brief Set C++-to-JS message data. This method should
-             *        be called from the C++ part
-             * @param data
-             */
-//        void setMsgData(QVariant data) { m_msgData = data; }
-
-        /**
-             * @brief Get the message data set by setMsgData(). This
-             *        method should be called from the JavaScript part.
-             */
-        Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
-        Q_INVOKABLE QVariant getResult() { return m_result; }
-        void setResult(QVariant data) { m_result = data;}
-        void resetResult() {}
-        Q_PROPERTY(QVariant m_result READ getResult WRITE setResult NOTIFY replyReady RESET resetResult)
-    public slots:
-        Q_INVOKABLE void receiveMessage(QString msg, QVariant data) {
-            emit messageReceived(msg, data);
-        }
-        Q_INVOKABLE void makeReplyReady() {
-            emit replyReady();
-        }
-    signals:
-        /**
-             * @brief A JavaScript message has been received.
-             * @param msg Message type
-             * @param data Message data
-             */
-        void messageReceived(QString msg, QVariant data);
-        void sendMsg(QString msg, QVariant data);
-        void replyReady();
-    };
-
 
     /**
          * @brief Provides a JavaScript CodeMirror instance.
@@ -86,8 +34,7 @@ namespace EditorNS
     {
         Q_OBJECT
     private:
-            QEventLoop m_processLoop;
-            void initContextMenu();
+
     public:
 
         struct Theme {
@@ -312,6 +259,7 @@ namespace EditorNS
 
     private:
         static QQueue<Editor*> m_editorBuffer;
+        QEventLoop m_processLoop;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;
@@ -330,7 +278,7 @@ namespace EditorNS
 
         void setIndentationMode(const bool useTabs, const int size);
         void setIndentationMode(QString language);
-        QString makeMessageData(const QVariant &data);
+        void initContextMenu();
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
