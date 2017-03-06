@@ -41,6 +41,7 @@ var UiDriver = new function() {
         return (typeof cpp_ui_driver === 'undefined')
     }
 
+    this.proxy = undefined;
 
     this.sendMessage = function(msg, data) {
         if (usingQtWebChannel()) {
@@ -111,19 +112,22 @@ var UiDriver = new function() {
             _this.setReturnData(prevReturn);
         }
         return prevReturn;
-    }  
-        new QWebChannel(qt.webChannelTransport, function (_channel) {
-            channel = _channel;
-            // Send the messages in the queue
-            while (msgQueue.length) {
-                var cur = msgQueue.shift();
-                _this.sendMessage(cur[0], cur[1]);
-            //    console.error(msgQueue);
-            }
-            channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
-                _this.messageReceived(msg, data);
-            });
+    }
+
+    new QWebChannel(qt.webChannelTransport, function (_channel) {
+        channel = _channel;
+        // Send the messages in the queue
+        while (msgQueue.length) {
+            var cur = msgQueue.shift();
+           _this.sendMessage(cur[0], cur[1]);
+        //    console.error(msgQueue);
+        }
+        _this.proxy = channel.objects.cpp_ui_driver;
+        channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
+            _this.messageReceived(msg, data);
         });
+    });
+
 }
 
 
