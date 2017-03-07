@@ -39,14 +39,7 @@ namespace EditorNS
 
     void Editor::fullConstructor(const Theme &theme)
     {
-        m_jsToCppProxy = new JsToCppProxy(this);
-        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
-        connect(m_jsToCppProxy,
-                &JsToCppProxy::editorEvent, 
-                this, 
-                &Editor::on_proxyMessageReceived
-                );
-        connect(m_jsToCppProxy, &JsToCppProxy::languageChange, this, &Editor::on_languageChange);
+        initJsProxy();
         m_webView = new CustomQWebView(this);
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -57,7 +50,6 @@ namespace EditorNS
 
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         
-//        m_webView->page()->webChannel()->registerObject("cpp_ui_driver",m_jsToCppProxy);
         m_webView->page()->load(url);
 
         initContextMenu();
@@ -80,6 +72,18 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
 
+
+    void Editor::initJsProxy()
+    {
+        m_jsToCppProxy = new JsToCppProxy(this);
+        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
+        connect(m_jsToCppProxy,
+                &JsToCppProxy::editorEvent, 
+                this, 
+                &Editor::on_proxyMessageReceived
+                );
+        connect(m_jsToCppProxy, &JsToCppProxy::languageChange, this, &Editor::on_languageChange);
+    }
 
     void Editor::initContextMenu()
     {

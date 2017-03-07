@@ -281,6 +281,7 @@ namespace EditorNS
         void setIndentationMode(const bool useTabs, const int size);
         void setIndentationMode(QString language);
         void initContextMenu();
+        void initJsProxy();
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
