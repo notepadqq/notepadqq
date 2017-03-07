@@ -100,6 +100,7 @@ var UiDriver = new function() {
     // Hook for when we load a file/change content
     this.onSetValue = function(editor) {
         this.proxy.detectedIndent = this.detectIndentationMode(editor);
+        editor.clearHistory();
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)
@@ -142,7 +143,6 @@ var UiDriver = new function() {
         this.onChange(editor);
         this.onScroll(editor);
         this.proxy.sendEditorEvent("J_EVT_READY", 0);
-        editor.clearHistory();
         editor.refresh();
         console.error("ONLOAD CALLED");
     }

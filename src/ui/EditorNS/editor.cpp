@@ -94,6 +94,8 @@ namespace EditorNS
         m_webView->addAction(page->action(QWebEnginePage::Copy));
         m_webView->addAction(page->action(QWebEnginePage::Paste));
         m_webView->addAction(page->action(QWebEnginePage::SelectAll));
+        page->action(QWebEnginePage::Undo)->setEnabled(false);
+        page->action(QWebEnginePage::Redo)->setEnabled(false);
     }
 
 
