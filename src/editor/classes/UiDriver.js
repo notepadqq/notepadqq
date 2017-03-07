@@ -127,6 +127,7 @@ var UiDriver = new function() {
     this.onChange = function(editor) {
         this.proxy.textLength = editor.getValue("\n").length;
         this.proxy.lineCount = editor.lineCount();
+        this.proxy.clean = isCleanOrForced(changeGeneration);
     }
 
     // Hook for when the user scrolls the page.
@@ -141,6 +142,7 @@ var UiDriver = new function() {
         this.onChange(editor);
         this.onScroll(editor);
         this.proxy.sendEditorEvent("J_EVT_READY", 0);
+        editor.clearHistory();
         editor.refresh();
         console.error("ONLOAD CALLED");
     }

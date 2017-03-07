@@ -27,14 +27,14 @@ function isCleanOrForced(generation) {
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.proxy.clean = true;
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", true);
+    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
+    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
     forceDirty = true;
-    UiDriver.proxy.clean = false;
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", false);
+    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
+    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -704,13 +704,10 @@ $(document).ready(function () {
         }
     });
     
-//    UiDriver.onLoad(editor);
     changeGeneration = editor.changeGeneration(true);
 
     editor.on("change", function(instance, changeObj) {
         UiDriver.onChange(instance);
-        //TODO: Move this into UiDriver
-        UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
         UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
         UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
