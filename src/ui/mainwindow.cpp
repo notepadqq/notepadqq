@@ -1144,7 +1144,6 @@ void MainWindow::on_cursorActivity()
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
-    qDebug() << "Made it here";
     if (currentEditor() == editor) {
         refreshEditorUiCursorInfo(editor);
     }
@@ -1165,7 +1164,7 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 {
     if (editor != 0) {
         // Update status bar
-        int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
+        int len = editor->textLength();
         int lines = editor->lineCount();
         m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 

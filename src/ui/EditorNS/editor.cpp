@@ -368,6 +368,7 @@ namespace EditorNS
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
+        qDebug() << "Handling Message: " << msg;
         if(m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
@@ -393,6 +394,11 @@ namespace EditorNS
     qreal Editor::zoomFactor() const
     {
         return m_webView->zoomFactor();
+    }
+
+    int Editor::textLength()
+    {
+        return m_jsToCppProxy->getTextLength().toInt();
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -599,7 +605,7 @@ namespace EditorNS
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = sendMessageWithResult("C_FUN_GET_SELECTIONS").toList();
+        QList<QVariant> sels = m_jsToCppProxy->getSelections().toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -619,8 +625,7 @@ namespace EditorNS
 
     QStringList Editor::selectedTexts()
     {
-        QVariant text = sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
-        return text.toStringList();
+        return m_jsToCppProxy->getSelectionsText().toStringList();
     }
 
     void Editor::setOverwrite(bool overwrite)
@@ -684,7 +689,7 @@ namespace EditorNS
 
     int Editor::lineCount()
     {
-        return sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        return m_jsToCppProxy->getLineCount().toInt();
     }
 
 }

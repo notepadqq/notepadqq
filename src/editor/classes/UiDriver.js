@@ -32,7 +32,6 @@ var UiDriver = new function() {
 
     var socket;
     var channel;
-
     var msgQueue = [];
 
     var _this = this;
@@ -43,7 +42,32 @@ var UiDriver = new function() {
 
     this.proxy = undefined;
 
-    this.sendMessage = function(msg, data) {
+    this.onCursorActivity = function(editor) {
+        var out = [];
+        var sels = editor.listSelections();
+        for (var i = 0; i < sels.length; i++) {
+            out[i] = {  anchor: {
+                            line: sels[i].anchor.line,
+                            ch: sels[i].anchor.ch
+                        },
+                        head: {
+                            line: sels[i].head.line,
+                            ch: sels[i].head.ch
+                        }
+                    };
+        }
+        this.proxy.selections = out;
+        this.proxy.selectionsText = editor.getSelections("\n");
+        var cur = editor.getCursor();
+        this.proxy.cursor = [cur.line, cur.ch];
+    }
+
+    this.onChange = function(editor) {
+        this.proxy.textLength = editor.getValue("\n").length;
+        this.proxy.lineCount = editor.lineCount();
+    }
+
+/*    this.sendMessage = function(msg, data) {
         if (usingQtWebChannel()) {
             // QtWebEngine
 
@@ -53,17 +77,17 @@ var UiDriver = new function() {
                 return;
             }
             console.log("Reply data: " + msg);
-            if (data !== null && data !== undefined) {
-                channel.objects.cpp_ui_driver.receiveMessage(msg, data, function(ret) { console.error(msg + " sent to c++ (async)") });
-            } else {
-                channel.objects.cpp_ui_driver.receiveMessage(msg, "", function(ret) { console.error(msg + " sent to c++ (async)") });
-            }
+//            if (data !== null && data !== undefined) {
+//                channel.objects.cpp_ui_driver.receiveMessage(msg, data, function(ret) { console.error(msg + " sent to c++ (async)") });
+//            } else {
+//                channel.objects.cpp_ui_driver.receiveMessage(msg, "", function(ret) { console.error(msg + " sent to c++ (async)") });
+//            }
         } else {
             // QtWebKit
             cpp_ui_driver.receiveMessage(msg, data);
         }
     }
-
+*/
     this.registerEventHandler = function(msg, handler) {
         if (handlers[msg] === undefined)
             handlers[msg] = [];

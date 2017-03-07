@@ -4,6 +4,9 @@ var forceDirty = false;
 
 UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn) {
     editor.setValue(data);
+    // Update UiDriver.proxy here to keep things synced
+    UiDriver.onChange(editor);
+    UiDriver.onCursorActivity(editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn) {
@@ -702,17 +705,17 @@ $(document).ready(function () {
     editor.on("change", function(instance, changeObj) {
         UiDriver.handleMessageInternally("J_EVT_CONTENT_CHANGED");
         UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+        UiDriver.onChange(instance);
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
         UiDriver.handleMessageInternally("J_EVT_CURSOR_ACTIVITY");
-        var cur = instance.getCursor();
-        UiDriver.proxy.cursor = [cur.line, cur.ch];
+        UiDriver.onCursorActivity(instance);
     });
 
     editor.on("focus", function() {
         UiDriver.handleMessageInternally("J_EVT_GOT_FOCUS");
     });
 
-    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
+//    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
 });
