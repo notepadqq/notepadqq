@@ -42,9 +42,7 @@ UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) 
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
-    UiDriver.proxy.language = data;
     Languages.setLanguage(editor, data);
-    UiDriver.onLanguageChange(editor);
 });
 
 /*
@@ -56,7 +54,6 @@ UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevRetu
 UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, data, prevReturn) {
     var lang = Languages.languageByFileName(editor, data);
     Languages.setLanguage(editor, lang);
-    UiDriver.onLanguageChange(editor);
     return lang;
 });
 
