@@ -93,6 +93,7 @@ void JsToCppProxy::setScrollPosition(QVariant scrollPosition)
 void JsToCppProxy::setLanguage(QVariant language)
 {
     m_language = language;
+    emit languageChange();
 }
 
 void JsToCppProxy::setClean(QVariant state)
@@ -107,7 +108,6 @@ void JsToCppProxy::setDetectedIndent(QVariant detectedIndent)
 
 void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
 {
-    qDebug() << "Posting Editor Event: " << msg << " : " << data;
     emit editorEvent(msg, data);
 }
 

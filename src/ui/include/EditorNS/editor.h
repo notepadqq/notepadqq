@@ -285,6 +285,7 @@ namespace EditorNS
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
         void on_cursorActivity() { emit cursorActivity(); }
+        void on_languageChange();
 
     signals:
         void messageReceived(QString msg, QVariant data);

@@ -46,6 +46,7 @@ namespace EditorNS
                 this, 
                 &Editor::on_proxyMessageReceived
                 );
+        connect(m_jsToCppProxy, &JsToCppProxy::languageChange, this, &Editor::on_languageChange);
         m_webView = new CustomQWebView(this);
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -139,6 +140,14 @@ namespace EditorNS
     void Editor::on_javaScriptWindowObjectCleared()
     {
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
+    }
+
+    void Editor::on_languageChange()
+    {
+        QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
+        QString id = data.value("id").toString();
+        QString lang = data.value("lang").toMap().value("name").toString();
+        emit currentLanguageChanged(id, lang);
     }
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
@@ -263,7 +272,6 @@ namespace EditorNS
 
     QString Editor::language()
     {
-        qDebug() << m_jsToCppProxy->getLanguage();
         QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
         return data.value("id").toString();
     }

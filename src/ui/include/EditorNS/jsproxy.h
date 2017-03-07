@@ -70,7 +70,7 @@ namespace EditorNS {
         Q_PROPERTY(QVariant selections READ getSelections WRITE setSelections NOTIFY cursorActivity);
         Q_PROPERTY(QVariant selectionsText READ getSelectionsText WRITE setSelectionsText NOTIFY cursorActivity);
         Q_PROPERTY(QVariant scrollPosition READ getScrollPosition WRITE setScrollPosition NOTIFY cursorActivity);
-        Q_PROPERTY(QVariant language READ getLanguage WRITE setLanguage NOTIFY cursorActivity);
+        Q_PROPERTY(QVariant language READ getLanguage WRITE setLanguage NOTIFY languageChange);
         Q_PROPERTY(QVariant clean READ getClean WRITE setClean NOTIFY cursorActivity);
         Q_PROPERTY(QVariant detectedIndent READ getDetectedIndent WRITE setDetectedIndent NOTIFY cursorActivity);
     public slots:
@@ -85,6 +85,7 @@ namespace EditorNS {
         void sendMsg(QString msg, QVariant data);
         void replyReady();
         void cursorActivity();
+        void languageChange();
         void editorEvent(QString msg, QVariant data);
     };
 
