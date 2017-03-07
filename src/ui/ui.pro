@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webenginewidgets webchannel printsupport network script
+QT       += core gui svg widgets webenginewidgets webchannel printsupport network qml
 
 CONFIG += c++11
 

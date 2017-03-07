@@ -13,7 +13,7 @@
 
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
-#include <QtScript>
+#include <QJSEngine>
 
 namespace EditorNS
 {
@@ -221,7 +221,7 @@ namespace EditorNS
     QList<QMap<QString, QString>> Editor::languages()
     {
         // TODO: Cache this data.
-        QScriptEngine engine;
+        QJSEngine engine;
         QFileInfo fileInfo(Notepadqq::editorPath());
         QString fileName = fileInfo.absolutePath() + "/classes/Languages.js";
         QFile scriptFile(fileName);
@@ -230,7 +230,7 @@ namespace EditorNS
         QString contents = stream.readAll();
         scriptFile.close();
 
-        QScriptValue result = engine.evaluate(contents, fileName);
+        QJSValue result = engine.evaluate(contents, fileName);
 
         if(result.isError()) {
             qDebug() << "Failed to load languages file.";
