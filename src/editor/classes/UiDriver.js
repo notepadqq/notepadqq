@@ -42,8 +42,24 @@ var UiDriver = new function() {
 
     this.proxy = undefined;
 
+
+    
+    new QWebChannel(qt.webChannelTransport, function (_channel) {
+        channel = _channel;
+
+        _this.proxy = channel.objects.cpp_ui_driver;
+        _this.proxy.sendMsg.connect(function(msg, data) {
+            _this.messageReceived(msg, data);
+        });
+
+    }); 
+    
+
     // Helper functions for hooks
     this.detectIndentationMode = function(editor) {
+        if(this.proxy === undefined) {
+            return;
+        }
         var len = editor.lineCount();
         var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space
 
@@ -139,39 +155,24 @@ var UiDriver = new function() {
         return prevReturn;
     }
 
-    new QWebChannel(qt.webChannelTransport, function (_channel) {
-        channel = _channel;
-        // Send the messages in the queue
-        while (msgQueue.length) {
-            var cur = msgQueue.shift();
-           _this.sendMessage(cur[0], cur[1]);
-        //    console.error(msgQueue);
-        }
-        _this.proxy = channel.objects.cpp_ui_driver;
-        channel.objects.cpp_ui_driver.sendMsg.connect(function(msg, data) {
-            _this.messageReceived(msg, data);
-        });
-    });
-
-
     // BEGIN EVENT FUNCTIONS
     // These functions hook into the CodeMirror interface and allow us to
     // perform asynchronous data transfer between C++ and Javascript.
 
-    this.onLoad = function(editor) {
-//        this.proxy.sendEditorEvent("J_EVT_LANGUAGES_READY", Languages.languages);
-        $(document).ready(function() {
-        _this.proxy.sendEditorEvent("J_EVT_TEST", editor.getValue("\n"));
-        });
-    }
 
     // Hook for when we load a file/change content
     this.onSetValue = function(editor) {
+        if(this.proxy === undefined) {
+            return;
+        }
         this.proxy.detectedIndent = this.detectIndentationMode(editor);
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)
     this.onCursorActivity = function(editor) {
+        if(this.proxy === undefined) {
+            return;
+        }
         var out = [];
         var sels = editor.listSelections();
         for (var i = 0; i < sels.length; i++) {
@@ -193,20 +194,35 @@ var UiDriver = new function() {
 
     // Hook for when any content is changed
     this.onChange = function(editor) {
+        if(this.proxy === undefined) {
+            return;
+        }
         this.proxy.textLength = editor.getValue("\n").length;
         this.proxy.lineCount = editor.lineCount();
     }
 
     // Hook for when the user scrolls the page.
     this.onScroll = function(editor) {
+        if(this.proxy === undefined) {
+            return;
+        }
         var scroll = editor.getScrollInfo();
         this.proxy.scrollPosition = [scroll.left, scroll.top];
     }
 
+    this.onLoad = function(editor) {
+        // Initialize all values here for safety.
+        if (this.proxy === undefined) {
+            return;
+        }
+        this.onCursorActivity(editor);
+        this.onChange(editor);
+        this.proxy.sendEditorEvent("J_EVT_READY", 0);
+        editor.refresh();
+        console.error("ONLOAD CALLED");
+    }
+
     // END EVENT FUNCTIONS
-
-
-
 }
 
 

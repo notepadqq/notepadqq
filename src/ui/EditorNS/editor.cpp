@@ -55,7 +55,9 @@ namespace EditorNS
         url.setQuery(query);
 
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
-        m_webView->setUrl(url);
+        
+//        m_webView->page()->webChannel()->registerObject("cpp_ui_driver",m_jsToCppProxy);
+        m_webView->page()->load(url);
 
         initContextMenu();
         
@@ -75,13 +77,6 @@ namespace EditorNS
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
-
-
-        // Wait for the page to load entirely before displaying
-        QEventLoop loop;
-        connect(m_webView->page(), &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
-        loop.exec();
-        //m_webView->show();
     }
 
 
@@ -377,6 +372,7 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
+        waitAsyncLoad();
         m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
     //    sendMessageWithResult(msg, data);
     }
@@ -388,7 +384,7 @@ namespace EditorNS
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        qDebug() << "Handling Result: " << msg;
+        waitAsyncLoad();
         if(m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 

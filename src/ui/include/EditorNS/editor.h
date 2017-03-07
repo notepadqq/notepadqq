@@ -259,7 +259,6 @@ namespace EditorNS
         int lineCount();
         int textLength();
 
-
     private:
         static QQueue<Editor*> m_editorBuffer;
         QEventLoop m_processLoop;
