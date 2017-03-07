@@ -220,8 +220,8 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        qDebug() << "Clean state: " << m_jsToCppProxy->getClean().toBool();
-        return m_jsToCppProxy->getClean().toBool();
+        qDebug() << "Clean state: " << m_jsToCppProxy->getClean();
+        return m_jsToCppProxy->getClean();
     }
 
     void Editor::markClean()

@@ -31,7 +31,7 @@ namespace EditorNS {
         QVariant m_selectionsText;
         QVariant m_scrollPosition;
         QVariant m_language;
-        QVariant m_clean;
+        bool m_clean;
         QVariant m_detectedIndent;
 
     public:
@@ -46,7 +46,7 @@ namespace EditorNS {
         QVariant getSelectionsText();
         QVariant getScrollPosition();
         QVariant getLanguage();
-        QVariant getClean();
+        bool getClean();
         QVariant getDetectedIndent();
 
         // Functions to allow the proxy to set data on the CPP side.
@@ -58,7 +58,7 @@ namespace EditorNS {
         void setSelectionsText(QVariant selectionsText);
         void setScrollPosition(QVariant scrollPosition);
         void setLanguage(QVariant language);
-        void setClean(QVariant clean);
+        void setClean(bool clean);
         void setDetectedIndent(QVariant detectedIndent);
 
         // Expose our properties to the JS-side.
@@ -71,7 +71,7 @@ namespace EditorNS {
         Q_PROPERTY(QVariant selectionsText READ getSelectionsText WRITE setSelectionsText NOTIFY cursorActivity);
         Q_PROPERTY(QVariant scrollPosition READ getScrollPosition WRITE setScrollPosition NOTIFY cursorActivity);
         Q_PROPERTY(QVariant language READ getLanguage WRITE setLanguage NOTIFY languageChange);
-        Q_PROPERTY(QVariant clean READ getClean WRITE setClean NOTIFY cursorActivity);
+        Q_PROPERTY(bool clean READ getClean WRITE setClean NOTIFY cursorActivity);
         Q_PROPERTY(QVariant detectedIndent READ getDetectedIndent WRITE setDetectedIndent NOTIFY cursorActivity);
     public slots:
         Q_INVOKABLE void sendEditorEvent(QString msg, QVariant data);

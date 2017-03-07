@@ -43,7 +43,7 @@ QVariant JsToCppProxy::getLanguage()
     return m_language;
 }
 
-QVariant JsToCppProxy::getClean()
+bool JsToCppProxy::getClean()
 {
     return m_clean;
 }
@@ -96,7 +96,7 @@ void JsToCppProxy::setLanguage(QVariant language)
     emit languageChange();
 }
 
-void JsToCppProxy::setClean(QVariant state)
+void JsToCppProxy::setClean(bool state)
 {
     m_clean = state;
 }
