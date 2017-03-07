@@ -368,7 +368,7 @@ namespace EditorNS
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        qDebug() << "Handling Message: " << msg;
+        qDebug() << "Handling Result: " << msg;
         if(m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
@@ -489,7 +489,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();
+        QList<QVariant> scroll = m_jsToCppProxy->getScrollPosition().toList();
         return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
     }
 

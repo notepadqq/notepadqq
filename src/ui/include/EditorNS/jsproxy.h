@@ -29,6 +29,7 @@ namespace EditorNS {
         QVariant m_lineCount;
         QVariant m_selections;
         QVariant m_selectionsText;
+        QVariant m_scrollPosition;
 
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
@@ -41,6 +42,7 @@ namespace EditorNS {
         QVariant getLineCount();
         QVariant getSelections();
         QVariant getSelectionsText();
+        QVariant getScrollPosition();
 
         // Functions to allow the proxy to set data on the CPP side.
         void setResult(QVariant data);
@@ -49,6 +51,7 @@ namespace EditorNS {
         void setLineCount(QVariant lineCount);
         void setSelections(QVariant selections);
         void setSelectionsText(QVariant selectionsText);
+        void setScrollPosition(QVariant scrollPosition);
 
         // Expose our properties to the JS-side.
         Q_PROPERTY(QVariant result READ getResult WRITE setResult NOTIFY replyReady);
@@ -57,6 +60,7 @@ namespace EditorNS {
         Q_PROPERTY(QVariant lineCount READ getLineCount WRITE setLineCount NOTIFY cursorActivity);
         Q_PROPERTY(QVariant selections READ getSelections WRITE setSelections NOTIFY cursorActivity);
         Q_PROPERTY(QVariant selectionsText READ getSelectionsText WRITE setSelectionsText NOTIFY cursorActivity);
+        Q_PROPERTY(QVariant scrollPosition READ getScrollPosition WRITE setScrollPosition NOTIFY cursorActivity);
     public slots:
         Q_INVOKABLE void receiveMessage(QString msg, QVariant data);
 

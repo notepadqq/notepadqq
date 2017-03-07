@@ -7,6 +7,7 @@ UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn)
     // Update UiDriver.proxy here to keep things synced
     UiDriver.onChange(editor);
     UiDriver.onCursorActivity(editor);
+    UiDriver.onScroll(editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn) {
@@ -706,6 +707,10 @@ $(document).ready(function () {
         UiDriver.handleMessageInternally("J_EVT_CONTENT_CHANGED");
         UiDriver.handleMessageInternally("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
         UiDriver.onChange(instance);
+    });
+
+    editor.on("scroll", function(instance) {
+        UiDriver.onScroll(instance);
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {

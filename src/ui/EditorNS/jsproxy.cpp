@@ -37,6 +37,11 @@ QVariant JsToCppProxy::getSelectionsText()
     return m_selectionsText;
 }
 
+QVariant JsToCppProxy::getScrollPosition()
+{
+    return m_scrollPosition;
+}
+
 void JsToCppProxy::setResult(QVariant data)
 {
     m_result = data;
@@ -67,6 +72,11 @@ void JsToCppProxy::setSelections(QVariant selections)
 void JsToCppProxy::setSelectionsText(QVariant selectionsText)
 {
     m_selectionsText = selectionsText;
+}
+
+void JsToCppProxy::setScrollPosition(QVariant scrollPosition)
+{
+    m_scrollPosition = scrollPosition;
 }
 
 void JsToCppProxy::receiveMessage(QString msg, QVariant data)

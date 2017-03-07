@@ -42,6 +42,9 @@ var UiDriver = new function() {
 
     this.proxy = undefined;
 
+    // BEGIN EVENT FUNCTIONS
+    // These functions hook into the CodeMirror interface and allow us to
+    // perform asynchronous data transfer between C++ and Javascript.
     this.onCursorActivity = function(editor) {
         var out = [];
         var sels = editor.listSelections();
@@ -66,6 +69,13 @@ var UiDriver = new function() {
         this.proxy.textLength = editor.getValue("\n").length;
         this.proxy.lineCount = editor.lineCount();
     }
+
+    this.onScroll = function(editor) {
+        var scroll = editor.getScrollInfo();
+        this.proxy.scrollPosition = [scroll.left, scroll.top];
+    }
+
+    // END EVENT FUNCTIONS
 
 /*    this.sendMessage = function(msg, data) {
         if (usingQtWebChannel()) {
@@ -96,24 +106,24 @@ var UiDriver = new function() {
     }
 
     this.setReturnData = function(data) {
-        console.error("Setting return data to: " + data);
+//        console.error("Setting return data to: " + data);
         channel.objects.cpp_ui_driver.result = data;
     }
     
     this.handleMessageInternally = function(msg, data) {
-        console.error("Received internal message: "+ msg);
+//        console.error("Received internal message: "+ msg);
 
         if (handlers[msg] !== undefined) {
-            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
+//            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
             handlers[msg].forEach(function(handler) {
-                console.error("Foreach: "+ handler);
+//                console.error("Foreach: "+ handler);
             });
         }
  
     }
 
     this.messageReceived = function(msg, data) {
-        console.error("Received message: "+ msg);
+//        console.error("Received message: "+ msg);
         if (!usingQtWebChannel()) {
             console.error("Not using QtWebChannel: "+ msg);
             data = cpp_ui_driver.getMsgData();
@@ -124,15 +134,15 @@ var UiDriver = new function() {
         // we provide the previous handler's return value.
         var prevReturn = undefined;
         if (handlers[msg] !== undefined) {
-            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
+//            console.error("Defined handlers[msg] has " + handlers[msg].length + ": " + msg);
             handlers[msg].forEach(function(handler) {
-                console.error("Foreach: "+ handler);
+//                console.error("Foreach: "+ handler);
                 prevReturn = handler(msg, data, prevReturn);
             });
         }
         
         if(prevReturn !== undefined) {
-            console.error("Setting return data for: "+ msg);
+//            console.error("Setting return data for: "+ msg);
             _this.setReturnData(prevReturn);
         }
         return prevReturn;
