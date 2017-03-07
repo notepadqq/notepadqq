@@ -711,7 +711,7 @@ $(document).ready(function () {
         UiDriver.onChange(instance);
         //TODO: Move this into UiDriver
         UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED");
+        UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
         UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
@@ -721,7 +721,7 @@ $(document).ready(function () {
 
     editor.on("cursorActivity", function(instance, changeObj) {
         UiDriver.onCursorActivity(instance);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY");
+        UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", 0);
     });
 
     editor.on("focus", function() {
