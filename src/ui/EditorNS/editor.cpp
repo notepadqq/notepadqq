@@ -13,6 +13,7 @@
 
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
+#include <QtScript>
 
 namespace EditorNS
 {
@@ -39,12 +40,12 @@ namespace EditorNS
     void Editor::fullConstructor(const Theme &theme)
     {
         m_jsToCppProxy = new JsToCppProxy(this);
-        connect(m_jsToCppProxy,
-                &JsToCppProxy::messageReceived,
-                this,
-                &Editor::on_proxyMessageReceived);
         connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
-        connect(m_jsToCppProxy, &JsToCppProxy::cursorActivity, this, &Editor::on_cursorActivity);
+        connect(m_jsToCppProxy,
+                &JsToCppProxy::editorEvent, 
+                this, 
+                &Editor::on_proxyMessageReceived
+                );
         m_webView = new CustomQWebView(this);
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -147,6 +148,7 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
+        qDebug() << msg << " : " << data;
         emit messageReceived(msg, data);
 
         if(msg == "J_EVT_READY") {
@@ -161,9 +163,13 @@ namespace EditorNS
         else if(msg == "J_EVT_GOT_FOCUS")
             emit gotFocus();
         else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            QVariantMap map = data.toMap();
-            emit currentLanguageChanged(map.value("id").toString(),
-                                        map.value("name").toString());
+            QVariantMap lang = data.toMap();
+            QString id = lang.value("id").toString();
+            QString name = lang.value("name").toString();
+            if (!m_customIndentationMode) {
+                setIndentationMode(id);
+            }
+            emit currentLanguageChanged(id, name);
         }
     }
 
@@ -204,7 +210,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
+        return m_jsToCppProxy->getClean().toBool();
     }
 
     void Editor::markClean()
@@ -219,10 +225,27 @@ namespace EditorNS
 
     QList<QMap<QString, QString>> Editor::languages()
     {
-        QMap<QString, QVariant> languages =
-                sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
+        // TODO: Cache this data.
+        QScriptEngine engine;
+        QFileInfo fileInfo(Notepadqq::editorPath());
+        QString fileName = fileInfo.absolutePath() + "/classes/Languages.js";
+        QFile scriptFile(fileName);
+        scriptFile.open(QIODevice::ReadOnly);
+        QTextStream stream(&scriptFile);
+        QString contents = stream.readAll();
+        scriptFile.close();
 
-        QList<QMap<QString, QString>> out;
+        QScriptValue result = engine.evaluate(contents, fileName);
+
+        if(result.isError()) {
+            qDebug() << "Failed to load languages file.";
+            return QList<QMap<QString, QString>>();
+        }
+
+        QMap<QString, QVariant> languages =
+            engine.evaluate("Languages.languages", fileName).toVariant().toMap();
+
+        QList<QMap<QString, QString>> langs;
 
         QMap<QString, QVariant>::iterator lang;
         for (lang = languages.begin(); lang != languages.end(); ++lang) {
@@ -233,16 +256,19 @@ namespace EditorNS
             newMode.insert("name", mode.value("name").toString());
             newMode.insert("mime", mode.value("mime").toString());
             newMode.insert("mode", mode.value("mode").toString());
-
-            out.append(newMode);
+            langs.append(newMode);
         }
+        return langs;
+    }
 
-        return out;
+    QVariantMap Editor::languageRaw()
+    {
+        return m_jsToCppProxy->getLanguage().toMap();
     }
 
     QString Editor::language()
     {
-        QVariantMap data = sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+        QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
         return data.value("id").toString();
     }
 
@@ -253,20 +279,14 @@ namespace EditorNS
             setIndentationMode(language);
     }
 
-    QString Editor::setLanguageFromFileName(QString fileName)
+    void Editor::setLanguageFromFileName(QString fileName)
     {
-        QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName).toString();
-
-        if (!m_customIndentationMode)
-            setIndentationMode(lang);
-
-        return lang;
+        sendMessage("C_FUN_SET_LANGUAGE_FROM_FILENAME", fileName);
     }
 
-    QString Editor::setLanguageFromFileName()
+    void Editor::setLanguageFromFileName()
     {
-        return setLanguageFromFileName(fileName().toString());
+        setLanguageFromFileName(fileName().toString());
     }
 
     void Editor::setIndentationMode(QString language)
@@ -657,9 +677,7 @@ namespace EditorNS
 
     Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
-        QVariantMap indent =
-                sendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").toMap();
-
+        QVariantMap indent = m_jsToCppProxy->getDetectedIndent().toMap();
         IndentationMode out;
 
         bool _found = indent.value("found", false).toBool();

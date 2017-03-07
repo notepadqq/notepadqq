@@ -147,7 +147,7 @@ namespace EditorNS
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
-        QList<QMap<QString, QString> > languages();
+        static QList<QMap<QString, QString> > languages();
 
         /**
          * @brief Set the language to use for the editor.
@@ -156,8 +156,8 @@ namespace EditorNS
          * @param language Language id
          */
         Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE QString setLanguageFromFileName(QString fileName);
-        Q_INVOKABLE QString setLanguageFromFileName();
+        Q_INVOKABLE void setLanguageFromFileName(QString fileName);
+        Q_INVOKABLE void setLanguageFromFileName();
         Q_INVOKABLE void setValue(const QString &value);
         Q_INVOKABLE QString value();
 
@@ -182,6 +182,7 @@ namespace EditorNS
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
         Q_INVOKABLE QString language();
+        Q_INVOKABLE QVariantMap languageRaw();
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -256,8 +257,8 @@ namespace EditorNS
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         int lineCount();
-
         int textLength();
+
 
     private:
         static QQueue<Editor*> m_editorBuffer;

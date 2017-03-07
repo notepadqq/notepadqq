@@ -30,12 +30,14 @@ namespace EditorNS {
         QVariant m_selections;
         QVariant m_selectionsText;
         QVariant m_scrollPosition;
+        QVariant m_language;
+        QVariant m_clean;
+        QVariant m_detectedIndent;
 
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
 
         // These are our data retrieval mechanisms.
-        QVariant getMsgData();
         QVariant getResult();
         QVariant getCursor();
         QVariant getTextLength();
@@ -43,6 +45,9 @@ namespace EditorNS {
         QVariant getSelections();
         QVariant getSelectionsText();
         QVariant getScrollPosition();
+        QVariant getLanguage();
+        QVariant getClean();
+        QVariant getDetectedIndent();
 
         // Functions to allow the proxy to set data on the CPP side.
         void setResult(QVariant data);
@@ -52,8 +57,12 @@ namespace EditorNS {
         void setSelections(QVariant selections);
         void setSelectionsText(QVariant selectionsText);
         void setScrollPosition(QVariant scrollPosition);
+        void setLanguage(QVariant language);
+        void setClean(QVariant clean);
+        void setDetectedIndent(QVariant detectedIndent);
 
         // Expose our properties to the JS-side.
+        // TODO: voidActivity signal for stuff that don't matter
         Q_PROPERTY(QVariant result READ getResult WRITE setResult NOTIFY replyReady);
         Q_PROPERTY(QVariant cursor READ getCursor WRITE setCursor NOTIFY cursorActivity);
         Q_PROPERTY(QVariant textLength READ getTextLength WRITE setTextLength NOTIFY cursorActivity);
@@ -61,8 +70,11 @@ namespace EditorNS {
         Q_PROPERTY(QVariant selections READ getSelections WRITE setSelections NOTIFY cursorActivity);
         Q_PROPERTY(QVariant selectionsText READ getSelectionsText WRITE setSelectionsText NOTIFY cursorActivity);
         Q_PROPERTY(QVariant scrollPosition READ getScrollPosition WRITE setScrollPosition NOTIFY cursorActivity);
+        Q_PROPERTY(QVariant language READ getLanguage WRITE setLanguage NOTIFY cursorActivity);
+        Q_PROPERTY(QVariant clean READ getClean WRITE setClean NOTIFY cursorActivity);
+        Q_PROPERTY(QVariant detectedIndent READ getDetectedIndent WRITE setDetectedIndent NOTIFY cursorActivity);
     public slots:
-        Q_INVOKABLE void receiveMessage(QString msg, QVariant data);
+        Q_INVOKABLE void sendEditorEvent(QString msg, QVariant data);
 
     signals:
         /**
@@ -70,10 +82,10 @@ namespace EditorNS {
              * @param msg Message type
              * @param data Message data
              */
-        void messageReceived(QString msg, QVariant data);
         void sendMsg(QString msg, QVariant data);
         void replyReady();
         void cursorActivity();
+        void editorEvent(QString msg, QVariant data);
     };
 
 }

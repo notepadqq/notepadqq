@@ -42,40 +42,31 @@ var UiDriver = new function() {
 
     this.proxy = undefined;
 
-    // BEGIN EVENT FUNCTIONS
-    // These functions hook into the CodeMirror interface and allow us to
-    // perform asynchronous data transfer between C++ and Javascript.
-    this.onCursorActivity = function(editor) {
-        var out = [];
-        var sels = editor.listSelections();
-        for (var i = 0; i < sels.length; i++) {
-            out[i] = {  anchor: {
-                            line: sels[i].anchor.line,
-                            ch: sels[i].anchor.ch
-                        },
-                        head: {
-                            line: sels[i].head.line,
-                            ch: sels[i].head.ch
-                        }
-                    };
+    // Helper functions for hooks
+    this.detectIndentationMode = function(editor) {
+        var len = editor.lineCount();
+        var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space
+
+        for (var i = 0; i < len && i < 100; i++) {
+            var line = editor.getLine(i);
+            var matches = regexIndented.exec(line);
+            if (matches !== null) {
+                if (line[0] === "\t") { // Is a tab
+                    return {found: true, useTabs: true, size: 0};
+                } else { // Is a space
+                    var size = matches[1].length;
+                    if (size === 2 || size === 4 || size === 8) {
+                        return {found: true, useTabs: false, size: size};
+                    } else {
+                        return {found: false};
+                    }
+                }
+            }
         }
-        this.proxy.selections = out;
-        this.proxy.selectionsText = editor.getSelections("\n");
-        var cur = editor.getCursor();
-        this.proxy.cursor = [cur.line, cur.ch];
-    }
 
-    this.onChange = function(editor) {
-        this.proxy.textLength = editor.getValue("\n").length;
-        this.proxy.lineCount = editor.lineCount();
-    }
+        return {found: false};
 
-    this.onScroll = function(editor) {
-        var scroll = editor.getScrollInfo();
-        this.proxy.scrollPosition = [scroll.left, scroll.top];
     }
-
-    // END EVENT FUNCTIONS
 
 /*    this.sendMessage = function(msg, data) {
         if (usingQtWebChannel()) {
@@ -161,6 +152,60 @@ var UiDriver = new function() {
             _this.messageReceived(msg, data);
         });
     });
+
+
+    // BEGIN EVENT FUNCTIONS
+    // These functions hook into the CodeMirror interface and allow us to
+    // perform asynchronous data transfer between C++ and Javascript.
+
+    this.onLoad = function(editor) {
+//        this.proxy.sendEditorEvent("J_EVT_LANGUAGES_READY", Languages.languages);
+        $(document).ready(function() {
+        _this.proxy.sendEditorEvent("J_EVT_TEST", editor.getValue("\n"));
+        });
+    }
+
+    // Hook for when we load a file/change content
+    this.onSetValue = function(editor) {
+        this.proxy.detectedIndent = this.detectIndentationMode(editor);
+    }
+
+    // Hook for when cursor activity is detected(cursor moved/selection changed)
+    this.onCursorActivity = function(editor) {
+        var out = [];
+        var sels = editor.listSelections();
+        for (var i = 0; i < sels.length; i++) {
+            out[i] = {  anchor: {
+                            line: sels[i].anchor.line,
+                            ch: sels[i].anchor.ch
+                        },
+                        head: {
+                            line: sels[i].head.line,
+                            ch: sels[i].head.ch
+                        }
+                    };
+        }
+        this.proxy.selections = out;
+        this.proxy.selectionsText = editor.getSelections("\n");
+        var cur = editor.getCursor();
+        this.proxy.cursor = [cur.line, cur.ch];
+    }
+
+    // Hook for when any content is changed
+    this.onChange = function(editor) {
+        this.proxy.textLength = editor.getValue("\n").length;
+        this.proxy.lineCount = editor.lineCount();
+    }
+
+    // Hook for when the user scrolls the page.
+    this.onScroll = function(editor) {
+        var scroll = editor.getScrollInfo();
+        this.proxy.scrollPosition = [scroll.left, scroll.top];
+    }
+
+    // END EVENT FUNCTIONS
+
+
 
 }
 

@@ -1,11 +1,7 @@
 #include "include/EditorNS/jsproxy.h"
+#include <QDebug>
 
 namespace EditorNS {
-
-QVariant JsToCppProxy::getMsgData()
-{
-    return m_msgData;
-}
 
 QVariant JsToCppProxy::getResult()
 {
@@ -40,6 +36,21 @@ QVariant JsToCppProxy::getSelectionsText()
 QVariant JsToCppProxy::getScrollPosition()
 {
     return m_scrollPosition;
+}
+
+QVariant JsToCppProxy::getLanguage()
+{
+    return m_language;
+}
+
+QVariant JsToCppProxy::getClean()
+{
+    return m_clean;
+}
+
+QVariant JsToCppProxy::getDetectedIndent()
+{
+    return m_detectedIndent;
 }
 
 void JsToCppProxy::setResult(QVariant data)
@@ -79,10 +90,25 @@ void JsToCppProxy::setScrollPosition(QVariant scrollPosition)
     m_scrollPosition = scrollPosition;
 }
 
-void JsToCppProxy::receiveMessage(QString msg, QVariant data)
+void JsToCppProxy::setLanguage(QVariant language)
 {
-    //TODO: Remove this signal and slot and rely on a more central approach
-    emit messageReceived(msg, data);
+    m_language = language;
+}
+
+void JsToCppProxy::setClean(QVariant state)
+{
+    m_clean = state;
+}
+
+void JsToCppProxy::setDetectedIndent(QVariant detectedIndent)
+{
+    m_detectedIndent = detectedIndent;
+}
+
+void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
+{
+    qDebug() << "Posting Editor Event: " << msg << " : " << data;
+    emit editorEvent(msg, data);
 }
 
 }

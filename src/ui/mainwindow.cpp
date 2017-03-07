@@ -33,6 +33,7 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 #include <QJsonArray>
+#include <QtScript>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -440,13 +441,11 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    Editor *editor = currentEditor();
-    if (editor == 0) {
-        qDebug() << "currentEditor is null";
-        throw;
-    }
+    // Lets open our Languages.js file and evaluate what languages we have.
+    // This keeps us from relying on an editor instance.
 
-    QList<QMap<QString, QString>> langs = editor->languages();
+    QList<QMap<QString, QString>> langs = Editor::languages();
+
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
@@ -469,7 +468,7 @@ void MainWindow::setupLanguagesMenu()
 
         QString langId = map.value("id", "");
         QAction *action = new QAction(map.value("name"), this);
-        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
+        connect(action, &QAction::triggered, this, [=](bool = false) {
             currentEditor()->setLanguage(langId);
         });
         letterMenu->insertAction(0, action);
@@ -1188,7 +1187,7 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+    QVariantMap data = editor->languageRaw();
     QString name = data.value("lang").toMap().value("name").toString();
     m_statusBar_fileFormat->setText(name);
 
