@@ -263,6 +263,7 @@ namespace EditorNS
 
     QString Editor::language()
     {
+        qDebug() << m_jsToCppProxy->getLanguage();
         QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
         return data.value("id").toString();
     }

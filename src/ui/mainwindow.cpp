@@ -33,7 +33,6 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 #include <QJsonArray>
-#include <QtScript>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -1187,8 +1186,8 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->languageRaw();
-    QString name = data.value("lang").toMap().value("name").toString();
+    //QVariantMap data = editor->language().toString();
+    QString name = editor->language();
     m_statusBar_fileFormat->setText(name);
 
 

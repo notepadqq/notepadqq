@@ -160,19 +160,18 @@ var UiDriver = new function() {
     // perform asynchronous data transfer between C++ and Javascript.
 
 
+    this.onLanguageChange = function(editor) {
+        var langId = Languages.currentLanguage(editor);
+        this.proxy.language = {id: langId, lang: Languages.languages[langId]};
+    }
+
     // Hook for when we load a file/change content
     this.onSetValue = function(editor) {
-        if(this.proxy === undefined) {
-            return;
-        }
         this.proxy.detectedIndent = this.detectIndentationMode(editor);
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)
     this.onCursorActivity = function(editor) {
-        if(this.proxy === undefined) {
-            return;
-        }
         var out = [];
         var sels = editor.listSelections();
         for (var i = 0; i < sels.length; i++) {
@@ -194,27 +193,17 @@ var UiDriver = new function() {
 
     // Hook for when any content is changed
     this.onChange = function(editor) {
-        if(this.proxy === undefined) {
-            return;
-        }
         this.proxy.textLength = editor.getValue("\n").length;
         this.proxy.lineCount = editor.lineCount();
     }
 
     // Hook for when the user scrolls the page.
     this.onScroll = function(editor) {
-        if(this.proxy === undefined) {
-            return;
-        }
         var scroll = editor.getScrollInfo();
         this.proxy.scrollPosition = [scroll.left, scroll.top];
     }
 
     this.onLoad = function(editor) {
-        // Initialize all values here for safety.
-        if (this.proxy === undefined) {
-            return;
-        }
         this.onCursorActivity(editor);
         this.onChange(editor);
         this.proxy.sendEditorEvent("J_EVT_READY", 0);
