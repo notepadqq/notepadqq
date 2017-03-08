@@ -29,9 +29,6 @@ var UiDriver = new function() {
 
     // Helper functions for hooks
     this.detectIndentationMode = function(editor) {
-        if(this.proxy === undefined) {
-            return;
-        }
         var len = editor.lineCount();
         var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space
 
@@ -46,12 +43,12 @@ var UiDriver = new function() {
                     if (size === 2 || size === 4 || size === 8) {
                         return [0, size];
                     } else {
-                        return;
+                        return undefined;
                     }
                 }
             }
         }
-        return;
+        return undefined;
 
     }
 
@@ -99,13 +96,16 @@ var UiDriver = new function() {
     this.onLanguageChange = function(editor) {
         var langId = Languages.currentLanguage(editor);
         var langData =  {id: langId, lang: Languages.languages[langId]}; 
-        this.proxy.language = langData;
+        this.proxy.setValue("language", langData);
         this.proxy.sendEditorEvent("J_EVT_CURRENT_LANGUAGE_CHANGED", langData);
     }
 
     // Hook for when we load a file/change content
     this.onSetValue = function(editor) {
-        this.proxy.setValue("detectedIndent", this.detectIndentationMode(editor));
+        var detectedIndent = this.detectIndentationMode(editor);
+        if (detectedIndent !== undefined) {
+            this.proxy.setValue("detectedIndent", detectedIndent);
+        }
         editor.clearHistory();
         this.proxy.sendEditorEvent("J_EVT_FILE_LOADED", 0);
     }
@@ -125,23 +125,23 @@ var UiDriver = new function() {
                         }
                     };
         }
-        this.proxy.selections = out;
-        this.proxy.selectionsText = editor.getSelections("\n");
+        this.proxy.setValue("selections", out);
+        this.proxy.setValue("selectionsText", editor.getSelections("\n"));
         var cur = editor.getCursor();
         this.proxy.setValue("cursor", [cur.line, cur.ch]);
     }
 
     // Hook for when any content is changed
     this.onChange = function(editor) {
-        this.proxy.textLength = editor.getValue("\n").length;
-        this.proxy.lineCount = editor.lineCount();
-        this.proxy.clean = isCleanOrForced(changeGeneration);
+        this.proxy.setValue("charCount", editor.getValue("\n").length);
+        this.proxy.setValue("lineCount", editor.lineCount());
+        this.proxy.setValue("clean", isCleanOrForced(changeGeneration));
     }
 
     // Hook for when the user scrolls the page.
     this.onScroll = function(editor) {
         var scroll = editor.getScrollInfo();
-        this.proxy.scrollPosition = [scroll.left, scroll.top];
+        this.proxy.setValue("scrollPosition", [scroll.left, scroll.top]);
     }
 
     // Hook for when the editor is in a functional loaded state

@@ -82,7 +82,6 @@ namespace EditorNS
                 this, 
                 &Editor::on_proxyMessageReceived
                 );
-        connect(m_jsToCppProxy, &JsToCppProxy::languageChange, this, &Editor::on_languageChange);
     }
 
     void Editor::initContextMenu()
@@ -150,7 +149,7 @@ namespace EditorNS
 
     void Editor::on_languageChange()
     {
-        QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
+        QVariantMap data = m_jsToCppProxy->getRawValue("language").toMap();
         QString id = data.value("id").toString();
         QString lang = data.value("lang").toMap().value("name").toString();
         emit currentLanguageChanged(id, lang);
@@ -222,7 +221,9 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return m_jsToCppProxy->getClean();
+        bool clean;
+        m_jsToCppProxy->getValue("clean", clean);
+        return clean;
     }
 
     void Editor::markClean()
@@ -275,7 +276,7 @@ namespace EditorNS
 
     QString Editor::getLanguage(const QString& val)
     {
-        QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
+        QVariantMap data = m_jsToCppProxy->getRawValue("language").toMap();
         if ( val == "id" ) {
             return data.value("id").toString();
         }
@@ -321,9 +322,7 @@ namespace EditorNS
     Editor::IndentationMode Editor::indentationMode()
     {
         QPair<int, int> indent;
-        bool success = m_jsToCppProxy->getValue(indent, "indentMode");
-        if(!success)
-            return { true, 4 };
+        m_jsToCppProxy->getValue("indentMode", indent);
         IndentationMode out;
         out.useTabs = indent.first;
         out.size = indent.second;
@@ -422,7 +421,9 @@ namespace EditorNS
 
     int Editor::textLength()
     {
-        return m_jsToCppProxy->getTextLength().toInt();
+        int charCount;
+        m_jsToCppProxy->getValue("charCount", charCount);
+        return charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -486,10 +487,8 @@ namespace EditorNS
     QPair<int, int> Editor::cursorPosition()
     {
         QPair<int, int> cursor;
-        bool success = m_jsToCppProxy->getValue(cursor, "cursor");
-        if(success)
-            return cursor;
-        return qMakePair(0,0);
+        m_jsToCppProxy->getValue("cursor", cursor);
+        return cursor;
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -516,8 +515,9 @@ namespace EditorNS
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = m_jsToCppProxy->getScrollPosition().toList();
-        return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
+        QPair<int, int> scrollPosition;
+        m_jsToCppProxy->getValue("scrollPosition", scrollPosition);
+        return scrollPosition;
     }
 
     void Editor::setScrollPosition(const int left, const int top)
@@ -632,7 +632,7 @@ namespace EditorNS
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = m_jsToCppProxy->getSelections().toList();
+        QList<QVariant> sels = m_jsToCppProxy->getRawValue("selections").toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -652,7 +652,9 @@ namespace EditorNS
 
     QStringList Editor::selectedTexts()
     {
-        return m_jsToCppProxy->getSelectionsText().toStringList();
+        QStringList selectedTexts;
+        m_jsToCppProxy->getValue("selectionsText", selectedTexts);
+        return selectedTexts;
     }
 
     void Editor::setOverwrite(bool overwrite)
@@ -682,12 +684,11 @@ namespace EditorNS
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    //FIXME: Should we really have a struct for something so simple?
     Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
-        QPair<int, int> indent;
         IndentationMode out;
-        bool _found = m_jsToCppProxy->getValue(indent, "detectedIndent");
+        QPair<int, int> indent;
+        bool _found = m_jsToCppProxy->getValue("detectedIndent", indent);
 
         if (found != nullptr) {
             *found = _found;
@@ -715,7 +716,9 @@ namespace EditorNS
 
     int Editor::lineCount()
     {
-        return m_jsToCppProxy->getLineCount().toInt();
+        int lineCount;
+        m_jsToCppProxy->getValue("lineCount", lineCount);
+        return lineCount;
     }
 
 }

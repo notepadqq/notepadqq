@@ -3,44 +3,22 @@
 
 namespace EditorNS {
 
+bool JsToCppProxy::hasKey(const QString& key)
+{
+    if(!m_values.contains(key) || m_values[key].isNull()) {
+        return false;
+    }
+    return true;
+}
+
+void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
+{
+    emit editorEvent(msg, data);
+}
+
 QVariant JsToCppProxy::getResult()
 {
     return m_result;
-}
-
-QVariant JsToCppProxy::getTextLength()
-{
-    return m_textLength;
-}
-
-QVariant JsToCppProxy::getLineCount()
-{
-    return m_lineCount;
-}
-
-QVariant JsToCppProxy::getSelections()
-{
-    return m_selections;
-}
-
-QVariant JsToCppProxy::getSelectionsText()
-{
-    return m_selectionsText;
-}
-
-QVariant JsToCppProxy::getScrollPosition()
-{
-    return m_scrollPosition;
-}
-
-QVariant JsToCppProxy::getLanguage()
-{
-    return m_language;
-}
-
-bool JsToCppProxy::getClean()
-{
-    return m_clean;
 }
 
 void JsToCppProxy::setResult(QVariant data)
@@ -49,64 +27,51 @@ void JsToCppProxy::setResult(QVariant data)
     emit replyReady();
 }
 
-void JsToCppProxy::setTextLength(QVariant textLength)
-{
-    m_textLength = textLength;
-}
 
-void JsToCppProxy::setLineCount(QVariant lineCount)
+bool JsToCppProxy::getValue(const QString& key, int& r)
 {
-    m_lineCount = lineCount;
-}
-
-void JsToCppProxy::setSelections(QVariant selections)
-{
-    m_selections = selections;
-}
-
-void JsToCppProxy::setSelectionsText(QVariant selectionsText)
-{
-    m_selectionsText = selectionsText;
-}
-
-void JsToCppProxy::setScrollPosition(QVariant scrollPosition)
-{
-    m_scrollPosition = scrollPosition;
-}
-
-void JsToCppProxy::setLanguage(QVariant language)
-{
-    m_language = language;
-}
-
-void JsToCppProxy::setClean(bool state)
-{
-    m_clean = state;
-}
-
-template<class T>
-bool JsToCppProxy::getValue(T& local, const QString &dataName)
-{
-    // If for some reason the editor data isn't initialized, this gives us
-    // a way to handle it cleanly.
-    if (!m_values.contains(dataName) || m_values[dataName].isNull()) {
-        qDebug() << "JsProxy Failure: \n" << "dataName: " << dataName
-            << "\nNo value detected for the provided dataName, please report this at: \n" <<
-            "https://github.com/notepadqq/notepadqq/issues";
+    if (!hasKey(key))
         return false;
-    }
-    // FIXME: Maybe use enums?
-    if (dataName == "cursor" || dataName == "detectedIndent" || dataName == "indentMode") {
-        QVariantList data = m_values.value(dataName).toList();
-        local = qMakePair(data[0].toInt(), data[1].toInt());
-    }
-
+    r = m_values.value(key).toInt();
     return true;
 }
 
-bool JsToCppProxy::getValue(QPair<int, int>& local, const QString& dataName)
+bool JsToCppProxy::getValue(const QString& key, bool& r)
 {
-    return getValue<>(local, dataName);
+    if (!hasKey(key))
+        return false;
+    r = m_values.value(key).toBool();
+    return true;
+}
+
+bool JsToCppProxy::getValue(const QString& key, QPair<int, int>& r)
+{
+    if (!hasKey(key))
+        return false;
+    QVariantList data = m_values.value(key).toList();
+    r = qMakePair(data[0].toInt(), data[1].toInt());
+    return true;
+}
+
+bool JsToCppProxy::getValue(const QString& key, QString& r)
+{
+    if (!hasKey(key))
+        return false;
+    r = m_values.value(key).toString();
+    return true;
+}
+
+bool JsToCppProxy::getValue(const QString& key, QStringList& r)
+{
+    if (!hasKey(key))
+        return false;
+    r = m_values.value(key).toStringList();
+    return true;
+}
+
+QVariant JsToCppProxy::getRawValue(const QString& key)
+{
+    return m_values.value(key);
 }
 
 void JsToCppProxy::setValue(QString name, QVariant data)
@@ -114,11 +79,6 @@ void JsToCppProxy::setValue(QString name, QVariant data)
     m_values[name] = data;
 }
 
-void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
-{
-    emit editorEvent(msg, data);
-}
 
 }
-
 
