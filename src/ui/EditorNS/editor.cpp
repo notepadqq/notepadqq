@@ -158,7 +158,7 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        qDebug() << msg << " : " << data;
+        qDebug() << msg << " : " << sender();
         emit messageReceived(msg, data);
 
         if(msg == "J_EVT_READY") {
@@ -175,7 +175,7 @@ namespace EditorNS
         else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
             QVariantMap lang = data.toMap();
             QString id = lang.value("id").toString();
-            QString name = lang.value("name").toString();
+            QString name = lang.value("lang").toMap().value("name").toString();
             if (!m_customIndentationMode) {
                 setIndentationMode(id);
             }
@@ -220,7 +220,6 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        qDebug() << "Clean state: " << m_jsToCppProxy->getClean();
         return m_jsToCppProxy->getClean();
     }
 
@@ -272,15 +271,13 @@ namespace EditorNS
         return langs;
     }
 
-    QVariantMap Editor::languageRaw()
-    {
-        return m_jsToCppProxy->getLanguage().toMap();
-    }
-
-    QString Editor::language()
+    QString Editor::getLanguage(const QString& val)
     {
         QVariantMap data = m_jsToCppProxy->getLanguage().toMap();
-        return data.value("id").toString();
+        if ( val == "id" ) {
+            return data.value("id").toString();
+        }
+        return data.value("lang").toMap().value(val).toString();
     }
 
     void Editor::setLanguage(const QString &language)
@@ -343,7 +340,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
-        setIndentationMode(language());
+        setIndentationMode(getLanguage());
     }
 
     bool Editor::isUsingCustomIndentationMode() const

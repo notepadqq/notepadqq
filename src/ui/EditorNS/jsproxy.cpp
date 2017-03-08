@@ -93,7 +93,6 @@ void JsToCppProxy::setScrollPosition(QVariant scrollPosition)
 void JsToCppProxy::setLanguage(QVariant language)
 {
     m_language = language;
-    emit languageChange();
 }
 
 void JsToCppProxy::setClean(bool state)

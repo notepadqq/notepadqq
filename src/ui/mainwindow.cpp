@@ -1187,7 +1187,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
     //QVariantMap data = editor->language().toString();
-    QString name = editor->language();
+    QString name = editor->getLanguage("name");
     m_statusBar_fileFormat->setText(name);
 
 

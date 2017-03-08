@@ -94,7 +94,9 @@ var UiDriver = new function() {
     // Hook for when the editor's language is changed.
     this.onLanguageChange = function(editor) {
         var langId = Languages.currentLanguage(editor);
-        this.proxy.language = {id: langId, lang: Languages.languages[langId]};
+        var langData =  {id: langId, lang: Languages.languages[langId]}; 
+        this.proxy.language = langData;
+        this.proxy.sendEditorEvent("J_EVT_CURRENT_LANGUAGE_CHANGED", langData);
     }
 
     // Hook for when we load a file/change content
