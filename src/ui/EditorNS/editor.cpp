@@ -51,6 +51,7 @@ namespace EditorNS
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         
         m_webView->page()->load(url);
+        m_webView->page()->setBackgroundColor(Qt::transparent);
 
         initContextMenu();
         
