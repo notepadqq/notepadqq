@@ -84,6 +84,7 @@ namespace EditorNS {
         void replyReady();
         void languageChange();
         void editorEvent(QString msg, QVariant data);
+        void cursorActivity();
     };
 
 }

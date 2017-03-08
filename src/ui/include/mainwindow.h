@@ -65,6 +65,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
+    void checkIndentationMode();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -256,7 +257,6 @@ private:
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
-    void                checkIndentationMode(Editor *editor);
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();

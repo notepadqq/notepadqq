@@ -43,11 +43,6 @@ bool JsToCppProxy::getClean()
     return m_clean;
 }
 
-QVariant JsToCppProxy::getDetectedIndent()
-{
-    return m_detectedIndent;
-}
-
 void JsToCppProxy::setResult(QVariant data)
 {
     m_result = data;
@@ -89,22 +84,20 @@ void JsToCppProxy::setClean(bool state)
     m_clean = state;
 }
 
-void JsToCppProxy::setDetectedIndent(QVariant detectedIndent)
-{
-    m_detectedIndent = detectedIndent;
-}
-
 template<class T>
 bool JsToCppProxy::getValue(T& local, const QString &dataName)
 {
     // If for some reason the editor data isn't initialized, this gives us
-    // a way to handle it cleanly
-    if (!m_values.contains(dataName)) {
+    // a way to handle it cleanly.
+    if (!m_values.contains(dataName) || m_values[dataName].isNull()) {
+        qDebug() << "JsProxy Failure: \n" << "dataName: " << dataName
+            << "\nNo value detected for the provided dataName, please report this at: \n" <<
+            "https://github.com/notepadqq/notepadqq/issues";
         return false;
     }
     // FIXME: Maybe use enums?
-    if(dataName == "cursor") {
-        QVariantList data = m_values.value("cursor").toList();
+    if (dataName == "cursor" || dataName == "detectedIndent" || dataName == "indentMode") {
+        QVariantList data = m_values.value(dataName).toList();
         local = qMakePair(data[0].toInt(), data[1].toInt());
     }
 

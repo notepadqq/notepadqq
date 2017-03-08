@@ -40,19 +40,18 @@ var UiDriver = new function() {
             var matches = regexIndented.exec(line);
             if (matches !== null) {
                 if (line[0] === "\t") { // Is a tab
-                    return {found: true, useTabs: true, size: 0};
+                    return [1, 0];
                 } else { // Is a space
                     var size = matches[1].length;
                     if (size === 2 || size === 4 || size === 8) {
-                        return {found: true, useTabs: false, size: size};
+                        return [0, size];
                     } else {
-                        return {found: false};
+                        return;
                     }
                 }
             }
         }
-
-        return {found: false};
+        return;
 
     }
 
@@ -91,6 +90,11 @@ var UiDriver = new function() {
     // These functions hook into the CodeMirror interface and allow us to
     // perform asynchronous data transfer between C++ and Javascript.
 
+    this.onOptionChange = function(editor) {
+        var indentMode = [editor.options.indentWithTabs, editor.options.indentUnit];
+        this.proxy.setValue("indentMode", indentMode);
+    }
+
     // Hook for when the editor's language is changed.
     this.onLanguageChange = function(editor) {
         var langId = Languages.currentLanguage(editor);
@@ -101,8 +105,9 @@ var UiDriver = new function() {
 
     // Hook for when we load a file/change content
     this.onSetValue = function(editor) {
-        this.proxy.detectedIndent = this.detectIndentationMode(editor);
+        this.proxy.setValue("detectedIndent", this.detectIndentationMode(editor));
         editor.clearHistory();
+        this.proxy.sendEditorEvent("J_EVT_FILE_LOADED", 0);
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)
@@ -144,6 +149,7 @@ var UiDriver = new function() {
         this.onCursorActivity(editor);
         this.onChange(editor);
         this.onScroll(editor);
+        this.onOptionChange(editor);
         this.proxy.sendEditorEvent("J_EVT_READY", 0);
         editor.refresh();
     }

@@ -723,6 +723,9 @@ $(document).ready(function () {
     editor.on("focus", function() {
         UiDriver.proxy.sendEditorEvent("J_EVT_GOT_FOCUS");
     });
+    editor.on("optionChange", function() {
+        UiDriver.onOptionChange(editor);
+    });
 
     var proxyWait = setInterval(function() {
         if(UiDriver.proxy !== undefined) {

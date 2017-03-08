@@ -299,6 +299,7 @@ namespace EditorNS
         void cursorActivity();
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
+        void fileLoaded();
 
         /**
              * @brief The editor finished loading. There should be
@@ -309,10 +310,8 @@ namespace EditorNS
         void currentLanguageChanged(QString id, QString name);
 
     public slots:
-        void sendMessage(const QString &msg, const QVariant &data);
-        void sendMessage(const QString &msg);
-        QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
-        QVariant sendMessageWithResult(const QString &msg);
+        void sendMessage(const QString &msg, const QVariant &data = QVariant());
+        QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
 
         void print(QPrinter *printer);
     };

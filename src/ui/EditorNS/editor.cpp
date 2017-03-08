@@ -158,7 +158,6 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        qDebug() << msg << " : " << sender();
         emit messageReceived(msg, data);
 
         if(msg == "J_EVT_READY") {
@@ -180,6 +179,9 @@ namespace EditorNS
                 setIndentationMode(id);
             }
             emit currentLanguageChanged(id, name);
+        }else if(msg == "J_EVT_FILE_LOADED")
+        {
+            emit fileLoaded();
         }
     }
 
@@ -318,10 +320,13 @@ namespace EditorNS
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        QVariantMap indent = sendMessageWithResult("C_FUN_GET_INDENTATION_MODE").toMap();
+        QPair<int, int> indent;
+        bool success = m_jsToCppProxy->getValue(indent, "indentMode");
+        if(!success)
+            return { true, 4 };
         IndentationMode out;
-        out.useTabs = indent.value("useTabs", true).toBool();
-        out.size = indent.value("size", 4).toInt();
+        out.useTabs = indent.first;
+        out.size = indent.second;
         return out;
     }
 
@@ -387,28 +392,18 @@ namespace EditorNS
     {
         waitAsyncLoad();
         m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
-    //    sendMessageWithResult(msg, data);
-    }
-
-    void Editor::sendMessage(const QString &msg)
-    {
-        sendMessage(msg, 0);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
+        qDebug() << "Getting result for: " << msg;
         waitAsyncLoad();
-        if(m_processLoop.isRunning())
+        if (m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
         emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
         m_processLoop.exec();
         return m_jsToCppProxy->getResult();
-    }
-
-    QVariant Editor::sendMessageWithResult(const QString &msg)
-    {
-        return sendMessageWithResult(msg, 0);
     }
 
     void Editor::setZoomFactor(const qreal &factor)
@@ -492,7 +487,6 @@ namespace EditorNS
     {
         QPair<int, int> cursor;
         bool success = m_jsToCppProxy->getValue(cursor, "cursor");
-        qDebug() << cursor;
         if(success)
             return cursor;
         return qMakePair(0,0);
@@ -688,19 +682,20 @@ namespace EditorNS
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
+    //FIXME: Should we really have a struct for something so simple?
     Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
-        QVariantMap indent = m_jsToCppProxy->getDetectedIndent().toMap();
+        QPair<int, int> indent;
         IndentationMode out;
+        bool _found = m_jsToCppProxy->getValue(indent, "detectedIndent");
 
-        bool _found = indent.value("found", false).toBool();
         if (found != nullptr) {
             *found = _found;
         }
 
         if (_found) {
-            out.useTabs = indent.value("useTabs", true).toBool();
-            out.size = indent.value("size", 4).toInt();
+            out.useTabs = indent.first;
+            out.size = indent.second;
         }
 
         return out;
