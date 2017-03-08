@@ -8,11 +8,6 @@ QVariant JsToCppProxy::getResult()
     return m_result;
 }
 
-QVariant JsToCppProxy::getCursor()
-{
-    return m_cursor;
-}
-
 QVariant JsToCppProxy::getTextLength()
 {
     return m_textLength;
@@ -59,12 +54,6 @@ void JsToCppProxy::setResult(QVariant data)
     emit replyReady();
 }
 
-void JsToCppProxy::setCursor(QVariant cursorPos)
-{
-    m_cursor = cursorPos;
-    emit cursorActivity();
-}
-
 void JsToCppProxy::setTextLength(QVariant textLength)
 {
     m_textLength = textLength;
@@ -103,6 +92,33 @@ void JsToCppProxy::setClean(bool state)
 void JsToCppProxy::setDetectedIndent(QVariant detectedIndent)
 {
     m_detectedIndent = detectedIndent;
+}
+
+template<class T>
+bool JsToCppProxy::getValue(T& local, const QString &dataName)
+{
+    // If for some reason the editor data isn't initialized, this gives us
+    // a way to handle it cleanly
+    if (!m_values.contains(dataName)) {
+        return false;
+    }
+    // FIXME: Maybe use enums?
+    if(dataName == "cursor") {
+        QVariantList data = m_values.value("cursor").toList();
+        local = qMakePair(data[0].toInt(), data[1].toInt());
+    }
+
+    return true;
+}
+
+bool JsToCppProxy::getValue(QPair<int, int>& local, const QString& dataName)
+{
+    return getValue<>(local, dataName);
+}
+
+void JsToCppProxy::setValue(QString name, QVariant data)
+{
+    m_values[name] = data;
 }
 
 void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)

@@ -490,8 +490,12 @@ namespace EditorNS
 
     QPair<int, int> Editor::cursorPosition()
     {
-        QList<QVariant> cursor = m_jsToCppProxy->getCursor().toList();
-        return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+        QPair<int, int> cursor;
+        bool success = m_jsToCppProxy->getValue(cursor, "cursor");
+        qDebug() << cursor;
+        if(success)
+            return cursor;
+        return qMakePair(0,0);
     }
 
     void Editor::setCursorPosition(const int line, const int column)

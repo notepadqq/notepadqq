@@ -123,7 +123,7 @@ var UiDriver = new function() {
         this.proxy.selections = out;
         this.proxy.selectionsText = editor.getSelections("\n");
         var cur = editor.getCursor();
-        this.proxy.cursor = [cur.line, cur.ch];
+        this.proxy.setValue("cursor", [cur.line, cur.ch]);
     }
 
     // Hook for when any content is changed

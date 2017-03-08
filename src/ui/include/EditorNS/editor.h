@@ -316,7 +316,6 @@ namespace EditorNS
 
         void print(QPrinter *printer);
     };
-
 }
 
 #endif // EDITOR_H
