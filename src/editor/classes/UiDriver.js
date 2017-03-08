@@ -146,7 +146,6 @@ var UiDriver = new function() {
         this.onScroll(editor);
         this.proxy.sendEditorEvent("J_EVT_READY", 0);
         editor.refresh();
-        console.error("ONLOAD CALLED");
     }
     // END HOOKS
 }

@@ -403,7 +403,6 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
         }
     }
 
-    console.error("THEME NAME: " + data.name);
     if (link === undefined) {
         editor.setOption("theme", data.name);
     } else {
