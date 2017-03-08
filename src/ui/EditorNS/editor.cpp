@@ -389,14 +389,14 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-        waitAsyncLoad();
+//        waitAsyncLoad();
         m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
         qDebug() << "Getting result for: " << msg;
-        waitAsyncLoad();
+//        waitAsyncLoad();
         if (m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
