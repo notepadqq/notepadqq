@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QPair>
+#include <QQueue>
 
 namespace EditorNS {
     /**
@@ -18,9 +19,13 @@ namespace EditorNS {
         Q_OBJECT
 
     private:
+        void pushQueuedMessages();
         bool hasKey(const QString&);
-        QVariant m_result;
+
         QHash<QString, QVariant> m_values;
+        QQueue<QPair<QString, QVariant>> m_queuedMessages;
+        QVariant m_result;
+        bool m_ready = false;
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
 
@@ -34,14 +39,14 @@ namespace EditorNS {
         QVariant getRawValue(const QString&);
         // Functions to allow the proxy to set data on the CPP side.
         void setResult(QVariant data);
-
+        void sendMsg(QString msg, QVariant data);
         Q_PROPERTY(QVariant result READ getResult WRITE setResult NOTIFY replyReady);
     public slots:
         Q_INVOKABLE void sendEditorEvent(QString msg, QVariant data);
         Q_INVOKABLE void setValue(QString name, QVariant data);
 
     signals:
-        void sendMsg(QString msg, QVariant data);
+        void sendMsgInternal(QString msg, QVariant data);
         void replyReady();
         void editorEvent(QString msg, QVariant data);
     };

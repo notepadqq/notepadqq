@@ -20,7 +20,8 @@ var UiDriver = new function() {
         channel = _channel;
 
         _this.proxy = channel.objects.cpp_ui_driver;
-        _this.proxy.sendMsg.connect(function(msg, data) {
+        _this.proxy.sendEditorEvent("J_EVT_PROXY_INIT", 0);
+        _this.proxy.sendMsgInternal.connect(function(msg, data) {
             _this.messageReceived(msg, data);
         });
 

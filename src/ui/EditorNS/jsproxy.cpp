@@ -11,8 +11,30 @@ bool JsToCppProxy::hasKey(const QString& key)
     return true;
 }
 
+void JsToCppProxy::pushQueuedMessages()
+{
+    while(!m_queuedMessages.isEmpty()) {
+        QPair<QString, QVariant> msg = m_queuedMessages.dequeue();
+        emit sendMsgInternal(msg.first, msg.second);
+    }
+}
+
+void JsToCppProxy::sendMsg(QString msg, QVariant data)
+{
+    if(!m_ready) {
+        m_queuedMessages.enqueue(qMakePair(msg, data));
+    }else {
+        emit sendMsgInternal(msg, data);
+    }
+}
+
 void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
 {
+    if (msg == "J_EVT_READY" && m_ready == false) {
+        qDebug() << "Here";
+        m_ready = true;
+        pushQueuedMessages();
+    }
     emit editorEvent(msg, data);
 }
 
