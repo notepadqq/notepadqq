@@ -6,11 +6,11 @@ os:
 env:
   - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
 before_install:
+  - sudo add-apt-repository ppa:beineri/opt-qt58-trusty -y
   - sudo apt-get -qq update
-  - sudo apt-cache search webengine
-  - sudo apt-get install -y qtbase5-dev qt5webengine5-dev libqt5svg5-dev qttools5-dev-tools
+  - sudo apt-get install -y qt58base qt58webengine qt58svg qt58tools; source /opt/qt58/bin/qt58-env.sh;
 script:
-  - "./configure && make"
+  - "./configure --qmake qmake --lrelease lrelease && make"
   - "./src/ui-tests/ui-tests"
 before_deploy:
   - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
