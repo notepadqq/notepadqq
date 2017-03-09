@@ -149,13 +149,22 @@ namespace EditorNS
         Q_INVOKABLE void markDirty();
         static QList<QMap<QString, QString> > languages();
 
+
+        /**
+         * @brief Get the currently active language used
+         *        in the editor.
+         * @param val The value to pull from the language data,
+         *        or ID by default.
+         * @return The value associated with the key "val".
+         */
+
+        Q_INVOKABLE QString getLanguage(const QString& val = "id");
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        Q_INVOKABLE QString getLanguage(const QString& val = "id");
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFileName(QString fileName);
         Q_INVOKABLE void setLanguageFromFileName();
