@@ -175,6 +175,16 @@ TRANSLATIONS = \
     ../translations/notepadqq_sl.ts \
     ../translations/notepadqq_sv.ts
 
+QMAKE_CLEAN += \
+    ../translations/notepadqq_de.qm \
+    ../translations/notepadqq_fr.qm \
+    ../translations/notepadqq_hu.qm \
+    ../translations/notepadqq_it.qm \
+    ../translations/notepadqq_pl.qm \
+    ../translations/notepadqq_ru.qm \
+    ../translations/notepadqq_sl.qm \
+    ../translations/notepadqq_sv.qm
+
 
 # Build translations so that qmake doesn't complain about missing files in resources.qrc
 system($${LRELEASE} \"$${CURRFILE}\")
