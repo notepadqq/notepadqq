@@ -182,9 +182,6 @@ namespace EditorNS
                 setIndentationMode(id);
             }
             emit currentLanguageChanged(id, name);
-        }else if(msg == "J_EVT_FILE_LOADED")
-        {
-            emit fileLoaded();
         }
     }
 

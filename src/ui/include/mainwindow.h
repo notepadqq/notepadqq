@@ -65,7 +65,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
-    void checkIndentationMode();
+    void checkIndentationMode(Editor *editor);
 
 protected:
     void closeEvent(QCloseEvent *event);

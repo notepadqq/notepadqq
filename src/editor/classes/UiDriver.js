@@ -108,7 +108,6 @@ var UiDriver = new function() {
             this.proxy.setValue("detectedIndent", detectedIndent);
         }
         editor.clearHistory();
-        this.proxy.sendEditorEvent("J_EVT_FILE_LOADED", 0);
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)

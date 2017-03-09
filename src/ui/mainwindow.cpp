@@ -1116,7 +1116,6 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
-    connect(editor, &Editor::fileLoaded, this, &MainWindow::checkIndentationMode);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1673,14 +1672,13 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
     if (!wasAlreadyOpened) {
         if (m_settings.General.getWarnForDifferentIndentation()) {
-//            checkIndentationMode(editor);
+            checkIndentationMode(editor);
         }
     }
 }
 
-void MainWindow::checkIndentationMode()
+void MainWindow::checkIndentationMode(Editor* editor)
 {
-    Editor* editor = static_cast<Editor*>(sender());
     bool found = false;
     Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
     if (found) {
