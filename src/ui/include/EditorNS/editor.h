@@ -226,6 +226,8 @@ namespace EditorNS
          */
         void setFont(QString fontFamily, int fontSize, double lineHeight); 
 
+        QTextCodec *codec() const;
+
         /**
          * @brief Set the codec for this Editor.
          *        This method does not change the in-memory or on-screen
@@ -234,7 +236,6 @@ namespace EditorNS
          *        that needs to be used when the document gets saved.
          * @param codec
          */
-        QTextCodec *codec() const;
         void setCodec(QTextCodec *codec);
 
         bool bom() const;
@@ -244,13 +245,15 @@ namespace EditorNS
         void setTheme(Theme theme);
         static Editor::Theme themeFromName(QString name);
  
+
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
+
         /**
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
         Q_INVOKABLE QStringList getSelectedTexts();
         QList<Selection> getSelections();
 
