@@ -313,7 +313,7 @@ namespace EditorNS
         void cursorActivity();
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
-        void fileLoaded(bool wasAlreadyLoaded);
+        void documentLoaded(bool wasAlreadyLoaded);
 
         /**
              * @brief The editor finished loading. There should be

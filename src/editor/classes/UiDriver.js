@@ -8,9 +8,6 @@ var UiDriver = new function() {
 
     var _this = this;
 
-    function usingQtWebChannel() {
-        return (typeof cpp_ui_driver === 'undefined')
-    }
     // UiDriver holds onto the JsProxy transport so we can access it elsewhere.
     this.proxy = undefined;
 
@@ -64,10 +61,6 @@ var UiDriver = new function() {
     }
     
     this.messageReceived = function(msg, data) {
-        if (!usingQtWebChannel()) {
-            console.error("Not using QtWebChannel: "+ msg);
-        }
-
         // Only one of the handlers (the last that gets
         // called) can return a value. So, to each handler
         // we provide the previous handler's return value.
@@ -108,7 +101,7 @@ var UiDriver = new function() {
             this.proxy.setValue("detectedIndent", detectedIndent);
         }
         editor.clearHistory();
-        this.proxy.sendEditorEvent("J_EVT_FILE_LOADED", 0);
+        this.proxy.sendEditorEvent("J_EVT_DOCUMENT_LOADED", 0);
     }
 
     // Hook for when cursor activity is detected(cursor moved/selection changed)

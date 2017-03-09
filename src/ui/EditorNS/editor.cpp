@@ -182,11 +182,11 @@ namespace EditorNS
                 setIndentationMode(id);
             }
             emit currentLanguageChanged(id, name);
-        }else if(msg == "J_EVT_FILE_LOADED")
+        }else if(msg == "J_EVT_DOCUMENT_LOADED")
         {
             // Data should be context aware of when the file was loaded
             // later on
-            emit fileLoaded(false);
+            emit documentLoaded(false);
         }
     }
 

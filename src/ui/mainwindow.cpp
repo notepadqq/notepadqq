@@ -1116,7 +1116,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
-    connect(editor, &Editor::fileLoaded, this, &MainWindow::on_fileLoaded);
+    connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
