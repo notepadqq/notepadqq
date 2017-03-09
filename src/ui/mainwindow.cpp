@@ -1672,7 +1672,7 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     }
 }
 
-// TODO: Make editor aware if a file is already loaded so
+// FIXME: Make editor aware if a file is already loaded so
 // indentation banner only appears for new files.
 void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
 {
