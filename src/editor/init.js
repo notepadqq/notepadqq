@@ -5,38 +5,26 @@
 */
 
 var _initialized = false;
-var _defaultTheme = "";
 
-function addStylesheet(path) {
-    var link = document.createElement("link");
-    link.href = path;
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.media = "screen,print";
-
-    document.getElementsByTagName("head")[0].appendChild(link);
-    return link;
+function swapStylesheet(path)
+{
+    console.error(path);
+    console.error(localStorage.getItem('CodeMirrorTheme'));
+    if(localStorage.getItem('CodeMirrorTheme') !== path) {
+        localStorage.setItem('CodeMirrorTheme', path);
+    }
+    $('link.CodeMirrorTheme').prop('href', localStorage.getItem('CodeMirrorTheme'));
 }
 
 function init()
 {
     if (_initialized)
         return;
-    
-    function getParameterByName(name) {
-        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
-        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    var themeName = localStorage.getItem('CodeMirrorThemeName');
+    if(themeName === null) {
+        localStorage.setItem('CodeMirrorThemeName', 'default');
     }
-    
-    var themePath = getParameterByName("themePath");
-    var themeName = getParameterByName("themeName");
-    if (themePath !== "") {
-        addStylesheet(themePath);
-    }
-    
-    _defaultTheme = themeName === "" ? "default" : themeName;
+    $('link.CodeMirrorTheme').prop('href', localStorage.getItem('CodeMirrorTheme'));
 }
 
 init();

@@ -3,6 +3,11 @@
 
 namespace EditorNS {
 
+JsToCppProxy::JsToCppProxy(QObject* parent) : QObject(parent)
+{
+    m_tempQueue = new QQueue<QPair<QString, QVariant>>();
+}
+
 bool JsToCppProxy::hasKey(const QString& key)
 {
     if(!m_values.contains(key) || m_values[key].isNull()) {
@@ -13,16 +18,17 @@ bool JsToCppProxy::hasKey(const QString& key)
 
 void JsToCppProxy::pushQueuedMessages()
 {
-    while(!m_queuedMessages.isEmpty()) {
-        QPair<QString, QVariant> msg = m_queuedMessages.dequeue();
+    while(!m_tempQueue->isEmpty()) {
+        QPair<QString, QVariant> msg = m_tempQueue->dequeue();
         emit sendMsgInternal(msg.first, msg.second);
     }
+    delete m_tempQueue;
 }
 
-void JsToCppProxy::sendMsg(QString msg, QVariant data)
+void JsToCppProxy::sendMsg(const QString& msg, const QVariant& data)
 {
     if(!m_ready) {
-        m_queuedMessages.enqueue(qMakePair(msg, data));
+        m_tempQueue->enqueue(qMakePair(msg, data));
     }else {
         emit sendMsgInternal(msg, data);
     }
@@ -31,7 +37,6 @@ void JsToCppProxy::sendMsg(QString msg, QVariant data)
 void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
 {
     if (msg == "J_EVT_READY" && m_ready == false) {
-        qDebug() << "Here";
         m_ready = true;
         pushQueuedMessages();
     }

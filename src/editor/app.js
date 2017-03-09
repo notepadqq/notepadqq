@@ -393,23 +393,11 @@ UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevRet
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
     var link = undefined;
     if (data.path != "") {
-        var stylesheet = $("link[href='" + data.path + "']");
-        if (stylesheet.length > 0) {
-            // Stylesheet already exists, move it to the bottom
-            stylesheet.appendTo('head');
-        } else {
-            // Add the stylesheet
-            link = addStylesheet(data.path);
-        }
+        swapStylesheet(data.path);
     }
-
-    if (link === undefined) {
-        editor.setOption("theme", data.name);
-    } else {
-        link.onload = function () {
-            editor.setOption("theme", data.name);
-        }
-    }
+    editor.setOption("theme", data.name);
+    setTimeout(function(){editor.refresh()}, 100);
+    localStorage.setItem("CodeMirrorThemeName", data.name);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn) {
@@ -666,6 +654,7 @@ UiDriver.registerEventHandler("C_CMD_EOL_TO_SPACE", function(msg, data, prevRetu
 });
 
 $(document).ready(function () {
+    var currentTheme = localStorage.getItem("CodeMirrorThemeName");
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
         mode: { name: "" },
@@ -679,7 +668,7 @@ $(document).ready(function () {
         tabSize: 4,
         matchBrackets: true,
         extraKeys: {"Ctrl-Space": "autocomplete"},
-        theme: _defaultTheme
+        theme: currentTheme
     });
 
     editor.addKeyMap({
@@ -725,6 +714,7 @@ $(document).ready(function () {
     });
     editor.on("optionChange", function() {
         UiDriver.onOptionChange(editor);
+        editor.refresh();
     });
 
     var proxyWait = setInterval(function() {

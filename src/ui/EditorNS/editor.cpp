@@ -41,12 +41,8 @@ namespace EditorNS
     {
         initJsProxy();
         m_webView = new CustomQWebView(this);
-        QUrlQuery query;
-        query.addQueryItem("themePath", theme.path);
-        query.addQueryItem("themeName", theme.name);
 
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
-        url.setQuery(query);
 
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         
@@ -68,7 +64,6 @@ namespace EditorNS
                 &QWebEnginePage::loadFinished,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
-
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
