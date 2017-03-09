@@ -11,11 +11,11 @@ before_install:
 script:
   - "./configure && make"
   - "./src/ui-tests/ui-tests"
-  - "git clone --recursive https://github.com/notepadqq/notepadqq.git notepadqq-${NQQ_VERSION}-source"
-  - "(cd notepadqq-${NQQ_VERSION}-source && rm -rf .git* .travis.yml)"
-  - "(cd notepadqq-${NQQ_VERSION}-source/src/editor/libs/codemirror && rm -f .git* .npmignore .travis.yml)"
 before_deploy:
   - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
+  - "files=$(ls); mkdir notepadqq-${NQQ_VERSION}-source && cp -r $files notepadqq-${NQQ_VERSION}-source"
+  - "find notepadqq-${NQQ_VERSION}-source \( -name '.git*' -o -name '.*ignore' -o -name '.travis.yml' \) -delete"
+  - "make -C notepadqq-${NQQ_VERSION}-source distclean"
   - "tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source"
 deploy:
   provider: releases
