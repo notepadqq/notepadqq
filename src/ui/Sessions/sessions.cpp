@@ -294,7 +294,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "";
 
             // Finally save other misc information about the tab.
-            const auto& scrollPos = editor->scrollPosition();
+            const auto& scrollPos = editor->getScrollPosition();
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
             td.active = tabWidget->currentEditor() == editor;

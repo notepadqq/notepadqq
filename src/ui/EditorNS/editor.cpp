@@ -40,20 +40,8 @@ namespace EditorNS
     void Editor::fullConstructor(const Theme &theme)
     {
         initJsProxy();
-        m_webView = new CustomQWebView(this);
-
-        QUrl url = QUrl("file://" + Notepadqq::editorPath());
-
-        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
-        
-        m_webView->page()->load(url);
-        m_webView->page()->setBackgroundColor(Qt::transparent);
-
+        initWebView();
         initContextMenu();
-        
-        QWebEngineSettings *pageSettings = m_webView->page()->settings();
-        pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
-
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(0);
@@ -68,11 +56,26 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
 
+    
+    void Editor::initWebView()
+    {
+        m_webView = new CustomQWebView(this);
+        QUrl url = QUrl("file://" + Notepadqq::editorPath());
+        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
+        m_webView->page()->load(url);
+        m_webView->page()->setBackgroundColor(Qt::transparent);
+        QWebEngineSettings *pageSettings = m_webView->page()->settings();
+        pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
+    }
+
 
     void Editor::initJsProxy()
     {
         m_jsToCppProxy = new JsToCppProxy(this);
-        connect(m_jsToCppProxy, &JsToCppProxy::replyReady, &m_processLoop, &QEventLoop::quit);
+        connect(m_jsToCppProxy, 
+                &JsToCppProxy::replyReady, 
+                &m_processLoop, 
+                &QEventLoop::quit);
         connect(m_jsToCppProxy,
                 &JsToCppProxy::editorEvent, 
                 this, 
@@ -246,7 +249,7 @@ namespace EditorNS
 
         QJSValue result = engine.evaluate(contents, fileName);
 
-        if(result.isError()) {
+        if (result.isError()) {
             qDebug() << "Failed to load languages file.";
             return QList<QMap<QString, QString>>();
         }
@@ -415,7 +418,7 @@ namespace EditorNS
         return m_webView->zoomFactor();
     }
 
-    int Editor::textLength()
+    int Editor::getCharCount()
     {
         int charCount;
         m_jsToCppProxy->getValue("charCount", charCount);
@@ -480,7 +483,7 @@ namespace EditorNS
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
     }
 
-    QPair<int, int> Editor::cursorPosition()
+    QPair<int, int> Editor::getCursorPosition()
     {
         QPair<int, int> cursor;
         m_jsToCppProxy->getValue("cursor", cursor);
@@ -509,7 +512,7 @@ namespace EditorNS
         sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
     }
 
-    QPair<int, int> Editor::scrollPosition()
+    QPair<int, int> Editor::getScrollPosition()
     {
         QPair<int, int> scrollPosition;
         m_jsToCppProxy->getValue("scrollPosition", scrollPosition);
@@ -624,7 +627,7 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
     }
 
-    QList<Editor::Selection> Editor::selections()
+    QList<Editor::Selection> Editor::getSelections()
     {
         QList<Selection> out;
 
@@ -646,7 +649,7 @@ namespace EditorNS
         return out;
     }
 
-    QStringList Editor::selectedTexts()
+    QStringList Editor::getSelectedTexts()
     {
         QStringList selectedTexts;
         m_jsToCppProxy->getValue("selectionsText", selectedTexts);
@@ -656,23 +659,6 @@ namespace EditorNS
     void Editor::setOverwrite(bool overwrite)
     {
         sendMessage("C_CMD_SET_OVERWRITE", overwrite);
-    }
-
-    void Editor::forceRender(QSize size)
-    {
-        // FIXME Not needed anymore?
-/*
-#ifndef USE_QTWEBENGINE
-        QWebPage *page = m_webView->page();
-
-        page->setViewportSize(size);
-
-        QImage image(size.width(), size.height(), QImage::Format_Mono);
-        QPainter painter(&image);
-
-        page->mainFrame()->render(&painter);
-#endif
-*/
     }
 
     void Editor::setTabsVisible(bool visible)
@@ -710,11 +696,11 @@ namespace EditorNS
         return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
     }
 
-    int Editor::lineCount()
+    int Editor::getLineCount()
     {
-        int lineCount;
-        m_jsToCppProxy->getValue("lineCount", lineCount);
-        return lineCount;
+        int lines;
+        m_jsToCppProxy->getValue("lineCount", lines);
+        return lines;
     }
 
 }

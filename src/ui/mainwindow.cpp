@@ -1078,7 +1078,7 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 
 void MainWindow::on_action_Copy_triggered()
 {
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     QApplication::clipboard()->setText(sel.join("\n"));
 }
 
@@ -1163,14 +1163,14 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 {
     if (editor != 0) {
         // Update status bar
-        int len = editor->textLength();
-        int lines = editor->lineCount();
+        int len = editor->getCharCount();
+        int lines = editor->getLineCount();
         m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 
-        QPair<int, int> cursor = editor->cursorPosition();
+        QPair<int, int> cursor = editor->getCursorPosition();
         int selectedChars = 0;
         int selectedPieces = 0;
-        QStringList selections = editor->selectedTexts();
+        QStringList selections = editor->getSelectedTexts();
         for (QString sel : selections) {
             selectedChars += sel.length();
             selectedPieces += sel.split("\n").count();
@@ -1360,7 +1360,7 @@ void MainWindow::on_actionSearch_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -1497,7 +1497,7 @@ void MainWindow::on_actionReplace_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -1550,7 +1550,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
     Editor *editor = currentEditor();
-    QStringList sel = editor->selectedTexts();
+    QStringList sel = editor->getSelectedTexts();
 
     for (int i = 0; i < sel.length(); i++) {
         sel.replace(i, func(sel.at(i)));
@@ -2026,7 +2026,7 @@ void MainWindow::runCommand()
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
-    QStringList selection = editor->selectedTexts();
+    QStringList selection = editor->getSelectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
@@ -2071,7 +2071,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 QStringList MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
-    QStringList selection = editor->selectedTexts();
+    QStringList selection = editor->getSelectedTexts();
 
     if (selection.isEmpty() || selection.first().isEmpty()) {
         return QStringList(editor->getCurrentWord());
@@ -2172,7 +2172,7 @@ void MainWindow::on_actionFind_in_Files_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -2258,8 +2258,8 @@ void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
 void MainWindow::on_actionGo_to_line_triggered()
 {
     Editor *editor = currentEditor();
-    int currentLine = editor->cursorPosition().first;
-    int lines = editor->lineCount();
+    int currentLine = editor->getCursorPosition().first;
+    int lines = editor->getLineCount();
     frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
     if (frm->exec() == QDialog::Accepted) {
         int line = frm->value();

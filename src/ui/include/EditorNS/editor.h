@@ -155,11 +155,14 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
+        Q_INVOKABLE QString getLanguage(const QString& val = "id");
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFileName(QString fileName);
         Q_INVOKABLE void setLanguageFromFileName();
-        Q_INVOKABLE void setValue(const QString &value);
+        
+        
         Q_INVOKABLE QString value();
+        Q_INVOKABLE void setValue(const QString &value);
 
         /**
          * @brief Set custom indentation settings which may be different
@@ -175,13 +178,12 @@ namespace EditorNS
         void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
-
         Q_INVOKABLE void setSmartIndent(bool enabled);
+
         Q_INVOKABLE qreal zoomFactor() const;
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString getLanguage(const QString& val = "id");
+
+        
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -190,7 +192,7 @@ namespace EditorNS
          * @brief Get the current cursor position
          * @return a <line, column> pair.
          */
-        QPair<int, int> cursorPosition();
+        QPair<int, int> getCursorPosition();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);
@@ -199,9 +201,11 @@ namespace EditorNS
          * @brief Get the current scroll position
          * @return a <left, top> pair.
          */
-        QPair<int, int> scrollPosition();
+        QPair<int, int> getScrollPosition();
         void setScrollPosition(const int left, const int top);
         void setScrollPosition(const QPair<int, int> &position);
+
+
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
@@ -211,9 +215,7 @@ namespace EditorNS
          *                   nullptr denote no override.
          * @param fontSize the size to be applied. 0 denotes no override.
          */
-        void setFont(QString fontFamily, int fontSize, double lineHeight);
-
-        QTextCodec *codec() const;
+        void setFont(QString fontFamily, int fontSize, double lineHeight); 
 
         /**
          * @brief Set the codec for this Editor.
@@ -223,6 +225,7 @@ namespace EditorNS
          *        that needs to be used when the document gets saved.
          * @param codec
          */
+        QTextCodec *codec() const;
         void setCodec(QTextCodec *codec);
 
         bool bom() const;
@@ -231,17 +234,18 @@ namespace EditorNS
         QList<Theme> themes();
         void setTheme(Theme theme);
         static Editor::Theme themeFromName(QString name);
-
-        QList<Selection> selections();
-
+ 
         /**
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList selectedTexts();
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
+        Q_INVOKABLE QStringList getSelectedTexts();
+        QList<Selection> getSelections();
 
         void setOverwrite(bool overwrite);
-        void forceRender(QSize size);
         void setTabsVisible(bool visible);
 
         /**
@@ -251,12 +255,9 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        QString getCurrentWord();
-
-        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
-
-        int lineCount();
-        int textLength();
+        QString getCurrentWord(); 
+        int getLineCount();
+        int getCharCount();
 
     private:
         static QQueue<Editor*> m_editorBuffer;
@@ -281,6 +282,7 @@ namespace EditorNS
         void setIndentationMode(QString language);
         void initContextMenu();
         void initJsProxy();
+        void initWebView();
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
