@@ -282,7 +282,7 @@ namespace EditorNS
         void setIndentationMode(QString language);
         void initContextMenu();
         void initJsProxy();
-        void initWebView();
+        void initWebView(const Theme &theme);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);

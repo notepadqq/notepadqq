@@ -40,7 +40,7 @@ namespace EditorNS
     void Editor::fullConstructor(const Theme &theme)
     {
         initJsProxy();
-        initWebView();
+        initWebView(theme);
         initContextMenu();
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
@@ -57,10 +57,15 @@ namespace EditorNS
     }
 
     
-    void Editor::initWebView()
+    void Editor::initWebView(const Theme &theme)
     {
         m_webView = new CustomQWebView(this);
+        QUrlQuery query;
+        query.addQueryItem("themePath", theme.path);
+        query.addQueryItem("themeName", theme.name);
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
+        url.setQuery(query);
+
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
         m_webView->page()->load(url);
         m_webView->page()->setBackgroundColor(Qt::transparent);
