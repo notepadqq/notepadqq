@@ -1116,7 +1116,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
-    connect(editor, &Editor::fileLoaded, this, &MainWindow::checkIndentationMode);
+    connect(editor, &Editor::fileLoaded, this, &MainWindow::on_fileLoaded);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1670,17 +1670,21 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
         updateRecentDocsInMenu();
     }
+}
 
-    if (!wasAlreadyOpened) {
-        if (m_settings.General.getWarnForDifferentIndentation()) {
-//            checkIndentationMode(editor);
+// TODO: Make editor aware if a file is already loaded so
+// indentation banner only appears for new files.
+void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
+{
+    if(!wasAlreadyOpened) {
+        if(m_settings.General.getWarnForDifferentIndentation()) {
+            checkIndentationMode(static_cast<Editor*>(sender()));
         }
     }
 }
 
-void MainWindow::checkIndentationMode()
+void MainWindow::checkIndentationMode(Editor* editor)
 {
-    Editor* editor = static_cast<Editor*>(sender());
     bool found = false;
     Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
     if (found) {

@@ -65,7 +65,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
-    void checkIndentationMode();
+    void on_fileLoaded(bool wasAlreadyLoaded);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -281,6 +281,8 @@ private:
      *               On a `true` return, default symbol saving behavior is modified.
      */
     bool updateSymbols(bool on);
+
+    void checkIndentationMode(Editor* editor);
 };
 
 #endif // MAINWINDOW_H

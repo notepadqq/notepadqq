@@ -184,7 +184,9 @@ namespace EditorNS
             emit currentLanguageChanged(id, name);
         }else if(msg == "J_EVT_FILE_LOADED")
         {
-            emit fileLoaded();
+            // Data should be context aware of when the file was loaded
+            // later on
+            emit fileLoaded(false);
         }
     }
 
