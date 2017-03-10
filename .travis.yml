@@ -13,11 +13,17 @@ script:
   - "./src/ui-tests/ui-tests"
 before_deploy:
   - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
+  - "files=$(ls); mkdir notepadqq-${NQQ_VERSION}-source && cp -r $files notepadqq-${NQQ_VERSION}-source"
+  - "find notepadqq-${NQQ_VERSION}-source \\( -name '.git*' -o -name '.*ignore' -o -name '.travis.yml' \\) -delete"
+  - "make -C notepadqq-${NQQ_VERSION}-source distclean"
+  - "tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source"
 deploy:
   provider: releases
   api_key:
     secure: OCEuXR1a2dDHKKQpnOeSoeWZeL0clf0eVUZt5QbrnkyvL3/iUHXjYbdVBEGrbuldffLy9YOC63viqh/r7Ak+7k/suG1BxwGczbvtMBvRyUOOI48YX90Ss+JUcpvJVNLoirDqA1hPMho5Rmydu+DFRlpjADfg3KtZZZA+8Xz8Uek=
-  file: "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
+  file:
+    - "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
+    - "notepadqq-${NQQ_VERSION}-source.tar.gz"
   skip_cleanup: true
   on:
     repo: notepadqq/notepadqq
