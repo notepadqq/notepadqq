@@ -1,14 +1,15 @@
 var editor;
 var changeGeneration;
 var forceDirty = false;
-
+var UiDriver = new CommDriver();
+var evhook = new EditorEventHandler();
 UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn) {
     editor.setValue(data);
     // Update UiDriver.proxy here to keep things synced
-    UiDriver.onSetValue(editor);
-    UiDriver.onChange(editor);
-    UiDriver.onCursorActivity(editor);
-    UiDriver.onScroll(editor);
+    evhook.onSetValue(UiDriver.proxy, editor);
+    evhook.onChange(UiDriver.proxy, editor);
+    evhook.onCursorActivity(UiDriver.proxy, editor);
+    evhook.onScroll(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn) {
@@ -706,17 +707,17 @@ $(document).ready(function () {
     changeGeneration = editor.changeGeneration(true);
 
     editor.on("change", function(instance, changeObj) {
-        UiDriver.onChange(instance);
+        evhook.onChange(UiDriver.proxy, instance);
         UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
         UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
     editor.on("scroll", function(instance) {
-        UiDriver.onScroll(instance);
+        evhook.onScroll(UiDriver.proxy, instance);
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
-        UiDriver.onCursorActivity(instance);
+        evhook.onCursorActivity(UiDriver.proxy, instance);
         UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", 0);
     });
 
@@ -724,12 +725,12 @@ $(document).ready(function () {
         UiDriver.proxy.sendEditorEvent("J_EVT_GOT_FOCUS");
     });
     editor.on("optionChange", function() {
-        UiDriver.onOptionChange(editor);
+        evhook.onOptionChange(UiDriver.proxy, instance);
     });
 
     var proxyWait = setInterval(function() {
         if(UiDriver.proxy !== undefined) {
-            UiDriver.onLoad(editor);
+            evhook.onLoad(UiDriver.proxy, editor);
             clearInterval(proxyWait);
         }else {
             console.error("Waiting on JsProxy.");
