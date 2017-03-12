@@ -39,6 +39,10 @@ void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
     if (msg == "J_EVT_READY" && m_ready == false) {
         m_ready = true;
         pushQueuedMessages();
+    }else if(msg == "J_EVT_CLEAN_CHANGED") {
+        m_values["clean"] = data;
+    }else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
+        m_values["language"] = data;
     }
     emit editorEvent(msg, data);
 }
