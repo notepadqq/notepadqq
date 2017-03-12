@@ -360,17 +360,6 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_overtypeNotify = label;
 
-    if (Notepadqq::oldQt()) {
-        ClickableLabel *cklabel = new ClickableLabel(QString("Qt ") + qVersion(), this);
-        cklabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        cklabel->setStyleSheet("QLabel { background-color: #FF4136; color: white; }");
-        cklabel->setCursor(Qt::PointingHandCursor);
-        connect(cklabel, &ClickableLabel::clicked, this, [&]() {
-            Notepadqq::showQtVersionWarning(false, this);
-        });
-        layout->addWidget(cklabel);
-    }
-
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());

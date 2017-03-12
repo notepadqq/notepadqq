@@ -43,7 +43,6 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
-    ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
 
@@ -326,8 +325,6 @@ bool frmPreferences::applySettings()
         return false;
     }
 
-
-    m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
 
