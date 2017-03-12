@@ -67,7 +67,7 @@ namespace EditorNS
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
 
-        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
+        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
         m_webView->page()->load(url);
         m_webView->page()->setBackgroundColor(Qt::transparent);
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
@@ -77,13 +77,13 @@ namespace EditorNS
 
     void Editor::initJsProxy()
     {
-        m_jsToCppProxy = new JsToCppProxy(this);
-        connect(m_jsToCppProxy, 
-                &JsToCppProxy::replyReady, 
+        m_jsProxy = new JsProxy(this);
+        connect(m_jsProxy,
+                &JsProxy::replyReady,
                 &m_processLoop, 
                 &QEventLoop::quit);
-        connect(m_jsToCppProxy,
-                &JsToCppProxy::editorEvent, 
+        connect(m_jsProxy,
+                &JsProxy::editorEvent,
                 this, 
                 &Editor::on_proxyMessageReceived
                 );
@@ -149,12 +149,12 @@ namespace EditorNS
 
     void Editor::on_javaScriptWindowObjectCleared()
     {
-        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsToCppProxy);
+        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
     }
 
     void Editor::on_languageChange()
     {
-        QVariantMap data = m_jsToCppProxy->getRawValue("language").toMap();
+        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
         QString id = data.value("id").toString();
         QString lang = data.value("lang").toMap().value("name").toString();
         emit currentLanguageChanged(id, lang);
@@ -227,7 +227,7 @@ namespace EditorNS
     bool Editor::isClean()
     {
         bool clean;
-        m_jsToCppProxy->getValue("clean", clean);
+        m_jsProxy->getValue("clean", clean);
         return clean;
     }
 
@@ -281,7 +281,7 @@ namespace EditorNS
 
     QString Editor::getLanguage(const QString& val)
     {
-        QVariantMap data = m_jsToCppProxy->getRawValue("language").toMap();
+        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
         if ( val == "id" ) {
             return data.value("id").toString();
         }
@@ -327,7 +327,7 @@ namespace EditorNS
     Editor::IndentationMode Editor::indentationMode()
     {
         QPair<int, int> indent;
-        m_jsToCppProxy->getValue("indentMode", indent);
+        m_jsProxy->getValue("indentMode", indent);
         IndentationMode out;
         out.useTabs = indent.first;
         out.size = indent.second;
@@ -395,7 +395,7 @@ namespace EditorNS
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
 //        waitAsyncLoad();
-        m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
+        m_jsProxy->sendMsg(jsStringEscape(msg), data);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
@@ -405,9 +405,9 @@ namespace EditorNS
         if (m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
-        emit m_jsToCppProxy->sendMsg(jsStringEscape(msg), data);
+        emit m_jsProxy->sendMsg(jsStringEscape(msg), data);
         m_processLoop.exec();
-        return m_jsToCppProxy->getResult();
+        return m_jsProxy->getResult();
     }
 
     void Editor::setZoomFactor(const qreal &factor)
@@ -427,7 +427,7 @@ namespace EditorNS
     int Editor::getCharCount()
     {
         int charCount;
-        m_jsToCppProxy->getValue("charCount", charCount);
+        m_jsProxy->getValue("charCount", charCount);
         return charCount;
     }
 
@@ -492,7 +492,7 @@ namespace EditorNS
     QPair<int, int> Editor::getCursorPosition()
     {
         QPair<int, int> cursor;
-        m_jsToCppProxy->getValue("cursor", cursor);
+        m_jsProxy->getValue("cursor", cursor);
         return cursor;
     }
 
@@ -521,7 +521,7 @@ namespace EditorNS
     QPair<int, int> Editor::getScrollPosition()
     {
         QPair<int, int> scrollPosition;
-        m_jsToCppProxy->getValue("scrollPosition", scrollPosition);
+        m_jsProxy->getValue("scrollPosition", scrollPosition);
         return scrollPosition;
     }
 
@@ -637,7 +637,7 @@ namespace EditorNS
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = m_jsToCppProxy->getRawValue("selections").toList();
+        QList<QVariant> sels = m_jsProxy->getRawValue("selections").toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -658,7 +658,7 @@ namespace EditorNS
     QStringList Editor::getSelectedTexts()
     {
         QStringList selectedTexts;
-        m_jsToCppProxy->getValue("selectionsText", selectedTexts);
+        m_jsProxy->getValue("selectionsText", selectedTexts);
         return selectedTexts;
     }
 
@@ -676,7 +676,7 @@ namespace EditorNS
     {
         IndentationMode out;
         QPair<int, int> indent;
-        bool _found = m_jsToCppProxy->getValue("detectedIndent", indent);
+        bool _found = m_jsProxy->getValue("detectedIndent", indent);
 
         if (found != nullptr) {
             *found = _found;
@@ -705,7 +705,7 @@ namespace EditorNS
     int Editor::getLineCount()
     {
         int lines;
-        m_jsToCppProxy->getValue("lineCount", lines);
+        m_jsProxy->getValue("lineCount", lines);
         return lines;
     }
 

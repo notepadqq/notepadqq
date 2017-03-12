@@ -19,7 +19,7 @@ namespace EditorNS {
      *          special handling.
     */
     
-    class JsToCppProxy : public QObject
+    class JsProxy : public QObject
     {
         Q_OBJECT
 
@@ -43,7 +43,7 @@ namespace EditorNS {
         QVariant m_result;
         bool m_ready = false;
     public:
-        JsToCppProxy(QObject *parent);
+        JsProxy(QObject *parent);
 
         /**
          * @brief Get the last result returned from javascript.

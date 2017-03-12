@@ -3,12 +3,12 @@
 
 namespace EditorNS {
 
-JsToCppProxy::JsToCppProxy(QObject* parent) : QObject(parent)
+JsProxy::JsProxy(QObject* parent) : QObject(parent)
 {
     m_tempQueue = new QQueue<QPair<QString, QVariant>>();
 }
 
-bool JsToCppProxy::hasKey(const QString& key)
+bool JsProxy::hasKey(const QString& key)
 {
     if(!m_values.contains(key) || m_values[key].isNull()) {
         return false;
@@ -16,7 +16,7 @@ bool JsToCppProxy::hasKey(const QString& key)
     return true;
 }
 
-void JsToCppProxy::pushQueuedMessages()
+void JsProxy::pushQueuedMessages()
 {
     while(!m_tempQueue->isEmpty()) {
         QPair<QString, QVariant> msg = m_tempQueue->dequeue();
@@ -25,7 +25,7 @@ void JsToCppProxy::pushQueuedMessages()
     delete m_tempQueue;
 }
 
-void JsToCppProxy::sendMsg(const QString& msg, const QVariant& data)
+void JsProxy::sendMsg(const QString& msg, const QVariant& data)
 {
     if(!m_ready) {
         m_tempQueue->enqueue(qMakePair(msg, data));
@@ -34,7 +34,7 @@ void JsToCppProxy::sendMsg(const QString& msg, const QVariant& data)
     }
 }
 
-void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
+void JsProxy::sendEditorEvent(QString msg, QVariant data)
 {
     if (msg == "J_EVT_READY" && m_ready == false) {
         m_ready = true;
@@ -43,19 +43,19 @@ void JsToCppProxy::sendEditorEvent(QString msg, QVariant data)
     emit editorEvent(msg, data);
 }
 
-QVariant JsToCppProxy::getResult()
+QVariant JsProxy::getResult()
 {
     return m_result;
 }
 
-void JsToCppProxy::setResult(QVariant data)
+void JsProxy::setResult(QVariant data)
 {
     m_result = data;
     emit replyReady();
 }
 
 
-bool JsToCppProxy::getValue(const QString& key, int& r)
+bool JsProxy::getValue(const QString& key, int& r)
 {
     if (!hasKey(key))
         return false;
@@ -63,7 +63,7 @@ bool JsToCppProxy::getValue(const QString& key, int& r)
     return true;
 }
 
-bool JsToCppProxy::getValue(const QString& key, bool& r)
+bool JsProxy::getValue(const QString& key, bool& r)
 {
     if (!hasKey(key))
         return false;
@@ -71,7 +71,7 @@ bool JsToCppProxy::getValue(const QString& key, bool& r)
     return true;
 }
 
-bool JsToCppProxy::getValue(const QString& key, QPair<int, int>& r)
+bool JsProxy::getValue(const QString& key, QPair<int, int>& r)
 {
     if (!hasKey(key))
         return false;
@@ -80,7 +80,7 @@ bool JsToCppProxy::getValue(const QString& key, QPair<int, int>& r)
     return true;
 }
 
-bool JsToCppProxy::getValue(const QString& key, QString& r)
+bool JsProxy::getValue(const QString& key, QString& r)
 {
     if (!hasKey(key))
         return false;
@@ -88,7 +88,7 @@ bool JsToCppProxy::getValue(const QString& key, QString& r)
     return true;
 }
 
-bool JsToCppProxy::getValue(const QString& key, QStringList& r)
+bool JsProxy::getValue(const QString& key, QStringList& r)
 {
     if (!hasKey(key))
         return false;
@@ -96,12 +96,12 @@ bool JsToCppProxy::getValue(const QString& key, QStringList& r)
     return true;
 }
 
-QVariant JsToCppProxy::getRawValue(const QString& key)
+QVariant JsProxy::getRawValue(const QString& key)
 {
     return m_values.value(key);
 }
 
-void JsToCppProxy::setValue(QString name, QVariant data)
+void JsProxy::setValue(QString name, QVariant data)
 {
     m_values[name] = data;
 }

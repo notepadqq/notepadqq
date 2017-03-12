@@ -276,7 +276,7 @@ namespace EditorNS
         QEventLoop m_processLoop;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
-        JsToCppProxy *m_jsToCppProxy;
+        JsProxy *m_jsProxy;
         QUrl m_fileName = QUrl();
         bool m_fileOnDiskChanged = false;
         bool m_loaded = false;
