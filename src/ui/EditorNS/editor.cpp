@@ -186,7 +186,8 @@ namespace EditorNS
         {
             // Data should be context aware of when the file was loaded
             // later on
-            emit documentLoaded(false);
+            emit documentLoaded(m_alreadyLoaded);
+            m_alreadyLoaded = true;
         }
     }
 
