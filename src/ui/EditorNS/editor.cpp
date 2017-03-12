@@ -25,8 +25,9 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "")
+        if (themeName == "") {
             themeName = "default";
+        }
 
         fullConstructor(themeFromName(themeName));
     }
@@ -166,15 +167,15 @@ namespace EditorNS
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED")
+        } else if(msg == "J_EVT_CONTENT_CHANGED") {
             emit contentChanged();
-        else if(msg == "J_EVT_CLEAN_CHANGED")
+        } else if(msg == "J_EVT_CLEAN_CHANGED") {
             emit cleanChanged(data.toBool());
-        else if(msg == "J_EVT_CURSOR_ACTIVITY")
+        } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
             emit cursorActivity();
-        else if(msg == "J_EVT_GOT_FOCUS")
+        } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
-        else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
+        } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
             QVariantMap lang = data.toMap();
             QString id = lang.value("id").toString();
             QString name = lang.value("lang").toMap().value("name").toString();
@@ -182,8 +183,7 @@ namespace EditorNS
                 setIndentationMode(id);
             }
             emit currentLanguageChanged(id, name);
-        }else if(msg == "J_EVT_DOCUMENT_LOADED")
-        {
+        } else if(msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
         }
