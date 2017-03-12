@@ -6,12 +6,12 @@ Notepadqq
 Build
 -----
 
-| Build dependencies | Dependencies  |
-|--------------------|---------------|
-| Qt 5.3             | Qt 5.3        |
-| libqt5webkit5-dev  | libqt5webkit5 |
-| libqt5svg5-dev     | libqt5svg5    |
-| qttools5-dev-tools | coreutils     |
+| Build dependencies   | Dependencies     |
+|----------------------|------------------|
+| Qt 5.7               | Qt 5.7           |
+| libqt5webengine5-dev | libqt5webengine5 |
+| libqt5svg5-dev       | libqt5svg5       |
+| qttools5-dev-tools   | coreutils        |
 
 #### Get the source
 
@@ -32,7 +32,7 @@ by following the above steps, then run
 
 Qt
 --
-Notepadqq might work on Qt 5.2, but it's recommended to use Qt 5.3 or later. If the newest version isn't available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
+If the latest Qt version is not available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
 
 Distribution Packages
 ---------------------
