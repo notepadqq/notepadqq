@@ -48,6 +48,7 @@ public:
 
 private:
     EditorTabWidget *m_currentTabWidget;
+    int m_currentTabIndex = -1;
 
 signals:
     /**

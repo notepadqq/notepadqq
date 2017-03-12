@@ -284,6 +284,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
+        bool m_alreadyLoaded = false;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;

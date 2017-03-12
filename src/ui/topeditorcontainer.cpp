@@ -89,9 +89,10 @@ void TopEditorContainer::on_currentTabChanged(int index)
     if (!tabWidget)
         return;
 
-    if (m_currentTabWidget == tabWidget && m_currentTabWidget->currentIndex() == index)
+    if (m_currentTabWidget == tabWidget && m_currentTabIndex == index)
         return;
 
+    m_currentTabIndex = index;
     m_currentTabWidget = tabWidget;
     emit currentTabChanged(tabWidget, index);
     emit currentEditorChanged(tabWidget, index);
