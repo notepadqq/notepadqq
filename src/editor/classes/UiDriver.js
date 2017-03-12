@@ -2,11 +2,7 @@ class CommDriver {
     constructor() {
         var _this = this;
         this.handlers = [];
-        this.channel = undefined;
-        this.proxy = undefined;
         new QWebChannel(qt.webChannelTransport, function (_channel) {
-            _this.channel = _channel;
-
             _this.proxy = _channel.objects.cpp_ui_driver;
             _this.proxy.sendEditorEvent("J_EVT_PROXY_INIT", 0);
             _this.proxy.sendMsgInternal.connect(function(msg, data) {
