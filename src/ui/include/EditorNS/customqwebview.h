@@ -1,21 +1,23 @@
 #ifndef CUSTOMQWEBVIEW_H
 #define CUSTOMQWEBVIEW_H
 
-#include <QWebView>
 #include <QWheelEvent>
+#include <QWebEngineView>
 
 namespace EditorNS
 {
 
-    class CustomQWebView : public QWebView
+    class CustomQWebView : public QWebEngineView
     {
         Q_OBJECT
     public:
         explicit CustomQWebView(QWidget *parent = 0);
+        void connectJavaScriptObject(QString name, QObject *obj);
 
     signals:
         void mouseWheel(QWheelEvent *ev);
         void urlsDropped(QList<QUrl> urls);
+
     public slots:
 
     protected:

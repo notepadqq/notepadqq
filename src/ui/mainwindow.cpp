@@ -440,13 +440,11 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    Editor *editor = currentEditor();
-    if (editor == 0) {
-        qDebug() << "currentEditor is null";
-        throw;
-    }
+    // Lets open our Languages.js file and evaluate what languages we have.
+    // This keeps us from relying on an editor instance.
 
-    QList<QMap<QString, QString>> langs = editor->languages();
+    QList<QMap<QString, QString>> langs = Editor::languages();
+
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
@@ -469,7 +467,7 @@ void MainWindow::setupLanguagesMenu()
 
         QString langId = map.value("id", "");
         QAction *action = new QAction(map.value("name"), this);
-        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
+        connect(action, &QAction::triggered, this, [=](bool = false) {
             currentEditor()->setLanguage(langId);
         });
         letterMenu->insertAction(0, action);
@@ -1080,7 +1078,7 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 
 void MainWindow::on_action_Copy_triggered()
 {
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     QApplication::clipboard()->setText(sel.join("\n"));
 }
 
@@ -1118,6 +1116,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
+    connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1144,7 +1143,6 @@ void MainWindow::on_cursorActivity()
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
-
     if (currentEditor() == editor) {
         refreshEditorUiCursorInfo(editor);
     }
@@ -1165,14 +1163,14 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 {
     if (editor != 0) {
         // Update status bar
-        int len = editor->sendMessageWithResult("C_FUN_GET_TEXT_LENGTH").toInt();
-        int lines = editor->lineCount();
+        int len = editor->getCharCount();
+        int lines = editor->getLineCount();
         m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
 
-        QPair<int, int> cursor = editor->cursorPosition();
+        QPair<int, int> cursor = editor->getCursorPosition();
         int selectedChars = 0;
         int selectedPieces = 0;
-        QStringList selections = editor->selectedTexts();
+        QStringList selections = editor->getSelectedTexts();
         for (QString sel : selections) {
             selectedChars += sel.length();
             selectedPieces += sel.split("\n").count();
@@ -1189,8 +1187,8 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
-    QString name = data.value("lang").toMap().value("name").toString();
+    //QVariantMap data = editor->language().toString();
+    QString name = editor->getLanguage("name");
     m_statusBar_fileFormat->setText(name);
 
 
@@ -1362,7 +1360,7 @@ void MainWindow::on_actionSearch_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -1499,7 +1497,7 @@ void MainWindow::on_actionReplace_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -1552,7 +1550,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
     Editor *editor = currentEditor();
-    QStringList sel = editor->selectedTexts();
+    QStringList sel = editor->getSelectedTexts();
 
     for (int i = 0; i < sel.length(); i++) {
         sel.replace(i, func(sel.at(i)));
@@ -1672,15 +1670,20 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
         updateRecentDocsInMenu();
     }
+}
 
-    if (!wasAlreadyOpened) {
-        if (m_settings.General.getWarnForDifferentIndentation()) {
-            checkIndentationMode(editor);
+// FIXME: Make editor aware if a file is already loaded so
+// indentation banner only appears for new files.
+void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
+{
+    if(!wasAlreadyOpened) {
+        if(m_settings.General.getWarnForDifferentIndentation()) {
+            checkIndentationMode(static_cast<Editor*>(sender()));
         }
     }
 }
 
-void MainWindow::checkIndentationMode(Editor *editor)
+void MainWindow::checkIndentationMode(Editor* editor)
 {
     bool found = false;
     Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
@@ -2027,7 +2030,7 @@ void MainWindow::runCommand()
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
-    QStringList selection = editor->selectedTexts();
+    QStringList selection = editor->getSelectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
@@ -2072,7 +2075,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 QStringList MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
-    QStringList selection = editor->selectedTexts();
+    QStringList selection = editor->getSelectedTexts();
 
     if (selection.isEmpty() || selection.first().isEmpty()) {
         return QStringList(editor->getCurrentWord());
@@ -2173,7 +2176,7 @@ void MainWindow::on_actionFind_in_Files_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->selectedTexts();
+    QStringList sel = currentEditor()->getSelectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }
@@ -2259,8 +2262,8 @@ void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
 void MainWindow::on_actionGo_to_line_triggered()
 {
     Editor *editor = currentEditor();
-    int currentLine = editor->cursorPosition().first;
-    int lines = editor->lineCount();
+    int currentLine = editor->getCursorPosition().first;
+    int lines = editor->getLineCount();
     frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
     if (frm->exec() == QDialog::Accepted) {
         int line = frm->value();

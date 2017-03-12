@@ -1,31 +1,41 @@
-var UiDriver = new function() {
-    var handlers = [];
-
-    this.sendMessage = function(msg, data) {
-        cpp_ui_driver.messageReceived(msg, data);
+class CommDriver {
+    constructor() {
+        this.handlers = [];
+        new QWebChannel(qt.webChannelTransport, _channel => {
+            this.proxy = _channel.objects.cpp_ui_driver;
+            this.proxy.sendEditorEvent("J_EVT_PROXY_INIT", 0);
+            this.proxy.sendMsgInternal.connect((msg, data) => {
+                this.messageReceived(msg, data);
+            });
+        });
     }
 
-    this.registerEventHandler = function(msg, handler) {
-        if (handlers[msg] === undefined)
-            handlers[msg] = [];
-
-        handlers[msg].push(handler);
+    registerEventHandler(msg, handler) {
+        if (this.handlers[msg] === undefined)
+            this.handlers[msg] = [];
+        this.handlers[msg].push(handler);
     }
 
-    this.messageReceived = function(msg) {
-        var data = cpp_ui_driver.getMsgData();
+    setReturnData(data) {
+        this.proxy.result = data;
+    }
 
+    messageReceived(msg, data) {
         // Only one of the handlers (the last that gets
         // called) can return a value. So, to each handler
         // we provide the previous handler's return value.
         var prevReturn = undefined;
-
-        if (handlers[msg] !== undefined) {
-            handlers[msg].forEach(function(handler) {
+        if (this.handlers[msg] !== undefined) {
+            this.handlers[msg].forEach(function(handler) {
                 prevReturn = handler(msg, data, prevReturn);
             });
         }
 
+        if(prevReturn !== undefined) {
+            this.setReturnData(prevReturn);
+        }
         return prevReturn;
     }
 }
+
+

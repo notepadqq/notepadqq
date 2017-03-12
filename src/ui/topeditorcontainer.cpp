@@ -82,10 +82,17 @@ EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
 
 void TopEditorContainer::on_currentTabChanged(int index)
 {
+    if (index == -1)
+        return;
+
     EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
     if (!tabWidget)
         return;
 
+    if (m_currentTabWidget == tabWidget && m_currentTabIndex == index)
+        return;
+
+    m_currentTabIndex = index;
     m_currentTabWidget = tabWidget;
     emit currentTabChanged(tabWidget, index);
     emit currentEditorChanged(tabWidget, index);

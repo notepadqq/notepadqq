@@ -1,9 +1,15 @@
 var editor;
 var changeGeneration;
 var forceDirty = false;
-
+var UiDriver = new CommDriver();
+var evhook = new EditorEventHandler();
 UiDriver.registerEventHandler("C_CMD_SET_VALUE", function(msg, data, prevReturn) {
     editor.setValue(data);
+    // Update UiDriver.proxy here to keep things synced
+    evhook.onSetValue(UiDriver.proxy, editor);
+    evhook.onChange(UiDriver.proxy, editor);
+    evhook.onCursorActivity(UiDriver.proxy, editor);
+    evhook.onScroll(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn) {
@@ -22,12 +28,14 @@ function isCleanOrForced(generation) {
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
+    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
     forceDirty = true;
-    UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
+    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -147,6 +155,7 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
     return [cur.line, cur.ch];
+    
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
@@ -427,7 +436,7 @@ UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevRet
 
 UiDriver.registerEventHandler("C_CMD_SET_SMART_INDENT", function(msg, data, prevReturn) {
     editor.options.smartIndent = data;
-    return data;
+    //return data;
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_FOCUS", function(msg, data, prevReturn) {
@@ -694,21 +703,38 @@ $(document).ready(function () {
             cm.indentSelection("subtract");
         }
     });
-
+    
     changeGeneration = editor.changeGeneration(true);
 
     editor.on("change", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
-        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+        evhook.onChange(UiDriver.proxy, instance);
+        UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
+        UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    });
+
+    editor.on("scroll", function(instance) {
+        evhook.onScroll(UiDriver.proxy, instance);
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY");
+        evhook.onCursorActivity(UiDriver.proxy, instance);
+        UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", 0);
     });
 
     editor.on("focus", function() {
-        UiDriver.sendMessage("J_EVT_GOT_FOCUS");
+        UiDriver.proxy.sendEditorEvent("J_EVT_GOT_FOCUS");
+    });
+    editor.on("optionChange", function() {
+        evhook.onOptionChange(UiDriver.proxy, instance);
     });
 
-    UiDriver.sendMessage("J_EVT_READY", null);
+    var proxyWait = setInterval(function() {
+        if(UiDriver.proxy !== undefined) {
+            evhook.onLoad(UiDriver.proxy, editor);
+            clearInterval(proxyWait);
+        }else {
+            console.error("Waiting on JsProxy.");
+        }
+    },100);
+//    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
 });

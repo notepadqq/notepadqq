@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Notepadqq</title>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
     <script src="libs/jquery/jquery.min.js"></script>
     <script src="libs/codemirror/lib/codemirror.js"></script>
@@ -154,8 +155,10 @@
     <script src="libs/codemirror/addon/selection/mark-selection.js"></script>
     <script src="libs/codemirror/addon/show-invisibles/show-invisibles.js"></script>
 
+    <!-- requires libs/.../codemirror.css to be loaded -->
     <script src="init.js"></script>
     <script src="classes/UiDriver.js"></script>
+    <script src="classes/EditorStatusEvents.js"></script>
     <script src="classes/Languages.js"></script>
     <script src="classes/Printer.js"></script>
     <script src="app.js"></script>

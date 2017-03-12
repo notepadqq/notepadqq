@@ -103,7 +103,7 @@ void frmPreferences::updatePreviewEditorFont()
 
     // Re-setting language also updates the position of text selection. If not done, selected text
     // would often glitch out when changing the font causes the position of text characters to change.
-    m_previewEditor->setLanguage(m_previewEditor->language());
+    m_previewEditor->setLanguage(m_previewEditor->getLanguage());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -133,7 +133,7 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QList<QMap<QString, QString>> langs = m_topEditorContainer->currentTabWidget()->currentEditor()->languages();
+    QList<QMap<QString, QString>> langs = Editor::languages();
 
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
@@ -194,7 +194,6 @@ void frmPreferences::loadAppearanceTab()
 
     // Avoid glitch where scrollbars are appearing for a moment
     const QSize renderSize = ui->colorSchemePreviewFrame->size();
-    m_previewEditor->forceRender(renderSize);
 
     const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {
@@ -359,7 +358,7 @@ bool frmPreferences::applySettings()
             editor->setFont(fontFamily, fontSize, lineHeight);
 
             // Reset language-dependent settings (e.g. tab settings)
-            editor->setLanguage(editor->language());
+            editor->setLanguage(editor->getLanguage());
 
             return true;
         });

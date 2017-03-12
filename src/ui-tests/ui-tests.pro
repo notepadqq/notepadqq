@@ -3,7 +3,7 @@
 ######################################################################
 
 QT += testlib
-QT += core gui svg widgets webkitwidgets printsupport network
+QT += core gui svg widgets webenginewidgets printsupport network
 CONFIG += c++11
 TEMPLATE = app
 TARGET = ui-tests

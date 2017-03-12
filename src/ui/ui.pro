@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webkitwidgets printsupport network
+QT       += core gui svg widgets webenginewidgets webchannel printsupport network qml
 
 CONFIG += c++11
 
@@ -76,6 +76,7 @@ SOURCES += main.cpp\
     clickablelabel.cpp \
     frmencodingchooser.cpp \
     EditorNS/bannerindentationdetected.cpp \
+    EditorNS/jsproxy.cpp \
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
@@ -101,7 +102,7 @@ SOURCES += main.cpp\
     keygrabber.cpp \
     Sessions/sessions.cpp \
     Sessions/persistentcache.cpp \
-    nqqsettings.cpp \  
+    nqqsettings.cpp \
     nqqrun.cpp
 
 HEADERS  += include/mainwindow.h \
@@ -117,6 +118,7 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerbasicmessage.h \
     include/EditorNS/bannerfileremoved.h \
     include/EditorNS/customqwebview.h \
+    include/EditorNS/jsproxy.h \
     include/clickablelabel.h \
     include/frmencodingchooser.h \
     include/EditorNS/bannerindentationdetected.h \

@@ -18,7 +18,6 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
-
     QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
     setStyleSheet(style);
 }

@@ -1120,7 +1120,7 @@ var Languages = new function() {
             editor.setOption("foldGutter", true);
         }
 
-        UiDriver.sendMessage("J_EVT_CURRENT_LANGUAGE_CHANGED", {id: languageId, name: lang.name});
+        evhook.onLanguageChange(UiDriver.proxy, editor);
     }
     
     this.currentLanguage = function() {

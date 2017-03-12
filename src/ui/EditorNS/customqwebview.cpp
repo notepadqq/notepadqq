@@ -1,18 +1,21 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QMimeData>
+#include <QWebChannel>
 
 namespace EditorNS
 {
 
     CustomQWebView::CustomQWebView(QWidget *parent) :
-        QWebView(parent)
+        QWebEngineView(parent)
     {
+        QWebChannel *channel = new QWebChannel(page());
+        page()->setWebChannel(channel);
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        QWebView::wheelEvent(ev);
+        QWebEngineView::wheelEvent(ev);
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -22,7 +25,7 @@ namespace EditorNS
             ev->ignore();
             break;
         default:
-            QWebView::keyPressEvent(ev);
+            QWebEngineView::keyPressEvent(ev);
         }
     }
 
@@ -32,8 +35,12 @@ namespace EditorNS
             ev->ignore();
             emit urlsDropped(ev->mimeData()->urls());
         } else {
-            QWebView::dropEvent(ev);
+            QWebEngineView::dropEvent(ev);
         }
     }
 
+    void CustomQWebView::connectJavaScriptObject(QString name, QObject *obj)
+    {
+        page()->webChannel()->registerObject(name, obj);
+    }
 }

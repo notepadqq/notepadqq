@@ -2,56 +2,20 @@
 #define EDITOR_H
 
 #include "include/EditorNS/customqwebview.h"
+#include "include/EditorNS/jsproxy.h"
 #include <QObject>
 #include <QVariant>
+#include <QJsonValue>
 #include <QQueue>
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
-
+#include <QPrinter>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QEventLoop>
 namespace EditorNS
 {
-
-    /**
-         * @brief An Object injectable into the javascript page, that allows
-         *        the javascript code to send messages to an Editor object.
-         *        It also allows the js instance to retrieve message data information.
-         *
-         * Note that this class is only needed for the current Editor
-         * implementation, that uses QWebView.
-         */
-    class JsToCppProxy : public QObject
-    {
-        Q_OBJECT
-
-    private:
-        QVariant m_msgData;
-
-    public:
-        JsToCppProxy(QObject *parent) : QObject(parent) { }
-
-        /**
-             * @brief Set C++-to-JS message data. This method should
-             *        be called from the C++ part
-             * @param data
-             */
-        void setMsgData(QVariant data) { m_msgData = data; }
-
-        /**
-             * @brief Get the message data set by setMsgData(). This
-             *        method should be called from the JavaScript part.
-             */
-        Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
-
-    signals:
-        /**
-             * @brief A JavaScript message has been received.
-             * @param msg Message type
-             * @param data Message data
-             */
-        void messageReceived(QString msg, QVariant data);
-    };
-
 
     /**
          * @brief Provides a JavaScript CodeMirror instance.
@@ -69,6 +33,8 @@ namespace EditorNS
     class Editor : public QWidget
     {
         Q_OBJECT
+    private:
+
     public:
 
         struct Theme {
@@ -181,8 +147,18 @@ namespace EditorNS
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
-        QList<QMap<QString, QString> > languages();
+        static QList<QMap<QString, QString> > languages();
 
+
+        /**
+         * @brief Get the currently active language used
+         *        in the editor.
+         * @param val The value to pull from the language data,
+         *        or ID by default.
+         * @return The value associated with the key "val".
+         */
+
+        Q_INVOKABLE QString getLanguage(const QString& val = "id");
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
@@ -190,10 +166,12 @@ namespace EditorNS
          * @param language Language id
          */
         Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE QString setLanguageFromFileName(QString fileName);
-        Q_INVOKABLE QString setLanguageFromFileName();
-        Q_INVOKABLE void setValue(const QString &value);
+        Q_INVOKABLE void setLanguageFromFileName(QString fileName);
+        Q_INVOKABLE void setLanguageFromFileName();
+        
+        
         Q_INVOKABLE QString value();
+        Q_INVOKABLE void setValue(const QString &value);
 
         /**
          * @brief Set custom indentation settings which may be different
@@ -209,13 +187,12 @@ namespace EditorNS
         void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
-
         Q_INVOKABLE void setSmartIndent(bool enabled);
+
         Q_INVOKABLE qreal zoomFactor() const;
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString language();
+
+        
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -224,7 +201,7 @@ namespace EditorNS
          * @brief Get the current cursor position
          * @return a <line, column> pair.
          */
-        QPair<int, int> cursorPosition();
+        QPair<int, int> getCursorPosition();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);
@@ -233,9 +210,11 @@ namespace EditorNS
          * @brief Get the current scroll position
          * @return a <left, top> pair.
          */
-        QPair<int, int> scrollPosition();
+        QPair<int, int> getScrollPosition();
         void setScrollPosition(const int left, const int top);
         void setScrollPosition(const QPair<int, int> &position);
+
+
         QString endOfLineSequence() const;
         void setEndOfLineSequence(const QString &endOfLineSequence);
 
@@ -245,7 +224,7 @@ namespace EditorNS
          *                   nullptr denote no override.
          * @param fontSize the size to be applied. 0 denotes no override.
          */
-        void setFont(QString fontFamily, int fontSize, double lineHeight);
+        void setFont(QString fontFamily, int fontSize, double lineHeight); 
 
         QTextCodec *codec() const;
 
@@ -265,17 +244,20 @@ namespace EditorNS
         QList<Theme> themes();
         void setTheme(Theme theme);
         static Editor::Theme themeFromName(QString name);
+ 
 
-        QList<Selection> selections();
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         /**
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList selectedTexts();
+        Q_INVOKABLE QStringList getSelectedTexts();
+        QList<Selection> getSelections();
 
         void setOverwrite(bool overwrite);
-        void forceRender(QSize size);
         void setTabsVisible(bool visible);
 
         /**
@@ -285,14 +267,13 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        QString getCurrentWord();
-
-        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
-
-        int lineCount();
+        QString getCurrentWord(); 
+        int getLineCount();
+        int getCharCount();
 
     private:
         static QQueue<Editor*> m_editorBuffer;
+        QEventLoop m_processLoop;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;
@@ -303,6 +284,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
+        bool m_alreadyLoaded = false;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -311,10 +293,14 @@ namespace EditorNS
 
         void setIndentationMode(const bool useTabs, const int size);
         void setIndentationMode(QString language);
-
+        void initContextMenu();
+        void initJsProxy();
+        void initWebView(const Theme &theme);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
+        void on_cursorActivity() { emit cursorActivity(); }
+        void on_languageChange();
 
     signals:
         void messageReceived(QString msg, QVariant data);
@@ -328,6 +314,7 @@ namespace EditorNS
         void cursorActivity();
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
+        void documentLoaded(bool wasAlreadyLoaded);
 
         /**
              * @brief The editor finished loading. There should be
@@ -338,14 +325,11 @@ namespace EditorNS
         void currentLanguageChanged(QString id, QString name);
 
     public slots:
-        void sendMessage(const QString &msg, const QVariant &data);
-        void sendMessage(const QString &msg);
-        QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
-        QVariant sendMessageWithResult(const QString &msg);
+        void sendMessage(const QString &msg, const QVariant &data = QVariant());
+        QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
 
         void print(QPrinter *printer);
     };
-
 }
 
 #endif // EDITOR_H

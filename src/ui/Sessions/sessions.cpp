@@ -294,11 +294,11 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "";
 
             // Finally save other misc information about the tab.
-            const auto& scrollPos = editor->scrollPosition();
+            const auto& scrollPos = editor->getScrollPosition();
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
             td.active = tabWidget->currentEditor() == editor;
-            td.language = editor->language();
+            td.language = editor->getLanguage();
 
             // If we're caching and there's a file opened in the tab we want to inform the
             // user whether the file's contents have changed since Nqq was last opened.
@@ -420,7 +420,9 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if(tab.active) activeIndex = idx;
 
-            if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
+            if(!tab.language.isEmpty()) {
+                editor->setLanguage(tab.language);
+            }
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
             editor->clearFocus();

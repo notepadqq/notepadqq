@@ -65,6 +65,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
+    void on_fileLoaded(bool wasAlreadyLoaded);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -256,7 +257,6 @@ private:
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
-    void                checkIndentationMode(Editor *editor);
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     QStringList         currentWordOrSelections();
     QString             currentWordOrSelection();
@@ -281,6 +281,8 @@ private:
      *               On a `true` return, default symbol saving behavior is modified.
      */
     bool updateSymbols(bool on);
+
+    void checkIndentationMode(Editor* editor);
 };
 
 #endif // MAINWINDOW_H
