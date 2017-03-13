@@ -111,7 +111,6 @@ namespace EditorNS
     Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
     {
         Editor *out;
-        qDebug() << "Called";
         if (m_editorBuffer.length() == 0) {
             m_editorBuffer.enqueue(new Editor());
             out = new Editor();
