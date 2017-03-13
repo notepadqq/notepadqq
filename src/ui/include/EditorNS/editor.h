@@ -333,28 +333,66 @@ namespace EditorNS
         void generateLanguageChangeSignal(const QVariantMap& v);
     private slots:
         void on_javaScriptWindowObjectCleared();
+        /**
+         * @brief A message was received from the proxy.
+         * @param msg The message
+         * @param data Attached data, if any.
+         */
         void on_proxyMessageReceived(QString msg, QVariant data);
 
     signals:
+        //FIXME: Is the below signal still relevant?
+        /**
+         * @brief The editor received a message from Javascript.
+         */
         void messageReceived(QString msg, QVariant data);
+        /**
+         * @brief The editor got focus.
+         */
         void gotFocus();
+        /**
+         * @brief A mouse wheel event was detected.
+         */
         void mouseWheel(QWheelEvent *ev);
+        /**
+         * @brief An URL drop event was detected.
+         */
         void urlsDropped(QList<QUrl> urls);
+        /**
+         * @brief The current banner was removed.
+         */
         void bannerRemoved(QWidget *banner);
 
-        // Pre-interpreted messages:
+        /**
+         * @brief The active document was modified.
+         */
         void documentChanged(UiChangeInfo info);
+        /**
+         * @brief Cursor activity was detected.
+         */
         void cursorActivity(UiCursorInfo info);
+        /**
+         * @brief The clean state of the document changed.
+         */
         void cleanChanged(bool isClean);
+        /**
+         * @brief The file name of the document changed.
+         */
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
+        /**
+         * @brief A document was loaded, or reloaded.
+         */
         void documentLoaded(bool wasAlreadyLoaded);
 
         /**
-             * @brief The editor finished loading. There should be
-             *        no need to use this signal outside this class.
-             */
+         * @brief The editor finished loading. There should be
+         *        no need to use this signal outside this class.
+         */
         void editorReady();
 
+        /**
+         * @brief The editor language was changed.
+         */
         void currentLanguageChanged(QString id, QString name);
 
     public slots:
