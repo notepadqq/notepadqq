@@ -17,6 +17,8 @@ class TopEditorContainer : public QSplitter
     Q_OBJECT
 public:
     explicit TopEditorContainer(QWidget *parent = 0);
+    ~TopEditorContainer();
+
     EditorTabWidget *addTabWidget();
     EditorTabWidget *tabWidget(int index);
     EditorTabWidget *currentTabWidget();
@@ -49,6 +51,7 @@ public:
 private:
     EditorTabWidget *m_currentTabWidget;
     int m_currentTabIndex = -1;
+    bool m_shuttingDown = false;
 
 signals:
     /**
