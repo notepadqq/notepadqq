@@ -24,6 +24,7 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
 EditorTabWidget::~EditorTabWidget()
 {
+    this->blockSignals(true);
     // Manually remove each tab to keep m_editorPointers consistent
     for (int i = this->count() - 1; i >= 0; i--) {
         QSharedPointer<Editor> edt = editorSharedPtr(i);

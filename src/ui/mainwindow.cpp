@@ -1151,9 +1151,6 @@ void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
 
 void MainWindow::refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info)
 {
-    qDebug() << "Char Count: " << info.charCount;
-    qDebug() << "Line Count: " << info.lineCount;
-    qDebug() << "Cursor: " << info.cursorLine << "," << info.cursorColumn;
     m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
         .arg(info.charCount).arg(info.lineCount));
     m_statusBar_curPos->setText(tr("Ln %1, col %2")

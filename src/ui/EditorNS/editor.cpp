@@ -191,8 +191,10 @@ namespace EditorNS
 
     void Editor::generateCursorActivitySignal(const QVariantMap& v)
     {
+        //NOTE should we cache these values for getCursor, getCharCount
+        //     and getLineCount?  I don't think they're used outside of
+        //     refreshEditorCursorUiInfo.
         UiCursorInfo info;
-        qDebug() << v;
         info.charCount = v["charCount"].toInt();
         info.lineCount = v["lineCount"].toInt();
         info.cursorLine = v["cursorLine"].toInt();
@@ -539,7 +541,10 @@ namespace EditorNS
     QPair<int, int> Editor::getScrollPosition()
     {
         QPair<int, int> scrollPosition;
-        m_jsProxy->getValue("scrollPosition", scrollPosition);
+        bool valid = m_jsProxy->getValue("scrollPosition", scrollPosition);
+        if(!valid) {
+            return qMakePair(0, 0);
+        }
         return scrollPosition;
     }
 
