@@ -130,27 +130,27 @@ namespace EditorNS
              *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
              *        and TopEditorContainer::setFocus() for that.
              */
-        Q_INVOKABLE void setFocus();
+        void setFocus();
 
         /**
              * @brief Remove the focus from the editor.
              */
-        Q_INVOKABLE void clearFocus();
+        void clearFocus();
 
         /**
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */
-        Q_INVOKABLE void setFileName(const QUrl &filename);
+        void setFileName(const QUrl &filename);
 
         /**
              * @brief Get the file name associated with this editor
              * @return
              */
-        Q_INVOKABLE QUrl fileName() const;
+        QUrl fileName() const;
 
-        Q_INVOKABLE bool fileOnDiskChanged() const;
-        Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
+        bool fileOnDiskChanged() const;
+        void setFileOnDiskChanged(bool fileOnDiskChanged);
 
         enum selectMode {
             selectMode_cursorBefore,
@@ -163,9 +163,9 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        Q_INVOKABLE bool isClean();
-        Q_INVOKABLE void markClean();
-        Q_INVOKABLE void markDirty();
+        bool isClean();
+        void markClean();
+        void markDirty();
         static QList<QMap<QString, QString> > languages();
 
 
@@ -177,20 +177,20 @@ namespace EditorNS
          * @return The value associated with the key "val".
          */
 
-        Q_INVOKABLE QString getLanguage(const QString& val = "id");
+        QString getLanguage(const QString& val = "id");
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE void setLanguageFromFileName(QString fileName);
-        Q_INVOKABLE void setLanguageFromFileName();
+        void setLanguage(const QString &language);
+        void setLanguageFromFileName(QString fileName);
+        void setLanguageFromFileName();
         
         
-        Q_INVOKABLE QString value();
-        Q_INVOKABLE void setValue(const QString &value);
+        QString value();
+        void setValue(const QString &value);
 
         /**
          * @brief Set custom indentation settings which may be different
@@ -206,15 +206,15 @@ namespace EditorNS
         void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
-        Q_INVOKABLE void setSmartIndent(bool enabled);
+        void setSmartIndent(bool enabled);
 
-        Q_INVOKABLE qreal zoomFactor() const;
-        Q_INVOKABLE void setZoomFactor(const qreal &factor);
+        qreal zoomFactor() const;
+        void setZoomFactor(const qreal &factor);
 
         
-        Q_INVOKABLE void setLineWrap(const bool wrap);
-        Q_INVOKABLE void setEOLVisible(const bool showeol);
-        Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
+        void setLineWrap(const bool wrap);
+        void setEOLVisible(const bool showeol);
+        void setWhitespaceVisible(const bool showspace);
 
         /**
          * @brief Get the current cursor position
@@ -265,15 +265,15 @@ namespace EditorNS
         static Editor::Theme themeFromName(QString name);
  
 
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        void setSelectionsText(const QStringList &texts, selectMode mode);
+        void setSelectionsText(const QStringList &texts);
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         /**
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList getSelectedTexts();
+        QStringList getSelectedTexts();
         QList<Selection> getSelections();
 
         void setOverwrite(bool overwrite);
