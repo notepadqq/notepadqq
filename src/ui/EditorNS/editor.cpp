@@ -111,7 +111,7 @@ namespace EditorNS
     Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
     {
         Editor *out;
-
+        qDebug() << "Called";
         if (m_editorBuffer.length() == 0) {
             m_editorBuffer.enqueue(new Editor());
             out = new Editor();
@@ -167,26 +167,41 @@ namespace EditorNS
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED") {
-            emit contentChanged();
+        } else if(msg == "J_EVT_DOCUMENT_CHANGED") {
+            emit generateChangeActivitySignal(data.toMap());
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            emit cleanChanged(data.toBool());
+            //Cache clean state since it's a high-traffic value.
+            m_clean = data.toBool();
+            emit cleanChanged(m_clean);
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
             generateCursorActivitySignal(data.toMap());
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
         } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            QVariantMap lang = data.toMap();
-            QString id = lang.value("id").toString();
-            QString name = lang.value("lang").toMap().value("name").toString();
-            if (!m_customIndentationMode) {
-                setIndentationMode(id);
-            }
-            emit currentLanguageChanged(id, name);
+            generateLanguageChangeSignal(data.toMap());
         } else if(msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
         }
+    }
+
+    void Editor::generateChangeActivitySignal(const QVariantMap& v)
+    {
+        UiChangeInfo info;
+        info.charCount = v["charCount"].toInt();
+        info.lineCount = v["lineCount"].toInt();
+
+        emit documentChanged(info);
+    }
+
+    void Editor::generateLanguageChangeSignal(const QVariantMap& v)
+    {
+        QString id = v.value("id").toString();
+        QString name = v.value("lang").toMap().value("name").toString();
+        if (!m_customIndentationMode) {
+            setIndentationMode(id);
+        }
+        emit currentLanguageChanged(id, name);
     }
 
     void Editor::generateCursorActivitySignal(const QVariantMap& v)
@@ -195,12 +210,12 @@ namespace EditorNS
         //     and getLineCount?  I don't think they're used outside of
         //     refreshEditorCursorUiInfo.
         UiCursorInfo info;
-        info.charCount = v["charCount"].toInt();
-        info.lineCount = v["lineCount"].toInt();
+//        info.charCount = v["charCount"].toInt();
+//        info.lineCount = v["lineCount"].toInt();
         info.cursorLine = v["cursorLine"].toInt();
         info.cursorColumn = v["cursorColumn"].toInt();
-        info.selectionLength = v["selectionLength"].toInt();
-        info.selectionLines = v["selectionLines"].toInt();
+        info.selectionCharCount = v["selectionCharCount"].toInt();
+        info.selectionLineCount = v["selectionLineCount"].toInt();
         emit cursorActivity(info);
     }
 
@@ -241,9 +256,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        bool clean;
-        m_jsProxy->getValue("clean", clean);
-        return clean;
+        return m_clean;
     }
 
     void Editor::markClean()

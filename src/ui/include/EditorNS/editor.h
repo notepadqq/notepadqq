@@ -85,14 +85,16 @@ namespace EditorNS
             }
         };
 
-        struct UiCursorInfo {
+        struct UiChangeInfo {
             int charCount;
             int lineCount;
+        };
+
+        struct UiCursorInfo {
             int cursorLine;
             int cursorColumn;
-            int selectionLength;
-            int selectionLines;
-            QStringList selections;
+            int selectionCharCount;
+            int selectionLineCount;
         }; 
 
         struct Selection {
@@ -295,6 +297,7 @@ namespace EditorNS
         bool m_bom = false;
         bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
+        bool m_clean = true;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -307,9 +310,11 @@ namespace EditorNS
         void initJsProxy();
         void initWebView(const Theme &theme);
         /**
-         * @brief Builds a UiCursorInfo struct to pass to our slot.
+         * @brief Passthru functions that handle slot calls to on_proxyMessageReceived
          */
+        void generateChangeActivitySignal(const QVariantMap& v);
         void generateCursorActivitySignal(const QVariantMap& v);
+        void generateLanguageChangeSignal(const QVariantMap& v);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
@@ -323,7 +328,7 @@ namespace EditorNS
         void bannerRemoved(QWidget *banner);
 
         // Pre-interpreted messages:
-        void contentChanged();
+        void documentChanged(UiChangeInfo info);
         void cursorActivity(UiCursorInfo info);
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);

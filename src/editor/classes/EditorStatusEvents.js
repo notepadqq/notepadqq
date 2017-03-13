@@ -1,6 +1,7 @@
 class EditorEventHandler {
     constructor() {
-
+        this.lastCleanStatus = undefined;
+        this.cursorActivityTimer = setTimeout(function() {},1);
     }
 
     cursorActivityObject(editor) {
@@ -9,15 +10,28 @@ class EditorEventHandler {
         var selLines = (sel.match(/\n/g)||[]).length;
         var cursor = editor.getCursor();
         var UiCursorInfo = {
-            charCount: editor.getValue("\n").length,
-            lineCount: editor.lineCount(),
             cursorLine: cursor.line,
             cursorColumn: cursor.ch,
-            selectionLength: selLength,
-            selectionLines: selLines
+            selectionCharCount: selLength,
+            selectionLineCount: selLines
         }
         return UiCursorInfo;
     }
+
+    changeActivityObject(editor) {
+        var UiChangeInfo = {
+            charCount: editor.getValue("\n").length,
+            lineCount: editor.lineCount()
+        }
+        return UiChangeInfo;
+    }
+
+    cleanActivityObject(editor) {
+        var clean = isCleanOrForced(changeGeneration);
+        this.lastCleanStatus = clean;
+        return clean;
+    }
+
 
     detectIndentationMode(editor) {
         var len = editor.lineCount();
@@ -64,17 +78,23 @@ class EditorEventHandler {
     }
 
     onCursorActivity(proxy, editor) {
-        var cur = editor.getCursor();
-        proxy.setValue("cursor", [cur.line, cur.ch]);
-        proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
+        clearTimeout(this.cursorActivityTimer);
+        // We put this in a small timer so we don't flood the queue
+        // during selection and fast cursor movement.
+        this.cursorActivityTimer = setTimeout(function() {
+            proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
+        }.bind(this), 20);
     }
 
+    onFocus(proxy, editor) {
 
+    }
 
     onChange(proxy, editor) {
-        proxy.setValue("charCount", editor.getValue("\n").length);
-        proxy.setValue("lineCount", editor.lineCount());
-        proxy.setValue("clean", isCleanOrForced(changeGeneration));
+        proxy.sendEditorEvent("J_EVT_DOCUMENT_CHANGED", this.changeActivityObject(editor));
+        if(this.lastCleanStatus != isCleanOrForced(changeGeneration)) {
+            proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", this.cleanActivityObject(editor));
+        }
     }
 
     onScroll(proxy, editor) {

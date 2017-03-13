@@ -1090,9 +1090,7 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
     if (tab != -1) {
         Editor *editor = tabWidget->editor(tab);
-
-        editor->on_cursorInfoRequest();
-        refreshEditorUiInfo(editor);
+        refreshEditorUiInfoAll(editor);
     }
 }
 
@@ -1107,6 +1105,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
     connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
+    connect(editor, &Editor::documentChanged, this, &MainWindow::on_documentChanged);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1114,6 +1113,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
         if (currentEditor() == editor)
             refreshEditorUiInfo(editor);
     });
+    connect(editor, &Editor::cleanChanged, this, &MainWindow::on_cleanChanged);
     connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
     // Initialize editor with UI settings
@@ -1128,9 +1128,15 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 
+void MainWindow::on_documentChanged(EditorNS::Editor::UiChangeInfo info)
+{
+    m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
+        .arg(info.charCount).arg(info.lineCount));
+}
+
 void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
+    Editor *editor = static_cast<Editor *>(sender());
     if (!editor)
         return;
     if (currentEditor() == editor) {
@@ -1151,14 +1157,39 @@ void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
 
 void MainWindow::refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info)
 {
-    m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
-        .arg(info.charCount).arg(info.lineCount));
+    //FIXME
     m_statusBar_curPos->setText(tr("Ln %1, col %2")
                                 .arg(info.cursorLine + 1)
                                 .arg(info.cursorColumn + 1));
 
     m_statusBar_selection->setText(tr("Sel %1 (%2)")
-            .arg(info.selectionLength).arg(info.selectionLines));
+            .arg(info.selectionCharCount).arg(info.selectionLineCount));
+}
+
+void MainWindow::on_cleanChanged(bool isClean)
+{
+    ui->actionMove_to_New_Window->setEnabled(isClean);
+    ui->actionOpen_in_New_Window->setEnabled(isClean);
+}
+
+void MainWindow::refreshEditorUiInfoAll(Editor* editor)
+{
+    editor->on_cursorInfoRequest();
+    refreshEditorUiEncodingInfo(editor);
+    refreshEditorUiInfo(editor);
+}
+
+void MainWindow::refreshEditorUiEncodingInfo(Editor *editor)
+{
+    // Encoding
+    QString encoding;
+    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
+        // Is UTF-8 without BOM
+        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
+    } else {
+        encoding = QString::fromUtf8(editor->codec()->name());
+    }
+    m_statusBar_textFormat->setText(encoding);
 }
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
@@ -1211,11 +1242,8 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 
     // Enable / disable menus
-    bool isClean = editor->isClean();
     QUrl fileName = editor->fileName();
     ui->actionRename->setEnabled(!fileName.isEmpty());
-    ui->actionMove_to_New_Window->setEnabled(isClean);
-    ui->actionOpen_in_New_Window->setEnabled(isClean);
 
     bool allowReloading = !editor->fileName().isEmpty();
     ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
@@ -1234,15 +1262,6 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         m_statusBar_EOLstyle->setText(tr("Old Mac"));
     }
 
-    // Encoding
-    QString encoding;
-    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
-        // Is UTF-8 without BOM
-        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
-    } else {
-        encoding = QString::fromUtf8(editor->codec()->name());
-    }
-    m_statusBar_textFormat->setText(encoding);
 
     // Indentation
     if (editor->isUsingCustomIndentationMode()) {
@@ -1648,8 +1667,6 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     }
 }
 
-// FIXME: Make editor aware if a file is already loaded so
-// indentation banner only appears for new files.
 void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
 {
     if(!wasAlreadyOpened) {
@@ -1834,7 +1851,7 @@ void MainWindow::convertEditorEncoding(Editor *editor, QTextCodec *codec, bool b
     editor->markDirty();
 
     if (editor == currentEditor())
-        refreshEditorUiInfo(editor);
+        refreshEditorUiEncodingInfo(editor);
 }
 
 void MainWindow::on_actionUTF_8_triggered()
@@ -1860,25 +1877,25 @@ void MainWindow::on_actionUTF_16LE_triggered()
 void MainWindow::on_actionInterpret_as_UTF_8_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_8_without_BOM_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionConvert_to_triggered()

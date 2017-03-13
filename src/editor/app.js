@@ -28,14 +28,12 @@ function isCleanOrForced(generation) {
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    evhook.onChange(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
     forceDirty = true;
-    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    evhook.onChange(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -711,8 +709,6 @@ $(document).ready(function () {
 
     editor.on("change", function(instance, changeObj) {
         evhook.onChange(UiDriver.proxy, instance);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
     editor.on("scroll", function(instance) {
@@ -723,8 +719,8 @@ $(document).ready(function () {
         evhook.onCursorActivity(UiDriver.proxy, instance);
     });
 
-    editor.on("focus", function() {
-        UiDriver.proxy.sendEditorEvent("J_EVT_GOT_FOCUS");
+    editor.on("focus", function(instance) {
+        evhook.onFocus(UiDriver.proxy, instance);
     });
     editor.on("optionChange", function() {
         evhook.onOptionChange(UiDriver.proxy, instance);
@@ -738,5 +734,4 @@ $(document).ready(function () {
             console.error("Waiting on JsProxy.");
         }
     },100);
-//    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
 });
