@@ -306,8 +306,8 @@ namespace EditorNS
         bool m_alreadyLoaded = false;
         bool m_clean = true;
         
-        UiChangeInfo docInfo;
-        UiCursorInfo cursorInfo;
+        UiChangeInfo m_docInfo;
+        UiCursorInfo m_cursorInfo;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -344,11 +344,6 @@ namespace EditorNS
         void on_proxyMessageReceived(QString msg, QVariant data);
 
     signals:
-        //FIXME: Is the below signal still relevant?
-        /**
-         * @brief The editor received a message from Javascript.
-         */
-        void messageReceived(QString msg, QVariant data);
         /**
          * @brief The editor got focus.
          */

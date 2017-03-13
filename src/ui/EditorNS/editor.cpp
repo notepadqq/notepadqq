@@ -178,9 +178,9 @@ namespace EditorNS
 
     void Editor::generateChangeActivitySignal(const QVariantMap& v)
     {
-        docInfo.charCount = v["charCount"].toInt();
-        docInfo.lineCount = v["lineCount"].toInt();
-        emit documentChanged(docInfo);
+        m_docInfo.charCount = v["charCount"].toInt();
+        m_docInfo.lineCount = v["lineCount"].toInt();
+        emit documentChanged(m_docInfo);
     }
 
     void Editor::generateLanguageChangeSignal(const QVariantMap& v)
@@ -195,11 +195,11 @@ namespace EditorNS
 
     void Editor::generateCursorActivitySignal(const QVariantMap& v)
     {
-        cursorInfo.line = v["cursorLine"].toInt();
-        cursorInfo.column = v["cursorColumn"].toInt();
-        cursorInfo.selectionCharCount = v["selectionCharCount"].toInt();
-        cursorInfo.selectionLineCount = v["selectionLineCount"].toInt();
-        emit cursorActivity(cursorInfo);
+        m_cursorInfo.line = v["cursorLine"].toInt();
+        m_cursorInfo.column = v["cursorColumn"].toInt();
+        m_cursorInfo.selectionCharCount = v["selectionCharCount"].toInt();
+        m_cursorInfo.selectionLineCount = v["selectionLineCount"].toInt();
+        emit cursorActivity(m_cursorInfo);
     }
 
     void Editor::setFocus()
@@ -437,7 +437,7 @@ namespace EditorNS
 
     int Editor::getCharCount()
     {
-        return docInfo.charCount;
+        return m_docInfo.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -510,7 +510,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getCursorPosition()
     {
-        return qMakePair(cursorInfo.line, cursorInfo.column);
+        return qMakePair(m_cursorInfo.line, m_cursorInfo.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -724,7 +724,7 @@ namespace EditorNS
 
     int Editor::getLineCount()
     {
-        return docInfo.lineCount;
+        return m_docInfo.lineCount;
     }
 
 }
