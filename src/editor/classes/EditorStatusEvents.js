@@ -81,9 +81,9 @@ class EditorEventHandler {
         clearTimeout(this.cursorActivityTimer);
         // We put this in a small timer so we don't flood the queue
         // during selection and fast cursor movement.
-        this.cursorActivityTimer = setTimeout(function() {
+        this.cursorActivityTimer = setTimeout(() => {
             proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
-        }.bind(this), 20);
+        }, 20);
     }
 
     onFocus(proxy, editor) {
