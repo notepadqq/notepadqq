@@ -78,7 +78,6 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info);
     void refreshEditorUiEncodingInfo(Editor* editor);
     //Temporary until we get refreshEditorUiInfo untangled.
     void refreshEditorUiInfoAll(Editor* editor);

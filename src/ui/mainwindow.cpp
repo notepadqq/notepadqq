@@ -1089,8 +1089,7 @@ void MainWindow::on_actionCu_t_triggered()
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
     if (tab != -1) {
-        Editor *editor = tabWidget->editor(tab);
-        refreshEditorUiInfoAll(editor);
+        refreshEditorUiInfoAll(tabWidget->editor(tab));
     }
 }
 
@@ -1109,10 +1108,6 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    connect(editor, &Editor::cleanChanged, this, [=]() {
-        if (currentEditor() == editor)
-            refreshEditorUiInfo(editor);
-    });
     connect(editor, &Editor::cleanChanged, this, &MainWindow::on_cleanChanged);
     connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
@@ -1126,6 +1121,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
                     m_settings.Appearance.getOverrideFontSize(),
                     m_settings.Appearance.getOverrideLineHeight());
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
+    refreshEditorUiInfoAll(editor);
 }
 
 void MainWindow::on_documentChanged(EditorNS::Editor::UiChangeInfo info)
@@ -1136,34 +1132,18 @@ void MainWindow::on_documentChanged(EditorNS::Editor::UiChangeInfo info)
 
 void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
 {
-    Editor *editor = static_cast<Editor *>(sender());
-    if (!editor)
-        return;
-    if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(info);
-    }
-}
-
-void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
-{
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-
-    if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
-    }
-}
-
-void MainWindow::refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info)
-{
-    //FIXME
     m_statusBar_curPos->setText(tr("Ln %1, col %2")
                                 .arg(info.cursorLine + 1)
                                 .arg(info.cursorColumn + 1));
 
     m_statusBar_selection->setText(tr("Sel %1 (%2)")
             .arg(info.selectionCharCount).arg(info.selectionLineCount));
+
+}
+
+void MainWindow::on_currentLanguageChanged(QString /*id*/, QString name)
+{
+    m_statusBar_fileFormat->setText(name);
 }
 
 void MainWindow::on_cleanChanged(bool isClean)
@@ -1174,6 +1154,7 @@ void MainWindow::on_cleanChanged(bool isClean)
 
 void MainWindow::refreshEditorUiInfoAll(Editor* editor)
 {
+    //TODO: Find a place to hook this slot.
     editor->on_cursorInfoRequest();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
@@ -1193,13 +1174,7 @@ void MainWindow::refreshEditorUiEncodingInfo(Editor *editor)
 }
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
-{
-    // Update current language in statusbar
-    //QVariantMap data = editor->language().toString();
-    QString name = editor->getLanguage("name");
-    m_statusBar_fileFormat->setText(name);
-
-
+{ 
     // Update MainWindow title
     QString newTitle;
     if (editor->fileName().isEmpty()) {
@@ -1637,7 +1612,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     editor->removeBanner("fileremoved");
 
     if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
+        refreshEditorUiInfoAll(editor);
     }
 }
 
@@ -1665,6 +1640,7 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
         updateRecentDocsInMenu();
     }
+    refreshEditorUiInfoAll(currentEditor());
 }
 
 void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
