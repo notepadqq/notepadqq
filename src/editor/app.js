@@ -155,13 +155,16 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
     return [cur.line, cur.ch];
-    
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
     var line = data[0];
     var ch = data[1];
     editor.setCursor(line, ch);
+});
+
+UiDriver.registerEventHandler('C_CMD_REQUEST_CURSOR_INFO', function(msg, data, prevReturn) {
+    evhook.onCursorActivity(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
@@ -718,7 +721,6 @@ $(document).ready(function () {
 
     editor.on("cursorActivity", function(instance, changeObj) {
         evhook.onCursorActivity(UiDriver.proxy, instance);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", 0);
     });
 
     editor.on("focus", function() {

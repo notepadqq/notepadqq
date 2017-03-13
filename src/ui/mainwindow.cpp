@@ -1090,8 +1090,9 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
     if (tab != -1) {
         Editor *editor = tabWidget->editor(tab);
+
+        editor->on_cursorInfoRequest();
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
     }
 }
 
@@ -1127,13 +1128,13 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 
-void MainWindow::on_cursorActivity()
+void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
 {
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
     if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(editor);
+        refreshEditorUiCursorInfo(info);
     }
 }
 
@@ -1148,29 +1149,19 @@ void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
     }
 }
 
-void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
+void MainWindow::refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info)
 {
-    if (editor != 0) {
-        // Update status bar
-        int len = editor->getCharCount();
-        int lines = editor->getLineCount();
-        m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
+    qDebug() << "Char Count: " << info.charCount;
+    qDebug() << "Line Count: " << info.lineCount;
+    qDebug() << "Cursor: " << info.cursorLine << "," << info.cursorColumn;
+    m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
+        .arg(info.charCount).arg(info.lineCount));
+    m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                .arg(info.cursorLine + 1)
+                                .arg(info.cursorColumn + 1));
 
-        QPair<int, int> cursor = editor->getCursorPosition();
-        int selectedChars = 0;
-        int selectedPieces = 0;
-        QStringList selections = editor->getSelectedTexts();
-        for (QString sel : selections) {
-            selectedChars += sel.length();
-            selectedPieces += sel.split("\n").count();
-        }
-
-        m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                    .arg(cursor.first + 1)
-                                    .arg(cursor.second + 1));
-
-        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
-    }
+    m_statusBar_selection->setText(tr("Sel %1 (%2)")
+            .arg(info.selectionLength).arg(info.selectionLines));
 }
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
@@ -1631,7 +1622,6 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
     }
 }
 

@@ -3,6 +3,22 @@ class EditorEventHandler {
 
     }
 
+    cursorActivityObject(editor) {
+        var sel = editor.getSelection("\n");
+        var selLength = sel.length;
+        var selLines = (sel.match(/\n/g)||[]).length;
+        var cursor = editor.getCursor();
+        var UiCursorInfo = {
+            charCount: editor.getValue("\n").length,
+            lineCount: editor.lineCount(),
+            cursorLine: cursor.line,
+            cursorColumn: cursor.ch,
+            selectionLength: selLength,
+            selectionLines: selLines
+        }
+        return UiCursorInfo;
+    }
+
     detectIndentationMode(editor) {
         var len = editor.lineCount();
         var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space
@@ -48,24 +64,12 @@ class EditorEventHandler {
     }
 
     onCursorActivity(proxy, editor) {
-        var out = [];
-        var sels = editor.listSelections();
-        for (var i = 0; i < sels.length; i++) {
-            out[i] = {  anchor: {
-                            line: sels[i].anchor.line,
-                            ch: sels[i].anchor.ch
-                        },
-                        head: {
-                            line: sels[i].head.line,
-                            ch: sels[i].head.ch
-                        }
-                    };
-        }
-        proxy.setValue("selections", out);
-        proxy.setValue("selectionsText", editor.getSelections("\n"));
         var cur = editor.getCursor();
         proxy.setValue("cursor", [cur.line, cur.ch]);
+        proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
     }
+
+
 
     onChange(proxy, editor) {
         proxy.setValue("charCount", editor.getValue("\n").length);

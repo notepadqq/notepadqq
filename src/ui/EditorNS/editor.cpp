@@ -172,7 +172,7 @@ namespace EditorNS
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
             emit cleanChanged(data.toBool());
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
-            emit cursorActivity();
+            generateCursorActivitySignal(data.toMap());
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
         } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
@@ -187,6 +187,19 @@ namespace EditorNS
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
         }
+    }
+
+    void Editor::generateCursorActivitySignal(const QVariantMap& v)
+    {
+        UiCursorInfo info;
+        qDebug() << v;
+        info.charCount = v["charCount"].toInt();
+        info.lineCount = v["lineCount"].toInt();
+        info.cursorLine = v["cursorLine"].toInt();
+        info.cursorColumn = v["cursorColumn"].toInt();
+        info.selectionLength = v["selectionLength"].toInt();
+        info.selectionLines = v["selectionLines"].toInt();
+        emit cursorActivity(info);
     }
 
     void Editor::setFocus()
@@ -487,6 +500,11 @@ namespace EditorNS
     void Editor::setWhitespaceVisible(const bool showspace)
     {
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
+    }
+
+    void Editor::on_cursorInfoRequest()
+    {
+        sendMessage("C_CMD_REQUEST_CURSOR_INFO");
     }
 
     QPair<int, int> Editor::getCursorPosition()

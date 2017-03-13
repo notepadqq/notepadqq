@@ -85,6 +85,16 @@ namespace EditorNS
             }
         };
 
+        struct UiCursorInfo {
+            int charCount;
+            int lineCount;
+            int cursorLine;
+            int cursorColumn;
+            int selectionLength;
+            int selectionLines;
+            QStringList selections;
+        }; 
+
         struct Selection {
             Cursor from;
             Cursor to;
@@ -296,10 +306,13 @@ namespace EditorNS
         void initContextMenu();
         void initJsProxy();
         void initWebView(const Theme &theme);
+        /**
+         * @brief Builds a UiCursorInfo struct to pass to our slot.
+         */
+        void generateCursorActivitySignal(const QVariantMap& v);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
-        void on_cursorActivity() { emit cursorActivity(); }
         void on_languageChange();
 
     signals:
@@ -311,7 +324,7 @@ namespace EditorNS
 
         // Pre-interpreted messages:
         void contentChanged();
-        void cursorActivity();
+        void cursorActivity(UiCursorInfo info);
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
         void documentLoaded(bool wasAlreadyLoaded);
@@ -327,7 +340,7 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data = QVariant());
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
-
+        void on_cursorInfoRequest();
         void print(QPrinter *printer);
     };
 }

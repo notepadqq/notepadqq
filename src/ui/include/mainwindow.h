@@ -12,6 +12,7 @@
 #include "include/Search/filesearchresultswidget.h"
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
+#include "include/EditorNS/editor.h"
 
 namespace Ui {
 class MainWindow;
@@ -77,7 +78,7 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiCursorInfo(Editor *editor);
+    void refreshEditorUiCursorInfo(EditorNS::Editor::UiCursorInfo info);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -92,7 +93,7 @@ private slots:
     void on_actionCu_t_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
-    void on_cursorActivity();
+    void on_cursorActivity(EditorNS::Editor::UiCursorInfo info);
     void on_action_Delete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
