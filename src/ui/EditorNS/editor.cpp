@@ -503,6 +503,11 @@ namespace EditorNS
         sendMessage("C_CMD_REQUEST_CURSOR_INFO");
     }
 
+    void Editor::on_documentInfoRequest()
+    {
+        sendMessage("C_CMD_REQUEST_DOCUMENT_INFO");
+    }
+
     QPair<int, int> Editor::getCursorPosition()
     {
         return qMakePair(cursorInfo.line, cursorInfo.column);

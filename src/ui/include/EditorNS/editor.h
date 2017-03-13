@@ -402,6 +402,7 @@ namespace EditorNS
         void sendMessage(const QString &msg, const QVariant &data = QVariant());
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
         void on_cursorInfoRequest();
+        void on_documentInfoRequest();
         void print(QPrinter *printer);
     };
 }

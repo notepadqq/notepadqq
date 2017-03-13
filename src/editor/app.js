@@ -165,6 +165,10 @@ UiDriver.registerEventHandler('C_CMD_REQUEST_CURSOR_INFO', function(msg, data, p
     evhook.onCursorActivity(UiDriver.proxy, editor);
 });
 
+UiDriver.registerEventHandler('C_CMD_REQUEST_DOCUMENT_INFO', function(msg, data, prevReturn) {
+    evhook.onChange(UiDriver.proxy, editor);
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
     var scroll = editor.getScrollInfo();
     return [scroll.left, scroll.top];

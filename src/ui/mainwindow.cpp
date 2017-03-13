@@ -1156,6 +1156,7 @@ void MainWindow::refreshEditorUiInfoAll(Editor* editor)
 {
     //TODO: Find a place to hook this slot.
     editor->on_cursorInfoRequest();
+    editor->on_documentInfoRequest();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
 }
