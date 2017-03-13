@@ -17,6 +17,8 @@ class TopEditorContainer : public QSplitter
     Q_OBJECT
 public:
     explicit TopEditorContainer(QWidget *parent = 0);
+    ~TopEditorContainer();
+
     EditorTabWidget *addTabWidget();
     EditorTabWidget *tabWidget(int index);
     EditorTabWidget *currentTabWidget();
@@ -49,6 +51,15 @@ public:
 private:
     EditorTabWidget *m_currentTabWidget;
     int m_currentTabIndex = -1;
+    /**
+     * @brief Is set to true when destructor is called. Required workaround to prevent a crash:
+              When TopEditorContainer is destroyed, it first destructs its members, then calls its parent destructor. 
+              That one makes sure all children get destroyed as well, that includes all EditorTabWidet. 
+              During that process, a number of signals are emitted that are being caught by the now half-destructed TopEditorContainer. 
+              That kills the program.
+              More info: https://github.com/notepadqq/notepadqq/pull/394
+     */
+    bool m_shuttingDown = false;
 
 signals:
     /**
