@@ -151,14 +151,6 @@ namespace EditorNS
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
     }
 
-    void Editor::on_languageChange()
-    {
-        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        QString id = data.value("id").toString();
-        QString lang = data.value("lang").toMap().value("name").toString();
-        emit currentLanguageChanged(id, lang);
-    }
-
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
         emit messageReceived(msg, data);

@@ -85,16 +85,23 @@ namespace EditorNS
             }
         };
 
+        /**
+         * @brief Document information struct containing line and character counts.
+         *
+         */
         struct UiChangeInfo {
-            int charCount;
-            int lineCount;
+            int charCount; /**< The number of characters contained in the document */
+            int lineCount; /**< The number of lines contained in the document */
         };
 
+        /**
+         * @brief Cursor information struct containing cursor and selection information.
+         */
         struct UiCursorInfo {
-            int cursorLine;
-            int cursorColumn;
-            int selectionCharCount;
-            int selectionLineCount;
+            int cursorLine; /**< The current line of the cursor */
+            int cursorColumn; /**< The current column of the cursor */
+            int selectionCharCount; /**< The currently selected text length, in characters */
+            int selectionLineCount; /**< The number of lines selected */
         }; 
 
         struct Selection {
@@ -310,15 +317,23 @@ namespace EditorNS
         void initJsProxy();
         void initWebView(const Theme &theme);
         /**
-         * @brief Passthru functions that handle slot calls to on_proxyMessageReceived
+         * @brief Generate a document change signal, with data.
+         * @param v The data to be parsed.
          */
         void generateChangeActivitySignal(const QVariantMap& v);
+        /**
+         * @brief Generate a cursor activity signal, with data.
+         * @param v The data to be parsed.
+         */
         void generateCursorActivitySignal(const QVariantMap& v);
+        /**
+         * @brief Generate a language change signal, with data.
+         * @param v The data to be parsed.
+         */
         void generateLanguageChangeSignal(const QVariantMap& v);
     private slots:
         void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
-        void on_languageChange();
 
     signals:
         void messageReceived(QString msg, QVariant data);
