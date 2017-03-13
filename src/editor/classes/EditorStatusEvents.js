@@ -1,6 +1,7 @@
 class EditorEventHandler {
     constructor() {
         this.lastCleanStatus = undefined;
+        this.cursorActivityTimer = setTimeout(function() {},1);
     }
 
     cursorActivityObject(editor) {
@@ -77,7 +78,12 @@ class EditorEventHandler {
     }
 
     onCursorActivity(proxy, editor) {
-        proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
+        clearTimeout(this.cursorActivityTimer);
+        // We put this in a small timer so we don't flood the queue
+        // during selection and fast cursor movement.
+        this.cursorActivityTimer = setTimeout(function() {
+            proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject(editor));
+        }.bind(this), 20);
     }
 
     onFocus(proxy, editor) {
