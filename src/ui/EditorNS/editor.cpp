@@ -178,11 +178,9 @@ namespace EditorNS
 
     void Editor::generateChangeActivitySignal(const QVariantMap& v)
     {
-        UiChangeInfo info;
-        info.charCount = v["charCount"].toInt();
-        info.lineCount = v["lineCount"].toInt();
-
-        emit documentChanged(info);
+        docInfo.charCount = v["charCount"].toInt();
+        docInfo.lineCount = v["lineCount"].toInt();
+        emit documentChanged(docInfo);
     }
 
     void Editor::generateLanguageChangeSignal(const QVariantMap& v)
@@ -197,17 +195,11 @@ namespace EditorNS
 
     void Editor::generateCursorActivitySignal(const QVariantMap& v)
     {
-        //NOTE should we cache these values for getCursor, getCharCount
-        //     and getLineCount?  I don't think they're used outside of
-        //     refreshEditorCursorUiInfo.
-        UiCursorInfo info;
-//        info.charCount = v["charCount"].toInt();
-//        info.lineCount = v["lineCount"].toInt();
-        info.cursorLine = v["cursorLine"].toInt();
-        info.cursorColumn = v["cursorColumn"].toInt();
-        info.selectionCharCount = v["selectionCharCount"].toInt();
-        info.selectionLineCount = v["selectionLineCount"].toInt();
-        emit cursorActivity(info);
+        cursorInfo.line = v["cursorLine"].toInt();
+        cursorInfo.column = v["cursorColumn"].toInt();
+        cursorInfo.selectionCharCount = v["selectionCharCount"].toInt();
+        cursorInfo.selectionLineCount = v["selectionLineCount"].toInt();
+        emit cursorActivity(cursorInfo);
     }
 
     void Editor::setFocus()
@@ -445,9 +437,7 @@ namespace EditorNS
 
     int Editor::getCharCount()
     {
-        int charCount;
-        m_jsProxy->getValue("charCount", charCount);
-        return charCount;
+        return docInfo.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -515,9 +505,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getCursorPosition()
     {
-        QPair<int, int> cursor;
-        m_jsProxy->getValue("cursor", cursor);
-        return cursor;
+        return qMakePair(cursorInfo.line, cursorInfo.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -731,9 +719,7 @@ namespace EditorNS
 
     int Editor::getLineCount()
     {
-        int lines;
-        m_jsProxy->getValue("lineCount", lines);
-        return lines;
+        return docInfo.lineCount;
     }
 
 }

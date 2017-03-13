@@ -1133,8 +1133,8 @@ void MainWindow::on_documentChanged(EditorNS::Editor::UiChangeInfo info)
 void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
 {
     m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                .arg(info.cursorLine + 1)
-                                .arg(info.cursorColumn + 1));
+                                .arg(info.line + 1)
+                                .arg(info.column + 1));
 
     m_statusBar_selection->setText(tr("Sel %1 (%2)")
             .arg(info.selectionCharCount).arg(info.selectionLineCount));

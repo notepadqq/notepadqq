@@ -98,8 +98,8 @@ namespace EditorNS
          * @brief Cursor information struct containing cursor and selection information.
          */
         struct UiCursorInfo {
-            int cursorLine; /**< The current line of the cursor */
-            int cursorColumn; /**< The current column of the cursor */
+            int line; /**< The current line of the cursor */
+            int column; /**< The current column of the cursor */
             int selectionCharCount; /**< The currently selected text length, in characters */
             int selectionLineCount; /**< The number of lines selected */
         }; 
@@ -305,6 +305,9 @@ namespace EditorNS
         bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
         bool m_clean = true;
+        
+        UiChangeInfo docInfo;
+        UiCursorInfo cursorInfo;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
