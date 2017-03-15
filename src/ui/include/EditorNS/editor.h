@@ -364,7 +364,7 @@ namespace EditorNS
         /**
          * @brief The active document was modified.
          */
-        void documentChanged(UiChangeInfo info);
+        void contentChanged(UiChangeInfo info);
         /**
          * @brief Cursor activity was detected.
          */
