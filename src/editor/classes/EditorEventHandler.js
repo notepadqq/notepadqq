@@ -91,7 +91,7 @@ class EditorEventHandler {
     }
 
     onChange(proxy, editor) {
-        proxy.sendEditorEvent("J_EVT_DOCUMENT_CHANGED", this.changeActivityObject(editor));
+        proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", this.changeActivityObject(editor));
         if (this.lastCleanStatus != isCleanOrForced(changeGeneration)) {
             proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", this.cleanActivityObject(editor));
         }
