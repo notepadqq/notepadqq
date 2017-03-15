@@ -153,8 +153,6 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        emit messageReceived(msg, data);
-
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
