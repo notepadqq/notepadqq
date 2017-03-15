@@ -2029,7 +2029,7 @@ void MainWindow::runCommand()
     QUrl url = currentEditor()->fileName();
     QString path = url.path(QUrl::FullyEncoded);
     QFileInfo fi(path);
-    QStringList selection = editor->getSelectedTexts();
+    QStringList selection = editor->SelectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", path);
