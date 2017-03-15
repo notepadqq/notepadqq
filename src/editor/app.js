@@ -513,11 +513,10 @@ UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevRe
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevReturn) {
-    
     var cur = editor.getCursor();
     
-    //check previous line is not beginning of the document
-    if( (cur.line - 1) < 0) {
+    // check previous line is not beginning of the document
+    if ((cur.line - 1) < 0) {
         return;
     }
     
@@ -530,11 +529,10 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevRetu
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevReturn) {
-    
     var cur = editor.getCursor();
     
     // check that next line is not past end of document
-    if( (cur.line + 1) == editor.lineCount() )  {
+    if ((cur.line + 1) == editor.lineCount() )  {
         return;
     }
     
@@ -544,7 +542,6 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevRe
     
     editor.replaceRange(line, from, to);
     editor.setCursor(cur.line + 1, cur.ch );
-    
 });
 
 
@@ -731,11 +728,11 @@ $(document).ready(function () {
     });
 
     var proxyWait = setInterval(function() {
-        if(UiDriver.proxy !== undefined) {
+        if (UiDriver.proxy !== undefined) {
             evhook.onLoad(UiDriver.proxy, editor);
             clearInterval(proxyWait);
-        }else {
+        } else {
             console.error("Waiting on JsProxy.");
         }
-    },100);
+    }, 100);
 });
