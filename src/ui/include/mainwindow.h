@@ -82,7 +82,7 @@ private slots:
     //Temporary until we get refreshEditorUiInfo untangled.
     void refreshEditorUiInfoAll(Editor* editor);
     void on_cleanChanged(bool);
-    void on_documentChanged(EditorNS::Editor::UiChangeInfo info);
+    void on_contentChanged(EditorNS::Editor::UiChangeInfo info);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();

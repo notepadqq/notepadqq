@@ -1104,7 +1104,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
     connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
-    connect(editor, &Editor::documentChanged, this, &MainWindow::on_documentChanged);
+    connect(editor, &Editor::contentChanged, this, &MainWindow::on_contentChanged);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1124,7 +1124,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     refreshEditorUiInfoAll(editor);
 }
 
-void MainWindow::on_documentChanged(EditorNS::Editor::UiChangeInfo info)
+void MainWindow::on_contentChanged(EditorNS::Editor::UiChangeInfo info)
 {
     m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
         .arg(info.charCount).arg(info.lineCount));

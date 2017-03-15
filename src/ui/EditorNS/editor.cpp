@@ -156,8 +156,8 @@ namespace EditorNS
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_DOCUMENT_CHANGED") {
-            emit generateChangeActivitySignal(data.toMap());
+        } else if(msg == "J_EVT_CONTENT_CHANGED") {
+            generateChangeActivitySignal(data.toMap());
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
             //Cache clean state since it's a high-traffic value.
             m_clean = data.toBool();
@@ -178,7 +178,7 @@ namespace EditorNS
     {
         m_docInfo.charCount = v["charCount"].toInt();
         m_docInfo.lineCount = v["lineCount"].toInt();
-        emit documentChanged(m_docInfo);
+        emit contentChanged(m_docInfo);
     }
 
     void Editor::generateLanguageChangeSignal(const QVariantMap& v)
