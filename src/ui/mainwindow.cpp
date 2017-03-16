@@ -1154,9 +1154,8 @@ void MainWindow::on_cleanChanged(bool isClean)
 
 void MainWindow::refreshEditorUiInfoAll(Editor* editor)
 {
-    //TODO: Find a place to hook this slot.
-    editor->cursorInfoRequest();
-    editor->contentInfoRequest();
+    editor->requestCursorInfo();
+    editor->requestContentInfo();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
 }

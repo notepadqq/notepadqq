@@ -519,12 +519,12 @@ namespace EditorNS
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
     }
 
-    void Editor::cursorInfoRequest()
+    void Editor::requestCursorInfo()
     {
         sendMessage("C_CMD_REQUEST_CURSOR_INFO");
     }
 
-    void Editor::contentInfoRequest()
+    void Editor::requestContentInfo()
     {
         sendMessage("C_CMD_REQUEST_DOCUMENT_INFO");
     }

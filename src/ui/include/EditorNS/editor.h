@@ -300,12 +300,12 @@ namespace EditorNS
         /**
          * @brief Requests content information from the editor.
          */
-        void contentInfoRequest();
+        void requestContentInfo();
 
         /**
          * @brief Requests cursor information from the editor.
          */
-        void cursorInfoRequest();
+        void requestCursorInfo();
 
     private:
         static QQueue<Editor*> m_editorBuffer;
