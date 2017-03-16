@@ -111,7 +111,6 @@ namespace EditorNS
     Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
     {
         Editor *out;
-
         if (m_editorBuffer.length() == 0) {
             m_editorBuffer.enqueue(new Editor());
             out = new Editor();
@@ -152,41 +151,71 @@ namespace EditorNS
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
     }
 
-    void Editor::on_languageChange()
-    {
-        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        QString id = data.value("id").toString();
-        QString lang = data.value("lang").toMap().value("name").toString();
-        emit currentLanguageChanged(id, lang);
-    }
-
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        emit messageReceived(msg, data);
-
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
         } else if(msg == "J_EVT_CONTENT_CHANGED") {
-            emit contentChanged();
+            emit contentChanged(buildContentChangedEventData(data));
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            emit cleanChanged(data.toBool());
+            m_contentInfo.clean = data.toBool();
+            emit cleanChanged(m_contentInfo.clean);
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
-            emit cursorActivity();
+            emit cursorActivity(buildCursorEventData(data));
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
         } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            QVariantMap lang = data.toMap();
-            QString id = lang.value("id").toString();
-            QString name = lang.value("lang").toMap().value("name").toString();
-            if (!m_customIndentationMode) {
-                setIndentationMode(id);
-            }
-            emit currentLanguageChanged(id, name);
+            emit languageChanged(buildLanguageChangedEventData(data));
         } else if(msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
         }
+    }
+
+    Editor::ContentInfo Editor::buildContentChangedEventData(
+            const QVariant& data, 
+            bool cache)
+    {
+        QVariantMap v = data.toMap();
+        ContentInfo temp;
+        temp.charCount = v["charCount"].toInt();
+        temp.lineCount = v["lineCount"].toInt();
+        if (cache) {
+            m_contentInfo = temp;
+        }
+        return temp;
+    }
+
+
+    Editor::CursorInfo Editor::buildCursorEventData(const QVariant& data, 
+            bool cache)
+    {
+        QVariantMap v = data.toMap();
+        CursorInfo  temp;
+        temp.line = v["cursorLine"].toInt();
+        temp.column = v["cursorColumn"].toInt();
+        temp.selectionCharCount = v["selectionCharCount"].toInt();
+        temp.selectionLineCount = v["selectionLineCount"].toInt();
+        if (cache) {
+            m_cursorInfo = temp;
+        }
+        return temp;
+    }
+
+    //NOTE: We don't cache these as of yet.
+    Editor::LanguageInfo Editor::buildLanguageChangedEventData(
+            const QVariant& data,
+            bool /*cache*/)
+    {
+        QVariantMap v = data.toMap();
+        LanguageInfo temp;
+        temp.id = v.value("id").toString();
+        temp.name = v.value("lang").toMap().value("name").toString();
+        if (!m_customIndentationMode) {
+            setIndentationMode(temp.id);
+        }
+        return temp;
     }
 
     void Editor::setFocus()
@@ -226,9 +255,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        bool clean;
-        m_jsProxy->getValue("clean", clean);
-        return clean;
+        return m_contentInfo.clean;
     }
 
     void Editor::markClean()
@@ -424,11 +451,14 @@ namespace EditorNS
         return m_webView->zoomFactor();
     }
 
+    int Editor::getLineCount()
+    {
+        return m_contentInfo.lineCount;
+    }
+
     int Editor::getCharCount()
     {
-        int charCount;
-        m_jsProxy->getValue("charCount", charCount);
-        return charCount;
+        return m_contentInfo.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -489,11 +519,19 @@ namespace EditorNS
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
     }
 
+    void Editor::requestCursorInfo()
+    {
+        sendMessage("C_CMD_REQUEST_CURSOR_INFO");
+    }
+
+    void Editor::requestContentInfo()
+    {
+        sendMessage("C_CMD_REQUEST_DOCUMENT_INFO");
+    }
+
     QPair<int, int> Editor::getCursorPosition()
     {
-        QPair<int, int> cursor;
-        m_jsProxy->getValue("cursor", cursor);
-        return cursor;
+        return qMakePair(m_cursorInfo.line, m_cursorInfo.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -521,7 +559,10 @@ namespace EditorNS
     QPair<int, int> Editor::getScrollPosition()
     {
         QPair<int, int> scrollPosition;
-        m_jsProxy->getValue("scrollPosition", scrollPosition);
+        bool valid = m_jsProxy->getValue("scrollPosition", scrollPosition);
+        if(!valid) {
+            return qMakePair(0, 0);
+        }
         return scrollPosition;
     }
 
@@ -700,13 +741,6 @@ namespace EditorNS
     QString Editor::getCurrentWord()
     {
         return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
-    }
-
-    int Editor::getLineCount()
-    {
-        int lines;
-        m_jsProxy->getValue("lineCount", lines);
-        return lines;
     }
 
 }

@@ -1089,9 +1089,7 @@ void MainWindow::on_actionCu_t_triggered()
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
     if (tab != -1) {
-        Editor *editor = tabWidget->editor(tab);
-        refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
+        refreshEditorUiInfoAll(tabWidget->editor(tab));
     }
 }
 
@@ -1106,13 +1104,11 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
     connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
+    connect(editor, &Editor::contentChanged, this, &MainWindow::on_contentChanged);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(editor, &Editor::languageChanged, this, &MainWindow::on_languageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    connect(editor, &Editor::cleanChanged, this, [=]() {
-        if (currentEditor() == editor)
-            refreshEditorUiInfo(editor);
-    });
+    connect(editor, &Editor::cleanChanged, this, &MainWindow::on_cleanChanged);
     connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
     // Initialize editor with UI settings
@@ -1125,62 +1121,60 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
                     m_settings.Appearance.getOverrideFontSize(),
                     m_settings.Appearance.getOverrideLineHeight());
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
+    refreshEditorUiInfoAll(editor);
 }
 
-void MainWindow::on_cursorActivity()
+void MainWindow::on_contentChanged(EditorNS::Editor::ContentInfo info)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-    if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(editor);
-    }
+    m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
+        .arg(info.charCount).arg(info.lineCount));
 }
 
-void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
+void MainWindow::on_cursorActivity(EditorNS::Editor::CursorInfo info)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
+    m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                .arg(info.line + 1)
+                                .arg(info.column + 1));
 
-    if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
-    }
+    m_statusBar_selection->setText(tr("Sel %1 (%2)")
+            .arg(info.selectionCharCount).arg(info.selectionLineCount));
+
 }
 
-void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
+void MainWindow::on_languageChanged(EditorNS::Editor::LanguageInfo info)
 {
-    if (editor != 0) {
-        // Update status bar
-        int len = editor->getCharCount();
-        int lines = editor->getLineCount();
-        m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len).arg(lines));
+    m_statusBar_fileFormat->setText(info.name);
+}
 
-        QPair<int, int> cursor = editor->getCursorPosition();
-        int selectedChars = 0;
-        int selectedPieces = 0;
-        QStringList selections = editor->getSelectedTexts();
-        for (QString sel : selections) {
-            selectedChars += sel.length();
-            selectedPieces += sel.split("\n").count();
-        }
+void MainWindow::on_cleanChanged(bool isClean)
+{
+    ui->actionMove_to_New_Window->setEnabled(isClean);
+    ui->actionOpen_in_New_Window->setEnabled(isClean);
+}
 
-        m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                    .arg(cursor.first + 1)
-                                    .arg(cursor.second + 1));
+void MainWindow::refreshEditorUiInfoAll(Editor* editor)
+{
+    editor->requestCursorInfo();
+    editor->requestContentInfo();
+    refreshEditorUiEncodingInfo(editor);
+    refreshEditorUiInfo(editor);
+}
 
-        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+void MainWindow::refreshEditorUiEncodingInfo(Editor *editor)
+{
+    // Encoding
+    QString encoding;
+    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
+        // Is UTF-8 without BOM
+        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
+    } else {
+        encoding = QString::fromUtf8(editor->codec()->name());
     }
+    m_statusBar_textFormat->setText(encoding);
 }
 
 void MainWindow::refreshEditorUiInfo(Editor *editor)
-{
-    // Update current language in statusbar
-    //QVariantMap data = editor->language().toString();
-    QString name = editor->getLanguage("name");
-    m_statusBar_fileFormat->setText(name);
-
-
+{ 
     // Update MainWindow title
     QString newTitle;
     if (editor->fileName().isEmpty()) {
@@ -1223,11 +1217,8 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
 
     // Enable / disable menus
-    bool isClean = editor->isClean();
     QUrl fileName = editor->fileName();
     ui->actionRename->setEnabled(!fileName.isEmpty());
-    ui->actionMove_to_New_Window->setEnabled(isClean);
-    ui->actionOpen_in_New_Window->setEnabled(isClean);
 
     bool allowReloading = !editor->fileName().isEmpty();
     ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
@@ -1246,15 +1237,6 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         m_statusBar_EOLstyle->setText(tr("Old Mac"));
     }
 
-    // Encoding
-    QString encoding;
-    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
-        // Is UTF-8 without BOM
-        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
-    } else {
-        encoding = QString::fromUtf8(editor->codec()->name());
-    }
-    m_statusBar_textFormat->setText(encoding);
 
     // Indentation
     if (editor->isUsingCustomIndentationMode()) {
@@ -1630,8 +1612,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     editor->removeBanner("fileremoved");
 
     if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
+        refreshEditorUiInfoAll(editor);
     }
 }
 
@@ -1659,10 +1640,9 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
         updateRecentDocsInMenu();
     }
+    refreshEditorUiInfoAll(currentEditor());
 }
 
-// FIXME: Make editor aware if a file is already loaded so
-// indentation banner only appears for new files.
 void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
 {
     if(!wasAlreadyOpened) {
@@ -1847,7 +1827,7 @@ void MainWindow::convertEditorEncoding(Editor *editor, QTextCodec *codec, bool b
     editor->markDirty();
 
     if (editor == currentEditor())
-        refreshEditorUiInfo(editor);
+        refreshEditorUiEncodingInfo(editor);
 }
 
 void MainWindow::on_actionUTF_8_triggered()
@@ -1873,25 +1853,25 @@ void MainWindow::on_actionUTF_16LE_triggered()
 void MainWindow::on_actionInterpret_as_UTF_8_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_8_without_BOM_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
 {
     m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
-    refreshEditorUiInfo(currentEditor());
+    refreshEditorUiEncodingInfo(currentEditor());
 }
 
 void MainWindow::on_actionConvert_to_triggered()

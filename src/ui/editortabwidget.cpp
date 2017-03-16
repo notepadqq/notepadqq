@@ -248,7 +248,7 @@ void EditorTabWidget::setTabBarHighlight(bool yes)
 
 void EditorTabWidget::on_cleanChanged(bool isClean)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
+    Editor *editor = static_cast<Editor *>(sender());
     if (!editor)
         return;
 

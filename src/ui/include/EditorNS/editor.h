@@ -85,6 +85,32 @@ namespace EditorNS
             }
         };
 
+        /**
+         * @brief Content information, such as line count, character count, 
+         *        and clean state
+         *
+         */
+        struct ContentInfo {
+            int charCount; /**< The number of characters contained in the document */
+            int lineCount; /**< The number of lines contained in the document */
+            bool clean = true; /**< Whether the content of the editor is clean or not */
+        };
+
+        /**
+         * @brief Cursor information struct containing cursor and selection information.
+         */
+        struct CursorInfo {
+            int line; /**< The current line of the cursor */
+            int column; /**< The current column of the cursor */
+            int selectionCharCount; /**< The currently selected text length, in characters */
+            int selectionLineCount; /**< The number of lines selected */
+        }; 
+
+        struct LanguageInfo {
+            QString id;
+            QString name;
+        };
+
         struct Selection {
             Cursor from;
             Cursor to;
@@ -111,27 +137,27 @@ namespace EditorNS
              *        the tab where the editor is. Use EditorTabWidget::setCurrentIndex()
              *        and TopEditorContainer::setFocus() for that.
              */
-        Q_INVOKABLE void setFocus();
+        void setFocus();
 
         /**
              * @brief Remove the focus from the editor.
              */
-        Q_INVOKABLE void clearFocus();
+        void clearFocus();
 
         /**
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */
-        Q_INVOKABLE void setFileName(const QUrl &filename);
+        void setFileName(const QUrl &filename);
 
         /**
              * @brief Get the file name associated with this editor
              * @return
              */
-        Q_INVOKABLE QUrl fileName() const;
+        QUrl fileName() const;
 
-        Q_INVOKABLE bool fileOnDiskChanged() const;
-        Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
+        bool fileOnDiskChanged() const;
+        void setFileOnDiskChanged(bool fileOnDiskChanged);
 
         enum selectMode {
             selectMode_cursorBefore,
@@ -144,9 +170,9 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        Q_INVOKABLE bool isClean();
-        Q_INVOKABLE void markClean();
-        Q_INVOKABLE void markDirty();
+        bool isClean();
+        void markClean();
+        void markDirty();
         static QList<QMap<QString, QString> > languages();
 
 
@@ -158,20 +184,20 @@ namespace EditorNS
          * @return The value associated with the key "val".
          */
 
-        Q_INVOKABLE QString getLanguage(const QString& val = "id");
+        QString getLanguage(const QString& val = "id");
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE void setLanguageFromFileName(QString fileName);
-        Q_INVOKABLE void setLanguageFromFileName();
+        void setLanguage(const QString &language);
+        void setLanguageFromFileName(QString fileName);
+        void setLanguageFromFileName();
         
         
-        Q_INVOKABLE QString value();
-        Q_INVOKABLE void setValue(const QString &value);
+        QString value();
+        void setValue(const QString &value);
 
         /**
          * @brief Set custom indentation settings which may be different
@@ -187,15 +213,15 @@ namespace EditorNS
         void setCustomIndentationMode(const bool useTabs);
         void clearCustomIndentationMode();
         bool isUsingCustomIndentationMode() const;
-        Q_INVOKABLE void setSmartIndent(bool enabled);
+        void setSmartIndent(bool enabled);
 
-        Q_INVOKABLE qreal zoomFactor() const;
-        Q_INVOKABLE void setZoomFactor(const qreal &factor);
+        qreal zoomFactor() const;
+        void setZoomFactor(const qreal &factor);
 
         
-        Q_INVOKABLE void setLineWrap(const bool wrap);
-        Q_INVOKABLE void setEOLVisible(const bool showeol);
-        Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
+        void setLineWrap(const bool wrap);
+        void setEOLVisible(const bool showeol);
+        void setWhitespaceVisible(const bool showspace);
 
         /**
          * @brief Get the current cursor position
@@ -246,15 +272,15 @@ namespace EditorNS
         static Editor::Theme themeFromName(QString name);
  
 
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts);
+        void setSelectionsText(const QStringList &texts, selectMode mode);
+        void setSelectionsText(const QStringList &texts);
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         /**
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList getSelectedTexts();
+        QStringList getSelectedTexts();
         QList<Selection> getSelections();
 
         void setOverwrite(bool overwrite);
@@ -271,6 +297,16 @@ namespace EditorNS
         int getLineCount();
         int getCharCount();
 
+        /**
+         * @brief Requests content information from the editor.
+         */
+        void requestContentInfo();
+
+        /**
+         * @brief Requests cursor information from the editor.
+         */
+        void requestCursorInfo();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QEventLoop m_processLoop;
@@ -285,6 +321,9 @@ namespace EditorNS
         bool m_bom = false;
         bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
+        
+        ContentInfo m_contentInfo;
+        CursorInfo m_cursorInfo;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -296,38 +335,101 @@ namespace EditorNS
         void initContextMenu();
         void initJsProxy();
         void initWebView(const Theme &theme);
+        /**
+         * @brief Build data for the contentChange signal.
+         * @param data 
+         * @param cache
+         * @return ContentInfo struct.
+         */
+        ContentInfo buildContentChangedEventData(const QVariant& data,
+                bool cache = true);
+        /**
+         * @brief Build data for the cursorActivity signal.
+         * @param data 
+         * @param cache
+         * @return CursorInfo struct.
+         */
+        CursorInfo buildCursorEventData(const QVariant& data, 
+                bool cache = true);
+        /**
+         * @brief Build data for the languageChange signal.
+         * @param data
+         * @param cache
+         * @return LanguageInfo struct.
+         */
+        LanguageInfo buildLanguageChangedEventData(const QVariant& data,
+                bool cache = true);
+
     private slots:
         void on_javaScriptWindowObjectCleared();
+        /**
+         * @brief A message was received from the proxy.
+         * @param msg The message
+         * @param data Attached data, if any.
+         */
         void on_proxyMessageReceived(QString msg, QVariant data);
-        void on_cursorActivity() { emit cursorActivity(); }
-        void on_languageChange();
 
     signals:
-        void messageReceived(QString msg, QVariant data);
+        /**
+         * @brief The editor got focus.
+         */
         void gotFocus();
+
+        /**
+         * @brief A mouse wheel event was detected.
+         */
         void mouseWheel(QWheelEvent *ev);
+
+        /**
+         * @brief An URL drop event was detected.
+         */
         void urlsDropped(QList<QUrl> urls);
+
+        /**
+         * @brief The current banner was removed.
+         */
         void bannerRemoved(QWidget *banner);
 
-        // Pre-interpreted messages:
-        void contentChanged();
-        void cursorActivity();
+        /**
+         * @brief The clean state of the document changed.
+         */
         void cleanChanged(bool isClean);
+
+        /**
+         * @brief The active document was modified.
+         */
+        void contentChanged(ContentInfo);
+
+        /**
+         * @brief Cursor activity was detected.
+         */
+        void cursorActivity(CursorInfo);
+
+        /**
+         * @brief The file name of the document changed.
+         */
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
+
+        /**
+         * @brief The editor language was changed.
+         */
+        void languageChanged(LanguageInfo);
+
+        /**
+         * @brief A document was loaded, or reloaded.
+         */
         void documentLoaded(bool wasAlreadyLoaded);
 
         /**
-             * @brief The editor finished loading. There should be
-             *        no need to use this signal outside this class.
-             */
+         * @brief The editor finished loading. There should be
+         *        no need to use this signal outside this class.
+         */
         void editorReady();
 
-        void currentLanguageChanged(QString id, QString name);
 
     public slots:
         void sendMessage(const QString &msg, const QVariant &data = QVariant());
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
-
         void print(QPrinter *printer);
     };
 }

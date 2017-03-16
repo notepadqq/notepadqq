@@ -28,14 +28,12 @@ function isCleanOrForced(generation) {
 UiDriver.registerEventHandler("C_CMD_MARK_CLEAN", function(msg, data, prevReturn) {
     forceDirty = false;
     changeGeneration = editor.changeGeneration(true);
-    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    evhook.onChange(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_CMD_MARK_DIRTY", function(msg, data, prevReturn) {
     forceDirty = true;
-    UiDriver.proxy.clean = isCleanOrForced(changeGeneration);
-    UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+    evhook.onChange(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_IS_CLEAN", function(msg, data, prevReturn) {
@@ -155,13 +153,20 @@ UiDriver.registerEventHandler("C_FUN_GET_LINE_COUNT", function(msg, data, prevRe
 UiDriver.registerEventHandler("C_FUN_GET_CURSOR", function(msg, data, prevReturn) {
     var cur = editor.getCursor();
     return [cur.line, cur.ch];
-    
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn) {
     var line = data[0];
     var ch = data[1];
     editor.setCursor(line, ch);
+});
+
+UiDriver.registerEventHandler('C_CMD_REQUEST_CURSOR_INFO', function(msg, data, prevReturn) {
+    evhook.onCursorActivity(UiDriver.proxy, editor);
+});
+
+UiDriver.registerEventHandler('C_CMD_REQUEST_DOCUMENT_INFO', function(msg, data, prevReturn) {
+    evhook.onChange(UiDriver.proxy, editor);
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
@@ -508,11 +513,10 @@ UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevRe
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevReturn) {
-    
     var cur = editor.getCursor();
     
-    //check previous line is not beginning of the document
-    if( (cur.line - 1) < 0) {
+    // check previous line is not beginning of the document
+    if ((cur.line - 1) < 0) {
         return;
     }
     
@@ -525,11 +529,10 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevRetu
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevReturn) {
-    
     var cur = editor.getCursor();
     
     // check that next line is not past end of document
-    if( (cur.line + 1) == editor.lineCount() )  {
+    if ((cur.line + 1) == editor.lineCount() )  {
         return;
     }
     
@@ -539,7 +542,6 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevRe
     
     editor.replaceRange(line, from, to);
     editor.setCursor(cur.line + 1, cur.ch );
-    
 });
 
 
@@ -708,8 +710,6 @@ $(document).ready(function () {
 
     editor.on("change", function(instance, changeObj) {
         evhook.onChange(UiDriver.proxy, instance);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CONTENT_CHANGED", 0);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
     editor.on("scroll", function(instance) {
@@ -718,23 +718,21 @@ $(document).ready(function () {
 
     editor.on("cursorActivity", function(instance, changeObj) {
         evhook.onCursorActivity(UiDriver.proxy, instance);
-        UiDriver.proxy.sendEditorEvent("J_EVT_CURSOR_ACTIVITY", 0);
     });
 
-    editor.on("focus", function() {
-        UiDriver.proxy.sendEditorEvent("J_EVT_GOT_FOCUS");
+    editor.on("focus", function(instance) {
+        evhook.onFocus(UiDriver.proxy, instance);
     });
     editor.on("optionChange", function() {
         evhook.onOptionChange(UiDriver.proxy, instance);
     });
 
     var proxyWait = setInterval(function() {
-        if(UiDriver.proxy !== undefined) {
+        if (UiDriver.proxy !== undefined) {
             evhook.onLoad(UiDriver.proxy, editor);
             clearInterval(proxyWait);
-        }else {
+        } else {
             console.error("Waiting on JsProxy.");
         }
-    },100);
-//    UiDriver.sendMessage("J_EVT_READY", null); //This one needs to be sendMessage() because the C++ Editor picks up that signal.
+    }, 100);
 });
