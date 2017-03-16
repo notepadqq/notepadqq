@@ -382,12 +382,20 @@ bool MainWindow::saveTabsToCache()
     while (!Sessions::saveSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath(), PersistentCache::cacheDirPath())) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") + PersistentCache::cacheDirPath());
-        msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+        msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") +
+                       PersistentCache::cacheDirPath() + "\n\n" +
+                       tr("By choosing \"ignore\" your session won't be saved."));
+        msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
         msgBox.setDefaultButton(QMessageBox::Retry);
         msgBox.setIcon(QMessageBox::Critical);
 
-        if(msgBox.exec() == QMessageBox::Abort) return false;
+        int result = msgBox.exec();
+        if (result == QMessageBox::Abort) {
+            return false;
+        } else if (result == QMessageBox::Ignore) {
+            // Do as if all went well
+            return true;
+        }
     }
 
     return true;
