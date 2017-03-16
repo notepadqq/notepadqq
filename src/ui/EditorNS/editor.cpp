@@ -157,47 +157,65 @@ namespace EditorNS
             m_loaded = true;
             emit editorReady();
         } else if(msg == "J_EVT_CONTENT_CHANGED") {
-            generateChangeActivitySignal(data.toMap());
+            emit contentChanged(buildContentChangedEventData(data));
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            //Cache clean state since it's a high-traffic value.
-            m_clean = data.toBool();
-            emit cleanChanged(m_clean);
+            m_contentInfo.clean = data.toBool();
+            emit cleanChanged(m_contentInfo.clean);
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
-            generateCursorActivitySignal(data.toMap());
+            emit cursorActivity(buildCursorEventData(data));
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
         } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            generateLanguageChangeSignal(data.toMap());
+            emit languageChanged(buildLanguageChangedEventData(data));
         } else if(msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
         }
     }
 
-    void Editor::generateChangeActivitySignal(const QVariantMap& v)
+    Editor::ContentInfo Editor::buildContentChangedEventData(
+            const QVariant& data, 
+            bool cache)
     {
-        m_docInfo.charCount = v["charCount"].toInt();
-        m_docInfo.lineCount = v["lineCount"].toInt();
-        emit contentChanged(m_docInfo);
-    }
-
-    void Editor::generateLanguageChangeSignal(const QVariantMap& v)
-    {
-        QString id = v.value("id").toString();
-        QString name = v.value("lang").toMap().value("name").toString();
-        if (!m_customIndentationMode) {
-            setIndentationMode(id);
+        QVariantMap v = data.toMap();
+        ContentInfo temp;
+        temp.charCount = v["charCount"].toInt();
+        temp.lineCount = v["lineCount"].toInt();
+        if (cache) {
+            m_contentInfo = temp;
         }
-        emit currentLanguageChanged(id, name);
+        return temp;
     }
 
-    void Editor::generateCursorActivitySignal(const QVariantMap& v)
+
+    Editor::CursorInfo Editor::buildCursorEventData(const QVariant& data, 
+            bool cache)
     {
-        m_cursorInfo.line = v["cursorLine"].toInt();
-        m_cursorInfo.column = v["cursorColumn"].toInt();
-        m_cursorInfo.selectionCharCount = v["selectionCharCount"].toInt();
-        m_cursorInfo.selectionLineCount = v["selectionLineCount"].toInt();
-        emit cursorActivity(m_cursorInfo);
+        QVariantMap v = data.toMap();
+        CursorInfo  temp;
+        temp.line = v["cursorLine"].toInt();
+        temp.column = v["cursorColumn"].toInt();
+        temp.selectionCharCount = v["selectionCharCount"].toInt();
+        temp.selectionLineCount = v["selectionLineCount"].toInt();
+        if (cache) {
+            m_cursorInfo = temp;
+        }
+        return temp;
+    }
+
+    //NOTE: We don't cache these as of yet.
+    Editor::LanguageInfo Editor::buildLanguageChangedEventData(
+            const QVariant& data,
+            bool /*cache*/)
+    {
+        QVariantMap v = data.toMap();
+        LanguageInfo temp;
+        temp.id = v.value("id").toString();
+        temp.name = v.value("lang").toMap().value("name").toString();
+        if (!m_customIndentationMode) {
+            setIndentationMode(temp.id);
+        }
+        return temp;
     }
 
     void Editor::setFocus()
@@ -237,7 +255,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return m_clean;
+        return m_contentInfo.clean;
     }
 
     void Editor::markClean()
@@ -433,9 +451,14 @@ namespace EditorNS
         return m_webView->zoomFactor();
     }
 
+    int Editor::getLineCount()
+    {
+        return m_contentInfo.lineCount;
+    }
+
     int Editor::getCharCount()
     {
-        return m_docInfo.charCount;
+        return m_contentInfo.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -496,12 +519,12 @@ namespace EditorNS
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
     }
 
-    void Editor::on_cursorInfoRequest()
+    void Editor::cursorInfoRequest()
     {
         sendMessage("C_CMD_REQUEST_CURSOR_INFO");
     }
 
-    void Editor::on_documentInfoRequest()
+    void Editor::contentInfoRequest()
     {
         sendMessage("C_CMD_REQUEST_DOCUMENT_INFO");
     }
@@ -718,11 +741,6 @@ namespace EditorNS
     QString Editor::getCurrentWord()
     {
         return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
-    }
-
-    int Editor::getLineCount()
-    {
-        return m_docInfo.lineCount;
     }
 
 }

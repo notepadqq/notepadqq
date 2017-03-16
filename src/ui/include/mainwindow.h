@@ -82,7 +82,7 @@ private slots:
     //Temporary until we get refreshEditorUiInfo untangled.
     void refreshEditorUiInfoAll(Editor* editor);
     void on_cleanChanged(bool);
-    void on_contentChanged(EditorNS::Editor::UiChangeInfo info);
+    void on_contentChanged(EditorNS::Editor::ContentInfo info);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -97,7 +97,7 @@ private slots:
     void on_actionCu_t_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
-    void on_cursorActivity(EditorNS::Editor::UiCursorInfo info);
+    void on_cursorActivity(EditorNS::Editor::CursorInfo info);
     void on_action_Delete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
@@ -116,7 +116,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_currentLanguageChanged(QString id, QString name);
+    void on_languageChanged(EditorNS::Editor::LanguageInfo);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();

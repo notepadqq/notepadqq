@@ -1106,7 +1106,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     connect(editor, &Editor::documentLoaded, this, &MainWindow::on_fileLoaded);
     connect(editor, &Editor::contentChanged, this, &MainWindow::on_contentChanged);
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(editor, &Editor::languageChanged, this, &MainWindow::on_languageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
     connect(editor, &Editor::cleanChanged, this, &MainWindow::on_cleanChanged);
     connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
@@ -1124,13 +1124,13 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     refreshEditorUiInfoAll(editor);
 }
 
-void MainWindow::on_contentChanged(EditorNS::Editor::UiChangeInfo info)
+void MainWindow::on_contentChanged(EditorNS::Editor::ContentInfo info)
 {
     m_statusBar_length_lines->setText(tr("%1 chars, %2 lines")
         .arg(info.charCount).arg(info.lineCount));
 }
 
-void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
+void MainWindow::on_cursorActivity(EditorNS::Editor::CursorInfo info)
 {
     m_statusBar_curPos->setText(tr("Ln %1, col %2")
                                 .arg(info.line + 1)
@@ -1141,9 +1141,9 @@ void MainWindow::on_cursorActivity(EditorNS::Editor::UiCursorInfo info)
 
 }
 
-void MainWindow::on_currentLanguageChanged(QString /*id*/, QString name)
+void MainWindow::on_languageChanged(EditorNS::Editor::LanguageInfo info)
 {
-    m_statusBar_fileFormat->setText(name);
+    m_statusBar_fileFormat->setText(info.name);
 }
 
 void MainWindow::on_cleanChanged(bool isClean)
@@ -1155,8 +1155,8 @@ void MainWindow::on_cleanChanged(bool isClean)
 void MainWindow::refreshEditorUiInfoAll(Editor* editor)
 {
     //TODO: Find a place to hook this slot.
-    editor->on_cursorInfoRequest();
-    editor->on_documentInfoRequest();
+    editor->cursorInfoRequest();
+    editor->contentInfoRequest();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
 }

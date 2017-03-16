@@ -86,23 +86,30 @@ namespace EditorNS
         };
 
         /**
-         * @brief Document information struct containing line and character counts.
+         * @brief Content information, such as line count, character count, 
+         *        and clean state
          *
          */
-        struct UiChangeInfo {
+        struct ContentInfo {
             int charCount; /**< The number of characters contained in the document */
             int lineCount; /**< The number of lines contained in the document */
+            bool clean = true; /**< Whether the content of the editor is clean or not */
         };
 
         /**
          * @brief Cursor information struct containing cursor and selection information.
          */
-        struct UiCursorInfo {
+        struct CursorInfo {
             int line; /**< The current line of the cursor */
             int column; /**< The current column of the cursor */
             int selectionCharCount; /**< The currently selected text length, in characters */
             int selectionLineCount; /**< The number of lines selected */
         }; 
+
+        struct LanguageInfo {
+            QString id;
+            QString name;
+        };
 
         struct Selection {
             Cursor from;
@@ -290,6 +297,16 @@ namespace EditorNS
         int getLineCount();
         int getCharCount();
 
+        /**
+         * @brief Requests content information from the editor.
+         */
+        void contentInfoRequest();
+
+        /**
+         * @brief Requests cursor information from the editor.
+         */
+        void cursorInfoRequest();
+
     private:
         static QQueue<Editor*> m_editorBuffer;
         QEventLoop m_processLoop;
@@ -304,10 +321,9 @@ namespace EditorNS
         bool m_bom = false;
         bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
-        bool m_clean = true;
         
-        UiChangeInfo m_docInfo;
-        UiCursorInfo m_cursorInfo;
+        ContentInfo m_contentInfo;
+        CursorInfo m_cursorInfo;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -320,20 +336,30 @@ namespace EditorNS
         void initJsProxy();
         void initWebView(const Theme &theme);
         /**
-         * @brief Generate a document change signal, with data.
-         * @param v The data to be parsed.
+         * @brief Build data for the contentChange signal.
+         * @param data 
+         * @param cache
+         * @return ContentInfo struct.
          */
-        void generateChangeActivitySignal(const QVariantMap& v);
+        ContentInfo buildContentChangedEventData(const QVariant& data,
+                bool cache = true);
         /**
-         * @brief Generate a cursor activity signal, with data.
-         * @param v The data to be parsed.
+         * @brief Build data for the cursorActivity signal.
+         * @param data 
+         * @param cache
+         * @return CursorInfo struct.
          */
-        void generateCursorActivitySignal(const QVariantMap& v);
+        CursorInfo buildCursorEventData(const QVariant& data, 
+                bool cache = true);
         /**
-         * @brief Generate a language change signal, with data.
-         * @param v The data to be parsed.
+         * @brief Build data for the languageChange signal.
+         * @param data
+         * @param cache
+         * @return LanguageInfo struct.
          */
-        void generateLanguageChangeSignal(const QVariantMap& v);
+        LanguageInfo buildLanguageChangedEventData(const QVariant& data,
+                bool cache = true);
+
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**
@@ -348,35 +374,47 @@ namespace EditorNS
          * @brief The editor got focus.
          */
         void gotFocus();
+
         /**
          * @brief A mouse wheel event was detected.
          */
         void mouseWheel(QWheelEvent *ev);
+
         /**
          * @brief An URL drop event was detected.
          */
         void urlsDropped(QList<QUrl> urls);
+
         /**
          * @brief The current banner was removed.
          */
         void bannerRemoved(QWidget *banner);
 
         /**
-         * @brief The active document was modified.
-         */
-        void contentChanged(UiChangeInfo info);
-        /**
-         * @brief Cursor activity was detected.
-         */
-        void cursorActivity(UiCursorInfo info);
-        /**
          * @brief The clean state of the document changed.
          */
         void cleanChanged(bool isClean);
+
+        /**
+         * @brief The active document was modified.
+         */
+        void contentChanged(ContentInfo);
+
+        /**
+         * @brief Cursor activity was detected.
+         */
+        void cursorActivity(CursorInfo);
+
         /**
          * @brief The file name of the document changed.
          */
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
+
+        /**
+         * @brief The editor language was changed.
+         */
+        void languageChanged(LanguageInfo);
+
         /**
          * @brief A document was loaded, or reloaded.
          */
@@ -388,16 +426,10 @@ namespace EditorNS
          */
         void editorReady();
 
-        /**
-         * @brief The editor language was changed.
-         */
-        void currentLanguageChanged(QString id, QString name);
 
     public slots:
         void sendMessage(const QString &msg, const QVariant &data = QVariant());
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data = QVariant());
-        void on_cursorInfoRequest();
-        void on_documentInfoRequest();
         void print(QPrinter *printer);
     };
 }
