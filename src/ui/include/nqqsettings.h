@@ -92,6 +92,7 @@ public:
 
     BEGIN_CATEGORY(Search)
         NQQ_SETTING(SearchAsIType,  bool,           true)
+        NQQ_SETTING(ShowWholeLines, bool,           false)
         NQQ_SETTING(SearchHistory,  QStringList,    QStringList())
         NQQ_SETTING(ReplaceHistory, QStringList,    QStringList())
         NQQ_SETTING(FileHistory,    QStringList,    QStringList())
