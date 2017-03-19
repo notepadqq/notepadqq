@@ -14,6 +14,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QEventLoop>
+#include <QJsonDocument>
 namespace EditorNS
 {
 
@@ -280,8 +281,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        QStringList getSelectedTexts();
-        QList<Selection> getSelections();
+        QList<Selection> convertToSelections(const QVariant& sels);
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
@@ -306,6 +306,40 @@ namespace EditorNS
          * @brief Requests cursor information from the editor.
          */
         void requestCursorInfo();
+
+        template<typename T>
+        void getSelections(T callback)
+        {
+            sendMessageWithCallback("C_FUN_GET_SELECTIONS", 
+                    [&, callback](const QVariant& v) {
+                callback(convertToSelections(v));
+            }); 
+        }
+
+        template<typename T>
+        void getSelectedTexts(T callback)
+        {
+            sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT", 
+                    [callback](const QVariant& v) mutable {
+                callback(v.toStringList());
+            });
+        }
+
+        template<typename T>
+        void getCurrentWordOrSelections(T callback) {
+            sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
+            [&, callback](const QVariant& v) mutable {
+                if(v.isNull()) {
+                    sendMessageWithCallback("C_FUN_GET_CURRENT_WORD",
+                    [callback](const QVariant& v) mutable {
+                        callback(v.toStringList());
+                    });
+                }else {
+                    callback(v.toStringList());
+                }
+            });
+        }
+
 
     private:
         static QQueue<Editor*> m_editorBuffer;
@@ -360,6 +394,18 @@ namespace EditorNS
         LanguageInfo buildLanguageChangedEventData(const QVariant& data,
                 bool cache = true);
 
+        template<typename T>
+        void sendMessageWithCallback(const QString& msg, const QVariant &data, T callback) {
+            QString jsonData = QJsonDocument::fromVariant(data).toJson();
+            QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(jsonData);
+            m_webView->page()->runJavaScript(jsMsg, callback);
+        }
+
+        template<typename T>
+        void sendMessageWithCallback(const QString& msg, T callback) {
+            QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(0);
+            m_webView->page()->runJavaScript(jsMsg, callback);
+        }
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**

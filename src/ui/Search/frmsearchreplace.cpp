@@ -528,22 +528,23 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
         manualSizeAdjust();
     }
 }
-
+#include <QDebug>
 void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
     if (s.Search.getSearchAsIType()) {
         if (ui->actionFind->isChecked()) {
-            Editor *editor = currentEditor();
+            currentEditor()->getSelections([&](const QList<Editor::Selection> selections) {
+                Editor *editor = currentEditor();
+                if (selections.length() > 0) {
+                    qDebug() << "Test" << selections[0].to.line;
+                    editor->setCursorPosition(
+                        std::min(selections[0].from, selections[0].to));
+                }
+                findFromUI(true);
 
-            QList<Editor::Selection> selections = editor->getSelections();
-            if (selections.length() > 0) {
-                editor->setCursorPosition(
-                            std::min(selections[0].from, selections[0].to));
-            }
-
-            findFromUI(true);
+            });
         }
     }
 }

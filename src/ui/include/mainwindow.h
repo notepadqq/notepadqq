@@ -158,8 +158,6 @@ private slots:
     void on_actionOpen_a_New_Window_triggered();
     void on_actionOpen_in_New_Window_triggered();
     void on_actionMove_to_New_Window_triggered();
-    void on_actionOpen_file_triggered();
-    void on_actionOpen_in_another_window_triggered();
     void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
     void on_actionFind_in_Files_triggered();
     void on_actionDelete_Line_triggered();
@@ -263,9 +261,6 @@ private:
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
-    QStringList         currentWordOrSelections();
-    QString             currentWordOrSelection();
-    void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248

@@ -784,46 +784,6 @@
     <string>&amp;Run...</string>
    </property>
   </action>
-  <action name="actionLaunch_in_Firefox">
-   <property name="text">
-    <string>Launch in Firefox</string>
-   </property>
-  </action>
-  <action name="actionLaunch_in_Chromium">
-   <property name="text">
-    <string>Launch in Chromium</string>
-   </property>
-  </action>
-  <action name="actionGet_php_help">
-   <property name="text">
-    <string>Get PHP help</string>
-   </property>
-  </action>
-  <action name="actionGoogle_Search">
-   <property name="text">
-    <string>Google Search</string>
-   </property>
-  </action>
-  <action name="actionWikipedia_Search">
-   <property name="text">
-    <string>Wikipedia Search</string>
-   </property>
-  </action>
-  <action name="actionOpen_file">
-   <property name="text">
-    <string>Open file(s)</string>
-   </property>
-  </action>
-  <action name="actionOpen_in_another_window">
-   <property name="text">
-    <string>Open file(s) in a new window</string>
-   </property>
-  </action>
-  <action name="actionModify_Shortcut_Delete_Command">
-   <property name="text">
-    <string>Modify Shortcut / Delete Command...</string>
-   </property>
-  </action>
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences...</string>

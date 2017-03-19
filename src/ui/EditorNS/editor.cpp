@@ -537,6 +537,7 @@ namespace EditorNS
     void Editor::setCursorPosition(const int line, const int column)
     {
         QList<QVariant> arg = QList<QVariant>({line, column});
+//        sendMessageWithCallback("C_CMD_SET_CURSOR", QVariant(arg), [](const QVariant& v) {});
         sendMessage("C_CMD_SET_CURSOR", QVariant(arg));
     }
 
@@ -674,11 +675,11 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
     }
 
-    QList<Editor::Selection> Editor::getSelections()
+    QList<Editor::Selection> Editor::convertToSelections(const QVariant& data)
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = m_jsProxy->getRawValue("selections").toList();
+        QList<QVariant> sels = data.toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -694,13 +695,6 @@ namespace EditorNS
         }
 
         return out;
-    }
-
-    QStringList Editor::getSelectedTexts()
-    {
-        QStringList selectedTexts;
-        m_jsProxy->getValue("selectionsText", selectedTexts);
-        return selectedTexts;
     }
 
     void Editor::setOverwrite(bool overwrite)

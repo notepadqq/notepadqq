@@ -1067,8 +1067,9 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 
 void MainWindow::on_action_Copy_triggered()
 {
-    QStringList sel = currentEditor()->getSelectedTexts();
-    QApplication::clipboard()->setText(sel.join("\n"));
+    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+        QApplication::clipboard()->setText(sel.join("\n"));
+    });
 }
 
 void MainWindow::on_action_Paste_triggered()
@@ -1331,11 +1332,12 @@ void MainWindow::on_actionSearch_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->getSelectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
-
+    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+        if (sel.length() > 0 && sel[0].length() > 0) {
+            m_frmSearchReplace->setSearchText(sel[0]);
+        } 
+    });
+   
     m_frmSearchReplace->show(frmSearchReplace::TabSearch);
     m_frmSearchReplace->activateWindow();
 }
@@ -1468,10 +1470,11 @@ void MainWindow::on_actionReplace_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->getSelectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
+    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+        if (sel.length() > 0 && sel[0].length() > 0) {
+            m_frmSearchReplace->setSearchText(sel[0]);
+        }     
+    });
 
     m_frmSearchReplace->show(frmSearchReplace::TabReplace);
     m_frmSearchReplace->activateWindow();
@@ -1520,14 +1523,13 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
-    Editor *editor = currentEditor();
-    QStringList sel = editor->getSelectedTexts();
+    currentEditor()->getSelectedTexts([&](QStringList sel) {
+        for (int i = 0; i < sel.length(); i++) {
+            sel.replace(i, func(sel.at(i)));
+        }
+        currentEditor()->setSelectionsText(sel, Editor::selectMode_selected);          
+    });
 
-    for (int i = 0; i < sel.length(); i++) {
-        sel.replace(i, func(sel.at(i)));
-    }
-
-    editor->setSelectionsText(sel, Editor::selectMode_selected);
 }
 
 void MainWindow::on_actionUPPERCASE_triggered()
@@ -1979,7 +1981,7 @@ void MainWindow::runCommand()
     QAction *a = qobject_cast<QAction*>(sender());
     QString cmd;
 
-    if (a->data().toString().size()) {
+    if (!a->data().isNull()) {
         cmd = a->data().toString();
     } else {
         NqqRun::RunDialog rd;
@@ -1999,22 +2001,24 @@ void MainWindow::runCommand()
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
-    QStringList selection = editor->getSelectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
     }
-    if(!selection.first().isEmpty()) {
-        cmd.replace("\%selection\%",selection.first());
-    }
-    QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
-    if (!args.isEmpty()) {
-        cmd = args.takeFirst();
-        if(!QProcess::startDetached(cmd, args)) {
-        
+    editor->getSelectedTexts([cmd](const QStringList& selection) mutable {
+        if(!selection.isEmpty() && !selection.first().isEmpty()) {
+            cmd.replace("\%selection\%",selection.first());
         }
-    }
+        QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
+        if (!args.isEmpty()) {
+            cmd = args.takeFirst();
+            if(!QProcess::startDetached(cmd, args)) {
+            }
+        }
+
+    });
+
 }
 
 void MainWindow::on_actionPrint_triggered()
@@ -2029,48 +2033,6 @@ void MainWindow::on_actionPrint_Now_triggered()
 {
     QPrinter printer(QPrinter::HighResolution);
     currentEditor()->print(&printer);
-}
-/*
-void MainWindow::on_actionLaunch_in_Chrome_triggered()
-{
-    QUrl fileName = currentEditor()->fileName();
-    if (!fileName.isEmpty()) {
-        QStringList args;
-        args << fileName.toString(QUrl::None);
-        QProcess::startDetached("google-chrome", args);
-    }
-}
-*/
-QStringList MainWindow::currentWordOrSelections()
-{
-    Editor *editor = currentEditor();
-    QStringList selection = editor->getSelectedTexts();
-
-    if (selection.isEmpty() || selection.first().isEmpty()) {
-        return QStringList(editor->getCurrentWord());
-    } else {
-        return selection;
-    }
-}
-
-QString MainWindow::currentWordOrSelection()
-{
-    QStringList terms = currentWordOrSelections();
-    if (terms.isEmpty()) {
-        return QString();
-    } else {
-        return terms.first();
-    }
-}
-
-void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
-{
-    QString term = currentWordOrSelection();
-
-    if (!term.isNull() && !term.isEmpty()) {
-        QUrl phpHelp = QUrl(searchUrl.arg(QString(QUrl::toPercentEncoding(term))));
-        QDesktopServices::openUrl(phpHelp);
-    }
 }
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
@@ -2107,31 +2069,6 @@ void MainWindow::on_actionMove_to_New_Window_triggered()
     }
 }
 
-void MainWindow::on_actionOpen_file_triggered()
-{
-    QStringList terms = currentWordOrSelections();
-    if (!terms.isEmpty()) {
-        QList<QUrl> urls;
-        for (QString term : terms) {
-            urls.append(QUrl::fromLocalFile(term));
-        }
-
-        m_docEngine->loadDocuments(urls,
-                                   m_topEditorContainer->currentTabWidget());
-    }
-}
-
-void MainWindow::on_actionOpen_in_another_window_triggered()
-{
-    QStringList terms = currentWordOrSelections();
-    if (!terms.isEmpty()) {
-        terms.prepend(QApplication::arguments().first());
-
-        MainWindow *b = new MainWindow(terms, 0);
-        b->show();
-    }
-}
-
 void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 {
     if (tab == -1) {
@@ -2145,10 +2082,11 @@ void MainWindow::on_actionFind_in_Files_triggered()
         instantiateFrmSearchReplace();
     }
 
-    QStringList sel = currentEditor()->getSelectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
+    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+        if (sel.length() > 0 && sel[0].length() > 0) {
+            m_frmSearchReplace->setSearchText(sel[0]);
+        }
+    });
 
     m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
     m_frmSearchReplace->activateWindow();
