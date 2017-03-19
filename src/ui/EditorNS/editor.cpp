@@ -703,7 +703,7 @@ namespace EditorNS
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
-    void Editor::getSelections(std::function<void(QList<Editor::Selection>)> callback)
+    void Editor::getSelections(std::function<void(const QList<Editor::Selection>&)> callback)
     {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS",
         [&, callback](const QVariant& v) {
@@ -726,7 +726,7 @@ namespace EditorNS
         });
     }
     
-    void Editor::getSelectedTexts(std::function<void(QStringList)> callback)
+    void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)
     {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
         [callback](const QVariant& v) mutable {
@@ -734,7 +734,7 @@ namespace EditorNS
         });
     }
 
-    void Editor::getLanguage(std::function<void(QString)> callback) {
+    void Editor::getLanguage(std::function<void(const QString&)> callback) {
         sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
         [callback](const QVariant &v) {
             QString langId = v.toMap().value("id").toString();
@@ -742,7 +742,7 @@ namespace EditorNS
         });
     }
 
-    void Editor::getCurrentWordOrSelections(std::function<void(QStringList)> callback) {
+    void Editor::getCurrentWordOrSelections(std::function<void(const QStringList&)> callback) {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
         [&, callback](const QVariant& v) mutable {
             if(v.isNull()) {

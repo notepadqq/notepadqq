@@ -307,23 +307,28 @@ namespace EditorNS
          * @param callback  Lambda or functor.
          *                  Must accept QList<Editor::Selection> type as parameter.
          */
-        void getSelections(std::function<void(QList<Selection>)> callback);
+        void getSelections(std::function<void(const QList<Selection>&)> callback);
 
         /**
          * @brief Get the currently selected texts.
          * @param callback  Lambda or functor.
          *                  Must accept QStringList type as parameter.
          */
-        void getSelectedTexts(std::function<void(QStringList)> callback);
+        void getSelectedTexts(std::function<void(const QStringList&)> callback);
 
         /**
          * @brief Get the current editor language.
          * @param callback Lambda or functor.
          *                 Must accept QString type as parameter.
          */
-        void getLanguage(std::function<void(QString)> callback); 
-
-        void getCurrentWordOrSelections(std::function<void(QStringList)> callback); 
+        void getLanguage(std::function<void(const QString&)> callback); 
+        /**
+         * @brief Get the currently selected text, or the word under the cursor
+         *        if no text is selected.
+         * @param callback Lambda or functor.
+         *                 Must accept QStringList type as parameter.
+         */
+        void getCurrentWordOrSelections(std::function<void(const QStringList&)> callback); 
 
     private:
         static QQueue<Editor*> m_editorBuffer;
