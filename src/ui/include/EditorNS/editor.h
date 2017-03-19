@@ -408,7 +408,6 @@ namespace EditorNS
             sendMessageWithCallback(msg, QVariant(0), callback);
         }
 
-        QList<Selection> convertToSelections(const QVariant& sels);
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**

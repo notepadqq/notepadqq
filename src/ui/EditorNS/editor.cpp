@@ -668,28 +668,6 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
     }
 
-    QList<Editor::Selection> Editor::convertToSelections(const QVariant& data)
-    {
-        QList<Selection> out;
-
-        QList<QVariant> sels = data.toList();
-        for (int i = 0; i < sels.length(); i++) {
-            QVariantMap selMap = sels[i].toMap();
-            QVariantMap from = selMap.value("anchor").toMap();
-            QVariantMap to = selMap.value("head").toMap();
-
-            Selection sel;
-            sel.from.line = from.value("line").toInt();
-            sel.from.column = from.value("ch").toInt();
-            sel.to.line = to.value("line").toInt();
-            sel.to.column = to.value("ch").toInt();
-
-            out.append(sel);
-        }
-
-        return out;
-    }
-
     void Editor::setOverwrite(bool overwrite)
     {
         sendMessage("C_CMD_SET_OVERWRITE", overwrite);
@@ -728,15 +706,30 @@ namespace EditorNS
     void Editor::getSelections(std::function<void(QList<Editor::Selection>)> callback)
     {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS",
-                [&, callback](const QVariant& v) {
-            callback(convertToSelections(v));
+        [&, callback](const QVariant& v) {
+            QList<Selection> out;
+            QList<QVariant> sels = v.toList();
+            for (int i = 0; i < sels.length(); i++) {
+                QVariantMap selMap = sels[i].toMap();
+                QVariantMap from = selMap.value("anchor").toMap();
+                QVariantMap to = selMap.value("head").toMap();
+
+                Selection sel;
+                sel.from.line = from.value("line").toInt();
+                sel.from.column = from.value("ch").toInt();
+                sel.to.line = to.value("line").toInt();
+                sel.to.column = to.value("ch").toInt();
+
+                out.append(sel);
+            }
+            callback(out);
         });
     }
     
     void Editor::getSelectedTexts(std::function<void(QStringList)> callback)
     {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
-                [callback](const QVariant& v) mutable {
+        [callback](const QVariant& v) mutable {
             callback(v.toStringList());
         });
     }
