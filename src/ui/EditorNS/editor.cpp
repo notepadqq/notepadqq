@@ -418,14 +418,11 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-//        waitAsyncLoad();
         m_jsProxy->sendMsg(jsStringEscape(msg), data);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        qDebug() << "Getting result for: " << msg;
-//        waitAsyncLoad();
         if (m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
@@ -534,7 +531,6 @@ namespace EditorNS
     void Editor::setCursorPosition(const int line, const int column)
     {
         QList<QVariant> arg = QList<QVariant>({line, column});
-//        sendMessageWithCallback("C_CMD_SET_CURSOR", QVariant(arg), [](const QVariant& v) {});
         sendMessage("C_CMD_SET_CURSOR", QVariant(arg));
     }
 
