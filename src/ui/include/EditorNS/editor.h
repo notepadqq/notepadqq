@@ -323,6 +323,7 @@ namespace EditorNS
          */
         void getLanguage(std::function<void(QString)> callback); 
 
+        void getCurrentWordOrSelections(std::function<void(QStringList)> callback); 
 
     private:
         static QQueue<Editor*> m_editorBuffer;

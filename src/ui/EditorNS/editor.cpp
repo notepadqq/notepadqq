@@ -749,4 +749,19 @@ namespace EditorNS
         });
     }
 
+    void Editor::getCurrentWordOrSelections(std::function<void(QStringList)> callback) {
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
+        [&, callback](const QVariant& v) mutable {
+            if(v.isNull()) {
+                sendMessageWithCallback("C_FUN_GET_CURRENT_WORD",
+                [callback](const QVariant& v) mutable {
+                    callback(v.toStringList());
+                });
+            }else {
+                callback(v.toStringList());
+            }
+        });
+    }
+
+
 }
