@@ -285,7 +285,6 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        QString getCurrentWord(); 
         int getLineCount();
         int getCharCount();
 
@@ -314,21 +313,6 @@ namespace EditorNS
             sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT", 
                     [callback](const QVariant& v) mutable {
                 callback(v.toStringList());
-            });
-        }
-
-        template<typename T>
-        void getCurrentWordOrSelections(T callback) {
-            sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
-            [&, callback](const QVariant& v) mutable {
-                if(v.isNull()) {
-                    sendMessageWithCallback("C_FUN_GET_CURRENT_WORD",
-                    [callback](const QVariant& v) mutable {
-                        callback(v.toStringList());
-                    });
-                }else {
-                    callback(v.toStringList());
-                }
             });
         }
 
