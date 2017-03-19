@@ -176,8 +176,12 @@ namespace EditorNS
         void markDirty();
         static QList<QMap<QString, QString> > languages();
 
-
+        /**
+         * @brief Get the id of the language currently being used by the editor.
+         * @return language_id
+         */
         QString getLanguage();
+
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
@@ -188,8 +192,15 @@ namespace EditorNS
         void setLanguageFromFileName(QString fileName);
         void setLanguageFromFileName();
         
-        
+        /**
+         * @brief Get the content of the editor.
+         * @return QString content text.
+         */
         QString value();
+        /**
+         * @brief Set the content of the editor, overwriting previous content.
+         * @param value New content to set.
+         */
         void setValue(const QString &value);
 
         /**
@@ -298,6 +309,11 @@ namespace EditorNS
          */
         void requestCursorInfo();
 
+        /**
+         * @brief Get the current selection boundaries.
+         * @param callback  Lambda or functor.
+         *                  Must accept QList<Editor::Selection> type as parameter.
+         */
         template<typename T>
         void getSelections(T callback)
         {
@@ -307,6 +323,11 @@ namespace EditorNS
             }); 
         }
 
+        /**
+         * @brief Get the currently selected texts.
+         * @param callback  Lambda or functor.
+         *                  Must accept QStringList type as parameter.
+         */
         template<typename T>
         void getSelectedTexts(T callback)
         {
@@ -316,6 +337,11 @@ namespace EditorNS
             });
         }
 
+        /**
+         * @brief Get the current editor language.
+         * @param callback Lambda or functor.
+         *                 Must accept QString type as parameter.
+         */
         template<typename T>
         void getLanguage(T callback) {
             sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
@@ -379,18 +405,36 @@ namespace EditorNS
         LanguageInfo buildLanguageChangedEventData(const QVariant& data,
                 bool cache = true);
 
+        /**
+         * @brief Sends a javascript message, including data, to the editor.
+         *        Invoking the specified "callback" when execution has 
+         *        completed.
+         * @param msg Initial message, which maps to a javascript function.
+         * @param data QVariant filled with data to send to javascript.
+         * @param callback Functor or lambda.
+         */
         template<typename T>
         void sendMessageWithCallback(const QString& msg, const QVariant &data, T callback) {
             QString jsonData = QJsonDocument::fromVariant(data).toJson();
+            if (jsonData.isEmpty()) 
+                jsonData.append("0");
             QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(jsonData);
             m_webView->page()->runJavaScript(jsMsg, callback);
         }
 
+        /**
+         * @brief This is an overloaded function.
+         *        Sends a javascript message to the editor, invoking the 
+         *        specified "callback" when execution has completed.
+         * @param msg Initial message, which maps to a javascript function.
+         * @param data QVariant filled with data to send to javascript.
+         * @param callback Functor or lambda.
+         */
         template<typename T>
         void sendMessageWithCallback(const QString& msg, T callback) {
-            QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(0);
-            m_webView->page()->runJavaScript(jsMsg, callback);
+            sendMessageWithCallback(msg, QVariant(0), callback);
         }
+
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**
