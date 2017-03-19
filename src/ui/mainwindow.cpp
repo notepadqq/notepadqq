@@ -2005,7 +2005,7 @@ void MainWindow::runCommand()
         QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
         if (!args.isEmpty()) {
             cmd = args.takeFirst();
-            if(!QProcess::startDetached(cmd, args)) {
+            if (!QProcess::startDetached(cmd, args)) {
             }
         }
     };
@@ -2018,14 +2018,14 @@ void MainWindow::runCommand()
     }
 
     // Check for selection before performing asynchronous call.
-    if(cmd.contains("\%selection\%")) {
+    if (cmd.contains("\%selection\%")) {
         editor->getSelectedTexts([cmd, doRun](const QStringList& selection) mutable {
-            if(!selection.isEmpty() && !selection.first().isEmpty()) {
+            if (!selection.isEmpty() && !selection.first().isEmpty()) {
                 cmd.replace("\%selection\%",selection.first());
             }
             doRun(cmd);
         });
-    }else {
+    } else {
         doRun(cmd);
     }
 }
