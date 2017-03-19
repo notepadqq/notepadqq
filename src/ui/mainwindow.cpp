@@ -1067,7 +1067,7 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 
 void MainWindow::on_action_Copy_triggered()
 {
-    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+    currentEditor()->getSelectedTexts([](const QStringList& sel) {
         QApplication::clipboard()->setText(sel.join("\n"));
     });
 }
@@ -1332,9 +1332,9 @@ void MainWindow::on_actionSearch_triggered()
         instantiateFrmSearchReplace();
     }
 
-    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+    currentEditor()->getSelectedTexts([this](const QStringList& sel) {
         if (sel.length() > 0 && sel[0].length() > 0) {
-            m_frmSearchReplace->setSearchText(sel[0]);
+            this->m_frmSearchReplace->setSearchText(sel[0]);
         } 
     });
    
@@ -1470,7 +1470,7 @@ void MainWindow::on_actionReplace_triggered()
         instantiateFrmSearchReplace();
     }
 
-    currentEditor()->getSelectedTexts([&](const QStringList& sel) {
+    currentEditor()->getSelectedTexts([this](const QStringList& sel) {
         if (sel.length() > 0 && sel[0].length() > 0) {
             m_frmSearchReplace->setSearchText(sel[0]);
         }     
@@ -1521,10 +1521,11 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
     }
 }
 
-void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
+void MainWindow::transformSelectedText(QString (*func)(const QString&))
 {
     Editor* editor = currentEditor();
-    editor->getSelectedTexts([&, editor](QStringList sel) {
+    editor->getSelectedTexts([func, editor](QStringList sel) {
+        qDebug() << sizeof(func);
         for (int i = 0; i < sel.length(); i++) {
             sel.replace(i, func(sel.at(i)));
         }
@@ -1535,14 +1536,14 @@ void MainWindow::transformSelectedText(std::function<QString (const QString &)> 
 
 void MainWindow::on_actionUPPERCASE_triggered()
 {
-    transformSelectedText([](const QString &str) {
+    transformSelectedText(+[](const QString&str) {
         return str.toUpper();
     });
 }
 
 void MainWindow::on_actionLowercase_triggered()
 {
-    transformSelectedText([](const QString &str) {
+    transformSelectedText(+[](const QString &str) {
         return str.toLower();
     });
 }

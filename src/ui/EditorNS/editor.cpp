@@ -706,7 +706,7 @@ namespace EditorNS
     void Editor::getSelections(std::function<void(const QList<Editor::Selection>&)> callback)
     {
         sendMessageWithCallback("C_FUN_GET_SELECTIONS",
-        [&, callback](const QVariant& v) {
+        [callback](const QVariant& v) {
             QList<Selection> out;
             QList<QVariant> sels = v.toList();
             for (int i = 0; i < sels.length(); i++) {
