@@ -1525,7 +1525,6 @@ void MainWindow::transformSelectedText(QString (*func)(const QString&))
 {
     Editor* editor = currentEditor();
     editor->getSelectedTexts([func, editor](QStringList sel) {
-        qDebug() << sizeof(func);
         for (int i = 0; i < sel.length(); i++) {
             sel.replace(i, func(sel.at(i)));
         }
