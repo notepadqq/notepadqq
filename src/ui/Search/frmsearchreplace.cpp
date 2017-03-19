@@ -528,7 +528,7 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
         manualSizeAdjust();
     }
 }
-#include <QDebug>
+
 void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 {
     NqqSettings& s = NqqSettings::getInstance();
