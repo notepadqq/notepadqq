@@ -1523,11 +1523,12 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
-    currentEditor()->getSelectedTexts([&](QStringList sel) {
+    Editor* editor = currentEditor();
+    editor->getSelectedTexts([&, editor](QStringList sel) {
         for (int i = 0; i < sel.length(); i++) {
             sel.replace(i, func(sel.at(i)));
         }
-        currentEditor()->setSelectionsText(sel, Editor::selectMode_selected);          
+        editor->setSelectionsText(sel, Editor::selectMode_selected);          
     });
 
 }
