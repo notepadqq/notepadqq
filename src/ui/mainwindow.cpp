@@ -1978,7 +1978,7 @@ void MainWindow::modifyRunCommands()
 
 void MainWindow::runCommand()
 {
-    QAction *a = qobject_cast<QAction*>(sender());
+    auto a = qobject_cast<QAction*>(sender());
     QString cmd;
 
     if (!a->data().isNull()) {
@@ -1999,6 +1999,15 @@ void MainWindow::runCommand()
     }
 
     Editor *editor = currentEditor();
+    
+    auto doRun = [](QString cmd) {
+        QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
+        if (!args.isEmpty()) {
+            cmd = args.takeFirst();
+            if(!QProcess::startDetached(cmd, args)) {
+            }
+        }
+    };
 
     QUrl url = currentEditor()->fileName();
     if (!url.isEmpty()) {
@@ -2006,19 +2015,18 @@ void MainWindow::runCommand()
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
     }
-    editor->getSelectedTexts([cmd](const QStringList& selection) mutable {
-        if(!selection.isEmpty() && !selection.first().isEmpty()) {
-            cmd.replace("\%selection\%",selection.first());
-        }
-        QStringList args = NqqRun::RunDialog::parseCommandString(cmd);
-        if (!args.isEmpty()) {
-            cmd = args.takeFirst();
-            if(!QProcess::startDetached(cmd, args)) {
+
+    // Check for selection before performing asynchronous call.
+    if(cmd.contains("\%selection\%")) {
+        editor->getSelectedTexts([cmd, doRun](const QStringList& selection) mutable {
+            if(!selection.isEmpty() && !selection.first().isEmpty()) {
+                cmd.replace("\%selection\%",selection.first());
             }
-        }
-
-    });
-
+            doRun(cmd);
+        });
+    }else {
+        doRun(cmd);
+    }
 }
 
 void MainWindow::on_actionPrint_triggered()
