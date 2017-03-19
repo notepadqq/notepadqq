@@ -306,13 +306,10 @@ namespace EditorNS
         return langs;
     }
 
-    QString Editor::getLanguage(const QString& val)
+    QString Editor::getLanguage()
     {
         QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        if ( val == "id" ) {
-            return data.value("id").toString();
-        }
-        return data.value("lang").toMap().value(val).toString();
+        return data.value("id").toString();
     }
 
     void Editor::setLanguage(const QString &language)

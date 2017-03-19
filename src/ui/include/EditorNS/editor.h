@@ -177,15 +177,7 @@ namespace EditorNS
         static QList<QMap<QString, QString> > languages();
 
 
-        /**
-         * @brief Get the currently active language used
-         *        in the editor.
-         * @param val The value to pull from the language data,
-         *        or ID by default.
-         * @return The value associated with the key "val".
-         */
-
-        QString getLanguage(const QString& val = "id");
+        QString getLanguage();
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
@@ -337,6 +329,15 @@ namespace EditorNS
                 }else {
                     callback(v.toStringList());
                 }
+            });
+        }
+
+        template<typename T>
+        void getLanguage(T callback) {
+            sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
+            [callback](const QVariant &v) {
+                QString langId = v.toMap().value("id").toString();
+                callback(langId);
             });
         }
 
