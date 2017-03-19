@@ -535,10 +535,9 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 
     if (s.Search.getSearchAsIType()) {
         if (ui->actionFind->isChecked()) {
-            currentEditor()->getSelections([&](const QList<Editor::Selection> selections) {
-                Editor *editor = currentEditor();
+            Editor *editor = currentEditor();
+            editor->getSelections([&, editor](const QList<Editor::Selection> selections) {
                 if (selections.length() > 0) {
-                    qDebug() << "Test" << selections[0].to.line;
                     editor->setCursorPosition(
                         std::min(selections[0].from, selections[0].to));
                 }

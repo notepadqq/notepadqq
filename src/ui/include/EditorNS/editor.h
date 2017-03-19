@@ -278,13 +278,7 @@ namespace EditorNS
 
         void setSelectionsText(const QStringList &texts, selectMode mode);
         void setSelectionsText(const QStringList &texts);
-        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
-
-        /**
-         * @brief Returns the currently selected texts.
-         * @return
-         */
-        QList<Selection> convertToSelections(const QVariant& sels);
+        void setSelection(int fromLine, int fromCol, int toLine, int toCol); 
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
@@ -435,6 +429,7 @@ namespace EditorNS
             sendMessageWithCallback(msg, QVariant(0), callback);
         }
 
+        QList<Selection> convertToSelections(const QVariant& sels);
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**
