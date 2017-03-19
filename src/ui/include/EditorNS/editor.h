@@ -11,10 +11,9 @@
 #include <QVBoxLayout>
 #include <QTextCodec>
 #include <QPrinter>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QEventLoop>
 #include <QJsonDocument>
+#include <functional>
 namespace EditorNS
 {
 
@@ -308,42 +307,21 @@ namespace EditorNS
          * @param callback  Lambda or functor.
          *                  Must accept QList<Editor::Selection> type as parameter.
          */
-        template<typename T>
-        void getSelections(T callback)
-        {
-            sendMessageWithCallback("C_FUN_GET_SELECTIONS", 
-                    [&, callback](const QVariant& v) {
-                callback(convertToSelections(v));
-            }); 
-        }
+        void getSelections(std::function<void(QList<Selection>)> callback);
 
         /**
          * @brief Get the currently selected texts.
          * @param callback  Lambda or functor.
          *                  Must accept QStringList type as parameter.
          */
-        template<typename T>
-        void getSelectedTexts(T callback)
-        {
-            sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT", 
-                    [callback](const QVariant& v) mutable {
-                callback(v.toStringList());
-            });
-        }
+        void getSelectedTexts(std::function<void(QStringList)> callback);
 
         /**
          * @brief Get the current editor language.
          * @param callback Lambda or functor.
          *                 Must accept QString type as parameter.
          */
-        template<typename T>
-        void getLanguage(T callback) {
-            sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
-            [callback](const QVariant &v) {
-                QString langId = v.toMap().value("id").toString();
-                callback(langId);
-            });
-        }
+        void getLanguage(std::function<void(QString)> callback); 
 
 
     private:

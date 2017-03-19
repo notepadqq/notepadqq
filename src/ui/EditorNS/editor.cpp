@@ -724,4 +724,29 @@ namespace EditorNS
         //m_webView->print(printer); // FIXME
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
+
+    void Editor::getSelections(std::function<void(QList<Editor::Selection>)> callback)
+    {
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS",
+                [&, callback](const QVariant& v) {
+            callback(convertToSelections(v));
+        });
+    }
+    
+    void Editor::getSelectedTexts(std::function<void(QStringList)> callback)
+    {
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
+                [callback](const QVariant& v) mutable {
+            callback(v.toStringList());
+        });
+    }
+
+    void Editor::getLanguage(std::function<void(QString)> callback) {
+        sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
+        [callback](const QVariant &v) {
+            QString langId = v.toMap().value("id").toString();
+            callback(langId);
+        });
+    }
+
 }
