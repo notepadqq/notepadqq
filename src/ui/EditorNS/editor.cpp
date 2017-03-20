@@ -187,7 +187,6 @@ namespace EditorNS
         return temp;
     }
 
-
     Editor::CursorInfo Editor::buildCursorEventData(const QVariant& data, 
             bool cache)
     {
@@ -197,10 +196,9 @@ namespace EditorNS
         temp.column = v["cursorColumn"].toInt();
         temp.selectionCharCount = v["selectionCharCount"].toInt();
         temp.selectionLineCount = v["selectionLineCount"].toInt();
-        QVariantList sels = v["selections"].toList();
-        for(auto& cursor : sels) {
-            QVariantMap anchor = cursor.toMap().value("anchor").toMap();
-            QVariantMap head = cursor.toMap().value("head").toMap();
+        for (auto selection : v["selections"].toList()) {
+            QVariantMap anchor = selection.toMap().value("anchor").toMap();
+            QVariantMap head = selection.toMap().value("head").toMap();
             Cursor from = { 
                 anchor["line"].toInt(), 
                 anchor["ch"].toInt() 
@@ -209,8 +207,7 @@ namespace EditorNS
                 head["line"].toInt(), 
                 head["ch"].toInt() 
             };
-            Selection curSelection = { from, to };
-            temp.selections.push_back(curSelection);
+            temp.selections.push_back({ from, to });
         }
         
         if (cache) {
