@@ -211,7 +211,7 @@ namespace EditorNS
         QVariantMap v = data.toMap();
         LanguageInfo temp;
         temp.id = v.value("id").toString();
-        temp.name = v.value("lang").toMap().value("name").toString();
+        temp.name = v.value("name").toString();
         if (!m_customIndentationMode) {
             setIndentationMode(temp.id);
         }
@@ -277,6 +277,7 @@ namespace EditorNS
                 langData.insert("id", l.id);
                 langData.insert("mime", l.mime);
                 langData.insert("mode", l.mode);
+                langData.insert("name", l.name);
                 langData.insert("fileNames", l.fileNames);
                 langData.insert("fileExtensions", l.fileExtensions);
                 return QVariant::fromValue(langData);

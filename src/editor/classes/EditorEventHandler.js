@@ -62,8 +62,10 @@ class EditorEventHandler {
     }
 
     onLanguageChange(proxy, editor, langData) {
-        proxy.setValue("language", langData);
-        proxy.sendEditorEvent("J_EVT_CURRENT_LANGUAGE_CHANGED", langData);
+        console.error(JSON.stringify(langData));
+        var lang = { id:langData.id, name:langData.name};
+        console.error(JSON.stringify(lang));
+        proxy.sendEditorEvent("J_EVT_CURRENT_LANGUAGE_CHANGED", lang);
     }
 
     onSetValue(proxy, editor) {
