@@ -134,7 +134,7 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QList<QMap<QString, QString>> langs = Editor::languages();
+    QVector<QMap<QString, QString>> langs = Editor::languages();
 
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 

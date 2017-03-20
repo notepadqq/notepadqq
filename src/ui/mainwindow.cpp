@@ -432,7 +432,7 @@ void MainWindow::setupLanguagesMenu()
     // Lets open our Languages.js file and evaluate what languages we have.
     // This keeps us from relying on an editor instance.
 
-    QList<QMap<QString, QString>> langs = Editor::languages();
+    QVector<QMap<QString, QString>> langs = Editor::languages();
 
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 

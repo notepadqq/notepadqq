@@ -173,7 +173,7 @@ namespace EditorNS
         bool isClean();
         void markClean();
         void markDirty();
-        static QList<QMap<QString, QString> > languages();
+        static QVector<QMap<QString, QString> > languages();
 
         /**
          * @brief Get the id of the language currently being used by the editor.
@@ -332,6 +332,7 @@ namespace EditorNS
 
     private:
         static QQueue<Editor*> m_editorBuffer;
+        static QVector<QMap<QString, QString>> m_langCache;
         QEventLoop m_processLoop;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;

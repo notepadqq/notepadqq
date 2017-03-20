@@ -1006,7 +1006,7 @@ var Languages = new function() {
             mode: "xml",
             mime: "application/xml",
             fileExtensions: ["xml", "svg", "wxs", "wxl", "wsdl", "rss", "atom", "rdf", "xslt", "xsl", "xul", "xbl", "mathml", "config", "plist", "xaml", "qrc"],
-            firstNonBlankLine: [/^<\?xml /, /^<.+?>/]
+            firstNonBlankLine: [/^<\\?xml /, /^<.+?>/]
         },
 
         "xquery": {
@@ -1046,7 +1046,6 @@ var Languages = new function() {
     }
 
     this.languageByFileName = function(editor, filename) {
-
         // Case-sensitive search for file name match
         for (var id in this.languages) { 
             if (this.languages.hasOwnProperty(id)) {

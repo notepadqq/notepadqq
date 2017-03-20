@@ -13,7 +13,7 @@
 
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
-#include <QJSEngine>
+#include <QJsonDocument>
 
 namespace EditorNS
 {
@@ -267,43 +267,27 @@ namespace EditorNS
     {
         sendMessage("C_CMD_MARK_DIRTY");
     }
-
-    QList<QMap<QString, QString>> Editor::languages()
+    
+    QVector<QMap<QString, QString>> Editor::languages()
     {
-        // TODO: Cache this data.
-        QJSEngine engine;
-        QFileInfo fileInfo(Notepadqq::editorPath());
-        QString fileName = fileInfo.absolutePath() + "/classes/Languages.js";
-        QFile scriptFile(fileName);
-        scriptFile.open(QIODevice::ReadOnly);
-        QTextStream stream(&scriptFile);
-        QString contents = stream.readAll();
-        scriptFile.close();
-
-        QJSValue result = engine.evaluate(contents, fileName);
-
-        if (result.isError()) {
-            qDebug() << "Failed to load languages file.";
-            return QList<QMap<QString, QString>>();
+        if(m_langCache.isEmpty()) {
+            QFileInfo fileInfo(Notepadqq::editorPath());
+            QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
+            QFile scriptFile(fileName);
+            scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
+            QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
+            scriptFile.close();
+            for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
+                QJsonObject mode = it.value().toObject();
+                QMap<QString, QString> newMode;
+                newMode.insert("id", it.key());
+                newMode.insert("name", mode.value("name").toString());
+                newMode.insert("mime", mode.value("mime").toString());
+                newMode.insert("mode", mode.value("mode").toString());
+                m_langCache.append(newMode);
+            }
         }
-
-        QMap<QString, QVariant> languages =
-            engine.evaluate("Languages.languages", fileName).toVariant().toMap();
-
-        QList<QMap<QString, QString>> langs;
-
-        QMap<QString, QVariant>::iterator lang;
-        for (lang = languages.begin(); lang != languages.end(); ++lang) {
-            QMap<QString, QVariant> mode = lang.value().toMap();
-
-            QMap<QString, QString> newMode;
-            newMode.insert("id", lang.key());
-            newMode.insert("name", mode.value("name").toString());
-            newMode.insert("mime", mode.value("mime").toString());
-            newMode.insert("mode", mode.value("mode").toString());
-            langs.append(newMode);
-        }
-        return langs;
+        return m_langCache;
     }
 
     QString Editor::getLanguage()
@@ -756,5 +740,5 @@ namespace EditorNS
         });
     }
 
-
+QVector<QMap<QString, QString>> Editor::m_langCache;
 }
