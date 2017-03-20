@@ -318,8 +318,7 @@ namespace EditorNS
 
         /**
          * @brief Get the current selection boundaries.
-         * @param callback  Lambda or functor.
-         *                  Must accept QList<Editor::Selection> type as parameter.
+         * @return const reference of cached selections.
          */
         const QList<Selection>& getSelections() const;
 
