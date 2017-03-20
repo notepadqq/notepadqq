@@ -13,7 +13,8 @@ class EditorEventHandler {
             cursorLine: cursor.line,
             cursorColumn: cursor.ch,
             selectionCharCount: selLength,
-            selectionLineCount: selLines
+            selectionLineCount: selLines,
+            selections: editor.listSelections()
         }
         return UiCursorInfo;
     }

@@ -85,6 +85,11 @@ namespace EditorNS
             }
         };
 
+        struct Selection {
+            Cursor from;
+            Cursor to;
+        };
+
         /**
          * @brief Content information, such as line count, character count, 
          *        and clean state
@@ -104,8 +109,10 @@ namespace EditorNS
             int column; /**< The current column of the cursor */
             int selectionCharCount; /**< The currently selected text length, in characters */
             int selectionLineCount; /**< The number of lines selected */
+            QList<Selection> selections;
         }; 
 
+        // TODO: Maybe combine this into LanguageData?
         struct LanguageInfo {
             QString id;
             QString name;
@@ -121,10 +128,7 @@ namespace EditorNS
             QStringList firstNonBlankLine;
         };
 
-        struct Selection {
-            Cursor from;
-            Cursor to;
-        };
+
 
         struct IndentationMode {
             bool useTabs;
@@ -317,7 +321,7 @@ namespace EditorNS
          * @param callback  Lambda or functor.
          *                  Must accept QList<Editor::Selection> type as parameter.
          */
-        void getSelections(std::function<void(const QList<Selection>&)> callback);
+        const QList<Selection>& getSelections() const;
 
         /**
          * @brief Get the currently selected texts.

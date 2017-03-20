@@ -197,6 +197,22 @@ namespace EditorNS
         temp.column = v["cursorColumn"].toInt();
         temp.selectionCharCount = v["selectionCharCount"].toInt();
         temp.selectionLineCount = v["selectionLineCount"].toInt();
+        QVariantList sels = v["selections"].toList();
+        for(auto& cursor : sels) {
+            QVariantMap anchor = cursor.toMap().value("anchor").toMap();
+            QVariantMap head = cursor.toMap().value("head").toMap();
+            Cursor from = { 
+                anchor["line"].toInt(), 
+                anchor["ch"].toInt() 
+            };
+            Cursor to = { 
+                head["line"].toInt(), 
+                head["ch"].toInt() 
+            };
+            Selection curSelection = { from, to };
+            temp.selections.push_back(curSelection);
+        }
+        
         if (cache) {
             m_cursorInfo = temp;
         }
@@ -745,27 +761,9 @@ namespace EditorNS
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
-    void Editor::getSelections(std::function<void(const QList<Editor::Selection>&)> callback)
+    const QList<Editor::Selection>& Editor::getSelections() const
     {
-        sendMessageWithCallback("C_FUN_GET_SELECTIONS",
-        [callback](const QVariant& v) {
-            QList<Selection> out;
-            QList<QVariant> sels = v.toList();
-            for (int i = 0; i < sels.length(); i++) {
-                QVariantMap selMap = sels[i].toMap();
-                QVariantMap from = selMap.value("anchor").toMap();
-                QVariantMap to = selMap.value("head").toMap();
-
-                Selection sel;
-                sel.from.line = from.value("line").toInt();
-                sel.from.column = from.value("ch").toInt();
-                sel.to.line = to.value("line").toInt();
-                sel.to.column = to.value("ch").toInt();
-
-                out.append(sel);
-            }
-            callback(out);
-        });
+        return m_cursorInfo.selections;
     }
     
     void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)
