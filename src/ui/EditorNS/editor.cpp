@@ -14,7 +14,7 @@
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
 #include <QJsonDocument>
-#include "include/timer.h"
+
 namespace EditorNS
 {
 
