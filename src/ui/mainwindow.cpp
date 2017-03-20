@@ -432,17 +432,15 @@ void MainWindow::setupLanguagesMenu()
     // Lets open our Languages.js file and evaluate what languages we have.
     // This keeps us from relying on an editor instance.
 
-    QVector<QMap<QString, QString>> langs = Editor::languages();
+    QVector<Editor::LanguageData> langs = Editor::languages();
 
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
+    //std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
     QMap<QChar, QMenu*> menuInitials;
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-
-        QString name = map.value("name", "?");
-        if (name.length() == 0) name = "?";
+    for (auto& l : langs) {
+        QString name = l.name;
+        if (name.isEmpty()) name = "?";
         QChar letter = name.at(0).toUpper();
 
         QMenu *letterMenu;
@@ -454,10 +452,9 @@ void MainWindow::setupLanguagesMenu()
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QString langId = map.value("id", "");
-        QAction *action = new QAction(map.value("name"), this);
+        QAction *action = new QAction(name, this);
         connect(action, &QAction::triggered, this, [=](bool = false) {
-            currentEditor()->setLanguage(langId);
+            currentEditor()->setLanguage(l.id);
         });
         letterMenu->insertAction(0, action);
     }

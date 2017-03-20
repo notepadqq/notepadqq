@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     // There are no other instances: start a new server.
     a.startServer();
-
+    Editor::initLanguageCache();
     Editor::addEditorToBuffer();
 
     QFile file(Notepadqq::editorPath());

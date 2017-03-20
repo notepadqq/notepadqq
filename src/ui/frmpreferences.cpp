@@ -134,28 +134,26 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QVector<QMap<QString, QString>> langs = Editor::languages();
+    auto langs = Editor::languages();
 
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
+    //std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     // Add "Default" language into the list.
-    QMap<QString,QString> defaultMap;
-    defaultMap.insert("id", "default");
-    defaultMap.insert("name", "Default");
-    langs.push_front(defaultMap);
+    Editor::LanguageData defaultLang;
+    defaultLang.id = "default";
+    defaultLang.name = "Default";
+    langs.push_front(defaultLang);
 
     // Add all languages to the comboBox and write their current settings to a temp list
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-        const QString langId = map.value("id", "");
+    for (auto& l : langs) {
 
-        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
+        ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
 
         LanguageSettings lang = {
-            langId,
-            m_settings.Languages.getTabSize(langId),
-            m_settings.Languages.getIndentWithSpaces(langId),
-            m_settings.Languages.getUseDefaultSettings(langId)
+            l.id,
+            m_settings.Languages.getTabSize(l.id),
+            m_settings.Languages.getIndentWithSpaces(l.id),
+            m_settings.Languages.getUseDefaultSettings(l.id)
         };
 
         m_tempLangSettings.push_back(lang);

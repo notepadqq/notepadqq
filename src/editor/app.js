@@ -44,22 +44,9 @@ UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevRetu
     Languages.setLanguage(editor, data);
 });
 
-/*
-    Sets the language by finding the more appropriate one for the file name.
-    E.g. path/to/worker.js => JavaScript
-    If nothing can be inferred from the file name, it looks at the editor content to see if it
-    can guess something (eg. files starting with #! are probably shell scripts).
-*/
-UiDriver.registerEventHandler("C_FUN_SET_LANGUAGE_FROM_FILENAME", function(msg, data, prevReturn) {
-    var lang = Languages.languageByFileName(editor, data);
-    Languages.setLanguage(editor, lang);
-    return lang;
-});
-
 /* Returns the id of the current language, and its data */
 UiDriver.registerEventHandler("C_FUN_GET_CURRENT_LANGUAGE", function(msg, data, prevReturn) {
-    var langId = Languages.currentLanguage(editor);
-    return {id: langId, lang: Languages.languages[langId]};
+    return Languages.currentLanguage(editor);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {

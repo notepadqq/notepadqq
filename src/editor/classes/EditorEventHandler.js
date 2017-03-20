@@ -61,9 +61,7 @@ class EditorEventHandler {
         proxy.setValue("indentMode", indentMode);
     }
 
-    onLanguageChange(proxy, editor) {
-        var langId = Languages.currentLanguage(editor);
-        var langData =  {id: langId, lang: Languages.languages[langId]};
+    onLanguageChange(proxy, editor, langData) {
         proxy.setValue("language", langData);
         proxy.sendEditorEvent("J_EVT_CURRENT_LANGUAGE_CHANGED", langData);
     }

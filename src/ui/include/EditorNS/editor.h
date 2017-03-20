@@ -111,6 +111,16 @@ namespace EditorNS
             QString name;
         };
 
+        struct LanguageData {
+            QString id;
+            QString name;
+            QString mime;
+            QString mode;
+            QStringList fileNames;
+            QStringList fileExtensions;
+            QStringList firstNonBlankLine;
+        };
+
         struct Selection {
             Cursor from;
             Cursor to;
@@ -173,7 +183,7 @@ namespace EditorNS
         bool isClean();
         void markClean();
         void markDirty();
-        static QVector<QMap<QString, QString> > languages();
+        static QVector<LanguageData> languages();
 
         /**
          * @brief Get the id of the language currently being used by the editor.
@@ -187,8 +197,8 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        void setLanguage(const QString &language);
-        void setLanguageFromFileName(QString fileName);
+        void setLanguage(const QString& language);
+        void setLanguageFromFileName(const QString& filename);
         void setLanguageFromFileName();
         
         /**
@@ -328,11 +338,23 @@ namespace EditorNS
          * @param callback Lambda or functor.
          *                 Must accept QStringList type as parameter.
          */
+
         void getCurrentWordOrSelections(std::function<void(const QStringList&)> callback); 
 
+        /**
+         * @brief Get the current content of the editor.
+         * @param callback Lambda or functor.
+         *        Must accept QString as type parameter.
+         */
+        void getValue(std::function<void(const QString&)> callback);
+
+        /**
+         * @brief Initialize the language cache for fast access.
+         */
+        static void initLanguageCache();
     private:
         static QQueue<Editor*> m_editorBuffer;
-        static QVector<QMap<QString, QString>> m_langCache;
+        static QVector<LanguageData> m_langCache;
         QEventLoop m_processLoop;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
@@ -413,6 +435,13 @@ namespace EditorNS
         void sendMessageWithCallback(const QString& msg, T callback) {
             sendMessageWithCallback(msg, QVariant(0), callback);
         }
+
+        /**
+         * @brief Finds the language with the given ID in m_langCache.
+         * @param langId
+         * @return QMap<QString, QString>
+         */
+        QVariant getLanguageData(const QString& langId);
 
     private slots:
         void on_javaScriptWindowObjectCleared();

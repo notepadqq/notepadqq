@@ -854,8 +854,8 @@
       "pm"
     ],
     "firstNonBlankLine":[
-      "/^#!.*\\/perl($| )/",
-      "/^#!\\/usr\\/bin\\/env perl($| )/"
+      "^#!.*\\/perl($| )",
+      "^#!\\/usr\\/bin\\/env perl($| )"
     ]
   },
   "php":{
@@ -930,8 +930,8 @@
       "wsgi"
     ],
     "firstNonBlankLine":[
-      "/^#!.*\\/python[\\d\\.]*($| )/",
-      "/^#!\\/usr\\/bin\\/env python[\\d\\.]*($| )/"
+      "^#!.*\\/python[\\d\\.]*($| )",
+      "^#!\\/usr\\/bin\\/env python[\\d\\.]*($| )"
     ]
   },
   "puppet":{
@@ -1043,20 +1043,20 @@
       "shar"
     ],
     "firstNonBlankLine":[
-      "/^#!.*\\/sh($| )/",
-      "/^#!\\/usr\\/bin\\/env sh($| )/",
-      "/^#!.*\\/bash($| )/",
-      "/^#!\\/usr\\/bin\\/env bash($| )/",
-      "/^#!.*\\/ksh($| )/",
-      "/^#!\\/usr\\/bin\\/env ksh($| )/",
-      "/^#!.*\\/csh($| )/",
-      "/^#!\\/usr\\/bin\\/env csh($| )/",
-      "/^#!.*\\/tcsh($| )/",
-      "/^#!\\/usr\\/bin\\/env tcsh($| )/",
-      "/^#!.*\\/zsh($| )/",
-      "/^#!\\/usr\\/bin\\/env zsh($| )/",
-      "/^#!.*\\/fish($| )/",
-      "/^#!\\/usr\\/bin\\/env fish($| )/"
+      "^#!.*\\/sh($| )",
+      "^#!\\/usr\\/bin\\/env sh($| )",
+      "^#!.*\\/bash($| )",
+      "^#!\\/usr\\/bin\\/env bash($| )",
+      "^#!.*\\/ksh($| )",
+      "^#!\\/usr\\/bin\\/env ksh($| )",
+      "^#!.*\\/csh($| )",
+      "^#!\\/usr\\/bin\\/env csh($| )",
+      "^#!.*\\/tcsh($| )",
+      "^#!\\/usr\\/bin\\/env tcsh($| )",
+      "^#!.*\\/zsh($| )",
+      "^#!\\/usr\\/bin\\/env zsh($| )",
+      "^#!.*\\/fish($| )",
+      "^#!\\/usr\\/bin\\/env fish($| )"
     ]
   },
   "sieve":{
@@ -1184,8 +1184,8 @@
       "tcl"
     ],
     "firstNonBlankLine":[
-      "/^#!.*\\/tclsh($| )/",
-      "/^#!\\/usr\\/bin\\/env tclsh($| )/"
+      "^#!.*\\/tclsh($| )",
+      "^#!\\/usr\\/bin\\/env tclsh($| )"
     ]
   },
   "textile":{
@@ -1348,8 +1348,8 @@
       "qrc"
     ],
     "firstNonBlankLine":[
-      "/^<\\\\?xml /",
-      "/^<.+?>/"
+      "^<\\\\?xml ",
+      "^<.+?>"
     ]
   },
   "xquery":{

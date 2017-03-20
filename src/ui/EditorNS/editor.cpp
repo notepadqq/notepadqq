@@ -14,7 +14,7 @@
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
 #include <QJsonDocument>
-
+#include "include/timer.h"
 namespace EditorNS
 {
 
@@ -267,26 +267,48 @@ namespace EditorNS
     {
         sendMessage("C_CMD_MARK_DIRTY");
     }
-    
-    QVector<QMap<QString, QString>> Editor::languages()
+ 
+    QVariant Editor::getLanguageData(const QString& langId)
     {
-        if(m_langCache.isEmpty()) {
-            QFileInfo fileInfo(Notepadqq::editorPath());
-            QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
-            QFile scriptFile(fileName);
-            scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
-            QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
-            scriptFile.close();
-            for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
-                QJsonObject mode = it.value().toObject();
-                QMap<QString, QString> newMode;
-                newMode.insert("id", it.key());
-                newMode.insert("name", mode.value("name").toString());
-                newMode.insert("mime", mode.value("mime").toString());
-                newMode.insert("mode", mode.value("mode").toString());
-                m_langCache.append(newMode);
+        QVariant comp = QVariant::fromValue(langId);
+        for (auto& l : m_langCache) {
+            if (l.id == langId) {
+                QVariantMap langData;
+                langData.insert("id", l.id);
+                langData.insert("mime", l.mime);
+                langData.insert("mode", l.mode);
+                langData.insert("fileNames", l.fileNames);
+                langData.insert("fileExtensions", l.fileExtensions);
+                return QVariant::fromValue(langData);
             }
         }
+        return QVariant();
+    }
+   
+    void Editor::initLanguageCache()
+    {
+        QFileInfo fileInfo(Notepadqq::editorPath());
+        QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
+        QFile scriptFile(fileName);
+        scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
+        QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
+        scriptFile.close();
+        for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
+            QJsonObject mode = it.value().toObject();
+            LanguageData newMode;
+            newMode.id = it.key();
+            newMode.name = mode.value("name").toString();
+            newMode.mime = mode.value("mime").toString();
+            newMode.mode = mode.value("mode").toString();
+            newMode.fileNames = mode.value("fileNames").toVariant().toStringList();
+            newMode.fileExtensions = mode.value("fileExtensions").toVariant().toStringList();
+            newMode.firstNonBlankLine = mode.value("firstNonBlankLine").toVariant().toStringList();
+            m_langCache.append(newMode);
+        }
+    }
+
+    QVector<Editor::LanguageData> Editor::languages()
+    {
         return m_langCache;
     }
 
@@ -298,14 +320,49 @@ namespace EditorNS
 
     void Editor::setLanguage(const QString &language)
     {
-        sendMessage("C_CMD_SET_LANGUAGE", language);
+        sendMessage("C_CMD_SET_LANGUAGE", getLanguageData(language));
         if (!m_customIndentationMode)
             setIndentationMode(language);
     }
 
-    void Editor::setLanguageFromFileName(QString fileName)
+    void Editor::setLanguageFromFileName(const QString& fileName)
     {
-        sendMessage("C_FUN_SET_LANGUAGE_FROM_FILENAME", fileName);
+        // Case-sensitive fileName search
+        for (auto& l : m_langCache) {
+            if (l.fileNames.contains(fileName)) {
+                setLanguage(l.id);
+                return;
+            }
+        }
+
+        // Case insensitive file extension search
+        int pos = fileName.lastIndexOf('.');
+        if (pos != -1) {
+            QString ext = fileName.mid(pos+1);
+            for (auto& l : m_langCache) {
+                if (l.fileExtensions.contains(ext, Qt::CaseInsensitive)) {
+                    setLanguage(l.id);
+                    return;
+                }
+            }
+        }
+        
+        // First non-blank line
+        getValue([&] (QString rawTxt) {
+            QTextStream stream(&rawTxt);
+            stream.skipWhiteSpace();
+            QString test = stream.readLine();
+            for (auto& l : m_langCache) {
+                if (!l.firstNonBlankLine.isEmpty()) {
+                    for (auto& t : l.firstNonBlankLine) {
+                        if (test.contains(QRegularExpression(t))) {
+                            setLanguage(l.id);
+                            return;
+                        }
+                    }
+                }
+            }
+        });
     }
 
     void Editor::setLanguageFromFileName()
@@ -718,10 +775,18 @@ namespace EditorNS
         });
     }
 
+    void Editor::getValue(std::function<void(const QString&)> callback) {
+        sendMessageWithCallback("C_FUN_GET_VALUE",
+        [callback](const QVariant &v) {
+            QString langId = v.toString();
+            callback(langId);
+        });
+    }
+
     void Editor::getLanguage(std::function<void(const QString&)> callback) {
         sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
         [callback](const QVariant &v) {
-            QString langId = v.toMap().value("id").toString();
+            QString langId = v.toString();
             callback(langId);
         });
     }
@@ -739,6 +804,5 @@ namespace EditorNS
             }
         });
     }
-
-QVector<QMap<QString, QString>> Editor::m_langCache;
+QVector<Editor::LanguageData> Editor::m_langCache;
 }
