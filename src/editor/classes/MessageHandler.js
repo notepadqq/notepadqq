@@ -173,7 +173,7 @@ class MessageHandler {
 */
     C_FUN_SEARCH(data) 
     {
-        return App.helpers.Search(data[0], data[1], data[2]);
+        return Search(data[0], data[1], data[2]);
     }
 
 /* Replace the currently selected text, then search with a specified regex (calls C_FUN_SEARCH)
@@ -196,11 +196,11 @@ class MessageHandler {
         if (editor.somethingSelected()) {
             var replacement = data[3];
             // Replace
-            if (searchMode == App.helpers.SearchMode.Regex && App.helpers.hasGroupReuseTokens(replacement)) {
+            if (searchMode == SearchMode.Regex && hasGroupReuseTokens(replacement)) {
                 var searchRegex = new RegExp(regexStr, regexModifiers);
                 groups = searchRegex.exec(editor.getSelection())
                 if (groups !== null) { //groups === null should never occur!
-                    editor.replaceSelection(App.helpers.applyReusedGroups(replacement,groups));
+                    editor.replaceSelection(applyReusedGroups(replacement,groups));
                 }
             } else {
                 editor.replaceSelection(replacement);
@@ -208,7 +208,7 @@ class MessageHandler {
         }
 
         // Find next/prev
-        return App.helpers.Search(regexStr, regexModifiers, forward);
+        return Search(regexStr, regexModifiers, forward);
     }
 
     C_FUN_REPLACE_ALL(data) {
@@ -221,13 +221,13 @@ class MessageHandler {
         var count = 0;
         var id = Math.round(Math.random() * 1000000) + "/" + Date.now();
     
-        var hasReuseTokens = App.helpers.hasGroupReuseTokens(replacement) && searchMode == App.helpers.SearchMode.Regex;
+        var hasReuseTokens = hasGroupReuseTokens(replacement) && searchMode == SearchMode.Regex;
 
         while (groups = searchCursor.findNext()) {
             count++;
             // Replace
             if (hasReuseTokens){
-                searchCursor.replace(App.helpers.applyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
+                searchCursor.replace(applyReusedGroups(replacement, groups), "*C_FUN_REPLACE_ALL" + id);
             } else {
                 searchCursor.replace(replacement, "*C_FUN_REPLACE_ALL" + id);
             }        
@@ -426,11 +426,11 @@ class MessageHandler {
     C_CMD_SPACE_TO_TAB_ALL(data) 
     {
         editLines(function (x) {
-            App.helpers.spaceToTabCounter = 0
+            spaceToTabCounter = 0
             var tabSz = editor.getOption("tabSize")
 
             return x.replace(/ +/g, function(match, offset) {
-                return App.helpers.spaceToTab(match, offset, tabSz)
+                return spaceToTab(match, offset, tabSz)
             });
 
         });
@@ -439,11 +439,11 @@ class MessageHandler {
     C_CMD_SPACE_TO_TAB_LEADING(data) 
     {
         editLines(function (x) {
-            App.helpers.spaceToTabCounter = 0
+            spaceToTabCounter = 0
             var tabSz = editor.getOption("tabSize")
 
             return x.replace(/^ +/g, function(match, offset) {
-                return App.helpers.spaceToTab(match, offset, tabSz)
+                return spaceToTab(match, offset, tabSz)
             });
 
         });

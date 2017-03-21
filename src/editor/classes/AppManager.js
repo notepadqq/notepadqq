@@ -6,13 +6,11 @@
  * Some brief examples of how to use this:
  * App.proxy.sendEvent(Message, Data);
  * App.eventHook.onChange();
- * App.helpers.Search(a, b, c);
  *
  */
 class AppManager {
     constructor()
     {
-        this.helpers = new Helpers();
         this.proxy = new CommunicationsManager();
         this.eventHook = new EditorEventHook();
         this.state = new StateManager();
