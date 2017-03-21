@@ -187,8 +187,7 @@ namespace EditorNS
             const QVariant& data,
             bool /*cache*/)
     {
-        // This is a safe default.
-        if (!data.isValid()) {
+        if (!data.canConvert<QVariantList>()) {
             return m_editorInfo.content.indentMode;
         }
         Editor::IndentationMode indentMode;
@@ -356,6 +355,11 @@ namespace EditorNS
         }
         sendMessage("C_CMD_SET_LANGUAGE", getLanguageVariantData(language));
         emit languageChanged(m_editorInfo.content.language);
+    }
+
+    void Editor::setLanguage(const Editor::LanguageData& language)
+    {
+        setLanguage(language.id);
     }
 
     void Editor::setLanguageFromFileName(const QString& fileName)
@@ -770,14 +774,6 @@ namespace EditorNS
 
     void Editor::getValue(std::function<void(const QString&)> callback) {
         sendMessageWithCallback("C_FUN_GET_VALUE",
-        [callback](const QVariant &v) {
-            QString langId = v.toString();
-            callback(langId);
-        });
-    }
-
-    void Editor::getLanguage(std::function<void(const QString&)> callback) {
-        sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
         [callback](const QVariant &v) {
             QString langId = v.toString();
             callback(langId);

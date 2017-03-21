@@ -102,9 +102,7 @@ void frmPreferences::updatePreviewEditorFont()
 
     // Re-setting language also updates the position of text selection. If not done, selected text
     // would often glitch out when changing the font causes the position of text characters to change.
-    m_previewEditor->getLanguage([&](const QString& langId) {
-        m_previewEditor->setLanguage(langId);
-    });
+    m_previewEditor->setLanguage(m_previewEditor->getLanguage());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -355,9 +353,7 @@ bool frmPreferences::applySettings()
             editor->setFont(fontFamily, fontSize, lineHeight);
 
             // Reset language-dependent settings (e.g. tab settings)
-            editor->getLanguage([&, editor](const QString& langId) {
-                editor->setLanguage(langId);
-            });
+            editor->setLanguage(editor->getLanguage());
 
             return true;
         });

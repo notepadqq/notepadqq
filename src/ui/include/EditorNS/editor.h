@@ -206,6 +206,7 @@ namespace EditorNS
          * @param language Language id
          */
         void setLanguage(const QString& language);
+        void setLanguage(const Editor::LanguageData& language);
         void setLanguageFromFileName(const QString& filename);
         void setLanguageFromFileName();
         
@@ -332,12 +333,6 @@ namespace EditorNS
          */
         void getSelectedTexts(std::function<void(const QStringList&)> callback);
 
-        /**
-         * @brief Get the current editor language.
-         * @param callback Lambda or functor.
-         *                 Must accept QString type as parameter.
-         */
-        void getLanguage(std::function<void(const QString&)> callback); 
         /**
          * @brief Get the currently selected text, or the word under the cursor
          *        if no text is selected.
