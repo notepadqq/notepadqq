@@ -90,16 +90,6 @@ namespace EditorNS
             Cursor to;
         };
 
-        /**
-         * @brief Content information, such as line count, character count, 
-         *        and clean state
-         *
-         */
-        struct ContentInfo {
-            int charCount; /**< The number of characters contained in the document */
-            int lineCount; /**< The number of lines contained in the document */
-            bool clean = true; /**< Whether the content of the editor is clean or not */
-        };
 
         /**
          * @brief Cursor information struct containing cursor and selection information.
@@ -112,12 +102,6 @@ namespace EditorNS
             QList<Selection> selections;
         }; 
 
-        // TODO: Maybe combine this into LanguageData?
-        struct LanguageInfo {
-            QString id;
-            QString name;
-        };
-
         struct LanguageData {
             QString id;
             QString name;
@@ -128,11 +112,27 @@ namespace EditorNS
             QStringList firstNonBlankLine;
         };
 
-
+        /**
+         * @brief Content information, such as line count, character count, 
+         *        and clean state
+         *
+         */
+        struct ContentInfo {
+            int charCount; /**< The number of characters contained in the document */
+            int lineCount; /**< The number of lines contained in the document */
+            bool clean = true; /**< Whether the content of the editor is clean or not */
+            LanguageData language;
+        };
 
         struct IndentationMode {
             bool useTabs;
             int size;
+        };
+
+        struct EditorInfo {
+            CursorInfo cursor;
+            LanguageData language;
+            ContentInfo content;
         };
 
         /**
@@ -371,8 +371,7 @@ namespace EditorNS
         bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
         
-        ContentInfo m_contentInfo;
-        CursorInfo m_cursorInfo;
+        EditorInfo m_editorInfo;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
@@ -399,14 +398,6 @@ namespace EditorNS
          * @return CursorInfo struct.
          */
         CursorInfo buildCursorEventData(const QVariant& data, 
-                bool cache = true);
-        /**
-         * @brief Build data for the languageChange signal.
-         * @param data
-         * @param cache
-         * @return LanguageInfo struct.
-         */
-        LanguageInfo buildLanguageChangedEventData(const QVariant& data,
                 bool cache = true);
 
         /**
@@ -440,12 +431,14 @@ namespace EditorNS
         }
 
         /**
-         * @brief Finds the language with the given ID in m_langCache.
+         * @brief Finds the language with the given ID in m_langCache, and
+         *        returns a QVariant representation of it.
          * @param langId
-         * @return QMap<QString, QString>
+         * @return QVariant
          */
-        QVariant getLanguageData(const QString& langId);
+        QVariant getLanguageVariantData(const QString& langId);
 
+        void changeCurrentLanguage(const QString& langId);
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**
@@ -499,7 +492,7 @@ namespace EditorNS
         /**
          * @brief The editor language was changed.
          */
-        void languageChanged(LanguageInfo);
+        void languageChanged(LanguageData);
 
         /**
          * @brief A document was loaded, or reloaded.

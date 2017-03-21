@@ -420,6 +420,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if(tab.active) activeIndex = idx;
 
+            qDebug() << tab.language;
             if(!tab.language.isEmpty()) {
                 editor->setLanguage(tab.language);
             }

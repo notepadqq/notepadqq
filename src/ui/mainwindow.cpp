@@ -1139,7 +1139,7 @@ void MainWindow::on_cursorActivity(EditorNS::Editor::CursorInfo info)
 
 }
 
-void MainWindow::on_languageChanged(EditorNS::Editor::LanguageInfo info)
+void MainWindow::on_languageChanged(EditorNS::Editor::LanguageData info)
 {
     m_statusBar_fileFormat->setText(info.name);
 }

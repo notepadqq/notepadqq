@@ -57,6 +57,7 @@ UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, 
     }
 
     editor.refresh();
+    evhook.onOptionChange
 });
 
 UiDriver.registerEventHandler("C_FUN_GET_INDENTATION_MODE", function(msg, data, prevReturn) {
@@ -377,10 +378,6 @@ UiDriver.registerEventHandler("C_FUN_SEARCH_SELECT_ALL", function(msg, data, pre
     editor.setSelections(selections);
 
     return count;
-});
-
-UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevReturn) {
-    return Languages.languages;
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {

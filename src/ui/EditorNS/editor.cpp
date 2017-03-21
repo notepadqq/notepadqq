@@ -159,14 +159,12 @@ namespace EditorNS
         } else if(msg == "J_EVT_CONTENT_CHANGED") {
             emit contentChanged(buildContentChangedEventData(data));
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            m_contentInfo.clean = data.toBool();
-            emit cleanChanged(m_contentInfo.clean);
+            m_editorInfo.content.clean = data.toBool();
+            emit cleanChanged(m_editorInfo.content.clean);
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
             emit cursorActivity(buildCursorEventData(data));
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
-        } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            emit languageChanged(buildLanguageChangedEventData(data));
         } else if(msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded);
             m_alreadyLoaded = true;
@@ -182,7 +180,8 @@ namespace EditorNS
         temp.charCount = v["charCount"].toInt();
         temp.lineCount = v["lineCount"].toInt();
         if (cache) {
-            m_contentInfo = temp;
+            m_editorInfo.content.charCount = temp.charCount;
+            m_editorInfo.content.lineCount = temp.lineCount;
         }
         return temp;
     }
@@ -211,22 +210,7 @@ namespace EditorNS
         }
         
         if (cache) {
-            m_cursorInfo = temp;
-        }
-        return temp;
-    }
-
-    //NOTE: We don't cache these as of yet.
-    Editor::LanguageInfo Editor::buildLanguageChangedEventData(
-            const QVariant& data,
-            bool /*cache*/)
-    {
-        QVariantMap v = data.toMap();
-        LanguageInfo temp;
-        temp.id = v.value("id").toString();
-        temp.name = v.value("name").toString();
-        if (!m_customIndentationMode) {
-            setIndentationMode(temp.id);
+            m_editorInfo.cursor = temp;
         }
         return temp;
     }
@@ -268,7 +252,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return m_contentInfo.clean;
+        return m_editorInfo.content.clean;
     }
 
     void Editor::markClean()
@@ -280,8 +264,32 @@ namespace EditorNS
     {
         sendMessage("C_CMD_MARK_DIRTY");
     }
- 
-    QVariant Editor::getLanguageData(const QString& langId)
+
+    void Editor::initLanguageCache()
+    {
+        QFileInfo fileInfo(Notepadqq::editorPath());
+        QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
+        QFile scriptFile(fileName);
+        scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
+        QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
+        scriptFile.close();
+        // Begin iterating through our language objects.
+        for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
+            QJsonObject mode = it.value().toObject();
+            LanguageData newMode;
+            newMode.id = it.key();
+            newMode.name = mode.value("name").toString();
+            newMode.mime = mode.value("mime").toString();
+            newMode.mode = mode.value("mode").toString();
+            newMode.fileNames = mode.value("fileNames").toVariant().toStringList();
+            newMode.fileExtensions = mode.value("fileExtensions").toVariant().toStringList();
+            newMode.firstNonBlankLine = mode.value("firstNonBlankLine").toVariant().toStringList();
+
+            m_langCache.append(newMode);
+        }
+    }
+
+    QVariant Editor::getLanguageVariantData(const QString& langId)
     {
         QVariant comp = QVariant::fromValue(langId);
         for (auto& l : m_langCache) {
@@ -298,27 +306,9 @@ namespace EditorNS
         }
         return QVariant();
     }
-   
-    void Editor::initLanguageCache()
+
+    void Editor::changeCurrentLanguage(const QString& langId)
     {
-        QFileInfo fileInfo(Notepadqq::editorPath());
-        QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
-        QFile scriptFile(fileName);
-        scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
-        QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
-        scriptFile.close();
-        for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
-            QJsonObject mode = it.value().toObject();
-            LanguageData newMode;
-            newMode.id = it.key();
-            newMode.name = mode.value("name").toString();
-            newMode.mime = mode.value("mime").toString();
-            newMode.mode = mode.value("mode").toString();
-            newMode.fileNames = mode.value("fileNames").toVariant().toStringList();
-            newMode.fileExtensions = mode.value("fileExtensions").toVariant().toStringList();
-            newMode.firstNonBlankLine = mode.value("firstNonBlankLine").toVariant().toStringList();
-            m_langCache.append(newMode);
-        }
     }
 
     QVector<Editor::LanguageData> Editor::languages()
@@ -328,15 +318,22 @@ namespace EditorNS
 
     QString Editor::getLanguage()
     {
-        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        return data.value("id").toString();
+        return m_editorInfo.content.language.id;
     }
 
     void Editor::setLanguage(const QString &language)
     {
-        sendMessage("C_CMD_SET_LANGUAGE", getLanguageData(language));
-        if (!m_customIndentationMode)
+        for (auto& l : m_langCache) {
+            if(l.id == language) {
+                m_editorInfo.content.language = l;
+                break;
+            }
+        }
+        sendMessage("C_CMD_SET_LANGUAGE", getLanguageVariantData(language));
+        if (!m_customIndentationMode) {
             setIndentationMode(language);
+        }
+        emit languageChanged(m_editorInfo.content.language);
     }
 
     void Editor::setLanguageFromFileName(const QString& fileName)
@@ -360,7 +357,7 @@ namespace EditorNS
                 }
             }
         }
-        
+        waitAsyncLoad();
         // First non-blank line
         getValue([&] (QString rawTxt) {
             QTextStream stream(&rawTxt);
@@ -502,12 +499,12 @@ namespace EditorNS
 
     int Editor::getLineCount()
     {
-        return m_contentInfo.lineCount;
+        return m_editorInfo.content.lineCount;
     }
 
     int Editor::getCharCount()
     {
-        return m_contentInfo.charCount;
+        return m_editorInfo.content.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -580,7 +577,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getCursorPosition()
     {
-        return qMakePair(m_cursorInfo.line, m_cursorInfo.column);
+        return qMakePair(m_editorInfo.cursor.line, m_editorInfo.cursor.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -760,7 +757,7 @@ namespace EditorNS
 
     const QList<Editor::Selection>& Editor::getSelections() const
     {
-        return m_cursorInfo.selections;
+        return m_editorInfo.cursor.selections;
     }
     
     void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)
