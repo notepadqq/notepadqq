@@ -1643,51 +1643,47 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     refreshEditorUiInfoAll(currentEditor());
 }
 
-void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
+void MainWindow::on_fileLoaded(bool wasAlreadyOpened, Editor::IndentationMode detectedIndent)
 {
     if(!wasAlreadyOpened) {
         if(m_settings.General.getWarnForDifferentIndentation()) {
-            checkIndentationMode(static_cast<Editor*>(sender()));
+            checkIndentationMode(static_cast<Editor*>(sender()), detectedIndent);
         }
     }
 }
 
-void MainWindow::checkIndentationMode(Editor* editor)
+void MainWindow::checkIndentationMode(Editor* editor, Editor::IndentationMode detected)
 {
-    bool found = false;
-    Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
-    if (found) {
-        Editor::IndentationMode curr = editor->indentationMode();
-        bool differentTabSpaces = detected.useTabs != curr.useTabs;
-        bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
+    Editor::IndentationMode curr = editor->indentationMode();
+    bool differentTabSpaces = detected.useTabs != curr.useTabs;
+    bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
 
-        if (differentTabSpaces || differentSpaceSize) {
-            // Show msg
-            BannerIndentationDetected *banner = new BannerIndentationDetected(
-                                                    differentSpaceSize,
-                                                    detected,
-                                                    curr,
-                                                    this);
-            banner->setObjectName("indentationdetected");
+    if (differentTabSpaces || differentSpaceSize) {
+        // Show msg
+        BannerIndentationDetected *banner = new BannerIndentationDetected(
+                                                differentSpaceSize,
+                                                detected,
+                                                curr,
+                                                this);
+        banner->setObjectName("indentationdetected");
 
-            editor->insertBanner(banner);
+        editor->insertBanner(banner);
 
-            connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
-                editor->removeBanner(banner);
-                editor->setFocus();
-            });
+        connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
+            editor->removeBanner(banner);
+            editor->setFocus();
+        });
 
-            connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
-                editor->removeBanner(banner);
-                if (detected.useTabs) {
-                    editor->setCustomIndentationMode(true);
-                } else {
-                    editor->setCustomIndentationMode(detected.useTabs, detected.size);
-                }
-                ui->actionIndentation_Custom->setChecked(true);
-                editor->setFocus();
-            });
-        }
+        connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
+            editor->removeBanner(banner);
+            if (detected.useTabs) {
+                editor->setCustomIndentationMode(true);
+            } else {
+                editor->setCustomIndentationMode(detected.useTabs, detected.size);
+            }
+            ui->actionIndentation_Custom->setChecked(true);
+            editor->setFocus();
+        });
     }
 }
 

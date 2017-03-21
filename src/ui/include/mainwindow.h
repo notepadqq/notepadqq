@@ -66,7 +66,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
-    void on_fileLoaded(bool wasAlreadyLoaded);
+    void on_fileLoaded(bool wasAlreadyLoaded, EditorNS::Editor::IndentationMode indentMode);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -282,7 +282,7 @@ private:
      */
     bool updateSymbols(bool on);
 
-    void checkIndentationMode(Editor* editor);
+    void checkIndentationMode(Editor* editor, EditorNS::Editor::IndentationMode detected);
 };
 
 #endif // MAINWINDOW_H

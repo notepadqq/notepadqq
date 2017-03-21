@@ -90,6 +90,11 @@ namespace EditorNS
             Cursor to;
         };
 
+        struct IndentationMode {
+            bool useTabs = true;
+            int size = 4;
+            bool custom = false;
+        };
 
         /**
          * @brief Cursor information struct containing cursor and selection information.
@@ -122,12 +127,11 @@ namespace EditorNS
             int lineCount; /**< The number of lines contained in the document */
             bool clean = true; /**< Whether the content of the editor is clean or not */
             LanguageData language;
+            IndentationMode indentMode;
+            QPair<int, int> scrollPosition;
         };
 
-        struct IndentationMode {
-            bool useTabs;
-            int size;
-        };
+
 
         struct EditorInfo {
             CursorInfo cursor;
@@ -297,10 +301,9 @@ namespace EditorNS
         void setTabsVisible(bool visible);
 
         /**
-         * @brief Detect the indentation mode used within the current document.
-         * @return
+         * @brief Get the indentation mode for the current document.
+         * @return Editor::IndentationMode struct
          */
-        Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
         int getLineCount();
@@ -368,7 +371,6 @@ namespace EditorNS
         QString m_endOfLineSequence = "\n";
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
-        bool m_customIndentationMode = false;
         bool m_alreadyLoaded = false;
         
         EditorInfo m_editorInfo;
@@ -378,8 +380,9 @@ namespace EditorNS
 
         void fullConstructor(const Theme &theme);
 
-        void setIndentationMode(const bool useTabs, const int size);
-        void setIndentationMode(QString language);
+        void setIndentationMode(const bool useTabs, const int size, 
+                const bool custom, const bool transport = true);
+        void setIndentationMode(QString language, const bool transport = true);
         void initContextMenu();
         void initJsProxy();
         void initWebView(const Theme &theme);
@@ -400,6 +403,8 @@ namespace EditorNS
         CursorInfo buildCursorEventData(const QVariant& data, 
                 bool cache = true);
 
+        IndentationMode buildDocumentLoadedEventData(const QVariant& data,
+                bool cache = true);
         /**
          * @brief Sends a javascript message, including data, to the editor.
          *        Invoking the specified "callback" when execution has 
@@ -413,7 +418,7 @@ namespace EditorNS
             QString jsonData = QJsonDocument::fromVariant(data).toJson();
             if (jsonData.isEmpty()) 
                 jsonData.append("0");
-            QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(jsonData);
+            QString jsMsg = QString("App.proxy.messageReceived('%1',%2)").arg(msg).arg(jsonData);
             m_webView->page()->runJavaScript(jsMsg, callback);
         }
 
@@ -432,13 +437,11 @@ namespace EditorNS
 
         /**
          * @brief Finds the language with the given ID in m_langCache, and
-         *        returns a QVariant representation of it.
+         *        returns a QVariant representation of it for javascript.
          * @param langId
          * @return QVariant
          */
         QVariant getLanguageVariantData(const QString& langId);
-
-        void changeCurrentLanguage(const QString& langId);
     private slots:
         void on_javaScriptWindowObjectCleared();
         /**
@@ -497,7 +500,7 @@ namespace EditorNS
         /**
          * @brief A document was loaded, or reloaded.
          */
-        void documentLoaded(bool wasAlreadyLoaded);
+        void documentLoaded(bool wasAlreadyLoaded, Editor::IndentationMode);
 
         /**
          * @brief The editor finished loading. There should be

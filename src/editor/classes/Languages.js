@@ -12,7 +12,6 @@ var Languages = new function() {
 
         m_currentLanguage = lang.id;
         editor.refresh();
-        evhook.onLanguageChange(UiDriver.proxy, editor, lang);
     }
     
     this.currentLanguage = function() {

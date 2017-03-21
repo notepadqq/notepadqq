@@ -228,9 +228,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     editor->setFileName(fileNames[i]);
                     //sci->setEolMode(sci->guessEolMode());
                     tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                    if(editor->getLanguage() == "plaintext") {
-                        editor->setLanguageFromFileName();
-                    }
+                    editor->setLanguageFromFileName();
                 } else {
                     //sci->scrollCursorToCenter(pos);
                     editor->setFileOnDiskChanged(false);

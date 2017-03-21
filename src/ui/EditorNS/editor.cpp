@@ -40,6 +40,14 @@ namespace EditorNS
 
     void Editor::fullConstructor(const Theme &theme)
     {
+        NqqSettings& s = NqqSettings::getInstance();
+        /* Initialize some values here so we don't have issues*/
+        const QString language = "default";
+        setIndentationMode(!s.Languages.getIndentWithSpaces(language),
+                            s.Languages.getTabSize(language),
+                            false,
+                            false);
+
         initJsProxy();
         initWebView(theme);
         initContextMenu();
@@ -166,9 +174,27 @@ namespace EditorNS
         } else if(msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
         } else if(msg == "J_EVT_DOCUMENT_LOADED") {
-            emit documentLoaded(m_alreadyLoaded);
+            emit documentLoaded(m_alreadyLoaded, buildDocumentLoadedEventData(data));
             m_alreadyLoaded = true;
+        } else if(msg == "J_EVT_SCROLL_CHANGED") {
+            QPair<int, int> scrollPos;
+            scrollPos.first = data.toList().at(0).toInt();
+            scrollPos.second = data.toList().at(1).toInt();
         }
+    }
+
+    Editor::IndentationMode Editor::buildDocumentLoadedEventData(
+            const QVariant& data,
+            bool /*cache*/)
+    {
+        // This is a safe default.
+        if (!data.isValid()) {
+            return m_editorInfo.content.indentMode;
+        }
+        Editor::IndentationMode indentMode;
+        indentMode.useTabs = data.toList().at(0).toBool();
+        indentMode.size = data.toList().at(1).toInt();
+        return indentMode;
     }
 
     Editor::ContentInfo Editor::buildContentChangedEventData(
@@ -307,10 +333,6 @@ namespace EditorNS
         return QVariant();
     }
 
-    void Editor::changeCurrentLanguage(const QString& langId)
-    {
-    }
-
     QVector<Editor::LanguageData> Editor::languages()
     {
         return m_langCache;
@@ -329,10 +351,10 @@ namespace EditorNS
                 break;
             }
         }
-        sendMessage("C_CMD_SET_LANGUAGE", getLanguageVariantData(language));
-        if (!m_customIndentationMode) {
+        if (!m_editorInfo.content.indentMode.custom) {
             setIndentationMode(language);
         }
+        sendMessage("C_CMD_SET_LANGUAGE", getLanguageVariantData(language));
         emit languageChanged(m_editorInfo.content.language);
     }
 
@@ -357,7 +379,7 @@ namespace EditorNS
                 }
             }
         }
-        waitAsyncLoad();
+        //waitAsyncLoad();
         // First non-blank line
         getValue([&] (QString rawTxt) {
             QTextStream stream(&rawTxt);
@@ -381,7 +403,7 @@ namespace EditorNS
         setLanguageFromFileName(fileName().toString());
     }
 
-    void Editor::setIndentationMode(QString language)
+    void Editor::setIndentationMode(QString language, const bool transport)
     {
         NqqSettings& s = NqqSettings::getInstance();
 
@@ -389,48 +411,49 @@ namespace EditorNS
             language = "default";
 
         setIndentationMode(!s.Languages.getIndentWithSpaces(language),
-                            s.Languages.getTabSize(language));
+                            s.Languages.getTabSize(language),
+                            false,
+                            transport);
     }
 
-    void Editor::setIndentationMode(const bool useTabs, const int size)
+    void Editor::setIndentationMode(const bool useTabs, const int size, 
+            const bool custom, const bool transport)
     {
         QMap<QString, QVariant> data;
         data.insert("useTabs", useTabs);
         data.insert("size", size);
-        sendMessage("C_CMD_SET_INDENTATION_MODE", data);
+        m_editorInfo.content.indentMode.useTabs = useTabs;
+        m_editorInfo.content.indentMode.size = size;
+        m_editorInfo.content.indentMode.custom = custom;
+        if (transport) {
+            sendMessage("C_CMD_SET_INDENTATION_MODE", data);
+        }
     }
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        QPair<int, int> indent;
-        m_jsProxy->getValue("indentMode", indent);
-        IndentationMode out;
-        out.useTabs = indent.first;
-        out.size = indent.second;
-        return out;
+        return m_editorInfo.content.indentMode;
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs, const int size)
     {
-        m_customIndentationMode = true;
-        setIndentationMode(useTabs, size);
+        setIndentationMode(useTabs, size, true);
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs)
     {
-        m_customIndentationMode = true;
-        setIndentationMode(useTabs, 0);
+        setIndentationMode(useTabs, 0, true);
     }
 
     void Editor::clearCustomIndentationMode()
     {
-        m_customIndentationMode = false;
+        m_editorInfo.content.indentMode.custom = false;
         setIndentationMode(getLanguage());
     }
 
     bool Editor::isUsingCustomIndentationMode() const
     {
-        return m_customIndentationMode;
+        return m_editorInfo.content.indentMode.custom;
     }
 
     void Editor::setSmartIndent(bool enabled)
@@ -604,12 +627,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getScrollPosition()
     {
-        QPair<int, int> scrollPosition;
-        bool valid = m_jsProxy->getValue("scrollPosition", scrollPosition);
-        if(!valid) {
-            return qMakePair(0, 0);
-        }
-        return scrollPosition;
+        return m_editorInfo.content.scrollPosition;
     }
 
     void Editor::setScrollPosition(const int left, const int top)
@@ -728,24 +746,6 @@ namespace EditorNS
     void Editor::setTabsVisible(bool visible)
     {
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
-    }
-
-    Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
-    {
-        IndentationMode out;
-        QPair<int, int> indent;
-        bool _found = m_jsProxy->getValue("detectedIndent", indent);
-
-        if (found != nullptr) {
-            *found = _found;
-        }
-
-        if (_found) {
-            out.useTabs = indent.first;
-            out.size = indent.second;
-        }
-
-        return out;
     }
 
     void Editor::print(QPrinter *printer)

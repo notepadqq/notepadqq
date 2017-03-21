@@ -26,6 +26,16 @@ namespace EditorNS
         void dropEvent(QDropEvent *ev);
     };
 
+    class CustomQWebViewPage : public QWebEnginePage {
+        Q_OBJECT;
+    protected:
+        void javaScriptConsoleMessage(
+                QWebEnginePage::JavaScriptConsoleMessageLevel level, 
+                const QString &message, 
+                int lineNumber, 
+                const QString &sourceID);
+    };
+
 }
 
 #endif // CUSTOMQWEBVIEW_H

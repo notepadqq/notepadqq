@@ -13,10 +13,6 @@ namespace EditorNS {
      *        communication.  In order to use this class, you should use:
      *        - sendMsg("C_CMD_SOME_FUNC", qvariant data); to send messages to 
      *          Javascript
-     *        - getValue("value_name", local variable); to retrieve common data
-     *          types.
-     *        - getRawValue("value_name"); to retrieve data types that need
-     *          special handling.
     */
     
     class JsProxy : public QObject
@@ -37,8 +33,6 @@ namespace EditorNS {
          * @param const QString& The key to check.
          * @return true if the key exists and has a value, false otherwise.
          */
-        bool hasKey(const QString&);
-        QHash<QString, QVariant> m_values;
         QQueue<QPair<QString, QVariant>>* m_tempQueue;
         QVariant m_result;
         bool m_ready = false;
@@ -50,28 +44,6 @@ namespace EditorNS {
          * @return QVariant result.
          */
         QVariant getResult();
-        /**
-         * @brief Get a synced value from javascript.  The variable in
-         *        [out]& is set to the data if it is available, otherwise
-         *        getValue returns false and does nothing.
-         * @param [in]const QString& The key to lookup.
-         * @param [out]& A reference to a local variable.
-         * @return true on success, false otherwise.
-         */
-        bool getValue(const QString&, int&);
-        bool getValue(const QString&, QPair<int, int>&);
-        bool getValue(const QString&, bool&);
-        bool getValue(const QString&, QString&);
-        bool getValue(const QString&, QStringList&);
-        /**
-         * @brief Get a synced value from javascript with no error handling.
-         *        This method should be used when you need to perform any
-         *        custom handling to the data prior to using it.  Or if one
-         *        of the getValue() methods doesn't support the data type.
-         * @param const QString& The key to lookup.
-         * @return QVariant containing the unmodified data of m_values[key].
-         */
-        QVariant getRawValue(const QString&);
         /**
          * @brief Sets the m_result variable in JsProxy.
          *        This function should not be used outside of the class, as it
@@ -97,16 +69,6 @@ namespace EditorNS {
          * @param QVariant The data Javascript sent, if any.
          */
         Q_INVOKABLE void sendEditorEvent(QString msg, QVariant data);
-        /**
-         * @brief Slot which allows Javascript to set m_values[key] data.
-         *        Usage example: proxy.setValue("my_key", [10, 2]);
-         *        The data variable is automatically converted to a QVariant
-         *        when it arrives to CPP.
-         * @param QString The key to set in m_values.
-         * @param QVariant The data to set m_values[key] to.
-         */
-        Q_INVOKABLE void setValue(QString name, QVariant data);
-
     signals:
         /**
          * @brief Internal message handler for JsProxy.  This is called when
