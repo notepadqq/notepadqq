@@ -13,6 +13,7 @@ class MessageHandler {
     C_CMD_SET_VALUE(data) 
     {
         editor.setValue(data);
+        App.eventHook.onSetValue();
     }
 
     C_FUN_GET_VALUE(data) 

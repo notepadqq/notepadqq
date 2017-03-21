@@ -30,7 +30,7 @@ class StateManager {
         this.changeGeneration = on;
     }
 
-    detectIndentationMode(editor)
+    detectIndentationMode()
     {
         var len = editor.lineCount();
         var regexIndented = /^([ ]{2,}|[\t]+)[^ \t]+?/g; // Is not blank, and is indented with tab or space 

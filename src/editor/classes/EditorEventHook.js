@@ -40,6 +40,7 @@ class EditorEventHook {
 
     onSetValue() 
     {
+        var detectedIndent = App.state.detectIndentationMode();
         editor.clearHistory();
         App.proxy.sendEvent("J_EVT_DOCUMENT_LOADED", detectedIndent);
     }
