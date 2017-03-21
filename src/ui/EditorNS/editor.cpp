@@ -306,13 +306,10 @@ namespace EditorNS
         return langs;
     }
 
-    QString Editor::getLanguage(const QString& val)
+    QString Editor::getLanguage()
     {
         QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        if ( val == "id" ) {
-            return data.value("id").toString();
-        }
-        return data.value("lang").toMap().value(val).toString();
+        return data.value("id").toString();
     }
 
     void Editor::setLanguage(const QString &language)
@@ -421,14 +418,11 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-//        waitAsyncLoad();
         m_jsProxy->sendMsg(jsStringEscape(msg), data);
     }
 
     QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
     {
-        qDebug() << "Getting result for: " << msg;
-//        waitAsyncLoad();
         if (m_processLoop.isRunning())
             throw std::runtime_error("m_processLoop must never be running at this point. Did this function get called from another thread?");
 
@@ -674,35 +668,6 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
     }
 
-    QList<Editor::Selection> Editor::getSelections()
-    {
-        QList<Selection> out;
-
-        QList<QVariant> sels = m_jsProxy->getRawValue("selections").toList();
-        for (int i = 0; i < sels.length(); i++) {
-            QVariantMap selMap = sels[i].toMap();
-            QVariantMap from = selMap.value("anchor").toMap();
-            QVariantMap to = selMap.value("head").toMap();
-
-            Selection sel;
-            sel.from.line = from.value("line").toInt();
-            sel.from.column = from.value("ch").toInt();
-            sel.to.line = to.value("line").toInt();
-            sel.to.column = to.value("ch").toInt();
-
-            out.append(sel);
-        }
-
-        return out;
-    }
-
-    QStringList Editor::getSelectedTexts()
-    {
-        QStringList selectedTexts;
-        m_jsProxy->getValue("selectionsText", selectedTexts);
-        return selectedTexts;
-    }
-
     void Editor::setOverwrite(bool overwrite)
     {
         sendMessage("C_CMD_SET_OVERWRITE", overwrite);
@@ -738,9 +703,58 @@ namespace EditorNS
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
-    QString Editor::getCurrentWord()
+    void Editor::getSelections(std::function<void(const QList<Editor::Selection>&)> callback)
     {
-        return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS",
+        [callback](const QVariant& v) {
+            QList<Selection> out;
+            QList<QVariant> sels = v.toList();
+            for (int i = 0; i < sels.length(); i++) {
+                QVariantMap selMap = sels[i].toMap();
+                QVariantMap from = selMap.value("anchor").toMap();
+                QVariantMap to = selMap.value("head").toMap();
+
+                Selection sel;
+                sel.from.line = from.value("line").toInt();
+                sel.from.column = from.value("ch").toInt();
+                sel.to.line = to.value("line").toInt();
+                sel.to.column = to.value("ch").toInt();
+
+                out.append(sel);
+            }
+            callback(out);
+        });
     }
+    
+    void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)
+    {
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
+        [callback](const QVariant& v) mutable {
+            callback(v.toStringList());
+        });
+    }
+
+    void Editor::getLanguage(std::function<void(const QString&)> callback) {
+        sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
+        [callback](const QVariant &v) {
+            QString langId = v.toMap().value("id").toString();
+            callback(langId);
+        });
+    }
+
+    void Editor::getCurrentWordOrSelections(std::function<void(const QStringList&)> callback) {
+        sendMessageWithCallback("C_FUN_GET_SELECTIONS_TEXT",
+        [&, callback](const QVariant& v) mutable {
+            if(v.isNull()) {
+                sendMessageWithCallback("C_FUN_GET_CURRENT_WORD",
+                [callback](const QVariant& v) mutable {
+                    callback(v.toStringList());
+                });
+            }else {
+                callback(v.toStringList());
+            }
+        });
+    }
+
 
 }

@@ -11,9 +11,9 @@
 #include <QVBoxLayout>
 #include <QTextCodec>
 #include <QPrinter>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QEventLoop>
+#include <QJsonDocument>
+#include <functional>
 namespace EditorNS
 {
 
@@ -175,16 +175,12 @@ namespace EditorNS
         void markDirty();
         static QList<QMap<QString, QString> > languages();
 
-
         /**
-         * @brief Get the currently active language used
-         *        in the editor.
-         * @param val The value to pull from the language data,
-         *        or ID by default.
-         * @return The value associated with the key "val".
+         * @brief Get the id of the language currently being used by the editor.
+         * @return language_id
          */
+        QString getLanguage();
 
-        QString getLanguage(const QString& val = "id");
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
@@ -195,8 +191,15 @@ namespace EditorNS
         void setLanguageFromFileName(QString fileName);
         void setLanguageFromFileName();
         
-        
+        /**
+         * @brief Get the content of the editor.
+         * @return QString content text.
+         */
         QString value();
+        /**
+         * @brief Set the content of the editor, overwriting previous content.
+         * @param value New content to set.
+         */
         void setValue(const QString &value);
 
         /**
@@ -274,14 +277,7 @@ namespace EditorNS
 
         void setSelectionsText(const QStringList &texts, selectMode mode);
         void setSelectionsText(const QStringList &texts);
-        void setSelection(int fromLine, int fromCol, int toLine, int toCol);
-
-        /**
-         * @brief Returns the currently selected texts.
-         * @return
-         */
-        QStringList getSelectedTexts();
-        QList<Selection> getSelections();
+        void setSelection(int fromLine, int fromCol, int toLine, int toCol); 
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
@@ -293,7 +289,6 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        QString getCurrentWord(); 
         int getLineCount();
         int getCharCount();
 
@@ -306,6 +301,34 @@ namespace EditorNS
          * @brief Requests cursor information from the editor.
          */
         void requestCursorInfo();
+
+        /**
+         * @brief Get the current selection boundaries.
+         * @param callback  Lambda or functor.
+         *                  Must accept QList<Editor::Selection> type as parameter.
+         */
+        void getSelections(std::function<void(const QList<Selection>&)> callback);
+
+        /**
+         * @brief Get the currently selected texts.
+         * @param callback  Lambda or functor.
+         *                  Must accept QStringList type as parameter.
+         */
+        void getSelectedTexts(std::function<void(const QStringList&)> callback);
+
+        /**
+         * @brief Get the current editor language.
+         * @param callback Lambda or functor.
+         *                 Must accept QString type as parameter.
+         */
+        void getLanguage(std::function<void(const QString&)> callback); 
+        /**
+         * @brief Get the currently selected text, or the word under the cursor
+         *        if no text is selected.
+         * @param callback Lambda or functor.
+         *                 Must accept QStringList type as parameter.
+         */
+        void getCurrentWordOrSelections(std::function<void(const QStringList&)> callback); 
 
     private:
         static QQueue<Editor*> m_editorBuffer;
@@ -359,6 +382,36 @@ namespace EditorNS
          */
         LanguageInfo buildLanguageChangedEventData(const QVariant& data,
                 bool cache = true);
+
+        /**
+         * @brief Sends a javascript message, including data, to the editor.
+         *        Invoking the specified "callback" when execution has 
+         *        completed.
+         * @param msg Initial message, which maps to a javascript function.
+         * @param data QVariant filled with data to send to javascript.
+         * @param callback Functor or lambda.
+         */
+        template<typename T>
+        void sendMessageWithCallback(const QString& msg, const QVariant &data, T callback) {
+            QString jsonData = QJsonDocument::fromVariant(data).toJson();
+            if (jsonData.isEmpty()) 
+                jsonData.append("0");
+            QString jsMsg = QString("UiDriver.messageReceived('%1',%2)").arg(msg).arg(jsonData);
+            m_webView->page()->runJavaScript(jsMsg, callback);
+        }
+
+        /**
+         * @brief This is an overloaded function.
+         *        Sends a javascript message to the editor, invoking the 
+         *        specified "callback" when execution has completed.
+         * @param msg Initial message, which maps to a javascript function.
+         * @param data QVariant filled with data to send to javascript.
+         * @param callback Functor or lambda.
+         */
+        template<typename T>
+        void sendMessageWithCallback(const QString& msg, T callback) {
+            sendMessageWithCallback(msg, QVariant(0), callback);
+        }
 
     private slots:
         void on_javaScriptWindowObjectCleared();

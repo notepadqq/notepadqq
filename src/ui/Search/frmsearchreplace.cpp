@@ -536,14 +536,14 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
     if (s.Search.getSearchAsIType()) {
         if (ui->actionFind->isChecked()) {
             Editor *editor = currentEditor();
+            editor->getSelections([&, editor](const QList<Editor::Selection> selections) {
+                if (selections.length() > 0) {
+                    editor->setCursorPosition(
+                        std::min(selections[0].from, selections[0].to));
+                }
+                findFromUI(true);
 
-            QList<Editor::Selection> selections = editor->getSelections();
-            if (selections.length() > 0) {
-                editor->setCursorPosition(
-                            std::min(selections[0].from, selections[0].to));
-            }
-
-            findFromUI(true);
+            });
         }
     }
 }
