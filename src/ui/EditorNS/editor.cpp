@@ -58,7 +58,7 @@ namespace EditorNS
         setLayout(m_layout);
         
         connect(m_webView->page(),
-                &QWebEnginePage::loadFinished,
+                &QWebEnginePage::loadStarted,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);

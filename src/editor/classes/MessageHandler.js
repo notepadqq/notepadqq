@@ -23,14 +23,14 @@ class MessageHandler {
 
     C_CMD_MARK_CLEAN(data) 
     {
-        App.state.setForceDirty(false);
-        App.state.setChangeGeneration(editor.changeGeneration(true));
+        App.content.setForceDirty(false);
+        App.content.setChangeGeneration(editor.changeGeneration(true));
         App.eventHook.onChange();
     }
 
     C_CMD_MARK_DIRTY(data) 
     {
-        App.state.setForceDirty(true);
+        App.content.setForceDirty(true);
         App.eventHook.onChange();
     }
 

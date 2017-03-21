@@ -54,5 +54,9 @@ function CommunicationsManager() {
         }
         return retVal;
     }
+
+    this.pushContentChangedEvent = function(data) {
+        this.sendEvent("J_EVT_CONTENT_CHANGED", data);
+    }.bind(this);
 }
 

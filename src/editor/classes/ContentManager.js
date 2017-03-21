@@ -1,4 +1,10 @@
-class StateManager {
+"use strict";
+/**
+ * @brief Contains functions related to the content and state of the current
+ *        editor context.
+ */
+
+class ContentManager {
     constructor() {
         this.forceDirty = false;
         this.changeGeneration = false;

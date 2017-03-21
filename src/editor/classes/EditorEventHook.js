@@ -40,7 +40,7 @@ class EditorEventHook {
 
     onSetValue() 
     {
-        var detectedIndent = App.state.detectIndentationMode();
+        var detectedIndent = App.content.detectIndentationMode();
         editor.clearHistory();
         App.proxy.sendEvent("J_EVT_DOCUMENT_LOADED", detectedIndent);
     }
@@ -60,9 +60,9 @@ class EditorEventHook {
 
     onChange() 
     {
-        App.proxy.sendEvent("J_EVT_CONTENT_CHANGED", this.changeActivityObject());
-        if (App.state.cleanStateChanged()) {
-            App.proxy.sendEvent("J_EVT_CLEAN_CHANGED", App.state.isCleanOrForced(App.state.changeGeneration));
+        App.proxy.pushContentChangedEvent(this.changeActivityObject());
+        if (App.content.cleanStateChanged()) {
+            App.proxy.sendEvent("J_EVT_CLEAN_CHANGED", App.content.isCleanOrForced(App.content.changeGeneration));
         }
     }
 

@@ -13,7 +13,7 @@ class AppManager {
     {
         this.proxy = new CommunicationsManager();
         this.eventHook = new EditorEventHook();
-        this.state = new StateManager();
+        this.content = new ContentManager();
     }
 }
 
