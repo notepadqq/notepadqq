@@ -338,9 +338,9 @@ namespace EditorNS
         return m_langCache;
     }
 
-    QString Editor::getLanguage()
+    Editor::LanguageData Editor::getLanguage()
     {
-        return m_editorInfo.content.language.id;
+        return m_editorInfo.content.language;
     }
 
     void Editor::setLanguage(const QString &language)
@@ -448,7 +448,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_editorInfo.content.indentMode.custom = false;
-        setIndentationMode(getLanguage());
+        setIndentationMode(getLanguage().id);
     }
 
     bool Editor::isUsingCustomIndentationMode() const

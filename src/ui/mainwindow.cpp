@@ -1156,6 +1156,7 @@ void MainWindow::refreshEditorUiInfoAll(Editor* editor)
     editor->requestContentInfo();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
+    m_statusBar_fileFormat->setText(editor->getLanguage().name);
 }
 
 void MainWindow::refreshEditorUiEncodingInfo(Editor *editor)

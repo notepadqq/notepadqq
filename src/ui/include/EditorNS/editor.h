@@ -197,7 +197,7 @@ namespace EditorNS
          * @brief Get the id of the language currently being used by the editor.
          * @return language_id
          */
-        QString getLanguage();
+        Editor::LanguageData getLanguage();
 
         /**
          * @brief Set the language to use for the editor.
