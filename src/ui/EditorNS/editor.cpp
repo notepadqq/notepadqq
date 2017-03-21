@@ -383,7 +383,8 @@ namespace EditorNS
                 }
             }
         }
-        //waitAsyncLoad();
+        // If we make it here we need to make sure we're loaded.
+        waitAsyncLoad();
         // First non-blank line
         getValue([&] (QString rawTxt) {
             QTextStream stream(&rawTxt);

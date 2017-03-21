@@ -7,15 +7,8 @@
 var _initialized = false;
 var _defaultTheme = "";
 
-function addStylesheet(path) {
-    var link = document.createElement("link");
-    link.href = path;
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.media = "screen,print";
-
-    document.getElementsByTagName("head")[0].appendChild(link);
-    return link;
+function addStylesheet(sheet){
+	document.getElementById('pagestyle').setAttribute('href', sheet);
 }
 
 function init()

@@ -267,14 +267,12 @@ class MessageHandler {
                 link = addStylesheet(data.path);
             }
         }
-
-        if (link === undefined) {
-            editor.setOption("theme", data.name);
-        } else {
-            link.onload = function () {
-                editor.setOption("theme", data.name);
-            }
-        }
+        editor.setOption("theme", data.name);
+        setTimeout(function() {
+            editor.setOption("fixedGutter", true);
+            editor.setOption("fixedGutter", false);
+            editor.refresh();
+        }, 100);
     }
 
     C_CMD_SET_FONT(data) 
