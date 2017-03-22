@@ -389,12 +389,8 @@ namespace EditorNS
                 }
             }
         }
-        // We wait for the page to finish loading before doing this one.
-        // First non-blank line
-        connect(this, &Editor::editorReady, this,
-                &Editor::detectLanguageFromContent);
     }
-
+/*
     void Editor::detectLanguageFromContent()
     {
         getValue([&] (QString rawTxt) {
@@ -415,7 +411,7 @@ namespace EditorNS
         disconnect(this, &Editor::editorReady, this,
                 &Editor::detectLanguageFromContent);
     }
-
+*/
     void Editor::setLanguageFromFileName()
     {
         setLanguageFromFileName(fileName().toString());

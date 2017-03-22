@@ -449,7 +449,7 @@ namespace EditorNS
          * @brief One shot slot which detects language from content if all
          *        other methods fail.
          */
-        void detectLanguageFromContent();
+//        void detectLanguageFromContent();
     signals:
         /**
          * @brief The editor got focus.
