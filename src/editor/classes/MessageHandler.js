@@ -36,7 +36,7 @@ class MessageHandler {
 
     C_CMD_SET_LANGUAGE(data) 
     {
-        Languages.setLanguage(editor, data);
+        editor.setOption('mode', data);
     }
 
     C_CMD_SET_INDENTATION_MODE(data) {

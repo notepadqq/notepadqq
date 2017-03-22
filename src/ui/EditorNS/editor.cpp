@@ -345,7 +345,7 @@ namespace EditorNS
     void Editor::setLanguage(const QString &language)
     {
         for (auto& l : m_langCache) {
-            if(l.id == language) {
+            if (l.id == language) {
                 m_editorInfo.content.language = l;
                 break;
             }
@@ -353,7 +353,13 @@ namespace EditorNS
         if (!m_editorInfo.content.indentMode.custom) {
             setIndentationMode(language);
         }
-        sendMessage("C_CMD_SET_LANGUAGE", getLanguageVariantData(language));
+        QString mode;
+        if (m_editorInfo.content.language.mime.isEmpty()) {
+            mode = m_editorInfo.content.language.mode;
+        } else {
+            mode = m_editorInfo.content.language.mime;
+        }
+        sendMessage("C_CMD_SET_LANGUAGE", mode);
         emit languageChanged(m_editorInfo.content.language);
     }
 
