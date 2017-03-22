@@ -55,8 +55,28 @@ function CommunicationsManager() {
         return retVal;
     }
 
-    this.pushContentChangedEvent = function(data) {
+    this.cleanChangedEvent = data => {
+        this.sendEvent("J_EVT_CLEAN_CHANGED", data);
+    }
+
+    this.contentChangedEvent = data => {
         this.sendEvent("J_EVT_CONTENT_CHANGED", data);
-    }.bind(this);
+    }
+
+    this.cursorActivityEvent = data => {
+        this.sendEvent("J_EVT_CURSOR_ACTIVITY", data);
+    }
+
+    this.documentLoadedEvent = data => {
+        this.sendEvent("J_EVT_DOCUMENT_LOADED", data);
+    }
+
+    this.scrollChangedEvent = data => {
+        this.sendEvent("J_EVT_SCROLL_CHANGED", data);
+    }
+
+    this.setReady = () => {
+        this.sendEvent("J_EVT_READY");
+    }
 }
 

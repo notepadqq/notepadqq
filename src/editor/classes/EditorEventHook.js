@@ -42,14 +42,14 @@ class EditorEventHook {
     {
         var detectedIndent = App.content.detectIndentationMode();
         editor.clearHistory();
-        App.proxy.sendEvent("J_EVT_DOCUMENT_LOADED", detectedIndent);
+        App.proxy.documentLoadedEvent(detectedIndent);
     }
 
     onCursorActivity() 
     {
         clearTimeout(this.cursorActivityTimer);
         this.cursorActivityTimer = setTimeout(() => {
-            App.proxy.sendEvent("J_EVT_CURSOR_ACTIVITY", this.cursorActivityObject());
+            App.proxy.cursorActivityEvent(this.cursorActivityObject());
         }, 20);
     }
 
@@ -60,16 +60,16 @@ class EditorEventHook {
 
     onChange() 
     {
-        App.proxy.pushContentChangedEvent(this.changeActivityObject());
+        App.proxy.contentChangedEvent(this.changeActivityObject());
         if (App.content.cleanStateChanged()) {
-            App.proxy.sendEvent("J_EVT_CLEAN_CHANGED", App.content.isCleanOrForced(App.content.changeGeneration));
+            App.proxy.cleanChangedEvent(App.content.isCleanOrForced(App.content.changeGeneration));
         }
     }
 
     onScroll() 
     {
         var scroll = editor.getScrollInfo();
-        App.proxy.sendEvent("J_EVT_SCROLL_CHANGED", [scroll.left, scroll.top]);
+        App.proxy.scrollChangedEvent([scroll.left, scroll.top]);
     }
 
     onLoad() 

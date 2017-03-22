@@ -55,5 +55,7 @@ $(document).ready(function () {
     editor.on("optionChange", function() {
         App.eventHook.onOptionChange();
     });
-    App.proxy.sendEvent("J_EVT_READY", 0);
+
+    App.proxy.setReady();
+
 });
