@@ -12,7 +12,7 @@ class AppManager {
     constructor()
     {
         this.proxy = new CommunicationsManager();
-        this.eventHook = new EditorEventHook();
+        this.events = new EditorEventHook();
         this.content = new ContentManager();
     }
 }

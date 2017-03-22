@@ -38,24 +38,26 @@ $(document).ready(function () {
         }
     });
     editor.on("change", function(instance, changeObj) {
-        App.eventHook.onChange();
+        App.events.onChange();
     });
 
     editor.on("scroll", function(instance) {
-        App.eventHook.onScroll();
+        App.events.onScroll();
     });
 
     editor.on("cursorActivity", function(instance, changeObj) {
-        App.eventHook.onCursorActivity();
+        App.events.onCursorActivity();
     });
 
     editor.on("focus", function(instance) {
-        App.eventHook.onFocus();
+        App.events.onFocus();
     });
     editor.on("optionChange", function() {
-        App.eventHook.onOptionChange();
+        App.events.onOptionChange();
     });
 
     App.proxy.setReady();
-
+    setTimeout(function() {
+        editor.focus();
+    }, 100);
 });

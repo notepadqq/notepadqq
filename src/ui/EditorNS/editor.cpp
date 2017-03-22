@@ -14,7 +14,7 @@
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
 #include <QJsonDocument>
-
+#include <memory>
 namespace EditorNS
 {
 
@@ -383,9 +383,14 @@ namespace EditorNS
                 }
             }
         }
-        // If we make it here we need to make sure we're loaded.
-        waitAsyncLoad();
+        // We wait for the page to finish loading before doing this one.
         // First non-blank line
+        connect(this, &Editor::editorReady, this,
+                &Editor::detectLanguageFromContent);
+    }
+
+    void Editor::detectLanguageFromContent()
+    {
         getValue([&] (QString rawTxt) {
             QTextStream stream(&rawTxt);
             stream.skipWhiteSpace();
@@ -401,6 +406,8 @@ namespace EditorNS
                 }
             }
         });
+        disconnect(this, &Editor::editorReady, this,
+                &Editor::detectLanguageFromContent);
     }
 
     void Editor::setLanguageFromFileName()

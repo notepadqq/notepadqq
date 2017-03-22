@@ -445,7 +445,11 @@ namespace EditorNS
          * @param data Attached data, if any.
          */
         void on_proxyMessageReceived(QString msg, QVariant data);
-
+        /**
+         * @brief One shot slot which detects language from content if all
+         *        other methods fail.
+         */
+        void detectLanguageFromContent();
     signals:
         /**
          * @brief The editor got focus.

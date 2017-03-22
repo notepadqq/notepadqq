@@ -13,7 +13,7 @@ class MessageHandler {
     C_CMD_SET_VALUE(data) 
     {
         editor.setValue(data);
-        App.eventHook.onSetValue();
+        App.events.onSetValue();
     }
 
     C_FUN_GET_VALUE(data) 
@@ -25,13 +25,13 @@ class MessageHandler {
     {
         App.content.setForceDirty(false);
         App.content.setChangeGeneration(editor.changeGeneration(true));
-        App.eventHook.onChange();
+        App.events.onChange();
     }
 
     C_CMD_MARK_DIRTY(data) 
     {
         App.content.setForceDirty(true);
-        App.eventHook.onChange();
+        App.events.onChange();
     }
 
     C_CMD_SET_LANGUAGE(data) 
@@ -108,12 +108,12 @@ class MessageHandler {
 
     C_CMD_REQUEST_CURSOR_INFO(data) 
     {
-        App.eventHook.onCursorActivity();
+        App.events.onCursorActivity();
     }
 
     C_CMD_REQUEST_DOCUMENT_INFO(data) 
     {
-        App.eventHook.onChange();
+        App.events.onChange();
     }
 
     C_CMD_SET_SCROLL_POS(data) 
