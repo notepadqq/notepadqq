@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 /**
  * @brief This is our controller class.  All calls are made through here
  *        so we have a consistent interface for javascript communication.
@@ -16,7 +16,7 @@ class AppManager {
         this.proxy = new CommunicationsManager();
         this.events = new EditorEventHook();
         this.content = new ContentManager();
-
+ 
         //Variables
         this.defaultTheme = "default";
 
@@ -38,6 +38,7 @@ class AppManager {
             this.setEditorStyleSheet(themePath);
             this.defaultTheme = themeName;
         }
+        $(document).ready(() => {this.initializeCodeMirror()});
     }
 
     setEditorStyleSheet(sheet)
@@ -47,20 +48,29 @@ class AppManager {
 
     initializeCodeMirror()
     {
+        let preferredTheme = this.defaultTheme;
         editor = CodeMirror($(".editor")[0], {
             lineNumbers: true,
-            mode: { name: "" },
-            highlightSelectionMatches: {style: "selectedHighlight", wordsOnly: true, delay: 25},
+            highlightSelectionMatches: {
+                style: "selectedHighlight", 
+                wordsOnly: true, 
+                delay: 25
+            },
             styleSelectedText: true,
             styleActiveLine: true,
             foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            gutters: [
+                "CodeMirror-linenumbers", 
+                "CodeMirror-foldgutter"
+            ],
             indentWithTabs: true,
             indentUnit: 4,
             tabSize: 4,
             matchBrackets: true,
-            extraKeys: {"Ctrl-Space": "autocomplete"},
-            theme: App.defaultTheme
+            extraKeys: {
+                "Ctrl-Space": "autocomplete"
+            },
+            theme: preferredTheme
         });
     
         editor.addKeyMap({
@@ -84,26 +94,17 @@ class AppManager {
                 cm.indentSelection("subtract");
             }
         });
-        editor.on("change", function(instance, changeObj) {
-            App.events.onChange();
-        });
 
-        editor.on("scroll", function(instance) {
-            App.events.onScroll();
-        });
-
-        editor.on("cursorActivity", function(instance, changeObj) {
-            App.events.onCursorActivity();
-        });
-
-        editor.on("focus", function(instance) {
-            App.events.onFocus();
-        });
-        editor.on("optionChange", function() {
-            App.events.onOptionChange();
-        });
-
+        // It's very important to append .bind(ev) here.  Otherwise you'll
+        // experience undefined behavior.
+        let ev = this.events;
+        editor.on("change", ev.onChange.bind(ev));
+        editor.on("scroll", ev.onScroll.bind(ev));
+        editor.on("cursorActivity", ev.onCursorActivity.bind(ev));
+        editor.on("focus", ev.onFocus.bind(ev));
+        editor.on("optionChange", ev.onOptionChange.bind(ev));
         App.proxy.setReady();
+
         setTimeout(function() {
             editor.focus();
         }, 100);
@@ -111,7 +112,3 @@ class AppManager {
 }
 
 var App = new AppManager();
-$(document).ready(function() {
-    App.initializeCodeMirror();
-});
-
