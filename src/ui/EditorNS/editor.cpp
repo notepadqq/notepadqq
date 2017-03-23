@@ -23,22 +23,10 @@ namespace EditorNS
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
-
-        QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "") {
-            themeName = "default";
-        }
-
-        fullConstructor(themeFromName(themeName));
+        fullConstructor();
     }
 
-    Editor::Editor(const Theme &theme, QWidget *parent) :
-        QWidget(parent)
-    {
-        fullConstructor(theme);
-    }
-
-    void Editor::fullConstructor(const Theme &theme)
+    void Editor::fullConstructor()
     {
         NqqSettings& s = NqqSettings::getInstance();
         /* Initialize some values here so we don't have issues*/
@@ -49,13 +37,13 @@ namespace EditorNS
                             false);
 
         initJsProxy();
-        initWebView(theme);
+        initWebView();
         initContextMenu();
-        m_layout = new QVBoxLayout(this);
-        m_layout->setContentsMargins(0, 0, 0, 0);
-        m_layout->setSpacing(0);
-        m_layout->addWidget(m_webView, 1);
-        setLayout(m_layout);
+        QVBoxLayout* vbox = new QVBoxLayout(this);
+        vbox->setContentsMargins(0, 0, 0, 0);
+        vbox->setSpacing(0);
+        vbox->addWidget(m_webView, 1);
+        setLayout(vbox);
         
         connect(m_webView->page(),
                 &QWebEnginePage::loadStarted,
@@ -66,8 +54,15 @@ namespace EditorNS
     }
 
     
-    void Editor::initWebView(const Theme &theme)
+    void Editor::initWebView()
     {
+        // Get the currently active color scheme/theme
+        QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
+        if (themeName == "") {
+            themeName = "default";
+        }
+        const Theme theme = themeFromName(themeName);
+
         m_webView = new CustomQWebView(this);
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -167,8 +162,8 @@ namespace EditorNS
         } else if(msg == "J_EVT_CONTENT_CHANGED") {
             emit contentChanged(buildContentChangedEventData(data));
         } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            m_editorInfo.content.clean = data.toBool();
-            emit cleanChanged(m_editorInfo.content.clean);
+            m_info.content.clean = data.toBool();
+            emit cleanChanged(m_info.content.clean);
         } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
             emit cursorActivity(buildCursorEventData(data));
         } else if(msg == "J_EVT_GOT_FOCUS") {
@@ -188,7 +183,7 @@ namespace EditorNS
             bool /*cache*/)
     {
         if (!data.canConvert<QVariantList>()) {
-            return m_editorInfo.content.indentMode;
+            return m_info.content.indentMode;
         }
         Editor::IndentationMode indentMode;
         indentMode.useTabs = data.toList().at(0).toBool();
@@ -205,8 +200,8 @@ namespace EditorNS
         temp.charCount = v["charCount"].toInt();
         temp.lineCount = v["lineCount"].toInt();
         if (cache) {
-            m_editorInfo.content.charCount = temp.charCount;
-            m_editorInfo.content.lineCount = temp.lineCount;
+            m_info.content.charCount = temp.charCount;
+            m_info.content.lineCount = temp.lineCount;
         }
         return temp;
     }
@@ -235,7 +230,7 @@ namespace EditorNS
         }
         
         if (cache) {
-            m_editorInfo.cursor = temp;
+            m_info.cursor = temp;
         }
         return temp;
     }
@@ -277,7 +272,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return m_editorInfo.content.clean;
+        return m_info.content.clean;
     }
 
     void Editor::markClean()
@@ -339,28 +334,28 @@ namespace EditorNS
 
     Editor::LanguageData Editor::getLanguage()
     {
-        return m_editorInfo.language;
+        return m_info.language;
     }
 
     void Editor::setLanguage(const QString &language)
     {
         for (auto& l : m_langCache) {
             if (l.id == language) {
-                m_editorInfo.language = l;
+                m_info.language = l;
                 break;
             }
         }
-        if (!m_editorInfo.content.indentMode.custom) {
+        if (!m_info.content.indentMode.custom) {
             setIndentationMode(language);
         }
         QString mode;
-        if (m_editorInfo.language.mime.isEmpty()) {
-            mode = m_editorInfo.language.mode;
+        if (m_info.language.mime.isEmpty()) {
+            mode = m_info.language.mode;
         } else {
-            mode = m_editorInfo.language.mime;
+            mode = m_info.language.mime;
         }
         sendMessage("C_CMD_SET_LANGUAGE", mode);
-        emit languageChanged(m_editorInfo.language);
+        emit languageChanged(m_info.language);
     }
 
     void Editor::setLanguage(const Editor::LanguageData& language)
@@ -436,9 +431,9 @@ namespace EditorNS
         QMap<QString, QVariant> data;
         data.insert("useTabs", useTabs);
         data.insert("size", size);
-        m_editorInfo.content.indentMode.useTabs = useTabs;
-        m_editorInfo.content.indentMode.size = size;
-        m_editorInfo.content.indentMode.custom = custom;
+        m_info.content.indentMode.useTabs = useTabs;
+        m_info.content.indentMode.size = size;
+        m_info.content.indentMode.custom = custom;
         if (transport) {
             sendMessage("C_CMD_SET_INDENTATION_MODE", data);
         }
@@ -446,7 +441,7 @@ namespace EditorNS
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        return m_editorInfo.content.indentMode;
+        return m_info.content.indentMode;
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs, const int size)
@@ -461,13 +456,13 @@ namespace EditorNS
 
     void Editor::clearCustomIndentationMode()
     {
-        m_editorInfo.content.indentMode.custom = false;
+        m_info.content.indentMode.custom = false;
         setIndentationMode(getLanguage().id);
     }
 
     bool Editor::isUsingCustomIndentationMode() const
     {
-        return m_editorInfo.content.indentMode.custom;
+        return m_info.content.indentMode.custom;
     }
 
     void Editor::setSmartIndent(bool enabled)
@@ -536,12 +531,12 @@ namespace EditorNS
 
     int Editor::getLineCount()
     {
-        return m_editorInfo.content.lineCount;
+        return m_info.content.lineCount;
     }
 
     int Editor::getCharCount()
     {
-        return m_editorInfo.content.charCount;
+        return m_info.content.charCount;
     }
 
     void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
@@ -568,13 +563,13 @@ namespace EditorNS
 
     void Editor::insertBanner(QWidget *banner)
     {
-        m_layout->insertWidget(0, banner);
+        static_cast<QVBoxLayout*>(layout())->insertWidget(0, banner);
     }
 
     void Editor::removeBanner(QWidget *banner)
     {
-        if (banner != m_webView && m_layout->indexOf(banner) >= 0) {
-            m_layout->removeWidget(banner);
+        if (banner != m_webView && layout()->indexOf(banner) >= 0) {
+            layout()->removeWidget(banner);
             emit bannerRemoved(banner);
         }
     }
@@ -614,7 +609,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getCursorPosition()
     {
-        return qMakePair(m_editorInfo.cursor.line, m_editorInfo.cursor.column);
+        return qMakePair(m_info.cursor.line, m_info.cursor.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -641,7 +636,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getScrollPosition()
     {
-        return m_editorInfo.content.scrollPosition;
+        return m_info.content.scrollPosition;
     }
 
     void Editor::setScrollPosition(const int left, const int top)
@@ -657,12 +652,12 @@ namespace EditorNS
 
     QString Editor::endOfLineSequence() const
     {
-        return m_editorInfo.content.newLine;
+        return m_info.content.newLine;
     }
 
     void Editor::setEndOfLineSequence(const QString &newLineSequence)
     {
-        m_editorInfo.content.newLine = newLineSequence;
+        m_info.content.newLine = newLineSequence;
     }
 
     void Editor::setFont(QString fontFamily, int fontSize, double lineHeight)
@@ -771,7 +766,7 @@ namespace EditorNS
 
     const QList<Editor::Selection>& Editor::getSelections() const
     {
-        return m_editorInfo.cursor.selections;
+        return m_info.cursor.selections;
     }
     
     void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)

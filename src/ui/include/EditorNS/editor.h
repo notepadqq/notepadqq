@@ -42,7 +42,6 @@ namespace EditorNS
             QString path;
         };
 
-        explicit Editor(const Theme &theme, QWidget *parent = 0);
         explicit Editor(QWidget *parent = 0);
 
         /**
@@ -357,7 +356,6 @@ namespace EditorNS
         static QQueue<Editor*> m_editorBuffer;
         static QVector<LanguageData> m_langCache;
         QEventLoop m_processLoop;
-        QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsProxy *m_jsProxy;
         QUrl m_fileName = QUrl();
@@ -367,19 +365,19 @@ namespace EditorNS
         bool m_bom = false;
         bool m_alreadyLoaded = false;
         
-        EditorInfo m_editorInfo;
+        EditorInfo m_info;
 
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
-        void fullConstructor(const Theme &theme);
+        void fullConstructor();
 
         void setIndentationMode(const bool useTabs, const int size, 
                 const bool custom, const bool transport = true);
         void setIndentationMode(QString language, const bool transport = true);
         void initContextMenu();
         void initJsProxy();
-        void initWebView(const Theme &theme);
+        void initWebView();
         /**
          * @brief Build data for the contentChange signal.
          * @param data 
