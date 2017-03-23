@@ -1526,7 +1526,7 @@ void MainWindow::transformSelectedText(QString (*func)(const QString&))
         for (int i = 0; i < sel.length(); i++) {
             sel.replace(i, func(sel.at(i)));
         }
-        editor->setSelectionsText(sel, Editor::selectMode_selected);          
+        editor->setSelectionsText(sel, Editor::SelectMode::Selected);          
     });
 
 }

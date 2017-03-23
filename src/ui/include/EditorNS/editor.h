@@ -159,10 +159,10 @@ namespace EditorNS
         /**
          * @brief Enum containing selection mode information.
          */
-        enum selectMode {
-            selectMode_cursorBefore,
-            selectMode_cursorAfter,
-            selectMode_selected
+        enum class SelectMode {
+            CursorBefore,
+            CursorAfter,
+            Selected
         };
 
         /**
@@ -465,7 +465,7 @@ namespace EditorNS
          * @param texts
          * @param selectMode
          */
-        void setSelectionsText(const QStringList &texts, selectMode mode);
+        void setSelectionsText(const QStringList &texts, SelectMode mode);
         void setSelectionsText(const QStringList &texts);
 
         /**

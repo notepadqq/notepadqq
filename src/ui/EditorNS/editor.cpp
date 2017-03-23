@@ -539,16 +539,20 @@ namespace EditorNS
         return m_info.content.charCount;
     }
 
-    void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
+    void Editor::setSelectionsText(const QStringList &texts, SelectMode mode)
     {
         QString modeStr = "";
-        if (mode == selectMode_cursorAfter)
-            modeStr = "after";
-        else if (mode == selectMode_cursorBefore)
-            modeStr = "before";
-        else
-            modeStr = "selected";
-
+        switch (mode) {
+            case SelectMode::CursorAfter:
+                modeStr = "after";
+                break;
+            case SelectMode::CursorBefore:
+                modeStr = "before";
+                break;
+            default:
+                modeStr = "selected";
+                break;
+        }
         QVariantMap data;
         data.insert("text", texts);
         data.insert("select", modeStr);
@@ -558,7 +562,7 @@ namespace EditorNS
 
     void Editor::setSelectionsText(const QStringList &texts)
     {
-        setSelectionsText(texts, selectMode_cursorAfter);
+        setSelectionsText(texts, SelectMode::CursorAfter);
     }
 
     void Editor::insertBanner(QWidget *banner)
