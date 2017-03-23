@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
+#include <QTimer>
 #include <QUrlQuery>
 #include <QRegularExpression>
 #include <QJsonDocument>
@@ -28,9 +29,9 @@ namespace EditorNS
 
     void Editor::fullConstructor()
     {
-        NqqSettings& s = NqqSettings::getInstance();
+        auto& s = NqqSettings::getInstance();
         /* Initialize some values here so we don't have issues*/
-        const QString language = "default";
+        const auto language = "default";
         setIndentationMode(!s.Languages.getIndentWithSpaces(language),
                             s.Languages.getTabSize(language),
                             false,
@@ -39,16 +40,20 @@ namespace EditorNS
         initJsProxy();
         initWebView();
         initContextMenu();
-        QVBoxLayout* vbox = new QVBoxLayout(this);
+
+        auto vbox = new QVBoxLayout(this);
         vbox->setContentsMargins(0, 0, 0, 0);
         vbox->setSpacing(0);
         vbox->addWidget(m_webView, 1);
         setLayout(vbox);
-        
+
         connect(m_webView->page(),
                 &QWebEnginePage::loadStarted,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
+
+        connect(m_webView->page(), &QWebEnginePage::loadFinished, 
+                this, &Editor::on_loadFinished);
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
@@ -57,22 +62,22 @@ namespace EditorNS
     void Editor::initWebView()
     {
         // Get the currently active color scheme/theme
-        QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
+        auto themeName = NqqSettings::getInstance().Appearance.getColorScheme();
         if (themeName == "") {
             themeName = "default";
         }
-        const Theme theme = themeFromName(themeName);
+        const auto theme = themeFromName(themeName);
 
         m_webView = new CustomQWebView(this);
+
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
+
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
 
-        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
         m_webView->page()->load(url);
-        m_webView->page()->setBackgroundColor(Qt::transparent);
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
         pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
     }
@@ -128,6 +133,21 @@ namespace EditorNS
         return out;
     }
 
+    void Editor::on_loadFinished()
+    {
+        updateBackground();
+    }
+
+    void Editor::updateBackground()
+    {
+        QString js = "rgb2hex($('.cm-s-'+editor.getOption('theme')).css('background-color'));";
+        m_webView->page()->runJavaScript(js, [&] (const QVariant& v){
+            QColor newBG = QColor(v.toString());
+            qDebug() << v.toString();
+            m_webView->page()->setBackgroundColor(newBG); 
+        });
+    }
+
     void Editor::addEditorToBuffer(const int howMany)
     {
         for (int i = 0; i < howMany; i++)
@@ -152,6 +172,7 @@ namespace EditorNS
     void Editor::on_javaScriptWindowObjectCleared()
     {
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
+        m_webView->page()->setBackgroundColor(Qt::transparent);
     }
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
@@ -195,7 +216,7 @@ namespace EditorNS
             const QVariant& data, 
             bool cache)
     {
-        QVariantMap v = data.toMap();
+        auto v = data.toMap();
         ContentInfo temp;
         temp.charCount = v["charCount"].toInt();
         temp.lineCount = v["lineCount"].toInt();
@@ -209,7 +230,7 @@ namespace EditorNS
     Editor::CursorInfo Editor::buildCursorEventData(const QVariant& data, 
             bool cache)
     {
-        QVariantMap v = data.toMap();
+        auto v = data.toMap();
         CursorInfo  temp;
         temp.line = v["cursorLine"].toInt();
         temp.column = v["cursorColumn"].toInt();
@@ -295,7 +316,7 @@ namespace EditorNS
         scriptFile.close();
         // Begin iterating through our language objects.
         for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
-            QJsonObject mode = it.value().toObject();
+            auto mode = it.value().toObject();
             LanguageData newMode;
             newMode.id = it.key();
             newMode.name = mode.value("name").toString();
@@ -311,8 +332,8 @@ namespace EditorNS
 
     QVariant Editor::getLanguageVariantData(const QString& langId)
     {
-        QVariant comp = QVariant::fromValue(langId);
-        for (auto& l : m_langCache) {
+        auto comp = QVariant::fromValue(langId);
+        for (const auto& l : m_langCache) {
             if (l.id == langId) {
                 QVariantMap langData;
                 langData.insert("id", l.id);
@@ -339,7 +360,7 @@ namespace EditorNS
 
     void Editor::setLanguage(const QString &language)
     {
-        for (auto& l : m_langCache) {
+        for (const auto& l : m_langCache) {
             if (l.id == language) {
                 m_info.language = l;
                 break;
@@ -374,7 +395,7 @@ namespace EditorNS
         }
 
         // Case insensitive file extension search
-        int pos = fileName.lastIndexOf('.');
+        auto pos = fileName.lastIndexOf('.');
         if (pos != -1) {
             QString ext = fileName.mid(pos+1);
             for (auto& l : m_langCache) {
@@ -428,7 +449,7 @@ namespace EditorNS
     void Editor::setIndentationMode(const bool useTabs, const int size, 
             const bool custom, const bool transport)
     {
-        QMap<QString, QVariant> data;
+        QVariantMap data;
         data.insert("useTabs", useTabs);
         data.insert("size", size);
         m_info.content.indentMode.useTabs = useTabs;
@@ -517,7 +538,7 @@ namespace EditorNS
 
     void Editor::setZoomFactor(const qreal &factor)
     {
-        qreal normFact = factor;
+        auto normFact = factor;
         if (normFact > 14) normFact = 14;
         else if (normFact < 0.10) normFact = 0.10;
 
@@ -695,49 +716,36 @@ namespace EditorNS
 
     Editor::Theme Editor::themeFromName(QString name)
     {
-        Theme defaultTheme;
-        defaultTheme.name = "default";
-        defaultTheme.path = "";
+        Theme theme = { "default", "" };
+        if (name == "default" || name.isEmpty())
+            return theme;
 
-        if (name == "default" || name == "")
-            return defaultTheme;
-
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        Theme t;
-        QString themeFile = bundledThemesDir.filePath(name + ".css");
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto themeFile = bundledThemesDir.filePath(name + ".css");
         if (QFile(themeFile).exists()) {
-            t.name = name;
-            t.path = themeFile;
-        } else {
-            t = defaultTheme;
+            theme.name = name;
+            theme.path = themeFile;
         }
-
-        return t;
+        return theme;
     }
 
     QList<Editor::Theme> Editor::themes()
     {
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        QStringList filters;
-        filters << "*.css";
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto filters = QStringList("*.css");
         bundledThemesDir.setNameFilters(filters);
 
-        QStringList themeFiles = bundledThemesDir.entryList();
+        auto themeFiles = bundledThemesDir.entryList();
 
         QList<Theme> out;
         for (QString themeStr : themeFiles) {
-            QFileInfo theme = QFileInfo(themeStr);
-            QString nameWithoutExt = theme.fileName()
+            const auto theme = QFileInfo(themeStr);
+            const auto nameWithoutExt = theme.fileName()
                     .replace(QRegularExpression("\\.css$"), "");
 
-            Theme t;
-            t.name = nameWithoutExt;
-            t.path = bundledThemesDir.filePath(themeStr);
-            out.append(t);
+            out.append({ nameWithoutExt, bundledThemesDir.filePath(themeStr) });
         }
 
         return out;
@@ -745,10 +753,18 @@ namespace EditorNS
 
     void Editor::setTheme(Theme theme)
     {
-        QMap<QString, QVariant> tmap;
+        QVariantMap tmap;
         tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
+
+        // Deferred update of background of m_webView->page()
+        auto timer = new QTimer(this);
+        timer->setSingleShot(true);
+        timer->setInterval(1000);
+        connect(timer, &QTimer::timeout, this, &Editor::updateBackground);
+        connect(timer, &QTimer::timeout, timer, &QObject::deleteLater);
+        timer->start();
     }
 
     void Editor::setOverwrite(bool overwrite)

@@ -668,6 +668,7 @@ namespace EditorNS
          */
         QVariant getLanguageVariantData(const QString& langId);
     private slots:
+        void on_loadFinished();
         /**
          * @brief Registers JsProxy to the WebChannel for use.
          */
@@ -679,6 +680,11 @@ namespace EditorNS
          * @param data Attached data, if any.
          */
         void on_proxyMessageReceived(QString msg, QVariant data);
+        /**
+         * @brief Updates the page background to match CodeMirror.  Keeps
+         *        white flashes and ugly resizing at bay.
+         */
+        void updateBackground();
     signals:
         /**
          * @brief The editor got focus.
