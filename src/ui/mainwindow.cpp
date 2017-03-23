@@ -32,7 +32,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
-#include <QJsonArray>
+#include <QtConcurrent/QtConcurrentRun>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -58,7 +58,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
     connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 
-    loadIcons();
+    QtConcurrent::run(this, &MainWindow::loadIcons);
 
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
