@@ -9,7 +9,7 @@ ABSOLUTE_DESTDIR := $(shell mkdir -p $$(dirname "$(DESTDIR)") && cd $$(dirname "
 
 all:
 	mkdir -p "$(DESTDIR)"
-	cp -r classes styles index.html init.js "$(DESTDIR)"/
+	cp -r classes styles index.html "$(DESTDIR)"/
 	mkdir -p "$(DESTDIR)"/libs
 	cp -r libs/jquery "$(DESTDIR)"/libs/jquery/
 	# Call CodeMirror makefile passing DESTDIR as absolute path, so we have no problems with cd-ing to libs
