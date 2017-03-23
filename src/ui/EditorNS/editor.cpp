@@ -339,14 +339,14 @@ namespace EditorNS
 
     Editor::LanguageData Editor::getLanguage()
     {
-        return m_editorInfo.content.language;
+        return m_editorInfo.language;
     }
 
     void Editor::setLanguage(const QString &language)
     {
         for (auto& l : m_langCache) {
             if (l.id == language) {
-                m_editorInfo.content.language = l;
+                m_editorInfo.language = l;
                 break;
             }
         }
@@ -354,13 +354,13 @@ namespace EditorNS
             setIndentationMode(language);
         }
         QString mode;
-        if (m_editorInfo.content.language.mime.isEmpty()) {
-            mode = m_editorInfo.content.language.mode;
+        if (m_editorInfo.language.mime.isEmpty()) {
+            mode = m_editorInfo.language.mode;
         } else {
-            mode = m_editorInfo.content.language.mime;
+            mode = m_editorInfo.language.mime;
         }
         sendMessage("C_CMD_SET_LANGUAGE", mode);
-        emit languageChanged(m_editorInfo.content.language);
+        emit languageChanged(m_editorInfo.language);
     }
 
     void Editor::setLanguage(const Editor::LanguageData& language)
@@ -657,12 +657,12 @@ namespace EditorNS
 
     QString Editor::endOfLineSequence() const
     {
-        return m_endOfLineSequence;
+        return m_editorInfo.content.newLine;
     }
 
     void Editor::setEndOfLineSequence(const QString &newLineSequence)
     {
-        m_endOfLineSequence = newLineSequence;
+        m_editorInfo.content.newLine = newLineSequence;
     }
 
     void Editor::setFont(QString fontFamily, int fontSize, double lineHeight)

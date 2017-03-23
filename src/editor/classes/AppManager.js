@@ -51,6 +51,7 @@ class AppManager {
         let preferredTheme = this.defaultTheme;
         editor = CodeMirror($(".editor")[0], {
             lineNumbers: true,
+            mode: "plaintext",
             highlightSelectionMatches: {
                 style: "selectedHighlight", 
                 wordsOnly: true, 

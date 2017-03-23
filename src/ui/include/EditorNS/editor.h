@@ -126,9 +126,9 @@ namespace EditorNS
             int charCount; /**< The number of characters contained in the document */
             int lineCount; /**< The number of lines contained in the document */
             bool clean = true; /**< Whether the content of the editor is clean or not */
-            LanguageData language;
             IndentationMode indentMode;
             QPair<int, int> scrollPosition;
+            QString newLine = "\n";
         };
 
 
@@ -136,6 +136,7 @@ namespace EditorNS
         struct EditorInfo {
             CursorInfo cursor;
             ContentInfo content;
+            LanguageData language;
         };
 
         /**
@@ -362,7 +363,6 @@ namespace EditorNS
         QUrl m_fileName = QUrl();
         bool m_fileOnDiskChanged = false;
         bool m_loaded = false;
-        QString m_endOfLineSequence = "\n";
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_alreadyLoaded = false;
