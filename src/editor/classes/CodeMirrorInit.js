@@ -14,7 +14,7 @@ $(document).ready(function () {
         tabSize: 4,
         matchBrackets: true,
         extraKeys: {"Ctrl-Space": "autocomplete"},
-        theme: _defaultTheme
+        theme: App.defaultTheme
     });
     
     editor.addKeyMap({

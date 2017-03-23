@@ -135,7 +135,6 @@ namespace EditorNS
 
         struct EditorInfo {
             CursorInfo cursor;
-            LanguageData language;
             ContentInfo content;
         };
 

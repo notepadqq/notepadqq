@@ -258,14 +258,7 @@ class MessageHandler {
     {
         var link = undefined;
         if (data.path != "") {
-            var stylesheet = $("link[href='" + data.path + "']");
-            if (stylesheet.length > 0) {
-                // Stylesheet already exists, move it to the bottom
-                stylesheet.appendTo('head');
-            } else {
-                // Add the stylesheet
-                link = addStylesheet(data.path);
-            }
+            App.setEditorStyleSheet(data.path);
         }
         editor.setOption("theme", data.name);
         setTimeout(function() {
