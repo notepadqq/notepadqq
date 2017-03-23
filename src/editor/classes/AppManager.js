@@ -95,19 +95,15 @@ class AppManager {
             }
         });
 
-        // It's very important to append .bind(ev) here.  Otherwise you'll
-        // experience undefined behavior.
         let ev = this.events;
-        editor.on("change", ev.onChange.bind(ev));
-        editor.on("scroll", ev.onScroll.bind(ev));
-        editor.on("cursorActivity", ev.onCursorActivity.bind(ev));
-        editor.on("focus", ev.onFocus.bind(ev));
-        editor.on("optionChange", ev.onOptionChange.bind(ev));
+        editor.on("change", function() {ev.onChange()});
+        editor.on("scroll", function() {ev.onScroll()});
+        editor.on("cursorActivity", function() {ev.onCursorActivity()});
+        editor.on("focus", function() {ev.onFocus()});
+        editor.on("optionChange", function() {ev.onOptionChange()});
         App.proxy.setReady();
-
-        setTimeout(function() {
-            editor.focus();
-        }, 100);
+        // Fixes #265 (I'm not sure how it does).
+        setTimeout(function(){editor.focus()}, 100);
     }
 }
 
