@@ -650,7 +650,7 @@ namespace EditorNS
         setScrollPosition(position.first, position.second);
     }
 
-    QString Editor::endOfLineSequence() const
+    const QString& Editor::endOfLineSequence() const
     {
         return m_info.content.newLine;
     }
