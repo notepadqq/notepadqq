@@ -43,7 +43,10 @@ int EditorTabWidget::addEditorTab(bool setFocus, const QString &title)
 bool EditorTabWidget::eventFilter(QObject* object, QEvent* ev)
 {
     if(object == tabBar() && ev->type() == QEvent::FocusIn) {
-        currentEditor()->setFocus();
+        Editor* editor = currentEditor();
+        if(editor) {
+            editor->setFocus();
+        }
         return true;
     }
     return QObject::eventFilter(object, ev);
@@ -216,7 +219,6 @@ void EditorTabWidget::tabRemoved(int)
 
 Editor *EditorTabWidget::currentEditor()
 {
-    setFocusProxy(editor(currentIndex()));
     return editor(currentIndex());
 }
 

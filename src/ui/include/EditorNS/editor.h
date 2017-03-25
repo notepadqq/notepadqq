@@ -572,7 +572,7 @@ namespace EditorNS
     private:
         static QQueue<Editor*> m_editorBuffer;
         static QVector<LanguageData> m_langCache;
-        CustomQWebView *m_webView;
+        CustomQWebView *m_webView = nullptr;
         EditorInfo m_info;
         JsProxy *m_jsProxy;
         QEventLoop m_processLoop;
