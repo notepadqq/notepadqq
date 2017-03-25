@@ -55,7 +55,7 @@ class EditorEventHook {
 
     onFocus() 
     {
-
+        App.proxy.focusChangedEvent();
     }
 
     onChange() 

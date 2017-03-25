@@ -12,7 +12,6 @@ function CommunicationsManager() {
     var CppProxy;
     new QWebChannel(qt.webChannelTransport, _channel => {
         CppProxy = _channel.objects.cpp_ui_driver;
-        CppProxy.sendEditorEvent("J_EVT_PROXY_INIT", 0);
         CppProxy.sendMsgInternal.connect((msg, data) => {
             this.messageReceived(msg, data);
         });
@@ -73,6 +72,10 @@ function CommunicationsManager() {
 
     this.scrollChangedEvent = data => {
         this.sendEvent("J_EVT_SCROLL_CHANGED", data);
+    }
+
+    this.focusChangedEvent = data => {
+        this.sendEvent("J_EVT_GOT_FOCUS", data);
     }
 
     this.setReady = () => {
