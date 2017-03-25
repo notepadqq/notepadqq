@@ -171,7 +171,11 @@ namespace EditorNS
     void Editor::on_javaScriptWindowObjectCleared()
     {
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
-        m_webView->page()->setBackgroundColor(Qt::transparent);
+    }
+
+    bool Editor::isLoadedDocument()
+    {
+        return m_alreadyLoaded;
     }
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
