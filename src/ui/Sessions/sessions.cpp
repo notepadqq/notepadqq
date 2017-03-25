@@ -454,7 +454,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
     Editor* lastEditor = firstTabW->editor(firstTabW->count()-1);
     lastEditor->setFocus();
-
+    firstTabW->setFocus();
     // This triggers `TopEditorContainer::on_currentTabChanged` and eventually
     // `MainWindow::on_currentEditorChanged` which calls refreshEditorUiInfo() to
     // get rid of the titlebar display bug when loading files from cache.

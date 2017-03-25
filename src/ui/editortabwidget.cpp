@@ -14,12 +14,13 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setDocumentMode(true);
     this->setTabsClosable(true);
+    this->setFocusPolicy(Qt::ClickFocus);
     this->setMovable(true);
-
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
     QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
     setStyleSheet(style);
+    tabBar()->installEventFilter(this);
 }
 
 EditorTabWidget::~EditorTabWidget()
@@ -37,6 +38,15 @@ EditorTabWidget::~EditorTabWidget()
 int EditorTabWidget::addEditorTab(bool setFocus, const QString &title)
 {
     return this->rawAddEditorTab(setFocus, title, 0, 0);
+}
+
+bool EditorTabWidget::eventFilter(QObject* object, QEvent* ev)
+{
+    if(object == tabBar() && ev->type() == QEvent::FocusIn) {
+        currentEditor()->setFocus();
+        return true;
+    }
+    return QObject::eventFilter(object, ev);
 }
 
 void EditorTabWidget::connectEditorSignals(Editor *editor)
@@ -65,6 +75,15 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
 
     disconnect(editor, &Editor::fileNameChanged,
                this, &EditorTabWidget::on_fileNameChanged);
+}
+
+void EditorTabWidget::setFocus(Qt::FocusReason reason)
+{
+    QWidget::setFocus(reason);
+    Editor* editor = currentEditor();
+    if (editor != nullptr) {
+        editor->setFocus();
+    }
 }
 
 int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
@@ -197,6 +216,7 @@ void EditorTabWidget::tabRemoved(int)
 
 Editor *EditorTabWidget::currentEditor()
 {
+    setFocusProxy(editor(currentIndex()));
     return editor(currentIndex());
 }
 

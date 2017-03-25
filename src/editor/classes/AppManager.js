@@ -103,8 +103,6 @@ class AppManager {
         editor.on("focus", function() {ev.onFocus()});
         editor.on("optionChange", function() {ev.onOptionChange()});
         App.proxy.setReady();
-        // Fixes #265 (I'm not sure how it does).
-        setTimeout(function(){editor.focus()}, 100);
     }
 }
 
