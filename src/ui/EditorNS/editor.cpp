@@ -143,7 +143,6 @@ namespace EditorNS
         QString js = "rgb2hex($('.cm-s-'+editor.getOption('theme')).css('background-color'));";
         m_webView->page()->runJavaScript(js, [&] (const QVariant& v){
             QColor newBG = QColor(v.toString());
-            qDebug() << v.toString();
             m_webView->page()->setBackgroundColor(newBG); 
         });
     }
@@ -177,7 +176,6 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        qDebug() << msg;
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
@@ -760,6 +758,8 @@ namespace EditorNS
         sendMessage("C_CMD_SET_THEME", tmap);
 
         // Deferred update of background of m_webView->page()
+        // Will be removed once CodeMirror is updated with
+        // editor.on("option") support.
         auto timer = new QTimer(this);
         timer->setSingleShot(true);
         timer->setInterval(1000);
