@@ -76,8 +76,9 @@ namespace EditorNS
 
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
-
+        m_webView->setEnabled(false);
         m_webView->page()->load(url);
+        m_webView->setEnabled(true);
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
         pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
     }
@@ -173,14 +174,8 @@ namespace EditorNS
         m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
     }
 
-    bool Editor::isLoadedDocument()
-    {
-        return m_alreadyLoaded;
-    }
-
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        qDebug() << msg;
         if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();

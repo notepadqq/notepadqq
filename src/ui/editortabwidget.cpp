@@ -86,6 +86,7 @@ void EditorTabWidget::setFocus(Qt::FocusReason reason)
     Editor* editor = currentEditor();
     if (editor != nullptr) {
         editor->setFocus();
+        setFocusProxy(editor);
     }
 }
 

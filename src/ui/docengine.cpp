@@ -217,8 +217,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 // If there was only a new empty tab opened, remove it
                 if (tabWidget->count() == 2) {
                     Editor *victim = tabWidget->editor(0);
-                    if (victim->fileName().isEmpty() && victim->isClean() &&
-                            victim->isLoadedDocument()) {
+                    if (victim->fileName().isEmpty() && victim->isClean()) {
                         tabWidget->removeTab(0);
                         tabIndex--;
                     }

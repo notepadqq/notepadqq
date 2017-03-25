@@ -569,8 +569,6 @@ namespace EditorNS
          * @brief Initialize the language cache for fast access.
          */
         static void initLanguageCache();
-
-        bool isLoadedDocument();
     private:
         static QQueue<Editor*> m_editorBuffer;
         static QVector<LanguageData> m_langCache;
