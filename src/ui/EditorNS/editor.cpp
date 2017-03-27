@@ -308,7 +308,7 @@ namespace EditorNS
     void Editor::initLanguageCache()
     {
         QFileInfo fileInfo(Notepadqq::editorPath());
-        QString fileName = fileInfo.absolutePath() + "/classes/Languages.json";
+        QString fileName = fileInfo.absolutePath() + "/Languages.json";
         QFile scriptFile(fileName);
         scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
         QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
