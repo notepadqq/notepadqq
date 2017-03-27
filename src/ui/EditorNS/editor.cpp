@@ -141,10 +141,11 @@ namespace EditorNS
 
     void Editor::updateBackground()
     {
-        QString js = "rgb2hex($('.cm-s-'+editor.getOption('theme')).css('background-color'));";
-        m_webView->page()->runJavaScript(js, [&] (const QVariant& v){
+        sendMessageWithCallback("C_FUN_GET_BACKGROUND_COLOR", 
+        [&] (const QVariant& v){
             QColor newBG = QColor(v.toString());
-            m_webView->page()->setBackgroundColor(newBG); 
+            QPalette pal = m_webView->palette();
+            m_webView->page()->setBackgroundColor(newBG);
         });
     }
 

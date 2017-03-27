@@ -447,4 +447,11 @@ class MessageHandler {
         var text = editor.getValue("\n");
         editor.setValue(text.replace(/\n/gm," "));
     }
+
+    C_FUN_GET_BACKGROUND_COLOR(data)
+    {
+        let currentTheme = editor.getOption('theme');
+        let style = $('.cm-s-' + currentTheme);
+        return rgb2hex(style.css('background-color'));
+    }
 }
