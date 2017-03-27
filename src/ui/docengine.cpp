@@ -25,6 +25,7 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
 {
     int tab = tabWidget->addEditorTab(setFocus, name);
     tabWidget->editor(tab)->setLanguage("plaintext");
+    tabWidget->editor(tab)->setInitiallyBlank(true);
     return tab;
 }
 
@@ -217,7 +218,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 // If there was only a new empty tab opened, remove it
                 if (tabWidget->count() == 2) {
                     Editor *victim = tabWidget->editor(0);
-                    if (victim->fileName().isEmpty() && victim->isClean()) {
+                    if (victim->fileName().isEmpty() && victim->isClean() && victim->isInitiallyBlank()) {
                         tabWidget->removeTab(0);
                         tabIndex--;
                     }
@@ -229,6 +230,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     //sci->setEolMode(sci->guessEolMode());
                     tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
                     editor->setLanguageFromFileName();
+                    editor->setInitiallyBlank(false);
                 } else {
                     //sci->scrollCursorToCenter(pos);
                     editor->setFileOnDiskChanged(false);
