@@ -671,14 +671,6 @@ namespace EditorNS
         void sendMessageWithCallback(const QString& msg, T callback) {
             sendMessageWithCallback(msg, QVariant(0), callback);
         }
-
-        /**
-         * @brief Finds the language with the given ID in m_langCache, and
-         *        returns a QVariant representation of it for javascript.
-         * @param langId
-         * @return QVariant
-         */
-        QVariant getLanguageVariantData(const QString& langId);
     private slots:
         void on_loadFinished();
         /**

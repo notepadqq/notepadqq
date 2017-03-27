@@ -330,24 +330,6 @@ namespace EditorNS
         }
     }
 
-    QVariant Editor::getLanguageVariantData(const QString& langId)
-    {
-        auto comp = QVariant::fromValue(langId);
-        for (const auto& l : m_langCache) {
-            if (l.id == langId) {
-                QVariantMap langData;
-                langData.insert("id", l.id);
-                langData.insert("mime", l.mime);
-                langData.insert("mode", l.mode);
-                langData.insert("name", l.name);
-                langData.insert("fileNames", l.fileNames);
-                langData.insert("fileExtensions", l.fileExtensions);
-                return QVariant::fromValue(langData);
-            }
-        }
-        return QVariant();
-    }
-
     QVector<Editor::LanguageData> Editor::languages()
     {
         return m_langCache;
