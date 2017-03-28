@@ -81,5 +81,13 @@ function CommunicationsManager() {
     this.setReady = () => {
         this.sendEvent("J_EVT_READY");
     }
+
+    this.optionChangedEvent = (key, value) => {
+        let pair = {
+            "key": key,
+            "value": value
+        };
+        this.sendEvent("J_EVT_OPTION_CHANGED", pair);
+    }
 }
 

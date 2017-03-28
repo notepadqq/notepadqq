@@ -36,7 +36,8 @@ class MessageHandler {
 
     C_CMD_SET_LANGUAGE(data) 
     {
-        editor.setOption('mode', data);
+        editor.setOption('mode', data.mode);
+        App.proxy.optionChangedEvent("language", data.id);
     }
 
     C_CMD_SET_INDENTATION_MODE(data) {
@@ -266,6 +267,7 @@ class MessageHandler {
             editor.setOption("fixedGutter", false);
             editor.refresh();
         }, 100);
+        App.proxy.optionChangedEvent("theme", getBackgroundColor(data.name));
     }
 
     C_CMD_SET_FONT(data) 

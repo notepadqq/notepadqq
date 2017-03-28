@@ -642,6 +642,13 @@ namespace EditorNS
                 bool cache = true);
 
         /**
+         * @brief Find a language by its given mode/mime information
+         * @param mode
+         * @return LanguageData struct
+         */
+        static LanguageData findLanguage(const QString& id);
+
+        /**
          * @brief Sends a javascript message, including data, to the editor.
          *        Invoking the specified "callback" when execution has 
          *        completed.
@@ -671,7 +678,6 @@ namespace EditorNS
             sendMessageWithCallback(msg, QVariant(0), callback);
         }
     private slots:
-        void on_loadFinished();
         /**
          * @brief Registers JsProxy to the WebChannel for use.
          */
@@ -687,7 +693,7 @@ namespace EditorNS
          * @brief Updates the page background to match CodeMirror.  Keeps
          *        white flashes and ugly resizing at bay.
          */
-        void updateBackground();
+        void updateBackground(const QString& colour);
     signals:
         /**
          * @brief The editor got focus.

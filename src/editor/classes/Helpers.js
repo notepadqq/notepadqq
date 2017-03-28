@@ -163,3 +163,9 @@ function rgb2hex(rgb)
     ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
     ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
 }
+
+function getBackgroundColor(theme)
+{
+    let style = $('.cm-s-' + theme);
+    return rgb2hex(style.css('background-color'));
+}

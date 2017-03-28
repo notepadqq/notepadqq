@@ -19,6 +19,7 @@ class AppManager {
  
         //Variables
         this.defaultTheme = "default";
+        this.loadLink = undefined;
 
         function getQueryValue(name) 
         {
@@ -43,7 +44,20 @@ class AppManager {
 
     setEditorStyleSheet(sheet)
     {
-        document.getElementById('pagestyle').setAttribute('href', sheet);
+        this.loadLink = document.getElementById('pagestyle')
+        // This logic probably doesn't belong here, but its pretty reliable
+        // this way.
+        this.loadLink.setAttribute('href', sheet);
+        $(this.loadLink).ready(function() {
+            let edwait = setInterval(function() {
+                if (editor != undefined) {
+                    let colour = getBackgroundColor(editor.getOption('theme'));
+                    App.proxy.optionChangedEvent('theme',
+                        getBackgroundColor(editor.getOption('theme')));
+                    clearInterval(edwait);
+                }
+            }, 10);
+        });
     }
 
     initializeCodeMirror()
@@ -73,7 +87,6 @@ class AppManager {
             },
             theme: preferredTheme
         });
-    
         editor.addKeyMap({
             "Tab": function (cm) {
                 if (cm.somethingSelected()) {
@@ -97,11 +110,10 @@ class AppManager {
         });
 
         let ev = this.events;
-        editor.on("change", function() {ev.onChange()});
-        editor.on("scroll", function() {ev.onScroll()});
-        editor.on("cursorActivity", function() {ev.onCursorActivity()});
-        editor.on("focus", function() {ev.onFocus()});
-        editor.on("optionChange", function() {ev.onOptionChange()});
+        editor.on('change', function() {ev.onChange()});
+        editor.on('scroll', function() {ev.onScroll()});
+        editor.on('cursorActivity', function() {ev.onCursorActivity()});
+        editor.on('focus', function() {ev.onFocus()});
         App.proxy.setReady();
     }
 }

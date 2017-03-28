@@ -46,9 +46,6 @@ namespace EditorNS
                 &QWebEnginePage::loadStarted,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
-
-        connect(m_webView->page(), &QWebEnginePage::loadFinished, 
-                this, &Editor::on_loadFinished);
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
@@ -128,19 +125,11 @@ namespace EditorNS
         return out;
     }
 
-    void Editor::on_loadFinished()
+    void Editor::updateBackground(const QString& colour)
     {
-        updateBackground();
-    }
-
-    void Editor::updateBackground()
-    {
-        sendMessageWithCallback("C_FUN_GET_BACKGROUND_COLOR", 
-        [&] (const QVariant& v){
-            QColor newBG = QColor(v.toString());
-            QPalette pal = m_webView->palette();
-            m_webView->page()->setBackgroundColor(newBG);
-        });
+        QColor newBG = QColor(colour);
+        QPalette pal = m_webView->palette();
+        m_webView->page()->setBackgroundColor(newBG);
     }
 
     void Editor::addEditorToBuffer(const int howMany)
@@ -171,25 +160,34 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        if(msg == "J_EVT_READY") {
+        if (msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED") {
+        } else if (msg == "J_EVT_CONTENT_CHANGED") {
             emit contentChanged(buildContentChangedEventData(data));
-        } else if(msg == "J_EVT_CLEAN_CHANGED") {
+        } else if (msg == "J_EVT_CLEAN_CHANGED") {
             m_info.content.clean = data.toBool();
             emit cleanChanged(m_info.content.clean);
-        } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
+        } else if (msg == "J_EVT_CURSOR_ACTIVITY") {
             emit cursorActivity(buildCursorEventData(data));
-        } else if(msg == "J_EVT_GOT_FOCUS") {
+        } else if (msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
-        } else if(msg == "J_EVT_DOCUMENT_LOADED") {
+        } else if (msg == "J_EVT_DOCUMENT_LOADED") {
             emit documentLoaded(m_alreadyLoaded, buildDocumentLoadedEventData(data));
             m_alreadyLoaded = true;
-        } else if(msg == "J_EVT_SCROLL_CHANGED") {
+        } else if (msg == "J_EVT_SCROLL_CHANGED") {
             QPair<int, int> scrollPos;
             scrollPos.first = data.toList().at(0).toInt();
             scrollPos.second = data.toList().at(1).toInt();
+        } else if (msg == "J_EVT_OPTION_CHANGED") {
+            // This may need its own function later
+            QVariantMap v = data.toMap();
+            QString key = v.value("key").toString();
+            if (key == "language") {
+                emit languageChanged(findLanguage(v.value("value").toString()));
+            }else if (key == "theme") {
+                updateBackground(v.value("value").toString());
+            }
         }
     }
 
@@ -329,6 +327,17 @@ namespace EditorNS
         return m_langCache;
     }
 
+    Editor::LanguageData Editor::findLanguage(const QString& id)
+    {
+        LanguageData found;
+        for (const auto& l : m_langCache) {
+            if (l.id == id) {
+                found = l;
+            }
+        }
+        return found;
+    }
+
     Editor::LanguageData Editor::getLanguage()
     {
         return m_info.language;
@@ -351,8 +360,10 @@ namespace EditorNS
         } else {
             mode = m_info.language.mime;
         }
-        sendMessage("C_CMD_SET_LANGUAGE", mode);
-        emit languageChanged(m_info.language);
+        QVariantMap data;
+        data["mode"] = mode;
+        data["id"] = m_info.language.id;
+        sendMessage("C_CMD_SET_LANGUAGE", data);
     }
 
     void Editor::setLanguage(const Editor::LanguageData& language)
@@ -733,16 +744,6 @@ namespace EditorNS
         tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
-
-        // Deferred update of background of m_webView->page()
-        // Will be removed once CodeMirror is updated with
-        // editor.on("option") support.
-        auto timer = new QTimer(this);
-        timer->setSingleShot(true);
-        timer->setInterval(1000);
-        connect(timer, &QTimer::timeout, this, &Editor::updateBackground);
-        connect(timer, &QTimer::timeout, timer, &QObject::deleteLater);
-        timer->start();
     }
 
     void Editor::setOverwrite(bool overwrite)
