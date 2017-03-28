@@ -24,11 +24,6 @@ namespace EditorNS
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
-        fullConstructor();
-    }
-
-    void Editor::fullConstructor()
-    {
         auto& s = NqqSettings::getInstance();
         /* Initialize some values here so we don't have issues*/
         const auto language = "default";
@@ -58,7 +53,6 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
 
-    
     void Editor::initWebView()
     {
         // Get the currently active color scheme/theme

@@ -614,7 +614,6 @@ namespace EditorNS
         void initContextMenu();
         void initJsProxy();
         void initWebView();
-        void fullConstructor();
 
         /**
          * @brief Build data for the contentChange signal.
