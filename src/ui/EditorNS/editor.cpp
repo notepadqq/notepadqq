@@ -18,7 +18,7 @@
 #include <memory>
 namespace EditorNS
 {
-
+    QVector<Editor::LanguageData> Editor::m_langCache;
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
     Editor::Editor(QWidget *parent) :
@@ -797,5 +797,4 @@ namespace EditorNS
             }
         });
     }
-QVector<Editor::LanguageData> Editor::m_langCache;
 }
