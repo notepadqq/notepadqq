@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
-#include <QTimer>
 #include <QUrlQuery>
 #include <QRegularExpression>
 #include <QJsonDocument>
@@ -18,7 +17,6 @@
 #include <memory>
 namespace EditorNS
 {
-    QVector<Editor::LanguageData> Editor::m_langCache;
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
     Editor::Editor(QWidget *parent) :
@@ -184,7 +182,8 @@ namespace EditorNS
             QVariantMap v = data.toMap();
             QString key = v.value("key").toString();
             if (key == "language") {
-                emit languageChanged(findLanguage(v.value("value").toString()));
+                auto& cache = LanguageCache::getInstance();
+                emit languageChanged(cache[cache.lookupById(v.value("value").toString())]);
             }else if (key == "theme") {
                 updateBackground(v.value("value").toString());
             }
@@ -298,123 +297,74 @@ namespace EditorNS
         sendMessage("C_CMD_MARK_DIRTY");
     }
 
-    void Editor::initLanguageCache()
+    const Language& Editor::getLanguage()
     {
-        QFileInfo fileInfo(Notepadqq::editorPath());
-        QString fileName = fileInfo.absolutePath() + "/Languages.json";
-        QFile scriptFile(fileName);
-        scriptFile.open(QIODevice::ReadOnly | QIODevice::Text);
-        QJsonDocument json = QJsonDocument::fromJson(scriptFile.readAll());
-        scriptFile.close();
-        // Begin iterating through our language objects.
-        for (auto it = json.object().constBegin(); it != json.object().constEnd(); ++it) {
-            auto mode = it.value().toObject();
-            LanguageData newMode;
-            newMode.id = it.key();
-            newMode.name = mode.value("name").toString();
-            newMode.mime = mode.value("mime").toString();
-            newMode.mode = mode.value("mode").toString();
-            newMode.fileNames = mode.value("fileNames").toVariant().toStringList();
-            newMode.fileExtensions = mode.value("fileExtensions").toVariant().toStringList();
-            newMode.firstNonBlankLine = mode.value("firstNonBlankLine").toVariant().toStringList();
+        auto& cache = LanguageCache::getInstance();
+        return cache[m_info.language];
+    }
 
-            m_langCache.append(newMode);
+    void Editor::setLanguage(const Language& language)
+    {
+        auto& cache = LanguageCache::getInstance();
+
+        if (!m_info.content.indentMode.custom) {
+            setIndentationMode(language.id);
         }
-    }
 
-    QVector<Editor::LanguageData> Editor::languages()
-    {
-        return m_langCache;
-    }
-
-    Editor::LanguageData Editor::findLanguage(const QString& id)
-    {
-        LanguageData found;
-        for (const auto& l : m_langCache) {
-            if (l.id == id) {
-                found = l;
-            }
+        auto& currentLang = cache[m_info.language];
+        QVariantMap data;
+        if (currentLang.mime.isEmpty()) {
+            data["mode"] = currentLang.mode;
+        } else {
+            data["mode"] = currentLang.mime;
         }
-        return found;
-    }
+        data["id"] = currentLang.id;
+        sendMessage("C_CMD_SET_LANGUAGE", data);
 
-    Editor::LanguageData Editor::getLanguage()
-    {
-        return m_info.language;
     }
 
     void Editor::setLanguage(const QString &language)
     {
-        for (const auto& l : m_langCache) {
-            if (l.id == language) {
-                m_info.language = l;
-                break;
-            }
-        }
-        if (!m_info.content.indentMode.custom) {
-            setIndentationMode(language);
-        }
-        QString mode;
-        if (m_info.language.mime.isEmpty()) {
-            mode = m_info.language.mode;
-        } else {
-            mode = m_info.language.mime;
-        }
-        QVariantMap data;
-        data["mode"] = mode;
-        data["id"] = m_info.language.id;
-        sendMessage("C_CMD_SET_LANGUAGE", data);
+        auto& cache = LanguageCache::getInstance();
+        m_info.language = cache.lookupById(language);
+        setLanguage(cache[m_info.language]);
     }
 
-    void Editor::setLanguage(const Editor::LanguageData& language)
-    {
-        setLanguage(language.id);
-    }
 
     void Editor::setLanguageFromFileName(const QString& fileName)
     {
-        // Case-sensitive fileName search
-        for (auto& l : m_langCache) {
-            if (l.fileNames.contains(fileName)) {
-                setLanguage(l.id);
-                return;
-            }
+        auto& cache = LanguageCache::getInstance();
+        auto success = cache.lookupByFileName(fileName);
+        if (success != -1) {
+            m_info.language = success;
+            setLanguage(cache[m_info.language]);
+            return;
         }
-
-        // Case insensitive file extension search
-        auto pos = fileName.lastIndexOf('.');
-        if (pos != -1) {
-            QString ext = fileName.mid(pos+1);
-            for (auto& l : m_langCache) {
-                if (l.fileExtensions.contains(ext, Qt::CaseInsensitive)) {
-                    setLanguage(l.id);
-                    return;
-                }
-            }
+        success = cache.lookupByExtension(fileName);
+        if (success != -1) {
+            m_info.language = success;
+            setLanguage(cache[m_info.language]);
         }
     }
-/*
-    void Editor::detectLanguageFromContent()
+
+    void Editor::detectLanguageFromContent(QString rawTxt)
     {
-        getValue([&] (QString rawTxt) {
-            QTextStream stream(&rawTxt);
-            stream.skipWhiteSpace();
-            QString test = stream.readLine();
-            for (auto& l : m_langCache) {
-                if (!l.firstNonBlankLine.isEmpty()) {
-                    for (auto& t : l.firstNonBlankLine) {
-                        if (test.contains(QRegularExpression(t))) {
-                            setLanguage(l.id);
-                            return;
-                        }
+        auto& cache = LanguageCache::getInstance();
+        QTextStream stream(&rawTxt);
+        stream.skipWhiteSpace();
+        QString test = stream.readLine();
+        for (auto& l : cache.languages()) {
+            if (!l.firstNonBlankLine.isEmpty()) {
+                for (auto& t : l.firstNonBlankLine) {
+                    if (test.contains(QRegularExpression(t))) {
+                        setLanguage(l.id);
+                        return;
                     }
                 }
             }
-        });
-        disconnect(this, &Editor::editorReady, this,
-                &Editor::detectLanguageFromContent);
+        }
     }
-*/
+
     void Editor::setLanguageFromFileName()
     {
         setLanguageFromFileName(fileName().toString());
@@ -480,6 +430,8 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
+        // Go ahead and detect the language from content if we can up front.
+        detectLanguageFromContent(value);
         sendMessage("C_CMD_SET_VALUE", value);
     }
 

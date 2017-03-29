@@ -77,6 +77,7 @@ SOURCES += main.cpp\
     frmencodingchooser.cpp \
     EditorNS/bannerindentationdetected.cpp \
     EditorNS/jsproxy.cpp \
+    EditorNS/languagecache.cpp \
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \

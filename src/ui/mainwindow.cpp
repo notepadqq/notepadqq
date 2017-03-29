@@ -429,32 +429,23 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    // Lets open our Languages.js file and evaluate what languages we have.
-    // This keeps us from relying on an editor instance.
-
-    QVector<Editor::LanguageData> langs = Editor::languages();
-
-    //std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
-    QMap<QChar, QMenu*> menuInitials;
-    for (auto& l : langs) {
-        QString name = l.name;
-        if (name.isEmpty()) name = "?";
-        QChar letter = name.at(0).toUpper();
-
+    std::map<QChar, QMenu*> menuInitials;
+    for (const auto& l : LanguageCache::getInstance().languages()) {
+        QString id = l.id;
+        QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
-            letterMenu = menuInitials.value(letter, 0);
+        if (menuInitials.count(letter)) {
+            letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
-            menuInitials.insert(letter, letterMenu);
+            menuInitials.emplace(std::make_pair(letter, letterMenu));
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QAction *action = new QAction(name, this);
-        connect(action, &QAction::triggered, this, [=](bool = false) {
-            currentEditor()->setLanguage(l.id);
+        QAction *action = new QAction(l.name, this);
+        connect(action, &QAction::triggered, this, [id, this](bool = false) {
+            currentEditor()->setLanguage(id);
         });
         letterMenu->insertAction(0, action);
     }
@@ -1139,7 +1130,7 @@ void MainWindow::on_cursorActivity(EditorNS::Editor::CursorInfo info)
 
 }
 
-void MainWindow::on_languageChanged(EditorNS::Editor::LanguageData info)
+void MainWindow::on_languageChanged(const Language& info)
 {
     m_statusBar_fileFormat->setText(info.name);
 }

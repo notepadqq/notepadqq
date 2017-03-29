@@ -116,7 +116,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_languageChanged(EditorNS::Editor::LanguageData);
+    void on_languageChanged(const Language&);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();

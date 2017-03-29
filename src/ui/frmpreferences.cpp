@@ -132,26 +132,23 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    auto langs = Editor::languages();
+    auto &ls = m_settings.Languages;
+    //"Default" language
+    ui->cmbLanguages->addItem("Default", "default");
+    LanguageSettings lang = {
+        "default",
+        ls.getTabSize("default"),
+        ls.getIndentWithSpaces("default"),
+        ls.getUseDefaultSettings("default")
+    };
 
-    //std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    // Add "Default" language into the list.
-    Editor::LanguageData defaultLang;
-    defaultLang.id = "default";
-    defaultLang.name = "Default";
-    langs.push_front(defaultLang);
-
-    // Add all languages to the comboBox and write their current settings to a temp list
-    for (auto& l : langs) {
-
+    for(const auto& l : LanguageCache::getInstance().languages()) {
         ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
-
         LanguageSettings lang = {
             l.id,
-            m_settings.Languages.getTabSize(l.id),
-            m_settings.Languages.getIndentWithSpaces(l.id),
-            m_settings.Languages.getUseDefaultSettings(l.id)
+            ls.getTabSize(l.id),
+            ls.getIndentWithSpaces(l.id),
+            ls.getUseDefaultSettings(l.id)
         };
 
         m_tempLangSettings.push_back(lang);

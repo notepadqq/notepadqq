@@ -1,8 +1,6 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "include/EditorNS/customqwebview.h"
-#include "include/EditorNS/jsproxy.h"
 #include <QObject>
 #include <QVariant>
 #include <QJsonValue>
@@ -14,6 +12,11 @@
 #include <QEventLoop>
 #include <QJsonDocument>
 #include <functional>
+
+#include "include/EditorNS/customqwebview.h"
+#include "include/EditorNS/jsproxy.h"
+#include "include/EditorNS/languagecache.h"
+
 namespace EditorNS
 {
 
@@ -42,7 +45,6 @@ namespace EditorNS
          */
         static QSharedPointer<Editor> getNewEditor(QWidget *parent = 0);
         static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
-
         static void invalidateEditorBuffer();
 
         //FIXME: Possibly un-necessary?
@@ -111,19 +113,6 @@ namespace EditorNS
         }; 
 
         /**
-         * @brief Struct containing information about specific languages.
-         */
-        struct LanguageData {
-            QString id; /**< The internal language ID */
-            QString name; /**< The friendly name of the language */
-            QString mime; /**< Internal mime information for the language */
-            QString mode; /**< Internal mode information for the language */
-            QStringList fileNames; /**< List of file names valid for the language */
-            QStringList fileExtensions; /**< list of file extensions valid for the language */
-            QStringList firstNonBlankLine; /**< (Possibly deprecated) Language detection sequences */
-        };
-
-        /**
          * @brief Content information, such as line count, character count, 
          *        and clean state
          *
@@ -145,7 +134,7 @@ namespace EditorNS
         struct EditorInfo {
             CursorInfo cursor;
             ContentInfo content;
-            LanguageData language;
+            int language = 0;
         };
 
         /**
@@ -238,17 +227,10 @@ namespace EditorNS
         void markDirty();
 
         /**
-         * @brief Static function.  Gets a full list of languages available to
-         *        the editor.
-         * @return QVector<LanguageData>
-         */
-        static QVector<LanguageData> languages();
-
-        /**
          * @brief Get the id of the language currently being used by the editor.
          * @return language_id
          */
-        Editor::LanguageData getLanguage();
+        const Language& getLanguage();
 
         /**
          * @brief Set the language to use for the editor.
@@ -260,10 +242,10 @@ namespace EditorNS
 
         /**
          * @brief This is an overloaded function.  Sets the language
-         *        to use for the Editor using a LanguageData struct
+         *        to use for the Editor using a Language struct
          * @param language
          */
-        void setLanguage(const Editor::LanguageData& language);
+        void setLanguage(const Language& language);
 
         /**
          * @brief Sets the language based on the filename given.
@@ -582,7 +564,6 @@ namespace EditorNS
 
     private:
         static QQueue<Editor*> m_editorBuffer;
-        static QVector<LanguageData> m_langCache;
         CustomQWebView *m_webView = nullptr;
         EditorInfo m_info;
         JsProxy *m_jsProxy;
@@ -615,6 +596,8 @@ namespace EditorNS
         void initJsProxy();
         void initWebView();
 
+
+        void detectLanguageFromContent(QString rawTxt);
         /**
          * @brief Build data for the contentChange signal.
          * @param data 
@@ -640,13 +623,6 @@ namespace EditorNS
          */
         IndentationMode buildDocumentLoadedEventData(const QVariant& data,
                 bool cache = true);
-
-        /**
-         * @brief Find a language by its given mode/mime information
-         * @param mode
-         * @return LanguageData struct
-         */
-        static LanguageData findLanguage(const QString& id);
 
         /**
          * @brief Sends a javascript message, including data, to the editor.
@@ -738,7 +714,7 @@ namespace EditorNS
         /**
          * @brief The editor language was changed.
          */
-        void languageChanged(LanguageData);
+        void languageChanged(const Language&);
 
         /**
          * @brief A document was loaded, or reloaded.
