@@ -115,8 +115,8 @@ int LanguageCache::lookupById(const QString& id)
 {
     TIMER;
     auto end = m_languages.constEnd();
-    for(auto it = m_languages.constBegin(); it != end; ++ it) {
-        if(it->id == id) {
+    for (auto it = m_languages.constBegin(); it != end; ++ it) {
+        if (it->id == id) {
             TOTALTIME("Language Cache Lookup[ID]");
             return it - m_languages.constBegin();
         }
