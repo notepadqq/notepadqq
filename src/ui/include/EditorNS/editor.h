@@ -483,7 +483,6 @@ namespace EditorNS
          * @param useTabs
          * @param size
          * @param custom
-         * @param transport
          */
         void setIndentationMode(const bool useTabs, const int size, 
                 const bool custom);
@@ -492,7 +491,6 @@ namespace EditorNS
          * @brief This is an overloaded function.  Sets the indentation mode
          *        based on the language data.
          * @param language
-         * @param transport
          */
         void setIndentationMode(QString language);
 
