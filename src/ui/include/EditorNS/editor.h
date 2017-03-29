@@ -486,7 +486,7 @@ namespace EditorNS
          * @param transport
          */
         void setIndentationMode(const bool useTabs, const int size, 
-                const bool custom, const bool transport = true);
+                const bool custom);
 
         /**
          * @brief This is an overloaded function.  Sets the indentation mode
@@ -494,7 +494,7 @@ namespace EditorNS
          * @param language
          * @param transport
          */
-        void setIndentationMode(QString language, const bool transport = true);
+        void setIndentationMode(QString language);
 
         /**
          * @param Get the current line count for the document.

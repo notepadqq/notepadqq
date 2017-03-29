@@ -371,13 +371,21 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             // This is the file to load the document from
             const QUrl& loadUrl = cacheFileExists ? cacheFileUrl : fileUrl;
 
-            //FIXME: setFileName here is a work-around for DocEngine killing
-            //       the first tab when sessions are being loaded.  This can
-            //       be removed when we re-work DocEngine to not mess with
-            //       tabs.
-            tabW->editor(0)->setFileName(QUrl("tmp"));
+            // FIXME: Everything in if(tmpEditor) is a work-around for a
+            // regression caused by asynchronous loading of WebEngine.
+            // This keeps DocEngine from destroying the first tab
+            // if it was loaded with a session.
+            Editor* tmpEditor = tabW->editor(0);
+            QString tmpTxt;
+            if(tmpEditor) {
+                tmpTxt = tabW->tabText(0);
+                tmpEditor->setFileName(QUrl("tmp"));
+            }
             const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
-            tabW->editor(0)->setFileName(QUrl());
+            if (tmpEditor) {
+                tmpEditor->setFileName(QUrl());
+                tabW->setTabText(0, tmpTxt);
+            }
 
             if (!success)
                 continue;

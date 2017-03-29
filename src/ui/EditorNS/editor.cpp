@@ -24,11 +24,10 @@ namespace EditorNS
     {
         auto& s = NqqSettings::getInstance();
         /* Initialize some values here so we don't have issues*/
-        const auto language = "default";
-        setIndentationMode(!s.Languages.getIndentWithSpaces(language),
-                            s.Languages.getTabSize(language),
-                            false,
-                            false);
+        auto& indents = m_info.content.indentMode;
+        indents.useTabs = !s.Languages.getIndentWithSpaces("default");
+        indents.size = s.Languages.getTabSize("default");
+        indents.custom = false;
 
         initJsProxy();
         initWebView();
@@ -370,7 +369,7 @@ namespace EditorNS
         setLanguageFromFileName(fileName().toString());
     }
 
-    void Editor::setIndentationMode(QString language, const bool transport)
+    void Editor::setIndentationMode(QString language)
     {
         NqqSettings& s = NqqSettings::getInstance();
 
@@ -379,12 +378,11 @@ namespace EditorNS
 
         setIndentationMode(!s.Languages.getIndentWithSpaces(language),
                             s.Languages.getTabSize(language),
-                            false,
-                            transport);
+                            false);
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size, 
-            const bool custom, const bool transport)
+            const bool custom)
     {
         QVariantMap data;
         data.insert("useTabs", useTabs);
@@ -392,9 +390,7 @@ namespace EditorNS
         m_info.content.indentMode.useTabs = useTabs;
         m_info.content.indentMode.size = size;
         m_info.content.indentMode.custom = custom;
-        if (transport) {
-            sendMessage("C_CMD_SET_INDENTATION_MODE", data);
-        }
+        sendMessage("C_CMD_SET_INDENTATION_MODE", data);
     }
 
     Editor::IndentationMode Editor::indentationMode()
