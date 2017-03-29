@@ -551,17 +551,6 @@ namespace EditorNS
          * @brief Initialize the language cache for fast access.
          */
         static void initLanguageCache();
-
-
-        /**
-         * @brief  Workaround. Using isClean() right after creating an Editor always returns true.
-         *         This value gets set to 'true' if the Editor starts out as a newly created empty
-         *         document, and is 'false' if the document was loaded from any file.
-         * @return
-         */
-        bool isInitiallyBlank() const { return m_initiallyBlank; }
-        void setInitiallyBlank(bool blank) { m_initiallyBlank = blank; }
-
     private:
         static QQueue<Editor*> m_editorBuffer;
         CustomQWebView *m_webView = nullptr;
@@ -574,7 +563,6 @@ namespace EditorNS
         bool m_loaded = false;
         bool m_bom = false;
         bool m_alreadyLoaded = false;
-        bool m_initiallyBlank = true;
         
         /**
          * @brief Waits for the editor to become ready for input.
