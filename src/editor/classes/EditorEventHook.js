@@ -1,7 +1,13 @@
 "use strict";
 /**
  * @brief These are our CodeMirror event hooks.  We place these as necessary
- *        in order to keep Notepadqq synchronized with CodeMirror.
+ *        in order to keep Notepadqq synchronized with CodeMirror. Please note
+ *        that these should RARELY need to be called outside of
+ *        editor.on("event", () => {}); due to how CodeMirror works.
+ *
+ *        Best practice would be to test your function without using one of
+ *        these first, then applying the appropriate one in your function
+ *        if something isn't behaving as expected.
  */
 class EditorEventHook {
     constructor() 
@@ -34,10 +40,17 @@ class EditorEventHook {
         return UiChangeInfo;
     }
 
+    /**
+     * @brief Placeholder for future CodeMirror version update
+     */
     onOptionChange() 
     {
     }
 
+    /**
+     * @brief Should be called every time C_CMD_SET_VALUE is called.  Prevents
+     *        being able to erase the initially loaded document.
+     */
     onSetValue() 
     {
         var detectedIndent = App.content.detectIndentationMode();
@@ -45,6 +58,11 @@ class EditorEventHook {
         App.proxy.documentLoadedEvent(detectedIndent);
     }
 
+    /**
+     * @brief Should be called every time the CodeMirror cursor moves, as well
+     *        as on document load to keep the CPP status UI in sync with the
+     *        editor.
+     */
     onCursorActivity() 
     {
         clearTimeout(this.cursorActivityTimer);
@@ -53,11 +71,17 @@ class EditorEventHook {
         }, 20);
     }
 
+    /**
+     * @brief Should be called every time the editor receives focus.
+     */
     onFocus() 
     {
         App.proxy.focusChangedEvent();
     }
 
+    /**
+     * @brief Should be called every time the content of the editor is changed.
+     */
     onChange() 
     {
         App.proxy.contentChangedEvent(this.changeActivityObject());
@@ -65,19 +89,12 @@ class EditorEventHook {
             App.proxy.cleanChangedEvent(App.content.isCleanOrForced(App.content.changeGeneration));
         }
     }
-
+    /**
+     * @brief Should be called every time the CodeMirror view is scrolled.
+     */
     onScroll() 
     {
         var scroll = editor.getScrollInfo();
         App.proxy.scrollChangedEvent([scroll.left, scroll.top]);
-    }
-
-    onLoad() 
-    {
-        this.onCursorActivity();
-        this.onChange();
-        this.onScroll();
-        this.onOptionChange();
-        editor.refresh();
     }
 }

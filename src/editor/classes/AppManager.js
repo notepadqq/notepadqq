@@ -1,4 +1,4 @@
-//"use strict";
+"use strict";
 /**
  * @brief This is our controller class.  All calls are made through here
  *        so we have a consistent interface for javascript communication.
