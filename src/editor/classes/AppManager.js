@@ -2,11 +2,12 @@
 /**
  * @brief This is our controller class.  All calls are made through here
  *        so we have a consistent interface for javascript communication.
- * 
- * Some brief examples of how to use this:
- * App.proxy.sendEvent(Message, Data);
- * App.eventHook.onChange();
  *
+ * You can find extended documentation on the individual components in
+ * the following files:
+ * App.proxy.function(): CommunicationsManager.js
+ * App.events.function(): EditorEventHooks.js
+ * App.content.function(): ContentManager.js
  */
 var editor;
 class AppManager {

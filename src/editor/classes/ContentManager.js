@@ -11,11 +11,21 @@ class ContentManager {
         this.previousCleanState = undefined;
     }
 
+    /**
+     * @brief Returns true if the document is clean and forceDirty is false.
+     * @return bool
+     */
     isCleanOrForced(generation)
     {
         return !this.forceDirty && editor.isClean(generation);
     }
 
+    /**
+     * @brief Checks whether the clean state changed and updates
+     *        this.previousCleanState accordingly.  This keeps needlessly
+     *        sending clean state events through the CPP proxy.
+     * @return bool True if the clean state changed, false otherwise.
+     */
     cleanStateChanged()
     {
         var cleanOrForced = this.isCleanOrForced(this.changeGeneration);
@@ -26,16 +36,29 @@ class ContentManager {
         return false;
     }
 
+    /**
+     * @brief Forces the editor content to be "dirty" if on is true.
+     *        This is mainly used for session/file loading.
+     */
     setForceDirty(on)
     {
         this.forceDirty = on;
     }
 
+    /**
+     * @brief Sets the change generation for the current editor content for use with
+     *        isCleanOrForced
+     */
     setChangeGeneration(on)
     {
         this.changeGeneration = on;
     }
 
+    /**
+     * @brief Detects the current indentation mode of the editor content.
+     * @return array containing the indent mode in the form of [useTabs, size],
+     *         or undefined if there was a failure in detection.
+     */
     detectIndentationMode()
     {
         var len = editor.lineCount();

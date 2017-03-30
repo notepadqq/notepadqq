@@ -17,7 +17,11 @@ function CommunicationsManager() {
         });
     });
     
-    // Wrapper for QWebChannel which avoids undefined behavior.
+    /**
+     * @brief Sends a message to CPP containing event data for it to interpret
+     * @param msg - J_EVT_SOME_THING
+     * @param data - Typically a JSON object
+     */
     this.sendEvent = function(msg, data) {
         // Support just sending a message
         if (data == undefined) {
@@ -36,10 +40,20 @@ function CommunicationsManager() {
         }
     }
 
+    /**
+     * @brief Sends return data to the CPP proxy
+     * @param data - Typically a JSON object
+     */
     this.setReturnData = function(data) {
         CppProxy.result = data;
     }
 
+    /**
+     * @brief A message was received from the CPP proxy.
+     * @param msg - i.e. C_CMD_SOME_FUNCTION
+     * @param data - QVariant converted to a JSON object.
+     * @return return value of the handler called.
+     */
     this.messageReceived = function(msg, data) {
         var retVal = undefined;
         if (typeof handlers[msg] === 'function') {
