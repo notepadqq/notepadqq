@@ -84,12 +84,9 @@ LanguageCache::LanguageCache()
     // Reserve the space we need to prevent resize and copy constructs.
     m_languages.reserve(json.object().count());
 
-    // Keep this in memory for better iteration speeds.
-    const auto& keys = json.object().keys();
-
     // Begin iterating our QJsonDocument's object and adding languages.
-    for (const auto& key : keys) {
-        QJsonObject mode = json.object().value(key).toObject();
+    for (const auto& key : json.object().keys()) {
+        auto mode = json.object().value(key).toObject();
         Language newMode;
         newMode.id = key;
         newMode.name = mode.value("name").toString();
