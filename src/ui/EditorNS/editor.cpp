@@ -13,63 +13,60 @@
 
 #include <QWebEngineSettings>
 #include <QtWebChannel/QWebChannel>
-#include <QJSEngine>
-
+#include <QJsonDocument>
+#include <memory>
 namespace EditorNS
 {
-
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
 
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
     {
+        auto& s = NqqSettings::getInstance();
+        /* Initialize some values here so we don't have issues*/
+        auto& indents = m_info.content.indentMode;
+        indents.useTabs = !s.Languages.getIndentWithSpaces("default");
+        indents.size = s.Languages.getTabSize("default");
+        indents.custom = false;
 
-        QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "") {
-            themeName = "default";
-        }
-
-        fullConstructor(themeFromName(themeName));
-    }
-
-    Editor::Editor(const Theme &theme, QWidget *parent) :
-        QWidget(parent)
-    {
-        fullConstructor(theme);
-    }
-
-    void Editor::fullConstructor(const Theme &theme)
-    {
         initJsProxy();
-        initWebView(theme);
+        initWebView();
         initContextMenu();
-        m_layout = new QVBoxLayout(this);
-        m_layout->setContentsMargins(0, 0, 0, 0);
-        m_layout->setSpacing(0);
-        m_layout->addWidget(m_webView, 1);
-        setLayout(m_layout);
-        
+
+        auto vbox = new QVBoxLayout(this);
+        vbox->setContentsMargins(0, 0, 0, 0);
+        vbox->setSpacing(0);
+        vbox->addWidget(m_webView, 1);
+        setLayout(vbox);
+
         connect(m_webView->page(),
-                &QWebEnginePage::loadFinished,
+                &QWebEnginePage::loadStarted,
                 this,
                 &Editor::on_javaScriptWindowObjectCleared);
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
 
-    
-    void Editor::initWebView(const Theme &theme)
+    void Editor::initWebView()
     {
+        // Get the currently active color scheme/theme
+        auto themeName = NqqSettings::getInstance().Appearance.getColorScheme();
+        if (themeName == "") {
+            themeName = "default";
+        }
+        const auto theme = themeFromName(themeName);
+
         m_webView = new CustomQWebView(this);
+
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
+
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
-
-        m_webView->connectJavaScriptObject("cpp_ui_driver", m_jsProxy);
+        m_webView->setEnabled(false);
         m_webView->page()->load(url);
-        m_webView->page()->setBackgroundColor(Qt::transparent);
+        m_webView->setEnabled(true);
         QWebEngineSettings *pageSettings = m_webView->page()->settings();
         pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
     }
@@ -125,6 +122,13 @@ namespace EditorNS
         return out;
     }
 
+    void Editor::updateBackground(const QString& colour)
+    {
+        QColor newBG = QColor(colour);
+        QPalette pal = m_webView->palette();
+        m_webView->page()->setBackgroundColor(newBG);
+    }
+
     void Editor::addEditorToBuffer(const int howMany)
     {
         for (int i = 0; i < howMany; i++)
@@ -153,67 +157,91 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        if(msg == "J_EVT_READY") {
+        if (msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED") {
+        } else if (msg == "J_EVT_CONTENT_CHANGED") {
             emit contentChanged(buildContentChangedEventData(data));
-        } else if(msg == "J_EVT_CLEAN_CHANGED") {
-            m_contentInfo.clean = data.toBool();
-            emit cleanChanged(m_contentInfo.clean);
-        } else if(msg == "J_EVT_CURSOR_ACTIVITY") {
+        } else if (msg == "J_EVT_CLEAN_CHANGED") {
+            m_info.content.clean = data.toBool();
+            emit cleanChanged(m_info.content.clean);
+        } else if (msg == "J_EVT_CURSOR_ACTIVITY") {
             emit cursorActivity(buildCursorEventData(data));
-        } else if(msg == "J_EVT_GOT_FOCUS") {
+        } else if (msg == "J_EVT_GOT_FOCUS") {
             emit gotFocus();
-        } else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            emit languageChanged(buildLanguageChangedEventData(data));
-        } else if(msg == "J_EVT_DOCUMENT_LOADED") {
-            emit documentLoaded(m_alreadyLoaded);
+        } else if (msg == "J_EVT_DOCUMENT_LOADED") {
+            emit documentLoaded(m_alreadyLoaded, buildDocumentLoadedEventData(data));
             m_alreadyLoaded = true;
+        } else if (msg == "J_EVT_SCROLL_CHANGED") {
+            QPair<int, int> scrollPos;
+            scrollPos.first = data.toList().at(0).toInt();
+            scrollPos.second = data.toList().at(1).toInt();
+        } else if (msg == "J_EVT_OPTION_CHANGED") {
+            // This may need its own function later
+            QVariantMap v = data.toMap();
+            QString key = v.value("key").toString();
+            if (key == "language") {
+                auto& cache = LanguageCache::getInstance();
+                emit languageChanged(cache[cache.lookupById(v.value("value").toString())]);
+            }else if (key == "theme") {
+                updateBackground(v.value("value").toString());
+            }
         }
+    }
+
+    Editor::IndentationMode Editor::buildDocumentLoadedEventData(
+            const QVariant& data,
+            bool /*cache*/)
+    {
+        if (!data.canConvert<QVariantList>()) {
+            return m_info.content.indentMode;
+        }
+        Editor::IndentationMode indentMode;
+        indentMode.useTabs = data.toList().at(0).toBool();
+        indentMode.size = data.toList().at(1).toInt();
+        return indentMode;
     }
 
     Editor::ContentInfo Editor::buildContentChangedEventData(
             const QVariant& data, 
             bool cache)
     {
-        QVariantMap v = data.toMap();
+        auto v = data.toMap();
         ContentInfo temp;
         temp.charCount = v["charCount"].toInt();
         temp.lineCount = v["lineCount"].toInt();
         if (cache) {
-            m_contentInfo = temp;
+            m_info.content.charCount = temp.charCount;
+            m_info.content.lineCount = temp.lineCount;
         }
         return temp;
     }
 
-
     Editor::CursorInfo Editor::buildCursorEventData(const QVariant& data, 
             bool cache)
     {
-        QVariantMap v = data.toMap();
+        auto v = data.toMap();
         CursorInfo  temp;
         temp.line = v["cursorLine"].toInt();
         temp.column = v["cursorColumn"].toInt();
         temp.selectionCharCount = v["selectionCharCount"].toInt();
         temp.selectionLineCount = v["selectionLineCount"].toInt();
-        if (cache) {
-            m_cursorInfo = temp;
+        for (auto selection : v["selections"].toList()) {
+            QVariantMap anchor = selection.toMap().value("anchor").toMap();
+            QVariantMap head = selection.toMap().value("head").toMap();
+            Cursor from = { 
+                anchor["line"].toInt(), 
+                anchor["ch"].toInt() 
+            };
+            Cursor to = { 
+                head["line"].toInt(), 
+                head["ch"].toInt() 
+            };
+            temp.selections.push_back({ from, to });
         }
-        return temp;
-    }
-
-    //NOTE: We don't cache these as of yet.
-    Editor::LanguageInfo Editor::buildLanguageChangedEventData(
-            const QVariant& data,
-            bool /*cache*/)
-    {
-        QVariantMap v = data.toMap();
-        LanguageInfo temp;
-        temp.id = v.value("id").toString();
-        temp.name = v.value("lang").toMap().value("name").toString();
-        if (!m_customIndentationMode) {
-            setIndentationMode(temp.id);
+        
+        if (cache) {
+            m_info.cursor = temp;
         }
         return temp;
     }
@@ -255,7 +283,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return m_contentInfo.clean;
+        return m_info.content.clean;
     }
 
     void Editor::markClean()
@@ -268,60 +296,72 @@ namespace EditorNS
         sendMessage("C_CMD_MARK_DIRTY");
     }
 
-    QList<QMap<QString, QString>> Editor::languages()
+    const Language& Editor::getLanguage()
     {
-        // TODO: Cache this data.
-        QJSEngine engine;
-        QFileInfo fileInfo(Notepadqq::editorPath());
-        QString fileName = fileInfo.absolutePath() + "/classes/Languages.js";
-        QFile scriptFile(fileName);
-        scriptFile.open(QIODevice::ReadOnly);
-        QTextStream stream(&scriptFile);
-        QString contents = stream.readAll();
-        scriptFile.close();
-
-        QJSValue result = engine.evaluate(contents, fileName);
-
-        if (result.isError()) {
-            qDebug() << "Failed to load languages file.";
-            return QList<QMap<QString, QString>>();
-        }
-
-        QMap<QString, QVariant> languages =
-            engine.evaluate("Languages.languages", fileName).toVariant().toMap();
-
-        QList<QMap<QString, QString>> langs;
-
-        QMap<QString, QVariant>::iterator lang;
-        for (lang = languages.begin(); lang != languages.end(); ++lang) {
-            QMap<QString, QVariant> mode = lang.value().toMap();
-
-            QMap<QString, QString> newMode;
-            newMode.insert("id", lang.key());
-            newMode.insert("name", mode.value("name").toString());
-            newMode.insert("mime", mode.value("mime").toString());
-            newMode.insert("mode", mode.value("mode").toString());
-            langs.append(newMode);
-        }
-        return langs;
+        auto& cache = LanguageCache::getInstance();
+        return cache[m_info.language];
     }
 
-    QString Editor::getLanguage()
+    void Editor::setLanguage(const Language& language)
     {
-        QVariantMap data = m_jsProxy->getRawValue("language").toMap();
-        return data.value("id").toString();
+        auto& cache = LanguageCache::getInstance();
+
+        if (!m_info.content.indentMode.custom) {
+            setIndentationMode(language.id);
+        }
+
+        auto& currentLang = cache[m_info.language];
+        QVariantMap data;
+        if (currentLang.mime.isEmpty()) {
+            data["mode"] = currentLang.mode;
+        } else {
+            data["mode"] = currentLang.mime;
+        }
+        data["id"] = currentLang.id;
+        sendMessage("C_CMD_SET_LANGUAGE", data);
+
     }
 
     void Editor::setLanguage(const QString &language)
     {
-        sendMessage("C_CMD_SET_LANGUAGE", language);
-        if (!m_customIndentationMode)
-            setIndentationMode(language);
+        auto& cache = LanguageCache::getInstance();
+        m_info.language = cache.lookupById(language);
+        setLanguage(cache[m_info.language]);
     }
 
-    void Editor::setLanguageFromFileName(QString fileName)
+
+    void Editor::setLanguageFromFileName(const QString& fileName)
     {
-        sendMessage("C_FUN_SET_LANGUAGE_FROM_FILENAME", fileName);
+        auto& cache = LanguageCache::getInstance();
+        auto success = cache.lookupByFileName(fileName);
+        if (success != -1) {
+            m_info.language = success;
+            setLanguage(cache[m_info.language]);
+            return;
+        }
+        success = cache.lookupByExtension(fileName);
+        if (success != -1) {
+            m_info.language = success;
+            setLanguage(cache[m_info.language]);
+        }
+    }
+
+    void Editor::detectLanguageFromContent(QString rawTxt)
+    {
+        auto& cache = LanguageCache::getInstance();
+        QTextStream stream(&rawTxt);
+        stream.skipWhiteSpace();
+        QString test = stream.readLine();
+        for (auto& l : cache.languages()) {
+            if (!l.firstNonBlankLine.isEmpty()) {
+                for (auto& t : l.firstNonBlankLine) {
+                    if (test.contains(QRegularExpression(t))) {
+                        setLanguage(l.id);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     void Editor::setLanguageFromFileName()
@@ -337,48 +377,46 @@ namespace EditorNS
             language = "default";
 
         setIndentationMode(!s.Languages.getIndentWithSpaces(language),
-                            s.Languages.getTabSize(language));
+                            s.Languages.getTabSize(language),
+                            false);
     }
 
-    void Editor::setIndentationMode(const bool useTabs, const int size)
+    void Editor::setIndentationMode(const bool useTabs, const int size, 
+            const bool custom)
     {
-        QMap<QString, QVariant> data;
+        QVariantMap data;
         data.insert("useTabs", useTabs);
         data.insert("size", size);
+        m_info.content.indentMode.useTabs = useTabs;
+        m_info.content.indentMode.size = size;
+        m_info.content.indentMode.custom = custom;
         sendMessage("C_CMD_SET_INDENTATION_MODE", data);
     }
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        QPair<int, int> indent;
-        m_jsProxy->getValue("indentMode", indent);
-        IndentationMode out;
-        out.useTabs = indent.first;
-        out.size = indent.second;
-        return out;
+        return m_info.content.indentMode;
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs, const int size)
     {
-        m_customIndentationMode = true;
-        setIndentationMode(useTabs, size);
+        setIndentationMode(useTabs, size, true);
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs)
     {
-        m_customIndentationMode = true;
-        setIndentationMode(useTabs, 0);
+        setIndentationMode(useTabs, 0, true);
     }
 
     void Editor::clearCustomIndentationMode()
     {
-        m_customIndentationMode = false;
-        setIndentationMode(getLanguage());
+        m_info.content.indentMode.custom = false;
+        setIndentationMode(getLanguage().id);
     }
 
     bool Editor::isUsingCustomIndentationMode() const
     {
-        return m_customIndentationMode;
+        return m_info.content.indentMode.custom;
     }
 
     void Editor::setSmartIndent(bool enabled)
@@ -388,6 +426,8 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
+        // Go ahead and detect the language from content if we can up front.
+        detectLanguageFromContent(value);
         sendMessage("C_CMD_SET_VALUE", value);
     }
 
@@ -433,7 +473,7 @@ namespace EditorNS
 
     void Editor::setZoomFactor(const qreal &factor)
     {
-        qreal normFact = factor;
+        auto normFact = factor;
         if (normFact > 14) normFact = 14;
         else if (normFact < 0.10) normFact = 0.10;
 
@@ -447,24 +487,28 @@ namespace EditorNS
 
     int Editor::getLineCount()
     {
-        return m_contentInfo.lineCount;
+        return m_info.content.lineCount;
     }
 
     int Editor::getCharCount()
     {
-        return m_contentInfo.charCount;
+        return m_info.content.charCount;
     }
 
-    void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
+    void Editor::setSelectionsText(const QStringList &texts, SelectMode mode)
     {
         QString modeStr = "";
-        if (mode == selectMode_cursorAfter)
-            modeStr = "after";
-        else if (mode == selectMode_cursorBefore)
-            modeStr = "before";
-        else
-            modeStr = "selected";
-
+        switch (mode) {
+            case SelectMode::CursorAfter:
+                modeStr = "after";
+                break;
+            case SelectMode::CursorBefore:
+                modeStr = "before";
+                break;
+            default:
+                modeStr = "selected";
+                break;
+        }
         QVariantMap data;
         data.insert("text", texts);
         data.insert("select", modeStr);
@@ -474,18 +518,18 @@ namespace EditorNS
 
     void Editor::setSelectionsText(const QStringList &texts)
     {
-        setSelectionsText(texts, selectMode_cursorAfter);
+        setSelectionsText(texts, SelectMode::CursorAfter);
     }
 
     void Editor::insertBanner(QWidget *banner)
     {
-        m_layout->insertWidget(0, banner);
+        static_cast<QVBoxLayout*>(layout())->insertWidget(0, banner);
     }
 
     void Editor::removeBanner(QWidget *banner)
     {
-        if (banner != m_webView && m_layout->indexOf(banner) >= 0) {
-            m_layout->removeWidget(banner);
+        if (banner != m_webView && layout()->indexOf(banner) >= 0) {
+            layout()->removeWidget(banner);
             emit bannerRemoved(banner);
         }
     }
@@ -525,7 +569,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getCursorPosition()
     {
-        return qMakePair(m_cursorInfo.line, m_cursorInfo.column);
+        return qMakePair(m_info.cursor.line, m_info.cursor.column);
     }
 
     void Editor::setCursorPosition(const int line, const int column)
@@ -552,12 +596,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::getScrollPosition()
     {
-        QPair<int, int> scrollPosition;
-        bool valid = m_jsProxy->getValue("scrollPosition", scrollPosition);
-        if(!valid) {
-            return qMakePair(0, 0);
-        }
-        return scrollPosition;
+        return m_info.content.scrollPosition;
     }
 
     void Editor::setScrollPosition(const int left, const int top)
@@ -571,14 +610,14 @@ namespace EditorNS
         setScrollPosition(position.first, position.second);
     }
 
-    QString Editor::endOfLineSequence() const
+    const QString& Editor::endOfLineSequence() const
     {
-        return m_endOfLineSequence;
+        return m_info.content.newLine;
     }
 
     void Editor::setEndOfLineSequence(const QString &newLineSequence)
     {
-        m_endOfLineSequence = newLineSequence;
+        m_info.content.newLine = newLineSequence;
     }
 
     void Editor::setFont(QString fontFamily, int fontSize, double lineHeight)
@@ -612,49 +651,36 @@ namespace EditorNS
 
     Editor::Theme Editor::themeFromName(QString name)
     {
-        Theme defaultTheme;
-        defaultTheme.name = "default";
-        defaultTheme.path = "";
+        Theme theme = { "default", "" };
+        if (name == "default" || name.isEmpty())
+            return theme;
 
-        if (name == "default" || name == "")
-            return defaultTheme;
-
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        Theme t;
-        QString themeFile = bundledThemesDir.filePath(name + ".css");
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto themeFile = bundledThemesDir.filePath(name + ".css");
         if (QFile(themeFile).exists()) {
-            t.name = name;
-            t.path = themeFile;
-        } else {
-            t = defaultTheme;
+            theme.name = name;
+            theme.path = themeFile;
         }
-
-        return t;
+        return theme;
     }
 
     QList<Editor::Theme> Editor::themes()
     {
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        QStringList filters;
-        filters << "*.css";
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto filters = QStringList("*.css");
         bundledThemesDir.setNameFilters(filters);
 
-        QStringList themeFiles = bundledThemesDir.entryList();
+        auto themeFiles = bundledThemesDir.entryList();
 
         QList<Theme> out;
         for (QString themeStr : themeFiles) {
-            QFileInfo theme = QFileInfo(themeStr);
-            QString nameWithoutExt = theme.fileName()
+            const auto theme = QFileInfo(themeStr);
+            const auto nameWithoutExt = theme.fileName()
                     .replace(QRegularExpression("\\.css$"), "");
 
-            Theme t;
-            t.name = nameWithoutExt;
-            t.path = bundledThemesDir.filePath(themeStr);
-            out.append(t);
+            out.append({ nameWithoutExt, bundledThemesDir.filePath(themeStr) });
         }
 
         return out;
@@ -662,7 +688,7 @@ namespace EditorNS
 
     void Editor::setTheme(Theme theme)
     {
-        QMap<QString, QVariant> tmap;
+        QVariantMap tmap;
         tmap.insert("name", theme.name == "" ? "default" : theme.name);
         tmap.insert("path", theme.path);
         sendMessage("C_CMD_SET_THEME", tmap);
@@ -678,24 +704,6 @@ namespace EditorNS
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
-    {
-        IndentationMode out;
-        QPair<int, int> indent;
-        bool _found = m_jsProxy->getValue("detectedIndent", indent);
-
-        if (found != nullptr) {
-            *found = _found;
-        }
-
-        if (_found) {
-            out.useTabs = indent.first;
-            out.size = indent.second;
-        }
-
-        return out;
-    }
-
     void Editor::print(QPrinter *printer)
     {
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
@@ -703,27 +711,9 @@ namespace EditorNS
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
     }
 
-    void Editor::getSelections(std::function<void(const QList<Editor::Selection>&)> callback)
+    const QList<Editor::Selection>& Editor::getSelections() const
     {
-        sendMessageWithCallback("C_FUN_GET_SELECTIONS",
-        [callback](const QVariant& v) {
-            QList<Selection> out;
-            QList<QVariant> sels = v.toList();
-            for (int i = 0; i < sels.length(); i++) {
-                QVariantMap selMap = sels[i].toMap();
-                QVariantMap from = selMap.value("anchor").toMap();
-                QVariantMap to = selMap.value("head").toMap();
-
-                Selection sel;
-                sel.from.line = from.value("line").toInt();
-                sel.from.column = from.value("ch").toInt();
-                sel.to.line = to.value("line").toInt();
-                sel.to.column = to.value("ch").toInt();
-
-                out.append(sel);
-            }
-            callback(out);
-        });
+        return m_info.cursor.selections;
     }
     
     void Editor::getSelectedTexts(std::function<void(const QStringList&)> callback)
@@ -734,10 +724,10 @@ namespace EditorNS
         });
     }
 
-    void Editor::getLanguage(std::function<void(const QString&)> callback) {
-        sendMessageWithCallback("C_FUN_GET_CURRENT_LANGUAGE",
+    void Editor::getValue(std::function<void(const QString&)> callback) {
+        sendMessageWithCallback("C_FUN_GET_VALUE",
         [callback](const QVariant &v) {
-            QString langId = v.toMap().value("id").toString();
+            QString langId = v.toString();
             callback(langId);
         });
     }
@@ -755,6 +745,4 @@ namespace EditorNS
             }
         });
     }
-
-
 }

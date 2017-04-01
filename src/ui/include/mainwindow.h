@@ -66,7 +66,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
-    void on_fileLoaded(bool wasAlreadyLoaded);
+    void on_fileLoaded(bool wasAlreadyLoaded, EditorNS::Editor::IndentationMode indentMode);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -116,7 +116,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_languageChanged(EditorNS::Editor::LanguageInfo);
+    void on_languageChanged(const Language&);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();
@@ -282,7 +282,7 @@ private:
      */
     bool updateSymbols(bool on);
 
-    void checkIndentationMode(Editor* editor);
+    void checkIndentationMode(Editor* editor, EditorNS::Editor::IndentationMode detected);
 };
 
 #endif // MAINWINDOW_H

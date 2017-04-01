@@ -102,9 +102,7 @@ void frmPreferences::updatePreviewEditorFont()
 
     // Re-setting language also updates the position of text selection. If not done, selected text
     // would often glitch out when changing the font causes the position of text characters to change.
-    m_previewEditor->getLanguage([&](const QString& langId) {
-        m_previewEditor->setLanguage(langId);
-    });
+    m_previewEditor->setLanguage(m_previewEditor->getLanguage());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -134,28 +132,23 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QList<QMap<QString, QString>> langs = Editor::languages();
+    auto &ls = m_settings.Languages;
+    //"Default" language
+    ui->cmbLanguages->addItem("Default", "default");
+    LanguageSettings lang = {
+        "default",
+        ls.getTabSize("default"),
+        ls.getIndentWithSpaces("default"),
+        ls.getUseDefaultSettings("default")
+    };
 
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    // Add "Default" language into the list.
-    QMap<QString,QString> defaultMap;
-    defaultMap.insert("id", "default");
-    defaultMap.insert("name", "Default");
-    langs.push_front(defaultMap);
-
-    // Add all languages to the comboBox and write their current settings to a temp list
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-        const QString langId = map.value("id", "");
-
-        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
-
+    for(const auto& l : LanguageCache::getInstance().languages()) {
+        ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
         LanguageSettings lang = {
-            langId,
-            m_settings.Languages.getTabSize(langId),
-            m_settings.Languages.getIndentWithSpaces(langId),
-            m_settings.Languages.getUseDefaultSettings(langId)
+            l.id,
+            ls.getTabSize(l.id),
+            ls.getIndentWithSpaces(l.id),
+            ls.getUseDefaultSettings(l.id)
         };
 
         m_tempLangSettings.push_back(lang);
@@ -357,9 +350,7 @@ bool frmPreferences::applySettings()
             editor->setFont(fontFamily, fontSize, lineHeight);
 
             // Reset language-dependent settings (e.g. tab settings)
-            editor->getLanguage([&, editor](const QString& langId) {
-                editor->setLanguage(langId);
-            });
+            editor->setLanguage(editor->getLanguage());
 
             return true;
         });

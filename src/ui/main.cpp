@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     qDebug() << "Start-time benchmark started.";
 
     printerrln("WARNING: Notepadqq is running in DEBUG mode.");
-    qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "23654");
 #endif
 
     // Initialize random number generator
@@ -102,7 +101,6 @@ int main(int argc, char *argv[])
 
     // There are no other instances: start a new server.
     a.startServer();
-
     Editor::addEditorToBuffer();
 
     QFile file(Notepadqq::editorPath());

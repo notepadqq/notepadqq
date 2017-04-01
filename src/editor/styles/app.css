@@ -5,33 +5,15 @@
 }
 
 body {
-    height: 100vh; /* Really needed? */
     margin: 0;
 }
 
-/*::-webkit-scrollbar {
-    width:  6px;
-    height: 6px;
-    background-color:transparent;
-}
-::-webkit-scrollbar-track {
-    background-color:transparent;
-    width: 6px;
-}
-::-webkit-scrollbar-track-piece  {
-    background-color: blue;
-}
-::-webkit-scrollbar-thumb {    
-    background-color: #d4dee8;
-    width: 6px;
-}*/
-
 .editor {
     position: absolute;
+    left: 0;
+    right: 0;
     top: 0;
     bottom: 0;
-    right: 0;
-    left: 0;
 }
 
 .editor > .CodeMirror {

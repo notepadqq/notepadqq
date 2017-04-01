@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg widgets webenginewidgets webchannel printsupport network qml
+QT       += core gui svg widgets webenginewidgets webchannel printsupport network
 
 CONFIG += c++11
 
@@ -77,6 +77,7 @@ SOURCES += main.cpp\
     frmencodingchooser.cpp \
     EditorNS/bannerindentationdetected.cpp \
     EditorNS/jsproxy.cpp \
+    EditorNS/languagecache.cpp \
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \

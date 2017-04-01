@@ -32,7 +32,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
-#include <QJsonArray>
+#include <QtConcurrent/QtConcurrentRun>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -58,7 +58,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
     connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 
-    loadIcons();
+    QtConcurrent::run(this, &MainWindow::loadIcons);
 
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
@@ -429,35 +429,23 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    // Lets open our Languages.js file and evaluate what languages we have.
-    // This keeps us from relying on an editor instance.
-
-    QList<QMap<QString, QString>> langs = Editor::languages();
-
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
-    QMap<QChar, QMenu*> menuInitials;
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-
-        QString name = map.value("name", "?");
-        if (name.length() == 0) name = "?";
-        QChar letter = name.at(0).toUpper();
-
+    std::map<QChar, QMenu*> menuInitials;
+    for (const auto& l : LanguageCache::getInstance().languages()) {
+        QString id = l.id;
+        QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
-            letterMenu = menuInitials.value(letter, 0);
+        if (menuInitials.count(letter)) {
+            letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
-            menuInitials.insert(letter, letterMenu);
+            menuInitials.emplace(std::make_pair(letter, letterMenu));
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QString langId = map.value("id", "");
-        QAction *action = new QAction(map.value("name"), this);
-        connect(action, &QAction::triggered, this, [=](bool = false) {
-            currentEditor()->setLanguage(langId);
+        QAction *action = new QAction(l.name, this);
+        connect(action, &QAction::triggered, this, [id, this](bool = false) {
+            currentEditor()->setLanguage(id);
         });
         letterMenu->insertAction(0, action);
     }
@@ -1142,7 +1130,7 @@ void MainWindow::on_cursorActivity(EditorNS::Editor::CursorInfo info)
 
 }
 
-void MainWindow::on_languageChanged(EditorNS::Editor::LanguageInfo info)
+void MainWindow::on_languageChanged(const Language& info)
 {
     m_statusBar_fileFormat->setText(info.name);
 }
@@ -1159,6 +1147,7 @@ void MainWindow::refreshEditorUiInfoAll(Editor* editor)
     editor->requestContentInfo();
     refreshEditorUiEncodingInfo(editor);
     refreshEditorUiInfo(editor);
+    m_statusBar_fileFormat->setText(editor->getLanguage().name);
 }
 
 void MainWindow::refreshEditorUiEncodingInfo(Editor *editor)
@@ -1528,7 +1517,7 @@ void MainWindow::transformSelectedText(QString (*func)(const QString&))
         for (int i = 0; i < sel.length(); i++) {
             sel.replace(i, func(sel.at(i)));
         }
-        editor->setSelectionsText(sel, Editor::selectMode_selected);          
+        editor->setSelectionsText(sel, Editor::SelectMode::Selected);          
     });
 
 }
@@ -1646,51 +1635,47 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     refreshEditorUiInfoAll(currentEditor());
 }
 
-void MainWindow::on_fileLoaded(bool wasAlreadyOpened)
+void MainWindow::on_fileLoaded(bool wasAlreadyOpened, Editor::IndentationMode detectedIndent)
 {
     if(!wasAlreadyOpened) {
         if(m_settings.General.getWarnForDifferentIndentation()) {
-            checkIndentationMode(static_cast<Editor*>(sender()));
+            checkIndentationMode(static_cast<Editor*>(sender()), detectedIndent);
         }
     }
 }
 
-void MainWindow::checkIndentationMode(Editor* editor)
+void MainWindow::checkIndentationMode(Editor* editor, Editor::IndentationMode detected)
 {
-    bool found = false;
-    Editor::IndentationMode detected = editor->detectDocumentIndentation(&found);
-    if (found) {
-        Editor::IndentationMode curr = editor->indentationMode();
-        bool differentTabSpaces = detected.useTabs != curr.useTabs;
-        bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
+    Editor::IndentationMode curr = editor->indentationMode();
+    bool differentTabSpaces = detected.useTabs != curr.useTabs;
+    bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
 
-        if (differentTabSpaces || differentSpaceSize) {
-            // Show msg
-            BannerIndentationDetected *banner = new BannerIndentationDetected(
-                                                    differentSpaceSize,
-                                                    detected,
-                                                    curr,
-                                                    this);
-            banner->setObjectName("indentationdetected");
+    if (differentTabSpaces || differentSpaceSize) {
+        // Show msg
+        BannerIndentationDetected *banner = new BannerIndentationDetected(
+                                                differentSpaceSize,
+                                                detected,
+                                                curr,
+                                                this);
+        banner->setObjectName("indentationdetected");
 
-            editor->insertBanner(banner);
+        editor->insertBanner(banner);
 
-            connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
-                editor->removeBanner(banner);
-                editor->setFocus();
-            });
+        connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
+            editor->removeBanner(banner);
+            editor->setFocus();
+        });
 
-            connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
-                editor->removeBanner(banner);
-                if (detected.useTabs) {
-                    editor->setCustomIndentationMode(true);
-                } else {
-                    editor->setCustomIndentationMode(detected.useTabs, detected.size);
-                }
-                ui->actionIndentation_Custom->setChecked(true);
-                editor->setFocus();
-            });
-        }
+        connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=]() {
+            editor->removeBanner(banner);
+            if (detected.useTabs) {
+                editor->setCustomIndentationMode(true);
+            } else {
+                editor->setCustomIndentationMode(detected.useTabs, detected.size);
+            }
+            ui->actionIndentation_Custom->setChecked(true);
+            editor->setFocus();
+        });
     }
 }
 

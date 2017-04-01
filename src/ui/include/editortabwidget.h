@@ -3,6 +3,8 @@
 
 #include <QTabWidget>
 #include <QWheelEvent>
+#include <QFocusEvent>
+#include <QEvent>
 #include "EditorNS/editor.h"
 
 using namespace EditorNS;
@@ -35,7 +37,7 @@ public:
 
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &zoomFactor);
-
+    void setFocus(Qt::FocusReason reason = Qt::OtherFocusReason);
     /**
      * @brief deleteIfEmpty Deletes the TabWidget if it has no tabs.
      */
@@ -82,6 +84,7 @@ public slots:
 protected:
     void mouseReleaseEvent(QMouseEvent *ev);
     void tabRemoved(int);
+    bool eventFilter(QObject* object, QEvent* ev);
 };
 
 #endif // EDITORTABWIDGET_H

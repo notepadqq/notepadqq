@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="libs/codemirror/addon/fold/foldgutter.css">
     <link rel="stylesheet" href="libs/codemirror/addon/hint/show-hint.css">
+    <link id="pagestyle" rel="stylesheet" type="text/css" href="default.css">
+    <!-- Fix defineSimpleMode error -->
+    <script src="libs/codemirror/addon/mode/simple.js"></script>
 
     <!-- MODES -->
     <script src="libs/codemirror/mode/apl/apl.js"></script>
@@ -156,10 +159,12 @@
     <script src="libs/codemirror/addon/show-invisibles/show-invisibles.js"></script>
 
     <!-- requires libs/.../codemirror.css to be loaded -->
-    <script src="init.js"></script>
-    <script src="classes/UiDriver.js"></script>
-    <script src="classes/EditorEventHandler.js"></script>
-    <script src="classes/Languages.js"></script>
+    <script src="classes/MessageHandler.js"></script>
+    <script src="classes/CommunicationsManager.js"></script>
+    <script src="classes/ContentManager.js"></script>
+    <script src="classes/EditorEventHook.js"></script>
+    <script src="classes/Helpers.js"></script>
+    <script src="classes/AppManager.js"></script>
     <script src="classes/Printer.js"></script>
     <script src="app.js"></script>
     <link rel="stylesheet" href="styles/app.css">

@@ -8,6 +8,7 @@ namespace EditorNS
     CustomQWebView::CustomQWebView(QWidget *parent) :
         QWebEngineView(parent)
     {
+        setPage(new CustomQWebViewPage());
         QWebChannel *channel = new QWebChannel(page());
         page()->setWebChannel(channel);
     }
@@ -42,5 +43,28 @@ namespace EditorNS
     void CustomQWebView::connectJavaScriptObject(QString name, QObject *obj)
     {
         page()->webChannel()->registerObject(name, obj);
+    }
+
+    void CustomQWebViewPage::javaScriptConsoleMessage(
+            QWebEnginePage::JavaScriptConsoleMessageLevel level, 
+            const QString &message, 
+            int line, 
+            const QString &sourceID) 
+    {
+        QUrl url = QUrl(sourceID);
+        QString txtLvl;
+        switch(level) {
+            case QWebEnginePage::InfoMessageLevel:
+                txtLvl = "Info[";
+                break;
+            case QWebEnginePage::WarningMessageLevel:
+                txtLvl = "Warn[";
+                break;
+            case QWebEnginePage::ErrorMessageLevel:
+                txtLvl = "Err[";
+                break;
+        }
+        txtLvl.append(url.fileName()).append(":");
+        qDebug().noquote() << "js: " + txtLvl << line << "]:" << message;
     }
 }
