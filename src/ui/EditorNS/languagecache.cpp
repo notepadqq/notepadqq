@@ -12,7 +12,7 @@
 #include <QElapsedTimer>
 #define STRINGIFY(X) #X
 #define TIMER QElapsedTimer timer;timer.start()
-#define TOTALTIME(X) qDebug().noquote() << STRINGIFY(X:) << timer.nsecsElapsed()/1000 << "microsecs"
+#define TOTALTIME(X) qDebug().noquote() << STRINGIFY(X:) << timer.nsecsElapsed() << "nanosecs"
 #else
 #define TIMER
 #define TOTALTIME(X)

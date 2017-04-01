@@ -47,15 +47,6 @@ namespace EditorNS
         static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
         static void invalidateEditorBuffer();
 
-        //FIXME: Possibly un-necessary?
-        /*
-        struct LanguageGreater {
-            inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
-                return v1.value("name").toLower() < v2.value("name").toLower();
-            }
-        };
-        */
-
         /**
          * @brief Struct containing cursor position information.
          */
