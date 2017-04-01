@@ -88,7 +88,7 @@ LanguageCache::LanguageCache()
     const auto& keys = json.object().keys();
 
     // Begin iterating our QJsonDocument's object and adding languages.
-    for (auto key : keys) {
+    for (const auto& key : keys) {
         QJsonObject mode = json.object().value(key).toObject();
         Language newMode;
         newMode.id = key;
