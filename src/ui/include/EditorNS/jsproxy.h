@@ -2,9 +2,9 @@
 #define _JSPROXY_H_
 
 #include <QObject>
-#include <QVariant>
 #include <QPair>
 #include <QQueue>
+#include <QVariant>
 
 namespace EditorNS {
     /**

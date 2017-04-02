@@ -1,5 +1,4 @@
 #include "include/EditorNS/jsproxy.h"
-#include <QDebug>
 
 namespace EditorNS {
 
