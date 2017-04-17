@@ -37,6 +37,8 @@
 
 #define COPYRIGHT_YEAR "2017"
 
+#define COPYRIGHT_YEAR "2016"
+
 #define MIB_UTF_8 106
 
 /**
