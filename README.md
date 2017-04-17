@@ -6,12 +6,12 @@ Notepadqq
 Build
 -----
 
-| Build dependencies | Dependencies  |
-|--------------------|---------------|
+| Build dependencies | Runtime dependencies  |
+|--------------------|-----------------------|
 | Qt 5.3             | Qt 5.3        |
 | libqt5webkit5-dev  | libqt5webkit5 |
 | libqt5svg5-dev     | libqt5svg5    |
-| qttools5-dev-tools | coreutils     |
+| qttools5-dev-tools | |
 
 #### Get the source
 
