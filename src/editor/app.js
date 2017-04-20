@@ -201,6 +201,36 @@ UiDriver.registerEventHandler("C_CMD_SET_TABS_VISIBLE", function(msg, data, prev
     editor.refresh();
 });
 
+/* Returns the number of occurences of a given search string.
+
+   regexStr: contains the regex string
+   regexModifiers: contains the regex modifiers (e.g. "ig")
+*/
+function Count(regexStr, regexModifiers) {
+    //Search from top-to-bottom
+    var searchRegex = new RegExp(regexStr, regexModifiers);
+    var searchCursor = editor.getSearchCursor(searchRegex, null, false);
+
+    var ret;
+    var count = 0;
+    
+    while(true) {
+        ret = searchCursor.findNext();
+        if(!ret) break;
+        ++count;
+    }
+
+    return count;
+}
+
+/*
+   data[0]: contains the regex string
+   data[1]: contains the regex modifiers (e.g. "ig")
+*/
+UiDriver.registerEventHandler("C_FUN_COUNT", function(msg, data, prevReturn) {
+    return Count(data[0], data[1]);
+});
+
 /* Search with a specified regex. Automatically select the text when found.
    The return value indicates whether a match was found.
    The return value is the array returned by the regex match method, in case you

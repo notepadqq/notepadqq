@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>555</height>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -304,7 +304,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QPushButton" name="btnReplacePrev">
         <property name="text">
          <string>Replace ⇧</string>
@@ -314,7 +314,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="2" column="2">
        <widget class="QPushButton" name="btnReplaceNext">
         <property name="text">
          <string>Replace ⇩</string>
@@ -324,7 +324,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
+      <item row="2" column="3">
        <widget class="QPushButton" name="btnReplaceAll">
         <property name="text">
          <string>Replace all</string>
@@ -334,14 +334,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QLabel" name="lblSpacer1">
         <property name="text">
          <string notr="true"/>
         </property>
        </widget>
       </item>
-      <item row="2" column="3">
+      <item row="3" column="3">
        <widget class="QPushButton" name="btnFindAll">
         <property name="text">
          <string>Find all</string>
@@ -361,29 +361,20 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" rowspan="3">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Maximum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>100</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QPushButton" name="btnReplaceAllInFiles">
         <property name="text">
          <string>Replace all</string>
         </property>
         <property name="autoDefault">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="btnCount">
+        <property name="text">
+         <string>Count</string>
         </property>
        </widget>
       </item>

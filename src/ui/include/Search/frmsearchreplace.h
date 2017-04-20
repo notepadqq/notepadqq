@@ -110,6 +110,8 @@ private slots:
     void on_btnLookInBrowse_clicked();
     void on_btnReplaceAllInFiles_clicked();
 
+    void on_btnCount_clicked();
+
 private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
