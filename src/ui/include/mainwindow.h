@@ -119,7 +119,6 @@ private slots:
     void on_actionLowercase_triggered();
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionSave_All_triggered();
-    void on_bannerRemoved(QWidget *banner);
     void on_documentSaved(EditorTabWidget *tabWidget, int tab);
     void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
     void on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);

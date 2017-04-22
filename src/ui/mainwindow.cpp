@@ -1120,16 +1120,9 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    
-    // If the tab is not newly opened but only transferred (e.g. with "Move to other View") it may
-    // have a banner attached to it. We need to disconnect previous signals to prevent
-    // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
-    // created a few lines below).
-    disconnect(editor, &Editor::bannerRemoved, 0, 0);
-    
+
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
-    connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
     connect(editor, &Editor::cleanChanged, this, [=]() {
         if (currentEditor() == editor)
             refreshEditorUiInfo(editor);
@@ -1627,11 +1620,6 @@ void MainWindow::on_actionSave_All_triggered()
             return (result != DocEngine::saveFileResult_Canceled);
         }
     });
-}
-
-void MainWindow::on_bannerRemoved(QWidget *banner)
-{
-    delete banner;
 }
 
 void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
