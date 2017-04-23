@@ -1,7 +1,6 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QRegularExpression>
-#include <QStringBuilder>
 #include <QUrlQuery>
 #include <QVBoxLayout>
 #include <QWebEngineSettings>
@@ -58,7 +57,7 @@ namespace EditorNS
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
 
-        QUrl url = QUrl("file://" % Notepadqq::editorPath());
+        QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
         m_webView->setEnabled(false);
         m_webView->page()->load(url);
@@ -646,8 +645,8 @@ namespace EditorNS
             return theme;
 
         auto editorPath = QFileInfo(Notepadqq::editorPath());
-        auto bundledThemesDir = QDir(editorPath.absolutePath() % "/libs/codemirror/theme/");
-        auto themeFile = bundledThemesDir.filePath(name % ".css");
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto themeFile = bundledThemesDir.filePath(name + ".css");
         if (QFile(themeFile).exists()) {
             theme.name = name;
             theme.path = themeFile;
@@ -659,7 +658,7 @@ namespace EditorNS
     {
         auto editorPath = QFileInfo(Notepadqq::editorPath());
         auto bundledThemesDir = 
-            QDir(editorPath.absolutePath() % "/libs/codemirror/theme/");
+            QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
         auto filters = QStringList("*.css");
         bundledThemesDir.setNameFilters(filters);
 
