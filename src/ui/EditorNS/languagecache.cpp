@@ -20,11 +20,6 @@
 
 namespace EditorNS {
 
-Language::Language()
-{
-
-}
-
 Language::Language(const Language& o) :
     id(o.id),
     name(o.name),

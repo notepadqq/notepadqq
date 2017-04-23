@@ -378,8 +378,12 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             Editor* tmpEditor = tabW->editor(0);
             QString tmpTxt;
             if(tmpEditor) {
-                tmpTxt = tabW->tabText(0);
-                tmpEditor->setFileName(QUrl("tmp"));
+                if (tmpEditor->fileName().isEmpty()) {
+                    tmpTxt = tabW->tabText(0);
+                    tmpEditor->setFileName(QUrl("tmp"));
+                }else {
+                    tmpEditor = nullptr;
+                }
             }
             const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
             if (tmpEditor) {

@@ -20,7 +20,7 @@ struct Language {
     QStringList fileNames;
     QStringList fileExtensions;
     QStringList firstNonBlankLine;
-    Language();
+    Language() {};
     Language(const Language& o);
     Language(Language&& o) noexcept;
     Language& operator=(const Language& o);

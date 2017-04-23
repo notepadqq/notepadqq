@@ -1,20 +1,14 @@
+#include <QDir>
+#include <QMessageBox>
+#include <QRegularExpression>
+#include <QUrlQuery>
+#include <QVBoxLayout>
+#include <QWebEngineSettings>
+
 #include "include/EditorNS/editor.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
-#include <QVBoxLayout>
-#include <QMessageBox>
-#include <QDir>
-#include <QEventLoop>
-#include <QUrlQuery>
-#include <QRegularExpression>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 
-#include <QWebEngineSettings>
-#include <QtWebChannel/QWebChannel>
-#include <QJsonDocument>
-#include <memory>
 namespace EditorNS
 {
     QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
@@ -39,24 +33,25 @@ namespace EditorNS
         vbox->addWidget(m_webView, 1);
         setLayout(vbox);
 
-        connect(m_webView->page(),
-                &QWebEnginePage::loadStarted,
-                this,
-                &Editor::on_javaScriptWindowObjectCleared);
-        connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
-        connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
     }
 
     void Editor::initWebView()
     {
         // Get the currently active color scheme/theme
         auto themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "") {
+        if (themeName.isEmpty()) {
             themeName = "default";
         }
         const auto theme = themeFromName(themeName);
 
         m_webView = new CustomQWebView(this);
+        //m_webView->page()->setBackgroundColor(Qt::transparent);
+        connect(m_webView->page(),
+                &QWebEnginePage::loadStarted,
+                this,
+                &Editor::on_javaScriptWindowObjectCleared);
+        connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
+        connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
 
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
@@ -157,33 +152,33 @@ namespace EditorNS
 
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        if (msg == "J_EVT_READY") {
+        if (msg == QLatin1String("J_EVT_READY")) {
             m_loaded = true;
             emit editorReady();
-        } else if (msg == "J_EVT_CONTENT_CHANGED") {
+        } else if (msg == QLatin1String("J_EVT_CONTENT_CHANGED")) {
             emit contentChanged(buildContentChangedEventData(data));
-        } else if (msg == "J_EVT_CLEAN_CHANGED") {
+        } else if (msg == QLatin1String("J_EVT_CLEAN_CHANGED")) {
             m_info.content.clean = data.toBool();
             emit cleanChanged(m_info.content.clean);
-        } else if (msg == "J_EVT_CURSOR_ACTIVITY") {
+        } else if (msg == QLatin1String("J_EVT_CURSOR_ACTIVITY")) {
             emit cursorActivity(buildCursorEventData(data));
-        } else if (msg == "J_EVT_GOT_FOCUS") {
+        } else if (msg == QLatin1String("J_EVT_GOT_FOCUS")) {
             emit gotFocus();
-        } else if (msg == "J_EVT_DOCUMENT_LOADED") {
+        } else if (msg == QLatin1String("J_EVT_DOCUMENT_LOADED")) {
             emit documentLoaded(m_alreadyLoaded, buildDocumentLoadedEventData(data));
             m_alreadyLoaded = true;
-        } else if (msg == "J_EVT_SCROLL_CHANGED") {
+        } else if (msg == QLatin1String("J_EVT_SCROLL_CHANGED")) {
             QPair<int, int> scrollPos;
             scrollPos.first = data.toList().at(0).toInt();
             scrollPos.second = data.toList().at(1).toInt();
-        } else if (msg == "J_EVT_OPTION_CHANGED") {
+        } else if (msg == QLatin1String("J_EVT_OPTION_CHANGED")) {
             // This may need its own function later
-            QVariantMap v = data.toMap();
-            QString key = v.value("key").toString();
-            if (key == "language") {
+            auto v = data.toMap();
+            auto key = v.value("key").toString();
+            if (key == QLatin1String("language")) {
                 auto& cache = LanguageCache::getInstance();
                 emit languageChanged(cache[cache.lookupById(v.value("value").toString())]);
-            }else if (key == "theme") {
+            }else if (key == QLatin1String("theme")) {
                 updateBackground(v.value("value").toString());
             }
         }
@@ -196,9 +191,10 @@ namespace EditorNS
         if (!data.canConvert<QVariantList>()) {
             return m_info.content.indentMode;
         }
-        Editor::IndentationMode indentMode;
-        indentMode.useTabs = data.toList().at(0).toBool();
-        indentMode.size = data.toList().at(1).toInt();
+        auto v = data.toList();
+        IndentationMode indentMode;
+        indentMode.useTabs = v.at(0).toBool();
+        indentMode.size = v.at(1).toInt();
         return indentMode;
     }
 
@@ -221,11 +217,13 @@ namespace EditorNS
             bool cache)
     {
         auto v = data.toMap();
-        CursorInfo  temp;
-        temp.line = v["cursorLine"].toInt();
-        temp.column = v["cursorColumn"].toInt();
-        temp.selectionCharCount = v["selectionCharCount"].toInt();
-        temp.selectionLineCount = v["selectionLineCount"].toInt();
+        CursorInfo temp = {
+            .line = v["cursorLine"].toInt(),
+            .column = v["cursorLine"].toInt(),
+            .selectionCharCount = v["selectionCharCount"].toInt(),
+            .selectionLineCount = v["selectionLineCount"].toInt(),
+            .selections = QList<Selection>()
+        };
         for (auto selection : v["selections"].toList()) {
             QVariantMap anchor = selection.toMap().value("anchor").toMap();
             QVariantMap head = selection.toMap().value("head").toMap();
@@ -305,19 +303,14 @@ namespace EditorNS
     void Editor::setLanguage(const Language& language)
     {
         auto& cache = LanguageCache::getInstance();
-
         if (!m_info.content.indentMode.custom) {
             setIndentationMode(language.id);
         }
-
-        auto& currentLang = cache[m_info.language];
-        QVariantMap data;
-        if (currentLang.mime.isEmpty()) {
-            data["mode"] = currentLang.mode;
-        } else {
-            data["mode"] = currentLang.mime;
-        }
-        data["id"] = currentLang.id;
+        auto& cLang = cache[m_info.language];
+        QVariantMap data {
+            {"id", cLang.id},
+            {"mode", cLang.mime.isEmpty() ? cLang.mode : cLang.mime}
+        };
         sendMessage("C_CMD_SET_LANGUAGE", data);
 
     }
@@ -371,25 +364,26 @@ namespace EditorNS
 
     void Editor::setIndentationMode(QString language)
     {
-        NqqSettings& s = NqqSettings::getInstance();
+        auto& ls = NqqSettings::getInstance().Languages;
 
-        if (s.Languages.getUseDefaultSettings(language))
+        if (ls.getUseDefaultSettings(language))
             language = "default";
 
-        setIndentationMode(!s.Languages.getIndentWithSpaces(language),
-                            s.Languages.getTabSize(language),
+        setIndentationMode(!ls.getIndentWithSpaces(language),
+                            ls.getTabSize(language),
                             false);
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size, 
             const bool custom)
     {
-        QVariantMap data;
-        data.insert("useTabs", useTabs);
-        data.insert("size", size);
         m_info.content.indentMode.useTabs = useTabs;
         m_info.content.indentMode.size = size;
         m_info.content.indentMode.custom = custom;
+        QVariantMap data {
+            {"useTabs", useTabs}, 
+            {"size", size}
+        };
         sendMessage("C_CMD_SET_INDENTATION_MODE", data);
     }
 
@@ -426,7 +420,6 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
-        // Go ahead and detect the language from content if we can up front.
         detectLanguageFromContent(value);
         sendMessage("C_CMD_SET_VALUE", value);
     }
@@ -497,22 +490,18 @@ namespace EditorNS
 
     void Editor::setSelectionsText(const QStringList &texts, SelectMode mode)
     {
-        QString modeStr = "";
+        QVariantMap data {{"text", texts}};
         switch (mode) {
             case SelectMode::CursorAfter:
-                modeStr = "after";
+                data.insert("select", "after");
                 break;
             case SelectMode::CursorBefore:
-                modeStr = "before";
+                data.insert("select", "before");
                 break;
             default:
-                modeStr = "selected";
+                data.insert("select", "selected");
                 break;
         }
-        QVariantMap data;
-        data.insert("text", texts);
-        data.insert("select", modeStr);
-
         sendMessage("C_CMD_SET_SELECTIONS_TEXT", data);
     }
 
@@ -668,7 +657,8 @@ namespace EditorNS
     QList<Editor::Theme> Editor::themes()
     {
         auto editorPath = QFileInfo(Notepadqq::editorPath());
-        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto bundledThemesDir = 
+            QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
         auto filters = QStringList("*.css");
         bundledThemesDir.setNameFilters(filters);
 

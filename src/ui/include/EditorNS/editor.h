@@ -1,17 +1,13 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <QObject>
-#include <QVariant>
-#include <QJsonValue>
-#include <QQueue>
-#include <QWheelEvent>
-#include <QVBoxLayout>
-#include <QTextCodec>
-#include <QPrinter>
+#include <functional>
 #include <QEventLoop>
 #include <QJsonDocument>
-#include <functional>
+#include <QObject>
+#include <QPrinter>
+#include <QQueue>
+#include <QTextCodec>
 
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/jsproxy.h"
