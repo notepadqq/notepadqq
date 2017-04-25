@@ -2041,6 +2041,8 @@ void MainWindow::runCommand()
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+        QString directory = url.toString().replace("file://", "").replace(url.fileName(), "");
+        cmd.replace("\%directory\%", directory);
     }
     if(!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
