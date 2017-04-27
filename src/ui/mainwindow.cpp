@@ -2038,9 +2038,11 @@ void MainWindow::runCommand()
     QUrl url = currentEditor()->fileName();
     QStringList selection = editor->selectedTexts();
     if (!url.isEmpty()) {
-        cmd.replace("\%fullpath\%", url.toString(QUrl::None));
+        cmd.replace("\%url\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+        QString directory = QFileInfo(url.toLocalFile()).absolutePath();
+        cmd.replace("\%directory\%", directory);
     }
     if(!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
