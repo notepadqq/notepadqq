@@ -2006,9 +2006,10 @@ void MainWindow::runCommand()
 
     QUrl url = currentEditor()->fileName();
     if (!url.isEmpty()) {
-        cmd.replace("\%fullpath\%", url.toString(QUrl::None));
+        cmd.replace("\%url\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+        cmd.replace("\%directory\%", QFileInfo(url.toLocalFile()).absolutePath());
     }
 
     // Check for selection before performing asynchronous call.

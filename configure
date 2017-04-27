@@ -37,6 +37,8 @@ Defaults for the options are specified in brackets.
   --prefix PREFIX,
   --prefix=PREFIX         install files in PREFIX [/usr/local]
 
+  -d, --debug             build with debugging symbols intact
+
   --fail-on-missing       return exit 1 if non-optional components are missing
 
   --lrelease COMMAND,
@@ -80,6 +82,10 @@ while [ "$#" -ge 1 ]; do
         -h|--help)
         help
         exit 0
+        ;;
+        -d|--debug)
+        BUILDMODE="debug"
+        echo "WARNING: Building in debug mode!"
         ;;
         --prefix=*) # --prefix=<something>
         PREFIX="${key#*=}"
@@ -193,4 +199,5 @@ QMAKE_CXX="$CXX" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
 LRELEASE="$LRELEASE" \
+CONFIG+="$BUILDMODE" \
 "$@" notepadqq.pro && echo "done" || errorExit "error!" 1
