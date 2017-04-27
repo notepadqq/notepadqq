@@ -1,18 +1,22 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QMimeData>
+#include <QWebChannel>
 
 namespace EditorNS
 {
 
     CustomQWebView::CustomQWebView(QWidget *parent) :
-        QWebView(parent)
+        QWebEngineView(parent)
     {
+        setPage(new CustomQWebViewPage());
+        QWebChannel *channel = new QWebChannel(page());
+        page()->setWebChannel(channel);
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        QWebView::wheelEvent(ev);
+        QWebEngineView::wheelEvent(ev);
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -22,7 +26,7 @@ namespace EditorNS
             ev->ignore();
             break;
         default:
-            QWebView::keyPressEvent(ev);
+            QWebEngineView::keyPressEvent(ev);
         }
     }
 
@@ -32,8 +36,35 @@ namespace EditorNS
             ev->ignore();
             emit urlsDropped(ev->mimeData()->urls());
         } else {
-            QWebView::dropEvent(ev);
+            QWebEngineView::dropEvent(ev);
         }
     }
 
+    void CustomQWebView::connectJavaScriptObject(QString name, QObject *obj)
+    {
+        page()->webChannel()->registerObject(name, obj);
+    }
+
+    void CustomQWebViewPage::javaScriptConsoleMessage(
+            QWebEnginePage::JavaScriptConsoleMessageLevel level, 
+            const QString &message, 
+            int line, 
+            const QString &sourceID) 
+    {
+        QUrl url = QUrl(sourceID);
+        QString txtLvl;
+        switch(level) {
+            case QWebEnginePage::InfoMessageLevel:
+                txtLvl = "Info[";
+                break;
+            case QWebEnginePage::WarningMessageLevel:
+                txtLvl = "Warn[";
+                break;
+            case QWebEnginePage::ErrorMessageLevel:
+                txtLvl = "Err[";
+                break;
+        }
+        txtLvl.append(url.fileName()).append(":");
+        qDebug().noquote() << "js: " + txtLvl << line << "]:" << message;
+    }
 }

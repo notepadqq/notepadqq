@@ -12,6 +12,7 @@
 #include "include/Search/filesearchresultswidget.h"
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
+#include "include/EditorNS/editor.h"
 
 namespace Ui {
 class MainWindow;
@@ -65,6 +66,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
+    void on_fileLoaded(bool wasAlreadyLoaded, EditorNS::Editor::IndentationMode indentMode);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -76,7 +78,11 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiCursorInfo(Editor *editor);
+    void refreshEditorUiEncodingInfo(Editor* editor);
+    //Temporary until we get refreshEditorUiInfo untangled.
+    void refreshEditorUiInfoAll(Editor* editor);
+    void on_cleanChanged(bool);
+    void on_contentChanged(EditorNS::Editor::ContentInfo info);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -91,7 +97,7 @@ private slots:
     void on_actionCu_t_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
-    void on_cursorActivity();
+    void on_cursorActivity(EditorNS::Editor::CursorInfo info);
     void on_action_Delete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
@@ -110,7 +116,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_currentLanguageChanged(QString id, QString name);
+    void on_languageChanged(const Language&);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();
@@ -152,8 +158,6 @@ private slots:
     void on_actionOpen_a_New_Window_triggered();
     void on_actionOpen_in_New_Window_triggered();
     void on_actionMove_to_New_Window_triggered();
-    void on_actionOpen_file_triggered();
-    void on_actionOpen_in_another_window_triggered();
     void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
     void on_actionFind_in_Files_triggered();
     void on_actionDelete_Line_triggered();
@@ -250,17 +254,13 @@ private:
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     void                setupLanguagesMenu();
-    void                transformSelectedText(std::function<QString (const QString &)> func);
+    void                transformSelectedText(QString (*func)(const QString&));
     void                restoreWindowSettings();
     void                loadIcons();
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
-    void                checkIndentationMode(Editor *editor);
     bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
-    QStringList         currentWordOrSelections();
-    QString             currentWordOrSelection();
-    void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
@@ -281,6 +281,8 @@ private:
      *               On a `true` return, default symbol saving behavior is modified.
      */
     bool updateSymbols(bool on);
+
+    void checkIndentationMode(Editor* editor, EditorNS::Editor::IndentationMode detected);
 };
 
 #endif // MAINWINDOW_H

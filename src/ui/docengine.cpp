@@ -85,7 +85,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
         editor->setEndOfLineSequence("\r");
 
     editor->setValue(decoded.text);
-    editor->sendMessage("C_CMD_CLEAR_HISTORY");
+    //editor->sendMessage("C_CMD_CLEAR_HISTORY");
     editor->markClean();
 
     return true;
@@ -170,8 +170,8 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 QPair<int, int> scrollPosition;
                 QPair<int, int> cursorPosition;
                 if (reload) {
-                    scrollPosition = editor->scrollPosition();
-                    cursorPosition = editor->cursorPosition();
+                    scrollPosition = editor->getScrollPosition();
+                    cursorPosition = editor->getCursorPosition();
                 }
 
                 QFile file(localFileName);
@@ -359,8 +359,8 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
 
 void DocEngine::reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom)
 {
-    QPair<int, int> scrollPosition = editor->scrollPosition();
-    QPair<int, int> cursorPosition = editor->cursorPosition();
+    QPair<int, int> scrollPosition = editor->getScrollPosition();
+    QPair<int, int> cursorPosition = editor->getCursorPosition();
 
     QTextCodec *oldCodec = editor->codec();
     QByteArray data = oldCodec->fromUnicode(editor->value());

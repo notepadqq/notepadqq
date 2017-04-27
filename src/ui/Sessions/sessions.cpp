@@ -294,11 +294,11 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "";
 
             // Finally save other misc information about the tab.
-            const auto& scrollPos = editor->scrollPosition();
+            const auto& scrollPos = editor->getScrollPosition();
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
             td.active = tabWidget->currentEditor() == editor;
-            td.language = editor->language();
+            td.language = editor->getLanguage().id;
 
             // If we're caching and there's a file opened in the tab we want to inform the
             // user whether the file's contents have changed since Nqq was last opened.
@@ -371,7 +371,25 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             // This is the file to load the document from
             const QUrl& loadUrl = cacheFileExists ? cacheFileUrl : fileUrl;
 
+            // FIXME: Everything in if(tmpEditor) is a work-around for a
+            // regression caused by asynchronous loading of WebEngine.
+            // This keeps DocEngine from destroying the first tab
+            // if it was loaded with a session.
+            Editor* tmpEditor = tabW->editor(0);
+            QString tmpTxt;
+            if(tmpEditor) {
+                if (tmpEditor->fileName().isEmpty()) {
+                    tmpTxt = tabW->tabText(0);
+                    tmpEditor->setFileName(QUrl("tmp"));
+                }else {
+                    tmpEditor = nullptr;
+                }
+            }
             const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
+            if (tmpEditor) {
+                tmpEditor->setFileName(QUrl());
+                tabW->setTabText(0, tmpTxt);
+            }
 
             if (!success)
                 continue;
@@ -420,7 +438,11 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if(tab.active) activeIndex = idx;
 
-            if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
+            if(!tab.language.isEmpty()) {
+                editor->setLanguage(tab.language);
+            }else {
+                editor->setLanguageFromFileName();
+            }
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
             editor->clearFocus();
@@ -449,13 +471,12 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     // Give focus to the last tab of the first tab widget.
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
     Editor* lastEditor = firstTabW->editor(firstTabW->count()-1);
-    lastEditor->setFocus();
-
     // This triggers `TopEditorContainer::on_currentTabChanged` and eventually
     // `MainWindow::on_currentEditorChanged` which calls refreshEditorUiInfo() to
     // get rid of the titlebar display bug when loading files from cache.
     firstTabW->currentChanged(firstTabW->count()-1);
 
+    firstTabW->setFocus();
     return;
 }
 

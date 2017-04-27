@@ -11,6 +11,11 @@ TopEditorContainer::TopEditorContainer(QWidget *parent) :
     m_currentTabWidget = addTabWidget();
 }
 
+TopEditorContainer::~TopEditorContainer()
+{
+    m_shuttingDown = true;
+}
+
 EditorTabWidget *TopEditorContainer::addTabWidget()
 {
     EditorTabWidget *tabWidget = new EditorTabWidget(this);
@@ -82,10 +87,17 @@ EditorTabWidget *TopEditorContainer::tabWidgetFromEditor(Editor *editor)
 
 void TopEditorContainer::on_currentTabChanged(int index)
 {
+    if (index == -1 || m_shuttingDown)
+        return;
+
     EditorTabWidget *tabWidget = dynamic_cast<EditorTabWidget *>(sender());
     if (!tabWidget)
         return;
 
+    if (m_currentTabWidget == tabWidget && m_currentTabIndex == index)
+        return;
+
+    m_currentTabIndex = index;
     m_currentTabWidget = tabWidget;
     emit currentTabChanged(tabWidget, index);
     emit currentEditorChanged(tabWidget, index);

@@ -43,7 +43,6 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
-    ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
 
@@ -103,7 +102,7 @@ void frmPreferences::updatePreviewEditorFont()
 
     // Re-setting language also updates the position of text selection. If not done, selected text
     // would often glitch out when changing the font causes the position of text characters to change.
-    m_previewEditor->setLanguage(m_previewEditor->language());
+    m_previewEditor->setLanguage(m_previewEditor->getLanguage());
 }
 
 void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
@@ -133,28 +132,23 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QList<QMap<QString, QString>> langs = m_topEditorContainer->currentTabWidget()->currentEditor()->languages();
+    auto &ls = m_settings.Languages;
+    //"Default" language
+    ui->cmbLanguages->addItem("Default", "default");
+    LanguageSettings lang = {
+        "default",
+        ls.getTabSize("default"),
+        ls.getIndentWithSpaces("default"),
+        ls.getUseDefaultSettings("default")
+    };
 
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    // Add "Default" language into the list.
-    QMap<QString,QString> defaultMap;
-    defaultMap.insert("id", "default");
-    defaultMap.insert("name", "Default");
-    langs.push_front(defaultMap);
-
-    // Add all languages to the comboBox and write their current settings to a temp list
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-        const QString langId = map.value("id", "");
-
-        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
-
+    for(const auto& l : LanguageCache::getInstance().languages()) {
+        ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
         LanguageSettings lang = {
-            langId,
-            m_settings.Languages.getTabSize(langId),
-            m_settings.Languages.getIndentWithSpaces(langId),
-            m_settings.Languages.getUseDefaultSettings(langId)
+            l.id,
+            ls.getTabSize(l.id),
+            ls.getIndentWithSpaces(l.id),
+            ls.getUseDefaultSettings(l.id)
         };
 
         m_tempLangSettings.push_back(lang);
@@ -194,7 +188,6 @@ void frmPreferences::loadAppearanceTab()
 
     // Avoid glitch where scrollbars are appearing for a moment
     const QSize renderSize = ui->colorSchemePreviewFrame->size();
-    m_previewEditor->forceRender(renderSize);
 
     const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {
@@ -327,8 +320,6 @@ bool frmPreferences::applySettings()
         return false;
     }
 
-
-    m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
 
@@ -359,7 +350,7 @@ bool frmPreferences::applySettings()
             editor->setFont(fontFamily, fontSize, lineHeight);
 
             // Reset language-dependent settings (e.g. tab settings)
-            editor->setLanguage(editor->language());
+            editor->setLanguage(editor->getLanguage());
 
             return true;
         });

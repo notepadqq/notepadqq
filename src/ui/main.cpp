@@ -16,7 +16,6 @@
 #include <QElapsedTimer>
 #endif
 
-void checkQtVersion();
 void forceDefaultSettings();
 void loadExtensions();
 
@@ -103,16 +102,12 @@ int main(int argc, char *argv[])
     // There are no other instances: start a new server.
     a.startServer();
 
-    Editor::addEditorToBuffer();
-
     QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {
         qCritical() << "Can't open file: " + file.fileName();
         return EXIT_FAILURE;
     }
     file.close();
-
-    checkQtVersion();
 
     if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
         Extensions::ExtensionsLoader::startExtensionsServer();
@@ -131,22 +126,7 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
-        Notepadqq::showQtVersionWarning(true, w);
-    }
-
     return a.exec();
-}
-
-void checkQtVersion()
-{
-    QString runtimeVersion = qVersion();
-    if (runtimeVersion.startsWith("5.0") ||
-            runtimeVersion.startsWith("5.1") ||
-            runtimeVersion.startsWith("5.2")) {
-
-        Notepadqq::setOldQt(true);
-    }
 }
 
 void forceDefaultSettings()
