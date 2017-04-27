@@ -2036,10 +2036,13 @@ void MainWindow::runCommand()
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->fileName();
+    QString path = url.path(QUrl::FullyEncoded);
+    QFileInfo fi(path);
     QStringList selection = editor->selectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%fullpath\%", url.toString(QUrl::None));
-        cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
+        cmd.replace("\%path\%", path);
+        cmd.replace("\%directory\%", fi.absolutePath());
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
     }
     if(!selection.first().isEmpty()) {
