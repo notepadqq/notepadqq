@@ -27,18 +27,6 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     //setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     m_previewEditor = Editor::getNewEditorUnmanagedPtr(this);
-    m_previewEditor->setLanguageFromFileName("test.js");
-    m_previewEditor->setValue(R"(var enabled = false;)" "\n"
-                              R"()" "\n"
-                              R"(function example(a, b) {)" "\n"
-                              R"(    if (b == 0 && enabled) {)" "\n"
-                              R"(        var ret = a > 3 ? "ok" : null;)" "\n"
-                              R"(        return !ret;)" "\n"
-                              R"(    })" "\n"
-                              R"()" "\n"
-                              R"(    return example(a + 1, 0);)" "\n"
-                              R"(})" "\n"
-                              );
 
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
@@ -185,6 +173,20 @@ void frmPreferences::loadAppearanceTab()
     }
 
     ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
+
+    m_previewEditor->setLanguageFromFileName("test.js");
+    m_previewEditor->setValue(R"(var enabled = false;)" "\n"
+                              R"()" "\n"
+                              R"(function example(a, b) {)" "\n"
+                              R"(    if (b == 0 && enabled) {)" "\n"
+                              R"(        var ret = a > 3 ? "ok" : null;)" "\n"
+                              R"(        return !ret;)" "\n"
+                              R"(    })" "\n"
+                              R"()" "\n"
+                              R"(    return example(a + 1, 0);)" "\n"
+                              R"(})" "\n"
+                              );
+
 
     // Avoid glitch where scrollbars are appearing for a moment
     const QSize renderSize = ui->colorSchemePreviewFrame->size();
