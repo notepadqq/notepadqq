@@ -2041,10 +2041,9 @@ void MainWindow::runCommand()
         cmd.replace("\%url\%", url.toString(QUrl::None));
         cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
         cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
-        QString directory = QFileInfo(url.toLocalFile()).absolutePath();
-        cmd.replace("\%directory\%", directory);
+        cmd.replace("\%directory\%", QFileInfo(url.toLocalFile()).absolutePath());
     }
-    if(!selection.first().isEmpty()) {
+    if (!selection.first().isEmpty()) {
         cmd.replace("\%selection\%",selection.first());
     }
     QStringList args = NqqRun::RunDialog::parseCommandString(cmd);

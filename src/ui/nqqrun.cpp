@@ -30,7 +30,8 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
 
     QLabel *info = new QLabel(tr("\
     <h3>Special placeholders</h3><ul>\
-    <li><em>\%fullpath\%</em> - Full path of the currently active file.</li>\
+    <li><em>\%url\%</em> - Full URL of the currently active file.</li>\
+    <li><em>\%path\%</em> - Full path of the currently active file.</li>\
     <li><em>\%directory\%</em> - Directory of the currently active file.</li>\
     <li><em>\%filename\%</em> - Name of the currently active file.</li>\
     <li><em>\%selection\%</em> - Currently selected text.</li>\
