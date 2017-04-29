@@ -1066,48 +1066,48 @@
         <translation>Szóközök megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="357"/>
-        <location filename="../ui/mainwindow.cpp" line="641"/>
+        <location filename="../ui/mainwindow.cpp" line="358"/>
+        <location filename="../ui/mainwindow.cpp" line="650"/>
         <source>INS</source>
         <translation>BEILL</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="639"/>
+        <location filename="../ui/mainwindow.cpp" line="648"/>
         <source>OVR</source>
         <translation>ÁTÍR</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="768"/>
+        <location filename="../ui/mainwindow.cpp" line="777"/>
         <source>Reload</source>
         <translation>Újratöltés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="806"/>
+        <location filename="../ui/mainwindow.cpp" line="815"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="808"/>
+        <location filename="../ui/mainwindow.cpp" line="817"/>
         <source>All files (*)</source>
         <translation>Minden fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="826"/>
+        <location filename="../ui/mainwindow.cpp" line="835"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="867"/>
+        <location filename="../ui/mainwindow.cpp" line="876"/>
         <source>Don&apos;t Save</source>
         <translation>Nincs mentés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="767"/>
+        <location filename="../ui/mainwindow.cpp" line="776"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>A(z) &quot;%1&quot; fájlon végzett módosításai el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="385"/>
+        <location filename="../ui/mainwindow.cpp" line="386"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
@@ -1116,130 +1116,135 @@
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="866"/>
+        <location filename="../ui/mainwindow.cpp" line="388"/>
+        <source>By choosing &quot;ignore&quot; your session won&apos;t be saved.</source>
+        <translation>Azáltal, hogy &quot;Mellőzés&quot;-t választja, a munkamenet nem lesz elmentve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="875"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Szeretné menteni a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="870"/>
+        <location filename="../ui/mainwindow.cpp" line="879"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Szeretné menteni bezárás előtt a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="874"/>
+        <location filename="../ui/mainwindow.cpp" line="883"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Ha nem menti el, a módosítások végleg el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="974"/>
+        <location filename="../ui/mainwindow.cpp" line="983"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>A fájlt az utolsó beolvasás óta megváltozott a lemezen.
 Biztosan menteni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="977"/>
+        <location filename="../ui/mainwindow.cpp" line="986"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>A fájl mentése a külső adatok elvesztésével járhat.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="996"/>
+        <location filename="../ui/mainwindow.cpp" line="1005"/>
         <source>Save as</source>
         <translation>Mentés másként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="998"/>
+        <location filename="../ui/mainwindow.cpp" line="1007"/>
         <source>Any file (*)</source>
         <translation>Bármilyen fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1170"/>
+        <location filename="../ui/mainwindow.cpp" line="1179"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1. karakter, %2. sor</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1181"/>
+        <location filename="../ui/mainwindow.cpp" line="1190"/>
         <source>Ln %1, col %2</source>
         <translation>%1. sor, %2 oszlop</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1185"/>
+        <location filename="../ui/mainwindow.cpp" line="1194"/>
         <source>Sel %1 (%2)</source>
         <translation>Kij. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1253"/>
+        <location filename="../ui/mainwindow.cpp" line="1262"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1256"/>
+        <location filename="../ui/mainwindow.cpp" line="1265"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1259"/>
+        <location filename="../ui/mainwindow.cpp" line="1268"/>
         <source>Old Mac</source>
         <translation>Régi Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1266"/>
+        <location filename="../ui/mainwindow.cpp" line="1275"/>
         <source>%1 w/o BOM</source>
         <translation>%1 BOM nélkül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1742"/>
+        <location filename="../ui/mainwindow.cpp" line="1751"/>
         <source>No recent files</source>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1910"/>
+        <location filename="../ui/mainwindow.cpp" line="1919"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1924"/>
+        <location filename="../ui/mainwindow.cpp" line="1933"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1966"/>
+        <location filename="../ui/mainwindow.cpp" line="1975"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1981"/>
+        <location filename="../ui/mainwindow.cpp" line="1990"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1993"/>
+        <location filename="../ui/mainwindow.cpp" line="2002"/>
         <source>Modify Run Commands</source>
         <translation>Futattási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2273"/>
+        <location filename="../ui/mainwindow.cpp" line="2283"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2318"/>
+        <location filename="../ui/mainwindow.cpp" line="2328"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2320"/>
-        <location filename="../ui/mainwindow.cpp" line="2340"/>
+        <location filename="../ui/mainwindow.cpp" line="2330"/>
+        <location filename="../ui/mainwindow.cpp" line="2350"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2338"/>
+        <location filename="../ui/mainwindow.cpp" line="2348"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2364"/>
+        <location filename="../ui/mainwindow.cpp" line="2374"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
@@ -1247,7 +1252,7 @@ Biztosan menteni szeretné?</translation>
 <context>
     <name>NqqRun::RunDelegate</name>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="231"/>
+        <location filename="../ui/nqqrun.cpp" line="232"/>
         <source>Open File</source>
         <translation>Fájl megnyitása</translation>
     </message>
@@ -1255,37 +1260,62 @@ Biztosan menteni szeretné?</translation>
 <context>
     <name>NqqRun::RunDialog</name>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="263"/>
+        <location filename="../ui/nqqrun.cpp" line="264"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="264"/>
+        <location filename="../ui/nqqrun.cpp" line="265"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="265"/>
+        <location filename="../ui/nqqrun.cpp" line="266"/>
         <source>Save...</source>
         <translation>Mentés...</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="267"/>
-        <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation>    &lt;h3&gt;Speciális helyőrzők&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%teljes elérési út%&lt;/em&gt; - A jelenleg aktív fájl teljes elérési útja.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%könyvtár%&lt;/em&gt; - A jelenleg aktív fájlt tartalmazó könyvtár.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%fájlnév%&lt;/em&gt; - A jelenleg aktív fájl neve.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%kijelölés%&lt;/em&gt; - Aktuálisan kijelölt szöveg.&lt;/li&gt;    &lt;/ul&gt;</translation>
+        <location filename="../ui/nqqrun.cpp" line="269"/>
+        <source>Special placeholders</source>
+        <translation>Speciális helyőrzők</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="312"/>
+        <location filename="../ui/nqqrun.cpp" line="270"/>
+        <source>Full URL of the currently active file.</source>
+        <translation>A jelenleg aktív fájl teljes URL-címe.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="271"/>
+        <source>Full path of the currently active file.</source>
+        <translation>A jelenleg aktív fájl teljes elérési útja.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="272"/>
+        <source>Directory of the currently active file.</source>
+        <translation>A jelenleg aktív fájlt tartalmazó könyvtár.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="273"/>
+        <source>Name of the currently active file.</source>
+        <translation>A jelenleg aktív fájl neve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="274"/>
+        <source>Currently selected text.</source>
+        <translation>Aktuálisan kijelölt szöveg.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="314"/>
         <source>Choose the name to be displayed in the run menu.</source>
         <translation>A futás menüben megjelenítendő név kiválasztása.</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="313"/>
+        <location filename="../ui/nqqrun.cpp" line="315"/>
         <source>Command Name:</source>
         <translation>Parancsnév:</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="322"/>
+        <location filename="../ui/nqqrun.cpp" line="324"/>
         <source>Command saved...</source>
         <translation>Parancs elmentve...</translation>
     </message>
@@ -1303,17 +1333,42 @@ Biztosan menteni szeretné?</translation>
         <translation>Mégse</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="31"/>
-        <source>    &lt;h3&gt;Special placeholders&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%fullpath%&lt;/em&gt; - Full path of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%directory%&lt;/em&gt; - Directory of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%filename%&lt;/em&gt; - Name of the currently active file.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%selection%&lt;/em&gt; - Currently selected text.&lt;/li&gt;    &lt;/ul&gt;</source>
-        <translation>    &lt;h3&gt;Speciális helyőrzők&lt;/h3&gt;&lt;ul&gt;    &lt;li&gt;&lt;em&gt;%teljes elérési út%&lt;/em&gt; - A jelenleg aktív fájl teljes elérési útja.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%könyvtár%&lt;/em&gt; - A jelenleg aktív fájlt tartalmazó könyvtár.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%fájlnév%&lt;/em&gt; - A jelenleg aktív fájl neve.&lt;/li&gt;    &lt;li&gt;&lt;em&gt;%kijelölés%&lt;/em&gt; - Aktuálisan kijelölt szöveg.&lt;/li&gt;    &lt;/ul&gt;</translation>
+        <location filename="../ui/nqqrun.cpp" line="32"/>
+        <source>Special placeholders</source>
+        <translation>Speciális helyőrzők</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="67"/>
+        <location filename="../ui/nqqrun.cpp" line="33"/>
+        <source>Full URL of the currently active file.</source>
+        <translation>A jelenleg aktív fájl teljes URL-címe.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="34"/>
+        <source>Full path of the currently active file.</source>
+        <translation>A jelenleg aktív fájl teljes elérési útja.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="35"/>
+        <source>Directory of the currently active file.</source>
+        <translation>A jelenleg aktív fájlt tartalmazó könyvtár.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="36"/>
+        <source>Name of the currently active file.</source>
+        <translation>A jelenleg aktív fájl neve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="37"/>
+        <source>Currently selected text.</source>
+        <translation>Aktuálisan kijelölt szöveg.</translation>
+    </message>
+    <message>
+        <location filename="../ui/nqqrun.cpp" line="68"/>
         <source>Text</source>
         <translation>Szöveg</translation>
     </message>
     <message>
-        <location filename="../ui/nqqrun.cpp" line="67"/>
+        <location filename="../ui/nqqrun.cpp" line="68"/>
         <source>Command</source>
         <translation>Parancs</translation>
     </message>
