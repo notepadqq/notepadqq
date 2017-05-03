@@ -136,7 +136,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
             m_settings.General.getRememberTabsOnExit() // and the Remember-tabs option is enabled
     ) {
         Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
-        refreshEditorUiInfo(m_topEditorContainer->currentTabWidget()->currentEditor());
+        if (m_topEditorContainer->count() > 0 && m_topEditorContainer->currentTabWidget()->count() > 0) {
+            refreshEditorUiInfo(m_topEditorContainer->currentTabWidget()->currentEditor());
+        }
     }
 
     // Inserts at least an editor
