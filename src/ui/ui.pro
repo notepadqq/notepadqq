@@ -84,6 +84,9 @@ SOURCES += main.cpp\
     Search/searchinfilesworker.cpp \
     Search/searchstring.cpp \
     Search/replaceinfilesworker.cpp \
+    Search/replaceworker.cpp \
+    Search/searchworker.cpp \
+    Search/advancedsearchdock.cpp \
     Search/dlgsearching.cpp \
     Search/searchresultsitemdelegate.cpp \
     Extensions/extension.cpp \
@@ -128,6 +131,9 @@ HEADERS  += include/mainwindow.h \
     include/Search/frmsearchreplace.h \
     include/Search/searchinfilesworker.h \
     include/Search/replaceinfilesworker.h \
+    include/Search/replaceworker.h \
+    include/Search/searchworker.h \
+    include/Search/advancedsearchdock.h \
     include/Search/searchhelpers.h \
     include/Search/searchstring.h \
     include/Search/dlgsearching.h \
