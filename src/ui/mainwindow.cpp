@@ -34,6 +34,8 @@
 #include <QDesktopServices>
 #include <QJsonArray>
 
+#include "include/Search/advancedsearchdock.h"
+
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
 MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
@@ -124,9 +126,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setAcceptDrops(true);
 
-    ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
-    connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
-            this, &MainWindow::on_resultMatchClicked);
+
+    //ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
+    //connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
+    //        this, &MainWindow::on_resultMatchClicked);
 
     // Initialize UI from settings
     initUI();
@@ -137,7 +140,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ) {
         Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
         if (m_topEditorContainer->count() > 0 && m_topEditorContainer->currentTabWidget()->count() > 0) {
-            refreshEditorUiInfo(m_topEditorContainer->currentTabWidget()->currentEditor());
         }
     }
 
@@ -156,7 +158,26 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     ui->actionFull_Screen->setChecked(isFullScreen());
 
-    ui->dockFileSearchResults->hide();
+    AdvancedSearchDock* asd = new AdvancedSearchDock();
+    addDockWidget(Qt::BottomDockWidgetArea, asd->getDockWidget() );
+    asd->getDockWidget()->show();
+
+    connect(asd, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
+        QUrl url = stringToUrl(doc.fileName);
+        m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+
+        QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+        if (pos.first == -1 || pos.second == -1)
+            return;
+
+        Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
+
+        editor->setSelection(result.m_lineNumber-1, result.m_matchIndex.x(), //selection start
+                             result.m_lineNumber-1, result.m_matchIndex.x() + result.m_matchIndex.y()); //selection end
+        editor->setFocus();
+    });
+
 
     // If there was another window already opened, move this window
     // slightly to the bottom-right, so that they won't completely overlap.
