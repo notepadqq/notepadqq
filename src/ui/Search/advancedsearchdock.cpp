@@ -27,6 +27,7 @@
 #include <QStyledItemDelegate>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include <QDir>
 
 #include <array>
 
@@ -696,6 +697,9 @@ AdvancedSearchDock::AdvancedSearchDock()
         runSearch(getConfigFromInputs());
     });
     connect(m_edtSearchDirectory, &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
+    connect(m_edtSearchDirectory, &QLineEdit::returnPressed, [this](){
+        runSearch(getConfigFromInputs());
+    });
 
     // "More Options" menu connections
     connect(m_actExpandAll, &QAction::toggled, [this](bool checked){
@@ -819,11 +823,28 @@ QDockWidget* AdvancedSearchDock::getDockWidget() const
     return m_dockWidget.data();
 }
 
-void AdvancedSearchDock::runSearch(const SearchConfig& cfg)
+void AdvancedSearchDock::runSearch(SearchConfig cfg)
 {
-    if(cfg.searchString.isEmpty())
+    if (cfg.searchString.isEmpty())
         return;
 
+    // TODO: Don't use magic numbers here.
+    if (m_cmbSearchScope->currentIndex() == 2) {
+        // If we're searching the file system, check that the search dir is not empty and actually exists
+        if (cfg.directory.isEmpty()) return;
+
+        QDir dir(cfg.directory);
+
+        if (!dir.exists()) {
+            QMessageBox::warning(QApplication::activeWindow(), "Error",
+                                 "Specified directory does not exist.", QMessageBox::Ok);
+            return;
+        }
+
+        cfg.directory = dir.absolutePath(); // Also cleans path from multiple separators or "..", ".", etc.
+    }
+
+    // TODO: Implement other search types
     if(m_cmbSearchScope->currentIndex() != 2) {
         QMessageBox::information(nullptr, "NYI", "Only searches in file system scope currently implemented.");
         return;
@@ -878,12 +899,12 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         m_fileSearcher = nullptr;
     });
 
-    //TODO only start once searchConfig etc is set
     m_fileSearcher->start();
 }
 
 SearchInstance::~SearchInstance()
 {
+    // After canceling, m_fileSearcher is deleted through a signal connected in SearchInstance's constructor
     if(m_fileSearcher) m_fileSearcher->cancel();
 }
 

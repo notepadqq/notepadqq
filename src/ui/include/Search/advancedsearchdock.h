@@ -89,7 +89,7 @@ public:
 
     QDockWidget* getDockWidget() const;
 
-    void runSearch(const SearchConfig& cfg);
+    void runSearch(SearchConfig cfg);
 
     void selectPrevResult();
     void selectNextResult();
@@ -160,7 +160,7 @@ private:
 
     QWidget* m_searchPanelWidget;
 
-    // Temporary
+    // For handling multiple search instances
     std::vector<std::unique_ptr<SearchInstance>> m_searchInstances;
     SearchInstance* m_currentSearchInstance = nullptr;
 };

@@ -16,7 +16,7 @@ FileSearcher::FileSearcher(const SearchConfig& config)
 
 /**
  * @brief matchesWholeWord Returns true if the substring at data.mid(index,matchLength) is a whole word.
- *                         This means it's preceeded and followed by either whitespace, symbols or punctuation.
+ *                         This means it's preceeded and followed by either a whitespace, symbol or punctuation.
  */
 bool matchesWholeWord(int index, int matchLength, const QString &data)
 {
@@ -98,12 +98,11 @@ DocResult FileSearcher::searchPlainText(const QString& content)
         const int lineEnd = linePosition[line];
 
         MatchResult result;
-
         result.m_lineNumber = line;
         result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
-        result.m_matchOffset = offset;
-        result.m_matchIndex = QPoint(offset - lineStart, matchLength);
-
+        result.m_positionInFile = offset;
+        result.m_positionInLine = offset - lineStart;
+        result.m_matchLength = matchLength;
         results.results.push_back(result);
 
         offset += 1;
@@ -133,12 +132,11 @@ DocResult FileSearcher::searchRegExp(const QString &content)
         const int lineEnd = linePosition[line];
 
         MatchResult result;
-
         result.m_lineNumber = line;
         result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
-        result.m_matchOffset = offset;
-        result.m_matchIndex = QPoint(offset - lineStart, match.capturedLength());
-
+        result.m_positionInFile = offset;
+        result.m_positionInLine = offset - lineStart;
+        result.m_matchLength = match.capturedLength();
         results.results.push_back(result);
 
         offset += 1;
@@ -149,13 +147,10 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 
 void FileSearcher::worker()
 {
-    QFlags<QRegularExpression::PatternOption> options = QRegularExpression::MultilineOption;
-
-
     if (m_searchConfig.searchMode == SearchHelpers::SearchMode::Regex) {
-        if (m_searchConfig.matchCase == false) {
-            options |= QRegularExpression::CaseInsensitiveOption;
-        }
+        const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
+                    QRegularExpression::MultilineOption :
+                    QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
 
         // TODO: Get rid of this one
         SearchHelpers::SearchOptions so;
@@ -172,12 +167,13 @@ void FileSearcher::worker()
                 (QDirIterator::Subdirectories | QDirIterator::FollowSymlinks) :
                 QDirIterator::NoIteratorFlags;
 
+    // Split contents of the file pattern string and sanitize it for use
     QStringList filters = m_searchConfig.filePattern.split(',', QString::SkipEmptyParts);
     for (QString& item : filters)
         item = item.trimmed();
 
+    // Create a list of all files that will be read.
     QDirIterator it(m_searchConfig.directory, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
-
     QStringList fileList;
 
     while( it.hasNext() )
@@ -185,9 +181,9 @@ void FileSearcher::worker()
 
     emit resultProgress(0, fileList.size());
 
-    int count = 1;
-    for(auto fileName : fileList) {
-
+    // Start the actual search
+    int count = 0;
+    for(const auto& fileName : fileList) {
         if(m_wantToStop)
             break;
 
@@ -200,7 +196,8 @@ void FileSearcher::worker()
         f.close();
 
         if (decodedText.error) {
-            // TODO: File could not be read. Add it to an error array so we can output it all.
+            // File could not be read. We'll ignore this error since it should never happen. QDirIterator only iterates over
+            // readable files and DocEngine only reads the file. But if it happens we can skip the rest, just in case.
             continue;
         }
 

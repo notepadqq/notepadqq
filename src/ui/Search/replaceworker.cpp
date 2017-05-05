@@ -10,26 +10,34 @@
 ReplaceWorker::ReplaceWorker(const SearchResult& results, const QString &replacement)
     : m_searchResult(results),
       m_replacement(replacement)
-{
-
-}
+{ }
 
 void ReplaceWorker::validate()
 {
-
     // TODO: Check if any MatchResults are overlapping. If so, we can't just blindly replace them.
-    /*for (const DocResult& r : m_searchResult.results) {
-        const std::vector<MatchResult>& mr = r.results;
+    for (const DocResult& r : m_searchResult.results) {
+        const QVector<MatchResult>& mr = r.results;
 
-    }*/
+        if (mr.isEmpty()) continue;
+
+        const MatchResult* last = &(*mr.cbegin());
+        for (auto it = mr.cbegin()+1; it != mr.cend(); ++it) {
+            const int endLast = last->m_positionInFile + last->m_matchLength;
+            const int startCurr = it->m_positionInFile;
+
+            if (endLast > startCurr) {
+                qDebug() << "There are overlapping items";
+            }
+
+            last = &(*it);
+        }
+    }
 
 }
 
 void ReplaceWorker::run()
 {
     int count = 0;
-
-
 
     for (const DocResult& docResult : m_searchResult.results) {
         const QVector<MatchResult>& matchResults = docResult.results;
@@ -50,12 +58,12 @@ void ReplaceWorker::run()
         }
 
         int numReplaced = 0;
-        qint64 offset = 0;
-        const qint64 replacementLength = m_replacement.length();
+        int offset = 0;
+        const int replacementLength = m_replacement.length();
 
         for (const MatchResult& result : matchResults) {
-            const qint64 pos = result.m_matchOffset + offset;
-            const qint64 length = result.m_matchIndex.y();
+            const int pos = result.m_positionInFile + offset;
+            const int length = result.m_matchLength;
 
             decodedText.text.replace(pos, length, m_replacement);
 
