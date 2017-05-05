@@ -60,12 +60,14 @@ QString getFormattedResultText(const MatchResult& result, bool showFullText=fals
 }
 
 bool askConfirmationForReplace(QString replaceText, int numReplacements) {
-    return QMessageBox::information(nullptr, "Confirm Replacement",
+    return QMessageBox::information(QApplication::activeWindow(),
+                                    "Confirm Replacement",
                                     QString("This will replace %1 selected matches with \"%2\"."
                                             " This action cannot be undone. Continue?")
                                     .arg(numReplacements)
                                     .arg(replaceText),
-                                    QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok;
+                                    QMessageBox::Ok | QMessageBox::Cancel,
+                                    QMessageBox::Cancel) == QMessageBox::Ok;
 }
 
 
@@ -705,14 +707,10 @@ AdvancedSearchDock::AdvancedSearchDock()
         m_currentSearchInstance->isMaximized = checked;
     });
     connect(m_actShowFullLines, &QAction::toggled, [this](bool checked){
-        //TODO: NYI
-        //m_currentSearchInstance->showFullLines = checked;
         m_currentSearchInstance->setShowFullLines(checked);
-
     });
     connect(m_actRedoSearch, &QAction::triggered, [this](){
         setInputsFromConfig( m_currentSearchInstance->m_searchConfig );
-        //selectSearchFromHistory(0);
         m_cmbSearchHistory->setCurrentIndex(0);
     });
     connect(m_actCopyContents, &QAction::triggered, [this](){
@@ -737,30 +735,22 @@ AdvancedSearchDock::AdvancedSearchDock()
             }
         }
 
-        /*for(const auto& item : m_currentSearchInstance->resultMap)
-            if(item.first->checkState(0) == Qt::Checked)
-                cp += item.second->m_matchLine + '\n';*/
-
-        if(!cp.isEmpty())
+        if(!cp.isEmpty()) // Remove the final '\n' from the text
             cp.remove(cp.length()-1,1);
 
         QApplication::clipboard()->setText(cp);
     });
     connect(m_actRemoveSearch, &QAction::triggered, [this](){
-
         if(m_currentSearchInstance->searchInProgress) {
-            QMessageBox msgBox(nullptr);
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setIcon(QMessageBox::Warning);
-            msgBox.setText("<h3>This search is still in progress</h3>");
-            msgBox.setInformativeText("The search will be canceled and all results discarded if you continue.");
-            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Cancel);
-            msgBox.setEscapeButton(QMessageBox::Cancel);
-            msgBox.exec();
+            const auto response = QMessageBox::warning(
+                        QApplication::activeWindow(),
+                        "Search in progress",
+                        "<h3>This search is still in progress.</h3> " \
+                        "The search will be canceled and all results discarded if you continue.",
+                        QMessageBox::Ok | QMessageBox::Cancel,
+                        QMessageBox::Cancel);
 
-            if (msgBox.standardButton(msgBox.clickedButton()) == QMessageBox::Cancel)
-                return;
+            if (response == QMessageBox::Cancel) return;
         }
 
         m_searchInstances.erase(m_searchInstances.begin() + m_cmbSearchHistory->currentIndex()-1);
@@ -774,12 +764,13 @@ AdvancedSearchDock::AdvancedSearchDock()
 
         if( !askConfirmationForReplace(replaceText, 2) )
             return;
-
-        qDebug() << "replaceing";
     });
 
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
         QString replaceText = m_edtReplaceText->text();
+
+        if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->m_searchResult.countResults()) )
+            return;
 
         ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->m_searchResult, replaceText);
 
@@ -798,7 +789,6 @@ AdvancedSearchDock::AdvancedSearchDock()
         msgBox->setText("<h3>Replacing selected matches...</h3>");
         msgBox->setInformativeText("Replacing in progress");
         msgBox->setStandardButtons(QMessageBox::Cancel);
-        msgBox->setEscapeButton(QMessageBox::Cancel);
         msgBox->exec();
 
         w->wait();
@@ -909,6 +899,8 @@ void SearchInstance::setShowFullLines(bool showFullLines)
         const MatchResult& res = *item.second;
         treeItem->setText(0, getFormattedResultText(res, m_showFullLines));
     }
+    // TODO: This doesn't actually resize the widget view area.
+    //m_treeWidget->resizeColumnToContents(0);
 }
 
 void SearchInstance::onSearchProgress(int processed, int total)
@@ -920,6 +912,7 @@ void SearchInstance::onSearchCompleted()
 {
     searchInProgress = false;
 
+    // FileSearcher is not needed once we got the result. Thus we can move out of it and delete it asap.
     m_searchResult = std::move(m_fileSearcher->getResult());
     delete m_fileSearcher;
     m_fileSearcher = nullptr;
