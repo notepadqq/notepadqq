@@ -133,7 +133,7 @@ private:
 
     // Search panel items
     QComboBox*   m_cmbSearchScope;
-    QLineEdit*   m_edtSearchTerm;
+    QLineEdit*   m_edtSearchTerm; // TODO: Change to combo boxes and remember history
     QLineEdit*   m_edtSearchPattern;
     QLineEdit*   m_edtSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;

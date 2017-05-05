@@ -32,7 +32,7 @@ void ReplaceWorker::run()
 
 
     for (const DocResult& docResult : m_searchResult.results) {
-        const std::vector<MatchResult>& matchResults = docResult.results;
+        const QVector<MatchResult>& matchResults = docResult.results;
 
         if(m_wantToStop)
             return;
@@ -66,10 +66,10 @@ void ReplaceWorker::run()
         if (numReplaced == 0)
             continue;
 
-        /*if (!DocEngine::writeFromString(&f, decodedText)) {
+        if (!DocEngine::writeFromString(&f, decodedText)) {
             // TODO: Handle errors
             continue;
-        }*/
+        }
 
         qDebug() << "File" << docResult.fileName << "had" << numReplaced << "of" << matchResults.size() << "replaced.";
         QThread::msleep(50);

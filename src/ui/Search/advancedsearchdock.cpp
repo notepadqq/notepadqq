@@ -34,11 +34,16 @@
 
 #include "include/Search/replaceworker.h"
 
-QString getFormattedLocationText(int number, QString location) {
-    return QString("%1 Results for: '<b>%2</b>'").arg(number).arg(location.toHtmlEscaped());
+QString getFormattedLocationText(const DocResult& docResult, const QString& searchLocation) {
+    const int commonPathLength = searchLocation.length();
+    const QString relativePath = docResult.fileName.mid(commonPathLength);
+
+    return QString("<span style='white-space:pre-wrap;'><b>%1</b> Results for:   '<b>%2</b>'</span>")
+            .arg(docResult.results.size(), 4) // Pad the number so all rows line up nicely.
+            .arg(relativePath.toHtmlEscaped());
 }
 
-QString getFormattedResultText(int line, QString pre, QString resultMatch, QString post) {
+QString getFormattedResultText(const MatchResult& result, bool showFullText=false) {
     //const static QString highlightColor = QApplication::palette().alternateBase().color().name(); /*#ffef0b*/
     //const static QString highlightTextColor = QApplication::palette().highlightedText().color().name(); /*black;*/
 
@@ -47,13 +52,21 @@ QString getFormattedResultText(int line, QString pre, QString resultMatch, QStri
                 "%2"
                 "<span style='background-color: #ffef0b; color: black;'>%3</span>"
                 "%4</span>")
-            .arg(line)
-            .arg(pre.replace('\t', "    ").toHtmlEscaped(), // Natural tabs are way too large; just replace them.
-                 resultMatch.replace('\t', "    ").toHtmlEscaped(),
-                 post.replace('\t', "    ").toHtmlEscaped());
+            .arg(result.m_lineNumber)
+            // Natural tabs are way too large; just replace them.
+            .arg(result.getPreMatchString(showFullText).replace('\t', "    ").toHtmlEscaped(),
+                result.getMatchString().replace('\t', "    ").toHtmlEscaped(),
+                result.getPostMatchString(showFullText).replace('\t', "    ").toHtmlEscaped());
 }
 
-
+bool askConfirmationForReplace(QString replaceText, int numReplacements) {
+    return QMessageBox::information(nullptr, "Confirm Replacement",
+                                    QString("This will replace %1 selected matches with \"%2\"."
+                                            " This action cannot be undone. Continue?")
+                                    .arg(numReplacements)
+                                    .arg(replaceText),
+                                    QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Ok;
+}
 
 
 QDockWidgetTitleButton::QDockWidgetTitleButton(QDockWidget *dockWidget)
@@ -267,9 +280,11 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
     m_btnReplaceOne = new QToolButton;
     m_btnReplaceOne->setText("Replace One");
+    m_btnReplaceOne->setToolTip("Replaces the currently selected search result.");
 
     m_btnReplaceSelected = new QToolButton;
     m_btnReplaceSelected->setText("Replace Selected");
+    m_btnReplaceOne->setToolTip("Replaces all selected search results.");
 
     replaceOptions->addWidget(m_edtReplaceText);
     replaceOptions->addWidget(m_btnReplaceOne);
@@ -481,19 +496,14 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
 void AdvancedSearchDock::onChangeSearchScope(int index)
 {
     switch(index) {
-    case 0:
+    case 0: // Search current document
+    case 1: // Search all open documents
         m_edtSearchPattern->setEnabled(false);
         m_edtSearchDirectory->setEnabled(false);
         m_btnSelectSearchDirectory->setEnabled(false);
         m_chkIncludeSubdirs->setEnabled(false);
         break;
-    case 1:
-        m_edtSearchPattern->setEnabled(true);
-        m_edtSearchDirectory->setEnabled(false);
-        m_btnSelectSearchDirectory->setEnabled(false);
-        m_chkIncludeSubdirs->setEnabled(false);
-        break;
-    case 2:
+    case 2: // Search in file system
         m_edtSearchPattern->setEnabled(true);
         m_edtSearchDirectory->setEnabled(true);
         m_btnSelectSearchDirectory->setEnabled(true);
@@ -551,6 +561,16 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
                 SearchHelpers::SearchMode::Regex : SearchHelpers::SearchMode::PlainText;
     config.includeSubdirs = m_chkIncludeSubdirs->isChecked();
 
+
+    // TODO: Dummy config
+    config.searchString = "variable variable";
+    //config.filePattern = "*.cpp";
+    config.directory = "/home/s3rius/dev/nqqtest";
+    config.matchWord = false;
+    config.matchCase = false;
+    config.includeSubdirs = true;
+    config.searchMode = SearchHelpers::SearchMode::Regex; //PlainText
+
     return config;
 }
 
@@ -602,6 +622,7 @@ void AdvancedSearchDock::selectPrevResult()
     }
 
     treeWidget->setCurrentItem(prev);
+    emit treeWidget->doubleClicked(treeWidget->currentIndex());
 }
 
 void AdvancedSearchDock::selectNextResult()
@@ -630,6 +651,7 @@ void AdvancedSearchDock::selectNextResult()
     }
 
     treeWidget->setCurrentItem(next);
+    emit treeWidget->doubleClicked(treeWidget->currentIndex());
 }
 
 AdvancedSearchDock::AdvancedSearchDock()
@@ -747,32 +769,41 @@ AdvancedSearchDock::AdvancedSearchDock()
         onSearchHistorySizeChange();
     });
 
+    connect(m_btnReplaceOne, &QToolButton::clicked, [this](){
+        QString replaceText = m_edtReplaceText->text();
+
+        if( !askConfirmationForReplace(replaceText, 2) )
+            return;
+
+        qDebug() << "replaceing";
+    });
+
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
-        ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->m_searchResult, "testme");
+        QString replaceText = m_edtReplaceText->text();
 
+        ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->m_searchResult, replaceText);
 
+        QMessageBox* msgBox = new QMessageBox(nullptr);
 
-        QMessageBox msgBox(nullptr);
-
-        //connect(w, &ReplaceWorker::finished, w, &ReplaceWorker::deleteLater);
-        connect(w, &ReplaceWorker::resultReady, &msgBox, &QMessageBox::close);
-        connect(w, &ReplaceWorker::resultProgress, this, [&msgBox](int curr, int total) {
-            msgBox.setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
+        connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
+        connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
+            msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
         });
-        connect(&msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
+        connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
 
         w->start();
 
-        msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText("<h3>Replacing selected matches...</h3>");
-        msgBox.setInformativeText("Replacing in progress");
-        msgBox.setStandardButtons(QMessageBox::Cancel);
-        msgBox.setEscapeButton(QMessageBox::Cancel);
-        msgBox.exec();
+        msgBox->setWindowTitle(QCoreApplication::applicationName());
+        msgBox->setIcon(QMessageBox::Information);
+        msgBox->setText("<h3>Replacing selected matches...</h3>");
+        msgBox->setInformativeText("Replacing in progress");
+        msgBox->setStandardButtons(QMessageBox::Cancel);
+        msgBox->setEscapeButton(QMessageBox::Cancel);
+        msgBox->exec();
 
         w->wait();
         delete w;
+        delete msgBox;
     });
 
     m_cmbSearchHistory->setCurrentIndex(0);
@@ -825,7 +856,6 @@ SearchInstance::SearchInstance(const SearchConfig& config)
       m_searchConfig(config),
       m_treeWidget(new QTreeWidget()),
       m_fileSearcher( new FileSearcher(config) )
-      //m_searchWorker(new SearchWorker(config))
 {
     QTreeWidget* treeWidget = m_treeWidget.get();
 
@@ -877,12 +907,7 @@ void SearchInstance::setShowFullLines(bool showFullLines)
     for (auto& item : resultMap) {
         QTreeWidgetItem* treeItem = item.first;
         const MatchResult& res = *item.second;
-
-        treeItem->setText(0, res.getFormattedText(m_showFullLines));
-        /*treeItem->setText(0, getFormattedResultText(res.m_lineNumber,
-                                                    res.getPreMatchString(m_showFullLines),
-                                                    res.getMatchString(),
-                                                    res.getPostMatchString(m_showFullLines)));*/
+        treeItem->setText(0, getFormattedResultText(res, m_showFullLines));
     }
 }
 
@@ -908,17 +933,13 @@ void SearchInstance::onSearchCompleted()
     m_treeWidget->clear();
     for (const auto& doc : m_searchResult.results) {
         QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(m_treeWidget.get());
-        toplevelitem->setText(0, doc.getFormattedText());
+        toplevelitem->setText(0, getFormattedLocationText(doc, m_searchConfig.directory));
         toplevelitem->setCheckState(0, Qt::Checked);
         docMap[toplevelitem] = &doc;
 
         for (const auto& res : doc.results) {
             QTreeWidgetItem* it = new QTreeWidgetItem(toplevelitem);
-            it->setText(0, res.getFormattedText(m_showFullLines));
-            /*it->setText(0, getFormattedResultText(res.m_lineNumber,
-                                                  res.getPreMatchString(m_showFullLines),
-                                                  res.getMatchString(),
-                                                  res.getPostMatchString(m_showFullLines)));*/
+            it->setText(0, getFormattedResultText(res, m_showFullLines));
             it->setCheckState(0, Qt::Checked);
             resultMap[it] = &res;
         }
