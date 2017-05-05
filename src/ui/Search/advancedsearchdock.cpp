@@ -29,10 +29,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QDir>
 
-#include <array>
-
 #include "include/iconprovider.h"
-
 #include "include/Search/replaceworker.h"
 
 QString getFormattedLocationText(const DocResult& docResult, const QString& searchLocation) {
@@ -561,18 +558,18 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
     config.matchCase = m_chkMatchCase->isChecked();
     config.matchWord = m_chkMatchWords->isChecked();
     config.searchMode = m_chkUseRegex->isChecked() ?
-                SearchHelpers::SearchMode::Regex : SearchHelpers::SearchMode::PlainText;
+                SearchConfig::ModeRegex : SearchConfig::ModePlainText;
     config.includeSubdirs = m_chkIncludeSubdirs->isChecked();
 
 
     // TODO: Dummy config
-    config.searchString = "variable variable";
+    config.searchString = "Test\\tMe";
     //config.filePattern = "*.cpp";
     config.directory = "/home/s3rius/dev/nqqtest";
     config.matchWord = false;
     config.matchCase = false;
     config.includeSubdirs = true;
-    config.searchMode = SearchHelpers::SearchMode::Regex; //PlainText
+    config.searchMode = SearchConfig::ModeRegex; //PlainText
 
     return config;
 }
@@ -586,7 +583,7 @@ void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
 
     m_chkMatchCase->setChecked( config.matchCase );
     m_chkMatchWords->setChecked( config.matchWord );
-    m_chkUseRegex->setChecked( config.searchMode == SearchHelpers::SearchMode::Regex );
+    m_chkUseRegex->setChecked( config.searchMode == SearchConfig::ModeRegex );
     m_chkIncludeSubdirs->setChecked( config.includeSubdirs );
 }
 

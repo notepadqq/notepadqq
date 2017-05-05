@@ -1,17 +1,13 @@
 #ifndef SEARCHWORKER_H
 #define SEARCHWORKER_H
 
-#include <vector>
-
 #include <QObject>
-#include <QPoint>
 #include <QString>
 #include <QThread>
+#include <QRegularExpression>
+#include <QVector>
 
 #include "include/Search/searchhelpers.h"
-#include <QRegularExpression>
-
-#include <QDebug>
 
 // TODO: Find a good home for SearchConfig, MatchResult, etc
 struct SearchConfig {
@@ -24,7 +20,14 @@ struct SearchConfig {
     bool matchWord;
     bool includeSubdirs;
 
-    SearchHelpers::SearchMode searchMode;
+    enum SearchMode {
+        ModeRegex,
+        ModePlainText,
+        ModePlanTextSpecialChars
+    };
+    SearchMode searchMode;
+
+    //SearchHelpers::SearchMode searchMode;
 };
 
 struct MatchResult {

@@ -2,10 +2,8 @@
 #define ADVANCEDSEARCHDOCK_H
 
 #include <QObject>
-#include <QScopedPointer>
 #include <QDockWidget>
 #include <QAbstractButton>
-#include <QPoint>
 #include <QString>
 #include <QTreeWidget>
 
