@@ -77,7 +77,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
 
     while((offset = content.indexOf(m_searchConfig.searchString, offset, caseSense)) != -1) {
         if (m_searchConfig.matchWord && !matchesWholeWord(offset, matchLength, content) ) {
-            offset += matchLength;
+            offset += 1;
             continue;
         }
 
@@ -96,7 +96,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
 
         results.results.push_back(result);
 
-        offset += matchLength;
+        offset += 1;
     }
 
     return results;
@@ -129,7 +129,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 
         results.results.push_back(result);
 
-        offset += match.capturedLength();
+        offset += 1;
     }
 
     return results;
@@ -209,15 +209,6 @@ void FileSearcher::worker()
 }
 
 void FileSearcher::run() {
-
-    // TODO: Dummy config
-    m_searchConfig.searchString = "variable";
-    m_searchConfig.filePattern = "*.cpp";
-    m_searchConfig.directory = "/home/s3rius/dev/raspi-arm/qt5/qtbase/";
-    m_searchConfig.matchWord = false;
-    m_searchConfig.matchCase = false;
-    m_searchConfig.includeSubdirs = true;
-    m_searchConfig.searchMode = SearchHelpers::SearchMode::Regex; //PlainText
 
     auto t1 = QDateTime::currentMSecsSinceEpoch();
     worker();

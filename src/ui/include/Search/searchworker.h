@@ -28,19 +28,6 @@ struct SearchConfig {
 };
 
 struct MatchResult {
-
-    QString getFormattedText(bool showFullText=false) const {
-        return QString("<span style='white-space:pre-wrap;'>%1:\t"
-                       "%2"
-                       "<span style='background-color: #ffef0b; color: black;'>%3</span>"
-                       "%4</span>")
-                .arg(m_lineNumber)
-                 // Natural tabs are way too large; just replace them.
-                .arg(getPreMatchString(showFullText).replace('\t', "    ").toHtmlEscaped(),
-                     getMatchString().replace('\t', "    ").toHtmlEscaped(),
-                     getPostMatchString(showFullText).replace('\t', "    ").toHtmlEscaped());
-    }
-
     QString getMatchString() const { return m_matchLineString.mid(m_matchIndex.x(), m_matchIndex.y()); }
 
     QString getPreMatchString(bool fullText=false) const {
@@ -69,6 +56,7 @@ struct MatchResult {
     QPoint m_matchIndex;
     qint64 m_matchOffset;
     qint32 m_lineNumber;
+    bool m_selected = false;
 
 private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
@@ -77,18 +65,22 @@ private:
 
 
 struct DocResult {
-
-    QString getFormattedText() const {
-        // TODO: May want to cut down file path as well, if it's too long
-        return QString("%1 Results for: '<b>%2</b>'").arg(results.size()).arg(fileName.toHtmlEscaped());
-    }
-
     QString fileName;
-    std::vector<MatchResult> results;
+    QVector<MatchResult> results;
 };
 
 struct SearchResult {
-    std::vector<DocResult> results;
+
+    int countResults() const {
+        int total = 0;
+
+        for(const DocResult& docResult : results)
+            total += docResult.results.size();
+
+        return total;
+    }
+
+    QVector<DocResult> results;
 
     // TODO: Debug value
     qint64 m_timeToComplete;
