@@ -1,11 +1,14 @@
 #include "include/Search/searchworker.h"
 
-#include "include/Search/searchstring.h"
-#include "include/docengine.h"
 #include <QDirIterator>
 #include <QMessageBox>
+#include <QDebug>
 
+#include <vector>
 #include <algorithm>
+
+#include "include/Search/searchstring.h"
+#include "include/docengine.h"
 
 const int MatchResult::CUTOFF_LENGTH = 60;
 
@@ -147,21 +150,36 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 
 void FileSearcher::worker()
 {
-    if (m_searchConfig.searchMode == SearchHelpers::SearchMode::Regex) {
+    switch(m_searchConfig.searchMode) {
+    case SearchConfig::ModeRegex: {
         const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
                     QRegularExpression::MultilineOption :
                     QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
 
-        // TODO: Get rid of this one
-        SearchHelpers::SearchOptions so;
-        so.MatchWholeWord = m_searchConfig.matchWord;
-        so.MatchCase = m_searchConfig.matchCase;
-        QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig.searchMode, so);
+        QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
-    } else if (m_searchConfig.searchMode == SearchHelpers::SearchMode::SpecialChars) {
-        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
     }
+    case SearchConfig::ModePlainTextSpecialChars:
+        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
+        break;
+
+    case SearchConfig::ModePlanText:
+    default:
+        break;
+    };
+
+/*    if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
+        const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
+                    QRegularExpression::MultilineOption :
+                    QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
+
+        QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig);
+        m_regex.setPattern(rawSearch);
+        m_regex.setPatternOptions(options);
+    } else if (m_searchConfig.searchMode == SearchConfig::ModePlanTextSpecialChars) {
+        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
+    }*/
 
     const QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = m_searchConfig.includeSubdirs ?
                 (QDirIterator::Subdirectories | QDirIterator::FollowSymlinks) :
@@ -202,7 +220,7 @@ void FileSearcher::worker()
         }
 
         DocResult res;
-        if (m_searchConfig.searchMode == SearchHelpers::SearchMode::Regex) {
+        if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
             res = std::move(searchRegExp(decodedText.text));
         } else {
             res = std::move(searchPlainText(decodedText.text));

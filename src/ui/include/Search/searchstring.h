@@ -3,6 +3,8 @@
 #include "include/Search/searchhelpers.h"
 #include <QString>
 
+#include "include/Search/searchworker.h"
+
 class SearchString {
 public:
    /**
@@ -26,6 +28,10 @@ public:
     * @return `QString`: `data` with escape sequences unescaped.
     */
     static QString unescape(const QString &data);
+
+
+
+    static QString toRaw(const QString& expression, const SearchConfig& config);
 };
 
 #endif //__SEARCHSTRING_H_

@@ -2,9 +2,7 @@
 #define REPLACEWORKER_H
 
 #include <QObject>
-#include <QMutex>
 #include <QThread>
-#include <QDebug>
 
 #include "searchworker.h"
 
@@ -17,11 +15,7 @@ class ReplaceWorker : public QThread
     Q_OBJECT
 
 public:
-    explicit ReplaceWorker(const SearchResult& results, const QString &replacement);
-
-    ~ReplaceWorker() {
-        qDebug() << "Replacer destroyed";
-    }
+    ReplaceWorker(const SearchResult& results, const QString &replacement);
 
     void cancel() { m_wantToStop = true; }
     void validate();

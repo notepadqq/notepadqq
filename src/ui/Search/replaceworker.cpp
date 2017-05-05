@@ -1,11 +1,10 @@
 #include "include/Search/replaceworker.h"
 
-#include "include/docengine.h"
 #include <QFile>
 #include <QTextStream>
-#include <QMessageBox>
-
 #include <QDebug>
+
+#include "include/docengine.h"
 
 ReplaceWorker::ReplaceWorker(const SearchResult& results, const QString &replacement)
     : m_searchResult(results),
