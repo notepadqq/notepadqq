@@ -12,10 +12,12 @@ const int MatchResult::CUTOFF_LENGTH = 60;
 FileSearcher::FileSearcher(const SearchConfig& config)
     : QThread(nullptr),
       m_searchConfig(config)
-{
+{ }
 
-}
-
+/**
+ * @brief matchesWholeWord Returns true if the substring at data.mid(index,matchLength) is a whole word.
+ *                         This means it's preceeded and followed by either whitespace, symbols or punctuation.
+ */
 bool matchesWholeWord(int index, int matchLength, const QString &data)
 {
     QChar boundary;
@@ -35,6 +37,9 @@ bool matchesWholeWord(int index, int matchLength, const QString &data)
     return true;
 }
 
+/**
+ * @brief getLinePositions Returns a vector with the positions of all line beginnings of the given string.
+ */
 std::vector<int> getLinePositions(const QString &data)
 {
     const int dataSize = data.size();
@@ -55,7 +60,11 @@ std::vector<int> getLinePositions(const QString &data)
     return linePosition;
 }
 
-QString trimEnd(QString str) {
+/**
+ * @brief trimEnd Returns the string with all whitespace trimmed from the end.
+ *                Taken from the QString source code.
+ */
+QString trimEnd(const QString& str) {
     const QChar *begin = str.cbegin();
     const QChar *end = str.cend();
 
@@ -81,18 +90,19 @@ DocResult FileSearcher::searchPlainText(const QString& content)
             continue;
         }
 
-        // std::upper_bound returns an iterator to the first element greater than column. This is the line column is on
-        // since we want to start counting lines from 1. Otherwise we'd have to subtract 1.
-        // TODO: line-1 sucks
+        // std::upper_bound returns an iterator to the first element greater than column. This is the line after the match.
+        // Substract 1 to get the line the match is on.
         const auto it = std::upper_bound(linePosition.begin(), linePosition.end(), offset);
         const int line = std::distance(linePosition.begin(), it);
+        const int lineStart = linePosition[line-1];
+        const int lineEnd = linePosition[line];
 
         MatchResult result;
 
         result.m_lineNumber = line;
-        result.m_matchLineString = trimEnd(content.mid(linePosition[line-1], linePosition[line]-linePosition[line-1]));
+        result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
         result.m_matchOffset = offset;
-        result.m_matchIndex = QPoint(offset - linePosition[line-1], matchLength);
+        result.m_matchIndex = QPoint(offset - lineStart, matchLength);
 
         results.results.push_back(result);
 
@@ -119,13 +129,15 @@ DocResult FileSearcher::searchRegExp(const QString &content)
         offset = match.capturedStart();
         const auto it = std::upper_bound(linePosition.begin(), linePosition.end(), offset);
         const int line = std::distance(linePosition.begin(), it);
+        const int lineStart = linePosition[line-1];
+        const int lineEnd = linePosition[line];
 
         MatchResult result;
 
         result.m_lineNumber = line;
-        result.m_matchLineString = trimEnd(content.mid(linePosition[line-1], linePosition[line]-linePosition[line-1]));
+        result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
         result.m_matchOffset = offset;
-        result.m_matchIndex = QPoint(offset - linePosition[line-1], match.capturedLength());
+        result.m_matchIndex = QPoint(offset - lineStart, match.capturedLength());
 
         results.results.push_back(result);
 
@@ -138,7 +150,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 void FileSearcher::worker()
 {
     QFlags<QRegularExpression::PatternOption> options = QRegularExpression::MultilineOption;
-    QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = QDirIterator::NoIteratorFlags;
+
 
     if (m_searchConfig.searchMode == SearchHelpers::SearchMode::Regex) {
         if (m_searchConfig.matchCase == false) {
@@ -156,17 +168,13 @@ void FileSearcher::worker()
         m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
     }
 
+    const QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = m_searchConfig.includeSubdirs ?
+                (QDirIterator::Subdirectories | QDirIterator::FollowSymlinks) :
+                QDirIterator::NoIteratorFlags;
 
-    if (m_searchConfig.includeSubdirs) {
-        dirIteratorOptions |= QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
-    }
-
-
-    // TODO: Test with multiple filters
-    QStringList filters = m_searchConfig.filePattern.split(",", QString::SkipEmptyParts);
-    for (int i = 0; i < filters.count(); i++) { // TODO: For-each ?
-        filters[i] = filters[i].trimmed();
-    }
+    QStringList filters = m_searchConfig.filePattern.split(',', QString::SkipEmptyParts);
+    for (QString& item : filters)
+        item = item.trimmed();
 
     QDirIterator it(m_searchConfig.directory, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
 
@@ -189,10 +197,12 @@ void FileSearcher::worker()
         QFile f(fileName);
         DocEngine::DecodedText decodedText;
         decodedText = DocEngine::readToString(&f);
-
-        // TODO: if(decodedText.error) ...
-
         f.close();
+
+        if (decodedText.error) {
+            // TODO: File could not be read. Add it to an error array so we can output it all.
+            continue;
+        }
 
         DocResult res;
         if (m_searchConfig.searchMode == SearchHelpers::SearchMode::Regex) {
