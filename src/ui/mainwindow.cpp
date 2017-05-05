@@ -174,8 +174,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
         Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
 
-        editor->setSelection(result.m_lineNumber-1, result.m_matchIndex.x(), //selection start
-                             result.m_lineNumber-1, result.m_matchIndex.x() + result.m_matchIndex.y()); //selection end
+        editor->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
+                             result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
         editor->setFocus();
     });
 
