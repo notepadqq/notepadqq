@@ -34,13 +34,11 @@
 #include "include/Search/replaceworker.h"
 
 /**
- * @brief addUniqueToList Adds the given item to the given list. Removes duplicates from list.
+ * @brief addUniqueToList Adds the given item to the given list. Also removes duplicates from list.
+ *        This is just a helper used in the updateXHistory functions.
  * @return The updated list, with item added and duplicates removed.
  */
 QStringList addUniqueToList(QStringList list, const QString& item) {
-    if (item.isEmpty())
-        return list;
-
     list.prepend(item);
     list.removeDuplicates();
     list = list.mid(0, 10);
@@ -57,6 +55,8 @@ QString getFormattedLocationText(const DocResult& docResult, const QString& sear
 }
 
 QString getFormattedResultText(const MatchResult& result, bool showFullText=false) {
+    // If, at some point, we want to use different color schemes for the text highlighting, these are ways to grab
+    // Colors from specific palettes from Qt.
     //const static QString highlightColor = QApplication::palette().alternateBase().color().name(); /*#ffef0b*/
     //const static QString highlightTextColor = QApplication::palette().highlightedText().color().name(); /*black;*/
 
@@ -779,6 +779,8 @@ QDockWidget* AdvancedSearchDock::getDockWidget() const
 }
 
 void AdvancedSearchDock::updateSearchHistory(const QString& item) {
+    if(item.isEmpty()) return;
+
     NqqSettings& settings = NqqSettings::getInstance();
     auto history = addUniqueToList(settings.Search.getSearchHistory(), item);
     settings.Search.setSearchHistory(history);
@@ -787,6 +789,8 @@ void AdvancedSearchDock::updateSearchHistory(const QString& item) {
 }
 
 void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
+    if(item.isEmpty()) return;
+
     NqqSettings& settings = NqqSettings::getInstance();
     auto history = addUniqueToList(settings.Search.getReplaceHistory(), item);
     settings.Search.setReplaceHistory(history);
@@ -795,6 +799,8 @@ void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
 }
 
 void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
+    if(item.isEmpty()) return;
+
     NqqSettings& settings = NqqSettings::getInstance();
     auto history = addUniqueToList(settings.Search.getFileHistory(), item);
     settings.Search.setFileHistory(history);
@@ -803,6 +809,8 @@ void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
 }
 
 void AdvancedSearchDock::updateFilterHistory(const QString& item) {
+    if(item.isEmpty()) return;
+
     NqqSettings& settings = NqqSettings::getInstance();
     auto history = addUniqueToList(settings.Search.getFilterHistory(), item);
     settings.Search.setFilterHistory(history);

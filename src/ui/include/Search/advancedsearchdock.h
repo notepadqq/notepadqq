@@ -110,6 +110,7 @@ signals:
     void resultItemClicked(const DocResult& doc, const MatchResult& result);
 
 private:
+    // Functions used to construct parts of the dock's user interface. Called in the constructor.
     QLayout* buildLeftTitlebar();
     QLayout* buildUpperTitlebarLayout();
     QLayout* buildReplaceOptionsLayout();
@@ -154,7 +155,7 @@ private:
 
     // Search panel items
     QComboBox*   m_cmbSearchScope;
-    QComboBox*   m_cmbSearchTerm; // TODO: Change to combo boxes and remember history
+    QComboBox*   m_cmbSearchTerm;
     QComboBox*   m_cmbSearchPattern;
     QComboBox*   m_cmbSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;
