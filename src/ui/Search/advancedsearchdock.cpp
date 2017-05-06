@@ -279,6 +279,8 @@ QLayout* AdvancedSearchDock::buildUpperTitlebarLayout() {
 }
 
 QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
+    NqqSettings& settings = NqqSettings::getInstance();
+
     m_replaceOptionsLayout = new QVBoxLayout;
 
     // Add a separating line.
@@ -289,9 +291,14 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     // Add the bar with replace options.
     QHBoxLayout* replaceOptions = new QHBoxLayout;
 
-    m_edtReplaceText = new QLineEdit;
-    m_edtReplaceText->setMaximumWidth(300);
-    m_edtReplaceText->setPlaceholderText("Replace Text");
+    m_cmbReplaceText = new QComboBox;
+    m_cmbReplaceText->setEditable(true);
+    m_cmbReplaceText->lineEdit()->setPlaceholderText("Replace Text");
+    m_cmbReplaceText->setMaximumWidth(300);
+    m_cmbReplaceText->setMinimumWidth(300);
+    m_cmbReplaceText->lineEdit()->setClearButtonEnabled(true);
+    m_cmbReplaceText->addItems(settings.Search.getReplaceHistory());
+    m_cmbReplaceText->setCurrentText("");
 
     m_btnReplaceOne = new QToolButton;
     m_btnReplaceOne->setText("Replace One");
@@ -301,7 +308,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_btnReplaceSelected->setText("Replace Selected");
     m_btnReplaceOne->setToolTip("Replaces all selected search results.");
 
-    replaceOptions->addWidget(m_edtReplaceText);
+    replaceOptions->addWidget(m_cmbReplaceText);
     replaceOptions->addWidget(m_btnReplaceOne);
     replaceOptions->addWidget(m_btnReplaceSelected);
     replaceOptions->setSizeConstraint(QHBoxLayout::SetNoConstraint);
@@ -648,7 +655,7 @@ AdvancedSearchDock::AdvancedSearchDock()
     connect(m_btnToggleReplaceOptions, &QToolButton::toggled, [this](bool checked){
         if (checked) {
             m_titlebarLayout->addLayout(m_replaceOptionsLayout);
-            m_edtReplaceText->clear();
+            m_cmbReplaceText->setCurrentText("");
         } else
             m_titlebarLayout->removeItem(m_replaceOptionsLayout);
     });
@@ -707,17 +714,21 @@ AdvancedSearchDock::AdvancedSearchDock()
     });
 
     connect(m_btnReplaceOne, &QToolButton::clicked, [this](){
-        QString replaceText = m_edtReplaceText->text();
+        QString replaceText = m_cmbReplaceText->currentText();
 
         if( !askConfirmationForReplace(replaceText, 2) )
             return;
+
+        updateReplaceHistory(replaceText);
     });
 
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
-        QString replaceText = m_edtReplaceText->text();
+        QString replaceText = m_cmbReplaceText->currentText();
 
         if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->getSearchResult().countResults()) )
             return;
+
+        updateReplaceHistory(replaceText);
 
         ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
 
@@ -779,8 +790,8 @@ void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
     NqqSettings& settings = NqqSettings::getInstance();
     auto history = addUniqueToList(settings.Search.getReplaceHistory(), item);
     settings.Search.setReplaceHistory(history);
-    m_cmbSearchTerm->clear();
-    m_cmbSearchTerm->addItems(history);
+    m_cmbReplaceText->clear();
+    m_cmbReplaceText->addItems(history);
 }
 
 void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
