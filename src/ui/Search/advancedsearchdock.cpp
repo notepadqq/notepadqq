@@ -45,6 +45,12 @@ QStringList addUniqueToList(QStringList list, const QString& item) {
     return list;
 }
 
+/**
+ * @brief getFormattedLocationText Creates a html-formatted string to use as the text of a toplevel QTreeWidget item.
+ * @param docResult The DocResult to grab the information from
+ * @param searchLocation The base directory that was searched
+ * @return The html-formatted string
+ */
 QString getFormattedLocationText(const DocResult& docResult, const QString& searchLocation) {
     const int commonPathLength = searchLocation.length();
     const QString relativePath = docResult.fileName.mid(commonPathLength);
@@ -54,6 +60,12 @@ QString getFormattedLocationText(const DocResult& docResult, const QString& sear
             .arg(relativePath.toHtmlEscaped());
 }
 
+/**
+ * @brief getFormattedLocationText Creates a html-formatted string to use as the text of a sublevel QTreeWidget item.
+ * @param result The MatchResult to grab the information from
+ * @param showFullText True if the match's full text line should be down. When false, long lines will be shortened.
+ * @return The html-formatted string
+ */
 QString getFormattedResultText(const MatchResult& result, bool showFullText=false) {
     // If, at some point, we want to use different color schemes for the text highlighting, these are ways to grab
     // Colors from specific palettes from Qt.
@@ -72,6 +84,13 @@ QString getFormattedResultText(const MatchResult& result, bool showFullText=fals
                 result.getPostMatchString(showFullText).replace('\t', "    ").toHtmlEscaped());
 }
 
+/**
+ * @brief askConfirmationForReplace Shows a blocking QMessageBox asking whether a user wants to go through with a
+ *                                  replacement action.
+ * @param replaceText The text that will be used to replace all match instances.
+ * @param numReplacements The number of instances that will be replaced.
+ * @return True if the user wants to continue. False otherwise.
+ */
 bool askConfirmationForReplace(QString replaceText, int numReplacements) {
     return QMessageBox::information(QApplication::activeWindow(),
                                     "Confirm Replacement",
@@ -583,7 +602,7 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
     config.directory = m_cmbSearchDirectory->currentText();
     config.filePattern = m_cmbSearchPattern->currentText();
     config.searchString = m_cmbSearchTerm->currentText();
-    config.scope = m_cmbSearchScope->currentIndex();
+    config.setScopeFromInt(m_cmbSearchScope->currentIndex());
 
     config.matchCase = m_chkMatchCase->isChecked();
     config.matchWord = m_chkMatchWords->isChecked();
@@ -609,7 +628,7 @@ void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
     m_cmbSearchDirectory->setCurrentText( config.directory );
     m_cmbSearchPattern->setCurrentText( config.filePattern );
     m_cmbSearchTerm->setCurrentText( config.searchString );
-    m_cmbSearchScope->setCurrentIndex( config.scope );
+    m_cmbSearchScope->setCurrentIndex( config.searchScope );
 
     m_chkMatchCase->setChecked( config.matchCase );
     m_chkMatchWords->setChecked( config.matchWord );
@@ -823,10 +842,9 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
     if (cfg.searchString.isEmpty())
         return;
 
-    // TODO: Don't use magic numbers here.
-    const int searchScope = cfg.scope;
+    const SearchConfig::SearchScope scope = cfg.searchScope;
 
-    if (searchScope == 2) {
+    if (scope == SearchConfig::ScopeFileSystem) {
         // If we're searching the file system, check that the search dir is not empty and actually exists
         if (cfg.directory.isEmpty()) return;
 
@@ -842,14 +860,14 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
     }
 
     // TODO: Implement other search types
-    if(searchScope != 2) {
+    if(scope != SearchConfig::ScopeFileSystem) {
         QMessageBox::information(nullptr, "NYI", "Only searches in file system scope currently implemented.");
         return;
     }
 
     // Update history
     updateSearchHistory(cfg.searchString);
-    if (searchScope==2) {
+    if (scope == SearchConfig::ScopeFileSystem) {
         updateDirectoryhHistory(cfg.directory);
         updateFilterHistory(cfg.filePattern);
     }
@@ -857,10 +875,7 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
 
     m_searchInstances.push_back( std::unique_ptr<SearchInstance>(new SearchInstance(cfg)) );
 
-    const int idx = cfg.scope;
-    QString scope = idx==0 ? "Current Document: " : idx==1 ? "All Documents: " : "File System: ";
-
-    m_cmbSearchHistory->addItem( scope + "\"" + cfg.searchString + "\"" );
+    m_cmbSearchHistory->addItem( cfg.getScopeAsString() + ": \"" + cfg.searchString + "\"" );
     m_cmbSearchHistory->setCurrentIndex( m_cmbSearchHistory->count()-1 );
 
     onSearchHistorySizeChange();
