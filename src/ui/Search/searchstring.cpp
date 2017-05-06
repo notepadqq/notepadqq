@@ -5,7 +5,7 @@
 QString SearchString::toRaw(const QString& expression, const SearchConfig& config)
 {
     QString rawSearch = expression;
-    if (config.searchMode == SearchConfig::ModePlanTextSpecialChars) {
+    if (config.searchMode == SearchConfig::ModePlainTextSpecialChars) {
         rawSearch = toRegex(expression, config.matchWord);
         rawSearch = rawSearch.replace("\\\\", "\\");
     } else if (config.searchMode == SearchConfig::ModePlainText){

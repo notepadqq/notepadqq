@@ -415,7 +415,7 @@ void AdvancedSearchDock::clearHistory()
     const bool anySearchInProgess = std::any_of(m_searchInstances.begin(),
                                                 m_searchInstances.end(),
                                                 [](const std::unique_ptr<SearchInstance>& inst) {
-        return inst->searchInProgress;
+        return inst->isSearchInProgress();
     });
 
     if(anySearchInProgess) {
@@ -447,7 +447,7 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
     qDebug() << "Index is " << index << "and size is " << m_cmbSearchHistory->count();
 
     // TODO: Clean this up, move stuff into a connect/disconnect function, something like that.
-    if(m_currentSearchInstance && m_currentSearchInstance->searchInProgress) {
+    if(m_currentSearchInstance && m_currentSearchInstance->isSearchInProgress()) {
         disconnect(m_currentSearchInstance, &SearchInstance::searchCompleted,
                    this, &AdvancedSearchDock::onCurrentSearchInstanceCompleted);
     }
@@ -470,7 +470,7 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
     } else {
         m_currentSearchInstance = m_searchInstances[index-1].get();
 
-        if(m_currentSearchInstance->searchInProgress) {
+        if(m_currentSearchInstance->isSearchInProgress()) {
             connect(m_currentSearchInstance, &SearchInstance::searchCompleted,
                        this, &AdvancedSearchDock::onCurrentSearchInstanceCompleted);
         }
@@ -478,15 +478,12 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
         connect(m_currentSearchInstance, &SearchInstance::resultItemClicked,
                    this, &AdvancedSearchDock::resultItemClicked);
 
-        QTreeWidget* treeWidget = m_currentSearchInstance->m_treeWidget.get();
-
-        m_dockWidget->setWidget(treeWidget);
+        m_dockWidget->setWidget( m_currentSearchInstance->getResultTreeWidget() );
         m_btnToggleReplaceOptions->setEnabled(true);
         m_btnMoreOptions->setEnabled(true);
         m_btnPrevResult->setEnabled(true);
         m_btnNextResult->setEnabled(true);
-
-        m_actExpandAll->setChecked( m_currentSearchInstance->isMaximized );
+        m_actExpandAll->setChecked( m_currentSearchInstance->areResultsExpanded() );
         m_actShowFullLines->setChecked( m_currentSearchInstance->getShowFullLines() );
 
         updateSearchInProgressUi();
@@ -536,7 +533,7 @@ void AdvancedSearchDock::onUserInput()
 
 void AdvancedSearchDock::updateSearchInProgressUi()
 {
-    const bool progress = m_currentSearchInstance->searchInProgress;
+    const bool progress = m_currentSearchInstance->isSearchInProgress();
 
     m_actExpandAll->setEnabled(!progress);
     m_actCopyContents->setEnabled(!progress);
@@ -597,61 +594,12 @@ void AdvancedSearchDock::onSearchHistorySizeChange()
 
 void AdvancedSearchDock::selectPrevResult()
 {
-    QTreeWidget* treeWidget = m_currentSearchInstance->m_treeWidget.get();
-
-    QTreeWidgetItem* curr = treeWidget->currentItem();
-    QTreeWidgetItem* prev = nullptr;
-
-    if(!curr) {
-        QTreeWidgetItem* lastTop = treeWidget->topLevelItem(treeWidget->topLevelItemCount()-1);
-        prev = lastTop->child(lastTop->childCount()-1);
-    } else if(!curr->parent()) {
-        prev = curr->child(curr->childCount()-1);
-    } else {
-        QTreeWidgetItem* top = curr->parent();
-        int prevIndex = top->indexOfChild(curr) - 1;
-
-        if(prevIndex >= 0)
-            prev = top->child(prevIndex);
-        else {
-            int prevTop = treeWidget->indexOfTopLevelItem(top) - 1;
-            if(prevTop < 0)
-                prevTop = treeWidget->topLevelItemCount() - 1;
-            prev = treeWidget->topLevelItem(prevTop)->child(treeWidget->topLevelItem(prevTop)->childCount()-1);
-        }
-    }
-
-    treeWidget->setCurrentItem(prev);
-    emit treeWidget->doubleClicked(treeWidget->currentIndex());
+    if(m_currentSearchInstance) m_currentSearchInstance->selectPreviousResult();
 }
 
 void AdvancedSearchDock::selectNextResult()
 {
-    QTreeWidget* treeWidget = m_currentSearchInstance->m_treeWidget.get();
-
-    QTreeWidgetItem* curr = treeWidget->currentItem();
-    QTreeWidgetItem* next = nullptr;
-
-    if(!curr)
-        next = treeWidget->topLevelItem(0)->child(0);
-    else if(!curr->parent()) {
-        next = curr->child(0);
-    } else {
-        QTreeWidgetItem* top = curr->parent();
-        int nextIndex = top->indexOfChild(curr) + 1;
-
-        if(nextIndex < top->childCount())
-            next = top->child(nextIndex);
-        else {
-            int nextTop = treeWidget->indexOfTopLevelItem(top) + 1;
-            if(nextTop >= treeWidget->topLevelItemCount())
-                nextTop = 0;
-            next = treeWidget->topLevelItem(nextTop)->child(0);
-        }
-    }
-
-    treeWidget->setCurrentItem(next);
-    emit treeWidget->doubleClicked(treeWidget->currentIndex());
+    if(m_currentSearchInstance) m_currentSearchInstance->selectNextResult();
 }
 
 AdvancedSearchDock::AdvancedSearchDock()
@@ -700,49 +648,21 @@ AdvancedSearchDock::AdvancedSearchDock()
 
     // "More Options" menu connections
     connect(m_actExpandAll, &QAction::toggled, [this](bool checked){
-        QTreeWidget* treeWidget = m_currentSearchInstance->m_treeWidget.get();
-
-        if(checked) treeWidget->expandAll();
-        else treeWidget->collapseAll();
-
-        m_currentSearchInstance->isMaximized = checked;
+        if(checked) m_currentSearchInstance->expandAllResults();
+        else m_currentSearchInstance->collapseAllResults();
     });
     connect(m_actShowFullLines, &QAction::toggled, [this](bool checked){
-        m_currentSearchInstance->setShowFullLines(checked);
+        m_currentSearchInstance->showFullLines(checked);
     });
     connect(m_actRedoSearch, &QAction::triggered, [this](){
-        setInputsFromConfig( m_currentSearchInstance->m_searchConfig );
+        setInputsFromConfig( m_currentSearchInstance->getSearchConfig() );
         m_cmbSearchHistory->setCurrentIndex(0);
     });
     connect(m_actCopyContents, &QAction::triggered, [this](){
-        //const SearchResult& sr = m_currentSearchInstance->searchResult;
-
-        QString cp;
-
-        /*for(const auto& docResult : sr.results)
-            for(const auto& matchResult : docResult.results)
-              cp += matchResult.m_matchLine + "\n";*/
-
-        //This terrible abomination loops through all QTreeWidgetItems and copies their
-        //contents if they are checked. This way proper item order is preserved.
-        //TODO: rework
-        QTreeWidget* tree = m_currentSearchInstance->m_treeWidget.get();
-        for(int i=0; i<tree->topLevelItemCount(); i++) {
-            for(int c=0; c<tree->topLevelItem(i)->childCount();c++) {
-                QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
-
-                if(it->checkState(0) == Qt::Checked)
-                    cp += m_currentSearchInstance->resultMap[it]->m_matchLineString + '\n';
-            }
-        }
-
-        if(!cp.isEmpty()) // Remove the final '\n' from the text
-            cp.remove(cp.length()-1,1);
-
-        QApplication::clipboard()->setText(cp);
+        m_currentSearchInstance->copySelectedLinesToClipboard();
     });
     connect(m_actRemoveSearch, &QAction::triggered, [this](){
-        if(m_currentSearchInstance->searchInProgress) {
+        if(m_currentSearchInstance->isSearchInProgress()) {
             const auto response = QMessageBox::warning(
                         QApplication::activeWindow(),
                         "Search in progress",
@@ -770,10 +690,10 @@ AdvancedSearchDock::AdvancedSearchDock()
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
         QString replaceText = m_edtReplaceText->text();
 
-        if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->m_searchResult.countResults()) )
+        if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->getSearchResult().countResults()) )
             return;
 
-        ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->m_searchResult, replaceText);
+        ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
 
         QMessageBox* msgBox = new QMessageBox(nullptr);
 
@@ -884,9 +804,9 @@ SearchInstance::SearchInstance(const SearchConfig& config)
     });
 
     connect(treeWidget, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem *item) {
-        auto it = resultMap.find(item);
-        if(it != resultMap.end())
-            emit resultItemClicked( *docMap.at(item->parent()), *(it->second) );
+        auto it = m_resultMap.find(item);
+        if(it != m_resultMap.end())
+            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second) );
     });
 
     connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
@@ -905,20 +825,116 @@ SearchInstance::~SearchInstance()
     if(m_fileSearcher) m_fileSearcher->cancel();
 }
 
-void SearchInstance::setShowFullLines(bool showFullLines)
+void SearchInstance::showFullLines(bool showFullLines)
 {
-    m_showFullLines = showFullLines;
-
-    if(searchInProgress)
+    if(m_showFullLines == showFullLines)
         return;
 
-    for (auto& item : resultMap) {
+    m_showFullLines = showFullLines;
+
+    if(m_isSearchInProgress)
+        return;
+
+    for (auto& item : m_resultMap) {
         QTreeWidgetItem* treeItem = item.first;
         const MatchResult& res = *item.second;
-        treeItem->setText(0, getFormattedResultText(res, m_showFullLines));
+        treeItem->setText(0, getFormattedResultText(res, showFullLines));
     }
     // TODO: This doesn't actually resize the widget view area.
     //m_treeWidget->resizeColumnToContents(0);
+}
+
+void SearchInstance::expandAllResults()
+{
+    m_treeWidget->expandAll();
+    m_resultsAreExpanded = true;
+}
+
+void SearchInstance::collapseAllResults()
+{
+    m_treeWidget->collapseAll();
+    m_resultsAreExpanded = true;
+}
+
+void SearchInstance::selectNextResult()
+{
+    QTreeWidget* treeWidget = getResultTreeWidget();
+
+    QTreeWidgetItem* curr = treeWidget->currentItem();
+    QTreeWidgetItem* next = nullptr;
+
+    if(!curr)
+        next = treeWidget->topLevelItem(0)->child(0);
+    else if(!curr->parent()) {
+        next = curr->child(0);
+    } else {
+        QTreeWidgetItem* top = curr->parent();
+        int nextIndex = top->indexOfChild(curr) + 1;
+
+        if(nextIndex < top->childCount())
+            next = top->child(nextIndex);
+        else {
+            int nextTop = treeWidget->indexOfTopLevelItem(top) + 1;
+            if(nextTop >= treeWidget->topLevelItemCount())
+                nextTop = 0;
+            next = treeWidget->topLevelItem(nextTop)->child(0);
+        }
+    }
+
+    treeWidget->setCurrentItem(next);
+    emit treeWidget->doubleClicked(treeWidget->currentIndex());
+}
+
+void SearchInstance::selectPreviousResult()
+{
+    QTreeWidget* treeWidget = getResultTreeWidget();
+
+    QTreeWidgetItem* curr = treeWidget->currentItem();
+    QTreeWidgetItem* prev = nullptr;
+
+    if(!curr) {
+        QTreeWidgetItem* lastTop = treeWidget->topLevelItem(treeWidget->topLevelItemCount()-1);
+        prev = lastTop->child(lastTop->childCount()-1);
+    } else if(!curr->parent()) {
+        prev = curr->child(curr->childCount()-1);
+    } else {
+        QTreeWidgetItem* top = curr->parent();
+        int prevIndex = top->indexOfChild(curr) - 1;
+
+        if(prevIndex >= 0)
+            prev = top->child(prevIndex);
+        else {
+            int prevTop = treeWidget->indexOfTopLevelItem(top) - 1;
+            if(prevTop < 0)
+                prevTop = treeWidget->topLevelItemCount() - 1;
+            prev = treeWidget->topLevelItem(prevTop)->child(treeWidget->topLevelItem(prevTop)->childCount()-1);
+        }
+    }
+
+    treeWidget->setCurrentItem(prev);
+    emit treeWidget->doubleClicked(treeWidget->currentIndex());
+}
+
+void SearchInstance::copySelectedLinesToClipboard() const
+{
+    QString cp;
+
+    //This loops through all QTreeWidgetItems and copies their
+    //contents if they are checked. This way proper item order is preserved.
+    const QTreeWidget* tree = m_treeWidget.get();
+    for (int i=0; i<tree->topLevelItemCount(); i++) {
+        for (int c=0; c<tree->topLevelItem(i)->childCount(); c++) {
+            QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
+
+            if (it->checkState(0) == Qt::Checked)
+                cp += m_resultMap.at(it)->m_matchLineString + '\n';
+        }
+    }
+
+    if(!cp.isEmpty()) // Remove the final '\n' from the text
+        cp.remove(cp.length()-1,1);
+
+    QApplication::clipboard()->setText(cp);
 }
 
 void SearchInstance::onSearchProgress(int processed, int total)
@@ -928,7 +944,7 @@ void SearchInstance::onSearchProgress(int processed, int total)
 
 void SearchInstance::onSearchCompleted()
 {
-    searchInProgress = false;
+    m_isSearchInProgress = false;
 
     // FileSearcher is not needed once we got the result. Thus we can move out of it and delete it asap.
     m_searchResult = std::move(m_fileSearcher->getResult());
@@ -946,13 +962,13 @@ void SearchInstance::onSearchCompleted()
         QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(m_treeWidget.get());
         toplevelitem->setText(0, getFormattedLocationText(doc, m_searchConfig.directory));
         toplevelitem->setCheckState(0, Qt::Checked);
-        docMap[toplevelitem] = &doc;
+        m_docMap[toplevelitem] = &doc;
 
         for (const auto& res : doc.results) {
             QTreeWidgetItem* it = new QTreeWidgetItem(toplevelitem);
             it->setText(0, getFormattedResultText(res, m_showFullLines));
             it->setCheckState(0, Qt::Checked);
-            resultMap[it] = &res;
+            m_resultMap[it] = &res;
         }
     }
 

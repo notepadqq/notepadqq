@@ -23,7 +23,7 @@ struct SearchConfig {
     enum SearchMode {
         ModeRegex,
         ModePlainText,
-        ModePlanTextSpecialChars
+        ModePlainTextSpecialChars
     };
     SearchMode searchMode;
 
