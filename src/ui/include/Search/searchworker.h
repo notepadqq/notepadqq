@@ -11,23 +11,48 @@
 
 // TODO: Find a good home for SearchConfig, MatchResult, etc
 struct SearchConfig {
-    int scope;
-    QString searchString;
-    QString filePattern;
-    QString directory;
 
-    bool matchCase;
-    bool matchWord;
-    bool includeSubdirs;
+    /**
+     * @brief setScopeFromInt Sets searchScope to the given int. Helper function to avoid int<->SearchScope cast.
+     * @param scopeAsInt Must be between 0 and 3.
+     */
+    void setScopeFromInt(int scopeAsInt) {
+        if(scopeAsInt>0 && scopeAsInt<3) searchScope = static_cast<SearchScope>(scopeAsInt);
+    }
+
+    /**
+     * @brief getScopeAsString Returns a readable label for the config's current searchScope
+     */
+    QString getScopeAsString() const {
+        switch(searchScope){
+        case ScopeCurrentDocument: return QObject::tr("Current Document");
+        case ScopeAllOpenDocuments: return QObject::tr("All Documents");
+        case ScopeFileSystem: return QObject::tr("File System");
+        default: return "Invalid";
+        }
+    }
+
+    QString searchString;
+    QString filePattern; // Only used if searchMode==ScopeFileSystem.
+    QString directory;   // Only used if searchMode==ScopeFileSystem.
+
+    bool matchCase = false;
+    bool matchWord = false;
+    bool includeSubdirs = false; // Only used if searchMode==ScopeFileSystem.
+
+    enum SearchScope {
+        ScopeCurrentDocument    = 0,
+        ScopeAllOpenDocuments   = 1,
+        ScopeFileSystem         = 2
+    };
+    SearchScope searchScope;
 
     enum SearchMode {
-        ModeRegex,
-        ModePlainText,
-        ModePlainTextSpecialChars
+        ModeRegex                   = 0,
+        ModePlainText               = 1,
+        ModePlainTextSpecialChars   = 2
     };
     SearchMode searchMode;
-
-    //SearchHelpers::SearchMode searchMode;
 };
 
 struct MatchResult {
@@ -53,6 +78,7 @@ struct MatchResult {
             return m_matchLineString.right(end-pos);
     }
 
+    // TODO: Decide if these remain public vars or not.
 //private:
     QString m_matchLineString;
 
@@ -61,7 +87,7 @@ struct MatchResult {
     int m_positionInLine;
     int m_matchLength;
 
-    bool m_selected = false;
+    bool m_selected = false; // TODO: Current not used
 
 private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
@@ -76,6 +102,9 @@ struct DocResult {
 
 struct SearchResult {
 
+    /**
+     * @brief countResults Returns the total number of MatchResults in all DocResults combined.
+     */
     int countResults() const {
         int total = 0;
 
