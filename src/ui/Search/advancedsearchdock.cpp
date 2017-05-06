@@ -29,8 +29,23 @@
 #include <QAbstractTextDocumentLayout>
 #include <QDir>
 
+#include "include/nqqsettings.h"
 #include "include/iconprovider.h"
 #include "include/Search/replaceworker.h"
+
+/**
+ * @brief addUniqueToList Adds the given item to the given list. Removes duplicates from list.
+ * @return The updated list, with item added and duplicates removed.
+ */
+QStringList addUniqueToList(QStringList list, const QString& item) {
+    if (item.isEmpty())
+        return list;
+
+    list.prepend(item);
+    list.removeDuplicates();
+    list = list.mid(0, 10);
+    return list;
+}
 
 QString getFormattedLocationText(const DocResult& docResult, const QString& searchLocation) {
     const int commonPathLength = searchLocation.length();
@@ -313,12 +328,17 @@ QWidget* AdvancedSearchDock::buildTitlebarWidget() {
 }
 
 QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
+    NqqSettings& settings = NqqSettings::getInstance();
+
     QGridLayout* gl = new QGridLayout;
 
-    m_edtSearchTerm = new QLineEdit;
-    m_edtSearchTerm->setPlaceholderText("Search String");
-    m_edtSearchTerm->setMaximumWidth(300);
-    m_edtSearchTerm->setClearButtonEnabled(true);
+    m_cmbSearchTerm = new QComboBox;
+    m_cmbSearchTerm->setEditable(true);
+    m_cmbSearchTerm->lineEdit()->setPlaceholderText("Search String");
+    m_cmbSearchTerm->setMaximumWidth(300);
+    m_cmbSearchTerm->lineEdit()->setClearButtonEnabled(true);
+    m_cmbSearchTerm->addItems(settings.Search.getSearchHistory());
+    m_cmbSearchTerm->setCurrentText("");
 
     m_cmbSearchScope = new QComboBox;
     m_cmbSearchScope->addItem("Search in Current Document");
@@ -326,23 +346,29 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchScope->addItem("Search in Files in File System");
     m_cmbSearchScope->setMaximumWidth(260);
 
-    m_edtSearchPattern = new QLineEdit;
-    m_edtSearchPattern->setPlaceholderText("*ext1, *ext2");
-    m_edtSearchPattern->setMaximumWidth(300);
-    m_edtSearchPattern->setClearButtonEnabled(true);
+    m_cmbSearchPattern = new QComboBox;
+    m_cmbSearchPattern->setEditable(true);
+    m_cmbSearchPattern->lineEdit()->setPlaceholderText("*ext1, *ext2");
+    m_cmbSearchPattern->setMaximumWidth(300);
+    m_cmbSearchPattern->lineEdit()->setClearButtonEnabled(true);
+    m_cmbSearchPattern->addItems(settings.Search.getFilterHistory());
+    m_cmbSearchPattern->setCurrentText("");
 
-    m_edtSearchDirectory = new QLineEdit;
-    m_edtSearchDirectory->setPlaceholderText("Directory");
-    m_edtSearchDirectory->setMaximumWidth(260);
-    m_edtSearchDirectory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-    m_edtSearchDirectory->setClearButtonEnabled(true);
+    m_cmbSearchDirectory = new QComboBox;
+    m_cmbSearchDirectory->setEditable(true);
+    m_cmbSearchDirectory->lineEdit()->setPlaceholderText("Directory");
+    m_cmbSearchDirectory->setMaximumWidth(260);
+    m_cmbSearchDirectory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    m_cmbSearchDirectory->lineEdit()->setClearButtonEnabled(true);
+    m_cmbSearchDirectory->addItems(settings.Search.getFileHistory());
+    m_cmbSearchDirectory->setCurrentText("");
 
     m_btnSelectSearchDirectory = new QToolButton;
     m_btnSelectSearchDirectory->setIcon(IconProvider::fromTheme("edit-find"));
     m_btnSelectSearchDirectory->setToolTip("Select Search Directory");
 
     QHBoxLayout* m2 = new QHBoxLayout;
-    m2->addWidget(m_edtSearchDirectory);
+    m2->addWidget(m_cmbSearchDirectory);
     m2->addWidget(m_btnSelectSearchDirectory);
 
 
@@ -381,10 +407,10 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addWidget(srd, 2,0);
     gl->addWidget(srp, 3,0);
 
-    gl->addWidget(m_edtSearchTerm, 0,1);
+    gl->addWidget(m_cmbSearchTerm, 0,1);
     gl->addWidget(m_cmbSearchScope, 1,1);
     gl->addLayout(m2, 2,1);
-    gl->addWidget(m_edtSearchPattern, 3,1);
+    gl->addWidget(m_cmbSearchPattern, 3,1);
     gl->addWidget(m_chkIncludeSubdirs, 2, 3);
 
 
@@ -466,7 +492,7 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
         m_btnMoreOptions->setEnabled(false);
         m_btnPrevResult->setEnabled(false);
         m_btnNextResult->setEnabled(false);
-        m_edtSearchTerm->setFocus();
+        m_cmbSearchTerm->setFocus();
     } else {
         m_currentSearchInstance = m_searchInstances[index-1].get();
 
@@ -495,14 +521,14 @@ void AdvancedSearchDock::onChangeSearchScope(int index)
     switch(index) {
     case 0: // Search current document
     case 1: // Search all open documents
-        m_edtSearchPattern->setEnabled(false);
-        m_edtSearchDirectory->setEnabled(false);
+        m_cmbSearchPattern->setEnabled(false);
+        m_cmbSearchDirectory->setEnabled(false);
         m_btnSelectSearchDirectory->setEnabled(false);
         m_chkIncludeSubdirs->setEnabled(false);
         break;
     case 2: // Search in file system
-        m_edtSearchPattern->setEnabled(true);
-        m_edtSearchDirectory->setEnabled(true);
+        m_cmbSearchPattern->setEnabled(true);
+        m_cmbSearchDirectory->setEnabled(true);
         m_btnSelectSearchDirectory->setEnabled(true);
         m_chkIncludeSubdirs->setEnabled(true);
         break;
@@ -524,10 +550,10 @@ void AdvancedSearchDock::onUserInput()
     const int scope = m_cmbSearchScope->currentIndex();
 
     if(scope==0 || scope==1)
-        m_btnSearch->setEnabled(!m_edtSearchTerm->text().isEmpty());
+        m_btnSearch->setEnabled(!m_cmbSearchTerm->currentText().isEmpty());
     else if(scope==2) {
-        m_btnSearch->setEnabled(!m_edtSearchTerm->text().isEmpty() &&
-                                !m_edtSearchDirectory->text().isEmpty());
+        m_btnSearch->setEnabled(!m_cmbSearchTerm->currentText().isEmpty() &&
+                                !m_cmbSearchDirectory->currentText().isEmpty());
     }
 }
 
@@ -547,9 +573,9 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 SearchConfig AdvancedSearchDock::getConfigFromInputs()
 {
     SearchConfig config;
-    config.directory = m_edtSearchDirectory->text();
-    config.filePattern = m_edtSearchPattern->text();
-    config.searchString = m_edtSearchTerm->text();
+    config.directory = m_cmbSearchDirectory->currentText();
+    config.filePattern = m_cmbSearchPattern->currentText();
+    config.searchString = m_cmbSearchTerm->currentText();
     config.scope = m_cmbSearchScope->currentIndex();
 
     config.matchCase = m_chkMatchCase->isChecked();
@@ -573,9 +599,9 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
 
 void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
 {
-    m_edtSearchDirectory->setText( config.directory );
-    m_edtSearchPattern->setText( config.filePattern );
-    m_edtSearchTerm->setText( config.searchString );
+    m_cmbSearchDirectory->setCurrentText( config.directory );
+    m_cmbSearchPattern->setCurrentText( config.filePattern );
+    m_cmbSearchTerm->setCurrentText( config.searchString );
     m_cmbSearchScope->setCurrentIndex( config.scope );
 
     m_chkMatchCase->setChecked( config.matchCase );
@@ -632,8 +658,8 @@ AdvancedSearchDock::AdvancedSearchDock()
     connect(m_btnDockUndock, SIGNAL(clicked()), dockWidget, SLOT(_q_toggleTopLevel()));
 
     // Search panel connections
-    connect(m_edtSearchTerm, &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
-    connect(m_edtSearchTerm, &QLineEdit::returnPressed, [this](){
+    connect(m_cmbSearchTerm->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
+    connect(m_cmbSearchTerm->lineEdit(), &QLineEdit::returnPressed, [this](){
         runSearch(getConfigFromInputs());
     });
     connect(m_cmbSearchScope, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -641,8 +667,8 @@ AdvancedSearchDock::AdvancedSearchDock()
     connect(m_btnSearch, &QToolButton::clicked, [this](){
         runSearch(getConfigFromInputs());
     });
-    connect(m_edtSearchDirectory, &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
-    connect(m_edtSearchDirectory, &QLineEdit::returnPressed, [this](){
+    connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
+    connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::returnPressed, [this](){
         runSearch(getConfigFromInputs());
     });
 
@@ -718,8 +744,9 @@ AdvancedSearchDock::AdvancedSearchDock()
     });
 
     m_cmbSearchHistory->setCurrentIndex(0);
-    onChangeSearchScope(0);
-    onSearchHistorySizeChange();
+    onChangeSearchScope(0); // Initializes the status of the search panel
+    selectSearchFromHistory(0); // Initializes the status of the search history combo box
+    onSearchHistorySizeChange(); // Initializes the status of the remaining title bar (Prev/Next buttons etc)
 
     // Custom context menu
     /*QMenu* menu = new QMenu();
@@ -740,13 +767,47 @@ QDockWidget* AdvancedSearchDock::getDockWidget() const
     return m_dockWidget.data();
 }
 
+void AdvancedSearchDock::updateSearchHistory(const QString& item) {
+    NqqSettings& settings = NqqSettings::getInstance();
+    auto history = addUniqueToList(settings.Search.getSearchHistory(), item);
+    settings.Search.setSearchHistory(history);
+    m_cmbSearchTerm->clear();
+    m_cmbSearchTerm->addItems(history);
+}
+
+void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
+    NqqSettings& settings = NqqSettings::getInstance();
+    auto history = addUniqueToList(settings.Search.getReplaceHistory(), item);
+    settings.Search.setReplaceHistory(history);
+    m_cmbSearchTerm->clear();
+    m_cmbSearchTerm->addItems(history);
+}
+
+void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
+    NqqSettings& settings = NqqSettings::getInstance();
+    auto history = addUniqueToList(settings.Search.getFileHistory(), item);
+    settings.Search.setFileHistory(history);
+    m_cmbSearchDirectory->clear();
+    m_cmbSearchDirectory->addItems(history);
+}
+
+void AdvancedSearchDock::updateFilterHistory(const QString& item) {
+    NqqSettings& settings = NqqSettings::getInstance();
+    auto history = addUniqueToList(settings.Search.getFilterHistory(), item);
+    settings.Search.setFilterHistory(history);
+    m_cmbSearchPattern->clear();
+    m_cmbSearchPattern->addItems(history);
+}
+
 void AdvancedSearchDock::runSearch(SearchConfig cfg)
 {
     if (cfg.searchString.isEmpty())
         return;
 
     // TODO: Don't use magic numbers here.
-    if (m_cmbSearchScope->currentIndex() == 2) {
+    const int searchScope = cfg.scope;
+
+    if (searchScope == 2) {
         // If we're searching the file system, check that the search dir is not empty and actually exists
         if (cfg.directory.isEmpty()) return;
 
@@ -762,10 +823,18 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
     }
 
     // TODO: Implement other search types
-    if(m_cmbSearchScope->currentIndex() != 2) {
+    if(searchScope != 2) {
         QMessageBox::information(nullptr, "NYI", "Only searches in file system scope currently implemented.");
         return;
     }
+
+    // Update history
+    updateSearchHistory(cfg.searchString);
+    if (searchScope==2) {
+        updateDirectoryhHistory(cfg.directory);
+        updateFilterHistory(cfg.filePattern);
+    }
+
 
     m_searchInstances.push_back( std::unique_ptr<SearchInstance>(new SearchInstance(cfg)) );
 

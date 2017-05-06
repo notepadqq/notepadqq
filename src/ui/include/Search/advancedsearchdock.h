@@ -124,6 +124,15 @@ private:
     void onCurrentSearchInstanceCompleted();
     void onUserInput();
 
+    /**
+     * @brief Adds the given item to one of the history lists stored in NqqSettings, also updates the
+     *        corresponding QComboBox with the new history list.
+     */
+    void updateSearchHistory(const QString& item);
+    void updateReplaceHistory(const QString& item);
+    void updateDirectoryhHistory(const QString& item);
+    void updateFilterHistory(const QString& item);
+
     SearchConfig getConfigFromInputs();
     void setInputsFromConfig(const SearchConfig& config);
 
@@ -145,9 +154,9 @@ private:
 
     // Search panel items
     QComboBox*   m_cmbSearchScope;
-    QLineEdit*   m_edtSearchTerm; // TODO: Change to combo boxes and remember history
-    QLineEdit*   m_edtSearchPattern;
-    QLineEdit*   m_edtSearchDirectory;
+    QComboBox*   m_cmbSearchTerm; // TODO: Change to combo boxes and remember history
+    QComboBox*   m_cmbSearchPattern;
+    QComboBox*   m_cmbSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;
     QToolButton* m_btnSearch;
     QCheckBox*   m_chkMatchCase;
