@@ -25,33 +25,48 @@ class SearchInstance : public QObject {
     Q_OBJECT
 
 public:
-    SearchConfig m_searchConfig;
-    std::unique_ptr<QTreeWidget> m_treeWidget;
-    SearchResult m_searchResult;
-    FileSearcher* m_fileSearcher;
-
     SearchInstance(const SearchConfig& config);
     ~SearchInstance();
 
-    bool isMaximized = false;
-    bool searchInProgress = true;
-
+    // Getters
     bool getShowFullLines() const { return m_showFullLines; }
-    void setShowFullLines(bool m_showFullLines);
+    bool areResultsExpanded() const { return m_resultsAreExpanded; }
+    bool isSearchInProgress() const { return m_isSearchInProgress; }
 
-    std::map<QTreeWidgetItem*, const MatchResult*> resultMap;
-    std::map<QTreeWidgetItem*, const DocResult*> docMap;
+    QTreeWidget*        getResultTreeWidget() const { return m_treeWidget.get(); }
+    const SearchConfig& getSearchConfig() const { return m_searchConfig; }
+    const SearchResult& getSearchResult() const { return m_searchResult; }
+
+    // Actions
+    void expandAllResults();
+    void collapseAllResults();
+
+    void selectNextResult();
+    void selectPreviousResult();
+
+    void showFullLines(bool showFullLines);
+    void copySelectedLinesToClipboard() const;
 
 signals:
     void searchCompleted();
     void resultItemClicked(const DocResult& doc, const MatchResult& result);
 
-public slots:
+private:
     void onSearchProgress(int processed, int total);
     void onSearchCompleted();
 
-private:
+    bool m_isSearchInProgress = true; // Search is started in the constructor so it can default to true
+    bool m_resultsAreExpanded = false;
     bool m_showFullLines = false;
+
+    SearchConfig    m_searchConfig;
+    std::unique_ptr<QTreeWidget> m_treeWidget; // TODO: use Qt's parent system instead
+    SearchResult    m_searchResult;
+    FileSearcher*   m_fileSearcher;
+
+    // These map each QTreeWidget item to their respective MatchResult or DocResult
+    std::map<QTreeWidgetItem*, const MatchResult*>  m_resultMap;
+    std::map<QTreeWidgetItem*, const DocResult*>    m_docMap;
 };
 
 
@@ -70,8 +85,7 @@ public:
     QDockWidgetTitleButton(QDockWidget *dockWidget);
 
     QSize sizeHint() const override;
-    QSize minimumSizeHint() const override
-    { return sizeHint(); }
+    QSize minimumSizeHint() const override { return sizeHint(); }
 
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
@@ -115,7 +129,7 @@ private:
 
     void onSearchHistorySizeChange();
 
-    QScopedPointer<QDockWidget> m_dockWidget;
+    QScopedPointer<QDockWidget> m_dockWidget; // TODO: Use Qt's parent system
 
     // Left-hand titlebar items
     QToolButton* m_btnClearHistory;

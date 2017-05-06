@@ -93,7 +93,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
             continue;
         }
 
-        // std::upper_bound returns an iterator to the first element greater than column. This is the line after the match.
+        // std::upper_bound returns an iterator to the first item greater than 'offset'. This is the line after the match.
         // Substract 1 to get the line the match is on.
         const auto it = std::upper_bound(linePosition.begin(), linePosition.end(), offset);
         const int line = std::distance(linePosition.begin(), it);
@@ -150,8 +150,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 
 void FileSearcher::worker()
 {
-    switch(m_searchConfig.searchMode) {
-    case SearchConfig::ModeRegex: {
+    if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
         const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
                     QRegularExpression::MultilineOption :
                     QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
@@ -159,27 +158,9 @@ void FileSearcher::worker()
         QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig);
         m_regex.setPattern(rawSearch);
         m_regex.setPatternOptions(options);
+    } else if (m_searchConfig.searchMode == SearchConfig::ModePlainTextSpecialChars) {
+        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
     }
-    case SearchConfig::ModePlainTextSpecialChars:
-        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
-        break;
-
-    case SearchConfig::ModePlanText:
-    default:
-        break;
-    };
-
-/*    if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
-        const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
-                    QRegularExpression::MultilineOption :
-                    QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
-
-        QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig);
-        m_regex.setPattern(rawSearch);
-        m_regex.setPatternOptions(options);
-    } else if (m_searchConfig.searchMode == SearchConfig::ModePlanTextSpecialChars) {
-        m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
-    }*/
 
     const QFlags<QDirIterator::IteratorFlag> dirIteratorOptions = m_searchConfig.includeSubdirs ?
                 (QDirIterator::Subdirectories | QDirIterator::FollowSymlinks) :
