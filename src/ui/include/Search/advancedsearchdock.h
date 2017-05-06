@@ -165,7 +165,7 @@ private:
     QCheckBox*   m_chkIncludeSubdirs;
 
     // Replace panel items
-    QLineEdit* m_edtReplaceText;
+    QComboBox* m_cmbReplaceText;
     QToolButton* m_btnReplaceOne;
     QToolButton* m_btnReplaceSelected;
 
