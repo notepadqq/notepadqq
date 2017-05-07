@@ -167,7 +167,7 @@ private:
 
     // Replace panel items
     QComboBox* m_cmbReplaceText;
-    QToolButton* m_btnReplaceOne;
+    //QToolButton* m_btnReplaceOne;
     QToolButton* m_btnReplaceSelected;
 
     // "More Options" menu items
