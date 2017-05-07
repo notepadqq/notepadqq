@@ -32,6 +32,7 @@
 
 #include "include/nqqsettings.h"
 #include "include/iconprovider.h"
+#include "include/Search/searchstring.h"
 #include "include/Search/replaceworker.h"
 
 /**
@@ -320,17 +321,17 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_cmbReplaceText->addItems(settings.Search.getReplaceHistory());
     m_cmbReplaceText->setCurrentText("");
 
-    /*m_btnReplaceOne = new QToolButton;
-    m_btnReplaceOne->setText("Replace One");
-    m_btnReplaceOne->setToolTip("Replaces the currently selected search result.");*/
-
     m_btnReplaceSelected = new QToolButton;
     m_btnReplaceSelected->setText("Replace Selected");
     m_btnReplaceSelected->setToolTip("Replaces all selected search results.");
 
+    m_chkReplaceWithSpecialChars = new QCheckBox;
+    m_chkReplaceWithSpecialChars->setText("Use Special Characters ('\\n', '\\t', ...)");
+    m_chkReplaceWithSpecialChars->setToolTip("Replaces strings like '\\n' with their corresponding special characters.");
+
     replaceOptions->addWidget(m_cmbReplaceText);
-    //replaceOptions->addWidget(m_btnReplaceOne);
     replaceOptions->addWidget(m_btnReplaceSelected);
+    replaceOptions->addWidget(m_chkReplaceWithSpecialChars);
     replaceOptions->setSizeConstraint(QHBoxLayout::SetNoConstraint);
 
     m_replaceOptionsLayout->addWidget(line);
@@ -745,15 +746,6 @@ AdvancedSearchDock::AdvancedSearchDock()
         onSearchHistorySizeChange();
     });
 
-    /*connect(m_btnReplaceOne, &QToolButton::clicked, [this](){
-        QString replaceText = m_cmbReplaceText->currentText();
-
-        if( !askConfirmationForReplace(replaceText, 2) )
-            return;
-
-        updateReplaceHistory(replaceText);
-    });*/
-
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
         QString replaceText = m_cmbReplaceText->currentText();
 
@@ -761,6 +753,9 @@ AdvancedSearchDock::AdvancedSearchDock()
             return;
 
         updateReplaceHistory(replaceText);
+
+        if (m_chkReplaceWithSpecialChars->isChecked())
+            replaceText = SearchString::unescape(replaceText);
 
         ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
 
@@ -782,6 +777,27 @@ AdvancedSearchDock::AdvancedSearchDock()
         msgBox->exec();
 
         w->wait();
+
+        const bool success = !w->hasErrors();
+
+        if (!success) {
+            const QVector<QString>& errors = w->getErrors();
+            const int maxCount = std::min(errors.size(), 8);
+            QString errorString = "One or more files could not be opened:\n";
+
+            for(int i=0; i<maxCount; i++) {
+                errorString += "\"" + errors[i] + "\"\n";
+            }
+            if(errors.size() > 8)
+                errorString += QString("And %1 more.").arg(errors.size()-8);
+
+            QMessageBox::warning(QApplication::activeWindow(),
+                                 "Replace Results", errorString, QMessageBox::Ok);
+        } else {
+            QMessageBox::information(QApplication::activeWindow(),
+                                     "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
+        }
+
         delete w;
         delete msgBox;
     });
