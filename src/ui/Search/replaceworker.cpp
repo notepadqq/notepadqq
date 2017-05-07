@@ -52,7 +52,7 @@ void ReplaceWorker::run()
 
         decodedText = DocEngine::readToString(&f);
         if (decodedText.error) {
-            // TODO: Handle errors
+            m_failedFiles.push_back(docResult.fileName);
             continue;
         }
 
@@ -74,7 +74,7 @@ void ReplaceWorker::run()
             continue;
 
         if (!DocEngine::writeFromString(&f, decodedText)) {
-            // TODO: Handle errors
+            m_failedFiles.push_back(docResult.fileName);
             continue;
         }
 
