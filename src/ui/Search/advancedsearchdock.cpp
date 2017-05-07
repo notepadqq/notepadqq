@@ -17,6 +17,7 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
 
 // For the clipboard
 #include <QApplication>
@@ -319,16 +320,16 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_cmbReplaceText->addItems(settings.Search.getReplaceHistory());
     m_cmbReplaceText->setCurrentText("");
 
-    m_btnReplaceOne = new QToolButton;
+    /*m_btnReplaceOne = new QToolButton;
     m_btnReplaceOne->setText("Replace One");
-    m_btnReplaceOne->setToolTip("Replaces the currently selected search result.");
+    m_btnReplaceOne->setToolTip("Replaces the currently selected search result.");*/
 
     m_btnReplaceSelected = new QToolButton;
     m_btnReplaceSelected->setText("Replace Selected");
-    m_btnReplaceOne->setToolTip("Replaces all selected search results.");
+    m_btnReplaceSelected->setToolTip("Replaces all selected search results.");
 
     replaceOptions->addWidget(m_cmbReplaceText);
-    replaceOptions->addWidget(m_btnReplaceOne);
+    //replaceOptions->addWidget(m_btnReplaceOne);
     replaceOptions->addWidget(m_btnReplaceSelected);
     replaceOptions->setSizeConstraint(QHBoxLayout::SetNoConstraint);
 
@@ -369,7 +370,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchScope = new QComboBox;
     m_cmbSearchScope->addItem("Search in Current Document");
     m_cmbSearchScope->addItem("Search in All Open Documents");
-    m_cmbSearchScope->addItem("Search in Files in File System");
+    m_cmbSearchScope->addItem("Search in Files on File System");
     m_cmbSearchScope->setMaximumWidth(260);
 
     m_cmbSearchPattern = new QComboBox;
@@ -397,7 +398,6 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m2->addWidget(m_cmbSearchDirectory);
     m2->addWidget(m_btnSelectSearchDirectory);
 
-
     m_btnSearch = new QToolButton;
     m_btnSearch->setText("Search");
     m_btnSearch->setEnabled(false);
@@ -415,7 +415,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_chkMatchCase->setText("Match Case");
 
     m_chkMatchWords = new QCheckBox;
-    m_chkMatchWords->setText("Match Whole Word Only");
+    m_chkMatchWords->setText("Match Whole Words Only");
 
     m_chkUseRegex = new QCheckBox;
     m_chkUseRegex->setText("Use Regular Expressions");
@@ -495,8 +495,6 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
 {
     if(index==-1)
         return;
-
-    qDebug() << "Index is " << index << "and size is " << m_cmbSearchHistory->count();
 
     // TODO: Clean this up, move stuff into a connect/disconnect function, something like that.
     if(m_currentSearchInstance && m_currentSearchInstance->isSearchInProgress()) {
@@ -697,6 +695,21 @@ AdvancedSearchDock::AdvancedSearchDock()
     connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::returnPressed, [this](){
         runSearch(getConfigFromInputs());
     });
+    connect(m_btnSelectSearchDirectory, &QToolButton::clicked, [this](){
+        QString defaultDir = m_cmbSearchDirectory->currentText();
+        if (defaultDir.isEmpty()) {
+            defaultDir = NqqSettings::getInstance().General.getLastSelectedDir();
+        }
+
+        QString dir = QFileDialog::getExistingDirectory(QApplication::activeWindow(),
+                                                        QObject::tr("Search in..."), defaultDir,
+                                                        QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly |
+                                                        QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty()) {
+            m_cmbSearchDirectory->setCurrentText(dir);
+        }
+    });
 
     // "More Options" menu connections
     connect(m_actExpandAll, &QAction::toggled, [this](bool checked){
@@ -732,14 +745,14 @@ AdvancedSearchDock::AdvancedSearchDock()
         onSearchHistorySizeChange();
     });
 
-    connect(m_btnReplaceOne, &QToolButton::clicked, [this](){
+    /*connect(m_btnReplaceOne, &QToolButton::clicked, [this](){
         QString replaceText = m_cmbReplaceText->currentText();
 
         if( !askConfirmationForReplace(replaceText, 2) )
             return;
 
         updateReplaceHistory(replaceText);
-    });
+    });*/
 
     connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
         QString replaceText = m_cmbReplaceText->currentText();
@@ -751,7 +764,7 @@ AdvancedSearchDock::AdvancedSearchDock()
 
         ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
 
-        QMessageBox* msgBox = new QMessageBox(nullptr);
+        QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
 
         connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
         connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
