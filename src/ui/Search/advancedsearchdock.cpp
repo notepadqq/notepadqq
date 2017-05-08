@@ -599,8 +599,9 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 void AdvancedSearchDock::startReplace()
 {
     QString replaceText = m_cmbReplaceText->currentText();
+    SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
 
-    if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->getSearchResult().countResults()) )
+    if( !askConfirmationForReplace(replaceText, filteredResults.countResults()) )
         return;
 
     updateReplaceHistory(replaceText);
@@ -608,7 +609,7 @@ void AdvancedSearchDock::startReplace()
     if (m_chkReplaceWithSpecialChars->isChecked())
         replaceText = SearchString::unescape(replaceText);
 
-    ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
+    ReplaceWorker* w = new ReplaceWorker(filteredResults, replaceText);
     QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
 
     connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
@@ -959,6 +960,28 @@ SearchInstance::~SearchInstance()
 {
     // After canceling, m_fileSearcher is deleted through a signal connected in SearchInstance's constructor
     if(m_fileSearcher) m_fileSearcher->cancel();
+}
+
+SearchResult SearchInstance::getFilteredSearchResult() const
+{
+    SearchResult result;
+
+    const QTreeWidget* tree = m_treeWidget.get();
+    for (int i=0; i<tree->topLevelItemCount(); i++) {
+        QTreeWidgetItem* docWidget = tree->topLevelItem(i);
+        const DocResult* fullResult = m_docMap.at(docWidget);
+        DocResult r;
+        r.fileName = fullResult->fileName;
+
+        for (int c=0; c<docWidget->childCount(); c++) {
+            QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
+            if (it->checkState(0) == Qt::Checked)
+                r.results.push_back( *m_resultMap.at(it) );
+        }
+        if(!r.results.empty()) result.results.push_back(r);
+    }
+
+    return result;
 }
 
 void SearchInstance::showFullLines(bool showFullLines)
