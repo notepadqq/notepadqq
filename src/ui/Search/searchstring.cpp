@@ -1,19 +1,6 @@
 #include "include/Search/searchstring.h"
 #include <QRegularExpression>
 
-// TODO: Find a more descriptive function name, and consolidate those function?
-QString SearchString::toRaw(const QString& expression, const SearchConfig& config)
-{
-    QString rawSearch = expression;
-    if (config.searchMode == SearchConfig::ModePlainTextSpecialChars) {
-        rawSearch = toRegex(expression, config.matchWord);
-        rawSearch = rawSearch.replace("\\\\", "\\");
-    } else if (config.searchMode == SearchConfig::ModePlainText){
-        rawSearch = toRegex(expression, config.matchWord);
-    }
-    return rawSearch;
-}
-
 QString SearchString::toRaw(const QString &data, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
     QString rawSearch = data;

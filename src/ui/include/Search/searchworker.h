@@ -36,8 +36,8 @@ struct SearchConfig {
     QString filePattern; // Only used if searchMode==ScopeFileSystem.
     QString directory;   // Only used if searchMode==ScopeFileSystem.
 
-    bool matchCase = false;
-    bool matchWord = false;
+    bool matchCase      = false;
+    bool matchWord      = false;
     bool includeSubdirs = false; // Only used if searchMode==ScopeFileSystem.
 
     enum SearchScope {
@@ -45,14 +45,14 @@ struct SearchConfig {
         ScopeAllOpenDocuments   = 1,
         ScopeFileSystem         = 2
     };
-    SearchScope searchScope;
+    SearchScope searchScope = ScopeCurrentDocument;
 
     enum SearchMode {
-        ModeRegex                   = 0,
-        ModePlainText               = 1,
-        ModePlainTextSpecialChars   = 2
+        ModePlainText               = 0,
+        ModePlainTextSpecialChars   = 1,
+        ModeRegex                   = 2
     };
-    SearchMode searchMode;
+    SearchMode searchMode = ModePlainText;
 };
 
 struct MatchResult {

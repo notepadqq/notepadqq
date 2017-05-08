@@ -215,10 +215,27 @@ void SearchTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem & o
     painter->restore();
 }
 
+/**
+ * @brief makeDivider Creates a QFrame that acts as a visual dividing line
+ * @param shape Either QFrame::HLine or QFrame::VLine to determine the line's orientation
+ * @param length Sets the maximum length of the divider.
+ */
+QFrame* makeDivider(QFrame::Shape shape, int length=0) {
+    QFrame* line = new QFrame();
+    line->setFrameShape(shape);
+    line->setFrameShadow(QFrame::Sunken);
+    if(length > 0) {
+        if(shape == QFrame::VLine)
+            line->setMaximumHeight(length);
+        else
+            line->setMaximumWidth(length);
+    }
+    return line;
+}
+
 QLayout* AdvancedSearchDock::buildLeftTitlebar() {
 
-    QLabel* label = new QLabel;
-    label->setText("Advanced Search");
+    QLabel* label = new QLabel("Advanced Search");
     label->setMaximumWidth( label->fontMetrics().width(label->text()) );
 
     m_btnClearHistory = new QToolButton;
@@ -238,10 +255,6 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
     m_btnNextResult = new QToolButton;
     m_btnNextResult->setIcon(IconProvider::fromTheme("go-next"));
     m_btnNextResult->setToolTip("Go To Next Result");
-
-    QFrame* separator = new QFrame();
-    separator->setFrameShape(QFrame::VLine);
-    separator->setFrameShadow(QFrame::Sunken);
 
     QMenu* menu = new QMenu();
     m_actExpandAll = menu->addAction("Expand/Collapse All");
@@ -269,7 +282,7 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
     layout->addWidget(m_cmbSearchHistory);
     layout->addWidget(m_btnPrevResult);
     layout->addWidget(m_btnNextResult);
-    layout->addWidget(separator);
+    layout->addWidget(makeDivider(QFrame::VLine));
     layout->addWidget(m_btnMoreOptions);
     layout->addWidget(m_btnToggleReplaceOptions);
     layout->setSizeConstraint(QHBoxLayout::SetNoConstraint);
@@ -304,11 +317,6 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
     m_replaceOptionsLayout = new QVBoxLayout;
 
-    // Add a separating line.
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-
     // Add the bar with replace options.
     QHBoxLayout* replaceOptions = new QHBoxLayout;
 
@@ -325,8 +333,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_btnReplaceSelected->setText("Replace Selected");
     m_btnReplaceSelected->setToolTip("Replaces all selected search results.");
 
-    m_chkReplaceWithSpecialChars = new QCheckBox;
-    m_chkReplaceWithSpecialChars->setText("Use Special Characters ('\\n', '\\t', ...)");
+    m_chkReplaceWithSpecialChars = new QCheckBox("Use Special Characters ('\\n', '\\t', ...)");
     m_chkReplaceWithSpecialChars->setToolTip("Replaces strings like '\\n' with their corresponding special characters.");
 
     replaceOptions->addWidget(m_cmbReplaceText);
@@ -334,7 +341,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     replaceOptions->addWidget(m_chkReplaceWithSpecialChars);
     replaceOptions->setSizeConstraint(QHBoxLayout::SetNoConstraint);
 
-    m_replaceOptionsLayout->addWidget(line);
+    m_replaceOptionsLayout->addWidget(makeDivider(QFrame::HLine));
     m_replaceOptionsLayout->addLayout(replaceOptions);
     m_replaceOptionsLayout->setAlignment(replaceOptions, Qt::AlignLeft);
 
@@ -412,22 +419,20 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     QLabel* srd = new QLabel("Location:");
     srd->setMaximumWidth(80);
 
-    m_chkMatchCase = new QCheckBox;
-    m_chkMatchCase->setText("Match Case");
-
-    m_chkMatchWords = new QCheckBox;
-    m_chkMatchWords->setText("Match Whole Words Only");
-
-    m_chkUseRegex = new QCheckBox;
-    m_chkUseRegex->setText("Use Regular Expressions");
-
-    m_chkIncludeSubdirs = new QCheckBox;
-    m_chkIncludeSubdirs->setText("Include Subdirectories");
+    m_chkMatchCase = new QCheckBox("Match Case");
+    m_chkMatchWords = new QCheckBox("Match Whole Words Only");
+    m_chkUseRegex = new QCheckBox("Use Regular Expressions");
+    m_chkUseSpecialChars = new QCheckBox("Use Special Characters ('\\t', '\\n', ...)");
+    m_chkUseSpecialChars->setToolTip("If set, character sequences like '\\t' will be replaced by their corresponding special characters.");
+    m_chkIncludeSubdirs = new QCheckBox("Include Subdirectories");
 
     QVBoxLayout* mini = new QVBoxLayout;
     mini->addWidget(m_chkMatchCase);
     mini->addWidget(m_chkMatchWords);
     mini->addWidget(m_chkUseRegex);
+    mini->addWidget(m_chkUseSpecialChars);
+    mini->addWidget(makeDivider(QFrame::HLine, 180));
+    mini->addWidget(m_chkIncludeSubdirs);
 
     gl->addWidget(srl, 0,0);
     gl->addWidget(scl, 1,0);
@@ -438,23 +443,16 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addWidget(m_cmbSearchScope, 1,1);
     gl->addLayout(m2, 2,1);
     gl->addWidget(m_cmbSearchPattern, 3,1);
-    gl->addWidget(m_chkIncludeSubdirs, 2, 3);
 
 
-    gl->addLayout(mini, 0, 3, 2, 1);
+    gl->addLayout(mini, 0, 3, 4, 1);
     gl->addWidget(m_btnSearch, 3,2);
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
 
     // Put the gridview into a vbox with a strecher so the gridview doesn't strech when the panelwidget is resized.
     QVBoxLayout* top = new QVBoxLayout();
-
-    // Add a separating line.
-    QFrame* line = new QFrame();
-    line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
-
-    top->addWidget(line);
+    top->addWidget( makeDivider(QFrame::HLine) );
     top->addLayout(gl);
     top->addStretch();
 
@@ -571,14 +569,16 @@ void AdvancedSearchDock::onCurrentSearchInstanceCompleted()
 
 void AdvancedSearchDock::onUserInput()
 {
-    //0 == this doc, 1 == all docs, 2 == file system
-    const int scope = m_cmbSearchScope->currentIndex();
-
-    if(scope==0 || scope==1)
+    // Dis- or enable the "Search" button depending on whether the necessary fields are filled out or not.
+    switch(m_cmbSearchScope->currentIndex()) {
+    case SearchConfig::ScopeCurrentDocument:
+    case SearchConfig::ScopeAllOpenDocuments:
         m_btnSearch->setEnabled(!m_cmbSearchTerm->currentText().isEmpty());
-    else if(scope==2) {
+        break;
+    case SearchConfig::ScopeFileSystem:
         m_btnSearch->setEnabled(!m_cmbSearchTerm->currentText().isEmpty() &&
                                 !m_cmbSearchDirectory->currentText().isEmpty());
+        break;
     }
 }
 
@@ -605,19 +605,21 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
 
     config.matchCase = m_chkMatchCase->isChecked();
     config.matchWord = m_chkMatchWords->isChecked();
-    config.searchMode = m_chkUseRegex->isChecked() ?
-                SearchConfig::ModeRegex : SearchConfig::ModePlainText;
+    config.searchMode = SearchConfig::ModePlainText;
+    if(m_chkUseSpecialChars->isChecked()) config.searchMode = SearchConfig::ModePlainTextSpecialChars;
+    else if(m_chkUseRegex->isChecked()) config.searchMode = SearchConfig::ModeRegex;
     config.includeSubdirs = m_chkIncludeSubdirs->isChecked();
 
 
     // TODO: Dummy config
-    config.searchString = "Test\\tMe";
-    //config.filePattern = "*.cpp";
+/*    config.searchString = "Test\\tMe";
+    config.filePattern = "";
     config.directory = "/home/s3rius/dev/nqqtest";
     config.matchWord = false;
     config.matchCase = false;
     config.includeSubdirs = true;
-    config.searchMode = SearchConfig::ModeRegex; //PlainText
+    config.useRegex = true;
+    config.useSpecialChars = false;*/
 
     return config;
 }
@@ -632,6 +634,7 @@ void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
     m_chkMatchCase->setChecked( config.matchCase );
     m_chkMatchWords->setChecked( config.matchWord );
     m_chkUseRegex->setChecked( config.searchMode == SearchConfig::ModeRegex );
+    m_chkUseSpecialChars->setChecked( config.searchMode == SearchConfig::ModePlainTextSpecialChars );
     m_chkIncludeSubdirs->setChecked( config.includeSubdirs );
 }
 
@@ -710,6 +713,15 @@ AdvancedSearchDock::AdvancedSearchDock()
         if (!dir.isEmpty()) {
             m_cmbSearchDirectory->setCurrentText(dir);
         }
+    });
+
+    connect(m_chkUseRegex, &QCheckBox::toggled, [this](bool checked){
+        m_chkUseSpecialChars->setEnabled(!checked);
+        if(checked) m_chkUseSpecialChars->setChecked(false);
+    });
+    connect(m_chkUseSpecialChars, &QCheckBox::toggled, [this](bool checked){
+        m_chkUseRegex->setEnabled(!checked);
+        if(checked) m_chkUseRegex->setChecked(false);
     });
 
     // "More Options" menu connections
