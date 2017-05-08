@@ -782,14 +782,15 @@ AdvancedSearchDock::AdvancedSearchDock()
 
         if (!success) {
             const QVector<QString>& errors = w->getErrors();
-            const int maxCount = std::min(errors.size(), 8);
-            QString errorString = "One or more files could not be opened:\n";
+            const int numErrors = errors.size();
+            const int maxCount = std::min(numErrors, 8);
+            QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
 
             for(int i=0; i<maxCount; i++) {
                 errorString += "\"" + errors[i] + "\"\n";
             }
-            if(errors.size() > 8)
-                errorString += QString("And %1 more.").arg(errors.size()-8);
+            if(numErrors > 8)
+                errorString += QString("And %1 more.").arg(numErrors-8);
 
             QMessageBox::warning(QApplication::activeWindow(),
                                  "Replace Results", errorString, QMessageBox::Ok);
