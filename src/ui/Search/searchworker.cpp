@@ -155,9 +155,12 @@ void FileSearcher::worker()
                     QRegularExpression::MultilineOption :
                     QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
 
-        QString rawSearch = SearchString::toRaw(m_searchConfig.searchString, m_searchConfig);
-        m_regex.setPattern(rawSearch);
+        const QString regex = m_searchConfig.matchWord ?
+                    "\\b" + m_searchConfig.searchString + "\\b" : m_searchConfig.searchString;
+
+        m_regex.setPattern(regex);
         m_regex.setPatternOptions(options);
+
     } else if (m_searchConfig.searchMode == SearchConfig::ModePlainTextSpecialChars) {
         m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
     }
@@ -178,7 +181,8 @@ void FileSearcher::worker()
     while( it.hasNext() )
         fileList << it.next();
 
-    emit resultProgress(0, fileList.size());
+    const int listSize = fileList.size();
+    emit resultProgress(0, listSize);
 
     // Start the actual search
     int count = 0;
@@ -187,7 +191,7 @@ void FileSearcher::worker()
             break;
 
         if (++count % 100 == 0)
-            emit resultProgress(count, fileList.size());
+            emit resultProgress(count, listSize);
 
         QFile f(fileName);
         DocEngine::DecodedText decodedText;

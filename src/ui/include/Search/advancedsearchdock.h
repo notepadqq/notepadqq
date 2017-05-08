@@ -163,6 +163,7 @@ private:
     QCheckBox*   m_chkMatchCase;
     QCheckBox*   m_chkMatchWords;
     QCheckBox*   m_chkUseRegex;
+    QCheckBox*   m_chkUseSpecialChars;
     QCheckBox*   m_chkIncludeSubdirs;
 
     // Replace panel items
