@@ -119,9 +119,10 @@ private:
 
     void clearHistory();
     void selectSearchFromHistory(int index);
-    void onChangeSearchScope(int index);
     void updateSearchInProgressUi();
+    void startReplace();
 
+    void onChangeSearchScope(int index);
     void onCurrentSearchInstanceCompleted();
     void onUserInput();
 
