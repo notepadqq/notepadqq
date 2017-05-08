@@ -298,6 +298,7 @@ QLayout* AdvancedSearchDock::buildUpperTitlebarLayout() {
 
     m_btnDockUndock = new QDockWidgetTitleButton(m_dockWidget.data());
     m_btnDockUndock->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarNormalButton));
+    m_btnDockUndock->setToolTip("Dock/Undock this panel");
 
     m_btnClose = new QDockWidgetTitleButton(m_dockWidget.data());
     m_btnClose->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarCloseButton));
@@ -331,10 +332,10 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
     m_btnReplaceSelected = new QToolButton;
     m_btnReplaceSelected->setText("Replace Selected");
-    m_btnReplaceSelected->setToolTip("Replaces all selected search results.");
+    m_btnReplaceSelected->setToolTip("Replace all selected search results.");
 
     m_chkReplaceWithSpecialChars = new QCheckBox("Use Special Characters ('\\n', '\\t', ...)");
-    m_chkReplaceWithSpecialChars->setToolTip("Replaces strings like '\\n' with their corresponding special characters.");
+    m_chkReplaceWithSpecialChars->setToolTip("Replace strings like '\\n' with their respective special characters.");
 
     replaceOptions->addWidget(m_cmbReplaceText);
     replaceOptions->addWidget(m_btnReplaceSelected);
@@ -350,7 +351,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
 QWidget* AdvancedSearchDock::buildTitlebarWidget() {
     QLayout* upperBar = buildUpperTitlebarLayout();
-    /*QLayout* lowerBar =*/ buildReplaceOptionsLayout(); // <- Hidden by default, aka not added
+    /*QLayout* lowerBar =*/ buildReplaceOptionsLayout(); // <- Hidden by default, aka not added yet
 
     m_titlebarLayout = new QVBoxLayout;
     m_titlebarLayout->addLayout(upperBar);
@@ -423,7 +424,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_chkMatchWords = new QCheckBox("Match Whole Words Only");
     m_chkUseRegex = new QCheckBox("Use Regular Expressions");
     m_chkUseSpecialChars = new QCheckBox("Use Special Characters ('\\t', '\\n', ...)");
-    m_chkUseSpecialChars->setToolTip("If set, character sequences like '\\t' will be replaced by their corresponding special characters.");
+    m_chkUseSpecialChars->setToolTip("If set, character sequences like '\\t' will be replaced by their respective special characters.");
     m_chkIncludeSubdirs = new QCheckBox("Include Subdirectories");
 
     QVBoxLayout* mini = new QVBoxLayout;
@@ -443,7 +444,6 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addWidget(m_cmbSearchScope, 1,1);
     gl->addLayout(m2, 2,1);
     gl->addWidget(m_cmbSearchPattern, 3,1);
-
 
     gl->addLayout(mini, 0, 3, 4, 1);
     gl->addWidget(m_btnSearch, 3,2);
@@ -584,6 +584,7 @@ void AdvancedSearchDock::onUserInput()
 
 void AdvancedSearchDock::updateSearchInProgressUi()
 {
+    // Some actions are only available when the search is finished
     const bool progress = m_currentSearchInstance->isSearchInProgress();
 
     m_actExpandAll->setEnabled(!progress);
@@ -593,6 +594,63 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 
     m_btnPrevResult->setEnabled(!progress);
     m_btnNextResult->setEnabled(!progress);
+}
+
+void AdvancedSearchDock::startReplace()
+{
+    QString replaceText = m_cmbReplaceText->currentText();
+
+    if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->getSearchResult().countResults()) )
+        return;
+
+    updateReplaceHistory(replaceText);
+
+    if (m_chkReplaceWithSpecialChars->isChecked())
+        replaceText = SearchString::unescape(replaceText);
+
+    ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
+    QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
+
+    connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
+    connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
+        msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
+    });
+    connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
+
+    w->start();
+
+    msgBox->setWindowTitle(QCoreApplication::applicationName());
+    msgBox->setIcon(QMessageBox::Information);
+    msgBox->setText("<h3>Replacing selected matches...</h3>");
+    msgBox->setInformativeText("Replacing in progress");
+    msgBox->setStandardButtons(QMessageBox::Cancel);
+    msgBox->exec();
+
+    w->wait();
+
+    const bool success = !w->hasErrors();
+
+    if (!success) {
+        const QVector<QString>& errors = w->getErrors();
+        const int numErrors = errors.size();
+        const int maxCount = std::min(numErrors, 8);
+        QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
+
+        for(int i=0; i<maxCount; i++) {
+            errorString += "\"" + errors[i] + "\"\n";
+        }
+        if(numErrors > 8)
+            errorString += QString("And %1 more.").arg(numErrors-8);
+
+        QMessageBox::warning(QApplication::activeWindow(),
+                             "Replace Results", errorString, QMessageBox::Ok);
+    } else {
+        QMessageBox::information(QApplication::activeWindow(),
+                                 "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
+    }
+
+    delete w;
+    delete msgBox;
 }
 
 SearchConfig AdvancedSearchDock::getConfigFromInputs()
@@ -609,17 +667,6 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
     if(m_chkUseSpecialChars->isChecked()) config.searchMode = SearchConfig::ModePlainTextSpecialChars;
     else if(m_chkUseRegex->isChecked()) config.searchMode = SearchConfig::ModeRegex;
     config.includeSubdirs = m_chkIncludeSubdirs->isChecked();
-
-
-    // TODO: Dummy config
-/*    config.searchString = "Test\\tMe";
-    config.filePattern = "";
-    config.directory = "/home/s3rius/dev/nqqtest";
-    config.matchWord = false;
-    config.matchCase = false;
-    config.includeSubdirs = true;
-    config.useRegex = true;
-    config.useSpecialChars = false;*/
 
     return config;
 }
@@ -640,7 +687,7 @@ void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
 
 void AdvancedSearchDock::onSearchHistorySizeChange()
 {
-    const bool historyNotEmpty = m_cmbSearchHistory->count() > 1;
+    const bool historyNotEmpty = m_cmbSearchHistory->count() > 1; // First item is "New Search"
 
     m_btnClearHistory->setEnabled(historyNotEmpty);
     m_cmbSearchHistory->setEnabled(historyNotEmpty);
@@ -714,7 +761,6 @@ AdvancedSearchDock::AdvancedSearchDock()
             m_cmbSearchDirectory->setCurrentText(dir);
         }
     });
-
     connect(m_chkUseRegex, &QCheckBox::toggled, [this](bool checked){
         m_chkUseSpecialChars->setEnabled(!checked);
         if(checked) m_chkUseSpecialChars->setChecked(false);
@@ -757,63 +803,7 @@ AdvancedSearchDock::AdvancedSearchDock()
         m_cmbSearchHistory->removeItem(m_cmbSearchHistory->currentIndex());
         onSearchHistorySizeChange();
     });
-
-    connect(m_btnReplaceSelected, &QToolButton::clicked, [this](){
-        QString replaceText = m_cmbReplaceText->currentText();
-
-        if( !askConfirmationForReplace(replaceText, m_currentSearchInstance->getSearchResult().countResults()) )
-            return;
-
-        updateReplaceHistory(replaceText);
-
-        if (m_chkReplaceWithSpecialChars->isChecked())
-            replaceText = SearchString::unescape(replaceText);
-
-        ReplaceWorker* w = new ReplaceWorker(m_currentSearchInstance->getSearchResult(), replaceText);
-
-        QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
-
-        connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
-        connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
-            msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
-        });
-        connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
-
-        w->start();
-
-        msgBox->setWindowTitle(QCoreApplication::applicationName());
-        msgBox->setIcon(QMessageBox::Information);
-        msgBox->setText("<h3>Replacing selected matches...</h3>");
-        msgBox->setInformativeText("Replacing in progress");
-        msgBox->setStandardButtons(QMessageBox::Cancel);
-        msgBox->exec();
-
-        w->wait();
-
-        const bool success = !w->hasErrors();
-
-        if (!success) {
-            const QVector<QString>& errors = w->getErrors();
-            const int numErrors = errors.size();
-            const int maxCount = std::min(numErrors, 8);
-            QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
-
-            for(int i=0; i<maxCount; i++) {
-                errorString += "\"" + errors[i] + "\"\n";
-            }
-            if(numErrors > 8)
-                errorString += QString("And %1 more.").arg(numErrors-8);
-
-            QMessageBox::warning(QApplication::activeWindow(),
-                                 "Replace Results", errorString, QMessageBox::Ok);
-        } else {
-            QMessageBox::information(QApplication::activeWindow(),
-                                     "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
-        }
-
-        delete w;
-        delete msgBox;
-    });
+    connect(m_btnReplaceSelected, &QToolButton::clicked, this, &AdvancedSearchDock::startReplace);
 
     m_cmbSearchHistory->setCurrentIndex(0);
     onChangeSearchScope(0); // Initializes the status of the search panel
@@ -940,11 +930,12 @@ SearchInstance::SearchInstance(const SearchConfig& config)
     toplevelitem->setText(0, "Calculating...");
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
+        // When checking/unchecking a toplevel item we want to propagate it to all children
         if(column!=0 || item->parent()) return;
-        bool checked = item->checkState(0) == Qt::Checked;
+        const Qt::CheckState checkState = item->checkState(0);
 
         for (int i=0; i<item->childCount(); i++) {
-            item->child(i)->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+            item->child(i)->setCheckState(0, checkState);
         }
     });
 
@@ -998,7 +989,7 @@ void SearchInstance::expandAllResults()
 void SearchInstance::collapseAllResults()
 {
     m_treeWidget->collapseAll();
-    m_resultsAreExpanded = true;
+    m_resultsAreExpanded = false;
 }
 
 void SearchInstance::selectNextResult()
