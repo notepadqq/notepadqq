@@ -163,6 +163,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     asd->getDockWidget()->show();
 
     connect(asd, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
+        // TODO: Don't open file if it doesn't exist. loadDocument() does not care about the file existence
         QUrl url = stringToUrl(doc.fileName);
         m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
 
