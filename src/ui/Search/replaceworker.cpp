@@ -78,8 +78,8 @@ void ReplaceWorker::run()
             continue;
         }
 
-        qDebug() << "File" << docResult.fileName << "had" << numReplaced << "of" << matchResults.size() << "replaced.";
-        QThread::msleep(50);
+        //qDebug() << "File" << docResult.fileName << "had" << numReplaced << "of" << matchResults.size() << "replaced.";
+        //QThread::msleep(50);
     }
 
     emit resultReady();
