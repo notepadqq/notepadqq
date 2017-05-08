@@ -89,7 +89,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
 
     while((offset = content.indexOf(m_searchConfig.searchString, offset, caseSense)) != -1) {
         if (m_searchConfig.matchWord && !matchesWholeWord(offset, matchLength, content) ) {
-            offset += 1;
+            offset += matchLength;
             continue;
         }
 
@@ -108,7 +108,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
         result.m_matchLength = matchLength;
         results.results.push_back(result);
 
-        offset += 1;
+        offset += matchLength;
     }
 
     return results;
@@ -142,7 +142,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
         result.m_matchLength = match.capturedLength();
         results.results.push_back(result);
 
-        offset += 1;
+        offset += match.capturedLength();
     }
 
     return results;
