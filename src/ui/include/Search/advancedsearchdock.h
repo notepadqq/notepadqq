@@ -37,6 +37,8 @@ public:
     const SearchConfig& getSearchConfig() const { return m_searchConfig; }
     const SearchResult& getSearchResult() const { return m_searchResult; }
 
+    SearchResult getFilteredSearchResult() const;
+
     // Actions
     void expandAllResults();
     void collapseAllResults();
