@@ -33,7 +33,7 @@
 #include "include/nqqsettings.h"
 #include "include/iconprovider.h"
 #include "include/Search/searchstring.h"
-#include "include/Search/replaceworker.h"
+#include "include/Search/filereplacer.h"
 
 #include "include/mainwindow.h"
 #include "include/EditorNS/editor.h"
@@ -626,7 +626,7 @@ void AdvancedSearchDock::startReplace()
             if(!tec->tabWidgetFromEditor(ed)) continue;
 
             QString content = ed->value();
-            ReplaceWorker::replaceAll(res, content, replaceText);
+            FileReplacer::replaceAll(res, content, replaceText);
             ed->setValue(content);
         }
         return;
@@ -1152,14 +1152,14 @@ void SearchInstance::onSearchCompleted()
 
 void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, const QString& replaceText) const
 {
-    ReplaceWorker* w = new ReplaceWorker(filteredResults, replaceText);
+    FileReplacer* w = new FileReplacer(filteredResults, replaceText);
     QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
 
-    connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
-    connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
+    connect(w, &FileReplacer::resultReady, msgBox, &QMessageBox::close);
+    connect(w, &FileReplacer::resultProgress, msgBox, [msgBox](int curr, int total) {
         msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
     });
-    connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
+    connect(msgBox, &QMessageBox::buttonClicked, w, &FileReplacer::cancel);
 
     w->start();
 

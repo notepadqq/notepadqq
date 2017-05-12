@@ -11,7 +11,7 @@
 #include <vector>
 #include <map>
 
-#include "searchworker.h"
+#include "filesearcher.h"
 
 class QWidget;
 class QLayout;

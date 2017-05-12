@@ -34,8 +34,6 @@
 #include <QDesktopServices>
 #include <QJsonArray>
 
-#include "include/Search/advancedsearchdock.h"
-
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
 MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
@@ -43,7 +41,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this)),
     m_settings(NqqSettings::getInstance()),
-    m_fileSearchResultsWidget(new FileSearchResultsWidget()),
     m_workingDirectory(workingDirectory),
     m_advSearchDock(new AdvancedSearchDock(this))
 {
@@ -127,11 +124,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setAcceptDrops(true);
 
-
-    //ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
-    //connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
-    //        this, &MainWindow::on_resultMatchClicked);
-
     // Initialize UI from settings
     initUI();
 
@@ -160,6 +152,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     ui->actionFull_Screen->setChecked(isFullScreen());
 
+    // Initialize the advanced search dock and hook its signals up
     addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
 
     connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
@@ -224,8 +217,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
         a->setShortcut(shortcut);
     }
-    //Register our meta types for signal/slot calls here.
-    qRegisterMetaType<FileSearchResult::SearchResult>("FileSearchResult::SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -1404,11 +1395,6 @@ void MainWindow::instantiateFrmSearchReplace()
     }
 }
 
-void MainWindow::on_fileSearchResultFinished(FileSearchResult::SearchResult result)
-{
-    m_fileSearchResultsWidget->addSearchResult(result);
-    ui->dockFileSearchResults->show();
-}
 
 void MainWindow::on_actionSearch_triggered()
 {
@@ -2245,25 +2231,6 @@ void MainWindow::on_actionMove_Line_Up_triggered()
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
-}
-
-void MainWindow::on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol)
-{
-    QUrl url = stringToUrl(fileName);
-    m_docEngine->loadDocument(url,
-                              m_topEditorContainer->currentTabWidget());
-
-    QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
-
-    if (pos.first == -1 || pos.second == -1)
-        return;
-
-    EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
-    Editor *editor = tabW->editor(pos.second);
-
-    editor->setSelection(startLine, startCol, endLine, endCol);
-
-    editor->setFocus();
 }
 
 void MainWindow::on_actionTrim_Trailing_Space_triggered()
