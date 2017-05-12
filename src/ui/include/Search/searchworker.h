@@ -9,6 +9,9 @@
 
 #include "include/Search/searchhelpers.h"
 
+
+class MainWindow;
+
 // TODO: Find a good home for SearchConfig, MatchResult, etc
 struct SearchConfig {
 
@@ -25,16 +28,17 @@ struct SearchConfig {
      */
     QString getScopeAsString() const {
         switch(searchScope){
-        case ScopeCurrentDocument: return QObject::tr("Current Document");
+        case ScopeCurrentDocument:  return QObject::tr("Current Document");
         case ScopeAllOpenDocuments: return QObject::tr("All Documents");
-        case ScopeFileSystem: return QObject::tr("File System");
-        default: return "Invalid";
+        case ScopeFileSystem:       return QObject::tr("File System");
+        default:                    return "Invalid";
         }
     }
 
     QString searchString;
     QString filePattern; // Only used if searchMode==ScopeFileSystem.
     QString directory;   // Only used if searchMode==ScopeFileSystem.
+    MainWindow* targetWindow = nullptr; // Only used if searchMode is ScopeCurrentDocument or ScopeAllOpenDocuements
 
     bool matchCase      = false;
     bool matchWord      = false;
@@ -87,8 +91,6 @@ struct MatchResult {
     int m_positionInLine;
     int m_matchLength;
 
-    bool m_selected = false; // TODO: Current not used
-
 private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
 };
@@ -98,6 +100,13 @@ private:
 struct DocResult {
     QString fileName;
     QVector<MatchResult> results;
+
+    enum DocType {
+        TypeNone,
+        TypeFile,
+        TypeDocument
+    };
+    DocType docType = TypeNone;
 };
 
 struct SearchResult {
@@ -117,7 +126,7 @@ struct SearchResult {
     QVector<DocResult> results;
 
     // TODO: Debug value
-    qint64 m_timeToComplete;
+    qint64 m_timeToComplete = 0;
 };
 
 class FileSearcher : public QThread {
@@ -128,6 +137,10 @@ public:
     void cancel() { m_wantToStop = true; }
     const SearchResult& getResult() { return m_searchResult; }
 
+    static QRegularExpression createRegexFromConfig(const SearchConfig& config);
+    static DocResult searchPlainText(const SearchConfig& config, const QString& content);
+    static DocResult searchRegExp(const QRegularExpression& regex, const QString& content);
+
 signals:
     void resultProgress(int processed, int total);
     void resultReady();
@@ -136,9 +149,6 @@ protected:
     void run() override;
 
 private:
-    DocResult searchPlainText(const QString& content);
-    DocResult searchRegExp(const QString& content);
-
     // TODO: Integrate this into run()
     void worker();
 

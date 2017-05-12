@@ -10,12 +10,6 @@
 #include "include/Search/searchstring.h"
 #include "include/docengine.h"
 
-const int MatchResult::CUTOFF_LENGTH = 60;
-
-FileSearcher::FileSearcher(const SearchConfig& config)
-    : QThread(nullptr),
-      m_searchConfig(config)
-{ }
 
 /**
  * @brief matchesWholeWord Returns true if the substring at data.mid(index,matchLength) is a whole word.
@@ -77,18 +71,42 @@ QString trimEnd(const QString& str) {
     return QString(begin,end-begin);
 }
 
-DocResult FileSearcher::searchPlainText(const QString& content)
+const int MatchResult::CUTOFF_LENGTH = 60;
+
+FileSearcher::FileSearcher(const SearchConfig& config)
+    : QThread(nullptr),
+      m_searchConfig(config)
+{ }
+
+QRegularExpression FileSearcher::createRegexFromConfig(const SearchConfig& config)
+{
+    QRegularExpression regex;
+
+    const QFlags<QRegularExpression::PatternOption> options = config.matchCase ?
+                QRegularExpression::MultilineOption :
+                QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
+
+    const QString regexString = config.matchWord ?
+                "\\b" + config.searchString + "\\b" : config.searchString;
+
+    regex.setPattern(regexString);
+    regex.setPatternOptions(options);
+
+    return regex;
+}
+
+DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QString& content)
 {
     DocResult results;
 
-    Qt::CaseSensitivity caseSense = m_searchConfig.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    Qt::CaseSensitivity caseSense = config.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
     const std::vector<int> linePosition = getLinePositions(content);
 
-    const int matchLength = m_searchConfig.searchString.length();
+    const int matchLength = config.searchString.length();
     int offset = 0;
 
-    while((offset = content.indexOf(m_searchConfig.searchString, offset, caseSense)) != -1) {
-        if (m_searchConfig.matchWord && !matchesWholeWord(offset, matchLength, content) ) {
+    while((offset = content.indexOf(config.searchString, offset, caseSense)) != -1) {
+        if (config.matchWord && !matchesWholeWord(offset, matchLength, content) ) {
             offset += matchLength;
             continue;
         }
@@ -114,7 +132,7 @@ DocResult FileSearcher::searchPlainText(const QString& content)
     return results;
 }
 
-DocResult FileSearcher::searchRegExp(const QString &content)
+DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QString& content)
 {
     DocResult results;
 
@@ -123,7 +141,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 
     QRegularExpressionMatch match;
     for(;;) {
-        match = m_regex.match(content, offset);
+        match = regex.match(content, offset);
 
         if(!match.hasMatch())
             break;
@@ -151,16 +169,7 @@ DocResult FileSearcher::searchRegExp(const QString &content)
 void FileSearcher::worker()
 {
     if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
-        const QFlags<QRegularExpression::PatternOption> options = m_searchConfig.matchCase ?
-                    QRegularExpression::MultilineOption :
-                    QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption;
-
-        const QString regex = m_searchConfig.matchWord ?
-                    "\\b" + m_searchConfig.searchString + "\\b" : m_searchConfig.searchString;
-
-        m_regex.setPattern(regex);
-        m_regex.setPatternOptions(options);
-
+        m_regex = createRegexFromConfig(m_searchConfig);
     } else if (m_searchConfig.searchMode == SearchConfig::ModePlainTextSpecialChars) {
         m_searchConfig.searchString = SearchString::unescape(m_searchConfig.searchString);
     }
@@ -205,10 +214,12 @@ void FileSearcher::worker()
         }
 
         DocResult res;
+        res.docType = DocResult::TypeFile;
+
         if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
-            res = std::move(searchRegExp(decodedText.text));
+            res = std::move(searchRegExp(m_regex, decodedText.text));
         } else {
-            res = std::move(searchPlainText(decodedText.text));
+            res = std::move(searchPlainText(m_searchConfig, decodedText.text));
         }
 
         if(!res.results.empty()) {

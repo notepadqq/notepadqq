@@ -35,6 +35,9 @@
 #include "include/Search/searchstring.h"
 #include "include/Search/replaceworker.h"
 
+#include "include/mainwindow.h"
+#include "include/EditorNS/editor.h"
+
 /**
  * @brief addUniqueToList Adds the given item to the given list. Also removes duplicates from list.
  *        This is just a helper used in the updateXHistory functions.
@@ -598,6 +601,9 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 
 void AdvancedSearchDock::startReplace()
 {
+    if(m_currentSearchInstance->getSearchConfig().searchScope != SearchConfig::ScopeFileSystem)
+        return; // TODO: Implement other modes
+
     QString replaceText = m_cmbReplaceText->currentText();
     SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
 
@@ -668,6 +674,7 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
     if(m_chkUseSpecialChars->isChecked()) config.searchMode = SearchConfig::ModePlainTextSpecialChars;
     else if(m_chkUseRegex->isChecked()) config.searchMode = SearchConfig::ModeRegex;
     config.includeSubdirs = m_chkIncludeSubdirs->isChecked();
+    config.targetWindow = m_mainWindow;
 
     return config;
 }
@@ -704,8 +711,9 @@ void AdvancedSearchDock::selectNextResult()
     if(m_currentSearchInstance) m_currentSearchInstance->selectNextResult();
 }
 
-AdvancedSearchDock::AdvancedSearchDock()
-    : QObject(nullptr),
+AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
+    : QObject(mainWindow),
+      m_mainWindow(mainWindow),
       m_dockWidget( new QDockWidget() )
 {
     QDockWidget* dockWidget = m_dockWidget.data();
@@ -892,19 +900,12 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
         cfg.directory = dir.absolutePath(); // Also cleans path from multiple separators or "..", ".", etc.
     }
 
-    // TODO: Implement other search types
-    if(scope != SearchConfig::ScopeFileSystem) {
-        QMessageBox::information(nullptr, "NYI", "Only searches in file system scope currently implemented.");
-        return;
-    }
-
     // Update history
     updateSearchHistory(cfg.searchString);
     if (scope == SearchConfig::ScopeFileSystem) {
         updateDirectoryhHistory(cfg.directory);
         updateFilterHistory(cfg.filePattern);
     }
-
 
     m_searchInstances.push_back( std::unique_ptr<SearchInstance>(new SearchInstance(cfg)) );
 
@@ -918,17 +919,12 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
 SearchInstance::SearchInstance(const SearchConfig& config)
     : QObject(nullptr),
       m_searchConfig(config),
-      m_treeWidget(new QTreeWidget()),
-      m_fileSearcher( new FileSearcher(config) )
+      m_treeWidget(new QTreeWidget())
 {
     QTreeWidget* treeWidget = m_treeWidget.get();
 
     treeWidget->setHeaderLabel("Search Results in \"" + config.directory + "\"");
-    //treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
-
-    QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(treeWidget);
-    toplevelitem->setText(0, "Calculating...");
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
         // When checking/unchecking a toplevel item we want to propagate it to all children
@@ -946,14 +942,54 @@ SearchInstance::SearchInstance(const SearchConfig& config)
             emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second) );
     });
 
-    connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
-    connect(m_fileSearcher, &FileSearcher::resultReady, this, &SearchInstance::onSearchCompleted);
-    connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, [this](){
-        m_fileSearcher->deleteLater();
-        m_fileSearcher = nullptr;
-    });
+    if(config.searchScope == SearchConfig::ScopeCurrentDocument) {
+        MainWindow* mw = config.targetWindow;
+        TopEditorContainer* tec = mw->topEditorContainer();
+        EditorTabWidget* tw = tec->currentTabWidget();
+        Editor* ed = mw->currentEditor();
+        QString title = tw->tabText(tw->indexOf(ed));
 
-    m_fileSearcher->start();
+        DocResult dr = FileSearcher::searchPlainText(config, ed->value());
+        dr.docType = DocResult::TypeDocument;
+        dr.fileName = title;
+
+        if(!dr.results.empty())
+            m_searchResult.results.push_back(dr);
+
+        onSearchCompleted();
+    } else if(config.searchScope == SearchConfig::ScopeAllOpenDocuments) {
+        MainWindow* mw = config.targetWindow;
+        TopEditorContainer* tec = mw->topEditorContainer();
+        EditorTabWidget* tw = tec->currentTabWidget();
+
+        const int numEditors = tw->count();
+
+        for(int i=0; i<numEditors; ++i) {
+            Editor* ed = tw->editor(i);
+            QString title = tw->tabText(i);
+
+            DocResult dr = FileSearcher::searchPlainText(config, ed->value());
+            dr.docType = DocResult::TypeDocument;
+            dr.fileName = title;
+            if(!dr.results.empty())
+                m_searchResult.results.push_back(dr);
+        }
+
+        onSearchCompleted();
+    } else if(config.searchScope == SearchConfig::ScopeFileSystem) {
+        QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(treeWidget);
+        toplevelitem->setText(0, "Calculating...");
+
+        m_fileSearcher = new FileSearcher(config);
+        connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
+        connect(m_fileSearcher, &FileSearcher::resultReady, this, &SearchInstance::onSearchCompleted);
+        connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, [this](){
+            m_fileSearcher->deleteLater();
+            m_fileSearcher = nullptr;
+        });
+
+        m_fileSearcher->start();
+    }
 }
 
 SearchInstance::~SearchInstance()
@@ -1105,10 +1141,13 @@ void SearchInstance::onSearchCompleted()
 {
     m_isSearchInProgress = false;
 
-    // FileSearcher is not needed once we got the result. Thus we can move out of it and delete it asap.
-    m_searchResult = std::move(m_fileSearcher->getResult());
-    delete m_fileSearcher;
-    m_fileSearcher = nullptr;
+    // If m_fileSearcher is set we get the results from it. Otherwise we assume m_searchResult already has all
+    // results in it.
+    if(m_fileSearcher) {
+        m_searchResult = std::move(m_fileSearcher->getResult());
+        delete m_fileSearcher;
+        m_fileSearcher = nullptr;
+    }
 
     m_treeWidget->setHeaderLabel("Search Results in \""
                                  + m_searchConfig.directory
