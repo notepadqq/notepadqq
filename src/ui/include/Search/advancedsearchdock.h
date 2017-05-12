@@ -126,6 +126,7 @@ private:
     void selectSearchFromHistory(int index);
     void updateSearchInProgressUi();
     void startReplace();
+    void showReplaceDialog(const SearchResult& filteredResults, const QString& replaceText) const;
 
     void onChangeSearchScope(int index);
     void onCurrentSearchInstanceCompleted();

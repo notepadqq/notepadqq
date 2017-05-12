@@ -214,8 +214,6 @@ void FileSearcher::worker()
         }
 
         DocResult res;
-        res.docType = DocResult::TypeFile;
-
         if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
             res = std::move(searchRegExp(m_regex, decodedText.text));
         } else {
@@ -223,6 +221,7 @@ void FileSearcher::worker()
         }
 
         if(!res.results.empty()) {
+            res.docType = DocResult::TypeFile;
             res.fileName = fileName;
             m_searchResult.results.push_back(res);
         }
