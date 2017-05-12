@@ -1,4 +1,4 @@
-#include "include/Search/replaceworker.h"
+#include "include/Search/filereplacer.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -6,12 +6,12 @@
 
 #include "include/docengine.h"
 
-ReplaceWorker::ReplaceWorker(const SearchResult& results, const QString &replacement)
+FileReplacer::FileReplacer(const SearchResult& results, const QString &replacement)
     : m_searchResult(results),
       m_replacement(replacement)
 { }
 
-void ReplaceWorker::validate()
+void FileReplacer::validate()
 {
     // TODO: Check if any MatchResults are overlapping. If so, we can't just blindly replace them.
     for (const DocResult& r : m_searchResult.results) {
@@ -34,7 +34,7 @@ void ReplaceWorker::validate()
 
 }
 
-int ReplaceWorker::replaceAll(const DocResult& doc, QString& content, const QString& replacement)
+int FileReplacer::replaceAll(const DocResult& doc, QString& content, const QString& replacement)
 {
     int numReplaced = 0;
     int offset = 0;
@@ -53,7 +53,7 @@ int ReplaceWorker::replaceAll(const DocResult& doc, QString& content, const QStr
     return numReplaced;
 }
 
-void ReplaceWorker::run()
+void FileReplacer::run()
 {
     int count = 0;
 

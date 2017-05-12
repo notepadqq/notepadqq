@@ -1,8 +1,6 @@
-#include "include/Search/searchworker.h"
+#include "include/Search/filesearcher.h"
 
 #include <QDirIterator>
-#include <QMessageBox>
-#include <QDebug>
 
 #include <vector>
 #include <algorithm>
@@ -78,6 +76,11 @@ FileSearcher::FileSearcher(const SearchConfig& config)
       m_searchConfig(config)
 { }
 
+FileSearcher* FileSearcher::prepareAsyncSearch(const SearchConfig& config)
+{
+    return new FileSearcher(config);
+}
+
 QRegularExpression FileSearcher::createRegexFromConfig(const SearchConfig& config)
 {
     QRegularExpression regex;
@@ -105,8 +108,8 @@ DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QStrin
     const int matchLength = config.searchString.length();
     int offset = 0;
 
-    while((offset = content.indexOf(config.searchString, offset, caseSense)) != -1) {
-        if (config.matchWord && !matchesWholeWord(offset, matchLength, content) ) {
+    while ((offset = content.indexOf(config.searchString, offset, caseSense)) != -1) {
+        if (config.matchWord && !matchesWholeWord(offset, matchLength, content)) {
             offset += matchLength;
             continue;
         }
@@ -140,10 +143,10 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
     std::vector<int> linePosition = getLinePositions(content);
 
     QRegularExpressionMatch match;
-    for(;;) {
+    for (;;) {
         match = regex.match(content, offset);
 
-        if(!match.hasMatch())
+        if (!match.hasMatch())
             break;
 
         offset = match.capturedStart();
@@ -187,7 +190,7 @@ void FileSearcher::worker()
     QDirIterator it(m_searchConfig.directory, filters, QDir::Files | QDir::Readable | QDir::Hidden, dirIteratorOptions);
     QStringList fileList;
 
-    while( it.hasNext() )
+    while (it.hasNext())
         fileList << it.next();
 
     const int listSize = fileList.size();
@@ -195,8 +198,8 @@ void FileSearcher::worker()
 
     // Start the actual search
     int count = 0;
-    for(const auto& fileName : fileList) {
-        if(m_wantToStop)
+    for (const auto& fileName : fileList) {
+        if (m_wantToStop)
             break;
 
         if (++count % 100 == 0)
@@ -220,7 +223,7 @@ void FileSearcher::worker()
             res = std::move(searchPlainText(m_searchConfig, decodedText.text));
         }
 
-        if(!res.results.empty()) {
+        if (!res.results.empty()) {
             res.docType = DocResult::TypeFile;
             res.fileName = fileName;
             m_searchResult.results.push_back(res);

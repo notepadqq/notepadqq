@@ -2,11 +2,7 @@
 #define FRMSEARCHREPLACE_H
 
 #include "include/topeditorcontainer.h"
-#include "include/Search/filesearchresult.h"
-#include "include/Search/searchinfilesworker.h"
-#include "include/Search/replaceinfilesworker.h"
 #include "include/Search/searchhelpers.h"
-#include "include/Search/dlgsearching.h"
 #include <QDialog>
 #include <QMainWindow>
 #include <QStandardItemModel>
@@ -51,46 +47,7 @@ protected:
     void keyPressEvent(QKeyEvent *evt);
 
 signals:
-    void fileSearchResultFinished(FileSearchResult::SearchResult result);
-    void stopSearchInFiles();
-    void stopReplaceInFiles();
     void advancedFindRequested();
-
-public slots:
-   /**
-    * @brief Handle file error request from thread.
-    * @param `message`:   The message received from the working thread.
-    * @param `operation`: The referenced value from the thread awaiting reply.
-    */
-    void displayThreadErrorMessageBox(const QString &message, int &operation);
-   /**
-    * @brief Display results from ReplaceInFilesWorker thread.
-    * @param `replaceCount`:  Number of occurrences replaced.
-    * @param `fileCount`:     Number of files changed.   
-    * @param `stopped`:       Bool value which determines how we display results.
-    */
-    void handleReplaceResult(int replaceCount, int fileCount, bool stopped);
-   /**
-    * @brief Display results from SearchInFilesWorker thread.
-    * @param `result`: FileSearchResult::SearchResult struct to generate the display from.
-    */
-    void handleSearchResult(const FileSearchResult::SearchResult &result);
-   /**
-    * @brief Handle general error message from thread.
-    * @param `e`: The error message received.
-    */
-    void handleError(const QString &e);
-   /**
-    * @brief Handle progress report from thread.
-    * @param `file`: Current file being worked on.
-    * @param `replace`: Bool value which determines how we display progress.
-    */
-    void handleProgress(const QString &file, bool replace = false);
-   /**
-    * @brief Starts ReplaceInFilesWorker thread if we started the search in replaceMode.
-    * @param `result`: FileSearchResult::SearchResult struct to work on.
-    */
-    void handleReplaceInFiles(const FileSearchResult::SearchResult &result);
 
 private slots:
     void on_btnFindNext_clicked();
@@ -101,47 +58,22 @@ private slots:
     void on_btnSelectAll_clicked();
     void on_actionFind_toggled(bool on);
     void on_actionReplace_toggled(bool on);
-    void on_actionFind_in_files_toggled(bool on);
     void on_chkShowAdvanced_toggled(bool checked);
     void on_radSearchWithRegex_toggled(bool checked);
     void on_radSearchPlainText_toggled(bool checked);
     void on_radSearchWithSpecialChars_toggled(bool checked);
     void on_searchStringEdited(const QString &text);
-    void on_btnFindAll_clicked();
-    void on_btnLookInBrowse_clicked();
-    void on_btnReplaceAllInFiles_clicked();
 
 private:
     Ui::frmSearchReplace*  ui;
     TopEditorContainer*    m_topEditorContainer;
     QString                m_lastSearch;
 
-    class SearchInFilesSession : public QObject {
-    public:
-        SearchInFilesSession(QObject *parent) : QObject(parent) { }
-        SearchInFilesWorker*   threadSearch = nullptr;
-        ReplaceInFilesWorker*  threadReplace = nullptr;
-        dlgSearching*          msgBox = nullptr;
-    };
-
-    SearchInFilesSession* m_session = nullptr;
-    QList<SearchInFilesSession*> m_findInFilesPtrs;
-
    /**
     * @brief Get the current editor.
     */
     Editor*                currentEditor();
-   /**
-    * @brief Clean up Search in file sessions.
-    */
-    void sessionCleanup();
-   /**
-    * @brief Ask for confirmation for replacing in files.
-    * @param `path`:    The directory path being worked on.
-    * @param `filters`: The filters that will be applied.
-    * @return `bool`:   The result of the request.
-    */
-    bool confirmReplaceInFiles(const QString &path, const QStringList &filters);
+
    /**
     * @brief Perform a search within the current document.
     * @param `string`:        The string to search for.
@@ -176,16 +108,6 @@ private:
     */
     int selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions);
    /**
-    * @brief Perform a search or replacement of `string` within the selected `path`.
-    * @param `string`:        The string to be searched for.
-    * @param `path`:          The directory path to work in.
-    * @param `filters`:       File filters to limit the scope of the search/replacement.
-    * @param `searchMode`:    Search mode to use.
-    * @param `searchOptions`: Search options to use.
-    * @param `replaceMode`:   Replace found occurrences if true.
-    */
-    void searchReplaceInFiles(const QString &string, const QString &path, const QStringList &filters, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions, bool replaceMode = false);
-   /**
     * @brief Sets the current tab.
     * @param `tab`: The tab to be set to.
     */
@@ -210,11 +132,6 @@ private:
     * @return `QString`: Modified string based on `searchOptions`.
     */
     QString regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions);
-   /**
-    * @brief Retrieve file filters from UI.
-    * @return `QStringList`: List of current UI file filters.
-    */
-    QStringList fileFiltersFromUI();
 
     /**
      * @brief Displays the abort/retry/ignore message box for read and write errors
@@ -225,8 +142,6 @@ private:
      */
     void addToSearchHistory(QString string);
     void addToReplaceHistory(QString string);
-    void addToFileHistory(QString string);
-    void addToFilterHistory(QString string);
 };
 
 #endif // FRMSEARCHREPLACE_H

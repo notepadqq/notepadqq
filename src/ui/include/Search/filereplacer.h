@@ -5,18 +5,18 @@
 #include <QThread>
 #include <QVector>
 
-#include "searchworker.h"
+#include "searchobjects.h"
 
 /**
  * @brief This worker handles the replacement of portions of text in files,
  *        based on a search result.
  */
-class ReplaceWorker : public QThread
+class FileReplacer : public QThread
 {
     Q_OBJECT
 
 public:
-    ReplaceWorker(const SearchResult& results, const QString &replacement);
+    FileReplacer(const SearchResult& results, const QString &replacement);
 
     void cancel() { m_wantToStop = true; }
     void validate();
