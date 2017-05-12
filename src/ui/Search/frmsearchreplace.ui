@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>555</height>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -440,13 +440,13 @@
   </action>
   <action name="actionFind_in_files">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Find in files</string>
    </property>
    <property name="toolTip">
-    <string>Find in files</string>
+    <string>Advanced Search</string>
    </property>
   </action>
  </widget>

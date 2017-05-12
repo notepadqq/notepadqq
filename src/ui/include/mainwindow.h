@@ -12,6 +12,7 @@
 #include "include/Search/filesearchresultswidget.h"
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
+#include "include/Search/advancedsearchdock.h"
 
 namespace Ui {
 class MainWindow;
@@ -201,6 +202,8 @@ private:
     FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+
+    AdvancedSearchDock*  m_advSearchDock;
 
     /**
      * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and

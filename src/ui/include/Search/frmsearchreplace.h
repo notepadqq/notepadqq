@@ -54,6 +54,7 @@ signals:
     void fileSearchResultFinished(FileSearchResult::SearchResult result);
     void stopSearchInFiles();
     void stopReplaceInFiles();
+    void advancedFindRequested();
 
 public slots:
    /**
