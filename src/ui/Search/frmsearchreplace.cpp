@@ -49,6 +49,10 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     connect(ui->cmbLookIn->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindAll_clicked);
     connect(ui->cmbFilter->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindAll_clicked);
 
+
+    connect(ui->actionFind_in_files, &QAction::triggered, this, &frmSearchReplace::advancedFindRequested);
+
+
     ui->cmbFilter->lineEdit()->setPlaceholderText("*.ext1, *.ext2, ...");
 
     ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));

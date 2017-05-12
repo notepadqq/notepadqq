@@ -44,7 +44,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_topEditorContainer(new TopEditorContainer(this)),
     m_settings(NqqSettings::getInstance()),
     m_fileSearchResultsWidget(new FileSearchResultsWidget()),
-    m_workingDirectory(workingDirectory)
+    m_workingDirectory(workingDirectory),
+    m_advSearchDock(new AdvancedSearchDock(this))
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -158,49 +159,40 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     ui->actionFull_Screen->setChecked(isFullScreen());
 
-    AdvancedSearchDock* asd = new AdvancedSearchDock(this);
-    addDockWidget(Qt::BottomDockWidgetArea, asd->getDockWidget() );
-    asd->getDockWidget()->show();
+    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
 
-    connect(asd, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
+    connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
         if(doc.docType == DocResult::TypeDocument) {
+            // Make sure the editor is still open by searching for it first.
+            Editor* found = doc.editor;
+            EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
+            if(!parentWidget) return;
 
-            EditorTabWidget* foundETW = nullptr;
-            Editor* found = nullptr;
-            topEditorContainer()->forEachEditor([&found, &foundETW, &doc](const int, const int edid, EditorTabWidget* tw, Editor* ed) {
-                if (tw->tabText(edid) == doc.fileName) {
-                    found = ed;
-                    foundETW = tw;
-                    return false;
-                }
-                return true;
-            });
+            parentWidget->setCurrentWidget(found);
+            found->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
+                                result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
+            found->setFocus();
 
-            if(found) {
-                foundETW->setCurrentWidget(found);
-                found->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
-                                     result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
-                found->setFocus();
-            }
+        } else if (doc.docType == DocResult::TypeFile) {
+            // Check the file's existence before trying to open it through the DocEngine. that is needed because
+            // DocEngine will even open nonexistent documents and just show them as empty.
+            if(!QFile(doc.fileName).exists()) return;
+
+            QUrl url = stringToUrl(doc.fileName);
+            m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+
+            QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+            if (pos.first == -1 || pos.second == -1)
+                return;
+
+            Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
+
+            editor->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
+                                 result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
+            editor->setFocus();
         }
 
-        if(doc.docType != DocResult::TypeFile)
-            return;
-
-        // TODO: Don't open file if it doesn't exist. loadDocument() does not care about the file existence
-        QUrl url = stringToUrl(doc.fileName);
-        m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
-
-        QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
-
-        if (pos.first == -1 || pos.second == -1)
-            return;
-
-        Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
-
-        editor->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
-                             result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
-        editor->setFocus();
     });
 
 
@@ -1419,8 +1411,12 @@ void MainWindow::instantiateFrmSearchReplace()
                                  m_topEditorContainer,
                                  this);
 
-        connect(m_frmSearchReplace, &frmSearchReplace::fileSearchResultFinished,
-                this, &MainWindow::on_fileSearchResultFinished);
+        /*connect(m_frmSearchReplace, &frmSearchReplace::fileSearchResultFinished,
+                this, &MainWindow::on_fileSearchResultFinished);*/
+
+        connect(m_frmSearchReplace, &frmSearchReplace::advancedFindRequested, [this](){
+            m_advSearchDock->getDockWidget()->show();
+        });
     }
 }
 
@@ -2299,17 +2295,7 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
-    if (!m_frmSearchReplace) {
-        instantiateFrmSearchReplace();
-    }
-
-    QStringList sel = currentEditor()->selectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
-
-    m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
-    m_frmSearchReplace->activateWindow();
+    m_advSearchDock->getDockWidget()->show();
 }
 
 void MainWindow::on_actionDelete_Line_triggered()

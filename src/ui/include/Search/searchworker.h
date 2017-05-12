@@ -99,9 +99,6 @@ private:
 namespace EditorNS { class Editor; }
 
 struct DocResult {
-    QString fileName;
-    QVector<MatchResult> results;
-
     enum DocType {
         TypeNone,
         TypeFile,
@@ -110,7 +107,10 @@ struct DocResult {
     DocType docType = TypeNone;
 
     // TODO: Only a workaround
-    EditorNS::Editor* editor = nullptr;
+    EditorNS::Editor* editor = nullptr; // Only used when docType==TypeDocument
+    QString fileName;                   // Is a file path when docType==TypeFile and a file name when TypeDocument
+    QVector<MatchResult> results;
+
 };
 
 struct SearchResult {
