@@ -601,9 +601,6 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 
 void AdvancedSearchDock::startReplace()
 {
-    if(m_currentSearchInstance->getSearchConfig().searchScope != SearchConfig::ScopeFileSystem)
-        return; // TODO: Implement other modes
-
     QString replaceText = m_cmbReplaceText->currentText();
     SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
 
@@ -615,49 +612,27 @@ void AdvancedSearchDock::startReplace()
     if (m_chkReplaceWithSpecialChars->isChecked())
         replaceText = SearchString::unescape(replaceText);
 
-    ReplaceWorker* w = new ReplaceWorker(filteredResults, replaceText);
-    QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
+    const SearchConfig& config = m_currentSearchInstance->getSearchConfig();
+    SearchConfig::SearchScope scope = config.searchScope;
 
-    connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
-    connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
-        msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
-    });
-    connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
 
-    w->start();
+    if (scope == SearchConfig::ScopeCurrentDocument || scope == SearchConfig::ScopeAllOpenDocuments) {
+        TopEditorContainer* tec = config.targetWindow->topEditorContainer();
 
-    msgBox->setWindowTitle(QCoreApplication::applicationName());
-    msgBox->setIcon(QMessageBox::Information);
-    msgBox->setText("<h3>Replacing selected matches...</h3>");
-    msgBox->setInformativeText("Replacing in progress");
-    msgBox->setStandardButtons(QMessageBox::Cancel);
-    msgBox->exec();
+        for(const DocResult& res : filteredResults.results) {
+            Editor* ed = res.editor;
 
-    w->wait();
+            // The editor might not be open anymore. Try to find it first
+            if(!tec->tabWidgetFromEditor(ed)) continue;
 
-    const bool success = !w->hasErrors();
-
-    if (!success) {
-        const QVector<QString>& errors = w->getErrors();
-        const int numErrors = errors.size();
-        const int maxCount = std::min(numErrors, 8);
-        QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
-
-        for(int i=0; i<maxCount; i++) {
-            errorString += "\"" + errors[i] + "\"\n";
+            QString content = ed->value();
+            ReplaceWorker::replaceAll(res, content, replaceText);
+            ed->setValue(content);
         }
-        if(numErrors > 8)
-            errorString += QString("And %1 more.").arg(numErrors-8);
-
-        QMessageBox::warning(QApplication::activeWindow(),
-                             "Replace Results", errorString, QMessageBox::Ok);
-    } else {
-        QMessageBox::information(QApplication::activeWindow(),
-                                 "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
+        return;
+    } else if(scope == SearchConfig::ScopeFileSystem) {
+        showReplaceDialog(filteredResults, replaceText);
     }
-
-    delete w;
-    delete msgBox;
 }
 
 SearchConfig AdvancedSearchDock::getConfigFromInputs()
@@ -952,6 +927,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         DocResult dr = FileSearcher::searchPlainText(config, ed->value());
         dr.docType = DocResult::TypeDocument;
         dr.fileName = title;
+        dr.editor = ed;
 
         if(!dr.results.empty())
             m_searchResult.results.push_back(dr);
@@ -971,6 +947,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
             DocResult dr = FileSearcher::searchPlainText(config, ed->value());
             dr.docType = DocResult::TypeDocument;
             dr.fileName = title;
+            dr.editor = ed;
             if(!dr.results.empty())
                 m_searchResult.results.push_back(dr);
         }
@@ -1006,8 +983,8 @@ SearchResult SearchInstance::getFilteredSearchResult() const
     for (int i=0; i<tree->topLevelItemCount(); i++) {
         QTreeWidgetItem* docWidget = tree->topLevelItem(i);
         const DocResult* fullResult = m_docMap.at(docWidget);
-        DocResult r;
-        r.fileName = fullResult->fileName;
+        DocResult r = *fullResult;
+        r.results.clear();
 
         for (int c=0; c<docWidget->childCount(); c++) {
             QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
@@ -1171,4 +1148,51 @@ void SearchInstance::onSearchCompleted()
     }
 
     emit searchCompleted();
+}
+
+void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, const QString& replaceText) const
+{
+    ReplaceWorker* w = new ReplaceWorker(filteredResults, replaceText);
+    QMessageBox* msgBox = new QMessageBox(QApplication::activeWindow());
+
+    connect(w, &ReplaceWorker::resultReady, msgBox, &QMessageBox::close);
+    connect(w, &ReplaceWorker::resultProgress, msgBox, [msgBox](int curr, int total) {
+        msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
+    });
+    connect(msgBox, &QMessageBox::buttonClicked, w, &ReplaceWorker::cancel);
+
+    w->start();
+
+    msgBox->setWindowTitle(QCoreApplication::applicationName());
+    msgBox->setIcon(QMessageBox::Information);
+    msgBox->setText("<h3>Replacing selected matches...</h3>");
+    msgBox->setInformativeText("Replacing in progress");
+    msgBox->setStandardButtons(QMessageBox::Cancel);
+    msgBox->exec();
+
+    w->wait();
+
+    const bool success = !w->hasErrors();
+
+    if (!success) {
+        const QVector<QString>& errors = w->getErrors();
+        const int numErrors = errors.size();
+        const int maxCount = std::min(numErrors, 8);
+        QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
+
+        for(int i=0; i<maxCount; i++) {
+            errorString += "\"" + errors[i] + "\"\n";
+        }
+        if(numErrors > 8)
+            errorString += QString("And %1 more.").arg(numErrors-8);
+
+        QMessageBox::warning(QApplication::activeWindow(),
+                             "Replace Results", errorString, QMessageBox::Ok);
+    } else {
+        QMessageBox::information(QApplication::activeWindow(),
+                                 "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
+    }
+
+    delete w;
+    delete msgBox;
 }

@@ -95,7 +95,8 @@ private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
 };
 
-
+// TODO: Only a workaround
+namespace EditorNS { class Editor; }
 
 struct DocResult {
     QString fileName;
@@ -107,6 +108,9 @@ struct DocResult {
         TypeDocument
     };
     DocType docType = TypeNone;
+
+    // TODO: Only a workaround
+    EditorNS::Editor* editor = nullptr;
 };
 
 struct SearchResult {

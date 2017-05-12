@@ -34,6 +34,25 @@ void ReplaceWorker::validate()
 
 }
 
+int ReplaceWorker::replaceAll(const DocResult& doc, QString& content, const QString& replacement)
+{
+    int numReplaced = 0;
+    int offset = 0;
+    const int replacementLength = replacement.length();
+
+    for (const MatchResult& result : doc.results) {
+        const int pos = result.m_positionInFile + offset;
+        const int length = result.m_matchLength;
+
+        content.replace(pos, length, replacement);
+
+        offset += replacementLength - length;
+        numReplaced++;
+    }
+
+    return numReplaced;
+}
+
 void ReplaceWorker::run()
 {
     int count = 0;
@@ -56,30 +75,13 @@ void ReplaceWorker::run()
             continue;
         }
 
-        int numReplaced = 0;
-        int offset = 0;
-        const int replacementLength = m_replacement.length();
-
-        for (const MatchResult& result : matchResults) {
-            const int pos = result.m_positionInFile + offset;
-            const int length = result.m_matchLength;
-
-            decodedText.text.replace(pos, length, m_replacement);
-
-            offset += replacementLength - length;
-            numReplaced++;
-        }
-
-        if (numReplaced == 0)
+        if (replaceAll(docResult, decodedText.text, m_replacement) == 0)
             continue;
 
         if (!DocEngine::writeFromString(&f, decodedText)) {
             m_failedFiles.push_back(docResult.fileName);
             continue;
         }
-
-        //qDebug() << "File" << docResult.fileName << "had" << numReplaced << "of" << matchResults.size() << "replaced.";
-        //QThread::msleep(50);
     }
 
     emit resultReady();
