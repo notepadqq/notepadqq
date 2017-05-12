@@ -24,6 +24,8 @@ public:
     bool hasErrors() const { return !m_failedFiles.empty(); }
     const QVector<QString>& getErrors() const { return m_failedFiles; }
 
+    static void replace(const MatchResult& matchResult, const QString& replacement);
+
 protected:
     void run() override;
 

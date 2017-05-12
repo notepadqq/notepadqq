@@ -64,7 +64,7 @@ private:
     SearchConfig    m_searchConfig;
     std::unique_ptr<QTreeWidget> m_treeWidget; // TODO: use Qt's parent system instead
     SearchResult    m_searchResult;
-    FileSearcher*   m_fileSearcher;
+    FileSearcher*   m_fileSearcher = nullptr;
 
     // These map each QTreeWidget item to their respective MatchResult or DocResult
     std::map<QTreeWidgetItem*, const MatchResult*>  m_resultMap;
@@ -94,12 +94,13 @@ public:
     void paintEvent(QPaintEvent *event) override;
 };
 
+class MainWindow;
 
 class AdvancedSearchDock : public QObject
 {
     Q_OBJECT
 public:
-    AdvancedSearchDock();
+    AdvancedSearchDock(MainWindow* mainWindow);
 
     QDockWidget* getDockWidget() const;
 
@@ -112,6 +113,8 @@ signals:
     void resultItemClicked(const DocResult& doc, const MatchResult& result);
 
 private:
+    MainWindow* m_mainWindow;
+
     // Functions used to construct parts of the dock's user interface. Called in the constructor.
     QLayout* buildLeftTitlebar();
     QLayout* buildUpperTitlebarLayout();

@@ -159,11 +159,35 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     ui->actionFull_Screen->setChecked(isFullScreen());
 
-    AdvancedSearchDock* asd = new AdvancedSearchDock();
+    AdvancedSearchDock* asd = new AdvancedSearchDock(this);
     addDockWidget(Qt::BottomDockWidgetArea, asd->getDockWidget() );
     asd->getDockWidget()->show();
 
     connect(asd, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
+        if(doc.docType == DocResult::TypeDocument) {
+
+            EditorTabWidget* foundETW = nullptr;
+            Editor* found = nullptr;
+            topEditorContainer()->forEachEditor([&found, &foundETW, &doc](const int, const int edid, EditorTabWidget* tw, Editor* ed) {
+                if (tw->tabText(edid) == doc.fileName) {
+                    found = ed;
+                    foundETW = tw;
+                    return false;
+                }
+                return true;
+            });
+
+            if(found) {
+                foundETW->setCurrentWidget(found);
+                found->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
+                                     result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
+                found->setFocus();
+            }
+        }
+
+        if(doc.docType != DocResult::TypeFile)
+            return;
+
         // TODO: Don't open file if it doesn't exist. loadDocument() does not care about the file existence
         QUrl url = stringToUrl(doc.fileName);
         m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
