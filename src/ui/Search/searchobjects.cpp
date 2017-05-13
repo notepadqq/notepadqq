@@ -1,11 +1,12 @@
 #include "include/Search/searchobjects.h"
 
 void SearchConfig::setScopeFromInt(int scopeAsInt) {
-    if(scopeAsInt>0 && scopeAsInt<3) searchScope = static_cast<SearchScope>(scopeAsInt);
+    if (scopeAsInt>0 && scopeAsInt<3)
+        searchScope = static_cast<SearchScope>(scopeAsInt);
 }
 
 QString SearchConfig::getScopeAsString() const {
-    switch(searchScope){
+    switch (searchScope){
     case ScopeCurrentDocument:  return QObject::tr("Current Document");
     case ScopeAllOpenDocuments: return QObject::tr("All Documents");
     case ScopeFileSystem:       return QObject::tr("File System");
@@ -40,7 +41,7 @@ QString MatchResult::getPostMatchString(bool fullText) const {
 int SearchResult::countResults() const {
     int total = 0;
 
-    for(const DocResult& docResult : results)
+    for (const DocResult& docResult : results)
         total += docResult.results.size();
 
     return total;
