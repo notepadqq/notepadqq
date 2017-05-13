@@ -16,10 +16,7 @@ class QLayout;
 class QVBoxLayout;
 class QToolButton;
 class QComboBox;
-class QLineEdit;
 class QCheckBox;
-
-
 
 /**
  * @brief The QDockWidgetTitleButton class is used to display a normal
@@ -80,6 +77,11 @@ private:
     void onChangeSearchScope(int index);
     void onCurrentSearchInstanceCompleted();
     void onUserInput();
+    /**
+     * @brief onSearchHistorySizeChange Called when the search history changes; used to disable some UI elements
+     *                                  when the history is empty.
+     */
+    void onSearchHistorySizeChange();
 
     /**
      * @brief Adds the given item to one of the history lists stored in NqqSettings, also updates the
@@ -90,10 +92,16 @@ private:
     void updateDirectoryhHistory(const QString& item);
     void updateFilterHistory(const QString& item);
 
+    /**
+     * @brief getConfigFromInputs Reads out the UI (checkboxes, etc) and creates a SearchConfig object based
+     *                            on these settings.
+     */
     SearchConfig getConfigFromInputs();
-    void setInputsFromConfig(const SearchConfig& config);
 
-    void onSearchHistorySizeChange();
+    /**
+     * @brief setInputsFromConfig Sets the UI (checkboxes, etc) to the settings specified in the given SearchConfig.
+     */
+    void setInputsFromConfig(const SearchConfig& config);
 
     QScopedPointer<QDockWidget> m_dockWidget; // TODO: Use Qt's parent system
 

@@ -39,7 +39,6 @@ QStringList addUniqueToList(QStringList list, const QString& item) {
     return list;
 }
 
-
 /**
  * @brief askConfirmationForReplace Shows a blocking QMessageBox asking whether a user wants to go through with a
  *                                  replacement action.
@@ -119,8 +118,6 @@ void QDockWidgetTitleButton::paintEvent(QPaintEvent* /*evt*/)
     opt.iconSize = QSize(size, size);
     style()->drawComplexControl(QStyle::CC_ToolButton, &opt, &p, this);
 }
-
-
 
 /**
  * @brief makeDivider Returns a QFrame that acts as a visual dividing line
@@ -506,6 +503,8 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 
 void AdvancedSearchDock::startReplace()
 {
+    if (!m_currentSearchInstance) return;
+
     QString replaceText = m_cmbReplaceText->currentText();
     SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
 
@@ -626,16 +625,16 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     // Search panel connections
     connect(m_cmbSearchTerm->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
     connect(m_cmbSearchTerm->lineEdit(), &QLineEdit::returnPressed, [this](){
-        runSearch(getConfigFromInputs());
+        startSearch(getConfigFromInputs());
     });
     connect(m_cmbSearchScope, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &AdvancedSearchDock::onChangeSearchScope);
     connect(m_btnSearch, &QToolButton::clicked, [this](){
-        runSearch(getConfigFromInputs());
+        startSearch(getConfigFromInputs());
     });
     connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
     connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::returnPressed, [this](){
-        runSearch(getConfigFromInputs());
+        startSearch(getConfigFromInputs());
     });
     connect(m_btnSelectSearchDirectory, &QToolButton::clicked, [this](){
         QString defaultDir = m_cmbSearchDirectory->currentText();
@@ -747,7 +746,7 @@ void AdvancedSearchDock::updateFilterHistory(const QString& item) {
     m_cmbSearchPattern->addItems(history);
 }
 
-void AdvancedSearchDock::runSearch(SearchConfig cfg)
+void AdvancedSearchDock::startSearch(SearchConfig cfg)
 {
     if (cfg.searchString.isEmpty())
         return;
