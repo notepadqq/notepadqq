@@ -50,12 +50,18 @@ public:
 
     QDockWidget* getDockWidget() const;
 
-    void runSearch(SearchConfig cfg);
+    /**
+     * @brief startSearch Starts a search with the settings given in the SearchConfig.
+     */
+    void startSearch(SearchConfig cfg);
 
     void selectPrevResult();
     void selectNextResult();
 
 signals:
+    /**
+     * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked
+     */
     void resultItemClicked(const DocResult& doc, const MatchResult& result);
 
 private:
@@ -68,19 +74,33 @@ private:
     QWidget* buildTitlebarWidget();
     QWidget* buildSearchPanelWidget();
 
+    /**
+     * @brief clearHistory Removes all items from the search history and resets UI back to "New Search"
+     */
     void clearHistory();
+
+    /**
+     * @brief selectSearchFromHistory Selects a given SearchInstance and displays it.
+     * @param index If 0, the "New Search" panel will be shown, else the respective SearchInstance will be shown.
+     */
     void selectSearchFromHistory(int index);
     void updateSearchInProgressUi();
+    /**
+     * @brief startReplace Takes the current SearchInstance and replaces all of its selected matches with the replacement
+     *                     string found in m_cmbReplaceText
+     */
     void startReplace();
+
+    /**
+     * @brief showReplaceDialog Shows a blocking dialog asking the user whether they want to continue with replacing
+     * @param filteredResults Contains all ResultMatches that will be replaced
+     * @param replaceText The text that is used for replacing
+     */
     void showReplaceDialog(const SearchResult& filteredResults, const QString& replaceText) const;
 
     void onChangeSearchScope(int index);
     void onCurrentSearchInstanceCompleted();
     void onUserInput();
-    /**
-     * @brief onSearchHistorySizeChange Called when the search history changes; used to disable some UI elements
-     *                                  when the history is empty.
-     */
     void onSearchHistorySizeChange();
 
     /**
