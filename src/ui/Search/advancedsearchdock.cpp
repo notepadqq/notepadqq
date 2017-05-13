@@ -482,7 +482,7 @@ void AdvancedSearchDock::onCurrentSearchInstanceCompleted()
 void AdvancedSearchDock::onUserInput()
 {
     // Dis- or enable the "Search" button depending on whether the necessary fields are filled out or not.
-    switch(m_cmbSearchScope->currentIndex()) {
+    switch (m_cmbSearchScope->currentIndex()) {
     case SearchConfig::ScopeCurrentDocument:
     case SearchConfig::ScopeAllOpenDocuments:
         m_btnSearch->setEnabled(!m_cmbSearchTerm->currentText().isEmpty());
@@ -526,8 +526,8 @@ void AdvancedSearchDock::startReplace()
     const SearchConfig& config = m_currentSearchInstance->getSearchConfig();
     SearchConfig::SearchScope scope = config.searchScope;
 
-
     if (scope == SearchConfig::ScopeCurrentDocument || scope == SearchConfig::ScopeAllOpenDocuments) {
+        // Since doc management is a mess we've got to go through all DocResults manually here.
         TopEditorContainer* tec = config.targetWindow->topEditorContainer();
 
         for (const DocResult& res : filteredResults.results) {
@@ -602,7 +602,7 @@ void AdvancedSearchDock::selectNextResult()
 AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     : QObject(mainWindow),
       m_mainWindow(mainWindow),
-      m_dockWidget( new QDockWidget() )
+      m_dockWidget(new QDockWidget())
 {
     QDockWidget* dockWidget = m_dockWidget.data();
     dockWidget->setWindowTitle(tr("Advanced Search"));

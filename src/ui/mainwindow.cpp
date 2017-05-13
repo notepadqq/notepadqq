@@ -152,40 +152,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Initialize the advanced search dock and hook its signals up
     addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
-
-    connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, [this](const DocResult& doc, const MatchResult& result){
-        if(doc.docType == DocResult::TypeDocument) {
-            // Make sure the editor is still open by searching for it first.
-            Editor* found = doc.editor;
-            EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
-            if(!parentWidget) return;
-
-            parentWidget->setCurrentWidget(found);
-            found->setSelection(result.lineNumber-1, result.positionInLine, //selection start
-                                result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
-            found->setFocus();
-
-        } else if (doc.docType == DocResult::TypeFile) {
-            // Check the file's existence before trying to open it through the DocEngine. that is needed because
-            // DocEngine will even open nonexistent documents and just show them as empty.
-            if(!QFile(doc.fileName).exists()) return;
-
-            QUrl url = stringToUrl(doc.fileName);
-            m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
-
-            QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
-
-            if (pos.first == -1 || pos.second == -1)
-                return;
-
-            Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
-
-            editor->setSelection(result.lineNumber-1, result.positionInLine, //selection start
-                                 result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
-            editor->setFocus();
-        }
-
-    });
+    connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, &MainWindow::searchDockItemClicked);
 
     restoreWindowSettings();
 
@@ -1223,6 +1190,40 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
                                     .arg(cursor.second + 1));
 
         m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+    }
+}
+
+void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& result)
+{
+    if(doc.docType == DocResult::TypeDocument) {
+        // Make sure the editor is still open by searching for it first.
+        Editor* found = doc.editor;
+        EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
+        if (!parentWidget) return;
+
+        parentWidget->setCurrentWidget(found);
+        found->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                            result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        found->setFocus();
+
+    } else if (doc.docType == DocResult::TypeFile) {
+        // Check the file's existence before trying to open it through the DocEngine. that is needed because
+        // DocEngine will even open nonexistent documents and just show them as empty.
+        if (!QFile(doc.fileName).exists()) return;
+
+        QUrl url = stringToUrl(doc.fileName);
+        m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+
+        QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+        if (pos.first == -1 || pos.second == -1)
+            return;
+
+        Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
+
+        editor->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                             result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        editor->setFocus();
     }
 }
 

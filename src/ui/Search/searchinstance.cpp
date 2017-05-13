@@ -110,7 +110,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
         // When checking/unchecking a toplevel item we want to propagate it to all children
-        if(column!=0 || item->parent()) return;
+        if (column!=0 || item->parent()) return;
         const Qt::CheckState checkState = item->checkState(0);
 
         for (int i=0; i<item->childCount(); i++) {
@@ -203,7 +203,7 @@ SearchResult SearchInstance::getFilteredSearchResult() const
             if (it->checkState(0) == Qt::Checked)
                 r.results.push_back( *m_resultMap.at(it) );
         }
-        if(!r.results.empty()) result.results.push_back(r);
+        if (!r.results.empty()) result.results.push_back(r);
     }
 
     return result;
@@ -259,7 +259,7 @@ void SearchInstance::selectNextResult()
             next = top->child(nextIndex);
         else {
             int nextTop = treeWidget->indexOfTopLevelItem(top) + 1;
-            if(nextTop >= treeWidget->topLevelItemCount())
+            if (nextTop >= treeWidget->topLevelItemCount())
                 nextTop = 0;
             next = treeWidget->topLevelItem(nextTop)->child(0);
         }
@@ -289,7 +289,7 @@ void SearchInstance::selectPreviousResult()
             prev = top->child(prevIndex);
         else {
             int prevTop = treeWidget->indexOfTopLevelItem(top) - 1;
-            if(prevTop < 0)
+            if (prevTop < 0)
                 prevTop = treeWidget->topLevelItemCount() - 1;
             prev = treeWidget->topLevelItem(prevTop)->child(treeWidget->topLevelItem(prevTop)->childCount()-1);
         }
