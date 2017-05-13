@@ -101,7 +101,8 @@ SOURCES += main.cpp\
     nqqrun.cpp \
     Search/filesearcher.cpp \
     Search/filereplacer.cpp \
-    Search/searchobjects.cpp
+    Search/searchobjects.cpp \
+    Search/searchinstance.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -145,7 +146,8 @@ HEADERS  += include/mainwindow.h \
     include/nqqrun.h \
     include/Search/filesearcher.h \
     include/Search/searchobjects.h \
-    include/Search/filereplacer.h
+    include/Search/filereplacer.h \
+    include/Search/searchinstance.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

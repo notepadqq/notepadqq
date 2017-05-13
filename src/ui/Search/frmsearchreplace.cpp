@@ -95,8 +95,6 @@ void frmSearchReplace::setCurrentTab(Tabs tab)
         ui->actionFind->setChecked(true);
     } else if (tab == TabReplace) {
         ui->actionReplace->setChecked(true);
-    } else if (tab == TabSearchInFiles) {
-        ui->actionFind_in_files->setChecked(true);
     }
 }
 
