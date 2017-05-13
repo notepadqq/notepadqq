@@ -33,6 +33,10 @@ public:
     QSharedPointer<Editor> editorSharedPtr(Editor *editor);
     Editor *currentEditor();
 
+    /**
+     * @brief tabTextFromEditor Returns the tab text of a given Editor, or an empty string if
+     *                          the Editor is not part of this tab widget.
+     */
     QString tabTextFromEditor(Editor* editor);
 
     qreal zoomFactor() const;
