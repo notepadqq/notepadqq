@@ -15,27 +15,27 @@ QString SearchConfig::getScopeAsString() const {
 }
 
 QString MatchResult::getMatchString() const {
-    return m_matchLineString.mid(m_positionInLine, m_matchLength);
+    return matchLineString.mid(positionInLine, matchLength);
 }
 
 QString MatchResult::getPreMatchString(bool fullText) const {
-    const int pos = m_positionInLine;
+    const int pos = positionInLine;
 
     // Cut off part of the text if it is too long and the caller did not request full text
     if (!fullText && pos > CUTOFF_LENGTH)
-        return "..." + m_matchLineString.mid( std::max(0, pos-CUTOFF_LENGTH), std::min(CUTOFF_LENGTH, pos) );
+        return "..." + matchLineString.mid( std::max(0, pos-CUTOFF_LENGTH), std::min(CUTOFF_LENGTH, pos) );
     else
-        return m_matchLineString.left(pos);
+        return matchLineString.left(pos);
 }
 
 QString MatchResult::getPostMatchString(bool fullText) const {
-    const int end = m_matchLineString.length();
-    const int pos = m_positionInLine + m_matchLength;
+    const int end = matchLineString.length();
+    const int pos = positionInLine + matchLength;
 
     if (!fullText && end-pos > CUTOFF_LENGTH)
-        return m_matchLineString.mid(pos, CUTOFF_LENGTH) + "...";
+        return matchLineString.mid(pos, CUTOFF_LENGTH) + "...";
     else
-        return m_matchLineString.right(end-pos);
+        return matchLineString.right(end-pos);
 }
 
 int SearchResult::countResults() const {

@@ -122,11 +122,11 @@ DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QStrin
         const int lineEnd = linePosition[line];
 
         MatchResult result;
-        result.m_lineNumber = line;
-        result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
-        result.m_positionInFile = offset;
-        result.m_positionInLine = offset - lineStart;
-        result.m_matchLength = matchLength;
+        result.lineNumber = line;
+        result.matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
+        result.positionInFile = offset;
+        result.positionInLine = offset - lineStart;
+        result.matchLength = matchLength;
         results.results.push_back(result);
 
         offset += matchLength;
@@ -156,11 +156,11 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
         const int lineEnd = linePosition[line];
 
         MatchResult result;
-        result.m_lineNumber = line;
-        result.m_matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
-        result.m_positionInFile = offset;
-        result.m_positionInLine = offset - lineStart;
-        result.m_matchLength = match.capturedLength();
+        result.lineNumber = line;
+        result.matchLineString = trimEnd(content.mid(lineStart, lineEnd-lineStart));
+        result.positionInFile = offset;
+        result.positionInLine = offset - lineStart;
+        result.matchLength = match.capturedLength();
         results.results.push_back(result);
 
         offset += match.capturedLength();
@@ -216,10 +216,14 @@ void FileSearcher::run() {
         }
 
         DocResult res;
-        if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
-            res = std::move(searchRegExp(m_regex, decodedText.text));
-        } else {
+        switch (m_searchConfig.searchMode) {
+        case SearchConfig::ModePlainText:
+        case SearchConfig::ModePlainTextSpecialChars:
             res = std::move(searchPlainText(m_searchConfig, decodedText.text));
+            break;
+        case SearchConfig::ModeRegex:
+            res = std::move(searchRegExp(m_regex, decodedText.text));
+            break;
         }
 
         if (!res.results.empty()) {
