@@ -60,9 +60,11 @@ QString getFormattedLocationText(const DocResult& docResult, const QString& sear
     const int commonPathLength = searchLocation.length();
     const QString relativePath = docResult.fileName.mid(commonPathLength);
 
-    return QString("<span style='white-space:pre-wrap;'><b>%1</b> Results for:   '<b>%2</b>'</span>")
-            .arg(docResult.results.size(), 4) // Pad the number so all rows line up nicely.
-            .arg(relativePath.toHtmlEscaped());
+    return QString("<span style='white-space:pre-wrap;'>" +
+                   QObject::tr("<b>%1</b> Results for:   '<b>%2</b>'")
+                   .arg(docResult.results.size(), 4) // Pad the number so all rows line up nicely.
+                   .arg(relativePath.toHtmlEscaped())
+                   + "</span>");
 }
 
 /**
@@ -98,8 +100,8 @@ QString getFormattedResultText(const MatchResult& result, bool showFullText=fals
  */
 bool askConfirmationForReplace(QString replaceText, int numReplacements) {
     return QMessageBox::information(QApplication::activeWindow(),
-                                    "Confirm Replacement",
-                                    QString("This will replace %1 selected matches with \"%2\"."
+                                    QObject::tr("Confirm Replacement"),
+                                    QObject::tr("This will replace %1 selected matches with \"%2\"."
                                             " This action cannot be undone. Continue?")
                                     .arg(numReplacements)
                                     .arg(replaceText),
@@ -174,11 +176,11 @@ class SearchTreeDelegate : public QStyledItemDelegate
 public:
     SearchTreeDelegate(QObject* parent) : QStyledItemDelegate(parent) {}
 
-    void paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
-QSize SearchTreeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize SearchTreeDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionViewItem optionItem = option;
     initStyleOption(&optionItem, index);
@@ -189,7 +191,7 @@ QSize SearchTreeDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
     return QSize(doc.idealWidth(), doc.size().height());
 }
 
-void SearchTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+void SearchTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 
     QStyleOptionViewItem optionItem = option;
@@ -219,7 +221,7 @@ void SearchTreeDelegate::paint(QPainter* painter, const QStyleOptionViewItem & o
 }
 
 /**
- * @brief makeDivider Creates a QFrame that acts as a visual dividing line
+ * @brief makeDivider Returns a QFrame that acts as a visual dividing line
  * @param shape Either QFrame::HLine or QFrame::VLine to determine the line's orientation
  * @param length Sets the maximum length of the divider.
  */
@@ -227,8 +229,8 @@ QFrame* makeDivider(QFrame::Shape shape, int length=0) {
     QFrame* line = new QFrame();
     line->setFrameShape(shape);
     line->setFrameShadow(QFrame::Sunken);
-    if(length > 0) {
-        if(shape == QFrame::VLine)
+    if (length > 0) {
+        if (shape == QFrame::VLine)
             line->setMaximumHeight(length);
         else
             line->setMaximumWidth(length);
@@ -238,45 +240,45 @@ QFrame* makeDivider(QFrame::Shape shape, int length=0) {
 
 QLayout* AdvancedSearchDock::buildLeftTitlebar() {
 
-    QLabel* label = new QLabel("Advanced Search");
-    label->setMaximumWidth( label->fontMetrics().width(label->text()) );
+    QLabel* label = new QLabel(tr("Advanced Search"));
+    label->setMaximumWidth(label->fontMetrics().width(label->text()));
 
     m_btnClearHistory = new QToolButton;
     m_btnClearHistory->setIcon(IconProvider::fromTheme("document-new"));
-    m_btnClearHistory->setToolTip("Clear Search History");
+    m_btnClearHistory->setToolTip(tr("Clear Search History"));
 
     m_cmbSearchHistory = new QComboBox;
-    m_cmbSearchHistory->addItem("New Search");
+    m_cmbSearchHistory->addItem(tr("New Search"));
     m_cmbSearchHistory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     m_cmbSearchHistory->setMinimumWidth(120);
     m_cmbSearchHistory->setMaximumWidth(300);
 
     m_btnPrevResult = new QToolButton;
     m_btnPrevResult->setIcon(IconProvider::fromTheme("go-previous"));
-    m_btnPrevResult->setToolTip("Go To Previous Result");
+    m_btnPrevResult->setToolTip(tr("Go To Previous Result"));
 
     m_btnNextResult = new QToolButton;
     m_btnNextResult->setIcon(IconProvider::fromTheme("go-next"));
-    m_btnNextResult->setToolTip("Go To Next Result");
+    m_btnNextResult->setToolTip(tr("Go To Next Result"));
 
     QMenu* menu = new QMenu();
-    m_actExpandAll = menu->addAction("Expand/Collapse All");
+    m_actExpandAll = menu->addAction(tr("Expand/Collapse All"));
     m_actExpandAll->setCheckable(true);
-    m_actRedoSearch = menu->addAction("Redo Search");
-    m_actCopyContents = menu->addAction("Copy Selected Contents To Clipboard");
-    m_actShowFullLines = menu->addAction("Show Full Lines");
+    m_actRedoSearch = menu->addAction(tr("Redo Search"));
+    m_actCopyContents = menu->addAction(tr("Copy Selected Contents To Clipboard"));
+    m_actShowFullLines = menu->addAction(tr("Show Full Lines"));
     m_actShowFullLines->setCheckable(true);
-    m_actRemoveSearch= menu->addAction("Remove This Search");
+    m_actRemoveSearch= menu->addAction(tr("Remove This Search"));
 
     m_btnMoreOptions = new QToolButton;
     m_btnMoreOptions->setIcon(IconProvider::fromTheme("preferences-other"));
     m_btnMoreOptions->setEnabled(false);
-    m_btnMoreOptions->setToolTip("More Options");
+    m_btnMoreOptions->setToolTip(tr("More Options"));
     m_btnMoreOptions->setPopupMode(QToolButton::InstantPopup);
     m_btnMoreOptions->setMenu(menu);
 
     m_btnToggleReplaceOptions = new QToolButton;
-    m_btnToggleReplaceOptions->setText("Replace Options");
+    m_btnToggleReplaceOptions->setText(tr("Replace Options"));
     m_btnToggleReplaceOptions->setCheckable(true);
 
     QHBoxLayout* layout = new QHBoxLayout;
@@ -301,7 +303,7 @@ QLayout* AdvancedSearchDock::buildUpperTitlebarLayout() {
 
     m_btnDockUndock = new QDockWidgetTitleButton(m_dockWidget.data());
     m_btnDockUndock->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarNormalButton));
-    m_btnDockUndock->setToolTip("Dock/Undock this panel");
+    m_btnDockUndock->setToolTip(tr("Dock/Undock this panel"));
 
     m_btnClose = new QDockWidgetTitleButton(m_dockWidget.data());
     m_btnClose->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarCloseButton));
@@ -326,7 +328,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
     m_cmbReplaceText = new QComboBox;
     m_cmbReplaceText->setEditable(true);
-    m_cmbReplaceText->lineEdit()->setPlaceholderText("Replace Text");
+    m_cmbReplaceText->lineEdit()->setPlaceholderText(tr("Replace Text"));
     m_cmbReplaceText->setMaximumWidth(300);
     m_cmbReplaceText->setMinimumWidth(300);
     m_cmbReplaceText->lineEdit()->setClearButtonEnabled(true);
@@ -334,11 +336,11 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_cmbReplaceText->setCurrentText("");
 
     m_btnReplaceSelected = new QToolButton;
-    m_btnReplaceSelected->setText("Replace Selected");
-    m_btnReplaceSelected->setToolTip("Replace all selected search results.");
+    m_btnReplaceSelected->setText(tr("Replace Selected"));
+    m_btnReplaceSelected->setToolTip(tr("Replace all selected search results."));
 
-    m_chkReplaceWithSpecialChars = new QCheckBox("Use Special Characters ('\\n', '\\t', ...)");
-    m_chkReplaceWithSpecialChars->setToolTip("Replace strings like '\\n' with their respective special characters.");
+    m_chkReplaceWithSpecialChars = new QCheckBox(tr("Use Special Characters ('\\n', '\\t', ...)"));
+    m_chkReplaceWithSpecialChars->setToolTip(tr("Replace strings like '\\n' with their respective special characters."));
 
     replaceOptions->addWidget(m_cmbReplaceText);
     replaceOptions->addWidget(m_btnReplaceSelected);
@@ -373,16 +375,16 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_cmbSearchTerm = new QComboBox;
     m_cmbSearchTerm->setEditable(true);
-    m_cmbSearchTerm->lineEdit()->setPlaceholderText("Search String");
+    m_cmbSearchTerm->lineEdit()->setPlaceholderText(tr("Search String"));
     m_cmbSearchTerm->setMaximumWidth(300);
     m_cmbSearchTerm->lineEdit()->setClearButtonEnabled(true);
     m_cmbSearchTerm->addItems(settings.Search.getSearchHistory());
     m_cmbSearchTerm->setCurrentText("");
 
     m_cmbSearchScope = new QComboBox;
-    m_cmbSearchScope->addItem("Search in Current Document");
-    m_cmbSearchScope->addItem("Search in All Open Documents");
-    m_cmbSearchScope->addItem("Search in Files on File System");
+    m_cmbSearchScope->addItem(tr("Search in Current Document"));
+    m_cmbSearchScope->addItem(tr("Search in All Open Documents"));
+    m_cmbSearchScope->addItem(tr("Search in Files on File System"));
     m_cmbSearchScope->setMaximumWidth(260);
 
     m_cmbSearchPattern = new QComboBox;
@@ -395,7 +397,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_cmbSearchDirectory = new QComboBox;
     m_cmbSearchDirectory->setEditable(true);
-    m_cmbSearchDirectory->lineEdit()->setPlaceholderText("Directory");
+    m_cmbSearchDirectory->lineEdit()->setPlaceholderText(tr("Directory"));
     m_cmbSearchDirectory->setMaximumWidth(260);
     m_cmbSearchDirectory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     m_cmbSearchDirectory->lineEdit()->setClearButtonEnabled(true);
@@ -404,31 +406,31 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_btnSelectSearchDirectory = new QToolButton;
     m_btnSelectSearchDirectory->setIcon(IconProvider::fromTheme("edit-find"));
-    m_btnSelectSearchDirectory->setToolTip("Select Search Directory");
+    m_btnSelectSearchDirectory->setToolTip(tr("Select Search Directory"));
 
     QHBoxLayout* m2 = new QHBoxLayout;
     m2->addWidget(m_cmbSearchDirectory);
     m2->addWidget(m_btnSelectSearchDirectory);
 
     m_btnSearch = new QToolButton;
-    m_btnSearch->setText("Search");
+    m_btnSearch->setText(tr("Search"));
     m_btnSearch->setEnabled(false);
 
-    QLabel* scl = new QLabel("Scope:");
+    QLabel* scl = new QLabel(tr("Scope:"));
     scl->setMaximumWidth(80);
-    QLabel* srl = new QLabel("Search:");
+    QLabel* srl = new QLabel(tr("Search:"));
     srl->setMaximumWidth(80);
-    QLabel* srp = new QLabel("Pattern:");
+    QLabel* srp = new QLabel(tr("Pattern:"));
     srp->setMaximumWidth(80);
-    QLabel* srd = new QLabel("Location:");
+    QLabel* srd = new QLabel(tr("Location:"));
     srd->setMaximumWidth(80);
 
-    m_chkMatchCase = new QCheckBox("Match Case");
-    m_chkMatchWords = new QCheckBox("Match Whole Words Only");
-    m_chkUseRegex = new QCheckBox("Use Regular Expressions");
-    m_chkUseSpecialChars = new QCheckBox("Use Special Characters ('\\t', '\\n', ...)");
-    m_chkUseSpecialChars->setToolTip("If set, character sequences like '\\t' will be replaced by their respective special characters.");
-    m_chkIncludeSubdirs = new QCheckBox("Include Subdirectories");
+    m_chkMatchCase = new QCheckBox(tr("Match Case"));
+    m_chkMatchWords = new QCheckBox(tr("Match Whole Words Only"));
+    m_chkUseRegex = new QCheckBox(tr("Use Regular Expressions"));
+    m_chkUseSpecialChars = new QCheckBox(tr("Use Special Characters ('\\t', '\\n', ...)"));
+    m_chkUseSpecialChars->setToolTip(tr("If set, character sequences like '\\t' will be replaced by their respective special characters."));
+    m_chkIncludeSubdirs = new QCheckBox(tr("Include Subdirectories"));
 
     QVBoxLayout* mini = new QVBoxLayout;
     mini->addWidget(m_chkMatchCase);
@@ -476,8 +478,8 @@ void AdvancedSearchDock::clearHistory()
         QMessageBox msgBox(nullptr);
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("<h3>One or more searches are still in progress</h3>");
-        msgBox.setInformativeText("All searches will be canceled and their results discarded if you continue.");
+        msgBox.setText(tr("<h3>One or more searches are still in progress</h3>"));
+        msgBox.setInformativeText(tr("All searches will be canceled and their results discarded if you continue."));
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Cancel);
         msgBox.setEscapeButton(QMessageBox::Cancel);
@@ -692,7 +694,7 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
       m_dockWidget( new QDockWidget() )
 {
     QDockWidget* dockWidget = m_dockWidget.data();
-    dockWidget->setWindowTitle("Advanced Search");
+    dockWidget->setWindowTitle(tr("Advanced Search"));
     dockWidget->setObjectName("advancedSearchDockWidget");
 
     dockWidget->setTitleBarWidget( buildTitlebarWidget() );
@@ -773,9 +775,9 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
         if(m_currentSearchInstance->isSearchInProgress()) {
             const auto response = QMessageBox::warning(
                         QApplication::activeWindow(),
-                        "Search in progress",
-                        "<h3>This search is still in progress.</h3> " \
-                        "The search will be canceled and all results discarded if you continue.",
+                        tr("Search in progress"),
+                        tr("<h3>This search is still in progress.</h3> " \
+                        "The search will be canceled and all results discarded if you continue."),
                         QMessageBox::Ok | QMessageBox::Cancel,
                         QMessageBox::Cancel);
 
@@ -867,8 +869,8 @@ void AdvancedSearchDock::runSearch(SearchConfig cfg)
         QDir dir(cfg.directory);
 
         if (!dir.exists()) {
-            QMessageBox::warning(QApplication::activeWindow(), "Error",
-                                 "Specified directory does not exist.", QMessageBox::Ok);
+            QMessageBox::warning(QApplication::activeWindow(), tr("Error"),
+                                 tr("Specified directory does not exist."), QMessageBox::Ok);
             return;
         }
 
@@ -898,7 +900,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
 {
     QTreeWidget* treeWidget = m_treeWidget.get();
 
-    treeWidget->setHeaderLabel("Search Results in \"" + config.directory + "\"");
+    treeWidget->setHeaderLabel(tr("Search Results in") + " \"" + config.directory + "\"");
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
@@ -955,9 +957,9 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         onSearchCompleted();
     } else if(config.searchScope == SearchConfig::ScopeFileSystem) {
         QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(treeWidget);
-        toplevelitem->setText(0, "Calculating...");
+        toplevelitem->setText(0, tr("Calculating..."));
 
-        m_fileSearcher = new FileSearcher(config);
+        m_fileSearcher = FileSearcher::prepareAsyncSearch(config);
         connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
         connect(m_fileSearcher, &FileSearcher::resultReady, this, &SearchInstance::onSearchCompleted);
         connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, [this](){
@@ -1111,7 +1113,7 @@ void SearchInstance::copySelectedLinesToClipboard() const
 
 void SearchInstance::onSearchProgress(int processed, int total)
 {
-    m_treeWidget->topLevelItem(0)->setText(0,QString("Search in progress [%1/%2 finished]").arg(processed).arg(total));
+    m_treeWidget->topLevelItem(0)->setText(0,QString(tr("Search in progress [%1/%2 finished]")).arg(processed).arg(total));
 }
 
 void SearchInstance::onSearchCompleted()
@@ -1126,9 +1128,11 @@ void SearchInstance::onSearchCompleted()
         m_fileSearcher = nullptr;
     }
 
-    m_treeWidget->setHeaderLabel("Search Results in \""
+    m_treeWidget->setHeaderLabel(tr("Search Results in")
+                                 + " \""
                                  + m_searchConfig.directory
-                                 + "\" (completed in "
+                                 + "\" ("
+                                 + tr("completed in ")
                                  + QString::number(m_searchResult.m_timeToComplete)
                                  + "ms)");
 
@@ -1157,7 +1161,7 @@ void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, 
 
     connect(w, &FileReplacer::resultReady, msgBox, &QMessageBox::close);
     connect(w, &FileReplacer::resultProgress, msgBox, [msgBox](int curr, int total) {
-        msgBox->setInformativeText(QString("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
+        msgBox->setInformativeText(tr("Matches in %1 of %2 files replaced.").arg(curr).arg(total));
     });
     connect(msgBox, &QMessageBox::buttonClicked, w, &FileReplacer::cancel);
 
@@ -1165,8 +1169,8 @@ void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, 
 
     msgBox->setWindowTitle(QCoreApplication::applicationName());
     msgBox->setIcon(QMessageBox::Information);
-    msgBox->setText("<h3>Replacing selected matches...</h3>");
-    msgBox->setInformativeText("Replacing in progress");
+    msgBox->setText(tr("<h3>Replacing selected matches...</h3>"));
+    msgBox->setInformativeText(tr("Replacing in progress"));
     msgBox->setStandardButtons(QMessageBox::Cancel);
     msgBox->exec();
 
@@ -1178,19 +1182,19 @@ void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, 
         const QVector<QString>& errors = w->getErrors();
         const int numErrors = errors.size();
         const int maxCount = std::min(numErrors, 8);
-        QString errorString = QString("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
+        QString errorString = tr("Replacing was unsuccessful for %1 file(s):\n").arg(numErrors);
 
         for(int i=0; i<maxCount; i++) {
             errorString += "\"" + errors[i] + "\"\n";
         }
         if(numErrors > 8)
-            errorString += QString("And %1 more.").arg(numErrors-8);
+            errorString += tr("And %1 more.").arg(numErrors-8);
 
         QMessageBox::warning(QApplication::activeWindow(),
-                             "Replace Results", errorString, QMessageBox::Ok);
+                             tr("Replace Results"), errorString, QMessageBox::Ok);
     } else {
         QMessageBox::information(QApplication::activeWindow(),
-                                 "Replace Results", "All selected matches successfully replaced.", QMessageBox::Ok);
+                                 tr("Replace Results"), tr("All selected matches successfully replaced."), QMessageBox::Ok);
     }
 
     delete w;
