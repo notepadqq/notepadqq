@@ -15,7 +15,6 @@ public:
     FileReplacer(const SearchResult& results, const QString &replacement);
 
     void cancel() { m_wantToStop = true; }
-    void validate();
 
     bool hasErrors() const { return !m_failedFiles.empty(); }
     const QVector<QString>& getErrors() const { return m_failedFiles; }

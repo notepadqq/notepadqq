@@ -102,7 +102,6 @@ struct SearchResult {
     int countResults() const;
 
     QVector<DocResult> results;
-    qint64 m_timeToComplete = 0; // TODO: Debug value
 };
 
 
