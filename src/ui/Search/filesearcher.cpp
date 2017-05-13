@@ -169,8 +169,7 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
     return results;
 }
 
-void FileSearcher::worker()
-{
+void FileSearcher::run() {
     if (m_searchConfig.searchMode == SearchConfig::ModeRegex) {
         m_regex = createRegexFromConfig(m_searchConfig);
     } else if (m_searchConfig.searchMode == SearchConfig::ModePlainTextSpecialChars) {
@@ -229,15 +228,6 @@ void FileSearcher::worker()
             m_searchResult.results.push_back(res);
         }
     }
-}
-
-void FileSearcher::run() {
-
-    auto t1 = QDateTime::currentMSecsSinceEpoch();
-    worker();
-    auto t2 = QDateTime::currentMSecsSinceEpoch();
-
-    m_searchResult.m_timeToComplete = t2-t1;
 
     emit resultReady();
 }

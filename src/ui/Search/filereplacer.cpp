@@ -11,29 +11,6 @@ FileReplacer::FileReplacer(const SearchResult& results, const QString &replaceme
       m_replacement(replacement)
 { }
 
-void FileReplacer::validate()
-{
-    // TODO: Check if any MatchResults are overlapping. If so, we can't just blindly replace them.
-    for (const DocResult& r : m_searchResult.results) {
-        const QVector<MatchResult>& mr = r.results;
-
-        if (mr.isEmpty()) continue;
-
-        const MatchResult* last = &(*mr.cbegin());
-        for (auto it = mr.cbegin()+1; it != mr.cend(); ++it) {
-            const int endLast = last->m_positionInFile + last->m_matchLength;
-            const int startCurr = it->m_positionInFile;
-
-            if (endLast > startCurr) {
-                qDebug() << "There are overlapping items";
-            }
-
-            last = &(*it);
-        }
-    }
-
-}
-
 int FileReplacer::replaceAll(const DocResult& doc, QString& content, const QString& replacement)
 {
     int numReplaced = 0;

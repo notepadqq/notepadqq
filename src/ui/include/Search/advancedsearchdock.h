@@ -123,7 +123,7 @@ private:
      */
     void setInputsFromConfig(const SearchConfig& config);
 
-    QScopedPointer<QDockWidget> m_dockWidget; // TODO: Use Qt's parent system
+    QScopedPointer<QDockWidget> m_dockWidget;
 
     // Left-hand titlebar items
     QToolButton* m_btnClearHistory;

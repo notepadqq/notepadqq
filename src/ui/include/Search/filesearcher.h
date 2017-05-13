@@ -70,9 +70,6 @@ protected:
 private:
     FileSearcher(const SearchConfig& config);
 
-    // TODO: Integrate this into run()
-    void worker();
-
     SearchConfig m_searchConfig;
     QRegularExpression m_regex;
     bool m_wantToStop = false;

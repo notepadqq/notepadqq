@@ -103,7 +103,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
       m_searchConfig(config),
       m_treeWidget(new QTreeWidget())
 {
-    QTreeWidget* treeWidget = m_treeWidget.get();
+    QTreeWidget* treeWidget = getResultTreeWidget();
 
     treeWidget->setHeaderLabel(tr("Search Results in") + " \"" + config.directory + "\"");
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
@@ -187,7 +187,7 @@ SearchResult SearchInstance::getFilteredSearchResult() const
 {
     SearchResult result;
 
-    const QTreeWidget* tree = m_treeWidget.get();
+    const QTreeWidget* tree = getResultTreeWidget();
     for (int i=0; i<tree->topLevelItemCount(); i++) {
         QTreeWidgetItem* docWidget = tree->topLevelItem(i);
         const DocResult* fullResult = m_docMap.at(docWidget);
@@ -301,7 +301,7 @@ void SearchInstance::copySelectedLinesToClipboard() const
 
     //This loops through all QTreeWidgetItems and copies their
     //contents if they are checked. This way proper item order is preserved.
-    const QTreeWidget* tree = m_treeWidget.get();
+    const QTreeWidget* tree = getResultTreeWidget();
     for (int i=0; i<tree->topLevelItemCount(); i++) {
         for (int c=0; c<tree->topLevelItem(i)->childCount(); c++) {
             QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
@@ -334,17 +334,9 @@ void SearchInstance::onSearchCompleted()
         m_fileSearcher = nullptr;
     }
 
-    m_treeWidget->setHeaderLabel(tr("Search Results in")
-                                 + " \""
-                                 + m_searchConfig.directory
-                                 + "\" ("
-                                 + tr("completed in ")
-                                 + QString::number(m_searchResult.m_timeToComplete)
-                                 + "ms)");
-
     m_treeWidget->clear();
     for (const auto& doc : m_searchResult.results) {
-        QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(m_treeWidget.get());
+        QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(getResultTreeWidget());
         toplevelitem->setText(0, getFormattedLocationText(doc, m_searchConfig.directory));
         toplevelitem->setCheckState(0, Qt::Checked);
         m_docMap[toplevelitem] = &doc;

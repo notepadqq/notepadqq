@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QTreeWidget>
+#include <QScopedPointer>
 
 #include <memory>
 #include <map>
@@ -25,7 +26,7 @@ public:
      * @brief SearchInstance Constructs SearchInstance object and starts a search.
      * @param config If config.searchScope is ScopeFileSystem, a non-blocking file search will be started.
      *               If it's ScopeCurrentDocument or ScopeAllDocuments, a blocking document search will
-     *               be started, but searching documents is fast enough not to block the UI
+     *               be started, but searching documents is fast enough not to visibly block the UI.
      */
     SearchInstance(const SearchConfig& config);
     ~SearchInstance();
@@ -45,7 +46,7 @@ public:
      */
     bool isSearchInProgress() const { return m_isSearchInProgress; }
 
-    QTreeWidget*        getResultTreeWidget() const { return m_treeWidget.get(); }
+    QTreeWidget*        getResultTreeWidget() const { return m_treeWidget.data(); }
     const SearchConfig& getSearchConfig() const { return m_searchConfig; }
     const SearchResult& getSearchResult() const { return m_searchResult; }
 
@@ -81,10 +82,10 @@ private:
     bool m_resultsAreExpanded = false;
     bool m_showFullLines = false;
 
-    SearchConfig    m_searchConfig;
-    std::unique_ptr<QTreeWidget> m_treeWidget; // TODO: use Qt's parent system instead
-    SearchResult    m_searchResult;
-    FileSearcher*   m_fileSearcher = nullptr;
+    SearchConfig                m_searchConfig;
+    QScopedPointer<QTreeWidget> m_treeWidget;
+    SearchResult                m_searchResult;
+    FileSearcher*               m_fileSearcher = nullptr;
 
     // These map each QTreeWidget item to their respective MatchResult or DocResult
     std::map<QTreeWidgetItem*, const MatchResult*>  m_resultMap;
