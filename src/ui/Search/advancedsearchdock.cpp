@@ -147,7 +147,6 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
     m_btnClearHistory->setToolTip(tr("Clear Search History"));
 
     m_cmbSearchHistory = new QComboBox;
-    m_cmbSearchHistory->addItem(tr("New Search"));
     m_cmbSearchHistory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     m_cmbSearchHistory->setMinimumWidth(120);
     m_cmbSearchHistory->setMaximumWidth(300);
@@ -389,9 +388,12 @@ void AdvancedSearchDock::clearHistory()
             return;
     }
 
-    m_searchInstances.clear();
+    // First clear the history, then the SearchInstance array. Necessary because changing history calls
+    // selectSearchFromHistory() which wants to disconnect connections from the currently active SearchInstance.
+    // Clearing the SearchInstance array first invalidates the pointers.
     m_cmbSearchHistory->clear();
-    m_cmbSearchHistory->addItem("New Search"); //TODO: bad idea, move to reset() function or something
+    m_cmbSearchHistory->addItem(tr("New Search"));
+    m_searchInstances.clear();
     onSearchHistorySizeChange();
 }
 
@@ -695,10 +697,9 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     });
     connect(m_btnReplaceSelected, &QToolButton::clicked, this, &AdvancedSearchDock::startReplace);
 
-    m_cmbSearchHistory->setCurrentIndex(0);
+    // m_cmbSearchHistory is completely empty by this point. clearHistory() can be used to initialize it.
+    clearHistory();
     onChangeSearchScope(0); // Initializes the status of the search panel
-    selectSearchFromHistory(0); // Initializes the status of the search history combo box
-    onSearchHistorySizeChange(); // Initializes the status of the remaining title bar (Prev/Next buttons etc)
 }
 
 QDockWidget* AdvancedSearchDock::getDockWidget() const
