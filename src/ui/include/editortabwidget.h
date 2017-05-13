@@ -33,6 +33,8 @@ public:
     QSharedPointer<Editor> editorSharedPtr(Editor *editor);
     Editor *currentEditor();
 
+    QString tabTextFromEditor(Editor* editor);
+
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &zoomFactor);
 
