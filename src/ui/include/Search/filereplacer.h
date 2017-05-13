@@ -1,5 +1,5 @@
-#ifndef REPLACEWORKER_H
-#define REPLACEWORKER_H
+#ifndef FILEREPLACER_H
+#define FILEREPLACER_H
 
 #include <QObject>
 #include <QThread>
@@ -7,10 +7,6 @@
 
 #include "searchobjects.h"
 
-/**
- * @brief This worker handles the replacement of portions of text in files,
- *        based on a search result.
- */
 class FileReplacer : public QThread
 {
     Q_OBJECT
@@ -41,4 +37,4 @@ private:
     QVector<QString> m_failedFiles;
 };
 
-#endif // REPLACEWORKER_H
+#endif // FILEREPLACER_H

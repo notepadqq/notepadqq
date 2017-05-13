@@ -58,8 +58,6 @@ void FileReplacer::run()
     int count = 0;
 
     for (const DocResult& docResult : m_searchResult.results) {
-        const QVector<MatchResult>& matchResults = docResult.results;
-
         if(m_wantToStop)
             return;
 

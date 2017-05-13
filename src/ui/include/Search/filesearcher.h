@@ -1,5 +1,5 @@
-#ifndef SEARCHWORKER_H
-#define SEARCHWORKER_H
+#ifndef FILESEARCHER_H
+#define FILESEARCHER_H
 
 #include <QObject>
 #include <QThread>
@@ -79,4 +79,4 @@ private:
     SearchResult m_searchResult;
 };
 
-#endif // SEARCHWORKER_H
+#endif // FILESEARCHER_H
