@@ -124,42 +124,46 @@ SearchInstance::SearchInstance(const SearchConfig& config)
             emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second) );
     });
 
-    // TODO: Can only do plain text search at the moment. Also, refactor
-    if (config.searchScope == SearchConfig::ScopeCurrentDocument) {
+
+    // If we're searching through documents we'll just do the search right now. File System searches are
+    // delegated to a FileSearcher instance because they can take a while to finish.
+    if (config.searchScope == SearchConfig::ScopeCurrentDocument ||
+            config.searchScope == SearchConfig::ScopeAllOpenDocuments) {
+
+        // This is a mess because Nqq's Editor management is a mess.
+        // We'll grab all Editors that want to be searched, then search them one-by-one and add the results
+        // to our SearchResult instance.
+        std::vector<Editor*> editorsToSearch;
+
         MainWindow* mw = config.targetWindow;
         TopEditorContainer* tec = mw->topEditorContainer();
-        EditorTabWidget* tw = tec->currentTabWidget();
-        Editor* ed = mw->currentEditor();
-        QString title = tw->tabText(tw->indexOf(ed));
 
-        DocResult dr = FileSearcher::searchPlainText(config, ed->value());
-        dr.docType = DocResult::TypeDocument;
-        dr.fileName = title;
-        dr.editor = ed;
+        if (config.searchScope == SearchConfig::ScopeCurrentDocument)
+            editorsToSearch.push_back( mw->currentEditor() );
+        else
+            editorsToSearch = tec->getOpenEditors();
 
-        if (!dr.results.empty())
-            m_searchResult.results.push_back(dr);
-
-        onSearchCompleted();
-    } else if (config.searchScope == SearchConfig::ScopeAllOpenDocuments) {
-        MainWindow* mw = config.targetWindow;
-        TopEditorContainer* tec = mw->topEditorContainer();
-        EditorTabWidget* tw = tec->currentTabWidget();
-
-        const int numEditors = tw->count();
-
-        for (int i=0; i<numEditors; ++i) {
-            Editor* ed = tw->editor(i);
-            QString title = tw->tabText(i);
-
-            DocResult dr = FileSearcher::searchPlainText(config, ed->value());
-            dr.docType = DocResult::TypeDocument;
-            dr.fileName = title;
-            dr.editor = ed;
-            if (!dr.results.empty())
-                m_searchResult.results.push_back(dr);
+        if (config.searchMode == SearchConfig::ModePlainText ||
+            config.searchMode == SearchConfig::ModePlainTextSpecialChars) {
+            for(Editor* ed : editorsToSearch) {
+                DocResult dr = FileSearcher::searchPlainText(config, ed->value());
+                dr.docType = DocResult::TypeDocument;
+                dr.fileName = tec->tabWidgetFromEditor(ed)->tabTextFromEditor(ed);
+                dr.editor = ed;
+                if (!dr.results.empty())
+                    m_searchResult.results.push_back(dr);
+            }
+        } else if (config.searchMode == SearchConfig::ModeRegex) {
+            QRegularExpression regex = FileSearcher::createRegexFromConfig(config);
+            for(Editor* ed : editorsToSearch) {
+                DocResult dr = FileSearcher::searchRegExp(regex, ed->value());
+                dr.docType = DocResult::TypeDocument;
+                dr.fileName = tec->tabWidgetFromEditor(ed)->tabTextFromEditor(ed);
+                dr.editor = ed;
+                if (!dr.results.empty())
+                    m_searchResult.results.push_back(dr);
+            }
         }
-
         onSearchCompleted();
     } else if (config.searchScope == SearchConfig::ScopeFileSystem) {
         QTreeWidgetItem* toplevelitem = new QTreeWidgetItem(treeWidget);

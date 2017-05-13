@@ -201,6 +201,12 @@ Editor *EditorTabWidget::currentEditor()
     return editor(currentIndex());
 }
 
+QString EditorTabWidget::tabTextFromEditor(Editor* ed)
+{
+    for(int i=0; i<count(); ++i)
+        if (editor(i) == ed) return tabText(i);
+}
+
 qreal EditorTabWidget::zoomFactor() const
 {
     return m_zoomFactor;

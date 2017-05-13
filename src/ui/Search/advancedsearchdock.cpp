@@ -402,7 +402,7 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
     if (index==-1)
         return;
 
-    // TODO: Clean this up, move stuff into a connect/disconnect function, something like that.
+    // These signals were connected farther down this function in a previous invokation.
     if (m_currentSearchInstance && m_currentSearchInstance->isSearchInProgress()) {
         disconnect(m_currentSearchInstance, &SearchInstance::searchCompleted,
                    this, &AdvancedSearchDock::onCurrentSearchInstanceCompleted);
