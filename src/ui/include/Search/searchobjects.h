@@ -64,14 +64,11 @@ struct MatchResult {
      */
     QString getPostMatchString(bool fullText=false) const;
 
-    // TODO: Decide if these remain public vars or not.
-//private:
-    QString m_matchLineString;
-
-    int m_lineNumber;
-    int m_positionInFile;
-    int m_positionInLine;
-    int m_matchLength;
+    QString matchLineString; // The full text line where the match occured
+    int lineNumber;          // The line number, starting at 1
+    int positionInFile;      // The match's offset from the beginning of the file
+    int positionInLine;      // The match's offset from the beginning of the line
+    int matchLength;         // The match's length
 
 private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
