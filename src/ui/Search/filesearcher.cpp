@@ -102,13 +102,15 @@ DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QStrin
 {
     DocResult results;
 
-    Qt::CaseSensitivity caseSense = config.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    const Qt::CaseSensitivity caseSense = config.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
     const std::vector<int> linePosition = getLinePositions(content);
+    const QString searchString = (config.searchMode == SearchConfig::ModePlainTextSpecialChars) ?
+                SearchString::unescape(config.searchString) : config.searchString;
 
-    const int matchLength = config.searchString.length();
+    const int matchLength = searchString.length();
     int offset = 0;
 
-    while ((offset = content.indexOf(config.searchString, offset, caseSense)) != -1) {
+    while ((offset = content.indexOf(searchString, offset, caseSense)) != -1) {
         if (config.matchWord && !matchesWholeWord(offset, matchLength, content)) {
             offset += matchLength;
             continue;
