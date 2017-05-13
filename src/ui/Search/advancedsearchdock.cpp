@@ -18,6 +18,7 @@
 #include <QFileDialog>
 #include <QApplication>
 #include <QPainter>
+#include <QCompleter>
 
 #include "include/nqqsettings.h"
 #include "include/iconprovider.h"
@@ -227,6 +228,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
 
     m_cmbReplaceText = new QComboBox;
     m_cmbReplaceText->setEditable(true);
+    m_cmbSearchTerm->completer()->setCompletionMode(QCompleter::PopupCompletion);
     m_cmbReplaceText->lineEdit()->setPlaceholderText(tr("Replace Text"));
     m_cmbReplaceText->setMaximumWidth(300);
     m_cmbReplaceText->setMinimumWidth(300);
@@ -274,6 +276,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_cmbSearchTerm = new QComboBox;
     m_cmbSearchTerm->setEditable(true);
+    m_cmbSearchTerm->completer()->setCompletionMode(QCompleter::PopupCompletion);
     m_cmbSearchTerm->lineEdit()->setPlaceholderText(tr("Search String"));
     m_cmbSearchTerm->setMaximumWidth(300);
     m_cmbSearchTerm->lineEdit()->setClearButtonEnabled(true);
@@ -288,6 +291,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_cmbSearchPattern = new QComboBox;
     m_cmbSearchPattern->setEditable(true);
+    m_cmbSearchTerm->completer()->setCompletionMode(QCompleter::PopupCompletion);
     m_cmbSearchPattern->lineEdit()->setPlaceholderText("*ext1, *ext2");
     m_cmbSearchPattern->setMaximumWidth(300);
     m_cmbSearchPattern->lineEdit()->setClearButtonEnabled(true);
@@ -296,6 +300,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     m_cmbSearchDirectory = new QComboBox;
     m_cmbSearchDirectory->setEditable(true);
+    m_cmbSearchTerm->completer()->setCompletionMode(QCompleter::PopupCompletion);
     m_cmbSearchDirectory->lineEdit()->setPlaceholderText(tr("Directory"));
     m_cmbSearchDirectory->setMaximumWidth(260);
     m_cmbSearchDirectory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
