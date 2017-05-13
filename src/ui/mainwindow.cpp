@@ -161,8 +161,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
             if(!parentWidget) return;
 
             parentWidget->setCurrentWidget(found);
-            found->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
-                                result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
+            found->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                                result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
             found->setFocus();
 
         } else if (doc.docType == DocResult::TypeFile) {
@@ -180,8 +180,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
             Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
 
-            editor->setSelection(result.m_lineNumber-1, result.m_positionInLine, //selection start
-                                 result.m_lineNumber-1, result.m_positionInLine + result.m_matchLength); //selection end
+            editor->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                                 result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
             editor->setFocus();
         }
 
