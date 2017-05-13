@@ -18,8 +18,8 @@ int FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStri
     const int replacementLength = replacement.length();
 
     for (const MatchResult& result : doc.results) {
-        const int pos = result.m_positionInFile + offset;
-        const int length = result.m_matchLength;
+        const int pos = result.positionInFile + offset;
+        const int length = result.matchLength;
 
         content.replace(pos, length, replacement);
 

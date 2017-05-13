@@ -44,7 +44,7 @@ QString getFormattedResultText(const MatchResult& result, bool showFullText=fals
                 "%2"
                 "<span style='background-color: #ffef0b; color: black;'>%3</span>"
                 "%4</span>")
-            .arg(result.m_lineNumber)
+            .arg(result.lineNumber)
             // Natural tabs are way too large; just replace them.
             .arg(result.getPreMatchString(showFullText).replace('\t', "    ").toHtmlEscaped(),
                 result.getMatchString().replace('\t', "    ").toHtmlEscaped(),
@@ -307,7 +307,7 @@ void SearchInstance::copySelectedLinesToClipboard() const
             QTreeWidgetItem* it = tree->topLevelItem(i)->child(c);
 
             if (it->checkState(0) == Qt::Checked)
-                cp += m_resultMap.at(it)->m_matchLineString + '\n';
+                cp += m_resultMap.at(it)->matchLineString + '\n';
         }
     }
 
