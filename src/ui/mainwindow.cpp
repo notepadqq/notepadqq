@@ -147,8 +147,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
         m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
     }
 
-    restoreWindowSettings();
-
     ui->actionFull_Screen->setChecked(isFullScreen());
 
     // Initialize the advanced search dock and hook its signals up
@@ -188,6 +186,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     });
 
+    restoreWindowSettings();
 
     // If there was another window already opened, move this window
     // slightly to the bottom-right, so that they won't completely overlap.
