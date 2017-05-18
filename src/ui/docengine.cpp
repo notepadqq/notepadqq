@@ -28,7 +28,7 @@ int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabW
     return tab;
 }
 
-QString DocEngine::getNewDocumentName() const
+QString DocEngine::getNewDocumentName()
 {
     static int num = 1; // FIXME maybe find a smarter way
     return tr("new %1").arg(num++);
@@ -264,6 +264,56 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
     return true;
 }
 
+
+Editor* DocEngine::loadDocumentProper(QUrl fileUrl, QTextCodec* codec, bool bom)
+{
+    if(fileUrl.isEmpty())
+        return nullptr;
+
+    if (!fileUrl.isLocalFile()) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(fileUrl.toDisplayString()));
+        msgBox.exec();
+        return nullptr;
+    }
+
+    QString filePath = fileUrl.toLocalFile();
+    QFileInfo fileInfo(filePath);
+
+    if(!QFileInfo::exists(filePath))
+        return nullptr;
+
+    QFile file(filePath);
+    Editor* editor = new Editor();
+
+    if (!read(&file, editor, codec, bom)) {
+        // Handle error
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Error trying to open \"%1\"").arg(fileInfo.fileName()));
+        msgBox.setDetailedText(file.errorString());
+        msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+        msgBox.setDefaultButton(QMessageBox::Retry);
+        msgBox.setIcon(QMessageBox::Critical);
+        int ret = msgBox.exec();
+        if(ret == QMessageBox::Abort) {
+            return nullptr;
+        } else if(ret == QMessageBox::Retry) {
+            return loadDocumentProper(fileUrl, codec, bom);
+        }
+    }
+
+
+    editor->setFileName(fileUrl);
+    editor->setLanguageFromFileName();
+
+    //monitorDocument(editor); // TODO: Reenable
+
+    return editor;
+}
+
+
 QPair<int, int> DocEngine::findOpenEditorByUrl(const QUrl &filename) const
 {
     for (int i = 0; i < m_topEditorContainer->count(); i++) {
@@ -386,6 +436,71 @@ void DocEngine::unmonitorDocument(const QString &fileName)
 {
     if(m_fsWatcher && !fileName.isEmpty()) {
         m_fsWatcher->removePath(fileName);
+    }
+}
+
+int DocEngine::saveDocumentProper(Editor* editor, QUrl outFileName, bool copy) {
+    if (!copy)
+        unmonitorDocument(editor);
+
+    if (outFileName.isEmpty())
+        outFileName = editor->fileName();
+
+    if (outFileName.isLocalFile()) {
+        QFile file(outFileName.toLocalFile());
+
+        do
+        {
+            if (write(&file, editor)) {
+                break;
+            } else {
+                // Handle error
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(QCoreApplication::applicationName());
+                msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
+                msgBox.setDetailedText(file.errorString());
+                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
+                msgBox.setDefaultButton(QMessageBox::Retry);
+                msgBox.setIcon(QMessageBox::Critical);
+                int ret = msgBox.exec();
+                if(ret == QMessageBox::Abort) {
+                    monitorDocument(editor);
+                    return DocEngine::saveFileResult_Canceled;
+                } else if(ret == QMessageBox::Retry) {
+                    continue;
+                }
+            }
+
+        } while (1);
+
+        // Update the file name if necessary.
+        if (!copy) {
+            if (editor->fileName() != outFileName) {
+                editor->setFileName(outFileName);
+                editor->setLanguageFromFileName();
+            }
+            editor->markClean();
+            editor->setFileOnDiskChanged(false);
+        }
+
+        file.close();
+
+        monitorDocument(editor);
+
+        if (!copy) {
+            //TODO emit documentSaved(tabWidget, tab);
+        }
+
+        return DocEngine::saveFileResult_Saved;
+
+    } else {
+        // FIXME ERROR
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(QCoreApplication::applicationName());
+        msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(outFileName.toDisplayString()));
+        msgBox.exec();
+
+        return DocEngine::saveFileResult_Canceled;
     }
 }
 

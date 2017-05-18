@@ -3,6 +3,7 @@
 
 #include <QTabWidget>
 #include <QWheelEvent>
+
 #include "EditorNS/editor.h"
 
 using namespace EditorNS;

@@ -16,7 +16,7 @@ namespace Extensions {
 
         }
 
-        NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
+/*        NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
         {
             RuntimeSupport *rts = runtimeSupport();
             MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
@@ -25,7 +25,7 @@ namespace Extensions {
             qint32 stubId = rts->presentObject(stub);
 
             return StubReturnValue(rts->getJSONStub(stubId, stub->stubName_()));
-        }
+        }*/
 
         NQQ_DEFINE_EXTENSION_METHOD(WindowStub, addExtensionMenuItem, args)
         {

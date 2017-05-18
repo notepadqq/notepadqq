@@ -13,6 +13,8 @@
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
 
+#include "include/nqqtab.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -47,14 +49,14 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
-    TopEditorContainer *topEditorContainer();
+    //TopEditorContainer *topEditorContainer();
+
+    NqqTabWidget* m_nqqTabWidget;
 
     void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
-    Editor*   currentEditor();
-    QSharedPointer<Editor> currentEditorSharedPtr();
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
 
@@ -64,7 +66,7 @@ public:
     DocEngine*  getDocEngine() const;
     void generateRunMenu();
 public slots:
-    void refreshEditorUiInfo(Editor *editor);
+    void refreshTabUiInfo(NqqTab* tab);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -78,19 +80,19 @@ private slots:
     void modifyRunCommands();
     void refreshEditorUiCursorInfo(Editor *editor);
     void on_action_New_triggered();
-    void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
+    void on_customTabContextMenuRequested(const QPoint& point);
     void on_actionMove_to_Other_View_triggered();
     void on_action_Open_triggered();
     void on_actionOpen_Folder_triggered();
-    void on_tabCloseRequested(EditorTabWidget* tabWidget, int tab);
+    void on_tabCloseRequested(NqqTab* tab);
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
     void on_actionSave_a_Copy_As_triggered();
     void on_action_Copy_triggered();
     void on_action_Paste_triggered();
     void on_actionCu_t_triggered();
-    void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
-    void on_editorAdded(EditorTabWidget* tabWidget, int tab);
+    void on_currenTabChanged(NqqTab* tab);
+    void on_tabAdded(NqqTab* tab);
     void on_cursorActivity();
     void on_action_Delete_triggered();
     void on_actionSelect_All_triggered();
@@ -154,7 +156,6 @@ private slots:
     void on_actionMove_to_New_Window_triggered();
     void on_actionOpen_file_triggered();
     void on_actionOpen_in_another_window_triggered();
-    void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
     void on_actionFind_in_Files_triggered();
     void on_actionDelete_Line_triggered();
     void on_actionDuplicate_Line_triggered();
@@ -181,10 +182,16 @@ private slots:
     void on_actionSave_Session_triggered();
 
 private:
+
+    enum TabCloseResult {
+        TabWantToClose,
+        TabDontClose
+    };
+
     static QList<MainWindow*> m_instances;
 
     Ui::MainWindow*       ui;
-    TopEditorContainer*   m_topEditorContainer;
+    //TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;
     QList<QAction *>      m_tabContextMenuActions;
@@ -218,26 +225,7 @@ private:
     bool                finalizeAllTabs();
 
     void                createStatusBar();
-    int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
-
-    /**
-     * @brief Removes the specified tab. Doesn't remove the tab if it's the
-     *        last tab, it's empty, in an unmodified state and it's not
-     *        associated with a file name.
-     *        If the document inside the tab is in a modified state, asks
-     *        the user to save the changes.
-     *        In addition, it ensures that the window won't remain without
-     *        any tab opened, and that there won't be any empty EditorTabWidget
-     * @param tabWidget
-     * @param tab
-     * @param remove Set this to false if you want to manually remove the tab from
-     *               the tabWidget.
-     * @param force Set this to true to close the tab without ever asking the user
-     *              to save changes.
-     * @return tabCloseResult
-     */
-    int                 closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool force);
-    int                 closeTab(EditorTabWidget *tabWidget, int tab);
+    int                 askIfWantToSave(NqqTab* tab, int reason);
 
     /**
      * @brief Save a document. If the document has not an associated path,
@@ -246,8 +234,8 @@ private:
      * @param tab
      * @return a saveFileResult
      */
-    int                 save(EditorTabWidget *tabWidget, int tab);
-    int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
+    int                 save(NqqTab* tab);
+    int                 saveAs(NqqTab* tab, bool copy=false);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
     void                setupLanguagesMenu();
     void                transformSelectedText(std::function<QString (const QString &)> func);
@@ -281,6 +269,7 @@ private:
      *               On a `true` return, default symbol saving behavior is modified.
      */
     bool updateSymbols(bool on);
+    TabCloseResult processTabClose(NqqTab* tab);
 };
 
 #endif // MAINWINDOW_H

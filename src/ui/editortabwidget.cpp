@@ -3,6 +3,9 @@
 #include <QTabBar>
 #include <QApplication>
 #include <QFileInfo>
+#include <QTabBar>
+
+#include "include/docengine.h"
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -306,3 +309,4 @@ void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUr
     setTabText(index, fileName);
     setTabToolTip(index, fullFileName);
 }
+

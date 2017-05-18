@@ -350,7 +350,7 @@ bool frmPreferences::applySettings()
     for (MainWindow *w : MainWindow::instances()) {
         w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
-        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
+        /*w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, Editor *editor) {
 
             // Set new theme
             editor->setTheme(newTheme);
@@ -362,7 +362,7 @@ bool frmPreferences::applySettings()
             editor->setLanguage(editor->language());
 
             return true;
-        });
+        });*/
     }
 
     // Invalidate already initialized editors in the buffer and add a single new

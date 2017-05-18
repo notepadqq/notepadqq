@@ -102,7 +102,8 @@ SOURCES += main.cpp\
     Sessions/sessions.cpp \
     Sessions/persistentcache.cpp \
     nqqsettings.cpp \  
-    nqqrun.cpp
+    nqqrun.cpp \
+    nqqtab.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -148,7 +149,8 @@ HEADERS  += include/mainwindow.h \
     include/Sessions/sessions.h \
     include/Sessions/persistentcache.h \
     include/nqqsettings.h \
-    include/nqqrun.h
+    include/nqqrun.h \
+    include/nqqtab.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

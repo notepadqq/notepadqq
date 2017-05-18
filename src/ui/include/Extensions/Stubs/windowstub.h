@@ -17,7 +17,7 @@ namespace Extensions {
 
             NQQ_STUB_NAME("Window")
         private:
-            NQQ_DECLARE_EXTENSION_METHOD(currentEditor)
+            //NQQ_DECLARE_EXTENSION_METHOD(currentEditor)
             NQQ_DECLARE_EXTENSION_METHOD(addExtensionMenuItem)
         };
 

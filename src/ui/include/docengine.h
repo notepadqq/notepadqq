@@ -84,8 +84,14 @@ public:
      * @brief getNewDocumentName
      * @return Returns a QString with a fitting name for a new document tab.
      */
-    QString getNewDocumentName() const;
+    static QString getNewDocumentName();
 
+
+
+     Editor* loadDocumentProper(QUrl fileUrl, QTextCodec* codec=nullptr, bool bom=false);
+
+
+     int saveDocumentProper(Editor* editor, QUrl outFileName, bool copy=false);
 private:
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;
