@@ -41,6 +41,8 @@ namespace EditorNS
 
         m_webView = new CustomQWebView(this);
 
+        connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
+
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
@@ -146,7 +148,10 @@ namespace EditorNS
         else if(msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
         else if(msg == "J_EVT_GOT_FOCUS")
-            emit gotFocus();
+            // TODO Still needed? Causes double gotFocus() to be emitted, also causes subtle bug where
+            // this event won't be caused when entering a tab for the first time when it wasn't created by the user
+            // (because user creation means it was focused right from the start)
+            ; //emit gotFocus();
         else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
             QVariantMap map = data.toMap();
             emit currentLanguageChanged(map.value("id").toString(),

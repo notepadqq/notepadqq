@@ -14,6 +14,30 @@ using namespace EditorNS;
 
 class NqqTabWidget;
 
+class FocusWatcher : public QObject
+{
+   Q_OBJECT
+public:
+   explicit FocusWatcher(QObject* parent = nullptr) : QObject(parent)
+   {
+      if (parent)
+         parent->installEventFilter(this);
+   }
+   virtual bool eventFilter(QObject *obj, QEvent *event) override
+   {
+      Q_UNUSED(obj)
+      if (event->type() == QEvent::FocusIn)
+         emit focusChanged(true);
+      else if (event->type() == QEvent::FocusOut)
+         emit focusChanged(false);
+
+      return false;
+   }
+
+Q_SIGNALS:
+   void focusChanged(bool in);
+};
+
 class NqqTab : public QObject {
     Q_OBJECT
 
@@ -48,7 +72,9 @@ class CustomTabWidget : public QTabWidget {
 
 public:
 
-    CustomTabWidget(QWidget* parent) : QTabWidget(parent) {}
+    CustomTabWidget(QWidget* parent) : QTabWidget(parent) {
+        setFocusPolicy(Qt::StrongFocus);
+    }
 
     virtual void tabInserted(int index) {
         qDebug() << "tab inserted at index " << index;
@@ -102,10 +128,17 @@ public:
 
 signals:
     void currentTabChanged(NqqTab* newFocus);
+    void currentTabCursorActivity(NqqTab* tab);
+    void currentTabLanguageChanged(NqqTab* tab);
+    void currentTabCleanStatusChanged(NqqTab* tab);
+
     void tabCloseRequested(NqqTab* tab);
     void newTabAdded(NqqTab* tab);
     void customContextMenuRequested(const QPoint& point);
     void urlsDropped(const QList<QUrl>& urls);
+
+    void gotFocus();
+    void tabBarClicked();
 
 
 private slots:
@@ -120,16 +153,40 @@ private:
     QTabWidget* m_tabWidget;
 };
 
+class CustomSplitter : public QSplitter {
+    Q_OBJECT
+
+    void changeEvent(QEvent *event) override;
+};
+
 class NqqSplitPane : public QObject {
     Q_OBJECT
 
+
+signals:
+    void currentTabChanged(NqqTab* newFocus);
+    void currentTabCursorActivity(NqqTab* tab);
+    void currentTabLanguageChanged(NqqTab* tab);
+    void currentTabCleanStatusChanged(NqqTab* tab);
+
+    void tabCloseRequested(NqqTab* tab);
+    void newTabAdded(NqqTab* tab);
+    void customContextMenuRequested(const QPoint& point);
+    void urlsDropped(const QList<QUrl>& urls);
+
 public:
 
+    void connectTabWidget(NqqTabWidget* tabWidget);
+    void disconnectTabWidget(NqqTabWidget* tabWidget);
+    void activateTabWidget(NqqTabWidget* tabWidget);
+    void deactivateTabWidget(NqqTabWidget* tabWidget);
 
 
+    NqqTabWidget* createNewPanel();
 
+    std::vector<NqqTabWidget*> m_panels;
 
-    QSplitter m_splitter;
+    QSplitter* m_splitter = new CustomSplitter();
 };
 
 

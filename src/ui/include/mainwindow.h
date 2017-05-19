@@ -24,8 +24,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
-    explicit MainWindow(const QStringList &arguments, QWidget *parent = 0);
+
+    QApplication* m_application;
+
+    explicit MainWindow(QApplication* app, const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
+    explicit MainWindow(QApplication* app, const QStringList &arguments, QWidget *parent = 0);
     ~MainWindow();
 
     static QList<MainWindow *> instances();
@@ -93,7 +96,7 @@ private slots:
     void on_actionCu_t_triggered();
     void on_currenTabChanged(NqqTab* tab);
     void on_tabAdded(NqqTab* tab);
-    void on_cursorActivity();
+    void on_cursorActivity(NqqTab* tab);
     void on_action_Delete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
@@ -112,7 +115,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_currentLanguageChanged(QString id, QString name);
+    void on_currentLanguageChanged(NqqTab* tab);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();

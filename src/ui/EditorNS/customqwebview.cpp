@@ -7,6 +7,7 @@ namespace EditorNS
     CustomQWebView::CustomQWebView(QWidget *parent) :
         QWebView(parent)
     {
+        setFocusPolicy(Qt::StrongFocus); // Mouse wheel won't grant focus
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
@@ -34,6 +35,12 @@ namespace EditorNS
         } else {
             QWebView::dropEvent(ev);
         }
+    }
+
+    void CustomQWebView::focusInEvent(QFocusEvent* evt)
+    {
+        QWebView::focusInEvent(evt);
+        emit gotFocus();
     }
 
 }

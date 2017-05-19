@@ -55,6 +55,11 @@ NqqTabWidget::NqqTabWidget()
             createEmptyTab(true);
     });
 
+    connect(m_tabWidget, &QTabWidget::tabBarClicked, this, [this](){
+        getCurrentTab()->m_editor->setFocus(); //TODO: don't want to do this
+        //emit currentTabChanged(getCurrentTab());
+    });
+
     connect((m_tabWidget->tabBar()), &QTabBar::tabMoved, [this](int to, int from){ //to and from switched. But in Qt
         qDebug() << "tab moved from " << from << "to" << to;
 
@@ -66,10 +71,10 @@ NqqTabWidget::NqqTabWidget()
         for(NqqTab* tab : m_tabs) qDebug() << tab->getTabTitle();
     });
 
-    connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
+    /*connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
         if(index >= 0)
             emit currentTabChanged(m_tabs[index]);
-    });
+    });*/
 
     connect(m_tabWidget, &QTabWidget::customContextMenuRequested, [this](const QPoint& point) {
         emit customContextMenuRequested(m_tabWidget->mapToGlobal(point));
@@ -102,6 +107,12 @@ NqqTab* NqqTabWidget::createTab(Editor* editor, bool makeCurrent) {
     NqqTab* t = new NqqTab();
     t->m_editor = editor;
     t->m_parentTabWidget = this;
+
+    /*connect(new FocusWatcher(t->m_editor->m_webView), &FocusWatcher::focusChanged, [](){
+        qDebug() << "Focus changed here in the watcher!";
+    });*/
+
+    //t->m_editor->m_webView->setFocusPolicy(Qt::StrongFocus);
 
     m_tabs.push_back(t);
 
@@ -139,16 +150,28 @@ void NqqTabWidget::onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt)
         for(NqqTab* t : getAllTabs())
             t->setZoomFactor(newZoom);
     }
+    //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
+    //We used to do that in NqqSplitPane through a signal
 }
 
 void NqqTabWidget::connectTab(NqqTab* tab) {
-    connect(tab, &NqqTab::gotFocus, tab, [this](){
-        emit currentTabChanged(reinterpret_cast<NqqTab*>(sender()));
+    connect(tab, &NqqTab::gotFocus, tab, [tab, this](){
+        qDebug() << "Is this event being called right now?"; //TODO want to connect to editor directly or to NqqTab?
+        emit currentTabChanged(tab);
     });
     connect(tab->m_editor, &Editor::mouseWheel, this, [tab, this](QWheelEvent* evt) {
         onTabMouseWheelUsed(tab, evt);
     });
     connect(tab->m_editor, &Editor::urlsDropped, this, &NqqTabWidget::urlsDropped);
+    connect(tab->m_editor, &Editor::cursorActivity, [tab, this](){
+        emit currentTabCursorActivity(tab);
+    });
+    connect(tab->m_editor, &Editor::currentLanguageChanged, [tab, this](){
+        emit currentTabLanguageChanged(tab);
+    });
+    connect(tab->m_editor, &Editor::gotFocus, [tab, this](){
+        emit currentTabChanged(tab);
+    });
 }
 
 NqqTab* NqqTabWidget::getCurrentTab() const
@@ -215,4 +238,64 @@ void NqqTabWidget::makeCurrent(int index)
 {
     if(index >= 0 && static_cast<uint>(index) < m_tabs.size())
         makeCurrent(m_tabs[index]);
+}
+
+void NqqSplitPane::connectTabWidget(NqqTabWidget* tabWidget)
+{
+    connect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
+    connect(tabWidget, &NqqTabWidget::tabCloseRequested, this, &NqqSplitPane::tabCloseRequested);
+    connect(tabWidget, &NqqTabWidget::newTabAdded, this, &NqqSplitPane::newTabAdded);
+    connect(tabWidget, &NqqTabWidget::customContextMenuRequested, this, &NqqSplitPane::customContextMenuRequested);
+    connect(tabWidget, &NqqTabWidget::urlsDropped, this, &NqqSplitPane::urlsDropped);
+
+
+    //connect(tabWidget, &NqqTabWidget::gotFocus, this, &NqqSplitPane::currentTabChanged);
+
+    /*connect(tabWidget->getWidget(), &QTabWidget::tabBarClicked, [this, tabWidget](){
+        emit currentTabChanged(tabWidget->getCurrentTab());
+    });*/
+}
+
+void NqqSplitPane::disconnectTabWidget(NqqTabWidget* tabWidget)
+{
+    /*disconnect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
+    disconnect(tabWidget, &NqqTabWidget::tabCloseRequested, this, &NqqSplitPane::tabCloseRequested);
+    disconnect(tabWidget, &NqqTabWidget::newTabAdded, this, &NqqSplitPane::newTabAdded);
+    disconnect(tabWidget, &NqqTabWidget::customContextMenuRequested, this, &NqqSplitPane::customContextMenuRequested);
+    disconnect(tabWidget, &NqqTabWidget::urlsDropped, this, &NqqSplitPane::urlsDropped);
+
+    disconnect(tabWidget, &NqqTabWidget::gotFocus, this, &NqqSplitPane::currentTabChanged);
+    disconnect(tabWidget->getWidget(), &NqqTabWidget::tabBarClicked, this, &NqqSplitPane::currentTabChanged);*/
+}
+
+void NqqSplitPane::activateTabWidget(NqqTabWidget* tabWidget)
+{
+    connect(tabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
+    connect(tabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
+    connect(tabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+}
+
+void NqqSplitPane::deactivateTabWidget(NqqTabWidget* tabWidget)
+{
+    disconnect(tabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
+    disconnect(tabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
+    disconnect(tabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+}
+
+NqqTabWidget* NqqSplitPane::createNewPanel() {
+    NqqTabWidget* w = new NqqTabWidget();
+
+    connectTabWidget(w);
+    activateTabWidget(w);
+
+    m_panels.push_back(w);
+    m_splitter->addWidget(w->getWidget());
+
+    w->createEmptyTab();
+
+    return w;
+}
+
+void CustomSplitter::changeEvent(QEvent* event) {
+    qDebug() << "ChangeEvent " << event->type();
 }

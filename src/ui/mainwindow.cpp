@@ -36,13 +36,15 @@
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
-MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
+MainWindow::MainWindow(QApplication* app, const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_settings(NqqSettings::getInstance()),
     m_fileSearchResultsWidget(new FileSearchResultsWidget()),
     m_workingDirectory(workingDirectory)
 {
+    m_application = app;
+
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -50,7 +52,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     m_docEngine = new DocEngine(nullptr);
     connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
-    connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
+    connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved); //TODO: not emitted currently
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
     connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 
@@ -109,14 +111,47 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
 
     // Initiate the new and wonderful tab widget!
-    m_nqqTabWidget = new NqqTabWidget();
-    setCentralWidget(m_nqqTabWidget->getWidget());
+    NqqSplitPane* p = new NqqSplitPane();
+    m_nqqTabWidget = p->createNewPanel();
+    p->createNewPanel();
 
-    connect(m_nqqTabWidget, &NqqTabWidget::currentTabChanged, this, &MainWindow::on_currenTabChanged);
+    //m_nqqTabWidget = new NqqTabWidget();
+    //setCentralWidget(m_nqqTabWidget->getWidget());
+    setCentralWidget(p->m_splitter);
+
+    connect(p, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
+    connect(p, &NqqSplitPane::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
+    connect(p, &NqqSplitPane::newTabAdded, this, &MainWindow::on_tabAdded);
+    connect(p, &NqqSplitPane::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
+    connect(p, &NqqSplitPane::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
+
+    connect(p, &NqqSplitPane::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(p, &NqqSplitPane::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(p, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
+        refreshTabUiInfo(tab);
+    });
+
+    /*connect(m_nqqTabWidget, &NqqTabWidget::currentTabChanged, this, &MainWindow::on_currenTabChanged);
     connect(m_nqqTabWidget, &NqqTabWidget::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
     connect(m_nqqTabWidget, &NqqTabWidget::newTabAdded, this, &MainWindow::on_tabAdded);
     connect(m_nqqTabWidget, &NqqTabWidget::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
     connect(m_nqqTabWidget, &NqqTabWidget::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
+
+    connect(m_nqqTabWidget, &NqqTabWidget::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(m_nqqTabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(m_nqqTabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
+        refreshTabUiInfo(tab);
+    });*/
+
+    /*connect(m_application, &QApplication::focusChanged, [](QWidget* old, QWidget* newW){
+        if(newW == nullptr) {
+            qDebug() << "focus null";
+            return;
+        }
+
+        QString class_name =  newW->metaObject()->className();
+        qDebug() << "Focus widget class: " << class_name;
+    });*/
 
     // We wanna add a test document so we're good to go until session restore is available again.
     Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile("/home/s3rius/Downloads/Important Stuff"));
@@ -189,8 +224,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     emit Notepadqq::getInstance().newWindow(this);
 }
 
-MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)
-    : MainWindow(QDir::currentPath(), arguments, parent)
+MainWindow::MainWindow(QApplication* app, const QStringList &arguments, QWidget *parent)
+    : MainWindow(app, QDir::currentPath(), arguments, parent)
 { }
 
 MainWindow::~MainWindow()
@@ -1075,9 +1110,13 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currenTabChanged(NqqTab* tab)
 {
-    qDebug() << "MainWindow::on_currentTabChanged";
 
-    if(!tab) return; //TODO: Can/should this be null?
+    if(!tab) {
+        qDebug() << "null tab";
+        return; //TODO: Can/should this be null?
+
+    }
+    qDebug() << "MainWindow::on_currentTabChanged to " << tab->getTabTitle();
 
     m_nqqTabWidget->setFocus(tab); //TODO: Do we need to set focus every time we change tabs? Here?
 
@@ -1100,14 +1139,9 @@ void MainWindow::on_tabAdded(NqqTab* tab)
 
     /*disconnect(editor, &Editor::bannerRemoved, 0, 0);
     
-    connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    connect(editor, &Editor::cleanChanged, this, [=]() {
-        /f (currentEditor() == editor)
-            refreshEditorUiInfo(editor);
-    });
-    connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);*/
+    */
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
@@ -1121,26 +1155,14 @@ void MainWindow::on_tabAdded(NqqTab* tab)
     editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
 }
 
-void MainWindow::on_cursorActivity()
+void MainWindow::on_cursorActivity(NqqTab* tab)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-
-   /* if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(editor);
-    }*/
+    refreshEditorUiCursorInfo(tab->m_editor);
 }
 
-void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
+void MainWindow::on_currentLanguageChanged(NqqTab* tab)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-
-  /*  if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
-    }*/
+    refreshTabUiInfo(tab);
 }
 
 void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
@@ -1253,12 +1275,12 @@ void MainWindow::refreshTabUiInfo(NqqTab* tab)
 
 void MainWindow::on_action_Delete_triggered()
 {
-   // currentEditor()->setSelectionsText(QStringList(""));
+    m_nqqTabWidget->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
 }
 
 void MainWindow::on_actionSelect_All_triggered()
 {
-   // currentEditor()->sendMessage("C_CMD_SELECT_ALL");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_SELECT_ALL");
 }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()
@@ -1277,12 +1299,12 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_action_Undo_triggered()
 {
-    //currentEditor()->sendMessage("C_CMD_UNDO");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_UNDO");
 }
 
 void MainWindow::on_action_Redo_triggered()
 {
-   // currentEditor()->sendMessage("C_CMD_REDO");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_REDO");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1347,34 +1369,38 @@ void MainWindow::on_actionSearch_triggered()
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
-    /*Editor *editor = currentEditor();
-    if (currentEditor()->fileName().isEmpty())
+    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    Editor *editor = tab->m_editor;
+
+    if (editor->fileName().isEmpty())
     {
-        EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
-        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+        QApplication::clipboard()->setText(tab->getTabTitle());
     } else {
         QApplication::clipboard()->setText(
                     editor->fileName().toDisplayString(QUrl::PreferLocalFile |
                                                        QUrl::RemovePassword));
-    }*/
+    }
 }
 
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
-    /*Editor *editor = currentEditor();
-    if (currentEditor()->fileName().isEmpty())
+    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    Editor *editor = tab->m_editor;
+
+    if (editor->fileName().isEmpty())
     {
-        EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
-        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
+        QApplication::clipboard()->setText(tab->getTabTitle());
     } else {
         QApplication::clipboard()->setText(Notepadqq::fileNameFromUrl(editor->fileName()));
-    }*/
+    }
 }
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
-    /*Editor *editor = currentEditor();
-    if(currentEditor()->fileName().isEmpty())
+    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    Editor *editor = tab->m_editor;
+
+    if(editor->fileName().isEmpty())
     {
         QApplication::clipboard()->setText("");
     } else {
@@ -1389,7 +1415,7 @@ void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
                                                        QUrl::RemoveFilename |
                                                        QUrl::NormalizePathSegments
                                                        ));
-    }*/
+    }
 }
 
 void MainWindow::on_actionPreferences_triggered()
@@ -1507,6 +1533,7 @@ void MainWindow::on_actionZoom_Out_triggered()
 
 void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
 {
+    // Currently Unused
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         qreal curZoom = tabWidget->editor(tab)->zoomFactor();
         qreal diff = ev->delta() / 120;
@@ -1515,20 +1542,20 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
         // Increment/Decrement zoom factor by 0.1 at each step.
         qreal newZoom = curZoom + diff;
         tabWidget->setZoomFactor(newZoom);
-        m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
+        //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
     }
 }
 
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
-  /*  Editor *editor = currentEditor();
+    Editor* editor = m_nqqTabWidget->getCurrentTab()->m_editor;
     QStringList sel = editor->selectedTexts();
 
     for (int i = 0; i < sel.length(); i++) {
         sel.replace(i, func(sel.at(i)));
     }
 
-    editor->setSelectionsText(sel, Editor::selectMode_selected);*/
+    editor->setSelectionsText(sel, Editor::selectMode_selected);
 }
 
 void MainWindow::on_actionUPPERCASE_triggered()
@@ -2031,14 +2058,14 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 */
 QStringList MainWindow::currentWordOrSelections()
 {
-   /* Editor *editor = currentEditor();
+    Editor *editor = m_nqqTabWidget->getCurrentTab()->m_editor;
     QStringList selection = editor->selectedTexts();
 
     if (selection.isEmpty() || selection.first().isEmpty()) {
         return QStringList(editor->getCurrentWord());
     } else {
         return selection;
-    }*/
+    }
 }
 
 QString MainWindow::currentWordOrSelection()
@@ -2063,20 +2090,21 @@ void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
 {
-    MainWindow *b = new MainWindow(QStringList(), 0);
+    MainWindow *b = new MainWindow(m_application, QStringList(), 0);
     b->show();
 }
 
 void MainWindow::on_actionOpen_in_New_Window_triggered()
 {
- /*   QStringList args;
+    Editor* editor = m_nqqTabWidget->getCurrentTab()->m_editor;
+    QStringList args;
     args.append(QApplication::arguments().first());
-    if (!currentEditor()->fileName().isEmpty()) {
-        args.append(currentEditor()->fileName().toString(QUrl::None));
+    if (!editor->fileName().isEmpty()) {
+        args.append(editor->fileName().toString(QUrl::None));
     }
 
-    MainWindow *b = new MainWindow(args, 0);
-    b->show();*/
+    MainWindow *b = new MainWindow(m_application, args, 0);
+    b->show();
 }
 
 void MainWindow::on_actionMove_to_New_Window_triggered()
@@ -2099,13 +2127,10 @@ void MainWindow::on_actionOpen_file_triggered()
 {
     QStringList terms = currentWordOrSelections();
     if (!terms.isEmpty()) {
-        QList<QUrl> urls;
-        for (QString term : terms) {
-            urls.append(QUrl::fromLocalFile(term));
+        for (QString term : terms) {   
+            Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile(term));
+            m_nqqTabWidget->createTab(ed);
         }
-
-     /*   m_docEngine->loadDocuments(urls,
-                                   m_topEditorContainer->currentTabWidget());*/
     }
 }
 
@@ -2115,44 +2140,44 @@ void MainWindow::on_actionOpen_in_another_window_triggered()
     if (!terms.isEmpty()) {
         terms.prepend(QApplication::arguments().first());
 
-        MainWindow *b = new MainWindow(terms, 0);
+        MainWindow *b = new MainWindow(m_application, terms, 0);
         b->show();
     }
 }
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
-    if (!m_frmSearchReplace) {
-        instantiateFrmSearchReplace();
-    }
+    //if (!m_frmSearchReplace) {
+    //    instantiateFrmSearchReplace();
+    //}
 
 /*    QStringList sel = currentEditor()->selectedTexts();
     if (sel.length() > 0 && sel[0].length() > 0) {
         m_frmSearchReplace->setSearchText(sel[0]);
     }*/
 
-    m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
-    m_frmSearchReplace->activateWindow();
+    //m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
+    //m_frmSearchReplace->activateWindow();
 }
 
 void MainWindow::on_actionDelete_Line_triggered()
 {
-   // currentEditor()->sendMessage("C_CMD_DELETE_LINE");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_DELETE_LINE");
 }
 
 void MainWindow::on_actionDuplicate_Line_triggered()
 {
-  //  currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_DUPLICATE_LINE");
 }
 
 void MainWindow::on_actionMove_Line_Up_triggered()
 {
-   // currentEditor()->sendMessage("C_CMD_MOVE_LINE_UP");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_UP");
 }
 
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
-   // currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
+    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_DOWN");
 }
 
 void MainWindow::on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol)
