@@ -24,11 +24,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-
-    QApplication* m_application;
-
-    explicit MainWindow(QApplication* app, const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
-    explicit MainWindow(QApplication* app, const QStringList &arguments, QWidget *parent = 0);
+    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
+    explicit MainWindow(const QStringList &arguments, QWidget *parent = 0);
     ~MainWindow();
 
     static QList<MainWindow *> instances();
@@ -55,6 +52,7 @@ public:
     //TopEditorContainer *topEditorContainer();
 
     NqqTabWidget* m_nqqTabWidget;
+    NqqSplitPane* m_nqqSplitPane;
 
     void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 

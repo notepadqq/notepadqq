@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
         if (parser->isSet("new-window")) {
             // Open a new window
-            MainWindow *win = new MainWindow(nullptr, workingDirectory, arguments, 0);
+            MainWindow *win = new MainWindow(workingDirectory, arguments, 0);
             win->show();
         } else {
             // Send the args to the last focused window
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    MainWindow *w = new MainWindow(&a, QApplication::arguments(), 0);
+    MainWindow *w = new MainWindow(QApplication::arguments(), 0);
     w->show();
 
 #ifdef QT_DEBUG

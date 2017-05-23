@@ -14,35 +14,12 @@ using namespace EditorNS;
 
 class NqqTabWidget;
 
-class FocusWatcher : public QObject
-{
-   Q_OBJECT
-public:
-   explicit FocusWatcher(QObject* parent = nullptr) : QObject(parent)
-   {
-      if (parent)
-         parent->installEventFilter(this);
-   }
-   virtual bool eventFilter(QObject *obj, QEvent *event) override
-   {
-      Q_UNUSED(obj)
-      if (event->type() == QEvent::FocusIn)
-         emit focusChanged(true);
-      else if (event->type() == QEvent::FocusOut)
-         emit focusChanged(false);
-
-      return false;
-   }
-
-Q_SIGNALS:
-   void focusChanged(bool in);
-};
-
 class NqqTab : public QObject {
     Q_OBJECT
 
 public:
 
+    NqqTab(Editor* editor);
     ~NqqTab();
 
     QString getTextContents() const { return m_editor->value(); }
@@ -61,6 +38,7 @@ public:
 
     NqqTabWidget* m_parentTabWidget;
     Editor* m_editor;
+    QString m_tabTitle;
 
 signals:
     void gotFocus();
@@ -73,15 +51,15 @@ class CustomTabWidget : public QTabWidget {
 public:
 
     CustomTabWidget(QWidget* parent) : QTabWidget(parent) {
-        setFocusPolicy(Qt::StrongFocus);
+        //setFocusPolicy(Qt::StrongFocus);
     }
 
-    virtual void tabInserted(int index) {
+    /*virtual void tabInserted(int index) {
         qDebug() << "tab inserted at index " << index;
     }
     virtual void tabRemoved(int index) {
         qDebug() << "tab removed at index " << index;
-    }
+    }*/
 
     virtual void mouseReleaseEvent(QMouseEvent* evt) {
         if(evt->button() != Qt::MiddleButton) {
@@ -110,6 +88,9 @@ public:
     NqqTab* createEmptyTab(bool makeCurrent=true);
     NqqTab* createTab(Editor* editor, bool makeCurrent=true);
 
+    bool detachTab(NqqTab* tab);
+    bool attachTab(NqqTab* tab);
+
     const std::vector<NqqTab*> getAllTabs() const { return m_tabs; }
     NqqTab* getCurrentTab() const;
     int getCurrentIndex() const;
@@ -118,6 +99,7 @@ public:
     bool isEmpty() const { return m_tabs.empty(); }
 
     NqqTab* findTabByUrl(const QUrl& fileUrl) const;
+    int getIndexOfTab(NqqTab* tab) const;
 
     void forceCloseTab(NqqTab* tab);
 
@@ -125,6 +107,8 @@ public:
 
     void makeCurrent(NqqTab* tab);
     void makeCurrent(int index);
+
+    void setTabSavedIcon(NqqTab* tab, bool saved);
 
 signals:
     void currentTabChanged(NqqTab* newFocus);
@@ -146,17 +130,11 @@ private slots:
     void onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt);
 
 private:
-
     void connectTab(NqqTab* tab);
+    void disconnectTab(NqqTab* tab);
 
     std::vector<NqqTab*> m_tabs;
     QTabWidget* m_tabWidget;
-};
-
-class CustomSplitter : public QSplitter {
-    Q_OBJECT
-
-    void changeEvent(QEvent *event) override;
 };
 
 class NqqSplitPane : public QObject {
@@ -178,15 +156,19 @@ public:
 
     void connectTabWidget(NqqTabWidget* tabWidget);
     void disconnectTabWidget(NqqTabWidget* tabWidget);
-    void activateTabWidget(NqqTabWidget* tabWidget);
-    void deactivateTabWidget(NqqTabWidget* tabWidget);
+    void setActiveTabWidget(NqqTabWidget* tabWidget);
+
+    NqqTabWidget* getCurrentTabWidget() const { return m_activeTabWidget; }
+    NqqTabWidget* getPrevTabWidget() const;
+    NqqTabWidget* getNextTabWidget() const;
 
 
-    NqqTabWidget* createNewPanel();
+    NqqTabWidget* createNewTabWidget(NqqTab* newTab=nullptr);
 
     std::vector<NqqTabWidget*> m_panels;
+    NqqTabWidget* m_activeTabWidget = nullptr;
 
-    QSplitter* m_splitter = new CustomSplitter();
+    QSplitter* m_splitter = new QSplitter();
 };
 
 

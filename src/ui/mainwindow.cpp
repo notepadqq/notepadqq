@@ -36,15 +36,13 @@
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
-MainWindow::MainWindow(QApplication* app, const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
+MainWindow::MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_settings(NqqSettings::getInstance()),
     m_fileSearchResultsWidget(new FileSearchResultsWidget()),
     m_workingDirectory(workingDirectory)
 {
-    m_application = app;
-
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -112,8 +110,9 @@ MainWindow::MainWindow(QApplication* app, const QString &workingDirectory, const
 
     // Initiate the new and wonderful tab widget!
     NqqSplitPane* p = new NqqSplitPane();
-    m_nqqTabWidget = p->createNewPanel();
-    p->createNewPanel();
+    m_nqqSplitPane = p;
+    m_nqqTabWidget = p->createNewTabWidget();
+    //p->createNewTabWidget();
 
     //m_nqqTabWidget = new NqqTabWidget();
     //setCentralWidget(m_nqqTabWidget->getWidget());
@@ -130,28 +129,6 @@ MainWindow::MainWindow(QApplication* app, const QString &workingDirectory, const
     connect(p, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
         refreshTabUiInfo(tab);
     });
-
-    /*connect(m_nqqTabWidget, &NqqTabWidget::currentTabChanged, this, &MainWindow::on_currenTabChanged);
-    connect(m_nqqTabWidget, &NqqTabWidget::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
-    connect(m_nqqTabWidget, &NqqTabWidget::newTabAdded, this, &MainWindow::on_tabAdded);
-    connect(m_nqqTabWidget, &NqqTabWidget::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
-    connect(m_nqqTabWidget, &NqqTabWidget::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
-
-    connect(m_nqqTabWidget, &NqqTabWidget::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(m_nqqTabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
-    connect(m_nqqTabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
-        refreshTabUiInfo(tab);
-    });*/
-
-    /*connect(m_application, &QApplication::focusChanged, [](QWidget* old, QWidget* newW){
-        if(newW == nullptr) {
-            qDebug() << "focus null";
-            return;
-        }
-
-        QString class_name =  newW->metaObject()->className();
-        qDebug() << "Focus widget class: " << class_name;
-    });*/
 
     // We wanna add a test document so we're good to go until session restore is available again.
     Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile("/home/s3rius/Downloads/Important Stuff"));
@@ -224,8 +201,8 @@ MainWindow::MainWindow(QApplication* app, const QString &workingDirectory, const
     emit Notepadqq::getInstance().newWindow(this);
 }
 
-MainWindow::MainWindow(QApplication* app, const QStringList &arguments, QWidget *parent)
-    : MainWindow(app, QDir::currentPath(), arguments, parent)
+MainWindow::MainWindow(const QStringList &arguments, QWidget *parent)
+    : MainWindow(QDir::currentPath(), arguments, parent)
 { }
 
 MainWindow::~MainWindow()
@@ -827,12 +804,19 @@ bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCod
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
-//    EditorTabWidget *curTabWidget = m_topEditorContainer->currentTabWidget();
-//    EditorTabWidget *destTabWidget = m_topEditorContainer->inactiveTabWidget(true);
+    NqqTabWidget* currTabWidget = m_nqqSplitPane->getCurrentTabWidget();
+    NqqTabWidget* nextTabWidget = m_nqqSplitPane->getNextTabWidget();
 
-//    destTabWidget->transferEditorTab(true, curTabWidget, curTabWidget->currentIndex());
+    NqqTab* currTab = currTabWidget->getCurrentTab();
 
-//    removeTabWidgetIfEmpty(curTabWidget);
+    if( !currTabWidget->detachTab(currTab) )
+        return;
+
+
+    if(currTabWidget==nextTabWidget)
+        nextTabWidget = m_nqqSplitPane->createNewTabWidget(currTab);
+    else
+        nextTabWidget->attachTab(currTab);
 }
 
 void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
@@ -1110,7 +1094,6 @@ void MainWindow::on_actionCu_t_triggered()
 
 void MainWindow::on_currenTabChanged(NqqTab* tab)
 {
-
     if(!tab) {
         qDebug() << "null tab";
         return; //TODO: Can/should this be null?
@@ -2090,7 +2073,7 @@ void MainWindow::currentWordOnlineSearch(const QString &searchUrl)
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
 {
-    MainWindow *b = new MainWindow(m_application, QStringList(), 0);
+    MainWindow *b = new MainWindow(QStringList(), 0);
     b->show();
 }
 
@@ -2103,7 +2086,7 @@ void MainWindow::on_actionOpen_in_New_Window_triggered()
         args.append(editor->fileName().toString(QUrl::None));
     }
 
-    MainWindow *b = new MainWindow(m_application, args, 0);
+    MainWindow *b = new MainWindow(args, 0);
     b->show();
 }
 
@@ -2140,7 +2123,7 @@ void MainWindow::on_actionOpen_in_another_window_triggered()
     if (!terms.isEmpty()) {
         terms.prepend(QApplication::arguments().first());
 
-        MainWindow *b = new MainWindow(m_application, terms, 0);
+        MainWindow *b = new MainWindow(terms, 0);
         b->show();
     }
 }

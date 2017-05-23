@@ -6,6 +6,16 @@
 #include "include/iconprovider.h"
 
 
+NqqTab::NqqTab(Editor* editor)
+{
+    m_editor = editor;
+
+    connect(m_editor, &Editor::cleanChanged, [this](bool isClean){
+        if(!m_parentTabWidget) return;
+        m_parentTabWidget->setTabSavedIcon(this, isClean);
+    });
+}
+
 NqqTab::~NqqTab()
 {
     //TODO: DocEngine::unmonitor(m_editor); <- or somewhere else? Maybe Editor itself should have this as a destructor?
@@ -14,14 +24,17 @@ NqqTab::~NqqTab()
 
 QString NqqTab::getTabTitle() const
 {
-    int index = m_parentTabWidget->getWidget()->indexOf(m_editor);
-    return m_parentTabWidget->getWidget()->tabText(index);
+    return m_tabTitle;
 }
 
 void NqqTab::setTabTitle(const QString& title)
 {
-    int index = m_parentTabWidget->getWidget()->indexOf(m_editor);
-    m_parentTabWidget->getWidget()->setTabText(index, title);
+    if(m_parentTabWidget) {
+        int index = m_parentTabWidget->getWidget()->indexOf(m_editor);
+        m_parentTabWidget->getWidget()->setTabText(index, title);
+    }
+
+    m_tabTitle = title;
 }
 
 void NqqTab::closeTab()
@@ -32,6 +45,8 @@ void NqqTab::closeTab()
 
 void NqqTab::forceCloseTab()
 {
+    // TODO: This function should probably call delete this. Check if parent even exists.
+    // Also, rename parent->forceCloseTab to something else? Just detach/remove tab instead? For close needed?
     m_parentTabWidget->forceCloseTab(this);
 }
 
@@ -71,11 +86,6 @@ NqqTabWidget::NqqTabWidget()
         for(NqqTab* tab : m_tabs) qDebug() << tab->getTabTitle();
     });
 
-    /*connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
-        if(index >= 0)
-            emit currentTabChanged(m_tabs[index]);
-    });*/
-
     connect(m_tabWidget, &QTabWidget::customContextMenuRequested, [this](const QPoint& point) {
         emit customContextMenuRequested(m_tabWidget->mapToGlobal(point));
     });
@@ -104,32 +114,65 @@ NqqTab* NqqTabWidget::createTab(Editor* editor, bool makeCurrent) {
 
     if(!editor) return nullptr;
 
-    NqqTab* t = new NqqTab();
-    t->m_editor = editor;
+    NqqTab* t = new NqqTab(editor);
     t->m_parentTabWidget = this;
-
-    /*connect(new FocusWatcher(t->m_editor->m_webView), &FocusWatcher::focusChanged, [](){
-        qDebug() << "Focus changed here in the watcher!";
-    });*/
-
-    //t->m_editor->m_webView->setFocusPolicy(Qt::StrongFocus);
 
     m_tabs.push_back(t);
 
     connectTab(t);
 
     int index = m_tabWidget->addTab(editor, editor->fileName().fileName());
+    t->setTabTitle(m_tabWidget->tabText(index));
 
     const QIcon& ic = editor->fileOnDiskChanged() ?
                 IconProvider::fromTheme("document-unsaved") : IconProvider::fromTheme("document-saved");
 
     m_tabWidget->setTabIcon(index, ic);
-    if(makeCurrent)
+    if(makeCurrent) {
         m_tabWidget->setCurrentIndex(index);
+        t->m_editor->setFocus();
+    }
 
     emit newTabAdded(t);
 
     return t;
+}
+
+bool NqqTabWidget::detachTab(NqqTab* tab)
+{
+    // TODO: can we use this to implement forceCloseTab?
+    const int index = getIndexOfTab(tab);
+
+    if(index < 0) return false;
+
+    disconnectTab(tab);
+    tab->m_parentTabWidget = nullptr;
+
+    m_tabWidget->removeTab(index);
+    m_tabs.erase(m_tabs.begin()+index);
+
+    if(m_tabs.empty()) {
+        qDebug() << "forceCloseTab: TabWidget empty, adding empty tab.";
+        createEmptyTab(true);
+    }
+
+    // m_tabs mustn't be empty at this point
+    makeCurrent( m_tabWidget->currentIndex() );
+
+    return true;
+}
+
+bool NqqTabWidget::attachTab(NqqTab* tab)
+{
+    // TODO: Can we use this to implement createTab?
+
+    if(tab->m_parentTabWidget != nullptr) return false;
+
+    NqqTab* t = createTab(tab->m_editor);
+    t->setTabTitle(tab->getTabTitle());
+    delete tab;
+
+    return true;
 }
 
 void NqqTabWidget::onTabCloseRequested(int index)
@@ -143,15 +186,19 @@ void NqqTabWidget::onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt)
 {
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         const qreal curZoom = tab->getZoomFactor();
-        qreal diff = evt->delta() / 120 / 10; // Increment/Decrement by 0.1 each step
+        qreal diff = evt->delta() / 120. / 10.; // Increment/Decrement by 0.1 each step
 
         const qreal newZoom = curZoom + diff;
 
-        for(NqqTab* t : getAllTabs())
-            t->setZoomFactor(newZoom);
+        // TODO: If we want all tabs to change zoom we should send a signal to MainWindow
+        /*for(NqqTab* t : getAllTabs())
+            t->setZoomFactor(newZoom);*/
+        getCurrentTab()->setZoomFactor(newZoom);
+
+        evt->accept(); // By accepting the event, it won't be handled by the WebView anymore
     }
     //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
-    //We used to do that in NqqSplitPane through a signal
+    //We used to do that in MainWindow through a signal
 }
 
 void NqqTabWidget::connectTab(NqqTab* tab) {
@@ -159,19 +206,24 @@ void NqqTabWidget::connectTab(NqqTab* tab) {
         qDebug() << "Is this event being called right now?"; //TODO want to connect to editor directly or to NqqTab?
         emit currentTabChanged(tab);
     });
-    connect(tab->m_editor, &Editor::mouseWheel, this, [tab, this](QWheelEvent* evt) {
+    connect(tab->m_editor, &Editor::mouseWheel, tab, [tab, this](QWheelEvent* evt) {
         onTabMouseWheelUsed(tab, evt);
     });
     connect(tab->m_editor, &Editor::urlsDropped, this, &NqqTabWidget::urlsDropped);
-    connect(tab->m_editor, &Editor::cursorActivity, [tab, this](){
+    connect(tab->m_editor, &Editor::cursorActivity, tab, [tab, this](){
         emit currentTabCursorActivity(tab);
     });
     connect(tab->m_editor, &Editor::currentLanguageChanged, [tab, this](){
         emit currentTabLanguageChanged(tab);
     });
-    connect(tab->m_editor, &Editor::gotFocus, [tab, this](){
+    connect(tab->m_editor, &Editor::gotFocus, tab, [tab, this](){
         emit currentTabChanged(tab);
     });
+}
+
+void NqqTabWidget::disconnectTab(NqqTab* tab) {
+    disconnect(tab->m_editor);
+    disconnect(tab);
 }
 
 NqqTab* NqqTabWidget::getCurrentTab() const
@@ -198,6 +250,16 @@ NqqTab*NqqTabWidget::findTabByUrl(const QUrl& fileUrl) const
     return nullptr;
 }
 
+int NqqTabWidget::getIndexOfTab(NqqTab* tab) const
+{
+    const auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
+
+    if (it==m_tabs.end())
+        return -1;
+    else
+        return std::distance(m_tabs.begin(), it);
+}
+
 void NqqTabWidget::forceCloseTab(NqqTab* tab)
 {
     auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
@@ -215,6 +277,9 @@ void NqqTabWidget::forceCloseTab(NqqTab* tab)
         qDebug() << "forceCloseTab: TabWidget empty, adding empty tab.";
         createEmptyTab(true);
     }
+
+    // m_tabs mustn't be empty at this point
+    makeCurrent( m_tabWidget->currentIndex() );
 }
 
 void NqqTabWidget::setFocus(NqqTab* tab)
@@ -240,6 +305,17 @@ void NqqTabWidget::makeCurrent(int index)
         makeCurrent(m_tabs[index]);
 }
 
+void NqqTabWidget::setTabSavedIcon(NqqTab* tab, bool saved)
+{
+    const int index = getIndexOfTab(tab);
+    if(index < 0) return;
+
+    const QIcon& icon = saved ? IconProvider::fromTheme("document-saved")
+                              : IconProvider::fromTheme("document-unsaved");
+
+    m_tabWidget->setTabIcon(index, icon);
+}
+
 void NqqSplitPane::connectTabWidget(NqqTabWidget* tabWidget)
 {
     connect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
@@ -248,54 +324,75 @@ void NqqSplitPane::connectTabWidget(NqqTabWidget* tabWidget)
     connect(tabWidget, &NqqTabWidget::customContextMenuRequested, this, &NqqSplitPane::customContextMenuRequested);
     connect(tabWidget, &NqqTabWidget::urlsDropped, this, &NqqSplitPane::urlsDropped);
 
+    connect(tabWidget, &NqqTabWidget::currentTabChanged, [tabWidget, this](){
+        if(m_activeTabWidget==tabWidget) return;
 
-    //connect(tabWidget, &NqqTabWidget::gotFocus, this, &NqqSplitPane::currentTabChanged);
+        setActiveTabWidget(tabWidget);
+        qDebug() << "Active TabWidget changed.";
+    });
 
-    /*connect(tabWidget->getWidget(), &QTabWidget::tabBarClicked, [this, tabWidget](){
-        emit currentTabChanged(tabWidget->getCurrentTab());
-    });*/
 }
 
-void NqqSplitPane::disconnectTabWidget(NqqTabWidget* tabWidget)
+void NqqSplitPane::setActiveTabWidget(NqqTabWidget* tabWidget)
 {
-    /*disconnect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
-    disconnect(tabWidget, &NqqTabWidget::tabCloseRequested, this, &NqqSplitPane::tabCloseRequested);
-    disconnect(tabWidget, &NqqTabWidget::newTabAdded, this, &NqqSplitPane::newTabAdded);
-    disconnect(tabWidget, &NqqTabWidget::customContextMenuRequested, this, &NqqSplitPane::customContextMenuRequested);
-    disconnect(tabWidget, &NqqTabWidget::urlsDropped, this, &NqqSplitPane::urlsDropped);
+    if(m_activeTabWidget){
+        disconnect(m_activeTabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
+        disconnect(m_activeTabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
+        disconnect(m_activeTabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+    }
 
-    disconnect(tabWidget, &NqqTabWidget::gotFocus, this, &NqqSplitPane::currentTabChanged);
-    disconnect(tabWidget->getWidget(), &NqqTabWidget::tabBarClicked, this, &NqqSplitPane::currentTabChanged);*/
-}
+    m_activeTabWidget = tabWidget;
 
-void NqqSplitPane::activateTabWidget(NqqTabWidget* tabWidget)
-{
     connect(tabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
     connect(tabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
     connect(tabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
 }
 
-void NqqSplitPane::deactivateTabWidget(NqqTabWidget* tabWidget)
+NqqTabWidget*NqqSplitPane::getPrevTabWidget() const
 {
-    disconnect(tabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
-    disconnect(tabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
-    disconnect(tabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+    NqqTabWidget* current = getCurrentTabWidget();
+
+    if(!current)
+        return m_panels.back();
+
+    auto it = std::find(m_panels.begin(), m_panels.end(), current);
+
+    return it==m_panels.begin() ? m_panels.back() : *(it-1);
 }
 
-NqqTabWidget* NqqSplitPane::createNewPanel() {
+NqqTabWidget*NqqSplitPane::getNextTabWidget() const
+{
+    NqqTabWidget* current = getCurrentTabWidget();
+
+    if(!current)
+        return m_panels.front();
+
+    auto it = std::find(m_panels.begin(), m_panels.end(), current);
+
+    return it==(m_panels.end()-1) ? m_panels.front() : *(it+1);
+}
+
+NqqTabWidget* NqqSplitPane::createNewTabWidget(NqqTab* newTab) {
     NqqTabWidget* w = new NqqTabWidget();
 
     connectTabWidget(w);
-    activateTabWidget(w);
 
     m_panels.push_back(w);
     m_splitter->addWidget(w->getWidget());
 
-    w->createEmptyTab();
+    // Resize all panels faily
+    const int currentViewCount = m_splitter->count();
+    const int tabSize = m_splitter->contentsRect().width() / currentViewCount;
+    QList<int> sizes;
+    for(int i=0; i<currentViewCount; ++i)
+        sizes << tabSize;
+
+    m_splitter->setSizes( sizes );
+
+    if(!newTab || !w->attachTab(newTab))
+        w->createEmptyTab();
+
+    if(!m_activeTabWidget) m_activeTabWidget = w;
 
     return w;
-}
-
-void CustomSplitter::changeEvent(QEvent* event) {
-    qDebug() << "ChangeEvent " << event->type();
 }

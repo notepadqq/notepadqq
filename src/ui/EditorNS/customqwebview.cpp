@@ -1,5 +1,6 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QMimeData>
+#include <QDebug>
 
 namespace EditorNS
 {
@@ -13,7 +14,9 @@ namespace EditorNS
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        QWebView::wheelEvent(ev);
+
+        if(!ev->isAccepted())
+            QWebView::wheelEvent(ev);
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -40,6 +43,8 @@ namespace EditorNS
     void CustomQWebView::focusInEvent(QFocusEvent* evt)
     {
         QWebView::focusInEvent(evt);
+
+        qDebug() << "Focus in event";
         emit gotFocus();
     }
 
