@@ -50,9 +50,9 @@ public:
     };
 
     //TopEditorContainer *topEditorContainer();
-
-    NqqTabWidget* m_nqqTabWidget;
     NqqSplitPane* m_nqqSplitPane;
+
+    NqqTabWidget* getCurrentTabWidget();
 
     void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 

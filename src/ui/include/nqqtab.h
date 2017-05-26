@@ -13,6 +13,7 @@
 using namespace EditorNS;
 
 class NqqTabWidget;
+class NqqSplitPane;
 
 class NqqTab : public QObject {
     Q_OBJECT
@@ -28,6 +29,9 @@ public:
     QString getTabTitle() const;
     void setTabTitle(const QString& title);
 
+    bool getClean() const;
+    void setClean(bool isClean);
+
     qreal getZoomFactor() const { return m_editor->zoomFactor(); }
     void setZoomFactor(qreal factor) { m_editor->setZoomFactor(factor); }
 
@@ -36,8 +40,8 @@ public:
     void closeTab();
     void forceCloseTab();
 
-    NqqTabWidget* m_parentTabWidget;
-    Editor* m_editor;
+    NqqTabWidget* m_parentTabWidget = nullptr;
+    Editor* m_editor = nullptr;
     QString m_tabTitle;
 
 signals:
@@ -53,13 +57,6 @@ public:
     CustomTabWidget(QWidget* parent) : QTabWidget(parent) {
         //setFocusPolicy(Qt::StrongFocus);
     }
-
-    /*virtual void tabInserted(int index) {
-        qDebug() << "tab inserted at index " << index;
-    }
-    virtual void tabRemoved(int index) {
-        qDebug() << "tab removed at index " << index;
-    }*/
 
     virtual void mouseReleaseEvent(QMouseEvent* evt) {
         if(evt->button() != Qt::MiddleButton) {
@@ -81,7 +78,7 @@ class NqqTabWidget : public QObject {
 
 public:
 
-    NqqTabWidget();
+    NqqTabWidget(NqqSplitPane* parent);
     ~NqqTabWidget();
 
 
@@ -100,8 +97,6 @@ public:
 
     NqqTab* findTabByUrl(const QUrl& fileUrl) const;
     int getIndexOfTab(NqqTab* tab) const;
-
-    void forceCloseTab(NqqTab* tab);
 
     void setFocus(NqqTab* tab);
 
@@ -133,6 +128,7 @@ private:
     void connectTab(NqqTab* tab);
     void disconnectTab(NqqTab* tab);
 
+    NqqSplitPane* m_parent;
     std::vector<NqqTab*> m_tabs;
     QTabWidget* m_tabWidget;
 };
@@ -162,6 +158,7 @@ public:
     NqqTabWidget* getPrevTabWidget() const;
     NqqTabWidget* getNextTabWidget() const;
 
+    bool processEmptyTabWidget(NqqTabWidget* tabW);
 
     NqqTabWidget* createNewTabWidget(NqqTab* newTab=nullptr);
 

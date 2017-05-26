@@ -9,6 +9,7 @@
 NqqTab::NqqTab(Editor* editor)
 {
     m_editor = editor;
+    setTabTitle(m_editor->fileName().fileName());
 
     connect(m_editor, &Editor::cleanChanged, [this](bool isClean){
         if(!m_parentTabWidget) return;
@@ -37,6 +38,17 @@ void NqqTab::setTabTitle(const QString& title)
     m_tabTitle = title;
 }
 
+bool NqqTab::getClean() const
+{
+    return m_editor->isClean();
+}
+
+void NqqTab::setClean(bool isClean)
+{
+    if(isClean) m_editor->markClean();
+    else m_editor->markDirty();
+}
+
 void NqqTab::closeTab()
 {
     int index = m_parentTabWidget->getWidget()->indexOf(m_editor);
@@ -45,13 +57,13 @@ void NqqTab::closeTab()
 
 void NqqTab::forceCloseTab()
 {
-    // TODO: This function should probably call delete this. Check if parent even exists.
-    // Also, rename parent->forceCloseTab to something else? Just detach/remove tab instead? For close needed?
-    m_parentTabWidget->forceCloseTab(this);
+    m_parentTabWidget->detachTab(this);
+    delete this;
 }
 
-NqqTabWidget::NqqTabWidget()
-    : m_tabWidget(new CustomTabWidget(nullptr))
+NqqTabWidget::NqqTabWidget(NqqSplitPane* parent)
+    : m_parent(parent),
+      m_tabWidget(new CustomTabWidget(nullptr))
 {
     m_tabWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     m_tabWidget->setDocumentMode(true);
@@ -105,7 +117,7 @@ NqqTab*NqqTabWidget::createEmptyTab(bool makeCurrent)
     Editor* ed = new Editor();
     ed->setLanguage("plaintext");
     NqqTab* t = createTab(ed, makeCurrent);
-    t->setTabTitle(DocEngine::getNewDocumentName()); //Issue: this is called after 'emit newTabAdded'
+    t->setTabTitle(DocEngine::getNewDocumentName()); //TODO: this is called after current tab is changed
     return t;
 }
 
@@ -115,32 +127,24 @@ NqqTab* NqqTabWidget::createTab(Editor* editor, bool makeCurrent) {
     if(!editor) return nullptr;
 
     NqqTab* t = new NqqTab(editor);
-    t->m_parentTabWidget = this;
 
-    m_tabs.push_back(t);
+    if (attachTab(t)) {
 
-    connectTab(t);
+        if(makeCurrent) {
+            m_tabWidget->setCurrentIndex( getIndexOfTab(t) );
+            t->m_editor->setFocus();
+        }
 
-    int index = m_tabWidget->addTab(editor, editor->fileName().fileName());
-    t->setTabTitle(m_tabWidget->tabText(index));
-
-    const QIcon& ic = editor->fileOnDiskChanged() ?
-                IconProvider::fromTheme("document-unsaved") : IconProvider::fromTheme("document-saved");
-
-    m_tabWidget->setTabIcon(index, ic);
-    if(makeCurrent) {
-        m_tabWidget->setCurrentIndex(index);
-        t->m_editor->setFocus();
+        emit newTabAdded(t);
+        return t;
     }
 
-    emit newTabAdded(t);
-
-    return t;
+    delete t;
+    return nullptr;
 }
 
 bool NqqTabWidget::detachTab(NqqTab* tab)
 {
-    // TODO: can we use this to implement forceCloseTab?
     const int index = getIndexOfTab(tab);
 
     if(index < 0) return false;
@@ -153,10 +157,14 @@ bool NqqTabWidget::detachTab(NqqTab* tab)
 
     if(m_tabs.empty()) {
         qDebug() << "forceCloseTab: TabWidget empty, adding empty tab.";
+
+        // If false, this tab will be deleted
+        if(!m_parent->processEmptyTabWidget(this))
+            return true;
+
         createEmptyTab(true);
     }
 
-    // m_tabs mustn't be empty at this point
     makeCurrent( m_tabWidget->currentIndex() );
 
     return true;
@@ -164,13 +172,16 @@ bool NqqTabWidget::detachTab(NqqTab* tab)
 
 bool NqqTabWidget::attachTab(NqqTab* tab)
 {
-    // TODO: Can we use this to implement createTab?
+    if(!tab || tab->m_parentTabWidget) return false;
 
-    if(tab->m_parentTabWidget != nullptr) return false;
+    tab->m_parentTabWidget = this;
 
-    NqqTab* t = createTab(tab->m_editor);
-    t->setTabTitle(tab->getTabTitle());
-    delete tab;
+    m_tabs.push_back(tab);
+    connectTab(tab);
+    m_tabWidget->addTab(tab->m_editor, tab->getFileUrl().fileName());
+
+    tab->setTabTitle( tab->getTabTitle() ); // TODO: We don't want to manually update all tab data
+    tab->setClean( tab->getClean() );
 
     return true;
 }
@@ -200,6 +211,13 @@ void NqqTabWidget::onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt)
     //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
     //We used to do that in MainWindow through a signal
 }
+
+
+/*
+  these lambda functions aren't properly disconnected using disconnectTab() because it only disconnects signals
+  caught by this tab widget (I think). Thus, the lambdas are unaffected. Turn all of these receivers into slots
+    so they'll be disconnected fine.
+*/
 
 void NqqTabWidget::connectTab(NqqTab* tab) {
     connect(tab, &NqqTab::gotFocus, tab, [tab, this](){
@@ -258,28 +276,6 @@ int NqqTabWidget::getIndexOfTab(NqqTab* tab) const
         return -1;
     else
         return std::distance(m_tabs.begin(), it);
-}
-
-void NqqTabWidget::forceCloseTab(NqqTab* tab)
-{
-    auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
-    if(it == m_tabs.end())
-        return;
-
-    qDebug() << "NqqTabWidget::forceCloseTab()";
-
-    m_tabWidget->removeTab(std::distance(m_tabs.begin(), it));
-
-    delete tab;
-    m_tabs.erase(it);
-
-    if(m_tabs.empty()) {
-        qDebug() << "forceCloseTab: TabWidget empty, adding empty tab.";
-        createEmptyTab(true);
-    }
-
-    // m_tabs mustn't be empty at this point
-    makeCurrent( m_tabWidget->currentIndex() );
 }
 
 void NqqTabWidget::setFocus(NqqTab* tab)
@@ -372,8 +368,22 @@ NqqTabWidget*NqqSplitPane::getNextTabWidget() const
     return it==(m_panels.end()-1) ? m_panels.front() : *(it+1);
 }
 
+bool NqqSplitPane::processEmptyTabWidget(NqqTabWidget* tabW)
+{
+    if(m_panels.size() == 1)
+        return true;    // Want to keep only panel
+    else {
+        std::remove(m_panels.begin(), m_panels.end(), tabW);
+        tabW->deleteLater();
+        tabW->getWidget()->setParent(nullptr);
+        tabW->getWidget()->deleteLater();
+
+        return false;
+    }
+}
+
 NqqTabWidget* NqqSplitPane::createNewTabWidget(NqqTab* newTab) {
-    NqqTabWidget* w = new NqqTabWidget();
+    NqqTabWidget* w = new NqqTabWidget(this);
 
     connectTabWidget(w);
 

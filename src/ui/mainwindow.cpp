@@ -109,30 +109,25 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
 
     // Initiate the new and wonderful tab widget!
-    NqqSplitPane* p = new NqqSplitPane();
-    m_nqqSplitPane = p;
-    m_nqqTabWidget = p->createNewTabWidget();
-    //p->createNewTabWidget();
+    m_nqqSplitPane = new NqqSplitPane();
+    m_nqqSplitPane->createNewTabWidget();
+    setCentralWidget(m_nqqSplitPane->m_splitter);
 
-    //m_nqqTabWidget = new NqqTabWidget();
-    //setCentralWidget(m_nqqTabWidget->getWidget());
-    setCentralWidget(p->m_splitter);
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
+    connect(m_nqqSplitPane, &NqqSplitPane::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
+    connect(m_nqqSplitPane, &NqqSplitPane::newTabAdded, this, &MainWindow::on_tabAdded);
+    connect(m_nqqSplitPane, &NqqSplitPane::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
+    connect(m_nqqSplitPane, &NqqSplitPane::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
-    connect(p, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
-    connect(p, &NqqSplitPane::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
-    connect(p, &NqqSplitPane::newTabAdded, this, &MainWindow::on_tabAdded);
-    connect(p, &NqqSplitPane::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
-    connect(p, &NqqSplitPane::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
-
-    connect(p, &NqqSplitPane::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(p, &NqqSplitPane::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
-    connect(p, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
         refreshTabUiInfo(tab);
     });
 
     // We wanna add a test document so we're good to go until session restore is available again.
     Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile("/home/s3rius/Downloads/Important Stuff"));
-    m_nqqTabWidget->createTab(ed);
+    getCurrentTabWidget()->createTab(ed);
 
 
     // Initialize UI from settings
@@ -154,12 +149,12 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     openCommandLineProvidedUrls(workingDirectory, arguments);
 
     // TODO: Since this isn't handled in NqqTabWidget yet, we'll manually create a tab if it's still empty
-    if (m_nqqTabWidget->isEmpty())
-        m_nqqTabWidget->createEmptyTab();
+    if (getCurrentTabWidget()->isEmpty())
+        getCurrentTabWidget()->createEmptyTab();
 
     // Set zoom from settings
     const qreal zoom = m_settings.General.getZoom();
-    for(NqqTab* tab : m_nqqTabWidget->getAllTabs())
+    for(NqqTab* tab : getCurrentTabWidget()->getAllTabs())
         tab->setZoomFactor(zoom);
 
     restoreWindowSettings();
@@ -225,6 +220,11 @@ MainWindow *MainWindow::lastActiveInstance()
     } else {
         return nullptr;
     }
+}
+
+NqqTabWidget*MainWindow::getCurrentTabWidget()
+{
+    return m_nqqSplitPane->getCurrentTabWidget();
 }
 
 void MainWindow::initUI()
@@ -458,7 +458,7 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    Editor *editor = m_nqqTabWidget->getCurrentTab()->m_editor;
+    Editor *editor = getCurrentTabWidget()->getCurrentTab()->m_editor;
 
     if (editor == 0) {
         qDebug() << "currentEditor is null";
@@ -489,7 +489,7 @@ void MainWindow::setupLanguagesMenu()
         QString langId = map.value("id", "");
         QAction *action = new QAction(map.value("name"), this);
         connect(action, &QAction::triggered, this, [=](bool) {
-            m_nqqTabWidget->getCurrentTab()->m_editor->setLanguage(langId);
+            getCurrentTabWidget()->getCurrentTab()->m_editor->setLanguage(langId);
         });
         letterMenu->insertAction(0, action);
     }
@@ -536,7 +536,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
         const QUrl url = stringToUrl(item, workingDirectory);
         Editor* editor = m_docEngine->loadDocumentProper(url);
 
-        m_nqqTabWidget->createTab(editor);
+        getCurrentTabWidget()->createTab(editor);
     }
 }
 
@@ -572,7 +572,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
     for (const QUrl& url : fileUrls) {
         Editor* editor = m_docEngine->loadDocumentProper(url);
-        m_nqqTabWidget->createTab(editor, true);
+        getCurrentTabWidget()->createTab(editor, true);
     }
 }
 
@@ -601,7 +601,7 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> fileUrls)
 
     for (const QUrl& url : fileUrls) {
         Editor* editor = m_docEngine->loadDocumentProper(url);
-        m_nqqTabWidget->createTab(editor, true);
+        getCurrentTabWidget()->createTab(editor, true);
     }
 }
 
@@ -619,19 +619,19 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
         }
     } else if (ev->key() >= Qt::Key_1 && ev->key() <= Qt::Key_9
                && QApplication::keyboardModifiers().testFlag(Qt::AltModifier)) {
-        m_nqqTabWidget->makeCurrent(ev->key() - Qt::Key_1);
+        getCurrentTabWidget()->makeCurrent(ev->key() - Qt::Key_1);
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
                && ev->key() == Qt::Key_PageDown) {
-        const int tabCount = m_nqqTabWidget->getAllTabs().size();
-        const int currentIndex = m_nqqTabWidget->getCurrentIndex();
+        const int tabCount = getCurrentTabWidget()->getAllTabs().size();
+        const int currentIndex = getCurrentTabWidget()->getCurrentIndex();
         const int nextIndex = (currentIndex + 1) % tabCount;
-        m_nqqTabWidget->makeCurrent(nextIndex);
+        getCurrentTabWidget()->makeCurrent(nextIndex);
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)
                && ev->key() == Qt::Key_PageUp) {
-        const int tabCount = m_nqqTabWidget->getAllTabs().size();
-        const int currentIndex = m_nqqTabWidget->getCurrentIndex();
+        const int tabCount = getCurrentTabWidget()->getAllTabs().size();
+        const int currentIndex = getCurrentTabWidget()->getCurrentIndex();
         const int prevIndex = (currentIndex + tabCount - 1) % tabCount;
-        m_nqqTabWidget->makeCurrent(prevIndex);
+        getCurrentTabWidget()->makeCurrent(prevIndex);
     } else {
         QMainWindow::keyPressEvent(ev);
     }
@@ -656,7 +656,7 @@ void MainWindow::toggleOverwrite()
 {
     m_overwrite = !m_overwrite;
 
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs())
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs())
         tab->m_editor->setOverwrite(m_overwrite);
 
     if (m_overwrite) {
@@ -671,12 +671,12 @@ void MainWindow::on_action_New_triggered()
     /*EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
     m_docEngine->addNewDocument(m_docEngine->getNewDocumentName(), true, tabW);*/
-    m_nqqTabWidget->createEmptyTab();
+    getCurrentTabWidget()->createEmptyTab();
 }
 
 void MainWindow::setCurrentEditorLanguage(QString language)
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->setLanguage(language);
+    getCurrentTabWidget()->getCurrentTab()->m_editor->setLanguage(language);
 }
 
 void MainWindow::on_customTabContextMenuRequested(const QPoint& point)
@@ -714,7 +714,7 @@ bool MainWindow::updateSymbols(bool on)
 
 void MainWindow::on_actionShow_Tabs_triggered(bool on)
 {
-    for(NqqTab* tab : m_nqqTabWidget->getAllTabs())
+    for(NqqTab* tab : getCurrentTabWidget()->getAllTabs())
         tab->m_editor->setTabsVisible(on);
 
     if (!updateSymbols(on)) {
@@ -724,7 +724,7 @@ void MainWindow::on_actionShow_Tabs_triggered(bool on)
 
 void MainWindow::on_actionShow_Spaces_triggered(bool on)
 {
-    for(NqqTab* tab : m_nqqTabWidget->getAllTabs())
+    for(NqqTab* tab : getCurrentTabWidget()->getAllTabs())
         tab->m_editor->setWhitespaceVisible(on);
 
     if (!updateSymbols(on)) {
@@ -734,7 +734,7 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
 
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
 {
-    for(NqqTab* tab : m_nqqTabWidget->getAllTabs())
+    for(NqqTab* tab : getCurrentTabWidget()->getAllTabs())
         tab->m_editor->setEOLVisible(on);
 
     if (!updateSymbols(on)) {
@@ -765,7 +765,7 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         ui->actionShow_Spaces->setChecked(showSpaces);
     }
 
-    for(NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for(NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         tab->m_editor->setTabsVisible(on);
         tab->m_editor->setWhitespaceVisible(on);
         tab->m_editor->setEOLVisible(on);
@@ -817,6 +817,8 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
         nextTabWidget = m_nqqSplitPane->createNewTabWidget(currTab);
     else
         nextTabWidget->attachTab(currTab);
+
+    currTab->m_parentTabWidget->makeCurrent(currTab); // TODO: Shitty workaround
 }
 
 void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
@@ -827,7 +829,7 @@ void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
 
 void MainWindow::on_action_Open_triggered()
 {
-    QUrl defaultUrl = m_nqqTabWidget->getCurrentTab()->getFileUrl();;
+    QUrl defaultUrl = getCurrentTabWidget()->getCurrentTab()->getFileUrl();;
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
@@ -840,7 +842,7 @@ void MainWindow::on_action_Open_triggered()
 
     for (QUrl url : fileUrls) {
         Editor* ed = m_docEngine->loadDocumentProper(url);
-        m_nqqTabWidget->createTab(ed, true);
+        getCurrentTabWidget()->createTab(ed, true);
     }
 
     if (!fileUrls.empty()) {
@@ -850,7 +852,7 @@ void MainWindow::on_action_Open_triggered()
 
 void MainWindow::on_actionOpen_Folder_triggered()
 {
-    QUrl defaultUrl = m_nqqTabWidget->getCurrentTab()->getFileUrl();
+    QUrl defaultUrl = getCurrentTabWidget()->getCurrentTab()->getFileUrl();
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
@@ -884,7 +886,7 @@ void MainWindow::on_actionOpen_Folder_triggered()
 
     for (const QFileInfo& fileInfo : files) {
         Editor* editor = m_docEngine->loadDocumentProper(QUrl::fromLocalFile(fileInfo.filePath()));
-        m_nqqTabWidget->createTab(editor, true);
+        getCurrentTabWidget()->createTab(editor, true);
     }
 
     m_settings.General.setLastSelectedDir(folder);
@@ -1058,22 +1060,22 @@ void MainWindow::on_tabCloseRequested(NqqTab* tab)
 
 void MainWindow::on_actionSave_triggered()
 {
-    save(m_nqqTabWidget->getCurrentTab());
+    save(getCurrentTabWidget()->getCurrentTab());
 }
 
 void MainWindow::on_actionSave_as_triggered()
 {
-    saveAs(m_nqqTabWidget->getCurrentTab());
+    saveAs(getCurrentTabWidget()->getCurrentTab());
 }
 
 void MainWindow::on_actionSave_a_Copy_As_triggered()
 {
-    saveAs(m_nqqTabWidget->getCurrentTab(), true);
+    saveAs(getCurrentTabWidget()->getCurrentTab(), true);
 }
 
 void MainWindow::on_action_Copy_triggered()
 {
-    QStringList sel = m_nqqTabWidget->getCurrentTab()->m_editor->selectedTexts();
+    QStringList sel = getCurrentTabWidget()->getCurrentTab()->m_editor->selectedTexts();
     QApplication::clipboard()->setText(sel.join("\n"));
 }
 
@@ -1083,13 +1085,13 @@ void MainWindow::on_action_Paste_triggered()
     QString text = QApplication::clipboard()->text()
                    .replace(QRegularExpression("\n|\r\n|\r"), "\n");
 
-    m_nqqTabWidget->getCurrentTab()->m_editor->setSelectionsText(text.split("\n"));
+    getCurrentTabWidget()->getCurrentTab()->m_editor->setSelectionsText(text.split("\n"));
 }
 
 void MainWindow::on_actionCu_t_triggered()
 {
     ui->action_Copy->trigger();
-    m_nqqTabWidget->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
+    getCurrentTabWidget()->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
 }
 
 void MainWindow::on_currenTabChanged(NqqTab* tab)
@@ -1101,7 +1103,7 @@ void MainWindow::on_currenTabChanged(NqqTab* tab)
     }
     qDebug() << "MainWindow::on_currentTabChanged to " << tab->getTabTitle();
 
-    m_nqqTabWidget->setFocus(tab); //TODO: Do we need to set focus every time we change tabs? Here?
+    getCurrentTabWidget()->setFocus(tab); //TODO: Do we need to set focus every time we change tabs? Here?
 
     Editor *editor = tab->m_editor;
     refreshTabUiInfo(tab);
@@ -1258,12 +1260,12 @@ void MainWindow::refreshTabUiInfo(NqqTab* tab)
 
 void MainWindow::on_action_Delete_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
+    getCurrentTabWidget()->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
 }
 
 void MainWindow::on_actionSelect_All_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_SELECT_ALL");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_SELECT_ALL");
 }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()
@@ -1282,12 +1284,12 @@ void MainWindow::on_actionAbout_Qt_triggered()
 
 void MainWindow::on_action_Undo_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_UNDO");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_UNDO");
 }
 
 void MainWindow::on_action_Redo_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_REDO");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_REDO");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1352,7 +1354,7 @@ void MainWindow::on_actionSearch_triggered()
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
-    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    NqqTab* tab = getCurrentTabWidget()->getCurrentTab();
     Editor *editor = tab->m_editor;
 
     if (editor->fileName().isEmpty())
@@ -1367,7 +1369,7 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
-    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    NqqTab* tab = getCurrentTabWidget()->getCurrentTab();
     Editor *editor = tab->m_editor;
 
     if (editor->fileName().isEmpty())
@@ -1380,7 +1382,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
-    NqqTab* tab = m_nqqTabWidget->getCurrentTab();
+    NqqTab* tab = getCurrentTabWidget()->getCurrentTab();
     Editor *editor = tab->m_editor;
 
     if(editor->fileName().isEmpty())
@@ -1411,7 +1413,7 @@ void MainWindow::on_actionPreferences_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    on_tabCloseRequested( m_nqqTabWidget->getCurrentTab() );
+    on_tabCloseRequested( getCurrentTabWidget()->getCurrentTab() );
 }
 
 void MainWindow::on_actionC_lose_All_triggered()
@@ -1420,7 +1422,7 @@ void MainWindow::on_actionC_lose_All_triggered()
 
     bool canceled = false;
 
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         if(processTabClose(tab) == TabDontClose) {
             canceled = true;
             break;
@@ -1429,7 +1431,7 @@ void MainWindow::on_actionC_lose_All_triggered()
 
     if(canceled) return;
 
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         tab->forceCloseTab();
     }
 }
@@ -1531,7 +1533,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 
 void MainWindow::transformSelectedText(std::function<QString (const QString &)> func)
 {
-    Editor* editor = m_nqqTabWidget->getCurrentTab()->m_editor;
+    Editor* editor = getCurrentTabWidget()->getCurrentTab()->m_editor;
     QStringList sel = editor->selectedTexts();
 
     for (int i = 0; i < sel.length(); i++) {
@@ -1559,10 +1561,10 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 {
     qDebug() << "MainWindow::on_actionCloseAllButCurrent";
 
-    NqqTab* currentTab = m_nqqTabWidget->getCurrentTab();
+    NqqTab* currentTab = getCurrentTabWidget()->getCurrentTab();
     bool canceled = false;
 
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         if(tab == currentTab) continue;
         if(processTabClose(tab) == TabDontClose) {
             canceled = true;
@@ -1572,7 +1574,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
     if(canceled) return;
 
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         if(tab == currentTab) continue;
         tab->forceCloseTab();
     }
@@ -1580,7 +1582,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
 void MainWindow::on_actionSave_All_triggered()
 {
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         Editor* ed = tab->m_editor;
 
         if(ed->isClean()) continue;
@@ -1701,7 +1703,7 @@ void MainWindow::updateRecentDocsInMenu()
         QAction *action = new QAction(Notepadqq::fileNameFromUrl(url), this);
         connect(action, &QAction::triggered, this, [=]() {
             Editor* ed = m_docEngine->loadDocumentProper(url);
-            m_nqqTabWidget->createTab(ed);
+            getCurrentTabWidget()->createTab(ed);
         });
 
         actions.append(action);
@@ -1773,7 +1775,7 @@ void MainWindow::on_actionRename_triggered()
 
 void MainWindow::on_actionWord_wrap_toggled(bool on)
 {
-    for (NqqTab* tab : m_nqqTabWidget->getAllTabs()) {
+    for (NqqTab* tab : getCurrentTabWidget()->getAllTabs()) {
         tab->m_editor->setLineWrap(on);
     }
 
@@ -1792,7 +1794,7 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 
     for (const QVariant& doc : recentDocs) {
         Editor* ed = m_docEngine->loadDocumentProper(doc.toUrl());
-        m_nqqTabWidget->createTab(ed);
+        getCurrentTabWidget()->createTab(ed);
     }
 }
 
@@ -2041,7 +2043,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 */
 QStringList MainWindow::currentWordOrSelections()
 {
-    Editor *editor = m_nqqTabWidget->getCurrentTab()->m_editor;
+    Editor *editor = getCurrentTabWidget()->getCurrentTab()->m_editor;
     QStringList selection = editor->selectedTexts();
 
     if (selection.isEmpty() || selection.first().isEmpty()) {
@@ -2079,7 +2081,7 @@ void MainWindow::on_actionOpen_a_New_Window_triggered()
 
 void MainWindow::on_actionOpen_in_New_Window_triggered()
 {
-    Editor* editor = m_nqqTabWidget->getCurrentTab()->m_editor;
+    Editor* editor = getCurrentTabWidget()->getCurrentTab()->m_editor;
     QStringList args;
     args.append(QApplication::arguments().first());
     if (!editor->fileName().isEmpty()) {
@@ -2112,7 +2114,7 @@ void MainWindow::on_actionOpen_file_triggered()
     if (!terms.isEmpty()) {
         for (QString term : terms) {   
             Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile(term));
-            m_nqqTabWidget->createTab(ed);
+            getCurrentTabWidget()->createTab(ed);
         }
     }
 }
@@ -2145,22 +2147,22 @@ void MainWindow::on_actionFind_in_Files_triggered()
 
 void MainWindow::on_actionDelete_Line_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_DELETE_LINE");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_DELETE_LINE");
 }
 
 void MainWindow::on_actionDuplicate_Line_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_DUPLICATE_LINE");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_DUPLICATE_LINE");
 }
 
 void MainWindow::on_actionMove_Line_Up_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_UP");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_UP");
 }
 
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
-    m_nqqTabWidget->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_DOWN");
+    getCurrentTabWidget()->getCurrentTab()->m_editor->sendMessage("C_CMD_MOVE_LINE_DOWN");
 }
 
 void MainWindow::on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol)
