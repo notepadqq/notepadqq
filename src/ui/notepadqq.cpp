@@ -1,11 +1,11 @@
 #include "include/notepadqq.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/Extensions/runtimesupport.h"
+#include "include/nqqsettings.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDir>
 #include <QCheckBox>
-#include <QSettings>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
@@ -50,13 +50,13 @@ QString Notepadqq::extensionToolsPath()
 }
 
 QString Notepadqq::nodejsPath() {
-    QSettings s;
-    return s.value("Extensions/Runtime_Nodejs", "").toString();
+    NqqSettings& s = NqqSettings::getInstance();
+    return s.Extensions.getRuntimeNodeJS();
 }
 
 QString Notepadqq::npmPath() {
-    QSettings s;
-    return s.value("Extensions/Runtime_Npm", "").toString();
+    NqqSettings& s = NqqSettings::getInstance();
+    return s.Extensions.getRuntimeNpm();
 }
 
 QString Notepadqq::fileNameFromUrl(const QUrl &url)
@@ -108,7 +108,7 @@ void Notepadqq::setOldQt(bool oldQt)
 
 void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
 {
-    QSettings settings;
+    NqqSettings& settings = NqqSettings::getInstance();
     QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
     QString altDir = "/opt/Qt";
 
@@ -139,7 +139,7 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
     msgBox.exec();
 
     if (showCheckBox) {
-        settings.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
+        settings.General.setCheckVersionAtStartup(!chkDontShowAgain->isChecked());
         chkDontShowAgain->deleteLater();
     }
 }
