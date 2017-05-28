@@ -54,7 +54,7 @@ var Languages = new function() {
         },
 
         "handel-c": {
-            name: "handel-C",
+            name: "Handel-C",
             mode: "clike",
             mime: "text/x-handelC",
             fileExtensions: ["hcc", "hch"]
