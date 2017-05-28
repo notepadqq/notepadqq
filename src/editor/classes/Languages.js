@@ -53,13 +53,6 @@ var Languages = new function() {
             fileExtensions: ["c", "h", "i", "xbm", "xpm"]
         },
 
-        "handel-c": {
-            name: "Handel-C",
-            mode: "clike",
-            mime: "text/x-handelC",
-            fileExtensions: ["hcc", "hch"]
-        },
-        
         "cpp": {
             name: "C++",
             mode: "clike",
