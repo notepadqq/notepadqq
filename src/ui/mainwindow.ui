@@ -211,7 +211,7 @@
    </widget>
    <widget class="QMenu" name="menu_Encoding">
     <property name="title">
-     <string>En&amp;coding</string>
+     <string>E&amp;ncoding</string>
     </property>
     <addaction name="actionInterpret_as_UTF_8"/>
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
@@ -932,7 +932,7 @@
   </action>
   <action name="actionFind_in_Files">
    <property name="text">
-    <string>Find &amp;in Files...</string>
+    <string>Advanced Search</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>

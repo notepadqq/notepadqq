@@ -9,9 +9,9 @@
 #include "include/Search/frmsearchreplace.h"
 #include <functional>
 #include "QtPrintSupport/QPrinter"
-#include "include/Search/filesearchresultswidget.h"
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
+#include "include/Search/advancedsearchdock.h"
 
 namespace Ui {
 class MainWindow;
@@ -77,6 +77,7 @@ private slots:
     void runCommand();
     void modifyRunCommands();
     void refreshEditorUiCursorInfo(Editor *editor);
+    void searchDockItemClicked(const DocResult& doc, const MatchResult& result);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
@@ -160,8 +161,6 @@ private slots:
     void on_actionDuplicate_Line_triggered();
     void on_actionMove_Line_Up_triggered();
     void on_actionMove_Line_Down_triggered();
-    void on_fileSearchResultFinished(FileSearchResult::SearchResult result);
-    void on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol);
     void on_actionTrim_Trailing_Space_triggered();
     void on_actionTrim_Leading_Space_triggered();
     void on_actionTrim_Leading_and_Trailing_Space_triggered();
@@ -198,9 +197,10 @@ private:
     NqqSettings&          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
-    FileSearchResultsWidget* m_fileSearchResultsWidget;
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+
+    AdvancedSearchDock*  m_advSearchDock;
 
     /**
      * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and

@@ -6,6 +6,7 @@
 #include "editortabwidget.h"
 #include "EditorNS/editor.h"
 #include <functional>
+#include <vector>
 
 /**
  * @brief Contains one or more EditorTabWidgets. This class
@@ -45,6 +46,8 @@ public:
      */
     void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
     void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
+
+    std::vector<Editor*> getOpenEditors();
 
 private:
     EditorTabWidget *m_currentTabWidget;
