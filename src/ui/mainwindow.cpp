@@ -593,7 +593,6 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> urls)
             QFileInfo fileInfo(path);
             if(fileInfo.isDir()) {
                 urls.clear();
-                qDebug() << "WQ";
                 for(QFileInfo fi : QDir(path).entryInfoList(QDir::Files)) {
                     urls.push_back(QUrl::fromLocalFile(fi.filePath()));
                 }
