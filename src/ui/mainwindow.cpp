@@ -601,7 +601,8 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> fileUrls)
 
     for (const QUrl& url : fileUrls) {
         Editor* editor = m_docEngine->loadDocumentProper(url);
-        getCurrentTabWidget()->createTab(editor, true);
+        if(editor)
+            getCurrentTabWidget()->createTab(editor, true);
     }
 }
 
