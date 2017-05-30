@@ -15,6 +15,12 @@ NqqTab::NqqTab(Editor* editor)
         if(!m_parentTabWidget) return;
         m_parentTabWidget->setTabSavedIcon(this, isClean);
     });
+
+    connect(editor, &Editor::gotFocus, this, &NqqTab::gotFocus);
+    connect(editor, &Editor::urlsDropped, this, &NqqTab::urlsDropped);
+    connect(editor, &Editor::cursorActivity, this, &NqqTab::cursorActivity);
+    connect(editor, &Editor::mouseWheel, this, &NqqTab::mouseWheel);
+    connect(editor, &Editor::currentLanguageChanged, this, &NqqTab::languageChanged);
 }
 
 NqqTab::~NqqTab()
@@ -105,6 +111,8 @@ NqqTabWidget::NqqTabWidget(NqqSplitPane* parent)
 
 NqqTabWidget::~NqqTabWidget()
 {
+    //disconnect(m_tabWidget);
+
     for(auto it=m_tabs.rbegin(); it!=m_tabs.rend(); ++it) {
         onTabCloseRequested(std::distance(m_tabs.rbegin(),it));
     }
@@ -193,8 +201,16 @@ void NqqTabWidget::onTabCloseRequested(int index)
     emit tabCloseRequested(m_tabs[index]);
 }
 
-void NqqTabWidget::onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt)
+void NqqTabWidget::onTabGotFocus()
 {
+    NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
+    emit currentTabChanged(tab);
+}
+
+void NqqTabWidget::onTabMouseWheelUsed(QWheelEvent* evt)
+{
+    NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
+
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         const qreal curZoom = tab->getZoomFactor();
         qreal diff = evt->delta() / 120. / 10.; // Increment/Decrement by 0.1 each step
@@ -212,35 +228,31 @@ void NqqTabWidget::onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt)
     //We used to do that in MainWindow through a signal
 }
 
+void NqqTabWidget::onTabCursorActivity()
+{
+    qDebug() << "onTabCursorActivity";
+    NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
+    emit currentTabCursorActivity(tab);
+}
 
-/*
-  these lambda functions aren't properly disconnected using disconnectTab() because it only disconnects signals
-  caught by this tab widget (I think). Thus, the lambdas are unaffected. Turn all of these receivers into slots
-    so they'll be disconnected fine.
-*/
+void NqqTabWidget::onTabLanguageChanged()
+{
+    NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
+    emit currentTabLanguageChanged(tab);
+}
 
 void NqqTabWidget::connectTab(NqqTab* tab) {
-    connect(tab, &NqqTab::gotFocus, tab, [tab, this](){
-        qDebug() << "Is this event being called right now?"; //TODO want to connect to editor directly or to NqqTab?
-        emit currentTabChanged(tab);
-    });
-    connect(tab->m_editor, &Editor::mouseWheel, tab, [tab, this](QWheelEvent* evt) {
-        onTabMouseWheelUsed(tab, evt);
-    });
-    connect(tab->m_editor, &Editor::urlsDropped, this, &NqqTabWidget::urlsDropped);
-    connect(tab->m_editor, &Editor::cursorActivity, tab, [tab, this](){
-        emit currentTabCursorActivity(tab);
-    });
-    connect(tab->m_editor, &Editor::currentLanguageChanged, [tab, this](){
-        emit currentTabLanguageChanged(tab);
-    });
-    connect(tab->m_editor, &Editor::gotFocus, tab, [tab, this](){
-        emit currentTabChanged(tab);
-    });
+    /* Connections should only be made from signal to a slot. Using a lambda as a slot means the connection might
+     * not get properly cleaned up. Connections need to be closed through disconnectTab() which calls QObject::disconnect.
+     * However, lambdas cannot be disconnected this way due to a limitation of Qt. So just stick to slots. */
+    connect(tab, &NqqTab::gotFocus, this, &NqqTabWidget::onTabGotFocus);
+    connect(tab, &NqqTab::mouseWheel, this, &NqqTabWidget::onTabMouseWheelUsed);
+    connect(tab, &NqqTab::urlsDropped, this, &NqqTabWidget::urlsDropped);
+    connect(tab, &NqqTab::cursorActivity, this, &NqqTabWidget::onTabCursorActivity);
+    connect(tab, &NqqTab::languageChanged, this, &NqqTabWidget::onTabLanguageChanged);
 }
 
 void NqqTabWidget::disconnectTab(NqqTab* tab) {
-    disconnect(tab->m_editor);
     disconnect(tab);
 }
 
@@ -373,11 +385,10 @@ bool NqqSplitPane::processEmptyTabWidget(NqqTabWidget* tabW)
     if(m_panels.size() == 1)
         return true;    // Want to keep only panel
     else {
-        std::remove(m_panels.begin(), m_panels.end(), tabW);
+        m_panels.erase( std::find(m_panels.begin(), m_panels.end(), tabW) );
         tabW->deleteLater();
         tabW->getWidget()->setParent(nullptr);
         tabW->getWidget()->deleteLater();
-
         return false;
     }
 }

@@ -227,6 +227,11 @@ NqqTabWidget*MainWindow::getCurrentTabWidget()
     return m_nqqSplitPane->getCurrentTabWidget();
 }
 
+NqqTab*MainWindow::getCurrentTab()
+{
+    return getCurrentTabWidget()->getCurrentTab();
+}
+
 void MainWindow::initUI()
 {
     bool showAll = m_settings.General.getShowAllSymbols();
@@ -1614,6 +1619,8 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     Editor *editor = tabWidget->editor(tab);
     editor->removeBanner("filechanged");
     editor->removeBanner("fileremoved");
+
+
 
    /* if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);

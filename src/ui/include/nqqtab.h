@@ -46,6 +46,10 @@ public:
 
 signals:
     void gotFocus();
+    void mouseWheel(QWheelEvent* evt);
+    void urlsDropped(QList<QUrl> urls);
+    void cursorActivity();
+    void languageChanged();
 };
 
 
@@ -70,7 +74,6 @@ public:
             evt->accept();
         }
     }
-
 };
 
 class NqqTabWidget : public QObject {
@@ -119,10 +122,13 @@ signals:
     void gotFocus();
     void tabBarClicked();
 
-
 private slots:
     void onTabCloseRequested(int index);
-    void onTabMouseWheelUsed(NqqTab* tab, QWheelEvent* evt);
+
+    void onTabGotFocus();
+    void onTabMouseWheelUsed(QWheelEvent* evt);
+    void onTabCursorActivity();
+    void onTabLanguageChanged();
 
 private:
     void connectTab(NqqTab* tab);
@@ -130,7 +136,7 @@ private:
 
     NqqSplitPane* m_parent;
     std::vector<NqqTab*> m_tabs;
-    QTabWidget* m_tabWidget;
+    CustomTabWidget* m_tabWidget;
 };
 
 class NqqSplitPane : public QObject {
