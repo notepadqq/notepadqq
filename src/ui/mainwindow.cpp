@@ -112,7 +112,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_nqqSplitPane = new NqqSplitPane();
     setCentralWidget(m_nqqSplitPane->m_splitter);
 
-    connect(m_nqqSplitPane, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currentTabChanged);
     connect(m_nqqSplitPane, &NqqSplitPane::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
     connect(m_nqqSplitPane, &NqqSplitPane::newTabAdded, this, &MainWindow::on_tabAdded);
     connect(m_nqqSplitPane, &NqqSplitPane::customContextMenuRequested, this, &MainWindow::on_customTabContextMenuRequested);
@@ -120,9 +120,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabCursorActivity, this, &MainWindow::on_cursorActivity);
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
-    connect(m_nqqSplitPane, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
-        refreshTabUiInfo(tab);
-    });
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabCleanStatusChanged, this, &MainWindow::refreshUiInfo);
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabMouseWheel, this, &MainWindow::on_editorMouseWheel);
 
     // We want to restore tabs only if...
@@ -810,12 +808,6 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
     currTab->makeCurrent();
 }
 
-void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
-    if(tabWidget->count() == 0) {
-        delete tabWidget;
-    }
-}
-
 void MainWindow::on_action_Open_triggered()
 {
     QUrl defaultUrl = getCurrentTabWidget()->getCurrentTab()->getFileUrl();;
@@ -1083,7 +1075,7 @@ void MainWindow::on_actionCu_t_triggered()
     getCurrentTabWidget()->getCurrentTab()->m_editor->setSelectionsText(QStringList(""));
 }
 
-void MainWindow::on_currenTabChanged(NqqTab* tab)
+void MainWindow::on_currentTabChanged(NqqTab* tab)
 {
     if(!tab) {
         qDebug() << "null tab";
@@ -1095,7 +1087,7 @@ void MainWindow::on_currenTabChanged(NqqTab* tab)
     getCurrentTabWidget()->setFocus(tab); //TODO: Do we need to set focus every time we change tabs? Here?
 
     Editor *editor = tab->m_editor;
-    refreshTabUiInfo(tab);
+    refreshUiInfo();
     refreshEditorUiCursorInfo(editor);
 
 }
@@ -1125,7 +1117,7 @@ void MainWindow::on_cursorActivity(NqqTab* tab)
 
 void MainWindow::on_currentLanguageChanged(NqqTab* tab)
 {
-    refreshTabUiInfo(tab);
+    refreshUiInfo();
 }
 
 void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
@@ -1153,8 +1145,9 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     }
 }
 
-void MainWindow::refreshTabUiInfo(NqqTab* tab)
+void MainWindow::refreshUiInfo()
 {
+    NqqTab* tab = getCurrentTab();
     Editor* editor = tab->m_editor;
 
     // Update current language in statusbar
@@ -1414,10 +1407,8 @@ void MainWindow::on_actionC_lose_All_triggered()
     }
 }
 
-void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed)
+void MainWindow::on_fileOnDiskChanged(Editor* editor, bool removed)
 {
-    Editor *editor = tabWidget->editor(tab);
-
     if (removed) {
         BannerFileRemoved *banner = new BannerFileRemoved(this);
         editor->insertBanner(banner);
@@ -1445,7 +1436,8 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
             editor->removeBanner(banner);
             editor->setFocus();
 
-            m_docEngine->reloadDocument(tabWidget, tab);
+            //TODO: Reimplement
+            //m_docEngine->reloadDocument(tabWidget, tab);
         });
     }
 }
@@ -1568,27 +1560,25 @@ void MainWindow::on_actionSave_All_triggered()
     }
 }
 
-void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
+void MainWindow::on_documentSaved(Editor* editor)
 {
-    Editor *editor = tabWidget->editor(tab);
     editor->removeBanner( BannerFileRemoved::getId() );
     editor->removeBanner( BannerFileChanged::getId() );
 
-    /*if (editor == currentEditor()) {
+    if (getCurrentTab()->m_editor == editor) {
         ui->actionRename->setEnabled(true);
-    }*/
+    }
 }
 
-void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
+void MainWindow::on_documentReloaded(Editor* editor)
 {
-    Editor *editor = tabWidget->editor(tab);
     editor->removeBanner( BannerFileRemoved::getId() );
     editor->removeBanner( BannerFileChanged::getId() );
 
-   /* if (currentEditor() == editor) {
-        refreshEditorUiInfo(editor);
+    if (getCurrentTab()->m_editor == editor) {
+        refreshUiInfo();
         refreshEditorUiCursorInfo(editor);
-    }*/
+    }
 }
 
 void MainWindow::on_documentLoaded(Editor* editor, bool wasAlreadyOpened, bool updateRecentDocs)

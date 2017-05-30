@@ -159,7 +159,7 @@ signals:
      * @param tab
      * @param removed true if the file has been removed from the disk
      */
-    void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+    void fileOnDiskChanged(Editor* editor, bool removed);
 
     /**
      * @brief The document has been successfully saved. This event is
@@ -168,9 +168,9 @@ signals:
      * @param tabWidget
      * @param tab
      */
-    void documentSaved(EditorTabWidget *tabWidget, int tab);
+    void documentSaved(Editor* editor);
 
-    void documentReloaded(EditorTabWidget *tabWidget, int tab);
+    void documentReloaded(Editor* editor);
 
     /**
      * @brief The document has been successfully loaded.

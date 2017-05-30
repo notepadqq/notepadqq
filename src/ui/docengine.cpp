@@ -243,7 +243,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 }
 
                 if (reload) {
-                    emit documentReloaded(tabWidget, tabIndex);
+                    //emit documentReloaded(tabWidget, tabIndex);
                 } else {
                     //emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
                 }
@@ -490,7 +490,7 @@ int DocEngine::saveDocumentProper(Editor* editor, QUrl outFileName, bool copy) {
         monitorDocument(editor);
 
         if (!copy) {
-            //TODO emit documentSaved(tabWidget, tab);
+            emit documentSaved(editor);
         }
 
         return DocEngine::saveFileResult_Saved;
@@ -558,7 +558,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         monitorDocument(editor);
 
         if (!copy) {
-            emit documentSaved(tabWidget, tab);
+            //emit documentSaved(tabWidget, tab);
         }
 
         return DocEngine::saveFileResult_Saved;
@@ -586,7 +586,7 @@ void DocEngine::documentChanged(QString fileName)
         Editor *editor = tabWidget->editor(pos.second);
         editor->markDirty();
         editor->setFileOnDiskChanged(true);
-        emit fileOnDiskChanged(tabWidget, pos.second, !file.exists());
+        emit fileOnDiskChanged(editor, !file.exists());
     }
 }
 

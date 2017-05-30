@@ -49,13 +49,10 @@ public:
         ,askToSaveChangesReason_generic     /** Generic reason */
     };
 
-    //TopEditorContainer *topEditorContainer();
     NqqSplitPane* m_nqqSplitPane;
 
     NqqTabWidget* getCurrentTabWidget();
     NqqTab* getCurrentTab();
-
-    void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 
     void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
 
@@ -68,7 +65,7 @@ public:
     DocEngine*  getDocEngine() const;
     void generateRunMenu();
 public slots:
-    void refreshTabUiInfo(NqqTab* tab);
+    void refreshUiInfo();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -93,7 +90,7 @@ private slots:
     void on_action_Copy_triggered();
     void on_action_Paste_triggered();
     void on_actionCu_t_triggered();
-    void on_currenTabChanged(NqqTab* tab);
+    void on_currentTabChanged(NqqTab* tab);
     void on_tabAdded(NqqTab* tab);
     void on_cursorActivity(NqqTab* tab);
     void on_action_Delete_triggered();
@@ -111,7 +108,7 @@ private slots:
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
     void on_actionC_lose_All_triggered();
-    void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+    void on_fileOnDiskChanged(Editor* editor, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
     void on_currentLanguageChanged(NqqTab* tab);
@@ -126,8 +123,8 @@ private slots:
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionSave_All_triggered();
 
-    void on_documentSaved(EditorTabWidget *tabWidget, int tab);
-    void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
+    void on_documentSaved(Editor* editor);
+    void on_documentReloaded(Editor* editor);
 
     void on_documentLoaded(Editor* editor, bool wasAlreadyOpened, bool updateRecentDocs);
 
