@@ -110,7 +110,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Initiate the new and wonderful tab widget!
     m_nqqSplitPane = new NqqSplitPane();
-    m_nqqSplitPane->createNewTabWidget();
+    //m_nqqSplitPane->createNewTabWidget();
     setCentralWidget(m_nqqSplitPane->m_splitter);
 
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
@@ -125,32 +125,27 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
         refreshTabUiInfo(tab);
     });
 
-    // We wanna add a test document so we're good to go until session restore is available again.
-    Editor* ed = m_docEngine->loadDocumentProper(QUrl::fromLocalFile("/home/s3rius/Downloads/Important Stuff"));
-    getCurrentTabWidget()->createTab(ed);
-
-
-    // Initialize UI from settings
-    initUI();
-
-
     // We want to restore tabs only if...
     if (    m_instances.size()==1 && // this window is the first one to be opened,
             m_settings.General.getRememberTabsOnExit() // and the Remember-tabs option is enabled
     ) {
-        /*Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
-        if (m_topEditorContainer->count() > 0 && m_topEditorContainer->currentTabWidget()->count() > 0) {
-            refreshEditorUiInfo(m_topEditorContainer->currentTabWidget()->currentEditor());
-        }*/
-
-
+        Sessions::loadSession(m_docEngine, m_nqqSplitPane, PersistentCache::cacheSessionPath());
     }
+
+    // TODO: We should probably find a more graceful way of handling this. Right now loadSession
+    // needs to be aware that no current tab widget exists.
+    if(!getCurrentTabWidget())
+        m_nqqSplitPane->createNewTabWidget();
 
     openCommandLineProvidedUrls(workingDirectory, arguments);
 
-    // TODO: Since this isn't handled in NqqTabWidget yet, we'll manually create a tab if it's still empty
     if (getCurrentTabWidget()->isEmpty())
         getCurrentTabWidget()->createEmptyTab();
+
+
+
+    // Initialize UI from settings
+    initUI();
 
     // Set zoom from settings
     const qreal zoom = m_settings.General.getZoom();
@@ -393,7 +388,8 @@ void MainWindow::createStatusBar()
 bool MainWindow::saveTabsToCache()
 {
     // If saveSession() returns false, something went wrong. Most likely writing to the .xml file.
-    /*while (!Sessions::saveSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath(), PersistentCache::cacheDirPath())) {
+
+    while (!Sessions::saveSession(m_docEngine, m_nqqSplitPane, PersistentCache::cacheSessionPath(), PersistentCache::cacheDirPath())) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setText(tr("Error while trying to save this session. Please ensure the following directory is accessible:\n\n") +
@@ -411,12 +407,14 @@ bool MainWindow::saveTabsToCache()
             return true;
         }
     }
-*/
+
     return true;
 }
 
 bool MainWindow::finalizeAllTabs()
 {
+    // TODO: Implement. Maybe change implementation of NqqTab::closeTab() so it can return a status value like
+    // closeTab() in does here.
 
     //Close all tabs normally
     /*int tabWidgetsCount = m_topEditorContainer->count();
@@ -1620,8 +1618,6 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     editor->removeBanner("filechanged");
     editor->removeBanner("fileremoved");
 
-
-
    /* if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
         refreshEditorUiCursorInfo(editor);
@@ -1795,7 +1791,6 @@ void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
     m_settings.General.resetRecentDocuments();
     updateRecentDocsInMenu();
 }
-
 void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 {
     QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();

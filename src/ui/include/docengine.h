@@ -89,9 +89,8 @@ public:
 
 
      Editor* loadDocumentProper(QUrl fileUrl, QTextCodec* codec=nullptr, bool bom=false);
-
-
      int saveDocumentProper(Editor* editor, QUrl outFileName, bool copy=false);
+
 private:
     TopEditorContainer *m_topEditorContainer;
     QFileSystemWatcher *m_fsWatcher;

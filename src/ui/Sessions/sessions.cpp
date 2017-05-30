@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "include/docengine.h"
-#include "include/topeditorcontainer.h"
+#include "include/nqqtab.h"
 #include "include/Sessions/persistentcache.h"
 
 
@@ -234,7 +234,7 @@ void SessionWriter::addTabData(const TabData& td){
 
 namespace Sessions {
 
-bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath)
+bool saveSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath, QString cacheDirPath)
 {
     const bool cacheModifiedFiles = !cacheDirPath.isEmpty();
 
@@ -258,16 +258,16 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     std::vector<ViewData> viewData;
 
     //Loop through all tabwidgets and their tabs
-    const int tabWidgetsCount = editorContainer->count();
-    for (int i = 0; i < tabWidgetsCount; i++) {
-        EditorTabWidget *tabWidget = editorContainer->tabWidget(i);
-        const int tabCount = tabWidget->count();
+    for (NqqTabWidget* tabWidget : pane->getAllTabWidgets()) {
+
+        if(tabWidget->isEmpty())
+            continue;
 
         viewData.push_back( ViewData() );
         ViewData& currentViewData = viewData.back();
 
-        for (int j = 0; j < tabCount; j++) {
-            Editor* editor = tabWidget->editor(j);
+        for (NqqTab* tab : tabWidget->getAllTabs()) {
+            Editor* editor = tab->m_editor;
             bool isClean = editor->isClean();
             bool isOrphan = editor->fileName().isEmpty();
 
@@ -278,11 +278,11 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if (!isClean && cacheModifiedFiles) {
                 // Tab is dirty, meaning it needs to be cached.
-                QUrl cacheFilePath = PersistentCache::createValidCacheName(cacheDir, tabWidget->tabText(j));
+                QUrl cacheFilePath = PersistentCache::createValidCacheName(cacheDir, tab->getTabTitle());
 
                 td.cacheFilePath = cacheFilePath.toLocalFile();
 
-                if (docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != DocEngine::saveFileResult_Saved) {
+                if (docEngine->saveDocumentProper(editor, cacheFilePath, true) != DocEngine::saveFileResult_Saved) {
                     return false;
                 }
             } else if (isOrphan) {
@@ -297,7 +297,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             const auto& scrollPos = editor->scrollPosition();
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
-            td.active = tabWidget->currentEditor() == editor;
+            td.active = tabWidget->getCurrentTab() == tab;
             td.language = editor->language();
 
             // If we're caching and there's a file opened in the tab we want to inform the
@@ -332,7 +332,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     return true;
 }
 
-void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath)
+void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath)
 {
     QFile file(sessionPath);
     file.open(QIODevice::ReadOnly);
@@ -349,41 +349,32 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         return;
     }
 
-    int viewCounter = 0;
+    NqqTabWidget* currTabWidget = pane->getCurrentTabWidget();
+
     for (const auto& view : views) {
-        // Each new view must be created if it does not yet exist.
-        EditorTabWidget* tabW = editorContainer->tabWidget(viewCounter);
-        int activeIndex = 0;
-
-        if (!tabW)
-            tabW = editorContainer->addTabWidget();
-
-        viewCounter++;
-
-        for (const TabData& tab : view.tabs) {
-            const QFileInfo fileInfo(tab.filePath);
+        for (const TabData& tabData : view.tabs) {
+            const QFileInfo fileInfo(tabData.filePath);
             const bool fileExists = fileInfo.exists();
-            const bool cacheFileExists = QFileInfo(tab.cacheFilePath).exists();
+            const bool cacheFileExists = QFileInfo(tabData.cacheFilePath).exists();
 
-            const QUrl fileUrl = QUrl::fromLocalFile(tab.filePath);
-            const QUrl cacheFileUrl = QUrl::fromLocalFile(tab.cacheFilePath);
+            const QUrl fileUrl = QUrl::fromLocalFile(tabData.filePath);
+            const QUrl cacheFileUrl = QUrl::fromLocalFile(tabData.cacheFilePath);
 
             // This is the file to load the document from
             const QUrl& loadUrl = cacheFileExists ? cacheFileUrl : fileUrl;
 
-            const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
+            Editor* editor = docEngine->loadDocumentProper(loadUrl);
 
-            if (!success)
+            if(!editor)
                 continue;
 
-            int idx = tabW->findOpenEditorByUrl(loadUrl);
+            NqqTab* tab = new NqqTab(editor);
 
-            if (idx == -1)
-                continue;
+            if (!currTabWidget)
+                currTabWidget = pane->createNewTabWidget(tab);
+            else
+                currTabWidget->attachTab(tab);
 
-            // DocEngine sets the editor's fileName to loadUrl since this is where the file
-            // was loaded from. Since loadUrl could point to a cached file we reset it here.
-            Editor* editor = tabW->editor(idx);
 
             if (cacheFileExists) {
                 editor->markDirty();
@@ -397,64 +388,41 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 docEngine->monitorDocument(editor);
             } else {
                 editor->setFileName(QUrl());
-                tabW->setTabText(idx, docEngine->getNewDocumentName());
+                tab->setTabTitle(docEngine->getNewDocumentName());
+                //tabW->setTabText(idx, docEngine->getNewDocumentName());
             }
 
             // If we're loading an existing file from cache we want to inform the user whether
             // the file has changed since Nqq was last closed. For this we can compare the
             // file's last modification date.
-            if (fileExists && cacheFileExists && tab.lastModified != 0) {
+            if (fileExists && cacheFileExists && tabData.lastModified != 0) {
                 auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
 
-                if (lastModified > tab.lastModified) {
+                if (lastModified > tabData.lastModified) {
                     editor->setFileOnDiskChanged(true);
                 }
             }
 
             // If the orig. file does not exist but *should* exist, we inform the user of its removal.
             if (!fileExists && !fileUrl.isEmpty()) {
-                editor->setFileOnDiskChanged(true);
-                emit docEngine->fileOnDiskChanged(tabW, idx, true);
+                //TODO
+                //editor->setFileOnDiskChanged(true);
+                //emit docEngine->fileOnDiskChanged(tabW, idx, true);
             }
 
 
-            if(tab.active) activeIndex = idx;
+            if(tabData.active) currTabWidget->makeCurrent(tab);
 
-            if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
+            if(!tabData.language.isEmpty()) editor->setLanguage(tabData.language);
 
-            editor->setScrollPosition(tab.scrollX, tab.scrollY);
+            editor->setScrollPosition(tabData.scrollX, tabData.scrollY);
             editor->clearFocus();
 
         } // end for
 
-        tabW->clearFocus();
-
-        // In case a new tabwidget was created but no tabs were actually added to it,
-        // we'll attempt to re-use the widget for the next view.
-        if (tabW->count() == 0)
-            viewCounter--;
-        else // Otherwise we finish by making the right tab the currently open one.
-            tabW->setCurrentIndex(activeIndex);
+        currTabWidget = nullptr;
 
     } // end for
-
-    // Stop if we haven't added any views at all, otherwise we have to clean up after ourselves.
-    if (viewCounter <= 0)
-        return;
-
-    // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
-    EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
-    lastTabW->deleteIfEmpty();
-
-    // Give focus to the last tab of the first tab widget.
-    EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
-    Editor* lastEditor = firstTabW->editor(firstTabW->count()-1);
-    lastEditor->setFocus();
-
-    // This triggers `TopEditorContainer::on_currentTabChanged` and eventually
-    // `MainWindow::on_currentEditorChanged` which calls refreshEditorUiInfo() to
-    // get rid of the titlebar display bug when loading files from cache.
-    firstTabW->currentChanged(firstTabW->count()-1);
 
     return;
 }

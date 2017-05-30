@@ -3,8 +3,9 @@
 
 #include <QString>
 
+
 class DocEngine;
-class TopEditorContainer;
+class NqqSplitPane;
 
 namespace Sessions {
 
@@ -18,7 +19,7 @@ namespace Sessions {
  *        will be deleted.
  * @return Whether the save has been successful.
  */
-bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath=QString());
+bool saveSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath, QString cacheDirPath=QString());
 
 /**
  * @brief Loads a session XML file and restores all its tabs in the specified window.
@@ -26,7 +27,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
  * @param editorContainer The TopEditorContainer which will receive all newly crated Tabs.
  * @param sessionPath Path to where the XML file is located.
  */
-void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath);
+void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath);
 
 } // namespace Autosave
 

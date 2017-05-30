@@ -164,6 +164,8 @@ public:
     NqqTabWidget* getPrevTabWidget() const;
     NqqTabWidget* getNextTabWidget() const;
 
+    const std::vector<NqqTabWidget*>& getAllTabWidgets() const { return m_panels; };
+
     bool processEmptyTabWidget(NqqTabWidget* tabW);
 
     NqqTabWidget* createNewTabWidget(NqqTab* newTab=nullptr);

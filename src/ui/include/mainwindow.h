@@ -53,6 +53,7 @@ public:
     NqqSplitPane* m_nqqSplitPane;
 
     NqqTabWidget* getCurrentTabWidget();
+    NqqTab* getCurrentTab();
 
     void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
 
