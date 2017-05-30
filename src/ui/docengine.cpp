@@ -151,7 +151,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                             tabW->setCurrentIndex(openPos.second);
                         }
 
-                        emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
+                        //emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
                         continue;
                     }
                 }
@@ -245,7 +245,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 if (reload) {
                     emit documentReloaded(tabWidget, tabIndex);
                 } else {
-                    emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
+                    //emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
                 }
 
             } else if (fileNames[i].isEmpty()) {
@@ -307,6 +307,8 @@ Editor* DocEngine::loadDocumentProper(QUrl fileUrl, QTextCodec* codec, bool bom)
 
     editor->setFileName(fileUrl);
     editor->setLanguageFromFileName();
+
+    emit documentLoaded(editor, false, /*rememberLastDir*/ false); //TODO remember last dir won't work
 
     //monitorDocument(editor); // TODO: Reenable
 

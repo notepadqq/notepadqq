@@ -11,6 +11,7 @@
 
 namespace EditorNS
 {
+    class BannerBasicMessage;
 
     /**
          * @brief An Object injectable into the javascript page, that allows
@@ -173,8 +174,8 @@ namespace EditorNS
             selectMode_selected
         };
 
-        void insertBanner(QWidget *banner);
-        void removeBanner(QWidget *banner);
+        void insertBanner(BannerBasicMessage* banner);
+        void removeBanner(BannerBasicMessage* banner);
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:

@@ -9,6 +9,8 @@
 #include <QUrlQuery>
 #include <QRegularExpression>
 
+#include "include/EditorNS/bannerbasicmessage.h"
+
 namespace EditorNS
 {
 
@@ -410,16 +412,15 @@ namespace EditorNS
         setSelectionsText(texts, selectMode_cursorAfter);
     }
 
-    void Editor::insertBanner(QWidget *banner)
+    void Editor::insertBanner(BannerBasicMessage* banner)
     {
         m_layout->insertWidget(0, banner);
     }
 
-    void Editor::removeBanner(QWidget *banner)
+    void Editor::removeBanner(BannerBasicMessage* banner)
     {
-        if (banner != m_webView && m_layout->indexOf(banner) >= 0) {
-            m_layout->removeWidget(banner);
-            emit bannerRemoved(banner);
+        if (m_layout->indexOf(banner) >= 0) {
+            delete banner;
         }
     }
 
@@ -427,7 +428,7 @@ namespace EditorNS
     {
         QList<QWidget *> list = findChildren<QWidget *>(objectName);
         for (int i = 0; i < list.length(); i++) {
-            removeBanner(list[i]);
+            delete list[i]; // Will be removed from the layout automatiaclly
         }
     }
 

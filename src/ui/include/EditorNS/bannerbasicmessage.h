@@ -24,6 +24,8 @@ namespace EditorNS
         QPushButton *addButton(QString text);
         void setImportance(Importance importance);
 
+        static QString getId() { return "basicmessage"; }
+
     signals:
         void bannerRemoved();
 

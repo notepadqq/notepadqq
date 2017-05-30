@@ -13,6 +13,8 @@ namespace EditorNS
     public:
         BannerIndentationDetected(bool mode, Editor::IndentationMode detected, Editor::IndentationMode current, QWidget *parent = 0);
 
+        static QString getId() { return "indentationdetected"; }
+
     signals:
         void useDocumentSettings();
         void useApplicationSettings();

@@ -40,6 +40,8 @@ public:
     void closeTab();
     void forceCloseTab();
 
+    void makeCurrent();
+
     NqqTabWidget* m_parentTabWidget = nullptr;
     Editor* m_editor = nullptr;
     QString m_tabTitle;
@@ -113,6 +115,7 @@ signals:
     void currentTabCursorActivity(NqqTab* tab);
     void currentTabLanguageChanged(NqqTab* tab);
     void currentTabCleanStatusChanged(NqqTab* tab);
+    void currentTabMouseWheel(NqqTab* tab, QWheelEvent* evt);
 
     void tabCloseRequested(NqqTab* tab);
     void newTabAdded(NqqTab* tab);
@@ -137,6 +140,7 @@ private:
     NqqSplitPane* m_parent;
     std::vector<NqqTab*> m_tabs;
     CustomTabWidget* m_tabWidget;
+    QVector<QMetaObject::Connection> m_connections;
 };
 
 class NqqSplitPane : public QObject {
@@ -148,6 +152,7 @@ signals:
     void currentTabCursorActivity(NqqTab* tab);
     void currentTabLanguageChanged(NqqTab* tab);
     void currentTabCleanStatusChanged(NqqTab* tab);
+    void currentTabMouseWheel(NqqTab* tab, QWheelEvent* evt);
 
     void tabCloseRequested(NqqTab* tab);
     void newTabAdded(NqqTab* tab);
@@ -164,7 +169,8 @@ public:
     NqqTabWidget* getPrevTabWidget() const;
     NqqTabWidget* getNextTabWidget() const;
 
-    const std::vector<NqqTabWidget*>& getAllTabWidgets() const { return m_panels; };
+    const std::vector<NqqTabWidget*>& getAllTabWidgets() const { return m_panels; }
+    const std::vector<NqqTab*> getAllTabs() const;
 
     bool processEmptyTabWidget(NqqTabWidget* tabW);
 

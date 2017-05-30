@@ -12,6 +12,8 @@ namespace EditorNS
     public:
         explicit BannerFileRemoved(QWidget *parent = 0);
 
+        static QString getId() { return "fileremoved"; }
+
     signals:
         void save();
         void ignore();

@@ -180,7 +180,7 @@ signals:
      * @param updateRecentDocuments True if the document should be remembered
      *        as a recently opened file.
      */
-    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
+    void documentLoaded(Editor* editor, bool wasAlreadyOpened, bool updateRecentDocuments);
 
 public slots:
 

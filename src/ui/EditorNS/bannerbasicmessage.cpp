@@ -8,6 +8,8 @@ namespace EditorNS
     BannerBasicMessage::BannerBasicMessage(QWidget *parent) :
         QWidget(parent)
     {
+        setObjectName(getId());
+
         setContentsMargins(0, 0, 0, 0);
 
         m_topWidget = new QWidget(this);

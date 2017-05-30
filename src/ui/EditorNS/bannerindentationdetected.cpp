@@ -11,6 +11,7 @@ namespace EditorNS
         BannerBasicMessage(parent)
     {
         setImportance(BannerIndentationDetected::Importance::Question);
+        setObjectName(getId());
 
         QString message;
         QPushButton *tmp;

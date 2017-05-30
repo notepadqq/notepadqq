@@ -375,7 +375,6 @@ void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath)
             else
                 currTabWidget->attachTab(tab);
 
-
             if (cacheFileExists) {
                 editor->markDirty();
                 editor->setLanguageFromFileName();
@@ -386,10 +385,10 @@ void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath)
             if (fileExists) {
                 editor->setFileName(fileUrl);
                 docEngine->monitorDocument(editor);
+                tab->setTabTitle( fileUrl.fileName() );
             } else {
                 editor->setFileName(QUrl());
                 tab->setTabTitle(docEngine->getNewDocumentName());
-                //tabW->setTabText(idx, docEngine->getNewDocumentName());
             }
 
             // If we're loading an existing file from cache we want to inform the user whether
@@ -405,7 +404,7 @@ void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath)
 
             // If the orig. file does not exist but *should* exist, we inform the user of its removal.
             if (!fileExists && !fileUrl.isEmpty()) {
-                //TODO
+                //TODO: maybe just catch this through editor->nqqtab->etc?
                 //editor->setFileOnDiskChanged(true);
                 //emit docEngine->fileOnDiskChanged(tabW, idx, true);
             }

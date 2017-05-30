@@ -11,6 +11,7 @@ namespace EditorNS
         BannerBasicMessage(parent)
     {
         setMessage(tr("This file has been changed outside of Notepadqq."));
+        setObjectName(getId());
 
         QPushButton *btnReload = addButton(tr("Reload"));
         connect(btnReload, &QPushButton::clicked, this, &BannerFileChanged::reload);

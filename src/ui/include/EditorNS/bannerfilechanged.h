@@ -12,6 +12,8 @@ namespace EditorNS
     public:
         explicit BannerFileChanged(QWidget *parent = 0);
 
+        static QString getId() { return "filechanged"; }
+
     signals:
         void reload();
         void ignore();

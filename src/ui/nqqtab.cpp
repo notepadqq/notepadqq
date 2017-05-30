@@ -67,6 +67,12 @@ void NqqTab::forceCloseTab()
     delete this;
 }
 
+void NqqTab::makeCurrent()
+{
+    if(m_parentTabWidget)
+        m_parentTabWidget->makeCurrent(this);
+}
+
 NqqTabWidget::NqqTabWidget(NqqSplitPane* parent)
     : m_parent(parent),
       m_tabWidget(new CustomTabWidget(nullptr))
@@ -210,22 +216,8 @@ void NqqTabWidget::onTabGotFocus()
 void NqqTabWidget::onTabMouseWheelUsed(QWheelEvent* evt)
 {
     NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
-
-    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        const qreal curZoom = tab->getZoomFactor();
-        qreal diff = evt->delta() / 120. / 10.; // Increment/Decrement by 0.1 each step
-
-        const qreal newZoom = curZoom + diff;
-
-        // TODO: If we want all tabs to change zoom we should send a signal to MainWindow
-        /*for(NqqTab* t : getAllTabs())
-            t->setZoomFactor(newZoom);*/
-        getCurrentTab()->setZoomFactor(newZoom);
-
-        evt->accept(); // By accepting the event, it won't be handled by the WebView anymore
-    }
-    //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
-    //We used to do that in MainWindow through a signal
+    qDebug() << "onTabMouseWheelUsed";
+    emit currentTabMouseWheel(tab, evt);
 }
 
 void NqqTabWidget::onTabCursorActivity()
@@ -253,7 +245,14 @@ void NqqTabWidget::connectTab(NqqTab* tab) {
 }
 
 void NqqTabWidget::disconnectTab(NqqTab* tab) {
-    disconnect(tab);
+    /* Using a blanket disconnect like disconnect(tab) doesn't seem to properly disconnect all connections.
+     * This is either a bug or my ignorance about Qt. Either way, specifically disconnecting all connections
+     * works. So anything connected in connectTab() should be disconnected here the same way. */
+    disconnect(tab, &NqqTab::gotFocus, this, &NqqTabWidget::onTabGotFocus);
+    disconnect(tab, &NqqTab::mouseWheel, this, &NqqTabWidget::onTabMouseWheelUsed);
+    disconnect(tab, &NqqTab::urlsDropped, this, &NqqTabWidget::urlsDropped);
+    disconnect(tab, &NqqTab::cursorActivity, this, &NqqTabWidget::onTabCursorActivity);
+    disconnect(tab, &NqqTab::languageChanged, this, &NqqTabWidget::onTabLanguageChanged);
 }
 
 NqqTab* NqqTabWidget::getCurrentTab() const
@@ -266,7 +265,6 @@ int NqqTabWidget::getCurrentIndex() const
 {
     return m_tabWidget->currentIndex();
 }
-
 QTabWidget*NqqTabWidget::getWidget() const
 {
     return m_tabWidget;
@@ -347,6 +345,7 @@ void NqqSplitPane::setActiveTabWidget(NqqTabWidget* tabWidget)
         disconnect(m_activeTabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
         disconnect(m_activeTabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
         disconnect(m_activeTabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+        disconnect(m_activeTabWidget, &NqqTabWidget::currentTabMouseWheel, this, &NqqSplitPane::currentTabMouseWheel);
     }
 
     m_activeTabWidget = tabWidget;
@@ -354,6 +353,7 @@ void NqqSplitPane::setActiveTabWidget(NqqTabWidget* tabWidget)
     connect(tabWidget, &NqqTabWidget::currentTabCursorActivity, this, &NqqSplitPane::currentTabCursorActivity);
     connect(tabWidget, &NqqTabWidget::currentTabLanguageChanged, this, &NqqSplitPane::currentTabLanguageChanged);
     connect(tabWidget, &NqqTabWidget::currentTabCleanStatusChanged, this, &NqqSplitPane::currentTabCleanStatusChanged);
+    connect(tabWidget, &NqqTabWidget::currentTabMouseWheel, this, &NqqSplitPane::currentTabMouseWheel);
 }
 
 NqqTabWidget*NqqSplitPane::getPrevTabWidget() const
@@ -378,6 +378,19 @@ NqqTabWidget*NqqSplitPane::getNextTabWidget() const
     auto it = std::find(m_panels.begin(), m_panels.end(), current);
 
     return it==(m_panels.end()-1) ? m_panels.front() : *(it+1);
+}
+
+const std::vector<NqqTab*> NqqSplitPane::getAllTabs() const
+{
+    std::vector<NqqTab*> allTabs;
+
+    for(const auto& vec : getAllTabWidgets()) {
+        const auto& tabs = vec->getAllTabs();
+        allTabs.reserve( allTabs.size() + tabs.size() );
+        allTabs.insert(allTabs.end(), tabs.begin(), tabs.end());
+    }
+
+    return allTabs;
 }
 
 bool NqqSplitPane::processEmptyTabWidget(NqqTabWidget* tabW)
@@ -413,7 +426,7 @@ NqqTabWidget* NqqSplitPane::createNewTabWidget(NqqTab* newTab) {
     if(!newTab || !w->attachTab(newTab))
         w->createEmptyTab();
 
-    if(!m_activeTabWidget) m_activeTabWidget = w;
+    if(!m_activeTabWidget) setActiveTabWidget(w);
 
     return w;
 }

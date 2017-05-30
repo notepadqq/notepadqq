@@ -11,6 +11,7 @@ namespace EditorNS
         BannerBasicMessage(parent)
     {
         setMessage(tr("This file has been deleted from the file system."));
+        setObjectName(getId());
 
         QPushButton *btnReload = addButton(tr("Save"));
         connect(btnReload, &QPushButton::clicked, this, &BannerFileRemoved::save);

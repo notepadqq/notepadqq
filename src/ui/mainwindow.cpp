@@ -110,7 +110,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Initiate the new and wonderful tab widget!
     m_nqqSplitPane = new NqqSplitPane();
-    //m_nqqSplitPane->createNewTabWidget();
     setCentralWidget(m_nqqSplitPane->m_splitter);
 
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabChanged, this, &MainWindow::on_currenTabChanged);
@@ -124,6 +123,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_nqqSplitPane, &NqqSplitPane::currentTabCleanStatusChanged, this, [this](NqqTab* tab) {
         refreshTabUiInfo(tab);
     });
+    connect(m_nqqSplitPane, &NqqSplitPane::currentTabMouseWheel, this, &MainWindow::on_editorMouseWheel);
 
     // We want to restore tabs only if...
     if (    m_instances.size()==1 && // this window is the first one to be opened,
@@ -133,7 +133,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     // TODO: We should probably find a more graceful way of handling this. Right now loadSession
-    // needs to be aware that no current tab widget exists.
+    // needs to be aware that no current tab widget might exist.
     if(!getCurrentTabWidget())
         m_nqqSplitPane->createNewTabWidget();
 
@@ -414,8 +414,7 @@ bool MainWindow::saveTabsToCache()
 bool MainWindow::finalizeAllTabs()
 {
     // TODO: Implement. Maybe change implementation of NqqTab::closeTab() so it can return a status value like
-    // closeTab() in does here.
-
+    // closeTab() in does here. Or do we actually just need a saveTab() for this?
     //Close all tabs normally
     /*int tabWidgetsCount = m_topEditorContainer->count();
     for (int i = 0; i < tabWidgetsCount; i++) {
@@ -581,17 +580,6 @@ void MainWindow::dropEvent(QDropEvent *e)
 
 void MainWindow::on_editorUrlsDropped(QList<QUrl> fileUrls)
 {
-    qDebug() << "MainWindow::on_editorUrlsDropepd";
-
-    /*EditorTabWidget *tabWidget; //TODO
-    Editor *editor = dynamic_cast<Editor *>(sender());
-
-    if (editor) {
-        tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
-    } else {
-        tabWidget = m_topEditorContainer->currentTabWidget();
-    }*/
-
     if (fileUrls.count() > 6) {
         bool wantContinue = QMessageBox::question(this,
                                                   "Do you want to continue?",
@@ -672,9 +660,6 @@ void MainWindow::toggleOverwrite()
 
 void MainWindow::on_action_New_triggered()
 {
-    /*EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
-
-    m_docEngine->addNewDocument(m_docEngine->getNewDocumentName(), true, tabW);*/
     getCurrentTabWidget()->createEmptyTab();
 }
 
@@ -822,7 +807,7 @@ void MainWindow::on_actionMove_to_Other_View_triggered()
     else
         nextTabWidget->attachTab(currTab);
 
-    currTab->m_parentTabWidget->makeCurrent(currTab); // TODO: Shitty workaround
+    currTab->makeCurrent();
 }
 
 void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
@@ -1121,17 +1106,6 @@ void MainWindow::on_tabAdded(NqqTab* tab)
 
     Editor *editor = tab->m_editor;
     
-    // If the tab is not newly opened but only transferred (e.g. with "Move to other View") it may
-    // have a banner attached to it. We need to disconnect previous signals to prevent
-    // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
-    // created a few lines below).
-
-    /*disconnect(editor, &Editor::bannerRemoved, 0, 0);
-    
-
-    connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    */
-
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
     editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
@@ -1446,7 +1420,6 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
     if (removed) {
         BannerFileRemoved *banner = new BannerFileRemoved(this);
-        banner->setObjectName("fileremoved");
         editor->insertBanner(banner);
 
         connect(banner, &BannerFileRemoved::ignore, this, [=]() {
@@ -1460,7 +1433,6 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
     } else {
         BannerFileChanged *banner = new BannerFileChanged(this);
-        banner->setObjectName("filechanged");
         editor->insertBanner(banner);
 
         connect(banner, &BannerFileChanged::ignore, this, [=]() {
@@ -1501,37 +1473,37 @@ void MainWindow::on_actionPlain_text_triggered()
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
 {
     const qreal newZoom = m_settings.General.resetZoom();
-   // m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
+
+    for(NqqTab* t : m_nqqSplitPane->getAllTabs())
+        t->setZoomFactor(newZoom);
 }
 
 void MainWindow::on_actionZoom_In_triggered()
 {
-    /*qreal curZoom = currentEditor()->zoomFactor();
-    qreal newZoom = curZoom + 0.25;*/
-   // m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    //m_settings.General.setZoom(newZoom);
+    qreal newZoom = getCurrentTab()->getZoomFactor() + 0.25;
+
+    for(NqqTab* t : m_nqqSplitPane->getAllTabs())
+        t->setZoomFactor(newZoom);
 }
 
 void MainWindow::on_actionZoom_Out_triggered()
 {
-    /*qreal curZoom = currentEditor()->zoomFactor();
-    qreal newZoom = curZoom - 0.25;*/
-    //m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    //m_settings.General.setZoom(newZoom);
+    qreal newZoom = getCurrentTab()->getZoomFactor() - 0.25;
+
+    for(NqqTab* t : m_nqqSplitPane->getAllTabs())
+        t->setZoomFactor(newZoom);
 }
 
-void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev)
+void MainWindow::on_editorMouseWheel(NqqTab* tab, QWheelEvent *evt)
 {
-    // Currently Unused
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        qreal curZoom = tabWidget->editor(tab)->zoomFactor();
-        qreal diff = ev->delta() / 120;
-        diff /= 10;
-
-        // Increment/Decrement zoom factor by 0.1 at each step.
+        qreal curZoom = tab->getZoomFactor();
+        qreal diff = evt->delta() / 120. / 10.; // Increment/Decrement by 0.1 each step
         qreal newZoom = curZoom + diff;
-        tabWidget->setZoomFactor(newZoom);
-        //m_settings.General.setZoom(newZoom); //TODO: We don't save the zoom factor after changing it at the moment
+
+        tab->setZoomFactor(newZoom);
+        m_settings.General.setZoom(newZoom);
+        evt->accept(); // By accepting the event, it won't be handled by the WebView anymore
     }
 }
 
@@ -1596,16 +1568,11 @@ void MainWindow::on_actionSave_All_triggered()
     }
 }
 
-void MainWindow::on_bannerRemoved(QWidget *banner)
-{
-    delete banner;
-}
-
 void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    editor->removeBanner("filechanged");
-    editor->removeBanner("fileremoved");
+    editor->removeBanner( BannerFileRemoved::getId() );
+    editor->removeBanner( BannerFileChanged::getId() );
 
     /*if (editor == currentEditor()) {
         ui->actionRename->setEnabled(true);
@@ -1615,8 +1582,8 @@ void MainWindow::on_documentSaved(EditorTabWidget *tabWidget, int tab)
 void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    editor->removeBanner("filechanged");
-    editor->removeBanner("fileremoved");
+    editor->removeBanner( BannerFileRemoved::getId() );
+    editor->removeBanner( BannerFileChanged::getId() );
 
    /* if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
@@ -1624,10 +1591,8 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
     }*/
 }
 
-void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs)
+void MainWindow::on_documentLoaded(Editor* editor, bool wasAlreadyOpened, bool updateRecentDocs)
 {
-    Editor *editor = tabWidget->editor(tab);
-
     const int MAX_RECENT_ENTRIES = 10;
 
     if(updateRecentDocs){
@@ -1672,12 +1637,10 @@ void MainWindow::checkIndentationMode(Editor *editor)
                                                     detected,
                                                     curr,
                                                     this);
-            banner->setObjectName("indentationdetected");
-
             editor->insertBanner(banner);
 
             connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=]() {
-                editor->removeBanner(banner);
+                editor->removeBanner(banner); //TODO: Remove banner inside banner objects. For all banners.
                 editor->setFocus();
             });
 
