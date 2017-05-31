@@ -17,6 +17,7 @@ Build
 
     $ git clone --recursive https://github.com/notepadqq/notepadqq.git
     $ cd notepadqq
+    $ git submodule init && git submodule update
 
 #### Build it
 
