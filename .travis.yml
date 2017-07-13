@@ -4,19 +4,26 @@ sudo: required
 os:
   - linux
 env:
-  - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
+  - MODE=BUILD     NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
+  - MODE=APPIMAGE  NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
+  - if [ "$MODE" = "APPIMAGE" ]; then sudo apt-get install -y --no-install-recommends fuse build-essential wget git libxcb-* libxi-dev libxrender-dev libsm-dev libice-dev libx11-dev libxcomposite-dev libpng12-dev libsqlite3-dev libfontconfig1-dev libfreetype6-dev libjpeg-dev zlib1g-dev libicu-dev libglib2.0-dev libgl1-mesa-dev; fi
 script:
-  - "./configure && make"
-  - "./src/ui-tests/ui-tests"
+  - if [ "$MODE" = "BUILD" ]; then ./configure && make; fi
+  - if [ "$MODE" = "BUILD" ]; then ./src/ui-tests/ui-tests; fi
+  - if [ "$MODE" = "APPIMAGE" ]; then bash ./build-appimage.sh; fi
+after_success:
+  - if [ "$MODE" = "APPIMAGE" ]; then ( mkdir out ; cd out ; tar cfJ fltk-dialog-x86_64_linux.tar.xz ../fltk-dialog ); fi
+  - if [ "$MODE" = "APPIMAGE" ]; then wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh; fi
+  - if [ "$MODE" = "APPIMAGE" ]; then bash ./upload.sh out/notepadqq-*.AppImage; fi
 before_deploy:
-  - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
-  - "files=$(ls); mkdir notepadqq-${NQQ_VERSION}-source && cp -r $files notepadqq-${NQQ_VERSION}-source"
-  - "find notepadqq-${NQQ_VERSION}-source \\( -name '.git*' -o -name '.*ignore' -o -name '.travis.yml' \\) -delete"
-  - "make -C notepadqq-${NQQ_VERSION}-source distclean"
-  - "tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source"
+  - if [ "$MODE" = "BUILD" ]; then mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64; fi
+  - if [ "$MODE" = "BUILD" ]; then files=$(ls); mkdir notepadqq-${NQQ_VERSION}-source && cp -r $files notepadqq-${NQQ_VERSION}-source; fi
+  - if [ "$MODE" = "BUILD" ]; then find notepadqq-${NQQ_VERSION}-source \\( -name '.git*' -o -name '.*ignore' -o -name '.travis.yml' \\) -delete; fi
+  - if [ "$MODE" = "BUILD" ]; then make -C notepadqq-${NQQ_VERSION}-source distclean; fi
+  - if [ "$MODE" = "BUILD" ]; then tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source; fi
 deploy:
   provider: releases
   api_key:
@@ -28,3 +35,8 @@ deploy:
   on:
     repo: notepadqq/notepadqq
     tags: true
+    condition: "$MODE = BUILD"
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)$/
