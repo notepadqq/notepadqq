@@ -99,6 +99,16 @@ void frmSearchReplace::show(Tabs defaultTab)
 void frmSearchReplace::setSearchText(QString string)
 {
     ui->cmbSearch->setCurrentText(string);
+
+    /*
+      Workaround for: https://bugreports.qt.io/browse/QTBUG-49165
+      There's a bug where the combobox's current index is changed to 0 when
+      the lineedit contains selected text that isn't yet in the box's history.
+      That happens when we call setSearchText() followed by show().
+      Workaround is to disable auto complete until the search box was manually edited
+      which prevents the bug. Auto complete is enabled again in on_searchStringEdited.
+    */
+    ui->cmbSearch->setAutoCompletion(false);
 }
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
@@ -546,6 +556,9 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
             findFromUI(true);
         }
     }
+
+    // Workaround. See comment in setSearchText().
+    ui->cmbSearch->setAutoCompletion(true);
 }
 
 void frmSearchReplace::on_btnFindAll_clicked()
