@@ -171,17 +171,30 @@ if [ $(echo $?) -eq 0 ] ; then
     done
 fi
 
-# If we're in a git repo and git is installed, update the submodules.
-# If ".git" is not found, assume that the complete source
-# code is already available.
+# Test if git is installed
 which git 2>/dev/null 1>/dev/null
-if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
-    git submodule init
-    git submodule update
+if [ $(echo $?) -eq 0 ]; then
+
+    # If we're in a git repo, init submodules.
+    # Else we'll manually clone the repo
+    if [ -d ".git" ]; then
+        git submodule init
+        git submodule update
+    elif [ -d "src/editor/libs/codemirror/" ] && [ ! -d "src/editor/libs/codemirror/.git" ] ; then
+        pushd src/editor/libs/codemirror/
+        git init
+        git remote add origin https://github.com/notepadqq/CodeMirror/
+        ( git fetch origin ) 2>/dev/null
+        ( git checkout d790fc3 ) 2>/dev/null
+        popd
+        echo "CodeMirror git repository initialized."
+    fi
+else
+    echo "Git not found on system."
 fi
 
 cmdir=src/editor/libs/codemirror
-cmerror="error: CodeMirror submodule not available at \`$cmdir'! Make sure you downloaded the source code using git as specified in README.md."
+cmerror="error: CodeMirror submodule not available at \`$cmdir'! Make sure git is available to download CodeMirror or provide it manually."
 # check if directory exists
 test -d "$cmdir" || errorExit "$cmerror" 1
 # check if directory is empty
