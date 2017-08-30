@@ -20,17 +20,12 @@ after_success:
   - if [ "$MODE" = "APPIMAGE" ]; then bash ./upload.sh out/notepadqq-*.AppImage; fi
 before_deploy:
   - if [ "$MODE" = "BUILD" ]; then mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64; fi
-  - if [ "$MODE" = "BUILD" ]; then files=$(ls); mkdir notepadqq-${NQQ_VERSION}-source && cp -r $files notepadqq-${NQQ_VERSION}-source; fi
-  - if [ "$MODE" = "BUILD" ]; then find notepadqq-${NQQ_VERSION}-source \\( -name '.git*' -o -name '.*ignore' -o -name '.travis.yml' \\) -delete; fi
-  - if [ "$MODE" = "BUILD" ]; then make -C notepadqq-${NQQ_VERSION}-source distclean; fi
-  - if [ "$MODE" = "BUILD" ]; then tar -zcf notepadqq-${NQQ_VERSION}-source.tar.gz -C out notepadqq-${NQQ_VERSION}-source; fi
 deploy:
   provider: releases
   api_key:
     secure: OCEuXR1a2dDHKKQpnOeSoeWZeL0clf0eVUZt5QbrnkyvL3/iUHXjYbdVBEGrbuldffLy9YOC63viqh/r7Ak+7k/suG1BxwGczbvtMBvRyUOOI48YX90Ss+JUcpvJVNLoirDqA1hPMho5Rmydu+DFRlpjADfg3KtZZZA+8Xz8Uek=
   file:
     - "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
-    - "notepadqq-${NQQ_VERSION}-source.tar.gz"
   skip_cleanup: true
   on:
     repo: notepadqq/notepadqq
