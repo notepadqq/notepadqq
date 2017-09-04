@@ -221,10 +221,10 @@ void FileSearcher::run() {
         switch (m_searchConfig.searchMode) {
         case SearchConfig::ModePlainText:
         case SearchConfig::ModePlainTextSpecialChars:
-            res = std::move(searchPlainText(m_searchConfig, decodedText.text));
+            res = searchPlainText(m_searchConfig, decodedText.text);
             break;
         case SearchConfig::ModeRegex:
-            res = std::move(searchRegExp(m_regex, decodedText.text));
+            res = searchRegExp(m_regex, decodedText.text);
             break;
         }
 
