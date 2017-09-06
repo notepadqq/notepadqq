@@ -588,6 +588,19 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> fileUrls)
         if(!wantContinue) return;
     }
 
+    // TODO: Test this
+    if (fileUrls.size() == 1) {
+        // If only one URL is dropped and it's a directory, we query the dir's entry list and open that one instead.
+        const QString path = fileUrls.front().toLocalFile();
+        QFileInfo fileInfo(path);
+        if (fileInfo.isDir()) {
+            fileUrls.clear();
+            for (QFileInfo fi : QDir(path).entryInfoList(QDir::Files)) {
+                fileUrls.push_back(QUrl::fromLocalFile(fi.filePath()));
+            }
+        }
+    }
+
     for (const QUrl& url : fileUrls) {
         Editor* editor = m_docEngine->loadDocumentProper(url);
         if(editor)

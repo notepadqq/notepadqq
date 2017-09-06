@@ -128,11 +128,28 @@ NqqTabWidget::~NqqTabWidget()
 
 NqqTab*NqqTabWidget::createEmptyTab(bool makeCurrent)
 {
+    qDebug() << "Nqq: createEmptyTab() called.";
+
     Editor* ed = new Editor();
     ed->setLanguage("plaintext");
-    NqqTab* t = createTab(ed, makeCurrent);
-    t->setTabTitle(DocEngine::getNewDocumentName()); //TODO: this is called after current tab is changed
-    return t;
+
+    NqqTab* t = new NqqTab(ed);
+    t->setTabTitle(DocEngine::getNewDocumentName());
+
+    if (attachTab(t)) {
+
+        if(makeCurrent) {
+            m_tabWidget->setCurrentIndex( getIndexOfTab(t) );
+            t->m_editor->setFocus();
+        }
+
+        emit newTabAdded(t);
+        return t;
+    }
+
+    // TODO: What happens to the Editor if 't' is deleted?
+    delete t;
+    return nullptr;
 }
 
 NqqTab* NqqTabWidget::createTab(Editor* editor, bool makeCurrent) {
