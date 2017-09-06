@@ -157,7 +157,6 @@ printf "checking whether compiled test program works... "
 rm -f test test.cpp
 
 check make "$MAKE" 1
-check git git
 check pkg-config pkg-config
 
 # check for libraries via pkg-config
@@ -170,22 +169,6 @@ if [ $(echo $?) -eq 0 ] ; then
         test $(echo $?) -eq 0 && pkg-config --libs $l || errorExit "not found!"
     done
 fi
-
-# If we're in a git repo and git is installed, update the submodules.
-# If ".git" is not found, assume that the complete source
-# code is already available.
-which git 2>/dev/null 1>/dev/null
-if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
-    git submodule init
-    git submodule update
-fi
-
-cmdir=src/editor/libs/codemirror
-cmerror="error: CodeMirror submodule not available at \`$cmdir'! Make sure you downloaded the source code using git as specified in README.md."
-# check if directory exists
-test -d "$cmdir" || errorExit "$cmerror" 1
-# check if directory is empty
-test "$(ls -A $cmdir)" || errorExit "$cmerror" 1
 
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true

@@ -43,7 +43,8 @@ isEmpty(DESTDIR) {
 }
 
 isEmpty(LRELEASE) {
-    !macx: LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    !macx:!haiku: LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    haiku: LRELEASE = lrelease
     macx: LRELEASE = lrelease
 }
 

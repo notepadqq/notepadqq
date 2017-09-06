@@ -281,7 +281,7 @@ function applyReusedGroups(replacement, groups){
         //takes care of non-consecutive group reuse tokens,
         //i.e. in "\1 \3" with no "\2", the "\3" is ignored 
         groupToReuse = groups[iReuseGroup];
-        replacement = replacement.replace(new RegExp("\\\\"+iReuseGroup), groupToReuse);
+        replacement = replacement.replace(new RegExp("\\\\"+iReuseGroup, "g"), groupToReuse);
     }
     var groupReuseRegex = /\\([1-9])/g;
     //take care of all non-matched group reuse tokens (replace with empty string)
