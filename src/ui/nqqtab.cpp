@@ -113,6 +113,12 @@ NqqTabWidget::NqqTabWidget(NqqSplitPane* parent)
     connect(m_tabWidget, &QTabWidget::customContextMenuRequested, [this](const QPoint& point) {
         emit customContextMenuRequested(m_tabWidget->mapToGlobal(point));
     });
+
+    connect(m_tabWidget, &QTabWidget::currentChanged, [this](int idx){
+        if(idx<0) return;
+        NqqTab* t = m_tabs[idx];
+        emit currentTabChanged(t);
+    });
 }
 
 NqqTabWidget::~NqqTabWidget()
@@ -181,9 +187,9 @@ bool NqqTabWidget::detachTab(NqqTab* tab)
     if(index < 0) return false;
 
     disconnectTab(tab);
-    tab->m_parentTabWidget = nullptr;
+    tab->m_parentTabWidget = nullptr; //TODO should be done in disconnectTab
 
-    m_tabWidget->removeTab(index);
+    //m_tabWidget->removeTab(index);
     m_tabs.erase(m_tabs.begin()+index);
 
     if(m_tabs.empty()) {
@@ -196,6 +202,7 @@ bool NqqTabWidget::detachTab(NqqTab* tab)
         createEmptyTab(true);
     }
 
+    m_tabWidget->removeTab(index);
     makeCurrent( m_tabWidget->currentIndex() );
 
     return true;
@@ -227,7 +234,9 @@ void NqqTabWidget::onTabCloseRequested(int index)
 void NqqTabWidget::onTabGotFocus()
 {
     NqqTab* tab = reinterpret_cast<NqqTab*>(sender());
-    emit currentTabChanged(tab);
+    qDebug() << "onTabGotFocus";
+    //emit currentTabChanged(tab);
+    emit gotFocus(tab);
 }
 
 void NqqTabWidget::onTabMouseWheelUsed(QWheelEvent* evt)
@@ -305,7 +314,7 @@ int NqqTabWidget::getIndexOfTab(NqqTab* tab) const
         return std::distance(m_tabs.begin(), it);
 }
 
-void NqqTabWidget::setFocus(NqqTab* tab)
+void NqqTabWidget::setFocus(NqqTab* tab) //TODO useless function?
 {
     auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
     if(it == m_tabs.end())
@@ -320,6 +329,8 @@ void NqqTabWidget::makeCurrent(NqqTab* tab)
 
     m_tabWidget->setCurrentWidget(tab->m_editor);
     tab->m_editor->setFocus();
+
+    emit currentTabChanged(tab);
 }
 
 void NqqTabWidget::makeCurrent(int index)
@@ -341,19 +352,25 @@ void NqqTabWidget::setTabSavedIcon(NqqTab* tab, bool saved)
 
 void NqqSplitPane::connectTabWidget(NqqTabWidget* tabWidget)
 {
-    connect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
     connect(tabWidget, &NqqTabWidget::tabCloseRequested, this, &NqqSplitPane::tabCloseRequested);
     connect(tabWidget, &NqqTabWidget::newTabAdded, this, &NqqSplitPane::newTabAdded);
     connect(tabWidget, &NqqTabWidget::customContextMenuRequested, this, &NqqSplitPane::customContextMenuRequested);
     connect(tabWidget, &NqqTabWidget::urlsDropped, this, &NqqSplitPane::urlsDropped);
 
-    connect(tabWidget, &NqqTabWidget::currentTabChanged, [tabWidget, this](){
-        if(m_activeTabWidget==tabWidget) return;
-
-        setActiveTabWidget(tabWidget);
-        qDebug() << "Active TabWidget changed.";
+    connect(tabWidget, &NqqTabWidget::gotFocus, [tabWidget, this](NqqTab* focusedTab){
+        if(m_activeTabWidget!=tabWidget && m_activeTabWidget->getCurrentTab() != focusedTab) {
+            setActiveTabWidget(tabWidget);
+            qDebug() << "gotFocus() - Active TabWidget changed.";
+            emit currentTabChanged(focusedTab);
+        }
     });
 
+    /*connect(tabWidget, &NqqTabWidget::currentTabChanged, [tabWidget, this](NqqTab* tab){
+        qDebug() << "Emit currentTabChanged";
+        emit currentTabChanged(tab);
+    });*/
+
+    connect(tabWidget, &NqqTabWidget::currentTabChanged, this, &NqqSplitPane::currentTabChanged);
 }
 
 void NqqSplitPane::setActiveTabWidget(NqqTabWidget* tabWidget)
@@ -419,6 +436,10 @@ bool NqqSplitPane::processEmptyTabWidget(NqqTabWidget* tabW)
         tabW->deleteLater();
         tabW->getWidget()->setParent(nullptr);
         tabW->getWidget()->deleteLater();
+
+        setActiveTabWidget(m_panels[0]); //TODO do we have to set focus to the new active tab?
+        m_panels[0]->makeCurrent( m_panels[0]->getCurrentTab() );
+
         return false;
     }
 }
@@ -440,10 +461,10 @@ NqqTabWidget* NqqSplitPane::createNewTabWidget(NqqTab* newTab) {
 
     m_splitter->setSizes( sizes );
 
+    if(!m_activeTabWidget) setActiveTabWidget(w);
+
     if(!newTab || !w->attachTab(newTab))
         w->createEmptyTab();
-
-    if(!m_activeTabWidget) setActiveTabWidget(w);
 
     return w;
 }

@@ -1095,9 +1095,8 @@ void MainWindow::on_currentTabChanged(NqqTab* tab)
         return; //TODO: Can/should this be null?
 
     }
-    qDebug() << "MainWindow::on_currentTabChanged to " << tab->getTabTitle();
 
-    getCurrentTabWidget()->setFocus(tab); //TODO: Do we need to set focus every time we change tabs? Here?
+    qDebug() << "MainWindow::on_currentTabChanged to " << tab->getTabTitle();
 
     Editor *editor = tab->m_editor;
     refreshUiInfo();
@@ -1162,6 +1161,8 @@ void MainWindow::refreshUiInfo()
 {
     NqqTab* tab = getCurrentTab();
     Editor* editor = tab->m_editor;
+
+    qDebug() << "refreshUiInfo with tab " << tab->getTabTitle();
 
     // Update current language in statusbar
     QVariantMap data = editor->sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();

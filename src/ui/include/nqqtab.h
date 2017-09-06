@@ -122,7 +122,7 @@ signals:
     void customContextMenuRequested(const QPoint& point);
     void urlsDropped(const QList<QUrl>& urls);
 
-    void gotFocus();
+    void gotFocus(NqqTab* focusedTab);
     void tabBarClicked();
 
 private slots:
