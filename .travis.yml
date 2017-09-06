@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
   - if [ "$MODE" = "APPIMAGE" ]; then sudo apt-get install -y --no-install-recommends fuse build-essential wget git libxcb-* libxi-dev libxrender-dev libsm-dev libice-dev libx11-dev libxcomposite-dev libpng12-dev libsqlite3-dev libfontconfig1-dev libfreetype6-dev libjpeg-dev zlib1g-dev libicu-dev libglib2.0-dev libgl1-mesa-dev; fi
-  - git fetch --tags
+  - git pull --depth=500
 script:
   - if [ "$MODE" = "BUILD" ]; then ./configure && make; fi
   - if [ "$MODE" = "BUILD" ]; then ./src/ui-tests/ui-tests; fi
