@@ -8,6 +8,8 @@
 #include "editortabwidget.h"
 #include "topeditorcontainer.h"
 
+#include "filesystemwatcher.h"
+
 /**
  * @brief Provides methods for managing documents
  *
@@ -54,10 +56,6 @@ public:
 
     QPair<int, int> findOpenEditorByUrl(const QUrl &filename) const;
 
-    void monitorDocument(Editor *editor);
-    void unmonitorDocument(Editor *editor);
-    bool isMonitored(Editor *editor);
-
     bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
     bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
 
@@ -93,7 +91,8 @@ public:
 
 private:
     TopEditorContainer *m_topEditorContainer;
-    QFileSystemWatcher *m_fsWatcher;
+    //QFileSystemWatcher *m_fsWatcher;
+    FileSystemWatcher m_fsWatcher;
 
     /**
      * @brief Read a file and puts the content into the provided Editor, clearing
@@ -131,8 +130,6 @@ private:
      * @return true if successful, false otherwise
      */
     bool write(QIODevice *io, Editor *editor);
-    void monitorDocument(const QString &fileName);
-    void unmonitorDocument(const QString &fileName);
 
     /**
      * @brief Decodes a byte array into a string, trying to guess the best

@@ -379,12 +379,12 @@ void loadSession(DocEngine* docEngine, NqqSplitPane* pane, QString sessionPath)
                 editor->markDirty();
                 editor->setLanguageFromFileName();
                 // Since we loaded from cache we want to unmonitor the cache file.
-                docEngine->unmonitorDocument(editor);
+                //docEngine->unmonitorDocument(editor); //TODO: Handle this properly
             }
 
             if (fileExists) {
                 editor->setFileName(fileUrl);
-                docEngine->monitorDocument(editor);
+               // docEngine->monitorDocument(editor); //TODO: Handle this properly
                 tab->setTabTitle( fileUrl.fileName() );
             } else {
                 editor->setFileName(QUrl());

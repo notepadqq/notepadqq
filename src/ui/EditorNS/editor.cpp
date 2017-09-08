@@ -10,6 +10,9 @@
 #include <QRegularExpression>
 
 #include "include/EditorNS/bannerbasicmessage.h"
+#include "include/EditorNS/bannerfilechanged.h"
+#include "include/EditorNS/bannerfileremoved.h"
+//#include "include/EditorNS/bannerindentationdetected.h"
 
 namespace EditorNS
 {
@@ -191,7 +194,7 @@ namespace EditorNS
     /**
      * Always returns an absolute url.
      */
-    QUrl Editor::fileName() const
+    QUrl Editor::fileName() const //TODO: Bad name for tihs. Returns file path, not name
     {
         return m_fileName;
     }
@@ -337,6 +340,47 @@ namespace EditorNS
     void Editor::setFileOnDiskChanged(bool fileOnDiskChanged)
     {
         m_fileOnDiskChanged = fileOnDiskChanged;
+    }
+
+    void Editor::eventDocumentContentChanged()
+    {
+        markDirty();
+        setFileOnDiskChanged(true);
+
+        BannerFileChanged *banner = new BannerFileChanged(this);
+        insertBanner(banner);
+
+        connect(banner, &BannerFileChanged::ignore, this, [=]() {
+            removeBanner(banner);
+            setFocus();
+            // FIXME Set editor as clean
+        });
+
+        connect(banner, &BannerFileChanged::reload, this, [=]() {
+            removeBanner(banner);
+            setFocus();
+
+            //TODO: Reimplement
+            //m_docEngine->reloadDocument(tabWidget, tab);
+        });
+    }
+
+    void Editor::eventDocumentRemoved()
+    {
+        markDirty();
+        setFileOnDiskChanged(true);
+
+        BannerFileRemoved *banner = new BannerFileRemoved(this);
+        insertBanner(banner);
+
+        connect(banner, &BannerFileRemoved::ignore, this, [=]() {
+            removeBanner(banner);
+            setFocus();
+        });
+
+        connect(banner, &BannerFileRemoved::save, this, [=]() {
+            //TODO save(tabWidget, tab);
+        });
     }
 
     QString Editor::jsStringEscape(QString str) const {

@@ -115,7 +115,10 @@ NqqTabWidget::NqqTabWidget(NqqSplitPane* parent)
     });
 
     connect(m_tabWidget, &QTabWidget::currentChanged, [this](int idx){
-        if(idx<0) return;
+        if(idx<0) { //This can happen when a tab widget closes
+            qDebug() << "NqqTabWidget: idx is less than zero.";
+            return;
+        }
         NqqTab* t = m_tabs[idx];
         emit currentTabChanged(t);
     });
@@ -125,11 +128,15 @@ NqqTabWidget::~NqqTabWidget()
 {
     //disconnect(m_tabWidget);
 
+    // TODO: We can't really request tab closes here since the widget *will* be deleted.
+    // Got to make sure this never happens when the tab widget isn't already empty.
+    Q_ASSERT(m_tabs.empty());
+    /*
     for(auto it=m_tabs.rbegin(); it!=m_tabs.rend(); ++it) {
         onTabCloseRequested(std::distance(m_tabs.rbegin(),it));
     }
-
-    // delete m_tabWidget; ?
+*/
+    // delete m_tabWidget; ? TOOD: Check
 }
 
 NqqTab*NqqTabWidget::createEmptyTab(bool makeCurrent)
@@ -437,7 +444,7 @@ bool NqqSplitPane::processEmptyTabWidget(NqqTabWidget* tabW)
         tabW->getWidget()->setParent(nullptr);
         tabW->getWidget()->deleteLater();
 
-        setActiveTabWidget(m_panels[0]); //TODO do we have to set focus to the new active tab?
+        setActiveTabWidget(m_panels[0]); //TODO do we want to focus tab 0?
         m_panels[0]->makeCurrent( m_panels[0]->getCurrentTab() );
 
         return false;

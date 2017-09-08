@@ -165,8 +165,12 @@ namespace EditorNS
              */
         Q_INVOKABLE QUrl fileName() const;
 
+        // TODO: Are these used anywhere?
         Q_INVOKABLE bool fileOnDiskChanged() const;
         Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
+
+        void eventDocumentContentChanged();
+        void eventDocumentRemoved();
 
         enum selectMode {
             selectMode_cursorBefore,

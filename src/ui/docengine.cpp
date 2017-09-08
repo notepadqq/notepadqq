@@ -10,15 +10,14 @@
 
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
-    m_topEditorContainer(topEditorContainer),
-    m_fsWatcher(new QFileSystemWatcher(this))
+    m_topEditorContainer(topEditorContainer)
 {
-    connect(m_fsWatcher, &QFileSystemWatcher::fileChanged, this, &DocEngine::documentChanged);
+    //connect(m_fsWatcher, &QFileSystemWatcher::fileChanged, this, &DocEngine::documentChanged);
 }
 
 DocEngine::~DocEngine()
 {
-    delete m_fsWatcher;
+    //delete m_fsWatcher;
 }
 
 int DocEngine::addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget)
@@ -234,7 +233,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     editor->setFileOnDiskChanged(false);
                 }
 
-                monitorDocument(editor);
+                m_fsWatcher.monitor(editor);
 
                 if (isFirstDocument) {
                     isFirstDocument = false;
@@ -310,7 +309,7 @@ Editor* DocEngine::loadDocumentProper(QUrl fileUrl, QTextCodec* codec, bool bom)
 
     emit documentLoaded(editor, false, /*rememberLastDir*/ false); //TODO remember last dir won't work
 
-    //monitorDocument(editor); // TODO: Reenable
+    m_fsWatcher.monitor(editor);
 
     return editor;
 }
@@ -424,26 +423,9 @@ void DocEngine::reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom)
     editor->setCursorPosition(cursorPosition);
 }
 
-void DocEngine::monitorDocument(const QString &fileName)
-{
-    if(m_fsWatcher &&
-            !fileName.isEmpty() &&
-            !m_fsWatcher->files().contains(fileName)) {
-
-        m_fsWatcher->addPath(fileName);
-    }
-}
-
-void DocEngine::unmonitorDocument(const QString &fileName)
-{
-    if(m_fsWatcher && !fileName.isEmpty()) {
-        m_fsWatcher->removePath(fileName);
-    }
-}
-
 int DocEngine::saveDocumentProper(Editor* editor, QUrl outFileName, bool copy) {
     if (!copy)
-        unmonitorDocument(editor);
+        m_fsWatcher.unmonitor(editor);
 
     if (outFileName.isEmpty())
         outFileName = editor->fileName();
@@ -466,7 +448,7 @@ int DocEngine::saveDocumentProper(Editor* editor, QUrl outFileName, bool copy) {
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
                 if(ret == QMessageBox::Abort) {
-                    monitorDocument(editor);
+                    m_fsWatcher.monitor(editor);
                     return DocEngine::saveFileResult_Canceled;
                 } else if(ret == QMessageBox::Retry) {
                     continue;
@@ -487,7 +469,7 @@ int DocEngine::saveDocumentProper(Editor* editor, QUrl outFileName, bool copy) {
 
         file.close();
 
-        monitorDocument(editor);
+        m_fsWatcher.monitor(editor);
 
         if (!copy) {
             emit documentSaved(editor);
@@ -511,7 +493,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
     Editor *editor = tabWidget->editor(tab);
 
     if (!copy)
-        unmonitorDocument(editor);
+        m_fsWatcher.unmonitor(editor);
 
     if (outFileName.isEmpty())
         outFileName = editor->fileName();
@@ -534,7 +516,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
                 if(ret == QMessageBox::Abort) {
-                    monitorDocument(editor);
+                    m_fsWatcher.monitor(editor);
                     return DocEngine::saveFileResult_Canceled;
                 } else if(ret == QMessageBox::Retry) {
                     continue;
@@ -555,7 +537,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         file.close();
 
-        monitorDocument(editor);
+        m_fsWatcher.monitor(editor);
 
         if (!copy) {
             //emit documentSaved(tabWidget, tab);
@@ -576,7 +558,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
 void DocEngine::documentChanged(QString fileName)
 {
-    unmonitorDocument(fileName);
+    /*unmonitorDocument(fileName);
 
     QPair<int, int> pos = findOpenEditorByUrl(QUrl::fromLocalFile(fileName));
     if (pos.first != -1) {
@@ -587,29 +569,15 @@ void DocEngine::documentChanged(QString fileName)
         editor->markDirty();
         editor->setFileOnDiskChanged(true);
         emit fileOnDiskChanged(editor, !file.exists());
-    }
+    }*/
 }
 
 void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
 {
+    // TODO: Not updated yet either
     Editor *editor = tabWidget->editor(tab);
-    unmonitorDocument(editor);
+    m_fsWatcher.unmonitor(editor);
     tabWidget->removeTab(tab);
-}
-
-void DocEngine::monitorDocument(Editor *editor)
-{
-    monitorDocument(editor->fileName().toLocalFile());
-}
-
-void DocEngine::unmonitorDocument(Editor *editor)
-{
-    unmonitorDocument(editor->fileName().toLocalFile());
-}
-
-bool DocEngine::isMonitored(Editor *editor)
-{
-    return m_fsWatcher->files().contains(editor->fileName().toLocalFile());
 }
 
 DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
