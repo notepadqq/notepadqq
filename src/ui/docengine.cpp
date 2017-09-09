@@ -418,7 +418,7 @@ bool DocEngine::trySudoSave(QUrl outFileName, Editor* editor) {
             << "cp" << filePath << outFileName.toLocalFile());
 #endif
 
-    p.waitForFinished();
+    p.waitForFinished(-1);
     file.remove();
 
     return p.exitCode() == 0;
