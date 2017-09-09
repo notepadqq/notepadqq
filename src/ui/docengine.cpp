@@ -399,9 +399,9 @@ bool DocEngine::trySudoSave(QUrl outFileName, Editor* editor) {
                 outFileName.fileName() )
             .toLocalFile();
 
-    QFile file( filePath );
+    QFile file(filePath);
 
-    if(!write(&file, editor))
+    if (!write(&file, editor))
         return false;
 
     QProcess p;
@@ -461,10 +461,10 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 if (clicked == abort) {
                    monitorDocument(editor);
                    return DocEngine::saveFileResult_Canceled;
-                } else if(clicked == retry) {
+                } else if (clicked == retry) {
                     continue;
 #ifdef SUDO_TOOL_AVAILABLE
-                } else if(clicked == retryRoot) {
+                } else if (clicked == retryRoot) {
                     if (trySudoSave(outFileName, editor))
                         break;
                     else {
