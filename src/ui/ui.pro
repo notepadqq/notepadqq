@@ -29,6 +29,9 @@ DEFINES += QT_NO_URL_CAST_FROM_STRING
 unix: CMD_FULLDELETE = rm -rf
 win32: CMD_FULLDELETE = del /F /S /Q
 
+system("which kdesu"): DEFINES += SUDO_TOOL_AVAILABLE KDESU_AVAILABLE
+system("which gksu"): DEFINES += SUDO_TOOL_AVAILABLE GKSU_AVAILABLE
+
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
         message(Debug build)

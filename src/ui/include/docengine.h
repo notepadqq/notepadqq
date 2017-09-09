@@ -146,6 +146,15 @@ private:
     static DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
 
     static QByteArray getBomForCodec(QTextCodec *codec);
+
+    /**
+     * @brief Attempts to save the contents of editor to outFileName using a graphical sudo program.
+     * @param outFileName Target location of file
+     * @param editor Editor to be saved
+     * @return True if successful.
+     */
+    bool trySudoSave(QUrl outFileName, Editor* editor);
+
 signals:
     /**
      * @brief The monitored file has changed. Remember to call
