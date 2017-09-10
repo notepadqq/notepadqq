@@ -148,12 +148,19 @@ private:
     static QByteArray getBomForCodec(QTextCodec *codec);
 
     /**
+     * @brief getAvailableSudoProgram Queries the system to find a supported graphical sudo tool.
+     * @return Empty string if none found. Else either 'kdesu' or 'gksu'.
+     */
+    QString getAvailableSudoProgram() const;
+
+    /**
      * @brief Attempts to save the contents of editor to outFileName using a graphical sudo program.
+     * @param sudoProgram Name of the sudo tool to use. Only 'kdesu' and 'gksu' supported.
      * @param outFileName Target location of file
      * @param editor Editor to be saved
      * @return True if successful.
      */
-    bool trySudoSave(QUrl outFileName, Editor* editor);
+    bool trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor);
 
 signals:
     /**

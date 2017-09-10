@@ -392,8 +392,26 @@ void DocEngine::unmonitorDocument(const QString &fileName)
     }
 }
 
-bool DocEngine::trySudoSave(QUrl outFileName, Editor* editor) {
-#ifdef SUDO_TOOL_AVAILABLE
+
+QString DocEngine::getAvailableSudoProgram() const
+{
+    QProcess p;
+
+    p.start("which kdesu");
+    p.waitForFinished(10);
+    if (p.exitCode() == 0) return "kdesu";
+
+    p.start("which gksu");
+    p.waitForFinished(10);
+    if (p.exitCode() == 0) return "gksu";
+
+    return "";
+}
+
+bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor) {
+    if(sudoProgram.isEmpty())
+        return false;
+
     QString filePath = PersistentCache::createValidCacheName(
                 PersistentCache::cacheDirPath(),
                 outFileName.fileName() )
@@ -406,25 +424,24 @@ bool DocEngine::trySudoSave(QUrl outFileName, Editor* editor) {
 
     QProcess p;
 
-#ifdef KDESU_AVAILABLE
-    p.start("kdesu", QStringList()
-            << "--noignorebutton"
-            << "-n"
-            << "-c" << "cp" << filePath << outFileName.toLocalFile());
-#elif GKSU_AVAILABLE
-    p.start("gksu", QStringList()
-            << "-S" << tr("-m Notepadqq asks permission to overwrite the following file:\n\n%1")
-            .arg(outFileName.toLocalFile())
-            << "cp" << filePath << outFileName.toLocalFile());
-#endif
+    if (sudoProgram == "kdesu")
+        p.start("kdesu", QStringList()
+                << "--noignorebutton"
+                << "-n"
+                << "-c" << "cp" << filePath << outFileName.toLocalFile());
+    else if (sudoProgram == "gksu")
+        p.start("gksu", QStringList()
+                << "-S" << tr("-m Notepadqq asks permission to overwrite the following file:\n\n%1")
+                .arg(outFileName.toLocalFile())
+                << "cp" << filePath << outFileName.toLocalFile());
+    else
+        return false;
+
 
     p.waitForFinished(-1);
     file.remove();
 
     return p.exitCode() == 0;
-#else
-    return false;
-#endif
 }
 
 int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName, bool copy)
@@ -445,6 +462,8 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
             if (write(&file, editor)) {
                 break;
             } else {
+                static QString sudoProgram = getAvailableSudoProgram();
+
                 // Handle error
                 QMessageBox msgBox;
                 msgBox.setWindowTitle(QCoreApplication::applicationName());
@@ -452,9 +471,9 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 msgBox.setDetailedText(file.errorString());
                 auto abort = msgBox.addButton(tr("Abort"), QMessageBox::RejectRole);
                 auto retry = msgBox.addButton(tr("Retry"), QMessageBox::AcceptRole);
-#ifdef SUDO_TOOL_AVAILABLE
-                auto retryRoot = msgBox.addButton(tr("Retry as Root"), QMessageBox::AcceptRole);
-#endif
+                auto retryRoot = sudoProgram.isEmpty() ?
+                            nullptr : msgBox.addButton(tr("Retry as Root"), QMessageBox::AcceptRole);
+
                 msgBox.exec();
                 auto clicked = msgBox.clickedButton();
 
@@ -463,14 +482,12 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                    return DocEngine::saveFileResult_Canceled;
                 } else if (clicked == retry) {
                     continue;
-#ifdef SUDO_TOOL_AVAILABLE
                 } else if (clicked == retryRoot) {
-                    if (trySudoSave(outFileName, editor))
+                    if (trySudoSave(sudoProgram, outFileName, editor))
                         break;
                     else {
                         continue;
                     }
-#endif
                 }
             }
 
