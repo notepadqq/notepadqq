@@ -431,7 +431,7 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
                 << "-c" << "cp" << filePath << outFileName.toLocalFile());
     else if (sudoProgram == "gksu")
         p.start("gksu", QStringList()
-                << "-S" << tr("-m Notepadqq asks permission to overwrite the following file:\n\n%1")
+                << "-S" << "-m" << tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
                 .arg(outFileName.toLocalFile())
                 << "cp" << filePath << outFileName.toLocalFile());
     else
