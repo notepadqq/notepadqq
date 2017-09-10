@@ -5,8 +5,11 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <QCoreApplication>
+#include <QPushButton>
+
 #include "include/mainwindow.h"
 #include "include/nqqsettings.h"
+#include "include/Sessions/persistentcache.h"
 
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
@@ -389,6 +392,58 @@ void DocEngine::unmonitorDocument(const QString &fileName)
     }
 }
 
+
+QString DocEngine::getAvailableSudoProgram() const
+{
+    QProcess p;
+
+    p.start("which kdesu");
+    p.waitForFinished(10);
+    if (p.exitCode() == 0) return "kdesu";
+
+    p.start("which gksu");
+    p.waitForFinished(10);
+    if (p.exitCode() == 0) return "gksu";
+
+    return "";
+}
+
+bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor) {
+    if(sudoProgram.isEmpty())
+        return false;
+
+    QString filePath = PersistentCache::createValidCacheName(
+                PersistentCache::cacheDirPath(),
+                outFileName.fileName() )
+            .toLocalFile();
+
+    QFile file(filePath);
+
+    if (!write(&file, editor))
+        return false;
+
+    QProcess p;
+
+    if (sudoProgram == "kdesu")
+        p.start("kdesu", QStringList()
+                << "--noignorebutton"
+                << "-n"
+                << "-c" << "cp" << filePath << outFileName.toLocalFile());
+    else if (sudoProgram == "gksu")
+        p.start("gksu", QStringList()
+                << "-S" << "-m" << tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
+                .arg(outFileName.toLocalFile())
+                << "cp" << filePath << outFileName.toLocalFile());
+    else
+        return false;
+
+
+    p.waitForFinished(-1);
+    file.remove();
+
+    return p.exitCode() == 0;
+}
+
 int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName, bool copy)
 {
     Editor *editor = tabWidget->editor(tab);
@@ -407,20 +462,32 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
             if (write(&file, editor)) {
                 break;
             } else {
+                static QString sudoProgram = getAvailableSudoProgram();
+
                 // Handle error
                 QMessageBox msgBox;
                 msgBox.setWindowTitle(QCoreApplication::applicationName());
                 msgBox.setText(tr("Error trying to write to \"%1\"").arg(file.fileName()));
                 msgBox.setDetailedText(file.errorString());
-                msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry);
-                msgBox.setDefaultButton(QMessageBox::Retry);
-                msgBox.setIcon(QMessageBox::Critical);
-                int ret = msgBox.exec();
-                if(ret == QMessageBox::Abort) {
-                    monitorDocument(editor);
-                    return DocEngine::saveFileResult_Canceled;
-                } else if(ret == QMessageBox::Retry) {
+                auto abort = msgBox.addButton(tr("Abort"), QMessageBox::RejectRole);
+                auto retry = msgBox.addButton(tr("Retry"), QMessageBox::AcceptRole);
+                auto retryRoot = sudoProgram.isEmpty() ?
+                            nullptr : msgBox.addButton(tr("Retry as Root"), QMessageBox::AcceptRole);
+
+                msgBox.exec();
+                auto clicked = msgBox.clickedButton();
+
+                if (clicked == abort) {
+                   monitorDocument(editor);
+                   return DocEngine::saveFileResult_Canceled;
+                } else if (clicked == retry) {
                     continue;
+                } else if (clicked == retryRoot) {
+                    if (trySudoSave(sudoProgram, outFileName, editor))
+                        break;
+                    else {
+                        continue;
+                    }
                 }
             }
 
