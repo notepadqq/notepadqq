@@ -1405,11 +1405,9 @@ void MainWindow::instantiateFrmSearchReplace()
                                  m_topEditorContainer,
                                  this);
 
-        /*connect(m_frmSearchReplace, &frmSearchReplace::fileSearchResultFinished,
-                this, &MainWindow::on_fileSearchResultFinished);*/
-
-        connect(m_frmSearchReplace, &frmSearchReplace::advancedFindRequested, [this](){
-            m_advSearchDock->getDockWidget()->show();
+        connect(m_frmSearchReplace, &frmSearchReplace::toggleAdvancedSearch, [this](){
+            QWidget* dockWidget = m_advSearchDock->getDockWidget();
+            dockWidget->setVisible( !dockWidget->isVisible() );
         });
     }
 }
@@ -2284,7 +2282,8 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
-    m_advSearchDock->getDockWidget()->show();
+    QWidget* dockWidget = m_advSearchDock->getDockWidget();
+    dockWidget->setVisible( !dockWidget->isVisible() );
 }
 
 void MainWindow::on_actionDelete_Line_triggered()

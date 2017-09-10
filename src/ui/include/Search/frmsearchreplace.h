@@ -47,7 +47,7 @@ protected:
     void keyPressEvent(QKeyEvent *evt);
 
 signals:
-    void advancedFindRequested();
+    void toggleAdvancedSearch();
 
 private slots:
     void on_btnFindNext_clicked();

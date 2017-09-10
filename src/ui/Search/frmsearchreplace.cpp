@@ -37,7 +37,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
     connect(ui->cmbReplace->lineEdit(), &QLineEdit::returnPressed, this, &frmSearchReplace::on_btnFindNext_clicked);
 
-    connect(ui->actionFind_in_files, &QAction::triggered, this, &frmSearchReplace::advancedFindRequested);
+    connect(ui->actionAdvancedSearch, &QAction::triggered, this, &frmSearchReplace::toggleAdvancedSearch);
 
     ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));
     ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
@@ -45,13 +45,12 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     QActionGroup *tabGroup = new QActionGroup(this);
     tabGroup->addAction(ui->actionFind);
     tabGroup->addAction(ui->actionReplace);
-    tabGroup->addAction(ui->actionFind_in_files);
+    tabGroup->addAction(ui->actionAdvancedSearch);
     tabGroup->setExclusive(true);
 
     // Initialize all the tabs
     ui->actionFind->setChecked(true);
     ui->actionReplace->setChecked(true);
-    ui->actionFind_in_files->setChecked(true);
 
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
 

@@ -120,7 +120,7 @@
        <item row="0" column="0">
         <widget class="QRadioButton" name="radSearchPlainText">
          <property name="text">
-          <string>Search plain text</string>
+          <string>Search &amp;plain text</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -160,14 +160,14 @@
        <item row="2" column="0">
         <widget class="QRadioButton" name="radSearchWithSpecialChars">
          <property name="text">
-          <string>Search with special characters (\n, \r, \t, \0, \u..., \x...)</string>
+          <string>Search &amp;with special characters (\n, \r, \t, \0, \u..., \x...)</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QRadioButton" name="radSearchWithRegex">
          <property name="text">
-          <string>Search with regular expressions</string>
+          <string>Search with &amp;regular expressions</string>
          </property>
         </widget>
        </item>
@@ -308,7 +308,7 @@
    <addaction name="separator"/>
    <addaction name="actionReplace"/>
    <addaction name="separator"/>
-   <addaction name="actionFind_in_files"/>
+   <addaction name="actionAdvancedSearch"/>
   </widget>
   <action name="actionReplace">
    <property name="checkable">
@@ -326,12 +326,12 @@
     <string>&amp;Find</string>
    </property>
   </action>
-  <action name="actionFind_in_files">
+  <action name="actionAdvancedSearch">
    <property name="checkable">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Find in files</string>
+    <string>Advanced Search</string>
    </property>
    <property name="toolTip">
     <string>Advanced Search</string>
