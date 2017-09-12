@@ -392,12 +392,13 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 docEngine->unmonitorDocument(editor);
             }
 
-            if (fileExists) {
-                editor->setFileName(fileUrl);
-                docEngine->monitorDocument(editor);
-            } else {
+            if (tab.filePath.isEmpty()) {
                 editor->setFileName(QUrl());
                 tabW->setTabText(idx, docEngine->getNewDocumentName());
+            } else {
+                editor->setFileName(fileUrl);
+                if(fileExists)
+                    docEngine->monitorDocument(editor);
             }
 
             // If we're loading an existing file from cache we want to inform the user whether
