@@ -25,12 +25,12 @@ class QCheckBox;
  *        This class is copied almost 1-to-1 from Qt's source code and will
  *        display a button exactly like the dock's default titlebar.
  */
-class QDockWidgetTitleButton : public QAbstractButton
+class QSearchDockTitleButton : public QAbstractButton
 {
     Q_OBJECT
 
 public:
-    QDockWidgetTitleButton(QDockWidget *dockWidget);
+    QSearchDockTitleButton(QDockWidget *dockWidget);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override { return sizeHint(); }

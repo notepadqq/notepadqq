@@ -59,13 +59,13 @@ bool askConfirmationForReplace(QString replaceText, int numReplacements) {
 }
 
 
-QDockWidgetTitleButton::QDockWidgetTitleButton(QDockWidget *dockWidget)
+QSearchDockTitleButton::QSearchDockTitleButton(QDockWidget *dockWidget)
     : QAbstractButton(dockWidget)
 {
     setFocusPolicy(Qt::NoFocus);
 }
 
-QSize QDockWidgetTitleButton::sizeHint() const
+QSize QSearchDockTitleButton::sizeHint() const
 {
     ensurePolished();
 
@@ -79,19 +79,19 @@ QSize QDockWidgetTitleButton::sizeHint() const
     return QSize(size, size);
 }
 
-void QDockWidgetTitleButton::enterEvent(QEvent *event)
+void QSearchDockTitleButton::enterEvent(QEvent *event)
 {
     if (isEnabled()) update();
     QAbstractButton::enterEvent(event);
 }
 
-void QDockWidgetTitleButton::leaveEvent(QEvent *event)
+void QSearchDockTitleButton::leaveEvent(QEvent *event)
 {
     if (isEnabled()) update();
     QAbstractButton::leaveEvent(event);
 }
 
-void QDockWidgetTitleButton::paintEvent(QPaintEvent* /*evt*/)
+void QSearchDockTitleButton::paintEvent(QPaintEvent* /*evt*/)
 {
     QPainter p(this);
 
@@ -201,11 +201,11 @@ QLayout* AdvancedSearchDock::buildUpperTitlebarLayout() {
     QLayout* leftSide = buildLeftTitlebar();
 
     // Replacing a dock's titlebar means we have to add the top-right button manually
-    m_btnDockUndock = new QDockWidgetTitleButton(m_dockWidget.data());
+    m_btnDockUndock = new QSearchDockTitleButton(m_dockWidget.data());
     m_btnDockUndock->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarNormalButton));
     m_btnDockUndock->setToolTip(tr("Dock/Undock this panel"));
 
-    m_btnClose = new QDockWidgetTitleButton(m_dockWidget.data());
+    m_btnClose = new QSearchDockTitleButton(m_dockWidget.data());
     m_btnClose->setIcon(QApplication::style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 
     top->addLayout(leftSide);
