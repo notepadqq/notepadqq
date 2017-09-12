@@ -174,7 +174,8 @@ TRANSLATIONS = \
     ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_ru.ts \
     ../translations/notepadqq_sl.ts \
-    ../translations/notepadqq_sv.ts
+    ../translations/notepadqq_sv.ts \
+    ../translations/notepadqq_zh.ts 
 
 QMAKE_CLEAN += \
     ../translations/notepadqq_de.qm \
