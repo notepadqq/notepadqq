@@ -1841,8 +1841,46 @@ void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
 
 void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 {
-    for (const auto& doc : m_settings.General.getRecentDocuments())
-        openRecentFileEntry(doc.toUrl());
+    QList<QVariant> allRecentUrlVariants = m_settings.General.getRecentDocuments();
+    QList<QUrl> urlsToOpen;
+    QList<QUrl> urlsOfMissingFiles;
+
+    for (const auto& doc : allRecentUrlVariants) {
+        const QUrl url = doc.toUrl();
+
+        if(QFileInfo::exists(url.toLocalFile()))
+            urlsToOpen.push_back(url);
+        else
+            urlsOfMissingFiles.push_back(url);
+    }
+
+    if (!urlsOfMissingFiles.empty()) {
+        QString text = tr("These files do not exist anymore. Do you want to open them anyway?\n");
+
+        for(const auto& url : urlsOfMissingFiles)
+            text += '\n' + url.toLocalFile();
+
+        QMessageBox msg;
+        msg.setIcon(QMessageBox::Question);
+        msg.setText(text);
+        msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+        if (msg.exec() == QMessageBox::Yes) {
+            // Clear the list and re-add all to preserve their order.
+            urlsToOpen.clear();
+            for (const auto& url : allRecentUrlVariants)
+                urlsToOpen.push_back(url.toUrl());
+        } else { // QMessageBox::No
+            // Remove all missing files from the recent list.
+            for (const auto& url : urlsOfMissingFiles)
+                allRecentUrlVariants.removeOne(QVariant::fromValue(url));
+
+            m_settings.General.setRecentDocuments(allRecentUrlVariants);
+            updateRecentDocsInMenu();
+        }
+    }
+
+    m_docEngine->loadDocuments(urlsToOpen, m_topEditorContainer->currentTabWidget());
 }
 
 void MainWindow::on_actionUNIX_Format_triggered()
