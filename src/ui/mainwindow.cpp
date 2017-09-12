@@ -1855,7 +1855,7 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
     }
 
     if (!urlsOfMissingFiles.empty()) {
-        QString text = tr("These files do not exist anymore. Do you want to open them anyway?\n");
+        QString text = tr("The following files do not exist anymore. Do you want to open them anyway?\n");
 
         for(const auto& url : urlsOfMissingFiles)
             text += '\n' + url.toLocalFile();
