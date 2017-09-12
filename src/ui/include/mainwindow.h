@@ -263,6 +263,13 @@ private:
     void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**
+     * @brief Attempts to open a file from the recent history. Prompts the user if the file does not exist and
+     *        removes it from the recent history if applicable.
+     * @param url Url of file to open.
+     */
+    void                openRecentFileEntry(QUrl url);
+
+    /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
      */
     void                fixKeyboardShortcuts();

@@ -215,6 +215,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                     // creates that file from outside of notepadqq,
                     // when the user tries to save over it he gets a warning.
                     editor->setFileOnDiskChanged(true);
+                    editor->markDirty();
                 }
 
                 // If there was only a new empty tab opened, remove it
