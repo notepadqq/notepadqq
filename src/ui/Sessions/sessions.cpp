@@ -371,6 +371,9 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             // This is the file to load the document from
             const QUrl& loadUrl = cacheFileExists ? cacheFileUrl : fileUrl;
 
+            if (!fileExists && !cacheFileExists)
+                continue;
+
             const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
 
             if (!success)
