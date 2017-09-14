@@ -95,13 +95,13 @@
         <translation>Hiba történt a(z) &quot;%1&quot; megnyitásakor</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="261"/>
-        <location filename="../ui/docengine.cpp" line="520"/>
+        <location filename="../ui/docengine.cpp" line="262"/>
+        <location filename="../ui/docengine.cpp" line="521"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
         <translation>A protokoll nem támogatja a(z) &quot;%1&quot; fájlt.</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="434"/>
+        <location filename="../ui/docengine.cpp" line="435"/>
         <source>Notepadqq asks permission to overwrite the following file:
 
 %1</source>
@@ -110,22 +110,22 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="470"/>
+        <location filename="../ui/docengine.cpp" line="471"/>
         <source>Error trying to write to &quot;%1&quot;</source>
         <translation>Hiba a(z) &quot;%1&quot; írása közben</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="472"/>
+        <location filename="../ui/docengine.cpp" line="473"/>
         <source>Abort</source>
         <translation>Megszakítás</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="473"/>
+        <location filename="../ui/docengine.cpp" line="474"/>
         <source>Retry</source>
         <translation>Újra</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="475"/>
+        <location filename="../ui/docengine.cpp" line="476"/>
         <source>Retry as Root</source>
         <translation>Újra Root-ként</translation>
     </message>
@@ -1222,53 +1222,65 @@ Biztosan menteni szeretné?</translation>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1934"/>
+        <location filename="../ui/mainwindow.cpp" line="1858"/>
+        <source>The following files do not exist anymore. Do you want to open them anyway?
+</source>
+        <translation>Az alábbi fájlok már nem léteznek. Mindenképp szeretné őket megnyitni?
+</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="1966"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1948"/>
+        <location filename="../ui/mainwindow.cpp" line="1980"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1990"/>
+        <location filename="../ui/mainwindow.cpp" line="2022"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2005"/>
+        <location filename="../ui/mainwindow.cpp" line="2037"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2017"/>
+        <location filename="../ui/mainwindow.cpp" line="2049"/>
         <source>Modify Run Commands</source>
         <translation>Futattási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2298"/>
+        <location filename="../ui/mainwindow.cpp" line="2168"/>
+        <source>The file &quot;%1&quot; does not exist. Do you want to re-create it?</source>
+        <translation>A(z) &quot;%1&quot; fájl nem létezik. Szeretné újra létrehozni?</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="2353"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2343"/>
+        <location filename="../ui/mainwindow.cpp" line="2398"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2345"/>
-        <location filename="../ui/mainwindow.cpp" line="2365"/>
+        <location filename="../ui/mainwindow.cpp" line="2400"/>
+        <location filename="../ui/mainwindow.cpp" line="2420"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2363"/>
+        <location filename="../ui/mainwindow.cpp" line="2418"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2389"/>
+        <location filename="../ui/mainwindow.cpp" line="2444"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
