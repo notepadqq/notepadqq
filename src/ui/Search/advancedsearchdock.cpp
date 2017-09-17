@@ -50,8 +50,7 @@ QStringList addUniqueToList(QStringList list, const QString& item) {
 bool askConfirmationForReplace(QString replaceText, int numReplacements) {
     return QMessageBox::information(QApplication::activeWindow(),
                                     QObject::tr("Confirm Replacement"),
-                                    QObject::tr("This will replace %1 selected matches with \"%2\"."
-                                            " This action cannot be undone. Continue?")
+                                    QObject::tr("This will replace %1 selected matches with \"%2\". This action cannot be undone. Continue?")
                                     .arg(numReplacements)
                                     .arg(replaceText),
                                     QMessageBox::Ok | QMessageBox::Cancel,
@@ -154,11 +153,13 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
 
     m_btnPrevResult = new QToolButton;
     m_btnPrevResult->setIcon(IconProvider::fromTheme("go-previous"));
-    m_btnPrevResult->setToolTip(tr("Go To Previous Result"));
+    m_btnPrevResult->setToolTip(tr("Go To Previous Result (Shift+F4)"));
+    m_btnPrevResult->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_F4));
 
     m_btnNextResult = new QToolButton;
     m_btnNextResult->setIcon(IconProvider::fromTheme("go-next"));
-    m_btnNextResult->setToolTip(tr("Go To Next Result"));
+    m_btnNextResult->setToolTip(tr("Go To Next Result (F4)"));
+    m_btnNextResult->setShortcut(QKeySequence(Qt::Key_F4));
 
     QMenu* menu = new QMenu();
     m_actExpandAll = menu->addAction(tr("Expand/Collapse All"));
@@ -510,10 +511,11 @@ void AdvancedSearchDock::updateSearchInProgressUi()
 
 void AdvancedSearchDock::startReplace()
 {
-    if (!m_currentSearchInstance) return;
+    if (!m_currentSearchInstance)
+        return;
 
     QString replaceText = m_cmbReplaceText->currentText();
-    SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
+    const SearchResult filteredResults = m_currentSearchInstance->getFilteredSearchResult();
 
     if (!askConfirmationForReplace(replaceText, filteredResults.countResults()))
         return;
@@ -524,7 +526,7 @@ void AdvancedSearchDock::startReplace()
         replaceText = SearchString::unescape(replaceText);
 
     const SearchConfig& config = m_currentSearchInstance->getSearchConfig();
-    SearchConfig::SearchScope scope = config.searchScope;
+    const SearchConfig::SearchScope scope = config.searchScope;
 
     if (scope == SearchConfig::ScopeCurrentDocument || scope == SearchConfig::ScopeAllOpenDocuments) {
         // Since doc management is a mess we've got to go through all DocResults manually here.
@@ -569,16 +571,16 @@ SearchConfig AdvancedSearchDock::getConfigFromInputs()
 
 void AdvancedSearchDock::setInputsFromConfig(const SearchConfig& config)
 {
-    m_cmbSearchDirectory->setCurrentText( config.directory );
-    m_cmbSearchPattern->setCurrentText( config.filePattern );
-    m_cmbSearchTerm->setCurrentText( config.searchString );
-    m_cmbSearchScope->setCurrentIndex( config.searchScope );
+    m_cmbSearchDirectory->setCurrentText(config.directory);
+    m_cmbSearchPattern->setCurrentText(config.filePattern);
+    m_cmbSearchTerm->setCurrentText(config.searchString);
+    m_cmbSearchScope->setCurrentIndex(config.searchScope);
 
-    m_chkMatchCase->setChecked( config.matchCase );
-    m_chkMatchWords->setChecked( config.matchWord );
-    m_chkUseRegex->setChecked( config.searchMode == SearchConfig::ModeRegex );
-    m_chkUseSpecialChars->setChecked( config.searchMode == SearchConfig::ModePlainTextSpecialChars );
-    m_chkIncludeSubdirs->setChecked( config.includeSubdirs );
+    m_chkMatchCase->setChecked(config.matchCase);
+    m_chkMatchWords->setChecked(config.matchWord);
+    m_chkUseRegex->setChecked(config.searchMode == SearchConfig::ModeRegex);
+    m_chkUseSpecialChars->setChecked(config.searchMode == SearchConfig::ModePlainTextSpecialChars);
+    m_chkIncludeSubdirs->setChecked(config.includeSubdirs);
 }
 
 void AdvancedSearchDock::onSearchHistorySizeChange()
@@ -716,7 +718,7 @@ void AdvancedSearchDock::updateSearchHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    auto history = addUniqueToList(settings.Search.getSearchHistory(), item);
+    const QStringList history = addUniqueToList(settings.Search.getSearchHistory(), item);
     settings.Search.setSearchHistory(history);
     m_cmbSearchTerm->clear();
     m_cmbSearchTerm->addItems(history);
@@ -726,7 +728,7 @@ void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    auto history = addUniqueToList(settings.Search.getReplaceHistory(), item);
+    const QStringList history = addUniqueToList(settings.Search.getReplaceHistory(), item);
     settings.Search.setReplaceHistory(history);
     m_cmbReplaceText->clear();
     m_cmbReplaceText->addItems(history);
@@ -736,7 +738,7 @@ void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    auto history = addUniqueToList(settings.Search.getFileHistory(), item);
+    const QStringList history = addUniqueToList(settings.Search.getFileHistory(), item);
     settings.Search.setFileHistory(history);
     m_cmbSearchDirectory->clear();
     m_cmbSearchDirectory->addItems(history);
@@ -746,7 +748,7 @@ void AdvancedSearchDock::updateFilterHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    auto history = addUniqueToList(settings.Search.getFilterHistory(), item);
+    const QStringList history = addUniqueToList(settings.Search.getFilterHistory(), item);
     settings.Search.setFilterHistory(history);
     m_cmbSearchPattern->clear();
     m_cmbSearchPattern->addItems(history);
@@ -827,10 +829,11 @@ void AdvancedSearchDock::showReplaceDialog(const SearchResult& filteredResults, 
             errorString += tr("And %1 more.").arg(numErrors-8);
 
         QMessageBox::warning(QApplication::activeWindow(),
-                             tr("Replace Results"), errorString, QMessageBox::Ok);
+                             tr("Replacement Results"), errorString, QMessageBox::Ok);
     } else {
         QMessageBox::information(QApplication::activeWindow(),
-                                 tr("Replace Results"), tr("All selected matches successfully replaced."), QMessageBox::Ok);
+                                 tr("Replacement Results"),
+                                 tr("All selected matches successfully replaced."), QMessageBox::Ok);
     }
 
     delete w;

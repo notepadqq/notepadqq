@@ -39,7 +39,7 @@ public:
     const QVector<QString>& getErrors() const { return m_failedFiles; }
 
     /**
-     * @brief replaceAll Replaces all matches with a certain string
+     * @brief replaceAll Replaces all matches in 'content' with 'replacement'.
      * @param doc All of this DocResult's ResultMatches will be replaced
      * @param content This is the string that corresponds to the matches in 'doc'
      * @param replacement This is the replacement string
