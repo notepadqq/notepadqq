@@ -185,6 +185,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
         a->setShortcut(shortcut);
     }
+
+    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSetSmartIndentation());
+    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSetSmartIndentation());
+
     //Register our meta types for signal/slot calls here.
     qRegisterMetaType<FileSearchResult::SearchResult>("FileSearchResult::SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
@@ -1160,7 +1164,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
                     m_settings.Appearance.getOverrideFontSize(),
                     m_settings.Appearance.getOverrideLineHeight());
-    editor->setSmartIndent(ui->actionToggle_Smart_Indent->isChecked());
+    editor->setSmartIndent(m_settings.General.getSetSmartIndentation());
 }
 
 void MainWindow::on_cursorActivity()
@@ -2385,6 +2389,7 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
         editor->setSmartIndent(on);
         return true;
     });
+    m_settings.General.setSetSmartIndentation(on);
 }
 
 void MainWindow::on_actionLoad_Session_triggered()
