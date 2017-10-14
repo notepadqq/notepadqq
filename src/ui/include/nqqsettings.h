@@ -81,6 +81,7 @@ public:
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())
+        NQQ_SETTING(SetSmartIndentation,            bool,       true)
     END_CATEGORY(General)
 
     BEGIN_CATEGORY(Appearance)
