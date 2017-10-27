@@ -501,7 +501,7 @@ void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
     updatePreviewEditorFont();
 }
 
-void frmPreferences::on_spnLineHeight_valueChanged(double arg1)
+void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
 {
     updatePreviewEditorFont();
 }
