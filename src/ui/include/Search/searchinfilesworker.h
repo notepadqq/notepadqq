@@ -79,11 +79,12 @@ private:
      * @param `matchLen`
      * @return `FileSearchResult::Result` object to be used for final search results.
      */
-    FileSearchResult::Result buildResult(const int &line, 
-            const int &column, 
+    FileSearchResult::Result buildResult(const int &line,
+            const QVector<int> &linePosition,
             const int &absoluteColumn, 
             const QString &lineContent, 
-            const int &matchLen);
+            const int &matchLen,
+            const bool showWholeLines);
 
     /**
      * @brief Perform a search using regular expression matching

@@ -1,6 +1,7 @@
 #include "include/Search/searchinfilesworker.h"
 #include "include/Search/searchstring.h"
 #include "include/docengine.h"
+#include "include/nqqsettings.h"
 #include <QDirIterator>
 #include <QMessageBox>
 
@@ -104,6 +105,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
     fileResult.fileName = fileName;
     Qt::CaseSensitivity caseSense = m_searchOptions.MatchCase ? Qt::CaseSensitive : Qt::CaseInsensitive; 
     QVector<int> linePosition = getLinePositions(content);
+    NqqSettings& s = NqqSettings::getInstance();
+    bool showWholeLines = s.Search.getShowWholeLines();
 
     const int totalLines = linePosition.length();
     const int matchLength = m_string.length();
@@ -117,7 +120,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
                 if (linePosition[i] > column) {
                     line = i-1;
                     if (hasResult) {
-                        fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
+                        fileResult.results.append(buildResult(line, linePosition, column, content, matchLength, showWholeLines));
                     }
                     break;
                 }
@@ -138,6 +141,8 @@ FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fi
     int line = 0;
     QVector<int> linePosition = getLinePositions(content);
     QRegularExpressionMatch match;
+    NqqSettings& s = NqqSettings::getInstance();
+    bool showWholeLines = s.Search.getShowWholeLines();
 
     match = m_regex.match(content);
     column = match.capturedStart();
@@ -145,7 +150,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchRegExp(const QString &fi
         for (int i = line; i < linePosition.length(); i++){
             if (linePosition[i] > column) {
                 line = i-1;
-                fileResult.results.append(buildResult(line, column - linePosition[line], column, content, match.capturedLength()));
+                fileResult.results.append(buildResult(line, linePosition, column, content, match.capturedLength(), showWholeLines));
                 break;
             }
         }
@@ -193,17 +198,15 @@ QVector<int> SearchInFilesWorker::getLinePositions(const QString &data)
     return linePosition;
 }
 
-FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const int &column, const int &absoluteColumn, const QString &lineContent, const int &matchLen)
+FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const QVector<int> &linePosition, const int &absoluteColumn, const QString &lineContent, const int &matchLen, const bool showWholeLines)
 {
     FileSearchResult::Result res;
+    const int column = absoluteColumn - linePosition[line];
 
-    if (absoluteColumn > 50) {
-        res.previewBeforeMatch = lineContent.mid(absoluteColumn-50, 50);
-    } else {
-        res.previewBeforeMatch = lineContent.mid(0, absoluteColumn);
-    }
+    res.previewBeforeMatch = lineContent.mid(linePosition[line], column);
     res.match = lineContent.mid(absoluteColumn, matchLen);
-    res.previewAfterMatch = lineContent.mid(absoluteColumn + matchLen, matchLen + 50);
+    res.previewAfterMatch = lineContent.mid(absoluteColumn + matchLen, linePosition[line + 1] - absoluteColumn - matchLen);
+
     res.matchStartLine = line;
     res.matchStartCol = column;
     res.matchEndLine = line;
@@ -211,29 +214,15 @@ FileSearchResult::Result SearchInFilesWorker::buildResult(const int &line, const
     res.matchStartPosition = absoluteColumn;
     res.matchEndPosition = absoluteColumn + matchLen;
 
-    // Efficiently cut leading lines from previewBeforeMatch
-    {
-        int i;
-        for (i = res.previewBeforeMatch.length() - 1; i >= 0; i--) {
-            if (res.previewBeforeMatch[i] == '\r' || res.previewBeforeMatch[i] == '\n') {
-                break;
-            }
+    if (showWholeLines == false){
+        if (res.previewBeforeMatch.length() > 50){
+            res.previewBeforeMatch = res.previewBeforeMatch.mid(res.previewBeforeMatch.length() - 50);
         }
-        res.previewBeforeMatch = res.previewBeforeMatch.mid(i);
-    }
 
-    // Efficiently cut trailing lines from previewAfterMatch
-    {
-        int i, pos = -1;
-        for (i = 0; i < res.previewAfterMatch.length(); i++) {
-            if (res.previewAfterMatch[i] == '\r' || res.previewAfterMatch[i] == '\n') {
-                pos = i;
-                break;
-            }
+        if (res.previewAfterMatch.length() > 50){
+            res.previewAfterMatch = res.previewAfterMatch.mid(0, 50);
         }
-        res.previewAfterMatch = res.previewAfterMatch.mid(0, pos);
     }
-
 
     return res;
 }

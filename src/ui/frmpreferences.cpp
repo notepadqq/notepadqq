@@ -53,6 +53,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadShortcuts();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
+    ui->chkSearch_ShowWholeLines->setChecked(m_settings.Search.getShowWholeLines());
 
     ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
     ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
@@ -338,6 +339,7 @@ bool frmPreferences::applySettings()
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
+    m_settings.Search.setShowWholeLines(ui->chkSearch_ShowWholeLines->isChecked());
     m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
     m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
