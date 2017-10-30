@@ -116,9 +116,7 @@ FileSearchResult::FileResult SearchInFilesWorker::searchPlainText(const QString 
             for (int i = line; i < totalLines; i++) {
                 if (linePosition[i] > column) {
                     line = i-1;
-                    if (hasResult) {
-                        fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
-                    }
+                    fileResult.results.append(buildResult(line, column - linePosition[line], column, content, matchLength));
                     break;
                 }
             }
