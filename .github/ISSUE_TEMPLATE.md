@@ -3,11 +3,11 @@ PLEASE FILL THE FOLLOWING INFORMATION
 -->
 
 **I'm submitting a ...**  (check one with "x")
-
-- [ ] bug report => search github for a similar issue or PR before submitting
-- [ ] feature request
-- [ ] support request => Please do not submit support request here, instead see https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTING.md#question
-
+```
+[ ] bug report => search github for a similar issue or PR before submitting
+[ ] feature request
+[ ] support request => Please do not submit support request here, instead see https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTING.md#question
+```
 
 **Current behavior**
 <!-- Describe how the bug manifests. -->
