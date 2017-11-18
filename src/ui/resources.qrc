@@ -37,6 +37,7 @@
     </qresource>
     <qresource prefix="/translations">
         <file alias="notepadqq_de.qm">../translations/notepadqq_de.qm</file>
+        <file alias="notepadqq_es.qm">../translations/notepadqq_es.qm</file>
         <file alias="notepadqq_fr.qm">../translations/notepadqq_fr.qm</file>
         <file alias="notepadqq_hu.qm">../translations/notepadqq_hu.qm</file>
         <file alias="notepadqq_it.qm">../translations/notepadqq_it.qm</file>

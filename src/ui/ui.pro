@@ -168,6 +168,7 @@ ICON = ../../images/notepadqq.icns
 
 TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
+    ../translations/notepadqq_es.ts \
     ../translations/notepadqq_fr.ts \
     ../translations/notepadqq_hu.ts \
     ../translations/notepadqq_it.ts \
