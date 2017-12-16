@@ -141,9 +141,9 @@ int main(int argc, char *argv[])
 void checkQtVersion()
 {
     QString runtimeVersion = qVersion();
-    if (runtimeVersion.startsWith("5.0") ||
-            runtimeVersion.startsWith("5.1") ||
-            runtimeVersion.startsWith("5.2")) {
+    int minorVersion = runtimeVersion.split(".")[1].toInt();
+    if (runtimeVersion.startsWith("5") &&
+            minorVersion <= 3) {
 
         Notepadqq::setOldQt(true);
     }
