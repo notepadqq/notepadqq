@@ -37,6 +37,9 @@ Notepadqq might work on Qt 5.2, but it's recommended to use Qt 5.3 or later. If 
 Distribution Packages
 ---------------------
 
+#### AppImage (recommended for Ubuntu users) ★
+The QWebKit version used in later versions of Ubuntu causes Notepadqq to be unstable. AppImage solves this issue by packaging its own QWebKit version. Continous builds of Notepadqq's AppImage are available [here](https://github.com/notepadqq/notepadqq/releases/tag/continuous).
+
 #### Ubuntu (official packages) ★
 Notepadqq is available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
