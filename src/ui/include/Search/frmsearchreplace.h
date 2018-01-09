@@ -36,6 +36,7 @@ public:
     * @param `string`: Value to change the search input text to.
     */
     void setSearchText(QString string);
+    void setSearchReplaceInSelection(bool checked);
 
    /**
     * @brief Runs a "find next" or "find prev", taking the options from the UI.
@@ -102,6 +103,7 @@ private slots:
     void on_actionReplace_toggled(bool on);
     void on_actionFind_in_files_toggled(bool on);
     void on_chkShowAdvanced_toggled(bool checked);
+    void on_chkSearchReplaceInSelection_toggled(bool checked);
     void on_radSearchWithRegex_toggled(bool checked);
     void on_radSearchPlainText_toggled(bool checked);
     void on_radSearchWithSpecialChars_toggled(bool checked);

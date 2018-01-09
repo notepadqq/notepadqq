@@ -1386,17 +1386,7 @@ void MainWindow::on_fileSearchResultFinished(FileSearchResult::SearchResult resu
 
 void MainWindow::on_actionSearch_triggered()
 {
-    if (!m_frmSearchReplace) {
-        instantiateFrmSearchReplace();
-    }
-
-    QStringList sel = currentEditor()->selectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
-
-    m_frmSearchReplace->show(frmSearchReplace::TabSearch);
-    m_frmSearchReplace->activateWindow();
+    showSearchReplace(frmSearchReplace::TabSearch);
 }
 
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
@@ -1523,17 +1513,7 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
 
 void MainWindow::on_actionReplace_triggered()
 {
-    if (!m_frmSearchReplace) {
-        instantiateFrmSearchReplace();
-    }
-
-    QStringList sel = currentEditor()->selectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
-
-    m_frmSearchReplace->show(frmSearchReplace::TabReplace);
-    m_frmSearchReplace->activateWindow();
+    showSearchReplace(frmSearchReplace::TabReplace);
 }
 
 void MainWindow::on_actionPlain_text_triggered()
@@ -2253,16 +2233,26 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
+    showSearchReplace(frmSearchReplace::TabSearchInFiles);
+}
+
+void MainWindow::showSearchReplace(frmSearchReplace::Tabs tab)
+{
     if (!m_frmSearchReplace) {
         instantiateFrmSearchReplace();
     }
 
     QStringList sel = currentEditor()->selectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
+    bool selected = sel.length() > 0 && sel[0].length() > 0;
+    if (selected) {
+        bool multiline = sel[0].contains("\n");
+        m_frmSearchReplace->setSearchReplaceInSelection(multiline);
+        if (!multiline) {
+            m_frmSearchReplace->setSearchText(sel[0]);
+        }
     }
 
-    m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
+    m_frmSearchReplace->show(tab);
     m_frmSearchReplace->activateWindow();
 }
 

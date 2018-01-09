@@ -37,7 +37,11 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->cmbFilter->addItems(s.Search.getFilterHistory());
     ui->cmbFilter->setCurrentText("");
 
-    connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, &frmSearchReplace::on_searchStringEdited);
+    connect(ui->cmbSearch->lineEdit(), &QLineEdit::textEdited, this, [=](const QString & text) {
+        if (!ui->chkSearchReplaceInSelection->isChecked()) {
+            on_searchStringEdited(text);
+        }
+    });
     connect(ui->cmbSearch->lineEdit(), &QLineEdit::returnPressed, this, [=]() {
         if (ui->actionFind_in_files->isChecked()) {
             on_btnFindAll_clicked();
@@ -66,6 +70,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->actionFind_in_files->setChecked(true);
 
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
+    ui->chkSearchReplaceInSelection->toggled(ui->chkSearchReplaceInSelection->isChecked());
 
     setCurrentTab(TabSearch);
 }
@@ -109,6 +114,11 @@ void frmSearchReplace::setSearchText(QString string)
       which prevents the bug. Auto complete is enabled again in on_searchStringEdited.
     */
     ui->cmbSearch->setAutoCompletion(false);
+}
+
+void frmSearchReplace::setSearchReplaceInSelection(bool checked)
+{
+    ui->chkSearchReplaceInSelection->setChecked(checked);
 }
 
 void frmSearchReplace::setCurrentTab(Tabs tab)
@@ -188,6 +198,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelp
     data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
 		data.append(QString::number(static_cast<int>(searchMode)));
+    data.append(ui->chkSearchReplaceInSelection->isChecked());
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
@@ -198,6 +209,7 @@ int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode search
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
     data.append(regexModifiersFromSearchOptions(searchOptions));
+    data.append(ui->chkSearchReplaceInSelection->isChecked());
     QVariant count = currentEditor()->sendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data));
     return count.toInt();
 }
@@ -482,6 +494,8 @@ void frmSearchReplace::on_actionFind_in_files_toggled(bool on)
     ui->btnFindNext->setVisible(!on);
     ui->btnFindPrev->setVisible(!on);
     ui->btnSelectAll->setVisible(!on);
+    ui->chkSearchReplaceInSelection->setVisible(!on);
+    ui->frameSearchReplaceAll->setVisible(!on);
 
     ui->cmbSearch->setFocus();
 
@@ -508,6 +522,16 @@ void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
         ui->groupAdvanced->hide();
 
     manualSizeAdjust();
+}
+
+void frmSearchReplace::on_chkSearchReplaceInSelection_toggled(bool checked)
+{
+    ui->btnFindNext->setEnabled(!checked);
+    ui->btnFindPrev->setEnabled(!checked);
+    ui->btnReplaceNext->setEnabled(!checked);
+    ui->btnReplacePrev->setEnabled(!checked);
+
+    manualSizeAdjust(); 
 }
 
 void frmSearchReplace::on_radSearchWithRegex_toggled(bool checked)

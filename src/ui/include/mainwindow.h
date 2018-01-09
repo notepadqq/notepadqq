@@ -270,6 +270,12 @@ private:
     void                openRecentFileEntry(QUrl url);
 
     /**
+    * @brief Open the Search / replace / search in files window.
+    * @param tab Which tab to open
+    */
+    void                showSearchReplace(frmSearchReplace::Tabs tab);
+
+    /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
      */
     void                fixKeyboardShortcuts();
