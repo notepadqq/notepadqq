@@ -319,7 +319,7 @@ void frmSearchReplace::searchReplaceInFiles(const QString &string, const QString
         connect(m_session->threadSearch, SIGNAL(finished()), m_session->threadSearch, SLOT(deleteLater()));
         connect(m_session->threadSearch, &SearchInFilesWorker::error, this, &frmSearchReplace::handleError);
         connect(m_session->threadSearch, &SearchInFilesWorker::errorReadingFile, this, &frmSearchReplace::displayThreadErrorMessageBox, Qt::BlockingQueuedConnection);
-        connect(m_session->threadSearch, &SearchInFilesWorker::progress, this, &frmSearchReplace::handleProgress); 
+        connect(m_session->threadSearch, &SearchInFilesWorker::progress, this, &frmSearchReplace::handleProgress);
         connect(this, &frmSearchReplace::stopSearchInFiles, m_session->threadSearch, &SearchInFilesWorker::stop, Qt::DirectConnection);
         //Send results to a different location in the event of replaceMode.
         if (replaceMode) {
@@ -643,8 +643,20 @@ void frmSearchReplace::addToSearchHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getSearchHistory();
+
+    if (!s.Search.getSaveHistory()) {
+
+        for (int index = 0; index < ui->cmbSearch->count(); index++) {
+            history << ui->cmbSearch->itemText(index);
+        }
+
+    }
+
     addToHistory(history, string, ui->cmbSearch);
-    s.Search.setSearchHistory(history);
+
+    if (s.Search.getSaveHistory()) {
+        s.Search.setSearchHistory(history);
+    }
 }
 
 void frmSearchReplace::addToReplaceHistory(QString string)
@@ -652,8 +664,20 @@ void frmSearchReplace::addToReplaceHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getReplaceHistory();
+
+    if (!s.Search.getSaveHistory()) {
+
+        for (int index = 0; index < ui->cmbReplace->count(); index++) {
+            history << ui->cmbReplace->itemText(index);
+        }
+
+    }
+
     addToHistory(history, string, ui->cmbReplace);
-    s.Search.setReplaceHistory(history);
+
+    if (s.Search.getSaveHistory()) {
+        s.Search.setReplaceHistory(history);
+    }
 }
 
 void frmSearchReplace::addToFileHistory(QString string)
@@ -661,8 +685,20 @@ void frmSearchReplace::addToFileHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getFileHistory();
+
+    if (!s.Search.getSaveHistory()) {
+
+        for (int index = 0; index < ui->cmbLookIn->count(); index++) {
+            history << ui->cmbLookIn->itemText(index);
+        }
+
+    }
+
     addToHistory(history, string, ui->cmbLookIn);
-    s.Search.setFileHistory(history);
+
+    if (s.Search.getSaveHistory()) {
+        s.Search.setFileHistory(history);
+    }
 }
 
 void frmSearchReplace::addToFilterHistory(QString string)
@@ -670,6 +706,18 @@ void frmSearchReplace::addToFilterHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getFilterHistory();
+
+    if (!s.Search.getSaveHistory()) {
+
+        for (int index = 0; index < ui->cmbFilter->count(); index++) {
+            history << ui->cmbFilter->itemText(index);
+        }
+
+    }
+
     addToHistory(history, string, ui->cmbFilter);
-    s.Search.setFilterHistory(history);
+
+    if (s.Search.getSaveHistory()) {
+        s.Search.setFilterHistory(history);
+    }
 }
