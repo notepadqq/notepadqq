@@ -20,6 +20,7 @@ Build
 
 #### Build it
 
+    notepadqq$ sudo apt-get install qt5-default qttools5-dev-tools libqt5webkit5 libqt5webkit5-dev libqt5webkit5-qmlwebkitplugin libqt5svg5 libqt5svg5-dev
     notepadqq$ ./configure --prefix /usr
     notepadqq$ make
     

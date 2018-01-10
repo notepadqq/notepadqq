@@ -464,6 +464,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkSearch_SaveHistory">
+           <property name="text">
+            <string>Save search history</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer_2">
            <property name="orientation">
             <enum>Qt::Vertical</enum>

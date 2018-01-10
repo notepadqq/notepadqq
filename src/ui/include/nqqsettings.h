@@ -31,6 +31,7 @@
     Type get##Name() const { return _m_settings.value(_m_category+#Name,Default).value<Type>(); } \
     void set##Name(const Type& newValue) { _m_settings.setValue(_m_category+#Name, newValue); } \
     Type reset##Name() { _m_settings.setValue(_m_category+#Name,Default); return Default; } \
+    void remove##Name() { _m_settings.remove(_m_category+#Name); } \
     bool has##Name() const { return _m_settings.contains(_m_category+#Name); }
 
 #define NQQ_SETTING_WITH_KEY(Name, Type, Default) \
@@ -93,6 +94,7 @@ public:
 
     BEGIN_CATEGORY(Search)
         NQQ_SETTING(SearchAsIType,  bool,           true)
+        NQQ_SETTING(SaveHistory,    bool,           true)
         NQQ_SETTING(SearchHistory,  QStringList,    QStringList())
         NQQ_SETTING(ReplaceHistory, QStringList,    QStringList())
         NQQ_SETTING(FileHistory,    QStringList,    QStringList())

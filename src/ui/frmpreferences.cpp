@@ -53,6 +53,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadShortcuts();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
+    ui->chkSearch_SaveHistory->setChecked(m_settings.Search.getSaveHistory());
 
     ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
     ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
@@ -338,6 +339,33 @@ bool frmPreferences::applySettings()
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
+
+    if (!ui->chkSearch_SaveHistory->isChecked() && m_settings.Search.getSaveHistory()) {
+
+        if (!m_settings.Search.getSearchHistory().isEmpty() || !m_settings.Search.getReplaceHistory().isEmpty()
+            || !m_settings.Search.getFileHistory().isEmpty() || !m_settings.Search.getFilterHistory().isEmpty()) {
+
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(QCoreApplication::applicationName());
+            msgBox.setIcon(QMessageBox::Question);
+            msgBox.setText("You have disabled search history saving.  Would you like to clear the existing saved history?");
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.addButton(QMessageBox::No);
+            msgBox.setDefaultButton(QMessageBox::No);
+
+            if (msgBox.exec() == QMessageBox::Yes) {
+                m_settings.Search.removeSearchHistory();
+                m_settings.Search.removeReplaceHistory();
+                m_settings.Search.removeFileHistory();
+                m_settings.Search.removeFilterHistory();
+            }
+
+        }
+
+    }
+
+    m_settings.Search.setSaveHistory(ui->chkSearch_SaveHistory->isChecked());
+
     m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
     m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
