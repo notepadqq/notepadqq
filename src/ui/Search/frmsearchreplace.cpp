@@ -407,7 +407,8 @@ void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
     comboBox->addItems(history);
 }
 
-QStringList getComboBoxContents(const QComboBox* cb) {
+// Returns a QStringList of all items in the combo box.
+static QStringList getComboBoxContents(const QComboBox* cb) {
     QStringList list;
     const int size = cb->count();
     for (int index = 0; index < size; index++) {
@@ -443,35 +444,5 @@ void frmSearchReplace::addToReplaceHistory(QString string)
 
     if (s.Search.getSaveHistory()) {
         s.Search.setReplaceHistory(history);
-    }
-}
-
-void frmSearchReplace::addToFileHistory(QString string)
-{
-    NqqSettings& s = NqqSettings::getInstance();
-
-    auto history = s.Search.getSaveHistory() ?
-                s.Search.getFileHistory() :
-                getComboBoxContents(ui->cmbLookIn);
-
-    addToHistory(history, string, ui->cmbLookIn);
-
-    if (s.Search.getSaveHistory()) {
-        s.Search.setFileHistory(history);
-    }
-}
-
-void frmSearchReplace::addToFilterHistory(QString string)
-{
-    NqqSettings& s = NqqSettings::getInstance();
-
-    auto history = s.Search.getSaveHistory() ?
-                s.Search.getFilterHistory() :
-                getComboBoxContents(ui->cmbFilter);
-
-    addToHistory(history, string, ui->cmbFilter);
-
-    if (s.Search.getSaveHistory()) {
-        s.Search.setFilterHistory(history);
     }
 }

@@ -188,7 +188,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
 
     //Register our meta types for signal/slot calls here.
-    qRegisterMetaType<FileSearchResult::SearchResult>("FileSearchResult::SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
 }
 

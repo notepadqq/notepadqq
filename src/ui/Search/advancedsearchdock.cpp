@@ -714,44 +714,76 @@ QDockWidget* AdvancedSearchDock::getDockWidget() const
     return m_dockWidget.data();
 }
 
+// Returns a QStringList of all items in the combo box.
+static QStringList getComboBoxContents(const QComboBox* cb) {
+    QStringList list;
+    const int size = cb->count();
+    for (int index = 0; index < size; index++) {
+        list << cb->itemText(index);
+    }
+    return list;
+}
+
 void AdvancedSearchDock::updateSearchHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    const QStringList history = addUniqueToList(settings.Search.getSearchHistory(), item);
-    settings.Search.setSearchHistory(history);
+    const QStringList& currHistory = settings.Search.getSaveHistory() ?
+                settings.Search.getSearchHistory() :
+                getComboBoxContents(m_cmbSearchTerm) ;
+
+    const QStringList newHistory = addUniqueToList(currHistory, item);
     m_cmbSearchTerm->clear();
-    m_cmbSearchTerm->addItems(history);
+    m_cmbSearchTerm->addItems(newHistory);
+
+    if(settings.Search.getSaveHistory())
+        settings.Search.setSearchHistory(newHistory);
 }
 
 void AdvancedSearchDock::updateReplaceHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    const QStringList history = addUniqueToList(settings.Search.getReplaceHistory(), item);
-    settings.Search.setReplaceHistory(history);
+    const QStringList& currHistory = settings.Search.getSaveHistory() ?
+                settings.Search.getReplaceHistory() :
+                getComboBoxContents(m_cmbReplaceText) ;
+
+    const QStringList newHistory = addUniqueToList(currHistory, item);
     m_cmbReplaceText->clear();
-    m_cmbReplaceText->addItems(history);
+    m_cmbReplaceText->addItems(newHistory);
+
+    if(settings.Search.getSaveHistory())
+        settings.Search.setReplaceHistory(newHistory);
 }
 
 void AdvancedSearchDock::updateDirectoryhHistory(const QString& item) {
     if (item.isEmpty()) return;
 
     NqqSettings& settings = NqqSettings::getInstance();
-    const QStringList history = addUniqueToList(settings.Search.getFileHistory(), item);
-    settings.Search.setFileHistory(history);
+    const QStringList& currHistory = settings.Search.getSaveHistory() ?
+                settings.Search.getFileHistory() :
+                getComboBoxContents(m_cmbSearchDirectory) ;
+
+    const QStringList newHistory = addUniqueToList(currHistory, item);
     m_cmbSearchDirectory->clear();
-    m_cmbSearchDirectory->addItems(history);
+    m_cmbSearchDirectory->addItems(newHistory);
+
+    if(settings.Search.getSaveHistory())
+        settings.Search.setFileHistory(newHistory);
 }
 
 void AdvancedSearchDock::updateFilterHistory(const QString& item) {
-    if (item.isEmpty()) return;
-
     NqqSettings& settings = NqqSettings::getInstance();
-    const QStringList history = addUniqueToList(settings.Search.getFilterHistory(), item);
-    settings.Search.setFilterHistory(history);
+    const QStringList& currHistory = settings.Search.getSaveHistory() ?
+                settings.Search.getFilterHistory() :
+                getComboBoxContents(m_cmbSearchPattern) ;
+
+    const QStringList newHistory = addUniqueToList(currHistory, item);
     m_cmbSearchPattern->clear();
-    m_cmbSearchPattern->addItems(history);
+    m_cmbSearchPattern->addItems(newHistory);
+
+    if(settings.Search.getSaveHistory())
+        settings.Search.setFilterHistory(newHistory);
 }
 
 void AdvancedSearchDock::startSearch(SearchConfig cfg)
