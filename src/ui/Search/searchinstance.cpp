@@ -18,7 +18,8 @@
  */
 QString getFormattedLocationText(const DocResult& docResult, const QString& searchLocation) {
     const int commonPathLength = searchLocation.length();
-    const QString relativePath = docResult.fileName.mid(commonPathLength);
+    const QString relativePath = docResult.fileName.startsWith(searchLocation) ?
+                docResult.fileName.mid(commonPathLength) : docResult.fileName;
 
     return QString("<span style='white-space:pre-wrap;'>" +
                    QObject::tr("<b>%1</b> Results for:   '<b>%2</b>'")
@@ -105,7 +106,18 @@ SearchInstance::SearchInstance(const SearchConfig& config)
 {
     QTreeWidget* treeWidget = getResultTreeWidget();
 
-    treeWidget->setHeaderLabel(tr("Search Results in") + " \"" + config.directory + "\"");
+    QString searchLocation;
+
+    switch(config.searchScope) {
+    case SearchConfig::ScopeCurrentDocument:
+        searchLocation = tr("current document"); break;
+    case SearchConfig::ScopeAllOpenDocuments:
+        searchLocation = tr("open documents"); break;
+    case SearchConfig::ScopeFileSystem:
+        searchLocation = '"' + config.directory + '"'; break;
+    }
+
+    treeWidget->setHeaderLabel(tr("Search Results in: %1").arg(searchLocation));
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
@@ -172,8 +184,9 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         m_fileSearcher = FileSearcher::prepareAsyncSearch(config);
         connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
         connect(m_fileSearcher, &FileSearcher::resultReady, this, &SearchInstance::onSearchCompleted);
-        connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, [this](){
-            m_fileSearcher->deleteLater();
+        connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, &FileSearcher::deleteLater);
+        connect(m_fileSearcher, &FileSearcher::finished, this, [this](){
+            qDebug() << "this";
             m_fileSearcher = nullptr;
         });
 
@@ -330,12 +343,10 @@ void SearchInstance::onSearchCompleted()
 {
     m_isSearchInProgress = false;
 
-    // If m_fileSearcher is set we get the results from it. Otherwise we assume m_searchResult already has all
-    // results in it.
+    // m_fileSearcher is only instantiated when we've done a filesystem search. If so, get the results
+    // from there. Otherwise all search results were already added to m_searchResult
     if (m_fileSearcher) {
         m_searchResult = std::move(m_fileSearcher->getResult());
-        delete m_fileSearcher;
-        m_fileSearcher = nullptr;
     }
 
     m_treeWidget->clear();
