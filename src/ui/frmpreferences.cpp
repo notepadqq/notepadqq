@@ -339,31 +339,6 @@ bool frmPreferences::applySettings()
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
-
-    if (!ui->chkSearch_SaveHistory->isChecked() && m_settings.Search.getSaveHistory()) {
-
-        if (!m_settings.Search.getSearchHistory().isEmpty() || !m_settings.Search.getReplaceHistory().isEmpty()
-            || !m_settings.Search.getFileHistory().isEmpty() || !m_settings.Search.getFilterHistory().isEmpty()) {
-
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setIcon(QMessageBox::Question);
-            msgBox.setText("You have disabled search history saving.  Would you like to clear the existing saved history?");
-            msgBox.setStandardButtons(QMessageBox::Yes);
-            msgBox.addButton(QMessageBox::No);
-            msgBox.setDefaultButton(QMessageBox::No);
-
-            if (msgBox.exec() == QMessageBox::Yes) {
-                m_settings.Search.removeSearchHistory();
-                m_settings.Search.removeReplaceHistory();
-                m_settings.Search.removeFileHistory();
-                m_settings.Search.removeFilterHistory();
-            }
-
-        }
-
-    }
-
     m_settings.Search.setSaveHistory(ui->chkSearch_SaveHistory->isChecked());
 
     m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
@@ -532,4 +507,38 @@ void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
 void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
 {
     updatePreviewEditorFont();
+}
+
+void frmPreferences::on_chkSearch_SaveHistory_toggled(bool checked)
+{
+    if (checked)
+        return;
+
+    if (m_settings.Search.getSearchHistory().isEmpty() &&
+        m_settings.Search.getReplaceHistory().isEmpty() &&
+        m_settings.Search.getFileHistory().isEmpty() &&
+        m_settings.Search.getFilterHistory().isEmpty())
+        return;
+
+
+    QMessageBox msgBox(qApp->activeWindow());
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setText(tr("Would you like to clear the existing history now?"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    auto result = msgBox.exec();
+
+    if(result == QMessageBox::Cancel) {
+        ui->chkSearch_SaveHistory->setChecked(true);
+        return;
+    }
+
+    if (result == QMessageBox::Yes) {
+        m_settings.Search.resetSearchHistory();
+        m_settings.Search.resetReplaceHistory();
+        m_settings.Search.resetFileHistory();
+        m_settings.Search.resetFilterHistory();
+    }
 }

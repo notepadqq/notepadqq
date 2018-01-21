@@ -638,19 +638,22 @@ void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
     comboBox->addItems(history);
 }
 
+QStringList getComboBoxContents(const QComboBox* cb) {
+    QStringList list;
+    const int size = cb->count();
+    for (int index = 0; index < size; index++) {
+        list << cb->itemText(index);
+    }
+    return list;
+}
+
 void frmSearchReplace::addToSearchHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getSearchHistory();
-
-    if (!s.Search.getSaveHistory()) {
-
-        for (int index = 0; index < ui->cmbSearch->count(); index++) {
-            history << ui->cmbSearch->itemText(index);
-        }
-
-    }
+    auto history = s.Search.getSaveHistory() ?
+                s.Search.getSearchHistory() :
+                getComboBoxContents(ui->cmbSearch);
 
     addToHistory(history, string, ui->cmbSearch);
 
@@ -663,15 +666,9 @@ void frmSearchReplace::addToReplaceHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getReplaceHistory();
-
-    if (!s.Search.getSaveHistory()) {
-
-        for (int index = 0; index < ui->cmbReplace->count(); index++) {
-            history << ui->cmbReplace->itemText(index);
-        }
-
-    }
+    auto history = s.Search.getSaveHistory() ?
+                s.Search.getSearchHistory() :
+                getComboBoxContents(ui->cmbReplace);
 
     addToHistory(history, string, ui->cmbReplace);
 
@@ -684,15 +681,9 @@ void frmSearchReplace::addToFileHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getFileHistory();
-
-    if (!s.Search.getSaveHistory()) {
-
-        for (int index = 0; index < ui->cmbLookIn->count(); index++) {
-            history << ui->cmbLookIn->itemText(index);
-        }
-
-    }
+    auto history = s.Search.getSaveHistory() ?
+                s.Search.getSearchHistory() :
+                getComboBoxContents(ui->cmbLookIn);
 
     addToHistory(history, string, ui->cmbLookIn);
 
@@ -705,15 +696,9 @@ void frmSearchReplace::addToFilterHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getFilterHistory();
-
-    if (!s.Search.getSaveHistory()) {
-
-        for (int index = 0; index < ui->cmbFilter->count(); index++) {
-            history << ui->cmbFilter->itemText(index);
-        }
-
-    }
+    auto history = s.Search.getSaveHistory() ?
+                s.Search.getSearchHistory() :
+                getComboBoxContents(ui->cmbFilter);
 
     addToHistory(history, string, ui->cmbFilter);
 
