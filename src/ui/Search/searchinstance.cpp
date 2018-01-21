@@ -185,8 +185,8 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         connect(m_fileSearcher, &FileSearcher::resultProgress, this, &SearchInstance::onSearchProgress);
         connect(m_fileSearcher, &FileSearcher::resultReady, this, &SearchInstance::onSearchCompleted);
         connect(m_fileSearcher, &FileSearcher::finished, m_fileSearcher, &FileSearcher::deleteLater);
-        connect(m_fileSearcher, &FileSearcher::finished, this, [this](){
-            qDebug() << "this";
+        connect(m_fileSearcher, &FileSearcher::finished, this, [this]() {
+            // 'this' may be deleted during fileSearcher's lifetime, so this needs its own signal connection.
             m_fileSearcher = nullptr;
         });
 
