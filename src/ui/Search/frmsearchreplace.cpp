@@ -667,7 +667,7 @@ void frmSearchReplace::addToReplaceHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getSaveHistory() ?
-                s.Search.getSearchHistory() :
+                s.Search.getReplaceHistory() :
                 getComboBoxContents(ui->cmbReplace);
 
     addToHistory(history, string, ui->cmbReplace);
@@ -682,7 +682,7 @@ void frmSearchReplace::addToFileHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getSaveHistory() ?
-                s.Search.getSearchHistory() :
+                s.Search.getFileHistory() :
                 getComboBoxContents(ui->cmbLookIn);
 
     addToHistory(history, string, ui->cmbLookIn);
@@ -697,7 +697,7 @@ void frmSearchReplace::addToFilterHistory(QString string)
     NqqSettings& s = NqqSettings::getInstance();
 
     auto history = s.Search.getSaveHistory() ?
-                s.Search.getSearchHistory() :
+                s.Search.getFilterHistory() :
                 getComboBoxContents(ui->cmbFilter);
 
     addToHistory(history, string, ui->cmbFilter);
