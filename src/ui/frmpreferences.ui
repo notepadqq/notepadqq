@@ -86,7 +86,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -464,6 +464,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkSearch_SaveHistory">
+           <property name="text">
+            <string>Save search history</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer_2">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -506,7 +513,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>356</width>
+              <width>362</width>
               <height>205</height>
              </rect>
             </property>

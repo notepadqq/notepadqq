@@ -47,6 +47,8 @@ private slots:
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_chkSearch_SaveHistory_toggled(bool checked);
+
 private:
     /**
      * @brief s_lastSelectedTab Contains the index of the last selected preferences tab. Default is 0.

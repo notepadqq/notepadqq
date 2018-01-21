@@ -53,6 +53,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadShortcuts();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
+    ui->chkSearch_SaveHistory->setChecked(m_settings.Search.getSaveHistory());
 
     ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
     ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
@@ -338,6 +339,8 @@ bool frmPreferences::applySettings()
     saveShortcuts();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
+    m_settings.Search.setSaveHistory(ui->chkSearch_SaveHistory->isChecked());
+
     m_settings.Extensions.setRuntimeNodeJS(ui->txtNodejs->text());
     m_settings.Extensions.setRuntimeNpm(ui->txtNpm->text());
 
@@ -504,4 +507,38 @@ void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
 void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
 {
     updatePreviewEditorFont();
+}
+
+void frmPreferences::on_chkSearch_SaveHistory_toggled(bool checked)
+{
+    if (checked)
+        return;
+
+    if (m_settings.Search.getSearchHistory().isEmpty() &&
+        m_settings.Search.getReplaceHistory().isEmpty() &&
+        m_settings.Search.getFileHistory().isEmpty() &&
+        m_settings.Search.getFilterHistory().isEmpty())
+        return;
+
+
+    QMessageBox msgBox(qApp->activeWindow());
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setText(tr("Would you like to clear the existing history now?"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    auto result = msgBox.exec();
+
+    if(result == QMessageBox::Cancel) {
+        ui->chkSearch_SaveHistory->setChecked(true);
+        return;
+    }
+
+    if (result == QMessageBox::Yes) {
+        m_settings.Search.resetSearchHistory();
+        m_settings.Search.resetReplaceHistory();
+        m_settings.Search.resetFileHistory();
+        m_settings.Search.resetFilterHistory();
+    }
 }
