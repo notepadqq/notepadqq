@@ -42,7 +42,9 @@ std::vector<int> getLinePositions(const QString &data)
 
     linePosition.push_back(0);
 
-    for (int i = 0; i < dataSize; i++) {
+    // Finds line-breaks in the string. Doesn't check the last char so the loop
+    // can be optimized.
+    for (int i = 0; i < dataSize-1; i++) {
         if (data[i] == '\r' && data[i+1] == '\n') {
             linePosition.push_back(i+2);
             i++;
@@ -50,6 +52,11 @@ std::vector<int> getLinePositions(const QString &data)
             linePosition.push_back(i+1);
         }
     }
+    
+    // Check the last char manually
+    if (dataSize > 0 && (*data.end() == '\r' || *data.end() == '\n'))
+        linePosition.push_back(dataSize);
+    
 
     linePosition.push_back(dataSize);
     return linePosition;
