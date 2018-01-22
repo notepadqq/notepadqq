@@ -50,7 +50,7 @@ QStringList addUniqueToList(QStringList list, const QString& item) {
 bool askConfirmationForReplace(QString replaceText, int numReplacements) {
     return QMessageBox::information(QApplication::activeWindow(),
                                     QObject::tr("Confirm Replacement"),
-                                    QObject::tr("This will replace %1 selected matches with \"%2\". This action cannot be undone. Continue?")
+                                    QObject::tr("This will replace %1 selected matches with \"%2\". Continue?")
                                     .arg(numReplacements)
                                     .arg(replaceText),
                                     QMessageBox::Ok | QMessageBox::Cancel,
