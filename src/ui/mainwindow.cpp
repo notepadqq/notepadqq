@@ -41,8 +41,8 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui(new Ui::MainWindow),
     m_topEditorContainer(new TopEditorContainer(this)),
     m_settings(NqqSettings::getInstance()),
-    m_fileSearchResultsWidget(new FileSearchResultsWidget()),
-    m_workingDirectory(workingDirectory)
+    m_workingDirectory(workingDirectory),
+    m_advSearchDock(new AdvancedSearchDock(this))
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -124,10 +124,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     setAcceptDrops(true);
 
-    ui->dockFileSearchResults->setWidget(m_fileSearchResultsWidget);
-    connect(m_fileSearchResultsWidget, &FileSearchResultsWidget::resultMatchClicked,
-            this, &MainWindow::on_resultMatchClicked);
-
     // Initialize UI from settings
     initUI();
 
@@ -152,11 +148,13 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
         m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
     }
 
-    restoreWindowSettings();
-
     ui->actionFull_Screen->setChecked(isFullScreen());
 
-    ui->dockFileSearchResults->hide();
+    // Initialize the advanced search dock and hook its signals up
+    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
+    connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, &MainWindow::searchDockItemClicked);
+
+    restoreWindowSettings();
 
     // If there was another window already opened, move this window
     // slightly to the bottom-right, so that they won't completely overlap.
@@ -190,7 +188,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
 
     //Register our meta types for signal/slot calls here.
-    qRegisterMetaType<FileSearchResult::SearchResult>("FileSearchResult::SearchResult");
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -1214,6 +1211,40 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     }
 }
 
+void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& result)
+{
+    if(doc.docType == DocResult::TypeDocument) {
+        // Make sure the editor is still open by searching for it first.
+        Editor* found = doc.editor;
+        EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
+        if (!parentWidget) return;
+
+        parentWidget->setCurrentWidget(found);
+        found->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                            result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        found->setFocus();
+
+    } else if (doc.docType == DocResult::TypeFile) {
+        // Check the file's existence before trying to open it through the DocEngine. that is needed because
+        // DocEngine will even open nonexistent documents and just show them as empty.
+        if (!QFile(doc.fileName).exists()) return;
+
+        QUrl url = stringToUrl(doc.fileName);
+        m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+
+        QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
+
+        if (pos.first == -1 || pos.second == -1)
+            return;
+
+        Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
+
+        editor->setSelection(result.lineNumber-1, result.positionInLine, //selection start
+                             result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        editor->setFocus();
+    }
+}
+
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
@@ -1373,16 +1404,13 @@ void MainWindow::instantiateFrmSearchReplace()
                                  m_topEditorContainer,
                                  this);
 
-        connect(m_frmSearchReplace, &frmSearchReplace::fileSearchResultFinished,
-                this, &MainWindow::on_fileSearchResultFinished);
+        connect(m_frmSearchReplace, &frmSearchReplace::toggleAdvancedSearch, [this](){
+            QWidget* dockWidget = m_advSearchDock->getDockWidget();
+            dockWidget->setVisible( !dockWidget->isVisible() );
+        });
     }
 }
 
-void MainWindow::on_fileSearchResultFinished(FileSearchResult::SearchResult result)
-{
-    m_fileSearchResultsWidget->addSearchResult(result);
-    ui->dockFileSearchResults->show();
-}
 
 void MainWindow::on_actionSearch_triggered()
 {
@@ -2253,17 +2281,8 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
-    if (!m_frmSearchReplace) {
-        instantiateFrmSearchReplace();
-    }
-
-    QStringList sel = currentEditor()->selectedTexts();
-    if (sel.length() > 0 && sel[0].length() > 0) {
-        m_frmSearchReplace->setSearchText(sel[0]);
-    }
-
-    m_frmSearchReplace->show(frmSearchReplace::TabSearchInFiles);
-    m_frmSearchReplace->activateWindow();
+    QWidget* dockWidget = m_advSearchDock->getDockWidget();
+    dockWidget->setVisible( !dockWidget->isVisible() );
 }
 
 void MainWindow::on_actionDelete_Line_triggered()
@@ -2284,25 +2303,6 @@ void MainWindow::on_actionMove_Line_Up_triggered()
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
-}
-
-void MainWindow::on_resultMatchClicked(const QString &fileName, int startLine, int startCol, int endLine, int endCol)
-{
-    QUrl url = stringToUrl(fileName);
-    m_docEngine->loadDocument(url,
-                              m_topEditorContainer->currentTabWidget());
-
-    QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
-
-    if (pos.first == -1 || pos.second == -1)
-        return;
-
-    EditorTabWidget *tabW = m_topEditorContainer->tabWidget(pos.first);
-    Editor *editor = tabW->editor(pos.second);
-
-    editor->setSelection(startLine, startCol, endLine, endCol);
-
-    editor->setFocus();
 }
 
 void MainWindow::on_actionTrim_Trailing_Space_triggered()

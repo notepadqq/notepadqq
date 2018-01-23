@@ -80,13 +80,9 @@ SOURCES += main.cpp\
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
-    Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
-    Search/searchinfilesworker.cpp \
     Search/searchstring.cpp \
-    Search/replaceinfilesworker.cpp \
-    Search/dlgsearching.cpp \
-    Search/searchresultsitemdelegate.cpp \
+    Search/advancedsearchdock.cpp \
     Extensions/extension.cpp \
     frmlinenumberchooser.cpp \
     Extensions/extensionsserver.cpp \
@@ -103,7 +99,11 @@ SOURCES += main.cpp\
     Sessions/sessions.cpp \
     Sessions/persistentcache.cpp \
     nqqsettings.cpp \  
-    nqqrun.cpp
+    nqqrun.cpp \
+    Search/filesearcher.cpp \
+    Search/filereplacer.cpp \
+    Search/searchobjects.cpp \
+    Search/searchinstance.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -124,15 +124,10 @@ HEADERS  += include/mainwindow.h \
     include/frmindentationmode.h \
     include/singleapplication.h \
     include/localcommunication.h \
-    include/Search/filesearchresultswidget.h \
-    include/Search/filesearchresult.h \
     include/Search/frmsearchreplace.h \
-    include/Search/searchinfilesworker.h \
-    include/Search/replaceinfilesworker.h \
+    include/Search/advancedsearchdock.h \
     include/Search/searchhelpers.h \
     include/Search/searchstring.h \
-    include/Search/dlgsearching.h \
-    include/Search/searchresultsitemdelegate.h \
     include/Extensions/extension.h \
     include/frmlinenumberchooser.h \
     include/Extensions/extensionsserver.h \
@@ -149,7 +144,11 @@ HEADERS  += include/mainwindow.h \
     include/Sessions/sessions.h \
     include/Sessions/persistentcache.h \
     include/nqqsettings.h \
-    include/nqqrun.h
+    include/nqqrun.h \
+    include/Search/filesearcher.h \
+    include/Search/searchobjects.h \
+    include/Search/filereplacer.h \
+    include/Search/searchinstance.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

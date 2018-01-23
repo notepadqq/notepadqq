@@ -3,13 +3,12 @@
 
 QString SearchString::toRaw(const QString &data, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions)
 {
-    QString rawSearch = data;
+    QString rawSearch = toRegex(data, searchOptions.MatchWholeWord);
+
     if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
-        rawSearch = toRegex(data, searchOptions.MatchWholeWord);
         rawSearch = rawSearch.replace("\\\\", "\\");
-    } else if (searchMode == SearchHelpers::SearchMode::PlainText){
-        rawSearch = toRegex(data, searchOptions.MatchWholeWord);
     }
+
     return rawSearch;
 }
 
@@ -26,9 +25,10 @@ QString SearchString::unescape(const QString &data)
 { 
     const int dataLength = data.size();
     QString unescaped;
-    QChar c;
+    unescaped.reserve(dataLength);
+
     for (int i = 0; i < dataLength; i++) {
-        c = data[i];
+        QChar c = data[i];
         if (c == '\\' && i != dataLength) {
             i++;
             if (data[i] == 'a') c = '\a';
@@ -52,4 +52,3 @@ QString SearchString::unescape(const QString &data)
     }
     return unescaped;
 }
-

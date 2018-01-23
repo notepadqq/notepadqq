@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>555</height>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,32 +64,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QLabel" name="lblLookIn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Look in</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="lblFilter">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Filter</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
@@ -126,75 +100,9 @@
           </property>
          </widget>
         </item>
-        <item>
-         <layout class="QHBoxLayout" name="groupLookIn">
-          <item>
-           <widget class="QComboBox" name="cmbLookIn">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-            <property name="insertPolicy">
-             <enum>QComboBox::NoInsert</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="btnLookInBrowse">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cmbFilter">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <property name="insertPolicy">
-           <enum>QComboBox::NoInsert</enum>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Minimum</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>8</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="chkIncludeSubdirs">
-      <property name="text">
-       <string>Include subdirectories</string>
-      </property>
-     </widget>
     </item>
     <item>
      <widget class="QCheckBox" name="chkShowAdvanced">
@@ -212,7 +120,7 @@
        <item row="0" column="0">
         <widget class="QRadioButton" name="radSearchPlainText">
          <property name="text">
-          <string>Search plain text</string>
+          <string>Search &amp;plain text</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -252,14 +160,14 @@
        <item row="2" column="0">
         <widget class="QRadioButton" name="radSearchWithSpecialChars">
          <property name="text">
-          <string>Search with special characters (\n, \r, \t, \0, \u..., \x...)</string>
+          <string>Search &amp;with special characters (\n, \r, \t, \0, \u..., \x...)</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QRadioButton" name="radSearchWithRegex">
          <property name="text">
-          <string>Search with regular expressions</string>
+          <string>Search with &amp;regular expressions</string>
          </property>
         </widget>
        </item>
@@ -341,16 +249,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="3">
-       <widget class="QPushButton" name="btnFindAll">
-        <property name="text">
-         <string>Find all</string>
-        </property>
-        <property name="autoDefault">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QPushButton" name="btnFindPrev">
         <property name="text">
@@ -376,16 +274,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="2" column="2">
-       <widget class="QPushButton" name="btnReplaceAllInFiles">
-        <property name="text">
-         <string>Replace all</string>
-        </property>
-        <property name="autoDefault">
-         <bool>true</bool>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
@@ -420,7 +308,7 @@
    <addaction name="separator"/>
    <addaction name="actionReplace"/>
    <addaction name="separator"/>
-   <addaction name="actionFind_in_files"/>
+   <addaction name="actionAdvancedSearch"/>
   </widget>
   <action name="actionReplace">
    <property name="checkable">
@@ -438,25 +326,21 @@
     <string>&amp;Find</string>
    </property>
   </action>
-  <action name="actionFind_in_files">
+  <action name="actionAdvancedSearch">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
-    <string>Find in files</string>
+    <string>Advanced Search</string>
    </property>
    <property name="toolTip">
-    <string>Find in files</string>
+    <string>Advanced Search</string>
    </property>
   </action>
  </widget>
  <tabstops>
   <tabstop>cmbSearch</tabstop>
   <tabstop>cmbReplace</tabstop>
-  <tabstop>cmbLookIn</tabstop>
-  <tabstop>btnLookInBrowse</tabstop>
-  <tabstop>cmbFilter</tabstop>
-  <tabstop>chkIncludeSubdirs</tabstop>
   <tabstop>chkShowAdvanced</tabstop>
   <tabstop>radSearchPlainText</tabstop>
   <tabstop>radSearchWithRegex</tabstop>
@@ -469,7 +353,6 @@
   <tabstop>btnReplacePrev</tabstop>
   <tabstop>btnReplaceNext</tabstop>
   <tabstop>btnReplaceAll</tabstop>
-  <tabstop>btnFindAll</tabstop>
  </tabstops>
  <resources>
   <include location="../resources.qrc"/>
