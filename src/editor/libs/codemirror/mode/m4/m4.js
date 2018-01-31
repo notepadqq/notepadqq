@@ -1,0 +1,523 @@
+// CodeMirror, copyright (c) by Marijn Haverbeke and others
+// Distributed under an MIT license: http://codemirror.net/LICENSE
+
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("../../lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["../../lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+"use strict";
+
+CodeMirror.defineMode('m4', function() {
+
+  var words = {};
+  function define(style, string) {
+    var split = string.split(' ');
+    for(var i = 0; i < split.length; i++) {
+      words[split[i]] = style;
+    }
+  };
+
+  // Atoms
+  define('atom', 'true false');
+
+  // Keywords
+  define('keyword', 'if then do else elif while until for in esac fi fin ' +
+    'fil done exit set unset export function');
+
+  // Commands
+  define('builtin', 'ab awk bash beep cat cc cd chown chmod chroot clear cp ' +
+    'curl cut diff echo find gawk gcc get git grep kill killall ln ls make ' +
+    'mkdir openssl mv nc node npm ping ps restart rm rmdir sed service sh ' +
+    'shopt shred source sort sleep ssh start stop su sudo tee telnet top ' +
+    'touch vi vim wall wc wget who write yes zsh');
+
+  // autoconf/automake macros
+  define('meta', ' ' +
+    'AC_AIX AC_ALLOCA AC_ARG_ARRAY AC_ARG_ENABLE AC_ARG_PROGRAM AC_ARG_VAR ' +
+    'AC_ARG_WITH AC_AUTOCONF_VERSION AC_BEFORE AC_CACHE_CHECK AC_CACHE_LOAD ' +
+    'AC_CACHE_SAVE AC_CACHE_VAL AC_CANONICAL_BUILD AC_CANONICAL_HOST ' +
+    'AC_CANONICAL_SYSTEM AC_CANONICAL_TARGET AC_C_BACKSLASH_A ' +
+    'AC_C_BIGENDIAN AC_C_CHAR_UNSIGNED AC_C_CONST AC_C_CROSS ' +
+    'AC_C_FLEXIBLE_ARRAY_MEMBER AC_CHAR_UNSIGNED AC_CHECK_ALIGNOF ' +
+    'AC_CHECK_DECL AC_CHECK_DECLS AC_CHECK_DECLS_ONCE AC_CHECK_FILE ' +
+    'AC_CHECK_FILES AC_CHECK_FUNC AC_CHECK_FUNCS AC_CHECK_FUNCS_ONCE ' +
+    'AC_CHECK_HEADER AC_CHECK_HEADERS AC_CHECK_HEADERS_ONCE ' +
+    'AC_CHECK_HEADER_STDBOOL AC_CHECKING AC_CHECK_LIB AC_CHECK_MEMBER ' +
+    'AC_CHECK_MEMBERS AC_CHECK_PROG AC_CHECK_PROGS AC_CHECK_SIZEOF ' +
+    'AC_CHECK_TARGET_TOOL AC_CHECK_TARGET_TOOLS AC_CHECK_TOOL ' +
+    'AC_CHECK_TOOLS AC_CHECK_TYPE AC_CHECK_TYPE AC_CHECK_TYPES AC_C_INLINE ' +
+    'AC_C_LONG_DOUBLE AC_COMPILE_CHECK AC_COMPILE_IFELSE AC_COMPILE_IFELSE ' +
+    'AC_COMPUTE_INT AC_CONFIG_AUX_DIR AC_CONFIG_COMMANDS ' +
+    'AC_CONFIG_COMMANDS_POST AC_CONFIG_COMMANDS_PRE AC_CONFIG_FILES ' +
+    'AC_CONFIG_HEADER AC_CONFIG_HEADERS AC_CONFIG_ITEMS ' +
+    'AC_CONFIG_LIBOBJ_DIR AC_CONFIG_LINKS AC_CONFIG_MACRO_DIR ' +
+    'AC_CONFIG_MACRO_DIRS AC_CONFIG_SRCDIR AC_CONFIG_SUBDIRS ' +
+    'AC_CONFIG_TESTDIR AC_CONST AC_COPYRIGHT AC_C_PROTOTYPES AC_C_RESTRICT ' +
+    'AC_CROSS_CHECK AC_C_STRINGIZE AC_C_TYPEOF AC_C_VARARRAYS AC_C_VOLATILE ' +
+    'AC_CYGWIN AC_DATAROOTDIR_CHECKED AC_DECL_SYS_SIGLIST AC_DECL_YYTEXT ' +
+    'AC_DEFINE AC_DEFINE_UNQUOTED AC_DEFUN AC_DEFUN_ONCE AC_DIAGNOSE ' +
+    'AC_DIR_HEADER AC_DISABLE_OPTION_CHECKING AC_DYNIX_SEQ AC_EGREP_CPP ' +
+    'AC_EGREP_HEADER AC_EMXOS2 AC_ENABLE AC_ERLANG_CHECK_LIB ' +
+    'AC_ERLANG_NEED_ERL AC_ERLANG_NEED_ERLC AC_ERLANG_PATH_ERL ' +
+    'AC_ERLANG_PATH_ERLC AC_ERLANG_SUBST_ERTS_VER ' +
+    'AC_ERLANG_SUBST_INSTALL_LIB_DIR AC_ERLANG_SUBST_INSTALL_LIB_DIR ' +
+    'AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR AC_ERLANG_SUBST_INSTALL_LIB_SUBDIR ' +
+    'AC_ERLANG_SUBST_LIB_DIR AC_ERLANG_SUBST_ROOT_DIR AC_ERROR AC_EXEEXT ' +
+    'AC_F77_DUMMY_MAIN AC_F77_FUNC AC_F77_IMPLICIT_NONE ' +
+    'AC_F77_LIBRARY_LDFLAGS AC_F77_MAIN AC_F77_WRAPPERS AC_FATAL ' +
+    'AC_FC_CHECK_BOUNDS AC_FC_DUMMY_MAIN AC_FC_FIXEDFORM AC_FC_FREEFORM ' +
+    'AC_FC_FUNC AC_FC_IMPLICIT_NONE AC_FC_LIBRARY_LDFLAGS AC_FC_LINE_LENGTH ' +
+    'AC_FC_MAIN AC_FC_MODULE_EXTENSION AC_FC_MODULE_FLAG ' +
+    'AC_FC_MODULE_OUTPUT_FLAG AC_FC_PP_DEFINE AC_FC_PP_SRCEXT AC_FC_SRCEXT ' +
+    'AC_FC_WRAPPERS AC_FIND_X AC_FIND_XTRA AC_FOREACH AC_FUNC_ALLOCA ' +
+    'AC_FUNC_CHECK AC_FUNC_CHOWN AC_FUNC_CLOSEDIR_VOID ' +
+    'AC_FUNC_ERROR_AT_LINE AC_FUNC_FNMATCH AC_FUNC_FNMATCH_GNU AC_FUNC_FORK ' +
+    'AC_FUNC_FSEEKO AC_FUNC_GETGROUPS AC_FUNC_GETLOADAVG AC_FUNC_GETMNTENT ' +
+    'AC_FUNC_GETPGRP AC_FUNC_LSTAT AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK ' +
+    'AC_FUNC_MALLOC AC_FUNC_MBRTOWC AC_FUNC_MEMCMP AC_FUNC_MKTIME ' +
+    'AC_FUNC_MMAP AC_FUNC_OBSTACK AC_FUNC_REALLOC AC_FUNC_SELECT_ARGTYPES ' +
+    'AC_FUNC_SETPGRP AC_FUNC_SETVBUF_REVERSED AC_FUNC_STAT AC_FUNC_STRCOLL ' +
+    'AC_FUNC_STRERROR_R AC_FUNC_STRFTIME AC_FUNC_STRNLEN AC_FUNC_STRTOD ' +
+    'AC_FUNC_STRTOLD AC_FUNC_UTIME_NULL AC_FUNC_VPRINTF AC_FUNC_WAIT3 ' +
+    'AC_GCC_TRADITIONAL AC_GETGROUPS_T AC_GETLOADAVG AC_GNU_SOURCE ' +
+    'AC_HAVE_FUNCS AC_HAVE_HEADERS AC_HAVE_LIBRARY AC_HAVE_POUNDBANG ' +
+    'AC_HEADER_ASSERT AC_HEADER_CHECK AC_HEADER_DIRENT AC_HEADER_EGREP ' +
+    'AC_HEADER_MAJOR AC_HEADER_RESOLV AC_HEADER_STAT AC_HEADER_STDBOOL ' +
+    'AC_HEADER_STDC AC_HEADER_SYS_WAIT AC_HEADER_TIME AC_HEADER_TIOCGWINSZ ' +
+    'AC_HELP_STRING AC_INCLUDES_DEFAULT AC_INIT AC_INLINE AC_INT_16_BITS ' +
+    'AC_IRIX_SUN AC_ISC_POSIX AC_LANG AC_LANG_ASSERT AC_LANG_C AC_LANG_CALL ' +
+    'AC_LANG_CONFTEST AC_LANG_CPLUSPLUS AC_LANG_DEFINES_PROVIDED ' +
+    'AC_LANG_FORTRAN77 AC_LANG_FUNC_LINK_TRY AC_LANG_POP AC_LANG_PROGRAM ' +
+    'AC_LANG_PROGRAM AC_LANG_PUSH AC_LANG_RESTORE AC_LANG_SAVE ' +
+    'AC_LANG_SOURCE AC_LANG_SOURCE AC_LANG_WERROR AC_LIBOBJ AC_LIBSOURCE ' +
+    'AC_LIBSOURCES AC_LINK_FILES AC_LINK_IFELSE AC_LINK_IFELSE AC_LN_S ' +
+    'AC_LONG_64_BITS AC_LONG_DOUBLE AC_LONG_FILE_NAMES AC_MAJOR_HEADER ' +
+    'AC_MEMORY_H AC_MINGW32 AC_MINIX AC_MINUS_C_MINUS_O AC_MMAP AC_MODE_T ' +
+    'AC_MSG_CHECKING AC_MSG_ERROR AC_MSG_FAILURE AC_MSG_NOTICE ' +
+    'AC_MSG_RESULT AC_MSG_WARN AC_OBJEXT AC_OBSOLETE AC_OFF_T AC_OPENMP ' +
+    'AC_OUTPUT AC_OUTPUT AC_OUTPUT_COMMANDS AC_PACKAGE_BUGREPORT ' +
+    'AC_PACKAGE_NAME AC_PACKAGE_STRING AC_PACKAGE_TARNAME AC_PACKAGE_URL ' +
+    'AC_PACKAGE_VERSION AC_PATH_PROG AC_PATH_PROGS ' +
+    'AC_PATH_PROGS_FEATURE_CHECK AC_PATH_TARGET_TOOL AC_PATH_TOOL AC_PATH_X ' +
+    'AC_PATH_XTRA AC_PID_T AC_PREFIX AC_PREFIX_DEFAULT AC_PREFIX_PROGRAM ' +
+    'AC_PREPROC_IFELSE AC_PREPROC_IFELSE AC_PREREQ AC_PRESERVE_HELP_ORDER ' +
+    'AC_PROG_AWK AC_PROG_CC AC_PROG_CC_C89 AC_PROG_CC_C99 AC_PROG_CC_C_O ' +
+    'AC_PROG_CC_STDC AC_PROG_CPP AC_PROG_CPP_WERROR AC_PROG_CXX ' +
+    'AC_PROG_CXX_C_O AC_PROG_CXXCPP AC_PROG_EGREP AC_PROG_F77 ' +
+    'AC_PROG_F77_C_O AC_PROG_FC AC_PROG_FC_C_O AC_PROG_FGREP ' +
+    'AC_PROG_GCC_TRADITIONAL AC_PROG_GREP AC_PROG_INSTALL AC_PROG_LEX ' +
+    'AC_PROG_LN_S AC_PROG_MAKE_SET AC_PROG_MKDIR_P AC_PROG_OBJC ' +
+    'AC_PROG_OBJCPP AC_PROG_OBJCXX AC_PROG_OBJCXXCPP AC_PROGRAM_CHECK ' +
+    'AC_PROGRAM_EGREP AC_PROGRAM_PATH AC_PROGRAMS_CHECK AC_PROGRAMS_PATH ' +
+    'AC_PROG_RANLIB AC_PROG_SED AC_PROG_YACC AC_REMOTE_TAPE ' +
+    'AC_REPLACE_FNMATCH AC_REPLACE_FUNCS AC_REQUIRE AC_REQUIRE_AUX_FILE ' +
+    'AC_REQUIRE_CPP AC_RESTARTABLE_SYSCALLS AC_RETSIGTYPE AC_REVISION ' +
+    'AC_RSH AC_RUN_IFELSE AC_RUN_IFELSE AC_SCO_INTL AC_SEARCH_LIBS ' +
+    'AC_SET_MAKE AC_SETVBUF_REVERSED AC_SIZEOF_TYPE AC_SIZE_T ' +
+    'AC_STAT_MACROS_BROKEN AC_ST_BLKSIZE AC_ST_BLOCKS AC_STDC_HEADERS ' +
+    'AC_STRCOLL AC_ST_RDEV AC_STRUCT_DIRENT_D_INO AC_STRUCT_DIRENT_D_TYPE ' +
+    'AC_STRUCT_ST_BLKSIZE AC_STRUCT_ST_BLOCKS AC_STRUCT_ST_RDEV ' +
+    'AC_STRUCT_TIMEZONE AC_STRUCT_TM AC_SUBST AC_SUBST_FILE ' +
+    'AC_SYS_INTERPRETER AC_SYS_LARGEFILE AC_SYS_LONG_FILE_NAMES ' +
+    'AC_SYS_POSIX_TERMIOS AC_SYS_RESTARTABLE_SYSCALLS ' +
+    'AC_SYS_SIGLIST_DECLARED AC_TEST_CPP AC_TEST_PROGRAM ' +
+    'AC_TIME_WITH_SYS_TIME AC_TIMEZONE AC_TRY_COMPILE AC_TRY_COMPILE ' +
+    'AC_TRY_CPP AC_TRY_CPP AC_TRY_LINK AC_TRY_LINKAC_TRY_RUN ' +
+    'AC_TRY_LINK_FUNC AC_TRY_RUN AC_TYPE_GETGROUPS AC_TYPE_INT16_T ' +
+    'AC_TYPE_INT32_T AC_TYPE_INT64_T AC_TYPE_INT8_T AC_TYPE_INTMAX_T ' +
+    'AC_TYPE_INTPTR_T AC_TYPE_LONG_DOUBLE AC_TYPE_LONG_DOUBLE_WIDER ' +
+    'AC_TYPE_LONG_LONG_INT AC_TYPE_MBSTATE_T AC_TYPE_MODE_T AC_TYPE_OFF_T ' +
+    'AC_TYPE_PID_T AC_TYPE_SIGNAL AC_TYPE_SIZE_T AC_TYPE_SSIZE_T ' +
+    'AC_TYPE_UID_T AC_TYPE_UINT16_T AC_TYPE_UINT32_T AC_TYPE_UINT64_T ' +
+    'AC_TYPE_UINT8_T AC_TYPE_UINTMAX_T AC_TYPE_UINTPTR_T ' +
+    'AC_TYPE_UNSIGNED_LONG_LONG_INT AC_UID_T AC_UNISTD_H ' +
+    'AC_USE_SYSTEM_EXTENSIONS AC_USG AC_UTIME_NULL ' +
+    'AC_VALIDATE_CACHED_SYSTEM_TUPLE AC_VERBOSE AC_VFORK AC_VPRINTF ' +
+    'AC_WAIT3 AC_WARN AC_WARNING AC_WITH AC_WORDS_BIGENDIAN AC_XENIX_DIR ' +
+    'AC_YYTEXT_POINTER AH_BOTTOM AH_HEADER AH_TEMPLATE AH_TOP AH_VERBATIM ' +
+    'AM_CONDITIONAL AM_COND_IF AM_CONFIG_HEADER AM_DEP_TRACK AM_GNU_GETTEXT ' +
+    'AM_GNU_GETTEXT_INTL_SUBDIR AM_INIT_AUTOMAKE AM_MAINTAINER_MODE ' +
+    'AM_MAKE_INCLUDE AM_MISSING_PROG AM_OUTPUT_DEPENDENCY_COMMANDS ' +
+    'AM_PATH_LISPDIR AM_PATH_PYTHON AM_PROG_AR AM_PROG_AS AM_PROG_CC_C_O ' +
+    'AM_PROG_GCJ AM_PROG_INSTALL_STRIP AM_PROG_LEX AM_PROG_MKDIR_P ' +
+    'AM_PROG_UPC AM_PROG_VALAC AM_SANITY_CHECK AM_SET_DEPDIR ' +
+    'AM_SILENT_RULES AM_SUBST_NOTMAKE AM_WITH_DMALLOC AS_BOURNE_COMPATIBLE ' +
+    'AS_BOX AS_CASE AS_DIRNAME AS_ECHO AS_ECHO_N AS_ESCAPE AS_EXECUTABLE_P ' +
+    'AS_EXIT AS_HELP_STRING AS_IF AS_INIT AS_INIT_GENERATED ' +
+    'AS_LINENO_PREPARE AS_LITERAL_IF AS_LITERAL_WORD_IF AS_ME_PREPARE ' +
+    'AS_MESSAGE_FD AS_MESSAGE_LOG_FD AS_MKDIR_P AS_ORIGINAL_STDIN_FD ' +
+    'AS_SET_CATFILE AS_SET_STATUS AS_SHELL_SANITIZE AS_TMPDIR AS_TR_CPP ' +
+    'AS_TR_SH AS_UNSET AS_VAR_APPEND AS_VAR_ARITH AS_VAR_COPY AS_VAR_IF ' +
+    'AS_VAR_POPDEF AS_VAR_PUSHDEF AS_VAR_SET AS_VAR_SET_IF AS_VAR_TEST_SET ' +
+    'AS_VERSION_COMPARE AT_ARG_OPTION AT_ARG_OPTION_ARG AT_BANNER ' +
+    'AT_CAPTURE_FILE AT_CHECK AT_CHECK_EUNIT AT_CHECK_UNQUOTED AT_CLEANUP ' +
+    'AT_COLOR_TESTS AT_COPYRIGHT AT_DATA AT_FAIL_IF AT_INIT AT_KEYWORDS ' +
+    'AT_PACKAGE_BUGREPORT AT_PACKAGE_NAME AT_PACKAGE_STRING ' +
+    'AT_PACKAGE_TARNAME AT_PACKAGE_URL AT_PACKAGE_VERSION AT_SETUP ' +
+    'AT_SKIP_IF AT_TESTED AT_XFAIL_IF AU_ALIAS AU_DEFUN LT_INIT ' +
+    'ac_cv_alignof_type-or-expr ac_cv_c_const ac_cv_c_int16_t ' +
+    'ac_cv_c_int32_t ac_cv_c_int64_t ac_cv_c_int8_t ac_cv_c_restrict ' +
+    'ac_cv_c_uint16_t ac_cv_c_uint32_t ac_cv_c_uint64_t ac_cv_c_uint8_t ' +
+    'ac_cv_f77_compiler_gnu ac_cv_f77_dummy_main ac_cv_f77_implicit_none ' +
+    'ac_cv_f77_libs ac_cv_f77_main ac_cv_f77_mangling ac_cv_fc_check_bounds ' +
+    'ac_cv_fc_compiler_gnu ac_cv_fc_dummy_main ac_cv_fc_fixedform ' +
+    'ac_cv_fc_freeform ac_cv_fc_implicit_none ac_cv_fc_libs ' +
+    'ac_cv_fc_line_length ac_cv_fc_main ac_cv_fc_mangling ' +
+    'ac_cv_fc_module_ext ac_cv_fc_module_flag ac_cv_fc_module_output_flag ' +
+    'ac_cv_fc_pp_define ac_cv_fc_pp_srcext_ext ac_cv_fc_srcext_ext ' +
+    'ac_cv_file_file ac_cv_func_chown_works ac_cv_func_closedir_void ' +
+    'ac_cv_func_fnmatch_gnu ac_cv_func_fnmatch_works ac_cv_func_function ' +
+    'ac_cv_func_getgroups_works ac_cv_func_getpgrp_void ' +
+    'ac_cv_func_lstat_dereferences_slashed_symlink ' +
+    'ac_cv_func_lstat_empty_string_bug ac_cv_func_malloc_0_nonnull ' +
+    'ac_cv_func_mbrtowc ac_cv_func_memcmp_working ' +
+    'ac_cv_func_mmap_fixed_mapped ac_cv_func_obstack ac_cv_func_pow ' +
+    'ac_cv_func_realloc_0_nonnull ac_cv_func_setpgrp_void ' +
+    'ac_cv_func_stat_empty_string_bug ac_cv_func_strcoll_works ' +
+    'ac_cv_func_strerror_r_char_p ac_cv_func_strnlen_working ' +
+    'ac_cv_func_strtod ac_cv_func_strtold ac_cv_func_utime_null ' +
+    'ac_cv_func_working_mktime ac_cv_have_decl_symbol ' +
+    'ac_cv_header_header-file ac_cv_header_stdbool_h ac_cv_header_stdc ' +
+    'ac_cv_header_sys_wait_h ac_cv_header_time ac_cv_lib_error_at_line ' +
+    'ac_cv_lib_library_function ac_cv_member_aggregate_member ' +
+    'ac_cv_member_struct_stat_st_blocks ac_cv_path_install ac_cv_path_mkdir ' +
+    'ac_cv_path_SED ac_cv_path_variable ac_cv_prog_AWK ac_cv_prog_cc_c89 ' +
+    'ac_cv_prog_cc_c99 ac_cv_prog_cc_compiler_c_o ac_cv_prog_cc_stdc ' +
+    'ac_cv_prog_c_openmp ac_cv_prog_cxx_openmp ac_cv_prog_EGREP ' +
+    'ac_cv_prog_f77_c_o ac_cv_prog_f77_g ac_cv_prog_f77_openmp ' +
+    'ac_cv_prog_f77_v ac_cv_prog_fc_c_o ac_cv_prog_fc_g ' +
+    'ac_cv_prog_fc_openmp ac_cv_prog_fc_v ac_cv_prog_FGREP ac_cv_prog_GREP ' +
+    'ac_cv_prog_LEX ac_cv_prog_variable ac_cv_prog_YACC ' +
+    'ac_cv_search_function ac_cv_search_getmntent ac_cv_sizeof_type-or-expr ' +
+    'ac_cv_sys_posix_termios ac_cv_type_getgroups ac_cv_type_long_double ' +
+    'ac_cv_type_long_double_wider ac_cv_type_long_long_int ' +
+    'ac_cv_type_mbstate_t ac_cv_type_mode_t ac_cv_type_off_t ' +
+    'ac_cv_type_pid_t ac_cv_type_size_t ac_cv_type_ssize_t ac_cv_type_type ' +
+    'ac_cv_type_uid_t ac_cv_type_unsigned_long_long_int __file__ __line__ ' +
+    '__oline__ dnl m4_append m4_append_uniq m4_append_uniq_w m4_apply ' +
+    'm4_argn m4_assert m4_bmatch m4_bpatsubst m4_bpatsubsts m4_bregexp ' +
+    'm4_builtin m4_car m4_case m4_cdr m4_changecom m4_changequote m4_chomp ' +
+    'm4_chomp_all m4_cleardivert m4_cmp m4_combine m4_cond m4_copy ' +
+    'm4_copy_force m4_count m4_curry m4_debugfile m4_debugmode m4_decr ' +
+    'm4_default m4_default_nblank m4_default_nblank_quoted ' +
+    'm4_default_quoted m4_define m4_define_default m4_defn m4_divert ' +
+    'm4_divert_once m4_divert_pop m4_divert_push m4_divert_text m4_divnum ' +
+    'm4_do m4_dquote m4_dquote_elt m4_dumpdef m4_dumpdefs m4_echo ' +
+    'm4_errprint m4_errprintn m4_escape m4_esyscmd m4_esyscmd_s m4_eval ' +
+    'm4_exit m4_expand m4_fatal m4_flatten m4_for m4_foreach m4_foreach_w ' +
+    'm4_format m4_if m4_ifblank m4_ifdef m4_ifnblank m4_ifndef m4_ifset ' +
+    'm4_ifval m4_ifvaln m4_ignore m4_include m4_incr m4_index m4_indir ' +
+    'm4_init m4_join m4_joinall m4_len m4_list_cmp m4_location m4_make_list ' +
+    'm4_maketemp m4_map m4_mapall m4_mapall_sep m4_map_args ' +
+    'm4_map_args_pair m4_map_args_sep m4_map_args_w m4_map_sep m4_max ' +
+    'm4_min m4_mkstemp m4_n m4_newline m4_normalize m4_pattern_allow ' +
+    'm4_pattern_forbid m4_popdef m4_pushdef m4_quote m4_re_escape m4_rename ' +
+    'm4_rename_force m4_reverse m4_set_add m4_set_add_all m4_set_contains ' +
+    'm4_set_contents m4_set_delete m4_set_difference m4_set_dump ' +
+    'm4_set_empty m4_set_foreach m4_set_intersection m4_set_list ' +
+    'm4_set_listc m4_set_map m4_set_map_sep m4_set_remove m4_set_size ' +
+    'm4_set_union m4_shift m4_shift2 m4_shift3 m4_shiftn m4_sign ' +
+    'm4_sinclude m4_split m4_stack_foreach m4_stack_foreach_lifo ' +
+    'm4_stack_foreach_sep m4_stack_foreach_sep_lifo m4_strip m4_substr ' +
+    'm4_syscmd m4_sysval m4_text_box m4_text_wrap m4_tolower m4_toupper ' +
+    'm4_traceoff m4_traceon m4_translit m4_undefine m4_undivert m4_unquote ' +
+    'm4_version_compare m4_version_prereq m4_warn m4_wrap m4_wrap_lifo ' +
+    'PKG_CHECK_MODULES AX_ABSOLUTE_HEADER AX_AC_APPEND_TO_FILE ' +
+    'AX_AC_PRINT_TO_FILE AX_ADD_AM_MACRO AX_ADD_AM_MACRO_STATIC ' +
+    'AX_ADD_AM_TRILINOS_MAKEFILE_EXPORT AX_ADD_FORTIFY_SOURCE ' +
+    'AX_ADD_RECURSIVE_AM_MACRO AX_ADD_RECURSIVE_AM_MACRO_STATIC AX_AFS ' +
+    'AX_AM_JOBSERVER AX_AM_MACROS AX_AM_MACROS_STATIC AX_AM_OVERRIDE_VAR ' +
+    'AX_APPEND_COMPILE_FLAGS AX_APPEND_FLAG AX_APPEND_LINK_FLAGS ' +
+    'AX_APPEND_TO_FILE AX_ARG_WITH_PATH_STYLE AX_ASM_INLINE ' +
+    'AX_AT_CHECK_PATTERN AX_AUTO_INCLUDE_HEADERS AX_BERKELEY_DB_CXX ' +
+    'AX_BERKELEY_DB AX_BLAS_F77_FUNC AX_BLAS AX_BOOST_ASIO AX_BOOST_BASE ' +
+    'AX_BOOST_CHRONO AX_BOOST_CONTEXT AX_BOOST_COROUTINE AX_BOOST_DATE_TIME ' +
+    'AX_BOOST_FILESYSTEM AX_BOOST_IOSTREAMS AX_BOOST_LOCALE AX_BOOST_LOG ' +
+    'AX_BOOST_LOG_SETUP AX_BOOST_PROGRAM_OPTIONS AX_BOOST_PYTHON ' +
+    'AX_BOOST_REGEX AX_BOOST_SERIALIZATION AX_BOOST_SIGNALS AX_BOOST_SYSTEM ' +
+    'AX_BOOST_TEST_EXEC_MONITOR AX_BOOST_THREAD ' +
+    'AX_BOOST_UNIT_TEST_FRAMEWORK AX_BOOST_WAVE AX_BOOST_WSERIALIZATION ' +
+    'AX_BUILD_DATE_EPOCH AX_C99_INLINE AX_CACHE_SIZE ' +
+    'AX_CAOLAN_CHECK_PACKAGE AX_CAOLAN_SEARCH_PACKAGE ' +
+    'AX_C_ARITHMETIC_RSHIFT AX_C___ATTRIBUTE__ AX_C_BIGENDIAN_CROSS ' +
+    'AX_CC_FOR_BUILD AX_CC_MAXOPT AX_C_COMPILE_VALUE AX_C_DECLARE_BLOCK ' +
+    'AX_CF_EBCDIC AX_CFLAGS_AIX_OPTION AX_CFLAGS_FORCE_C89 ' +
+    'AX_CFLAGS_HPUX_OPTION AX_CFLAGS_IRIX_OPTION ' +
+    'AX_CFLAGS_NO_WRITABLE_STRINGS AX_CFLAGS_STRICT_PROTOTYPES ' +
+    'AX_CFLAGS_SUN_OPTION AX_CFLAGS_WARN_ALL AX_C_FLOAT_WORDS_BIGENDIAN ' +
+    'AX_CHECK_ALIGNED_ACCESS_REQUIRED AX_CHECK_ALLOCATED_CTIME ' +
+    'AX_CHECK_AWK_AND AX_CHECK_AWK_ARGIND AX_CHECK_AWK_ARRAY_DELETE_ELEM ' +
+    'AX_CHECK_AWK_ARRAY_DELETE AX_CHECK_AWK_ARRAY_IN AX_CHECK_AWK_ASORTI ' +
+    'AX_CHECK_AWK_ASORT AX_CHECK_AWK_ASSOCIATIVE_ARRAY AX_CHECK_AWK_ATAN2 ' +
+    'AX_CHECK_AWK_COMPL AX_CHECK_AWK_CONDITIONAL_EXPRESSION ' +
+    'AX_CHECK_AWK_COS AX_CHECK_AWK_ENVIRON AX_CHECK_AWK_ERRNO ' +
+    'AX_CHECK_AWK_EXIT AX_CHECK_AWK_EXP AX_CHECK_AWK_GENSUB ' +
+    'AX_CHECK_AWK_GETLINE AX_CHECK_AWK_GSUB AX_CHECK_AWK_IGNORECASE ' +
+    'AX_CHECK_AWK_INDEX AX_CHECK_AWK_INT AX_CHECK_AWK_LENGTH ' +
+    'AX_CHECK_AWK_LOG AX_CHECK_AWK_LSHIFT AX_CHECK_AWK_MATCH_2PARMS ' +
+    'AX_CHECK_AWK_MATCH_3PARMS AX_CHECK_AWK_OPERATOR_MULTIPLY_MULTIPLY ' +
+    'AX_CHECK_AWK_OPERATOR_SQUARE AX_CHECK_AWK_OR AX_CHECK_AWK_PRINTF ' +
+    'AX_CHECK_AWK_RAND AX_CHECK_AWK_RSHIFT AX_CHECK_AWK_SIN ' +
+    'AX_CHECK_AWK_SPLIT AX_CHECK_AWK_SPRINTF AX_CHECK_AWK_SQRT ' +
+    'AX_CHECK_AWK_SRAND AX_CHECK_AWK_STRFTIME AX_CHECK_AWK_STRTONUM ' +
+    'AX_CHECK_AWK_SUB AX_CHECK_AWK_SUBSTR AX_CHECK_AWK_SYSTEM ' +
+    'AX_CHECK_AWK_SYSTIME AX_CHECK_AWK_TOLOWER AX_CHECK_AWK_TOUPPER ' +
+    'AX_CHECK_AWK_USER_DEFINED_FUNCTIONS AX_CHECK_AWK_VARIABLE_VALUE_PAIRS ' +
+    'AX_CHECK_AWK_VAR_REGEXP AX_CHECK_AWK__V AX_CHECK_AWK__X_ESCAPES ' +
+    'AX_CHECK_AWK_XOR AX_CHECK_CLASS AX_CHECK_CLASSPATH ' +
+    'AX_CHECK_COMPILE_FLAG AX_CHECK_DEFINE AX_CHECK_DOCBOOK_DTD ' +
+    'AX_CHECK_DOCBOOK_XSLT AX_CHECK_DOCBOOK_XSLT_MIN AX_CHECK_DOS_FILESYS ' +
+    'AX_CHECK_ENABLE_DEBUG AX_CHECK_FUNC_IN AX_CHECK_GD AX_CHECK_GIRS_GJS ' +
+    'AX_CHECK_GIR_SYMBOLS_GJS AX_CHECK_GL AX_CHECK_GLU AX_CHECK_GLUT ' +
+    'AX_CHECK_GLX AX_CHECK_GNU_MAKE AX_CHECK_ICU AX_CHECK_JAVA_HOME ' +
+    'AX_CHECK_JAVA_PLUGIN AX_CHECK_JUNIT AX_CHECK_LIBRARY ' +
+    'AX_CHECK_LINK_FLAG AX_CHECK_MYSQL_DB AX_CHECK_MYSQL AX_CHECK_MYSQLR ' +
+    'AX_CHECK_OFF64_T AX_CHECK_OPENSSL AX_CHECK_PAGE_ALIGNED_MALLOC ' +
+    'AX_CHECK_PATHFIND AX_CHECK_PATHNAME_STYLE AX_CHECK_PGSQL_DB ' +
+    'AX_CHECK_POSIX_REGCOMP AX_CHECK_POSIX_SYSINFO AX_CHECK_POSTGRES_DB ' +
+    'AX_CHECK_PREPROC_FLAG AX_CHECK_RQRD_CLASS AX_CHECK_SIGN ' +
+    'AX_CHECK_STRCSPN AX_CHECK_STRFTIME AX_CHECK_STRUCT_FOR AX_CHECK_SYMBOL ' +
+    'AX_CHECK_SYS_SIGLIST AX_CHECK_TYPEDEF AX_CHECK_UNAME_SYSCALL ' +
+    'AX_CHECK_USER AX_CHECK_VSCRIPT AX_CHECK_X86_FEATURES AX_CHECK_ZLIB ' +
+    'AX_C_LONG_LONG AX_CODE_COVERAGE AX_COMPARE_VERSION ' +
+    'AX_COMPILE_CHECK_SIZEOF AX_COMPILER_FLAGS_CFLAGS ' +
+    'AX_COMPILER_FLAGS_CXXFLAGS AX_COMPILER_FLAGS_GIR ' +
+    'AX_COMPILER_FLAGS_LDFLAGS AX_COMPILER_FLAGS AX_COMPILER_VENDOR ' +
+    'AX_COMPILER_VERSION AX_COMPUTE_RELATIVE_PATHS ' +
+    'AX_COMPUTE_STANDARD_RELATIVE_PATHS AX_COND_WITH_LEVEL ' +
+    'AX_CONFIG_FEATURE AX_CONFIGURE_ARGS AX_COUNT_CPUS AX_CPU_FREQ ' +
+    'AX_CPU_VENDOR AX_CREATE_GENERIC_CONFIG AX_CREATE_PKGCONFIG_INFO ' +
+    'AX_CREATE_STDINT_H AX_CREATE_TARGET_H ' +
+    'AX_C_REFERENCEABLE_PASSED_VA_LIST AX_C_VAR_FUNC AX_CVS AX_CXX_BOOL ' +
+    'AX_CXX_COMPILE_STDCXX_0X AX_CXX_COMPILE_STDCXX_11 ' +
+    'AX_CXX_COMPILE_STDCXX_14 AX_CXX_COMPILE_STDCXX_17 ' +
+    'AX_CXX_COMPILE_STDCXX AX_CXX_COMPLEX_MATH_IN_NAMESPACE_STD ' +
+    'AX_CXX_CONST_CAST AX_CXX_CPPFLAGS_STD_LANG AX_CXX_CXXFLAGS_STD_LANG ' +
+    'AX_CXX_DEFAULT_TEMPLATE_PARAMETERS AX_CXX_DELETE_METHOD ' +
+    'AX_CXX_DTOR_AFTER_ATEXIT AX_CXX_DYNAMIC_CAST AX_CXX_ENUM_COMPUTATIONS ' +
+    'AX_CXX_ENUM_COMPUTATIONS_WITH_CAST AX_CXX_ERASE_ITERATOR_TYPE ' +
+    'AX_CXX_EXCEPTIONS AX_CXX_EXPLICIT_INSTANTIATIONS AX_CXX_EXPLICIT ' +
+    'AX_CXX_EXPLICIT_TEMPLATE_FUNCTION_QUALIFICATION AX_CXX_EXTERN_TEMPLATE ' +
+    'AX_CXX_FULL_SPECIALIZATION_SYNTAX AX_CXX_FUNCTION_NONTYPE_PARAMETERS ' +
+    'AX_CXX_FUNCTION_TRY_BLOCKS AX_CXX_GCC_ABI_DEMANGLE ' +
+    'AX_CXX_GNUCXX_HASHMAP AX_CXX_HAVE_BAD_FUNCTION_CALL AX_CXX_HAVE_BIND ' +
+    'AX_CXX_HAVE_BIT_AND AX_CXX_HAVE_BIT_OR AX_CXX_HAVE_BIT_XOR ' +
+    'AX_CXX_HAVE_COMPLEX AX_CXX_HAVE_COMPLEX_MATH1 ' +
+    'AX_CXX_HAVE_COMPLEX_MATH2 AX_CXX_HAVE_CREF AX_CXX_HAVE_EMPTY_IOSTREAM ' +
+    'AX_CXX_HAVE_EXT_HASH_MAP AX_CXX_HAVE_EXT_HASH_SET ' +
+    'AX_CXX_HAVE_EXT_SLIST AX_CXX_HAVE_FREEZE_SSTREAM AX_CXX_HAVE_FUNCTION ' +
+    'AX_CXX_HAVE_HASH AX_CXX_HAVE_IEEE_MATH AX_CXX_HAVE_IS_BIND_EXPRESSION ' +
+    'AX_CXX_HAVE_IS_PLACEHOLDER AX_CXX_HAVE_KOENIG_LOOKUP ' +
+    'AX_CXX_HAVE_LONG_LONG_FOR_IOSTREAM AX_CXX_HAVE_MEM_FN ' +
+    'AX_CXX_HAVE_NUMERIC_LIMITS AX_CXX_HAVE_PLACEHOLDERS ' +
+    'AX_CXX_HAVE_REFERENCE_WRAPPER AX_CXX_HAVE_REF AX_CXX_HAVE_SSTREAM ' +
+    'AX_CXX_HAVE_STD AX_CXX_HAVE_STL AX_CXX_HAVE_STRING_PUSH_BACK ' +
+    'AX_CXX_HAVE_SYSTEM_V_MATH AX_CXX_HAVE_VALARRAY AX_CXX_HAVE_VECTOR_AT ' +
+    'AX_CXX_HEADER_PRE_STDCXX AX_CXX_HEADER_STDCXX_0X ' +
+    'AX_CXX_HEADER_STDCXX_98 AX_CXX_HEADER_STDCXX_TR1 ' +
+    'AX_CXX_HEADER_TR1_UNORDERED_MAP AX_CXX_HEADER_TR1_UNORDERED_SET ' +
+    'AX_CXX_HEADER_UNORDERED_MAP AX_CXX_HEADER_UNORDERED_SET ' +
+    'AX_CXX_LDFLAGS_STD_LANG AX_CXX_MEMBER_CONSTANTS ' +
+    'AX_CXX_MEMBER_TEMPLATES AX_CXX_MEMBER_TEMPLATES_OUTSIDE_CLASS ' +
+    'AX_CXX_MUTABLE AX_CXX_NAMESPACES AX_CXX_NAMESPACE_STD ' +
+    'AX_CXX_NEW_FOR_SCOPING AX_CXX_OLD_FOR_SCOPING AX_CXX_PARTIAL_ORDERING ' +
+    'AX_CXX_PARTIAL_SPECIALIZATION AX_CXX_REINTERPRET_CAST ' +
+    'AX_CXX_RESTRICT_THIS AX_CXX_RTTI AX_CXX_RVALUE_REFERENCES ' +
+    'AX_CXX_STATIC_CAST AX_CXX_STLPORT_HASHMAP ' +
+    'AX_CXX_TEMPLATE_KEYWORD_QUALIFIER AX_CXX_TEMPLATE_QUALIFIED_BASE_CLASS ' +
+    'AX_CXX_TEMPLATE_QUALIFIED_RETURN_TYPE ' +
+    'AX_CXX_TEMPLATES_AS_TEMPLATE_ARGUMENTS ' +
+    'AX_CXX_TEMPLATE_SCOPED_ARGUMENT_MATCHING AX_CXX_TEMPLATES ' +
+    'AX_CXX_TYPENAME AX_CXX_USE_NUMTRAIT AX_CXX_VAR_PRETTYFUNC ' +
+    'AX_CXX_VERBOSE_TERMINATE_HANDLER AX_CZMQ AX_DECL_WCHAR_MAX ' +
+    'AX_DEFINE_INTEGER_BITS AX_DEFINE_SUB_PATH AX_DIRNAME AX_DIST_MSI ' +
+    'AX_DIST_RPM AX_DLL_STRING AX_ENABLE_BUILDDIR AX_EXECINFO ' +
+    'AX_EXPAND_PREFIX AX_EXT_CHECK_HEADER AX_EXTEND_SRCDIR AX_EXT_HAVE_LIB ' +
+    'AX_EXT AX_EXTRA_DIST AX_F77_CMAIN_FFLAGS AX_F90_HEADER ' +
+    'AX_F90_INTERNAL_HEADMOD AX_F90_LIBRARY AX_F90_LIBRARY_SETUP ' +
+    'AX_F90_MODULE_EXTENSION AX_F90_MODULE_FLAG AX_F90_MODULE ' +
+    'AX_FC_CHECK_DEFINE AX_FILE_ESCAPES AX_FIND_HAMCREST AX_FIND_JUNIT ' +
+    'AX_FIND_SCALA_STDLIB AX_FORCEINLINE AX_FUNC_ACCEPT_ARGTYPES ' +
+    'AX_FUNC_GETOPT_LONG AX_FUNC_MEMMOVE AX_FUNC_MKDIR ' +
+    'AX_FUNC_POSIX_MEMALIGN AX_FUNC_SNPRINTF AX_FUNC_WHICH_GETHOSTBYNAME_R ' +
+    'AX_FUNC_WHICH_GETSERVBYNAME_R AX_GCC_ARCHFLAG AX_GCC_BUILTIN ' +
+    'AX_GCC_CONST_CALL AX_GCC_FUNC_ATTRIBUTE AX_GCC_LIBGCC_EH AX_GCC_LIB ' +
+    'AX_GCC_LIBSUPCXX AX_GCC_MALLOC_CALL AX_GCC_VAR_ATTRIBUTE ' +
+    'AX_GCC_WARN_UNUSED_RESULT AX_GCC_X86_AVX_XGETBV AX_GCC_X86_CPUID ' +
+    'AX_GCC_X86_CPU_SUPPORTS AX_GENERATE_CHANGELOG AX_GNU_AUTOTEST ' +
+    'AX_HAVE_ADNS AX_HAVE_EPOLL AX_HAVE_POLL AX_HAVE_QT AX_HAVE_SELECT ' +
+    'AX_INCLUDE_STRCASECMP AX_INSTALL_FILES AX_IS_RELEASE ' +
+    'AX_JAVA_CHECK_CLASS AX_JAVA_OPTIONS AX_JNI_INCLUDE_DIR AX_LAPACK ' +
+    'AX_LIB_BEECRYPT AX_LIB_CGAL_CORE AX_LIB_CRYPTO AX_LIB_CURL AX_LIB_EV ' +
+    'AX_LIB_EXPAT AX_LIB_FIREBIRD AX_LIBGCJ_JAR AX_LIB_GCRYPT AX_LIB_GDAL ' +
+    'AX_LIB_HDF5 AX_LIB_ID3 AX_LIB_LIBKML AX_LIB_METIS AX_LIB_MYSQLCPPCONN ' +
+    'AX_LIB_MYSQL AX_LIB_NETCDF4 AX_LIB_NETTLE AX_LIB_NOKALVA ' +
+    'AX_LIB_ORACLE_OCCI AX_LIB_ORACLE_OCI AX_LIB_ORBIT2 AX_LIB_POSTGRESQL ' +
+    'AX_LIB_READLINE AX_LIB_SAMTOOLS AX_LIB_SOCKET_NSL AX_LIB_SQLITE3 ' +
+    'AX_LIB_TABIX AX_LIB_TAGLIB AX_LIBTOOLIZE_CFLAGS AX_LIB_TRACE ' +
+    'AX_LIB_UPNP AX_LIB_WAD AX_LIB_XALAN AX_LIB_XERCES AX_LIB_XML_SECURITY ' +
+    'AX_LLVM AX_LUA AX_LUAROCKS_ROCK AX_MAINTAINER_MODE_AUTO_SILENT ' +
+    'AX_MISSING_PROG AX_MPI AX_MPIP AX_NEED_AWK AX_NORMALIZE_PATH ' +
+    'AX_NOT_ENABLE_FRAME_POINTER AX_NUMERIC_NAMEDLEVEL AX_OPEN62541_CHECK_H ' +
+    'AX_OPEN62541_CHECK_LIB AX_OPEN62541_PATH AX_OPENMP ' +
+    'AX_PATCH_LIBTOOL_CHANGING_CMDS_IFS AX_PATH_BDB AX_PATH_GENERIC ' +
+    'AX_PATH_LIB_PCRE AX_PATH_MILTER AX_PATH_MISSING AX_PERL_EXT_FLAGS ' +
+    'AX_PERL_EXT AX_PERL_MODULE_VERSION AX_PGSQL_PRIV_ROOT ' +
+    'AX_PKG_CHECK_MODULES AX_PKG_MICO AX_PKG_SWIG AX_PREFIX_CONFIG_H ' +
+    'AX_PRINTF_SIZE_T AX_PRINT_TO_FILE AX_PROG_APACHE AX_PROG_BISON ' +
+    'AX_PROG_BISON_VERSION AX_PROG_CC_CHAR_SUBSCRIPTS AX_PROG_CC_FOR_BUILD ' +
+    'AX_PROG_CC_MPI AX_PROG_CP_S AX_PROG_CRONTAB AX_PROG_CXX_FOR_BUILD ' +
+    'AX_PROG_CXX_MPI AX_PROG_DOTNETCORE_VERSION AX_PROG_DOXYGEN ' +
+    'AX_PROG_F77_MPI AX_PROG_FASM AX_PROG_FASM_OPT AX_PROG_FC_MPI ' +
+    'AX_PROG_FIG2DEV AX_PROG_FLEX AX_PROG_FLEX_VERSION AX_PROG_GJS ' +
+    'AX_PROG_GUILE_VERSION AX_PROG_HAXE_VERSION AX_PROG_HLA AX_PROG_HLA_OPT ' +
+    'AX_PROG_HTTPD AX_PROG_JAR AX_PROG_JAVA_CC AX_PROG_JAVAC ' +
+    'AX_PROG_JAVAC_WORKS AX_PROG_JAVADOC AX_PROG_JAVAH AX_PROG_JAVA ' +
+    'AX_PROG_JAVA_WORKS AX_PROG_MASM AX_PROG_MASM_OPT AX_PROG_MD5SUM ' +
+    'AX_PROG_MODPROBE AX_PROG_MYSQLADMIN AX_PROG_MYSQLD AX_PROG_MYSQLIMPORT ' +
+    'AX_PROG_MYSQL AX_PROG_MYSQLSHOW AX_PROG_NASM AX_PROG_NASM_OPT ' +
+    'AX_PROG_PERL_MODULES AX_PROG_PERL_VERSION AX_PROG_PGCLIENT ' +
+    'AX_PROG_PYTHON_VERSION AX_PROG_RUBY_VERSION AX_PROG_SCALAC ' +
+    'AX_PROG_SCALA AX_PROG_SCP AX_PROG_SPLINT AX_PROG_SSH AX_PROG_TASM ' +
+    'AX_PROG_TASM_OPT AX_PROG_TCL AX_PROG_XSLTPROC AX_PROG_YASM ' +
+    'AX_PROG_YASM_OPT AX_PROTOTYPE_ACCEPT AX_PROTOTYPE_GETSOCKNAME ' +
+    'AX_PROTOTYPE AX_PROTOTYPE_SETSOCKOPT AX_PTHREAD AX_PYTHON_CONFIG_VAR ' +
+    'AX_PYTHON_DEVEL AX_PYTHON_EMBED AX_PYTHON AX_PYTHON_MODULE ' +
+    'AX_PYTHON_MODULE_VERSION AX_REQUIRE_DEFINED AX_REQUIRE_ONE_FUNC ' +
+    'AX_RESTORE_FLAGS AX_RESTORE_FLAGS_WITH_PREFIX AX_RPM_INIT ' +
+    'AX_RUBY_DEVEL AX_RUBY_EXT AX_SAVE_FLAGS AX_SAVE_FLAGS_WITH_PREFIX ' +
+    'AX_SET_DEFAULT_PATHS_SYSTEM AX_SHORT_SLEEP AX_SILENT_MODE AX_SIP_DEVEL ' +
+    'AX_SPEC_FILE AX_SPEC_PACKAGE_VERSION AX_SPLIT_VERSION ' +
+    'AX_STRINGS_STRCASECMP AX_STRING_STRCASECMP AX_STRUCT_SEMUN ' +
+    'AX_SUBDIR_FILES AX_SUBST_WITH AX_SWIG_ENABLE_CXX ' +
+    'AX_SWIG_MULTI_MODULE_SUPPORT AX_SWIG_PYTHON AX_SWITCH_FLAGS ' +
+    'AX_SYS_DEV_POLL AX_SYS_LARGEFILE_SENSITIVE AX_SYS_PERLSHARPBANG ' +
+    'AX_SYSV_IPC AX_SYS_WEAK_ALIAS AX_TLS AX_TRILINOS_AMESOS ' +
+    'AX_TRILINOS_BASE AX_TRILINOS_EPETRAEXT_HDF5 AX_TRILINOS_EPETRAEXT ' +
+    'AX_TRILINOS_EPETRA AX_TRILINOS_RTOP AX_TRILINOS_RYTHMOS ' +
+    'AX_TRILINOS_TEUCHOS AX_TRILINOS_THYRA_EPETRAEXT ' +
+    'AX_TRILINOS_THYRA_EPETRA AX_TRILINOS_THYRA AX_TRY_AWK_ANYOUT ' +
+    'AX_TRY_AWK_EXPOUT AX_TRY_COMPILE_JAVA AX_TRY_RUN_JAVA ' +
+    'AX_TYPE_SOCKLEN_T AX_UPLOAD AX_VALGRIND_CHECK AX_VAR_POP AX_VAR_PUSH ' +
+    'AX_VAR_TIMEZONE_EXTERNALS AX_VERY_NICE AX_WARNING_DEFAULT_ACLOCALDIR ' +
+    'AX_WARNING_DEFAULT_PKGCONFIG AX_WINT_T AX_WITH_APXS AX_WITH_BUILD_PATH ' +
+    'AX_WITH_CURSES_EXTRA AX_WITH_CURSES AX_WITH_DMALLOC AX_WITH_MPATROL ' +
+    'AX_WITH_PROG AX_XERCESC AX_XSDCXX AX_XTRA_CLASSPATH AX_ZMQ AX_ZONEINFO ' +
+    ' ');
+
+  function tokenBase(stream, state) {
+    if (stream.eatSpace()) return null;
+
+    var sol = stream.sol();
+    var ch = stream.next();
+
+    if (ch === '\\') {
+      stream.next();
+      return null;
+    }
+    if (ch === '[' || ch === ']') {
+      return 'string';
+    }
+    if (ch === '\'' || ch === '"' || ch === '`') {
+      state.tokens.unshift(tokenString(ch));
+      return tokenize(stream, state);
+    }
+    if (ch === '#') {
+//      if (sol && stream.eat('!')) {
+//        stream.skipToEnd();
+//        return 'meta'; // 'comment'?
+//      }
+      stream.skipToEnd();
+      return 'comment';
+    }
+    // dnl Comment.
+    if (ch === 'd') {
+      if (sol && stream.eat('n') && stream.eat('l')) {
+        stream.skipToEnd();
+        return 'comment';
+      }
+    }
+    if (ch === '$') {
+      state.tokens.unshift(tokenDollar);
+      return tokenize(stream, state);
+    }
+    if (ch === '+' || ch === '=') {
+      return 'operator';
+    }
+    if (ch === '-') {
+      stream.eat('-');
+      stream.eatWhile(/\w/);
+      return 'attribute';
+    }
+    if (/\d/.test(ch)) {
+      stream.eatWhile(/\d/);
+      if(stream.eol() || !/\w/.test(stream.peek())) {
+        return 'number';
+      }
+    }
+    stream.eatWhile(/[\w-]/);
+    var cur = stream.current();
+    if (stream.peek() === '=' && /\w+/.test(cur)) return 'def';
+    return words.hasOwnProperty(cur) ? words[cur] : null;
+  }
+
+  function tokenString(quote) {
+    return function(stream, state) {
+      var next, end = false, escaped = false;
+      while ((next = stream.next()) != null) {
+        if (next === quote && !escaped) {
+          end = true;
+          break;
+        }
+        if (next === '$' && !escaped && quote !== '\'') {
+          escaped = true;
+          stream.backUp(1);
+          state.tokens.unshift(tokenDollar);
+          break;
+        }
+        escaped = !escaped && next === '\\';
+      }
+      if (end || !escaped) {
+        state.tokens.shift();
+      }
+      return (quote === '`' || quote === ')' ? 'quote' : 'string');
+    };
+  };
+
+  var tokenDollar = function(stream, state) {
+    if (state.tokens.length > 1) stream.eat('$');
+    var ch = stream.next(), hungry = /\w/;
+    if (ch === '{') hungry = /[^}]/;
+    if (ch === '(') {
+      state.tokens[0] = tokenString(')');
+      return tokenize(stream, state);
+    }
+    if (!/\d/.test(ch)) {
+      stream.eatWhile(hungry);
+      stream.eat('}');
+    }
+    state.tokens.shift();
+    return 'def';
+  };
+
+  function tokenize(stream, state) {
+    return (state.tokens[0] || tokenBase) (stream, state);
+  };
+
+  return {
+    startState: function() {return {tokens:[]};},
+    token: function(stream, state) {
+      return tokenize(stream, state);
+    },
+    lineComment: '#',
+    fold: "brace"
+  };
+});
+
+CodeMirror.defineMIME('application/x-m4', 'm4');
+
+});
