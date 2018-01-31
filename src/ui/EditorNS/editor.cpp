@@ -55,6 +55,11 @@ namespace EditorNS
         //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
         //m_webView->setContent(content.toUtf8());
 
+		m_webView->pageAction(QWebPage::InspectElement)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionDefault)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionLeftToRight)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionRightToLeft)->setVisible(false);
+
         m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
         QWebSettings *pageSettings = m_webView->page()->settings();
