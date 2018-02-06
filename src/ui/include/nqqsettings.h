@@ -114,6 +114,7 @@ public:
     BEGIN_CATEGORY(MainWindow)
         NQQ_SETTING(Geometry,       QByteArray, QByteArray())
         NQQ_SETTING(WindowState,    QByteArray, QByteArray())
+        NQQ_SETTING(MenuBarVisible, bool,       true)
     END_CATEGORY(MainWindow)
 
 

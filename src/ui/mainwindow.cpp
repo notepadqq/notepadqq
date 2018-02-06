@@ -83,6 +83,12 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
+    // Wire up tool- and menubar visibility.
+    connect(ui->mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(ui->mainToolBar->isVisible());
+    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
+    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
+
     fixKeyboardShortcuts();
     // Set popup for action_Open in toolbar
     QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
@@ -2450,4 +2456,15 @@ void MainWindow::on_actionSave_Session_triggered()
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.setIcon(QMessageBox::Critical);
     }
+}
+
+void MainWindow::on_actionShow_Menubar_toggled(bool arg1)
+{
+    ui->menuBar->setVisible(arg1);
+    m_settings.MainWindow.setMenuBarVisible(arg1);
+}
+
+void MainWindow::on_actionShow_Toolbar_toggled(bool arg1)
+{
+    ui->mainToolBar->setVisible(arg1);
 }
