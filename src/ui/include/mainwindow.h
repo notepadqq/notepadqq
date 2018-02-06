@@ -178,10 +178,8 @@ private slots:
     void on_actionToggle_Smart_Indent_toggled(bool on);
     void on_actionLoad_Session_triggered();
     void on_actionSave_Session_triggered();
-
-	void on_actionShow_Menubar_toggled(bool arg1);
-
-	void on_actionShow_Toolbar_toggled(bool arg1);
+    void on_actionShow_Menubar_toggled(bool arg1);
+    void on_actionShow_Toolbar_toggled(bool arg1);
 
 private:
     static QList<MainWindow*> m_instances;
