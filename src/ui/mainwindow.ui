@@ -326,30 +326,6 @@
    <addaction name="actionSave_Currently_Recorded_Macro"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockFileSearchResults">
-   <property name="windowTitle">
-    <string>Find res&amp;ult</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QVBoxLayout" name="verticalLayout_3">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-    </layout>
-   </widget>
-  </widget>
   <action name="action_Open">
    <property name="text">
     <string>&amp;Open...</string>
