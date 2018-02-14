@@ -26,6 +26,10 @@ Build
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
     notepadqq$ sudo apt-get install qt5-default qttools5-dev-tools libqt5webkit5 libqt5webkit5-dev libqt5webkit5-qmlwebkitplugin libqt5svg5 libqt5svg5-dev
+
+For CentOS:
+
+    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
     
 Install
 -------
