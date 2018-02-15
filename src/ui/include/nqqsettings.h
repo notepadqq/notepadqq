@@ -66,6 +66,7 @@ public:
         NQQ_SETTING(Localization,                   QString,    "")
         NQQ_SETTING(CheckVersionAtStartup,          bool,       true)
         NQQ_SETTING(WarnForDifferentIndentation,    bool,       true)
+        NQQ_SETTING(ExitOnLastTabClose,             bool,       false)
 
         NQQ_SETTING(WordWrap,                       bool,       false)
         NQQ_SETTING(Zoom,                           qreal,      1.0)

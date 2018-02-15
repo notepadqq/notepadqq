@@ -957,6 +957,10 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
         if (tabWidget->count() > 0) {
             tabWidget->currentEditor()->setFocus();
         }
+    } else {
+        // If user tried to close last open (clean) tab, check if Nqq should just quit.
+        if(m_settings.General.getExitOnLastTabClose())
+            close();
     }
 
     if(tabWidget->count() == 0) {
@@ -968,7 +972,10 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
             delete tabWidget;
             m_topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
         } else {
-            ui->action_New->trigger();
+            if(m_settings.General.getExitOnLastTabClose())
+                close();
+            else
+                ui->action_New->trigger();
         }
     }
 
