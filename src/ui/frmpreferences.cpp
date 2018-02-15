@@ -46,6 +46,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
+    ui->chkExitOnLastTabClose->setChecked(m_settings.General.getExitOnLastTabClose());
 
     loadLanguages();
     loadAppearanceTab();
@@ -332,6 +333,7 @@ bool frmPreferences::applySettings()
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
+    m_settings.General.setExitOnLastTabClose(ui->chkExitOnLastTabClose->isChecked());
 
     saveLanguages();
     saveAppearanceTab();

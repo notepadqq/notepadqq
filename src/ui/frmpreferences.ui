@@ -86,7 +86,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -121,15 +121,22 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkExitOnLastTabClose">
+           <property name="text">
+            <string>Exit Notepadqq when closing the last Tab</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="localizationLabel">
              <property name="text">
               <string>Localization:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QComboBox" name="localizationComboBox"/>
            </item>
           </layout>
