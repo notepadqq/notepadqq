@@ -205,7 +205,6 @@
     <addaction name="menuMove_Clone_Current_Document"/>
     <addaction name="actionWord_wrap"/>
     <addaction name="separator"/>
-    <addaction name="actionText_Direction_RTL"/>
     <addaction name="separator"/>
     <addaction name="actionFull_Screen"/>
    </widget>
@@ -594,14 +593,6 @@
    </property>
    <property name="text">
     <string>&amp;Word wrap</string>
-   </property>
-  </action>
-  <action name="actionText_Direction_RTL">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Text Direction RTL</string>
    </property>
   </action>
   <action name="actionCurrent_Full_File_path_to_Clipboard">
