@@ -71,6 +71,6 @@ parts:
       
       
 
-    source: ../ 
+    source: . 
     after: [desktop-qt5] 
     plugin: qmake
