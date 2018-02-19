@@ -6,7 +6,7 @@ description: |
   You can search text using the power of regular expressions. You can organize documents side by side. You can use real-time highlighting to find near identifiers in no time.
 grade: devel
 confinement: strict
-icon: ../support_files/icons/hicolor/scalable/apps/notepadqq.svg
+icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
 
 
 apps:
