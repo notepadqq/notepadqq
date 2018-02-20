@@ -253,34 +253,64 @@ void MainWindow::loadIcons()
 
     // Assign (where possible) system theme icons to our actions.
     // If a system icon doesn't exist, fallback on the already assigned icon.
+
+    // File menu
     ui->action_New->setIcon(IconProvider::fromTheme("document-new"));
     ui->action_Open->setIcon(IconProvider::fromTheme("document-open"));
+    ui->actionReload_from_Disk->setIcon(IconProvider::fromTheme("view-refresh"));
     ui->actionSave->setIcon(IconProvider::fromTheme("document-save"));
     ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as"));
+    ui->actionSave_a_Copy_As->setIcon(IconProvider::fromTheme("document-save-as"));
     ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all"));
     ui->actionClose->setIcon(IconProvider::fromTheme("document-close"));
     ui->actionC_lose_All->setIcon(IconProvider::fromTheme("document-close-all"));
-    ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print"));
+    ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent"));
+    ui->actionE_xit->setIcon(IconProvider::fromTheme("application-exit"));
+    ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print")); // currently invisible
+
+    // Edit menu
+    ui->action_Undo->setIcon(IconProvider::fromTheme("edit-undo"));
+    ui->action_Redo->setIcon(IconProvider::fromTheme("edit-redo"));
     ui->actionCu_t->setIcon(IconProvider::fromTheme("edit-cut"));
     ui->action_Copy->setIcon(IconProvider::fromTheme("edit-copy"));
     ui->action_Paste->setIcon(IconProvider::fromTheme("edit-paste"));
-    ui->action_Undo->setIcon(IconProvider::fromTheme("edit-undo"));
-    ui->action_Redo->setIcon(IconProvider::fromTheme("edit-redo"));
+    ui->action_Delete->setIcon(IconProvider::fromTheme("edit-delete"));
+    ui->actionSelect_All->setIcon(IconProvider::fromTheme("edit-select-all"));
+
+    // Search menu
+    ui->actionSearch->setIcon(IconProvider::fromTheme("edit-find"));
+    ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next"));
+    ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous"));
+    ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
+    ui->actionGo_to_line->setIcon(IconProvider::fromTheme("go-jump"));
+
+    // View menu
+    ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("show-special-chars"));
     ui->actionZoom_In->setIcon(IconProvider::fromTheme("zoom-in"));
     ui->actionZoom_Out->setIcon(IconProvider::fromTheme("zoom-out"));
     ui->actionRestore_Default_Zoom->setIcon(IconProvider::fromTheme("zoom-original"));
+    ui->actionWord_wrap->setIcon(IconProvider::fromTheme("word-wrap"));
+    ui->actionFull_Screen->setIcon(IconProvider::fromTheme("view-fullscreen"));
+
+    // Settings menu
+    ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
+
+    // Run menu
+    ui->action_Run->setIcon(IconProvider::fromTheme("system-run"));
+
+    // Window menu
+    ui->actionOpen_a_New_Window->setIcon(IconProvider::fromTheme("window-new"));
+
+    // '?' menu
+    ui->actionAbout_Qt->setIcon(IconProvider::fromTheme("help-about"));
+    ui->actionAbout_Notepadqq->setIcon(IconProvider::fromTheme("notepadqq"));
+
+    // Macros in toolbar
     ui->action_Start_Recording->setIcon(IconProvider::fromTheme("media-record"));
     ui->action_Stop_Recording->setIcon(IconProvider::fromTheme("media-playback-stop"));
     ui->action_Playback->setIcon(IconProvider::fromTheme("media-playback-start"));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(IconProvider::fromTheme("media-seek-forward"));
     ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
-    ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
-    ui->actionSearch->setIcon(IconProvider::fromTheme("edit-find"));
-    ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
-    ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("show-special-chars"));
-    ui->actionWord_wrap->setIcon(IconProvider::fromTheme("word-wrap"));
-    ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next"));
-    ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous"));
 }
 
 void MainWindow::createStatusBar()
