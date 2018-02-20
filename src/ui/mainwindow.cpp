@@ -158,6 +158,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Initialize the advanced search dock and hook its signals up
     addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
+    m_advSearchDock->getDockWidget()->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
     connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, &MainWindow::searchDockItemClicked);
 
     restoreWindowSettings();
