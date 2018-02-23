@@ -2,6 +2,7 @@ Notepadqq
 =========
 
 [![Build Status](https://travis-ci.org/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.org/notepadqq/notepadqq)
+[![Snap Status](https://build.snapcraft.io/badge/notepadqq/notepadqq.svg)](https://build.snapcraft.io/user/notepadqq/notepadqq)
 
 Build
 -----
@@ -45,11 +46,23 @@ Notepadqq might work on Qt 5.2, but it is recommended to use Qt 5.3 or later. If
 Distribution Packages
 ---------------------
 
-#### AppImage (recommended for Ubuntu users) ★
+#### Most distributions: Snap (recommended) ★
+
+To install the latest stable version:
+
+    sudo snap install notepadqq
+
+If, instead, you want to follow the (UNSTABLE) development releases:
+
+    sudo snap install --edge notepadqq
+
+You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
+
+#### AppImage ★
 The QWebKit version used in later versions of Ubuntu causes Notepadqq to be unstable. AppImage solves this issue by packaging its own QWebKit version. Continous builds of Notepadqq's AppImage are available [here](https://github.com/notepadqq/notepadqq/releases/tag/continuous).
 
 #### Ubuntu (official packages) ★
-Notepadqq is available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
+You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
     sudo add-apt-repository ppa:notepadqq-team/notepadqq
     sudo apt-get update
