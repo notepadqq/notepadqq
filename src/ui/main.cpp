@@ -34,6 +34,10 @@ int main(int argc, char *argv[])
     // Initialize random number generator
     qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
 
+#if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
+    SingleApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    SingleApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
     SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
