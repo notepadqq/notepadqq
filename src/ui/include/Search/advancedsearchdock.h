@@ -60,9 +60,12 @@ public:
 
 signals:
     /**
-     * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked
+     * @brief itemInteracted Emitted when an item in the current tree widget is interacted with.
+     * @param doc The selected DocResult
+     * @param result The selected MatchResult. If this is nullptr then the user only selected a DocResult
+     * @param type The kind of interaction requested by the user
      */
-    void resultItemClicked(const DocResult& doc, const MatchResult& result);
+    void itemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
 
 private:
     MainWindow* m_mainWindow;
@@ -143,6 +146,7 @@ private:
     QComboBox*   m_cmbSearchPattern;
     QComboBox*   m_cmbSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;
+    QToolButton* m_btnSelectCurrentDirectory;
     QToolButton* m_btnSearch;
     QCheckBox*   m_chkMatchCase;
     QCheckBox*   m_chkMatchWords;

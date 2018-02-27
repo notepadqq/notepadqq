@@ -122,7 +122,7 @@ bool DocEngine::reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *
 {
     Editor *editor = tabWidget->editor(tab);
     QList<QUrl> files;
-    files.append(editor->fileName());
+    files.append(editor->filePath());
     return loadDocuments(files, tabWidget, true, codec, bom);
 }
 
@@ -221,7 +221,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
                 // If there was only a new empty tab opened, remove it
                 if (tabWidget->count() == 2) {
                     Editor *victim = tabWidget->editor(0);
-                    if (victim->fileName().isEmpty() && victim->isClean()) {
+                    if (victim->filePath().isEmpty() && victim->isClean()) {
                         tabWidget->removeTab(0);
                         tabIndex--;
                     }
@@ -229,7 +229,7 @@ bool DocEngine::loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tab
 
                 file.close();
                 if (!reload) {
-                    editor->setFileName(fileNames[i]);
+                    editor->setFilePath(fileNames[i]);
                     //sci->setEolMode(sci->guessEolMode());
                     tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
                     editor->setLanguageFromFileName();
@@ -453,7 +453,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         unmonitorDocument(editor);
 
     if (outFileName.isEmpty())
-        outFileName = editor->fileName();
+        outFileName = editor->filePath();
 
     if (outFileName.isLocalFile()) {
         QFile file(outFileName.toLocalFile());
@@ -496,8 +496,8 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         // Update the file name if necessary.
         if (!copy) {
-            if (editor->fileName() != outFileName) {
-                editor->setFileName(outFileName);
+            if (editor->filePath() != outFileName) {
+                editor->setFilePath(outFileName);
                 editor->setLanguageFromFileName();
             }
             editor->markClean();
@@ -550,17 +550,17 @@ void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
 
 void DocEngine::monitorDocument(Editor *editor)
 {
-    monitorDocument(editor->fileName().toLocalFile());
+    monitorDocument(editor->filePath().toLocalFile());
 }
 
 void DocEngine::unmonitorDocument(Editor *editor)
 {
-    unmonitorDocument(editor->fileName().toLocalFile());
+    unmonitorDocument(editor->filePath().toLocalFile());
 }
 
 bool DocEngine::isMonitored(Editor *editor)
 {
-    return m_fsWatcher->files().contains(editor->fileName().toLocalFile());
+    return m_fsWatcher->files().contains(editor->filePath().toLocalFile());
 }
 
 DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)

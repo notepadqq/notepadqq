@@ -269,7 +269,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         for (int j = 0; j < tabCount; j++) {
             Editor* editor = tabWidget->editor(j);
             bool isClean = editor->isClean();
-            bool isOrphan = editor->fileName().isEmpty();
+            bool isOrphan = editor->filePath().isEmpty();
 
             if (isOrphan && !cacheModifiedFiles)
                 continue; // Don't save temporary files if we're not caching tabs
@@ -291,7 +291,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             }
             // Else tab is an openened unmodified file, we don't have to do anything special.
 
-            td.filePath = !isOrphan ? editor->fileName().toLocalFile() : "";
+            td.filePath = !isOrphan ? editor->filePath().toLocalFile() : "";
 
             // Finally save other misc information about the tab.
             const auto& scrollPos = editor->scrollPosition();
@@ -396,10 +396,10 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             }
 
             if (tab.filePath.isEmpty()) {
-                editor->setFileName(QUrl());
+                editor->setFilePath(QUrl());
                 tabW->setTabText(idx, docEngine->getNewDocumentName());
             } else {
-                editor->setFileName(fileUrl);
+                editor->setFilePath(fileUrl);
                 if(fileExists)
                     docEngine->monitorDocument(editor);
             }
