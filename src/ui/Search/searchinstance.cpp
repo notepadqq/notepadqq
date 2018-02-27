@@ -6,6 +6,8 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QClipboard>
+#include <QMenu>
+#include <QHeaderView>
 
 #include "include/mainwindow.h"
 #include "include/EditorNS/editor.h"
@@ -117,8 +119,39 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         searchLocation = '"' + config.directory + '"'; break;
     }
 
+    // Create actions for the custom context menu
+    QAction* copyLine = new QAction(tr("Copy Line to Clipboard"));
+    connect(copyLine, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        if (it != m_resultMap.end())
+            QApplication::clipboard()->setText( m_resultMap.at(it->first)->matchLineString );
+    });
+
+    QAction* openDocument = new QAction(tr("Open Document"));
+    connect(openDocument, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        if (it != m_resultMap.end())
+            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second), SearchUserInteraction::OpenDocument );
+    });
+
+    QAction* openFolder = new QAction(tr("Open Folder in File Browser"));
+    connect(openFolder, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        if (it != m_resultMap.end())
+            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second), SearchUserInteraction::OpenContainingFolder );
+    });
+
+    m_contextMenu = new QMenu(treeWidget);
+    m_contextMenu->addAction(copyLine);
+    m_contextMenu->addAction(openDocument);
+    m_contextMenu->addAction(openFolder);
+
     treeWidget->setHeaderLabel(tr("Search Results in: %1").arg(searchLocation));
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
+    treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
         // When checking/unchecking a toplevel item we want to propagate it to all children
@@ -133,9 +166,18 @@ SearchInstance::SearchInstance(const SearchConfig& config)
     connect(treeWidget, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem *item) {
         auto it = m_resultMap.find(item);
         if (it != m_resultMap.end())
-            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second) );
+            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second), SearchUserInteraction::OpenDocument );
     });
 
+    connect(treeWidget, &QTreeWidget::customContextMenuRequested, [this, treeWidget](const QPoint &pos){
+        // Only open menu for result items.
+        if(!treeWidget->currentItem() || treeWidget->currentItem()->childCount() > 0)
+            return;
+
+        auto localPos = treeWidget->mapToGlobal(pos);
+        localPos.setY(localPos.y() + treeWidget->header()->height());
+        m_contextMenu->exec( localPos );
+    });
 
     // If we're searching through documents we'll just do the search right now. File System searches are
     // delegated to a FileSearcher instance because they can take a while to finish.

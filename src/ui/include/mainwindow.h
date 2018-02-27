@@ -77,7 +77,7 @@ private slots:
     void runCommand();
     void modifyRunCommands();
     void refreshEditorUiCursorInfo(Editor *editor);
-    void searchDockItemClicked(const DocResult& doc, const MatchResult& result);
+    void searchDockItemClicked(const DocResult& doc, const MatchResult& result, SearchUserInteraction type);
     void on_action_New_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();

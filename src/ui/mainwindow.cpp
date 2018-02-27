@@ -1255,8 +1255,16 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     }
 }
 
-void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& result)
+void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& result, SearchUserInteraction type)
 {
+    if (type == SearchUserInteraction::OpenContainingFolder) {
+        if (!QFile(doc.fileName).exists()) return;
+        QFileInfo fInfo(doc.fileName);
+        QString dirName = fInfo.dir().path();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(dirName));
+        return;
+    }
+
     if(doc.docType == DocResult::TypeDocument) {
         // Make sure the editor is still open by searching for it first.
         Editor* found = doc.editor;

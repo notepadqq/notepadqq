@@ -90,6 +90,11 @@ struct DocResult {
     QVector<MatchResult> results;
 };
 
+enum class SearchUserInteraction {
+    OpenDocument,
+    OpenContainingFolder
+};
+
 struct SearchResult {
 
     /**

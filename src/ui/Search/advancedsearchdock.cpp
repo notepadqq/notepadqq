@@ -309,6 +309,10 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchDirectory->addItems(settings.Search.getFileHistory());
     m_cmbSearchDirectory->setCurrentText("");
 
+    m_btnSelectCurrentDirectory = new QToolButton;
+    m_btnSelectCurrentDirectory->setIcon(IconProvider::fromTheme("edit-copy"));
+    m_btnSelectCurrentDirectory->setToolTip(tr("Select Directory of active Document"));
+
     m_btnSelectSearchDirectory = new QToolButton;
     m_btnSelectSearchDirectory->setIcon(IconProvider::fromTheme("edit-find"));
     m_btnSelectSearchDirectory->setToolTip(tr("Select Search Directory"));
@@ -336,6 +340,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_chkUseSpecialChars = new QCheckBox(tr("Use Special Characters ('\\t', '\\n', ...)"));
     m_chkUseSpecialChars->setToolTip(tr("If set, character sequences like '\\t' will be replaced by their respective special characters."));
     m_chkIncludeSubdirs = new QCheckBox(tr("Include Subdirectories"));
+    m_chkIncludeSubdirs->setChecked(true);
 
     QVBoxLayout* mini = new QVBoxLayout;
     mini->addWidget(m_chkMatchCase);
@@ -356,6 +361,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addWidget(m_cmbSearchPattern, 3,1);
 
     gl->addLayout(mini, 0, 3, 4, 1);
+    gl->addWidget(m_btnSelectCurrentDirectory, 2, 2);
     gl->addWidget(m_btnSearch, 3,2);
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
@@ -460,12 +466,14 @@ void AdvancedSearchDock::onChangeSearchScope(int index)
         m_cmbSearchPattern->setEnabled(false);
         m_cmbSearchDirectory->setEnabled(false);
         m_btnSelectSearchDirectory->setEnabled(false);
+        m_btnSelectCurrentDirectory->setEnabled(false);
         m_chkIncludeSubdirs->setEnabled(false);
         break;
     case 2: // Search in file system
         m_cmbSearchPattern->setEnabled(true);
         m_cmbSearchDirectory->setEnabled(true);
         m_btnSelectSearchDirectory->setEnabled(true);
+        m_btnSelectCurrentDirectory->setEnabled(true);
         m_chkIncludeSubdirs->setEnabled(true);
         break;
     }
@@ -644,6 +652,16 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
     connect(m_cmbSearchDirectory->lineEdit(), &QLineEdit::returnPressed, [this](){
         startSearch(getConfigFromInputs());
+    });
+    connect(m_btnSelectCurrentDirectory, &QToolButton::clicked, [this, mainWindow](){
+        auto* tabW = mainWindow->topEditorContainer()->currentTabWidget();
+        auto* editor = tabW->currentEditor();
+
+        QString dir;
+        if(editor && !editor->fileName().isEmpty()) {
+            dir = QFileInfo(editor->fileName().toLocalFile()).dir().path();
+        }
+        m_cmbSearchDirectory->setCurrentText(dir);
     });
     connect(m_btnSelectSearchDirectory, &QToolButton::clicked, [this](){
         QString defaultDir = m_cmbSearchDirectory->currentText();

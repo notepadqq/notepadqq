@@ -62,7 +62,7 @@ signals:
     /**
      * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked
      */
-    void resultItemClicked(const DocResult& doc, const MatchResult& result);
+    void resultItemClicked(const DocResult& doc, const MatchResult& result, SearchUserInteraction type);
 
 private:
     MainWindow* m_mainWindow;
@@ -143,6 +143,7 @@ private:
     QComboBox*   m_cmbSearchPattern;
     QComboBox*   m_cmbSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;
+    QToolButton* m_btnSelectCurrentDirectory;
     QToolButton* m_btnSearch;
     QCheckBox*   m_chkMatchCase;
     QCheckBox*   m_chkMatchWords;
