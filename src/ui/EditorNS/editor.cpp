@@ -174,24 +174,34 @@ namespace EditorNS
     /**
      * Automatically converts local relative file names to absolute ones.
      */
-    void Editor::setFileName(const QUrl &filename)
+    void Editor::setFilePath(const QUrl &filename)
     {
-        QUrl old = m_fileName;
+        QUrl old = m_filePath;
         QUrl newUrl = filename;
 
         if (newUrl.isLocalFile())
             newUrl = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
 
-        m_fileName = newUrl;
+        m_filePath = newUrl;
         emit fileNameChanged(old, newUrl);
     }
 
     /**
      * Always returns an absolute url.
      */
-    QUrl Editor::fileName() const
+    QUrl Editor::filePath() const
     {
-        return m_fileName;
+        return m_filePath;
+    }
+
+    QString Editor::tabName() const
+    {
+        return m_tabName;
+    }
+
+    void Editor::setTabName(const QString& name)
+    {
+        m_tabName = name;
     }
 
     bool Editor::isClean()
@@ -258,7 +268,7 @@ namespace EditorNS
 
     QString Editor::setLanguageFromFileName()
     {
-        return setLanguageFromFileName(fileName().toString());
+        return setLanguageFromFileName(filePath().toString());
     }
 
     void Editor::setIndentationMode(QString language)

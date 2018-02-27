@@ -816,7 +816,7 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
 {
     // Don't do anything if there is no file to reload from.
-    if (tabWidget->editor(tab)->fileName().isEmpty())
+    if (tabWidget->editor(tab)->filePath().isEmpty())
         return false;
 
     if (!tabWidget->editor(tab)->isClean()) {
@@ -859,7 +859,7 @@ void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
 
 void MainWindow::on_action_Open_triggered()
 {
-    QUrl defaultUrl = currentEditor()->fileName();
+    QUrl defaultUrl = currentEditor()->filePath();
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
@@ -880,7 +880,7 @@ void MainWindow::on_action_Open_triggered()
 
 void MainWindow::on_actionOpen_Folder_triggered()
 {
-    QUrl defaultUrl = currentEditor()->fileName();
+    QUrl defaultUrl = currentEditor()->filePath();
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
@@ -953,7 +953,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
     // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
     // Else, continue.
     if (! (m_topEditorContainer->count() == 1 && tabWidget->count() == 1
-           && editor->fileName().isEmpty() && editor->isClean())) {
+           && editor->filePath().isEmpty() && editor->isClean())) {
 
         if(!force && !editor->isClean()) {
             tabWidget->setCurrentIndex(tab);
@@ -1023,7 +1023,7 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
 
-    if (editor->fileName().isEmpty())
+    if (editor->filePath().isEmpty())
     {
         // Call "save as"
         return saveAs(tabWidget, tab, false);
@@ -1032,8 +1032,8 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
         // If the file has changed outside the editor, ask
         // the user if he want to save it.
         bool fileOverwrite = false;
-        if (editor->fileName().isLocalFile())
-            fileOverwrite = QFile(editor->fileName().toLocalFile()).exists();
+        if (editor->filePath().isLocalFile())
+            fileOverwrite = QFile(editor->filePath().toLocalFile()).exists();
 
         if (editor->fileOnDiskChanged() && fileOverwrite) {
             QMessageBox msgBox(this);
@@ -1053,7 +1053,7 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
                 return DocEngine::saveFileResult_Canceled;
         }
 
-        return m_docEngine->saveDocument(tabWidget, tab, editor->fileName());
+        return m_docEngine->saveDocument(tabWidget, tab, editor->filePath());
     }
 }
 
@@ -1078,7 +1078,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
 
 QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab)
 {
-    QUrl docFileName = tabWidget->editor(tab)->fileName();
+    QUrl docFileName = tabWidget->editor(tab)->filePath();
 
     if (docFileName.isEmpty()) {
         return QUrl::fromLocalFile(m_settings.General.getLastSelectedDir()
@@ -1299,7 +1299,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
     // Update MainWindow title
     QString newTitle;
-    if (editor->fileName().isEmpty()) {
+    if (editor->filePath().isEmpty()) {
 
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
@@ -1312,7 +1312,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         }
 
     } else {
-        QUrl url = editor->fileName();
+        QUrl url = editor->filePath();
 
         QString path = url.toDisplayString(QUrl::RemovePassword |
                                            QUrl::RemoveUserInfo |
@@ -1327,7 +1327,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                            );
 
         newTitle = QString("%1 (%2) - %3")
-                   .arg(Notepadqq::fileNameFromUrl(editor->fileName()))
+                   .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
                    .arg(path)
                    .arg(QApplication::applicationName());
 
@@ -1340,12 +1340,12 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 
     // Enable / disable menus
     bool isClean = editor->isClean();
-    QUrl fileName = editor->fileName();
+    QUrl fileName = editor->filePath();
     ui->actionRename->setEnabled(!fileName.isEmpty());
     ui->actionMove_to_New_Window->setEnabled(isClean);
     ui->actionOpen_in_New_Window->setEnabled(isClean);
 
-    bool allowReloading = !editor->fileName().isEmpty();
+    bool allowReloading = !editor->filePath().isEmpty();
     ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
     ui->actionReload_from_Disk->setEnabled(allowReloading);
 
@@ -1474,13 +1474,13 @@ void MainWindow::on_actionSearch_triggered()
 void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if (currentEditor()->fileName().isEmpty())
+    if (currentEditor()->filePath().isEmpty())
     {
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     } else {
         QApplication::clipboard()->setText(
-                    editor->fileName().toDisplayString(QUrl::PreferLocalFile |
+                    editor->filePath().toDisplayString(QUrl::PreferLocalFile |
                                                        QUrl::RemovePassword));
     }
 }
@@ -1488,24 +1488,24 @@ void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
 void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if (currentEditor()->fileName().isEmpty())
+    if (currentEditor()->filePath().isEmpty())
     {
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
         QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     } else {
-        QApplication::clipboard()->setText(Notepadqq::fileNameFromUrl(editor->fileName()));
+        QApplication::clipboard()->setText(Notepadqq::fileNameFromUrl(editor->filePath()));
     }
 }
 
 void MainWindow::on_actionCurrent_Directory_Path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
-    if(currentEditor()->fileName().isEmpty())
+    if(currentEditor()->filePath().isEmpty())
     {
         QApplication::clipboard()->setText("");
     } else {
         QApplication::clipboard()->setText(
-                    editor->fileName().toDisplayString(QUrl::RemovePassword |
+                    editor->filePath().toDisplayString(QUrl::RemovePassword |
                                                        QUrl::RemoveUserInfo |
                                                        QUrl::RemovePort |
                                                        QUrl::RemoveAuthority |
@@ -1755,7 +1755,7 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
     const int MAX_RECENT_ENTRIES = 10;
 
     if(updateRecentDocs){
-        QUrl newUrl = editor->fileName();
+        QUrl newUrl = editor->filePath();
         QList<QVariant> recentDocs = m_settings.General.getRecentDocuments();
         recentDocs.insert(0, QVariant(newUrl));
 
@@ -1879,12 +1879,12 @@ void MainWindow::on_actionFind_Previous_triggered()
 void MainWindow::on_actionRename_triggered()
 {
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
-    QUrl oldFilename = tabW->currentEditor()->fileName();
+    QUrl oldFilename = tabW->currentEditor()->filePath();
     int result = saveAs(tabW, tabW->currentIndex(), false);
 
     if (result == DocEngine::saveFileResult_Saved && !oldFilename.isEmpty()) {
 
-        if (QFileInfo(oldFilename.toLocalFile()) != QFileInfo(tabW->currentEditor()->fileName().toLocalFile())) {
+        if (QFileInfo(oldFilename.toLocalFile()) != QFileInfo(tabW->currentEditor()->filePath().toLocalFile())) {
 
             // Remove the old file
             QString filename = oldFilename.toLocalFile();
@@ -2158,7 +2158,7 @@ void MainWindow::runCommand()
 
     Editor *editor = currentEditor();
 
-    QUrl url = currentEditor()->fileName();
+    QUrl url = currentEditor()->filePath();
     QStringList selection = editor->selectedTexts();
     if (!url.isEmpty()) {
         cmd.replace("\%url\%", url.toString(QUrl::None));
@@ -2267,8 +2267,8 @@ void MainWindow::on_actionOpen_in_New_Window_triggered()
 {
     QStringList args;
     args.append(QApplication::arguments().first());
-    if (!currentEditor()->fileName().isEmpty()) {
-        args.append(currentEditor()->fileName().toString(QUrl::None));
+    if (!currentEditor()->filePath().isEmpty()) {
+        args.append(currentEditor()->filePath().toString(QUrl::None));
     }
 
     MainWindow *b = new MainWindow(args, 0);
@@ -2279,8 +2279,8 @@ void MainWindow::on_actionMove_to_New_Window_triggered()
 {
     QStringList args;
     args.append(QApplication::arguments().first());
-    if (!currentEditor()->fileName().isEmpty()) {
-        args.append(currentEditor()->fileName().toString(QUrl::None));
+    if (!currentEditor()->filePath().isEmpty()) {
+        args.append(currentEditor()->filePath().toString(QUrl::None));
     }
 
     EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();

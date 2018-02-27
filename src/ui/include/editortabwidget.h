@@ -28,7 +28,7 @@ public:
      */
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
     int findOpenEditorByUrl(const QUrl &filename);
-    Editor *editor(int index);
+    Editor *editor(int index) const;
     QSharedPointer<Editor> editorSharedPtr(int index);
     QSharedPointer<Editor> editorSharedPtr(Editor *editor);
     Editor *currentEditor();
@@ -53,7 +53,20 @@ public:
      */
     static void deleteIfEmpty(EditorTabWidget *tabWidget);
 
+    /**
+     * @brief tabText Returns the title of the given Editor or tab index
+     */
+    QString tabText(Editor* editor) const;
+    QString tabText(int index) const;
+
+    /**
+     * @brief tabText Sets the title of the given Editor or tab index
+     */
+    void setTabText(Editor* editor, const QString& text);
+    void setTabText(int index, const QString& text);
+
 private:
+
     // Smart pointers to the editors within this TabWidget
     QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;
 
