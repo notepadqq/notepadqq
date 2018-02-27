@@ -119,8 +119,10 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         searchLocation = '"' + config.directory + '"'; break;
     }
 
+    m_contextMenu = new QMenu(treeWidget);
+
     // Create actions for the custom context menu
-    m_actionCopyLine = new QAction(tr("Copy Line to Clipboard"));
+    m_actionCopyLine = new QAction(tr("Copy Line to Clipboard"), m_contextMenu);
     connect(m_actionCopyLine, &QAction::triggered, this, [this, treeWidget](){
         auto* item = treeWidget->currentItem();
         auto it = m_resultMap.find(item);
@@ -128,7 +130,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
             QApplication::clipboard()->setText( m_resultMap.at(it->first)->matchLineString );
     });
 
-    m_actionOpenDocument = new QAction(tr("Open Document"));
+    m_actionOpenDocument = new QAction(tr("Open Document"), m_contextMenu);
     connect(m_actionOpenDocument, &QAction::triggered, this, [this, treeWidget](){
         auto* item = treeWidget->currentItem();
         auto it = m_resultMap.find(item);
@@ -137,7 +139,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         emit itemInteracted( *docItem, resultItem, SearchUserInteraction::OpenDocument );
     });
 
-    m_actionOpenFolder = new QAction(tr("Open Folder in File Browser"));
+    m_actionOpenFolder = new QAction(tr("Open Folder in File Browser"), m_contextMenu);
     connect(m_actionOpenFolder, &QAction::triggered, this, [this, treeWidget](){
         auto* item = treeWidget->currentItem();
         auto it = m_resultMap.find(item);
@@ -146,7 +148,6 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         emit itemInteracted( *docItem, resultItem, SearchUserInteraction::OpenContainingFolder );
     });
 
-    m_contextMenu = new QMenu(treeWidget);
     m_contextMenu->addAction(m_actionCopyLine);
     m_contextMenu->addAction(m_actionOpenDocument);
     m_contextMenu->addAction(m_actionOpenFolder);
