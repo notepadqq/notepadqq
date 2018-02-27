@@ -60,8 +60,10 @@ public:
 
 signals:
     /**
-     * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked.
-     *        If result is a nullptr, the interacted item was a top-level DocResult.
+     * @brief itemInteracted Emitted when an item in the current tree widget is interacted with.
+     * @param doc The selected DocResult
+     * @param result The selected MatchResult. If this is nullptr then the user only selected a DocResult
+     * @param type The kind of interaction requested by the user
      */
     void itemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
 
