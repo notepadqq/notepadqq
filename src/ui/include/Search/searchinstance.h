@@ -72,7 +72,7 @@ signals:
     /**
      * @brief resultItemClicked Emitted when the user interacts with one of the MatchResults
      */
-    void resultItemClicked(const DocResult& doc, const MatchResult& result, SearchUserInteraction type);
+    void itemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
 
 private:
     void onSearchProgress(int processed, int total);
@@ -86,7 +86,12 @@ private:
     QScopedPointer<QTreeWidget> m_treeWidget;
     SearchResult                m_searchResult;
     FileSearcher*               m_fileSearcher = nullptr;
+
+    // Context menu
     QMenu*                      m_contextMenu;
+    QAction*                    m_actionCopyLine;
+    QAction*                    m_actionOpenDocument;
+    QAction*                    m_actionOpenFolder;
 
     // These map each QTreeWidget item to their respective MatchResult or DocResult
     std::map<QTreeWidgetItem*, const MatchResult*>  m_resultMap;

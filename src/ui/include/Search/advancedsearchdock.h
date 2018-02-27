@@ -60,9 +60,10 @@ public:
 
 signals:
     /**
-     * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked
+     * @brief resultItemClicked Emitted when an item in the current tree widget is double-clicked.
+     *        If result is a nullptr, the interacted item was a top-level DocResult.
      */
-    void resultItemClicked(const DocResult& doc, const MatchResult& result, SearchUserInteraction type);
+    void itemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
 
 private:
     MainWindow* m_mainWindow;

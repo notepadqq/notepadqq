@@ -421,8 +421,8 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
     }
 
     if (m_currentSearchInstance) {
-        disconnect(m_currentSearchInstance, &SearchInstance::resultItemClicked,
-                   this, &AdvancedSearchDock::resultItemClicked);
+        disconnect(m_currentSearchInstance, &SearchInstance::itemInteracted,
+                   this, &AdvancedSearchDock::itemInteracted);
     }
 
     if (index==0) {
@@ -443,8 +443,8 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
                        this, &AdvancedSearchDock::onCurrentSearchInstanceCompleted);
         }
 
-        connect(m_currentSearchInstance, &SearchInstance::resultItemClicked,
-                   this, &AdvancedSearchDock::resultItemClicked);
+        connect(m_currentSearchInstance, &SearchInstance::itemInteracted,
+                   this, &AdvancedSearchDock::itemInteracted);
 
         m_dockWidget->setWidget( m_currentSearchInstance->getResultTreeWidget() );
         m_btnToggleReplaceOptions->setEnabled(true);
@@ -658,8 +658,8 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
         auto* editor = tabW->currentEditor();
 
         QString dir;
-        if(editor && !editor->fileName().isEmpty()) {
-            dir = QFileInfo(editor->fileName().toLocalFile()).dir().path();
+        if (editor && !editor->filePath().isEmpty()) {
+            dir = QFileInfo(editor->filePath().toLocalFile()).dir().path();
         }
         m_cmbSearchDirectory->setCurrentText(dir);
     });
