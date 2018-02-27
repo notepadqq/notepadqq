@@ -159,7 +159,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize the advanced search dock and hook its signals up
     addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
     m_advSearchDock->getDockWidget()->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
-    connect(m_advSearchDock, &AdvancedSearchDock::resultItemClicked, this, &MainWindow::searchDockItemClicked);
+    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
 
     restoreWindowSettings();
 
@@ -1255,17 +1255,37 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     }
 }
 
-void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& result)
+void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type)
 {
-    if(doc.docType == DocResult::TypeDocument) {
+    if (type == SearchUserInteraction::OpenContainingFolder) {
+        QUrl fileUrl;
+
+        if (doc.docType == DocResult::TypeDocument)
+            fileUrl = doc.editor->filePath();
+        else
+            fileUrl = stringToUrl(doc.fileName);
+
+        if (fileUrl.isEmpty())
+            return;
+
+        QFileInfo fInfo(fileUrl.toLocalFile());
+        QString dirName = fInfo.dir().path();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(dirName));
+        return;
+    }
+
+    // Else: type == OpenDocument
+    if (doc.docType == DocResult::TypeDocument) {
         // Make sure the editor is still open by searching for it first.
         Editor* found = doc.editor;
         EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
         if (!parentWidget) return;
 
         parentWidget->setCurrentWidget(found);
-        found->setSelection(result.lineNumber-1, result.positionInLine, //selection start
-                            result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        if (result) {
+            found->setSelection(result->lineNumber-1, result->positionInLine, //selection start
+                                result->lineNumber-1, result->positionInLine + result->matchLength); //selection end
+        }
         found->setFocus();
 
     } else if (doc.docType == DocResult::TypeFile) {
@@ -1283,8 +1303,10 @@ void MainWindow::searchDockItemClicked(const DocResult& doc, const MatchResult& 
 
         Editor *editor = m_topEditorContainer->tabWidget(pos.first)->editor(pos.second);
 
-        editor->setSelection(result.lineNumber-1, result.positionInLine, //selection start
-                             result.lineNumber-1, result.positionInLine + result.matchLength); //selection end
+        if (result) {
+            editor->setSelection(result->lineNumber-1, result->positionInLine, //selection start
+                                result->lineNumber-1, result->positionInLine + result->matchLength); //selection end
+        }
         editor->setFocus();
     }
 }

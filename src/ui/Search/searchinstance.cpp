@@ -6,6 +6,8 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QClipboard>
+#include <QMenu>
+#include <QHeaderView>
 
 #include "include/mainwindow.h"
 #include "include/EditorNS/editor.h"
@@ -117,8 +119,42 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         searchLocation = '"' + config.directory + '"'; break;
     }
 
+    m_contextMenu = new QMenu(treeWidget);
+
+    // Create actions for the custom context menu
+    m_actionCopyLine = new QAction(tr("Copy Line to Clipboard"), m_contextMenu);
+    connect(m_actionCopyLine, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        if (it != m_resultMap.end())
+            QApplication::clipboard()->setText( m_resultMap.at(it->first)->matchLineString );
+    });
+
+    m_actionOpenDocument = new QAction(tr("Open Document"), m_contextMenu);
+    connect(m_actionOpenDocument, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        auto* resultItem = it != m_resultMap.end() ? it->second : nullptr;
+        auto* docItem = m_docMap.at(resultItem ? item->parent() : item);
+        emit itemInteracted( *docItem, resultItem, SearchUserInteraction::OpenDocument );
+    });
+
+    m_actionOpenFolder = new QAction(tr("Open Folder in File Browser"), m_contextMenu);
+    connect(m_actionOpenFolder, &QAction::triggered, this, [this, treeWidget](){
+        auto* item = treeWidget->currentItem();
+        auto it = m_resultMap.find(item);
+        auto* resultItem = it != m_resultMap.end() ? it->second : nullptr;
+        auto* docItem = m_docMap.at(resultItem ? item->parent() : item);
+        emit itemInteracted( *docItem, resultItem, SearchUserInteraction::OpenContainingFolder );
+    });
+
+    m_contextMenu->addAction(m_actionCopyLine);
+    m_contextMenu->addAction(m_actionOpenDocument);
+    m_contextMenu->addAction(m_actionOpenFolder);
+
     treeWidget->setHeaderLabel(tr("Search Results in: %1").arg(searchLocation));
     treeWidget->setItemDelegate(new SearchTreeDelegate(treeWidget));
+    treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(treeWidget, &QTreeWidget::itemChanged, [](QTreeWidgetItem *item, int column){
         // When checking/unchecking a toplevel item we want to propagate it to all children
@@ -132,10 +168,23 @@ SearchInstance::SearchInstance(const SearchConfig& config)
 
     connect(treeWidget, &QTreeWidget::itemDoubleClicked, [this](QTreeWidgetItem *item) {
         auto it = m_resultMap.find(item);
-        if (it != m_resultMap.end())
-            emit resultItemClicked( *m_docMap.at(item->parent()), *(it->second) );
+        if (it != m_resultMap.end()) // Don't emit the interaction if no ResultItem was clicked
+            emit itemInteracted( *m_docMap.at(item->parent()), (it->second), SearchUserInteraction::OpenDocument );
     });
 
+    connect(treeWidget, &QTreeWidget::customContextMenuRequested, [this, treeWidget](const QPoint &pos){
+        if (!treeWidget->currentItem())
+            return;
+
+        // Disable to CopyLines action if a DocResult was clicked. Doesn't make sense since no single line
+        // was selected in this case.
+        bool isTopLevelItem = treeWidget->currentItem()->childCount() > 0;
+        m_actionCopyLine->setEnabled(!isTopLevelItem);
+
+        auto localPos = treeWidget->mapToGlobal(pos);
+        localPos.setY(localPos.y() + treeWidget->header()->height());
+        m_contextMenu->exec( localPos );
+    });
 
     // If we're searching through documents we'll just do the search right now. File System searches are
     // delegated to a FileSearcher instance because they can take a while to finish.
