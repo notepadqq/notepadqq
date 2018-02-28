@@ -172,7 +172,9 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
         result.matchLength = match.capturedLength();
         results.results.push_back(result);
 
-        offset += match.capturedLength();
+        // Advance at least by one to avoit infinite loops when capturing
+        // empty expressions.
+        offset += std::max(1, result.matchLength);
     }
 
     return results;
