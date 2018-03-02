@@ -62,14 +62,14 @@ For CentOS:
     notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
     
 #### Install
--------
+
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run
 
     notepadqq$ sudo make install
 
 #### Qt
---
+
 Notepadqq might work on Qt 5.2, but it is recommended to use Qt 5.3 or later. If the newest version isn't available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
 
 Distribution Packages
