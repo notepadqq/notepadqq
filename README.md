@@ -100,5 +100,5 @@ Notepadqq is avilable in OpenSUSE's main repository:
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
 
-#### Compilation on Mac OSX
+#### Compilation on macOS
 While we do not (yet) officially support it, compiling and running Notepadqq on OSX is not very difficult. Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-Mac-OSX).
