@@ -1,10 +1,20 @@
-Notepadqq
-=========
+# <img src="https://user-images.githubusercontent.com/4319621/36906314-e3f99680-1e35-11e8-90fd-f959c9641f36.png" alt="Notepadqq" width="32" height="32" /> Notepadqq [![Build Status](https://travis-ci.org/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.org/notepadqq/notepadqq) [![Snap Status](https://build.snapcraft.io/badge/notepadqq/notepadqq.svg)](https://build.snapcraft.io/user/notepadqq/notepadqq)
 
-[![Build Status](https://travis-ci.org/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.org/notepadqq/notepadqq)
-[![Snap Status](https://build.snapcraft.io/badge/notepadqq/notepadqq.svg)](https://build.snapcraft.io/user/notepadqq/notepadqq)
+### Links
 
-Build
+* [What is it?](#what-is-it)
+* [Build it yourself](#build-it-yourself)
+* [Download it](#distribution-packages)
+
+#### What is it?
+
+Notepadqq is a text editor designed from developers, for developers. 
+
+![screenshot_20180302_163505](https://notepadqq.com/s/images/snapshot1.png)
+
+Please visit our [Wiki](https://github.com/notepadqq/notepadqq/wiki) for more screenshots and details.
+
+Build it yourself
 -----
 
 | Build dependencies | Dependencies  |
@@ -19,7 +29,7 @@ Build
     $ git clone --recursive https://github.com/notepadqq/notepadqq.git
     $ cd notepadqq
 
-#### Build it
+#### Build
 
     notepadqq$ ./configure --prefix /usr
     notepadqq$ make
@@ -32,15 +42,15 @@ For CentOS:
 
     notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
     
-Install
--------
+#### Install
+
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run
 
     notepadqq$ sudo make install
 
-Qt
---
+#### Qt
+
 Notepadqq might work on Qt 5.2, but it is recommended to use Qt 5.3 or later. If the newest version isn't available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
 
 Distribution Packages
@@ -58,17 +68,17 @@ If, instead, you want to follow the (UNSTABLE) development releases:
 
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
 
-#### AppImage ★
+#### AppImage
 The QWebKit version used in later versions of Ubuntu causes Notepadqq to be unstable. AppImage solves this issue by packaging its own QWebKit version. Continous builds of Notepadqq's AppImage are available [here](https://github.com/notepadqq/notepadqq/releases/tag/continuous).
 
-#### Ubuntu (official packages) ★
+#### Ubuntu (official packages)
 You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
     sudo add-apt-repository ppa:notepadqq-team/notepadqq
     sudo apt-get update
     sudo apt-get install notepadqq
 
-#### Debian (official packages) ★
+#### Debian (official packages)
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
 #### Arch Linux
@@ -81,7 +91,7 @@ Alternatively it can be found in the AUR:
  * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
  * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)
 
-#### OpenSUSE 
+#### OpenSUSE
 Notepadqq is avilable in OpenSUSE's main repository:
 
      sudo zypper in notepadqq
