@@ -61,14 +61,14 @@ For CentOS:
 
     notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
     
-Install
+#### Install
 -------
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run
 
     notepadqq$ sudo make install
 
-Qt
+#### Qt
 --
 Notepadqq might work on Qt 5.2, but it is recommended to use Qt 5.3 or later. If the newest version isn't available on your distribution, you can use the [online installer](http://www.qt.io/download-open-source) to get the latest libraries and install them into your home directory (`$HOME/Qt`). Notepadqq will automatically use them.
 
@@ -100,7 +100,7 @@ You should prefer using Snap packages, which are natively supported on Ubuntu (s
 #### Debian (official packages) ★
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
-#### Arch Linux
+#### Arch Linux ★
 Notepadqq is available from Arch's [community repositories](https://www.archlinux.org/packages/community/x86_64/notepadqq/). To install using pacman:
 
     sudo pacman -S notepadqq
