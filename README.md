@@ -95,11 +95,6 @@ Alternatively it can be found in the AUR:
 Notepadqq is avilable in OpenSUSE's main repository:
 
      sudo zypper in notepadqq
-     
-#### Solus
-Notepadqq is available in the `shannon` (stable) repository:
-
-     sudo eopkg it notepadqq
 
 #### Others
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
