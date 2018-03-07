@@ -272,7 +272,7 @@ unix:!macx {
     shortcuts.path = "$$INSTALL_ROOT$$PREFIX/share/applications/"
     shortcuts.files += "$$INSTALLFILESDIR/shortcuts/notepadqq.desktop"
     
-    appstream.path = "/usr/share/metainfo/"
+    appstream.path = "$$INSTALL_ROOT$$PREFIX/share/metainfo/"
     appstream.files += "$$INSTALLFILESDIR/notepadqq.appdata.xml"
 
     # == Dummy target used to fix permissions at the end of the install ==
