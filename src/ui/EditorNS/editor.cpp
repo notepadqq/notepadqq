@@ -81,6 +81,7 @@ namespace EditorNS
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
+        connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
 
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we
@@ -150,8 +151,6 @@ namespace EditorNS
             emit cleanChanged(data.toBool());
         else if(msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
-        else if(msg == "J_EVT_GOT_FOCUS")
-            emit gotFocus();
         else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
             QVariantMap map = data.toMap();
             emit currentLanguageChanged(map.value("id").toString(),

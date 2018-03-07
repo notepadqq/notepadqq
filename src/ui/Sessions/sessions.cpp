@@ -427,11 +427,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
-            editor->clearFocus();
 
         } // end for
-
-        tabW->clearFocus();
 
         // In case a new tabwidget was created but no tabs were actually added to it,
         // we'll attempt to re-use the widget for the next view.
@@ -449,18 +446,6 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
     lastTabW->deleteIfEmpty();
-
-    // Give focus to the last tab of the first tab widget.
-    EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
-    Editor* lastEditor = firstTabW->editor(firstTabW->count()-1);
-    lastEditor->setFocus();
-
-    // This triggers `TopEditorContainer::on_currentTabChanged` and eventually
-    // `MainWindow::on_currentEditorChanged` which calls refreshEditorUiInfo() to
-    // get rid of the titlebar display bug when loading files from cache.
-    firstTabW->currentChanged(firstTabW->count()-1);
-
-    return;
 }
 
 } // namespace Sessions
