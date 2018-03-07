@@ -349,6 +349,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         return;
     }
 
+    Editor* focusedEditor = nullptr;
+
     int viewCounter = 0;
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
@@ -421,13 +423,17 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 emit docEngine->fileOnDiskChanged(tabW, idx, true);
             }
 
-
-            if(tab.active) activeIndex = idx;
+            if(tab.active) {
+                focusedEditor = editor;
+                activeIndex = idx;
+            }
 
             if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
 
+            // loadDocuments() explicitely calls setFocus() so we'll have to undo that.
+            editor->clearFocus();
         } // end for
 
         // In case a new tabwidget was created but no tabs were actually added to it,
@@ -446,6 +452,11 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
     lastTabW->deleteIfEmpty();
+
+    if(focusedEditor)
+        focusedEditor->setFocus();
+
+    return;
 }
 
 } // namespace Sessions

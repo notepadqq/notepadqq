@@ -36,9 +36,9 @@ namespace EditorNS
         }
     }
 
-    void CustomQWebView::focusInEvent(QFocusEvent* /*event*/)
+    void CustomQWebView::focusInEvent(QFocusEvent* event)
     {
+        QWebView::focusInEvent(event);
         emit gotFocus();
     }
-
 }
