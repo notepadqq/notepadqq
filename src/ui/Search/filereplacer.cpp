@@ -2,7 +2,6 @@
 
 #include <QFile>
 #include <QTextStream>
-#include <QtGlobal>
 
 #include "include/docengine.h"
 
@@ -67,7 +66,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
         lastEnd = 0;
 
         // add the after string, with replacements for the backreferences
-        for (const BackReference& backReference : qAsConst(backReferences)) {
+        for (const BackReference& backReference : backReferences) {
             // part of "after" before the backreference
             len = backReference.pos - lastEnd;
             if (len > 0) {
@@ -106,7 +105,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     content.resize(newLength);
     int i = 0;
     QChar *uc = content.data();
-    for (const QStringRef &chunk : qAsConst(chunks)) {
+    for (const QStringRef &chunk : chunks) {
         int len = chunk.length();
         memcpy(uc + i, chunk.unicode(), static_cast<ulong>(len) * sizeof(QChar));
         i += len;
