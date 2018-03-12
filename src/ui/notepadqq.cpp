@@ -9,7 +9,7 @@
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/graphs/contributors";
-const QString Notepadqq::website = "http://notepadqq.altervista.org";
+const QString Notepadqq::website = "https://notepadqq.com";
 bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
