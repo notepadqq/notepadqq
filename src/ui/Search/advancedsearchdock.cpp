@@ -140,19 +140,19 @@ QFrame* makeDivider(QFrame::Shape shape, int length=0) {
 void showRegexInfo() {
     QString str;
 
-    str = "Notepadqq supports most of the <a href='http://perldoc.perl.org/perlre.html'>Perl Regular Expression</a> syntax when 'Use Regular Expressions' is checked.<br>";
-    str += "Here is a quick reference:<br>";
-
-    str += "<table>"
-           "<tr><td width=20%><b>\\w</b></td><td>" + QObject::tr("Matches a word character") + "</td></tr>"
-           "<tr><td><b>\\d</b></td><td>" + QObject::tr("Matches a 0-9 digit") + "</td></tr>"
-           "<tr><td><b>[abc]</b></td><td>" + QObject::tr("Matches any of a, b, or c") + "</td></tr>"
-           "<tr><td><b>[^abc]</b></td><td>" + QObject::tr("Matches anything but a, b, or c") + "</td></tr>"
-           "<tr><td><b>^</b></td><td>" + QObject::tr("Matches the beginning of a line") + "</td></tr>"
-           "<tr><td><b>$</b></td><td>" + QObject::tr("Matches the end of a line") + "</td></tr>"
-           "<tr><td><b>(abc)</b></td><td>" + QObject::tr("Matches 'abc' and captures it as a group") + "</td></tr>"
-           "<tr><td><b>\\n</b></td><td>" + QObject::tr("Use in a replace operation to refer to the n'th capture group") + "</td></tr>"
-           "</table>";
+    str =
+    QObject::tr("Notepadqq supports most of the <a href='http://perldoc.perl.org/perlre.html'>Perl Regular Expression</a> syntax when 'Use Regular Expressions' is checked.") + "<br>" +
+    QObject::tr("Here is a quick reference:") + "<br>"
+    "<table>"
+    "<tr><td width=20%><b>\\w</b></td><td>" + QObject::tr("Matches a word character") + "</td></tr>"
+    "<tr><td><b>\\d</b></td><td>" + QObject::tr("Matches a 0-9 digit") + "</td></tr>"
+    "<tr><td><b>[abc]</b></td><td>" + QObject::tr("Matches any of a, b, or c") + "</td></tr>"
+    "<tr><td><b>[^abc]</b></td><td>" + QObject::tr("Matches anything but a, b, or c") + "</td></tr>"
+    "<tr><td><b>^</b></td><td>" + QObject::tr("Matches the beginning of a line") + "</td></tr>"
+    "<tr><td><b>$</b></td><td>" + QObject::tr("Matches the end of a line") + "</td></tr>"
+    "<tr><td><b>(abc)</b></td><td>" + QObject::tr("Matches 'abc' and captures it as a group") + "</td></tr>"
+    "<tr><td><b>\\n</b></td><td>" + QObject::tr("Use in a replace operation to refer to the n'th capture group") + "</td></tr>"
+    "</table>";
 
     QMessageBox::information(nullptr, "", str);
 }
