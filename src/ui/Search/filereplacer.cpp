@@ -2,6 +2,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QtGlobal>
 
 #include "include/docengine.h"
 
