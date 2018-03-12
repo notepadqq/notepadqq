@@ -170,12 +170,15 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
         result.positionInFile = offset;
         result.positionInLine = offset - lineStart;
         result.matchLength = match.capturedLength();
+        result.regexMatch = match;
         results.results.push_back(result);
 
         // Advance at least by one to avoit infinite loops when capturing
         // empty expressions.
         offset += std::max(1, result.matchLength);
     }
+
+    results.regexCaptureGroupCount = regex.captureCount();
 
     return results;
 }
