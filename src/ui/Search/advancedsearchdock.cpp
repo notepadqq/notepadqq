@@ -342,6 +342,12 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_chkIncludeSubdirs = new QCheckBox(tr("Include Subdirectories"));
     m_chkIncludeSubdirs->setChecked(true);
 
+    m_chkMatchCase->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkMatchWords->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkUseRegex->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkUseSpecialChars->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkIncludeSubdirs->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+
     QVBoxLayout* mini = new QVBoxLayout;
     mini->addWidget(m_chkMatchCase);
     mini->addWidget(m_chkMatchWords);
@@ -363,6 +369,8 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addLayout(mini, 0, 3, 4, 1);
     gl->addWidget(m_btnSelectCurrentDirectory, 2, 2);
     gl->addWidget(m_btnSearch, 3,2);
+
+    gl->addWidget(new QLabel("(<a href='info'>?</a>)"), 0, 4);
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
 
