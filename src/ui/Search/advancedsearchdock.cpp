@@ -137,6 +137,26 @@ QFrame* makeDivider(QFrame::Shape shape, int length=0) {
     return line;
 }
 
+void showRegexInfo() {
+    QString str;
+
+    str =
+    QObject::tr("Notepadqq supports most of the <a href='http://perldoc.perl.org/perlre.html'>Perl Regular Expression</a> syntax when 'Use Regular Expressions' is checked.") + "<br>" +
+    QObject::tr("Here is a quick reference:") + "<br>"
+    "<table>"
+    "<tr><td width=20%><b>\\w</b></td><td>" + QObject::tr("Matches a word character") + "</td></tr>"
+    "<tr><td><b>\\d</b></td><td>" + QObject::tr("Matches a 0-9 digit") + "</td></tr>"
+    "<tr><td><b>[abc]</b></td><td>" + QObject::tr("Matches any of a, b, or c") + "</td></tr>"
+    "<tr><td><b>[^abc]</b></td><td>" + QObject::tr("Matches anything but a, b, or c") + "</td></tr>"
+    "<tr><td><b>^</b></td><td>" + QObject::tr("Matches the beginning of a line") + "</td></tr>"
+    "<tr><td><b>$</b></td><td>" + QObject::tr("Matches the end of a line") + "</td></tr>"
+    "<tr><td><b>(abc)</b></td><td>" + QObject::tr("Matches 'abc' and captures it as a group") + "</td></tr>"
+    "<tr><td><b>\\n</b></td><td>" + QObject::tr("Use in a replace operation to refer to the n'th capture group") + "</td></tr>"
+    "</table>";
+
+    QMessageBox::information(nullptr, "", str);
+}
+
 QLayout* AdvancedSearchDock::buildLeftTitlebar() {
 
     QLabel* label = new QLabel(tr("Advanced Search"));
@@ -342,13 +362,23 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_chkIncludeSubdirs = new QCheckBox(tr("Include Subdirectories"));
     m_chkIncludeSubdirs->setChecked(true);
 
-    QVBoxLayout* mini = new QVBoxLayout;
-    mini->addWidget(m_chkMatchCase);
-    mini->addWidget(m_chkMatchWords);
-    mini->addWidget(m_chkUseRegex);
-    mini->addWidget(m_chkUseSpecialChars);
-    mini->addWidget(makeDivider(QFrame::HLine, 180));
-    mini->addWidget(m_chkIncludeSubdirs);
+    m_chkMatchCase->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkMatchWords->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkUseRegex->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkUseSpecialChars->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_chkIncludeSubdirs->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+    QGridLayout* mini = new QGridLayout;
+    mini->addWidget(m_chkMatchCase, 0, 0);
+    mini->addWidget(m_chkMatchWords, 1, 0);
+    mini->addWidget(m_chkUseRegex, 2, 0);
+    mini->addWidget(m_chkUseSpecialChars, 3, 0);
+    mini->addWidget(makeDivider(QFrame::HLine, 180), 4, 0);
+    mini->addWidget(m_chkIncludeSubdirs, 5, 0);
+
+    QLabel* regexInfo = new QLabel("(<a href='info'>?</a>)");
+    QObject::connect(regexInfo, &QLabel::linkActivated, &showRegexInfo);
+    mini->addWidget(regexInfo, 2, 1);
 
     gl->addWidget(srl, 0,0);
     gl->addWidget(scl, 1,0);
@@ -363,6 +393,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addLayout(mini, 0, 3, 4, 1);
     gl->addWidget(m_btnSelectCurrentDirectory, 2, 2);
     gl->addWidget(m_btnSearch, 3,2);
+
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
 
