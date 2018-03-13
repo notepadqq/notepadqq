@@ -8,6 +8,7 @@
 #include <QEventLoop>
 #include <QUrlQuery>
 #include <QRegularExpression>
+#include <regex>
 
 namespace EditorNS
 {
@@ -142,7 +143,31 @@ namespace EditorNS
     {
         emit messageReceived(msg, data);
 
-        if(msg == "J_EVT_READY") {
+        if (msg.startsWith("[ASYNC_REPLY]")) {
+            std::regex rgx("\\[ID=(\\d+)\\]$");
+            std::smatch matches;
+
+            if(!std::regex_search(msg.toStdString(), matches, rgx))
+                return;
+
+            if (matches.size() != 2)
+                return;
+
+            unsigned int id = QString::fromStdString(matches[1].str()).toInt();
+
+            // Look into the list of callbacks
+            for (auto it = this->asyncMessages.begin(); it != this->asyncMessages.end(); ++it) {
+                if (it->id == id) {
+                    auto cb = it->callback;
+                    this->asyncMessages.erase(it);
+
+                    cb(data);
+                    break;
+                }
+            }
+
+
+        } else if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
         } else if(msg == "J_EVT_CONTENT_CHANGED")
@@ -156,6 +181,7 @@ namespace EditorNS
             emit currentLanguageChanged(map.value("id").toString(),
                                         map.value("name").toString());
         }
+
     }
 
     void Editor::setFocus()
@@ -381,6 +407,26 @@ namespace EditorNS
     QVariant Editor::sendMessageWithResult(const QString &msg)
     {
         return sendMessageWithResult(msg, 0);
+    }
+
+    void Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    {
+        static unsigned int msgid = 0;
+        msgid++;
+
+        AsyncMessage asyncmsg;
+        asyncmsg.id = msgid;
+        asyncmsg.callback = callback;
+        this->asyncMessages.push_back(asyncmsg);
+
+        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
+
+        this->sendMessage(message_id, data);
+    }
+
+    void Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    {
+        this->asyncSendMessageWithResult(msg, 0, callback);
     }
 
     void Editor::setZoomFactor(const qreal &factor)
@@ -682,6 +728,13 @@ namespace EditorNS
     int Editor::lineCount()
     {
         return sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+    }
+
+    void Editor::lineCount(std::function<void(int)> callback)
+    {
+        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT", [callback](QVariant r){
+            callback(r.toInt());
+        });
     }
 
 }

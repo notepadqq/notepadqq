@@ -8,6 +8,8 @@
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
+#include <QVariant>
+#include <functional>
 
 class EditorTabWidget;
 
@@ -292,9 +294,17 @@ namespace EditorNS
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         int lineCount();
+        void lineCount(std::function<void(int)> callback);
 
     private:
         friend class ::EditorTabWidget;
+
+        struct AsyncMessage {
+            unsigned int id;
+            std::function<void (QVariant)> callback;
+        };
+
+        std::list<AsyncMessage> asyncMessages;
 
         // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
         // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
@@ -352,6 +362,8 @@ namespace EditorNS
         void sendMessage(const QString &msg);
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
         QVariant sendMessageWithResult(const QString &msg);
+        void asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback);
+        void asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback);
 
         void print(QPrinter *printer);
     };
