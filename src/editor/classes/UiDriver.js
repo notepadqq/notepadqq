@@ -31,9 +31,9 @@ var UiDriver = new function() {
                 // we provide the previous handler's return value.
                 var prevReturn = undefined;
 
-                if (handlers[msg] !== undefined) {
-                    handlers[msg].forEach(function(handler) {
-                        prevReturn = handler(msg, data, prevReturn);
+                if (handlers[real_msg] !== undefined) {
+                    handlers[real_msg].forEach(function(handler) {
+                        prevReturn = handler(real_msg, data, prevReturn);
                     });
                 }
 
