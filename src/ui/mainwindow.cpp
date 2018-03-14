@@ -1235,24 +1235,24 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     if (editor != 0) {
         // Update status bar
         editor->asyncSendMessageWithResult("C_FUN_GET_TEXT_LENGTH", [=](QVariant len){
-            editor->lineCount([=](int lines) {
-                m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
+            int lines = editor->lineCount();
 
-                QPair<int, int> cursor = editor->cursorPosition();
-                int selectedChars = 0;
-                int selectedPieces = 0;
-                QStringList selections = editor->selectedTexts();
-                for (QString sel : selections) {
-                    selectedChars += sel.length();
-                    selectedPieces += sel.split("\n").count();
-                }
+            m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
 
-                m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                            .arg(cursor.first + 1)
-                                            .arg(cursor.second + 1));
+            QPair<int, int> cursor = editor->cursorPosition();
+            int selectedChars = 0;
+            int selectedPieces = 0;
+            QStringList selections = editor->selectedTexts();
+            for (QString sel : selections) {
+                selectedChars += sel.length();
+                selectedPieces += sel.split("\n").count();
+            }
 
-                m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
-            });
+            m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                        .arg(cursor.first + 1)
+                                        .arg(cursor.second + 1));
+
+            m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
         });
     }
 }

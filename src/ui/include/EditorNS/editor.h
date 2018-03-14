@@ -10,6 +10,7 @@
 #include <QTextCodec>
 #include <QVariant>
 #include <functional>
+#include <future>
 
 class EditorTabWidget;
 
@@ -294,7 +295,6 @@ namespace EditorNS
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
         int lineCount();
-        void lineCount(std::function<void(int)> callback);
 
     private:
         friend class ::EditorTabWidget;

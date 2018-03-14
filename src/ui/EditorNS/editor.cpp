@@ -417,7 +417,7 @@ namespace EditorNS
         AsyncMessage asyncmsg;
         asyncmsg.id = msgid;
         asyncmsg.callback = callback;
-        this->asyncMessages.push_back(asyncmsg);
+        this->asyncMessages.push_back(std::move(asyncmsg));
 
         QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
 
@@ -727,14 +727,11 @@ namespace EditorNS
 
     int Editor::lineCount()
     {
-        return sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
-    }
-
-    void Editor::lineCount(std::function<void(int)> callback)
-    {
-        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT", [callback](QVariant r){
-            callback(r.toInt());
+        auto p = std::make_shared<std::promise<int>>();
+        asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT", [p](QVariant r){
+            p->set_value(r.toInt());
         });
-    }
 
+        return p->get_future().get();
+    }
 }
