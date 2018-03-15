@@ -8,6 +8,9 @@
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
+#include <QVariant>
+#include <functional>
+#include <future>
 
 class EditorTabWidget;
 
@@ -296,6 +299,14 @@ namespace EditorNS
     private:
         friend class ::EditorTabWidget;
 
+        struct AsyncReply {
+            unsigned int id;
+            std::shared_ptr<std::promise<QVariant>> value;
+            std::function<void (QVariant)> callback;
+        };
+
+        std::list<AsyncReply> asyncReplies;
+
         // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
         // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
         QString tabName() const;
@@ -350,8 +361,8 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
-        QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
-        QVariant sendMessageWithResult(const QString &msg);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         void print(QPrinter *printer);
     };

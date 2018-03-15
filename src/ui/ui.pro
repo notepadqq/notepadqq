@@ -271,6 +271,9 @@ unix:!macx {
 
     shortcuts.path = "$$INSTALL_ROOT$$PREFIX/share/applications/"
     shortcuts.files += "$$INSTALLFILESDIR/shortcuts/notepadqq.desktop"
+    
+    appstream.path = "$$INSTALL_ROOT$$PREFIX/share/metainfo/"
+    appstream.files += "$$INSTALLFILESDIR/notepadqq.appdata.xml"
 
     # == Dummy target used to fix permissions at the end of the install ==
     # A random path. Without one, qmake refuses to create the rule.
@@ -281,7 +284,7 @@ unix:!macx {
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h22 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
-         misc_data launch shortcuts \
+         misc_data launch shortcuts appstream \
          set_permissions
 
 }

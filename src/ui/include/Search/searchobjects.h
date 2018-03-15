@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include <QRegularExpressionMatch>
 
 #include "include/Search/searchhelpers.h"
 
@@ -69,6 +70,7 @@ struct MatchResult {
     int positionInFile;      // The match's offset from the beginning of the file
     int positionInLine;      // The match's offset from the beginning of the line
     int matchLength;         // The match's length
+    QRegularExpressionMatch regexMatch; // Only valid if this MatchResult was created by a regex search
 
 private:
     static const int CUTOFF_LENGTH; //Number of characters before/after match result that will be shown in preview
@@ -88,6 +90,7 @@ struct DocResult {
     EditorNS::Editor* editor = nullptr; // Only used when docType==TypeDocument
     QString fileName;                   // Is a file path when docType==TypeFile and a file name when TypeDocument
     QVector<MatchResult> results;
+    int regexCaptureGroupCount = 0;     // Only used when DocResult was created by a regex search
 };
 
 enum class SearchUserInteraction {

@@ -45,7 +45,7 @@ public:
      * @param replacement This is the replacement string
      * @return The number of successful replacements
      */
-    static int replaceAll(const DocResult& doc, QString& content, const QString& replacement);
+    static void replaceAll(const DocResult& doc, QString& content, const QString& replacement);
 
 protected:
     void run() override;
