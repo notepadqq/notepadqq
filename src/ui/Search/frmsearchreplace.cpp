@@ -173,7 +173,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelp
     data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
 		data.append(QString::number(static_cast<int>(searchMode)));
-    QVariant count = currentEditor()->sendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data));
+    QVariant count = currentEditor()->asyncSendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data)).get();
     return count.toInt();
 }
 
@@ -183,7 +183,7 @@ int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode search
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
     data.append(regexModifiersFromSearchOptions(searchOptions));
-    QVariant count = currentEditor()->sendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data));
+    QVariant count = currentEditor()->asyncSendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data)).get();
     return count.toInt();
 }
 

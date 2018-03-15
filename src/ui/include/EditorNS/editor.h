@@ -361,8 +361,6 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
-        QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
-        QVariant sendMessageWithResult(const QString &msg);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 

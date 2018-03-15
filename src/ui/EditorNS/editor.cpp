@@ -250,7 +250,7 @@ namespace EditorNS
     QList<QMap<QString, QString>> Editor::languages()
     {
         QMap<QString, QVariant> languages =
-                sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
+                asyncSendMessageWithResult("C_FUN_GET_LANGUAGES").get().toMap();
 
         QList<QMap<QString, QString>> out;
 
@@ -272,7 +272,7 @@ namespace EditorNS
 
     QString Editor::language()
     {
-        QVariantMap data = sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+        QVariantMap data = asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
         return data.value("id").toString();
     }
 
@@ -285,8 +285,8 @@ namespace EditorNS
 
     QString Editor::setLanguageFromFileName(QString fileName)
     {
-        QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName).toString();
+        QString lang = asyncSendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
+                                             fileName).get().toString();
 
         if (!m_customIndentationMode)
             setIndentationMode(lang);
@@ -320,7 +320,7 @@ namespace EditorNS
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        QVariantMap indent = sendMessageWithResult("C_FUN_GET_INDENTATION_MODE").toMap();
+        QVariantMap indent = asyncSendMessageWithResult("C_FUN_GET_INDENTATION_MODE").get().toMap();
         IndentationMode out;
         out.useTabs = indent.value("useTabs", true).toBool();
         out.size = indent.value("size", 4).toInt();
@@ -362,7 +362,7 @@ namespace EditorNS
 
     QString Editor::value()
     {
-        return sendMessageWithResult("C_FUN_GET_VALUE").toString();
+        return asyncSendMessageWithResult("C_FUN_GET_VALUE").get().toString();
     }
 
     bool Editor::fileOnDiskChanged() const
@@ -387,16 +387,6 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-        sendMessageWithResult(msg, data);
-    }
-
-    void Editor::sendMessage(const QString &msg)
-    {
-        sendMessage(msg, 0);
-    }
-
-    QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
-    {
         waitAsyncLoad();
 
         QString funCall = "UiDriver.messageReceived('" +
@@ -404,12 +394,12 @@ namespace EditorNS
 
         m_jsToCppProxy->setMsgData(data);
 
-        return m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
+        m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
     }
 
-    QVariant Editor::sendMessageWithResult(const QString &msg)
+    void Editor::sendMessage(const QString &msg)
     {
-        return sendMessageWithResult(msg, 0);
+        sendMessage(msg, 0);
     }
 
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
@@ -539,7 +529,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();
+        QList<QVariant> scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
         return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
     }
 
@@ -655,7 +645,7 @@ namespace EditorNS
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = sendMessageWithResult("C_FUN_GET_SELECTIONS").toList();
+        QList<QVariant> sels = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS").get().toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -675,7 +665,7 @@ namespace EditorNS
 
     QStringList Editor::selectedTexts()
     {
-        QVariant text = sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
+        QVariant text = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").get();
         return text.toStringList();
     }
 
@@ -704,7 +694,7 @@ namespace EditorNS
     Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
         QVariantMap indent =
-                sendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").toMap();
+                asyncSendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").get().toMap();
 
         IndentationMode out;
 
@@ -730,7 +720,7 @@ namespace EditorNS
 
     QString Editor::getCurrentWord()
     {
-        return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
+        return asyncSendMessageWithResult("C_FUN_GET_CURRENT_WORD").get().toString();
     }
 
     int Editor::lineCount()
