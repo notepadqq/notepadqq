@@ -194,10 +194,6 @@ void frmPreferences::loadAppearanceTab()
 
     ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
 
-    // Avoid glitch where scrollbars are appearing for a moment
-    const QSize renderSize = ui->colorSchemePreviewFrame->size();
-    m_previewEditor->forceRender(renderSize);
-
     const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {
         ui->chkOverrideFontFamily->setChecked(true);

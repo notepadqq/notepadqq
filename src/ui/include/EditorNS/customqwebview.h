@@ -1,13 +1,13 @@
 #ifndef CUSTOMQWEBVIEW_H
 #define CUSTOMQWEBVIEW_H
 
-#include <QWebView>
+#include <QWebEngineView>
 #include <QWheelEvent>
 
 namespace EditorNS
 {
 
-    class CustomQWebView : public QWebView
+    class CustomQWebView : public QWebEngineView
     {
         Q_OBJECT
     public:

@@ -5,14 +5,14 @@ namespace EditorNS
 {
 
     CustomQWebView::CustomQWebView(QWidget *parent) :
-        QWebView(parent)
+        QWebEngineView(parent)
     {
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        QWebView::wheelEvent(ev);
+        QWebEngineView::wheelEvent(ev);
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -22,7 +22,7 @@ namespace EditorNS
             ev->ignore();
             break;
         default:
-            QWebView::keyPressEvent(ev);
+            QWebEngineView::keyPressEvent(ev);
         }
     }
 
@@ -32,13 +32,13 @@ namespace EditorNS
             ev->ignore();
             emit urlsDropped(ev->mimeData()->urls());
         } else {
-            QWebView::dropEvent(ev);
+            QWebEngineView::dropEvent(ev);
         }
     }
 
     void CustomQWebView::focusInEvent(QFocusEvent* event)
     {
-        QWebView::focusInEvent(event);
+        QWebEngineView::focusInEvent(event);
         emit gotFocus();
     }
 }

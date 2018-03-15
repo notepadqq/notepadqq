@@ -35,18 +35,7 @@ namespace EditorNS
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
 
-        /**
-             * @brief Set C++-to-JS message data. This method should
-             *        be called from the C++ part
-             * @param data
-             */
-        void setMsgData(QVariant data) { m_msgData = data; }
-
-        /**
-             * @brief Get the message data set by setMsgData(). This
-             *        method should be called from the JavaScript part.
-             */
-        Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
+        Q_INVOKABLE void receiveMessage(QString msg, QVariant data) { emit messageReceived(msg, data); }
 
     signals:
         /**
@@ -55,6 +44,8 @@ namespace EditorNS
              * @param data Message data
              */
         void messageReceived(QString msg, QVariant data);
+
+        void messageReceivedByJs(QString msg, QVariant data);
     };
 
 
@@ -280,7 +271,6 @@ namespace EditorNS
         Q_INVOKABLE QStringList selectedTexts();
 
         void setOverwrite(bool overwrite);
-        void forceRender(QSize size);
         void setTabsVisible(bool visible);
 
         /**
@@ -301,6 +291,7 @@ namespace EditorNS
 
         struct AsyncReply {
             unsigned int id;
+            QString message;
             std::shared_ptr<std::promise<QVariant>> value;
             std::function<void (QVariant)> callback;
         };
@@ -334,11 +325,11 @@ namespace EditorNS
         void setIndentationMode(QString language);
 
     private slots:
-        void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
 
     signals:
         void messageReceived(QString msg, QVariant data);
+        void asyncReplyReceived(unsigned int id, QString msg, QVariant data);
         void gotFocus();
         void mouseWheel(QWheelEvent *ev);
         void urlsDropped(QList<QUrl> urls);

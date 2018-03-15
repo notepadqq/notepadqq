@@ -1,13 +1,15 @@
 #include "include/EditorNS/editor.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
-#include <QWebFrame>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QDir>
 #include <QEventLoop>
 #include <QUrlQuery>
 #include <QRegularExpression>
+#include <QWebChannel>
+#include <QWebEngineSettings>
+#include <QTimer>
 #include <regex>
 
 namespace EditorNS
@@ -49,6 +51,10 @@ namespace EditorNS
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
 
+        QWebChannel * channel = new QWebChannel(this);
+        m_webView->page()->setWebChannel(channel);
+        channel->registerObject(QStringLiteral("cpp_ui_driver"), m_jsToCppProxy);
+
         m_webView->setUrl(url);
 
         // To load the page in the background (http://stackoverflow.com/a/10520029):
@@ -56,29 +62,21 @@ namespace EditorNS
         //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
         //m_webView->setContent(content.toUtf8());
 
-		m_webView->pageAction(QWebPage::InspectElement)->setVisible(false);
-		m_webView->pageAction(QWebPage::SetTextDirectionDefault)->setVisible(false);
-		m_webView->pageAction(QWebPage::SetTextDirectionLeftToRight)->setVisible(false);
-		m_webView->pageAction(QWebPage::SetTextDirectionRightToLeft)->setVisible(false);
+        m_webView->pageAction(QWebEnginePage::InspectElement)->setVisible(false);
 
-        m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+        //m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-        QWebSettings *pageSettings = m_webView->page()->settings();
+        QWebEngineSettings *pageSettings = m_webView->page()->settings();
         #ifdef QT_DEBUG
-        pageSettings->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+        //pageSettings->setAttribute(QWebEngineSettings::DeveloperExtrasEnabled, true);
         #endif
-        pageSettings->setAttribute(QWebSettings::JavascriptCanAccessClipboard, true);
+        pageSettings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
 
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(0);
         m_layout->addWidget(m_webView, 1);
         setLayout(m_layout);
-
-        connect(m_webView->page()->mainFrame(),
-                &QWebFrame::javaScriptWindowObjectCleared,
-                this,
-                &Editor::on_javaScriptWindowObjectCleared);
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
@@ -133,59 +131,59 @@ namespace EditorNS
         }
     }
 
-    void Editor::on_javaScriptWindowObjectCleared()
-    {
-        m_webView->page()->mainFrame()->
-                addToJavaScriptWindowObject("cpp_ui_driver", m_jsToCppProxy);
-    }
-
     void Editor::on_proxyMessageReceived(QString msg, QVariant data)
     {
-        emit messageReceived(msg, data);
+        QTimer::singleShot(0, [msg,data,this]{
 
-        if (msg.startsWith("[ASYNC_REPLY]")) {
-            std::regex rgx("\\[ID=(\\d+)\\]$");
-            std::smatch matches;
+            emit messageReceived(msg, data);
 
-            std::string msgstr = msg.toStdString();
-            if(!std::regex_search(msgstr, matches, rgx))
-                return;
+            if (msg.startsWith("[ASYNC_REPLY]")) {
+                std::regex rgx("\\[ID=(\\d+)\\]$");
+                std::smatch matches;
 
-            if (matches.size() != 2)
-                return;
+                std::string msgstr = msg.toStdString();
+                if(!std::regex_search(msgstr, matches, rgx))
+                    return;
 
-            unsigned int id = QString::fromStdString(matches[1].str()).toInt();
+                if (matches.size() != 2)
+                    return;
 
-            // Look into the list of callbacks
-            for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
-                if (it->id == id) {
-                    auto cb = it->callback;
-                    it->value->set_value(data);
-                    this->asyncReplies.erase(it);
+                unsigned int id = QString::fromStdString(matches[1].str()).toInt();
 
-                    if (cb != 0) {
-                        cb(data);
+                // Look into the list of callbacks
+                for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
+                    if (it->id == id) {
+                        AsyncReply r = *it;
+                        r.value->set_value(data);
+                        this->asyncReplies.erase(it);
+
+                        if (r.callback != 0) {
+                            QTimer::singleShot(0, [r,data]{ r.callback(data); });
+                        }
+
+                        emit asyncReplyReceived(r.id, r.message, data);
+
+                        break;
                     }
-                    break;
                 }
+
+
+            } else if(msg == "J_EVT_READY") {
+                m_loaded = true;
+                emit editorReady();
+            } else if(msg == "J_EVT_CONTENT_CHANGED")
+                emit contentChanged();
+            else if(msg == "J_EVT_CLEAN_CHANGED")
+                emit cleanChanged(data.toBool());
+            else if(msg == "J_EVT_CURSOR_ACTIVITY")
+                emit cursorActivity();
+            else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
+                QVariantMap map = data.toMap();
+                emit currentLanguageChanged(map.value("id").toString(),
+                                            map.value("name").toString());
             }
 
-
-        } else if(msg == "J_EVT_READY") {
-            m_loaded = true;
-            emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED")
-            emit contentChanged();
-        else if(msg == "J_EVT_CLEAN_CHANGED")
-            emit cleanChanged(data.toBool());
-        else if(msg == "J_EVT_CURSOR_ACTIVITY")
-            emit cursorActivity();
-        else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            QVariantMap map = data.toMap();
-            emit currentLanguageChanged(map.value("id").toString(),
-                                        map.value("name").toString());
-        }
-
+        });
     }
 
     void Editor::setFocus()
@@ -390,12 +388,7 @@ namespace EditorNS
     {
         waitAsyncLoad();
 
-        QString funCall = "UiDriver.messageReceived('" +
-                jsStringEscape(msg) + "');";
-
-        m_jsToCppProxy->setMsgData(data);
-
-        m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
+        emit m_jsToCppProxy->messageReceivedByJs(msg, data);
     }
 
     void Editor::sendMessage(const QString &msg)
@@ -405,22 +398,38 @@ namespace EditorNS
 
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
-        static unsigned int msgid = 0;
-        msgid++;
+        static unsigned int messageIdentifier = 0;
+
+        int currentMsgIdentifier = ++messageIdentifier;
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
 
         AsyncReply asyncmsg;
-        asyncmsg.id = msgid;
+        asyncmsg.id = currentMsgIdentifier;
+        asyncmsg.message = msg;
         asyncmsg.value = resultPromise;
         asyncmsg.callback = callback;
         this->asyncReplies.push_back((asyncmsg));
 
-        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
+        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
 
         this->sendMessage(message_id, data);
 
-        return resultPromise->get_future();
+        std::shared_future<QVariant> fut = resultPromise->get_future().share();
+
+
+        std::shared_ptr<QEventLoop> loop = std::make_shared<QEventLoop>();
+        QObject::connect(this, &Editor::asyncReplyReceived, this, [loop, fut, currentMsgIdentifier](unsigned int id, QString, QVariant){
+            if (id == currentMsgIdentifier) {
+                QApplication::processEvents();
+                if (loop->isRunning()) {
+                    loop->quit();
+                }
+            }
+        });
+        loop->exec();
+
+        return fut;
     }
 
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
@@ -675,18 +684,6 @@ namespace EditorNS
         sendMessage("C_CMD_SET_OVERWRITE", overwrite);
     }
 
-    void Editor::forceRender(QSize size)
-    {
-        QWebPage *page = m_webView->page();
-
-        page->setViewportSize(size);
-
-        QImage image(size.width(), size.height(), QImage::Format_Mono);
-        QPainter painter(&image);
-
-        page->mainFrame()->render(&painter);
-    }
-
     void Editor::setTabsVisible(bool visible)
     {
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
@@ -714,9 +711,9 @@ namespace EditorNS
 
     void Editor::print(QPrinter *printer)
     {
-        sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
+        /*sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->print(printer);
-        sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
+        sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");*/
     }
 
     QString Editor::getCurrentWord()
