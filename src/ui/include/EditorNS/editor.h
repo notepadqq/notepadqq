@@ -299,12 +299,13 @@ namespace EditorNS
     private:
         friend class ::EditorTabWidget;
 
-        struct AsyncMessage {
+        struct AsyncReply {
             unsigned int id;
+            std::shared_ptr<std::promise<QVariant>> value;
             std::function<void (QVariant)> callback;
         };
 
-        std::list<AsyncMessage> asyncMessages;
+        std::list<AsyncReply> asyncReplies;
 
         // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
         // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
@@ -362,8 +363,8 @@ namespace EditorNS
         void sendMessage(const QString &msg);
         QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
         QVariant sendMessageWithResult(const QString &msg);
-        void asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback);
-        void asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         void print(QPrinter *printer);
     };

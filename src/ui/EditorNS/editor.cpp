@@ -159,9 +159,12 @@ namespace EditorNS
             for (auto it = this->asyncMessages.begin(); it != this->asyncMessages.end(); ++it) {
                 if (it->id == id) {
                     auto cb = it->callback;
+                    it->value->set_value(data);
                     this->asyncMessages.erase(it);
 
-                    cb(data);
+                    if (cb != 0) {
+                        cb(data);
+                    }
                     break;
                 }
             }
@@ -231,7 +234,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
+        return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0)).get().toBool();
     }
 
     void Editor::markClean()
@@ -409,24 +412,29 @@ namespace EditorNS
         return sendMessageWithResult(msg, 0);
     }
 
-    void Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         static unsigned int msgid = 0;
         msgid++;
 
-        AsyncMessage asyncmsg;
+        std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
+
+        AsyncReply asyncmsg;
         asyncmsg.id = msgid;
+        asyncmsg.value = resultPromise;
         asyncmsg.callback = callback;
-        this->asyncMessages.push_back(std::move(asyncmsg));
+        this->asyncMessages.push_back((asyncmsg));
 
         QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
 
         this->sendMessage(message_id, data);
+
+        return resultPromise->get_future();
     }
 
-    void Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
     {
-        this->asyncSendMessageWithResult(msg, 0, callback);
+        return this->asyncSendMessageWithResult(msg, 0, callback);
     }
 
     void Editor::setZoomFactor(const qreal &factor)
@@ -503,7 +511,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::cursorPosition()
     {
-        QList<QVariant> cursor = sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();
         return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
     }
 
@@ -727,11 +735,6 @@ namespace EditorNS
 
     int Editor::lineCount()
     {
-        auto p = std::make_shared<std::promise<int>>();
-        asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT", [p](QVariant r){
-            p->set_value(r.toInt());
-        });
-
-        return p->get_future().get();
+        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT").get().toInt();
     }
 }
