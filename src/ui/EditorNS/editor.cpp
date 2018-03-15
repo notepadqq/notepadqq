@@ -147,7 +147,8 @@ namespace EditorNS
             std::regex rgx("\\[ID=(\\d+)\\]$");
             std::smatch matches;
 
-            if(!std::regex_search(msg.toStdString(), matches, rgx))
+            std::string msgstr = msg.toStdString();
+            if(!std::regex_search(msgstr, matches, rgx))
                 return;
 
             if (matches.size() != 2)
