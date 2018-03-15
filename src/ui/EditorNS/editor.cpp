@@ -156,11 +156,11 @@ namespace EditorNS
             unsigned int id = QString::fromStdString(matches[1].str()).toInt();
 
             // Look into the list of callbacks
-            for (auto it = this->asyncMessages.begin(); it != this->asyncMessages.end(); ++it) {
+            for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
                 if (it->id == id) {
                     auto cb = it->callback;
                     it->value->set_value(data);
-                    this->asyncMessages.erase(it);
+                    this->asyncReplies.erase(it);
 
                     if (cb != 0) {
                         cb(data);
@@ -423,7 +423,7 @@ namespace EditorNS
         asyncmsg.id = msgid;
         asyncmsg.value = resultPromise;
         asyncmsg.callback = callback;
-        this->asyncMessages.push_back((asyncmsg));
+        this->asyncReplies.push_back((asyncmsg));
 
         QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
 
