@@ -4,251 +4,251 @@
 <context>
     <name>AdvancedSearchDock</name>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="142"/>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="618"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="162"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="649"/>
         <source>Advanced Search</source>
         <translation>Speciális keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="167"/>
         <source>Clear Search History</source>
         <translation>Keresési előzmények törlése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="156"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="176"/>
         <source>Go To Previous Result (Shift+F4)</source>
         <translation>Ugrás az előző találatra (Shift+F4)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="161"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="181"/>
         <source>Go To Next Result (F4)</source>
         <translation>Ugrás a következő találatra (F4)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="165"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="185"/>
         <source>Expand/Collapse All</source>
         <translation>Összes kibontása/összecsukása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="167"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="187"/>
         <source>Redo Search</source>
         <translation>Újra keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="168"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="188"/>
         <source>Copy Selected Contents To Clipboard</source>
         <translation>A kijelölt tartalom másolása a vágólapra</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="169"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="189"/>
         <source>Show Full Lines</source>
         <translation>Teljes sorok megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="171"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="191"/>
         <source>Remove This Search</source>
         <translation>Ennek a keresésnek az eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="176"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="196"/>
         <source>More Options</source>
         <translation>További opciók</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="181"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="201"/>
         <source>Replace Options</source>
         <translation>Csere opciók</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="207"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="227"/>
         <source>Dock/Undock this panel</source>
         <translation>Ennek a panelnak a dokkolása/leválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="233"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="253"/>
         <source>Replace Text</source>
         <translation>Csereszöveg</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="241"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="261"/>
         <source>Replace Selected</source>
         <translation>Kijelölt cseréje</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="242"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="262"/>
         <source>Replace all selected search results.</source>
         <translation>Az összes kiválasztott keresési eredmény cseréje.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="244"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="264"/>
         <source>Use Special Characters (&apos;\n&apos;, &apos;\t&apos;, ...)</source>
         <translation>Speciális karakterek használata (&apos;\n&apos;, &apos;\t&apos;, ...)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="245"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="265"/>
         <source>Replace strings like &apos;\n&apos; with their respective special characters.</source>
         <translation>A karakterláncok mint  a &apos;\\n&apos; cseréje a megfelelő speciális karakterekkel.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="281"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="301"/>
         <source>Search String</source>
         <translation>Keresési karakterlánc</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="288"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="308"/>
         <source>Search in Current Document</source>
         <translation>Keresés az aktuális dokumentumban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="289"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="309"/>
         <source>Search in All Open Documents</source>
         <translation>Keresés az összes megnyitott dokumentumban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="290"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="310"/>
         <source>Search in Files on File System</source>
         <translation>Keresés a fájlrendszer fájljaiban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="305"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="325"/>
         <source>Directory</source>
         <translation>Könyvtár</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="314"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="334"/>
         <source>Select Directory of active Document</source>
         <translation>Az aktív dokumentum könyvtárának kiválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="318"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="338"/>
         <source>Select Search Directory</source>
         <translation>Keresési könyvtár kiválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="325"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="345"/>
         <source>Search</source>
         <translation>Keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="328"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="348"/>
         <source>Scope:</source>
         <translation>Keresési tartomány:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="330"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="350"/>
         <source>Search:</source>
         <translation>Keresés:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="332"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="352"/>
         <source>Pattern:</source>
         <translation>Minta:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="334"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="354"/>
         <source>Location:</source>
         <translation>Hely:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="337"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="357"/>
         <source>Match Case</source>
         <translation>Kis- és nagybetűk megkülönböztetése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="338"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="358"/>
         <source>Match Whole Words Only</source>
         <translation>Csak egész szavas találatok</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="339"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="359"/>
         <source>Use Regular Expressions</source>
         <translation>Reguláris kifejezések használata</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="340"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="360"/>
         <source>Use Special Characters (&apos;\t&apos;, &apos;\n&apos;, ...)</source>
         <translation>Speciális karakterek használata (&apos;\t&apos;, &apos;\n&apos;, ...)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="341"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="361"/>
         <source>If set, character sequences like &apos;\t&apos; will be replaced by their respective special characters.</source>
         <translation>Ha be van állítva, akkor az olyan karakter szekvenciák helyébe mint a &apos;\\t&apos;, a megfelelő speciális karakterek kerülnek.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="342"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="362"/>
         <source>Include Subdirectories</source>
         <translation>Alkönyvtárakkal együtt</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="392"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="423"/>
         <source>&lt;h3&gt;One or more searches are still in progress&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Egy vagy több keresés még folyamatban van&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="393"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="424"/>
         <source>All searches will be canceled and their results discarded if you continue.</source>
         <translation>Minden keresés meg lesz szakítva, és az összes eredmény el fog veszni, ha folytatja.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="407"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="438"/>
         <source>New Search</source>
         <translation>Új keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="709"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="740"/>
         <source>Search in progress</source>
         <translation>Keresés folyamatban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="710"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="741"/>
         <source>&lt;h3&gt;This search is still in progress.&lt;/h3&gt; The search will be canceled and all results discarded if you continue.</source>
         <translation>&lt;h3&gt;Ez a keresés még folyamatban van.&lt;/h3&gt; A keresés meg lesz szakítva, és az összes eredmény el fog veszni, ha folytatja.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="821"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="852"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="822"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="853"/>
         <source>Specified directory does not exist.</source>
         <translation>A megadott könyvtár nem létezik.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="852"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="883"/>
         <source>Matches in %1 of %2 files replaced.</source>
         <translation>A találatok %1/%2 fájlban lecserélve.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="860"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="891"/>
         <source>&lt;h3&gt;Replacing selected matches...&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;A kiválasztott találatok cseréje...&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="861"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="892"/>
         <source>Replacing in progress</source>
         <translation>Csere folyamatban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="873"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="904"/>
         <source>Replacing was unsuccessful for %1 file(s):
 </source>
         <translation>A csere %1 fájlban sikertelen volt:
 </translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="879"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="910"/>
         <source>And %1 more.</source>
         <translation>Még %1.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="882"/>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="885"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="913"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="916"/>
         <source>Replacement Results</source>
         <translation>A csere eredménye</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="886"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="917"/>
         <source>All selected matches successfully replaced.</source>
         <translation>Az összes kiválasztott találat sikeresen lecserélve.</translation>
     </message>
@@ -1431,105 +1431,105 @@ Biztosan menteni szeretné?</translation>
         <translation>Bármilyen fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1239"/>
+        <location filename="../ui/mainwindow.cpp" line="1240"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1. karakter, %2. sor</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1250"/>
+        <location filename="../ui/mainwindow.cpp" line="1251"/>
         <source>Ln %1, col %2</source>
         <translation>%1. sor, %2 oszlop</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1254"/>
+        <location filename="../ui/mainwindow.cpp" line="1255"/>
         <source>Sel %1 (%2)</source>
         <translation>Kij. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1378"/>
+        <location filename="../ui/mainwindow.cpp" line="1380"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1381"/>
+        <location filename="../ui/mainwindow.cpp" line="1383"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1384"/>
+        <location filename="../ui/mainwindow.cpp" line="1386"/>
         <source>Old Mac</source>
         <translation>Régi Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1391"/>
+        <location filename="../ui/mainwindow.cpp" line="1393"/>
         <source>%1 w/o BOM</source>
         <translation>%1 BOM nélkül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1864"/>
+        <location filename="../ui/mainwindow.cpp" line="1866"/>
         <source>No recent files</source>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1956"/>
+        <location filename="../ui/mainwindow.cpp" line="1958"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
         <translation>Az alábbi fájlok már nem léteznek. Mindenképp szeretné őket megnyitni?
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2064"/>
+        <location filename="../ui/mainwindow.cpp" line="2066"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2078"/>
+        <location filename="../ui/mainwindow.cpp" line="2080"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2120"/>
+        <location filename="../ui/mainwindow.cpp" line="2122"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2135"/>
+        <location filename="../ui/mainwindow.cpp" line="2137"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2147"/>
+        <location filename="../ui/mainwindow.cpp" line="2149"/>
         <source>Modify Run Commands</source>
         <translation>Futtatási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2266"/>
+        <location filename="../ui/mainwindow.cpp" line="2268"/>
         <source>The file &quot;%1&quot; does not exist. Do you want to re-create it?</source>
         <translation>A(z) &quot;%1&quot; fájl nem létezik. Szeretné újra létrehozni?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2423"/>
+        <location filename="../ui/mainwindow.cpp" line="2425"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2469"/>
+        <location filename="../ui/mainwindow.cpp" line="2471"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2471"/>
-        <location filename="../ui/mainwindow.cpp" line="2491"/>
+        <location filename="../ui/mainwindow.cpp" line="2473"/>
+        <location filename="../ui/mainwindow.cpp" line="2493"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2489"/>
+        <location filename="../ui/mainwindow.cpp" line="2491"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2515"/>
+        <location filename="../ui/mainwindow.cpp" line="2517"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
@@ -1721,7 +1721,57 @@ Biztosan menteni szeretné?</translation>
         <translation>A(z) %1 kiválasztott találat le lesz cserélve erre: \&quot;%2\&quot;. Folytatja?</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="673"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="144"/>
+        <source>Notepadqq supports most of the &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl Regular Expression&lt;/a&gt; syntax when &apos;Use Regular Expressions&apos; is checked.</source>
+        <translation>A Notepadqq a &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl  Reguláris kifejezések&lt;/a&gt; szintaxisának többségét támogatja, ha a &apos;Reguláris kifejezések használata&apos; jelölőnégyzet be van jelölve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="145"/>
+        <source>Here is a quick reference:</source>
+        <translation>Rövid összefoglalás:</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
+        <source>Matches a word character</source>
+        <translation>Egy betű karakterre illeszkedik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="148"/>
+        <source>Matches a 0-9 digit</source>
+        <translation>Egy 0-9 számjegyre illeszekdik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="149"/>
+        <source>Matches any of a, b, or c</source>
+        <translation>a, b, vagy c közül bármelyikre illeszkedik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="150"/>
+        <source>Matches anything but a, b, or c</source>
+        <translation>illeszkedik bármilyen karakterre, amelyik nem a, b, vagy c</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="151"/>
+        <source>Matches the beginning of a line</source>
+        <translation>Illeszkedik a sor kezdetére</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="152"/>
+        <source>Matches the end of a line</source>
+        <translation>Illeszkedik a sor végére</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="153"/>
+        <source>Matches &apos;abc&apos; and captures it as a group</source>
+        <translation>Illeszkedik &apos;abc&apos;-re és egy csoportként értelmezi őket</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="154"/>
+        <source>Use in a replace operation to refer to the n&apos;th capture group</source>
+        <translation>A csere műveletben használatos, hogy az n-edik találati csoportra hivatkozzon vele</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="704"/>
         <source>Search in...</source>
         <translation>Keresés ebben...</translation>
     </message>
