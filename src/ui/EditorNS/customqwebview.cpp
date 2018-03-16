@@ -1,5 +1,6 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QMimeData>
+#include <QMenu>
 
 namespace EditorNS
 {
@@ -40,5 +41,17 @@ namespace EditorNS
     {
         QWebEngineView::focusInEvent(event);
         emit gotFocus();
+    }
+
+    void CustomQWebView::contextMenuEvent(QContextMenuEvent* event)
+    {
+        QMenu *menu = new QMenu(this);
+
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Cut));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Copy));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Paste));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::SelectAll));
+
+        menu->popup(event->globalPos());
     }
 }

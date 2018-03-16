@@ -23,6 +23,7 @@ namespace EditorNS
         void keyPressEvent(QKeyEvent *ev) override;
         void dropEvent(QDropEvent *ev) override;
         void focusInEvent(QFocusEvent* event) override;
+        void contextMenuEvent(QContextMenuEvent* ev) override;
     };
 
 }
