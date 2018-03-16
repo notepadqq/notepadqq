@@ -65,9 +65,6 @@ public:
     static QString fileNameFromUrl(const QUrl &url);
     static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList &arguments);
 
-    static bool oldQt();
-    static void setOldQt(bool oldQt);
-
     static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
 
     static QString extensionsPath();
@@ -81,8 +78,6 @@ private:
     Notepadqq() {}
     Notepadqq(Notepadqq const&);      // Don't implement
     void operator=(Notepadqq const&); // Don't implement
-
-    static bool m_oldQt;
 };
 
 #endif // NOTEPADQQ_H

@@ -10,7 +10,6 @@
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/graphs/contributors";
 const QString Notepadqq::website = "https://notepadqq.com";
-bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
 {
@@ -94,54 +93,6 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
     parser->process(arguments);
 
     return parser;
-}
-
-bool Notepadqq::oldQt()
-{
-    return m_oldQt;
-}
-
-void Notepadqq::setOldQt(bool oldQt)
-{
-    m_oldQt = oldQt;
-}
-
-void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
-{
-    NqqSettings& settings = NqqSettings::getInstance();
-    QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
-    QString altDir = "/opt/Qt";
-
-    QMessageBox msgBox(parent);
-    msgBox.setWindowTitle(QCoreApplication::applicationName());
-    msgBox.setIcon(QMessageBox::Warning);
-    msgBox.setText("<h3>" + QObject::tr("You are using an old version of Qt (%1)").arg(qVersion()) + "</h3>");
-    msgBox.setInformativeText("<html><body>"
-        "<p>" + QObject::tr("Notepadqq will try to do its best, but <b>some things will not work properly</b>.") + "</p>" +
-        QObject::tr(
-            "Install a newer Qt version (&ge; %1) from the official repositories "
-            "of your distribution.<br><br>"
-            "If it's not available, download Qt (&ge; %1) from %2 and install it to \"%3\" or to \"%4\".").
-                  arg("5.3").
-                  arg("<nobr><a href=\"http://qt-project.org/\">http://qt-project.org/</a></nobr>").
-                  arg("<nobr>" + dir + "</nobr>").
-                  arg("<nobr>" + altDir + "</nobr>") +
-        "</body></html>");
-
-    QCheckBox *chkDontShowAgain;
-
-    if (showCheckBox) {
-        chkDontShowAgain = new QCheckBox();
-        chkDontShowAgain->setText(QObject::tr("Don't show me this warning again"));
-        msgBox.setCheckBox(chkDontShowAgain);
-    }
-
-    msgBox.exec();
-
-    if (showCheckBox) {
-        settings.General.setCheckVersionAtStartup(!chkDontShowAgain->isChecked());
-        chkDontShowAgain->deleteLater();
-    }
 }
 
 QString Notepadqq::extensionsPath()
