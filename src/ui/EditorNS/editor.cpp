@@ -400,7 +400,7 @@ namespace EditorNS
     {
         static unsigned int messageIdentifier = 0;
 
-        int currentMsgIdentifier = ++messageIdentifier;
+        unsigned int currentMsgIdentifier = ++messageIdentifier;
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
 
