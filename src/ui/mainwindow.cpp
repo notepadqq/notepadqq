@@ -124,6 +124,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     generateRunMenu();
 
     m_mainToolBar = new QToolBar("Toolbar");
+    m_mainToolBar->setObjectName("toolbar");
     addToolBar(m_mainToolBar);
     loadToolBar();
 
