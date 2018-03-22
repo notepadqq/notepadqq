@@ -185,6 +185,7 @@ private:
     static QList<MainWindow*> m_instances;
 
     Ui::MainWindow*       ui;
+    QToolBar*             m_mainToolBar = nullptr;
     TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;
@@ -220,6 +221,7 @@ private:
     bool                finalizeAllTabs();
 
     void                createStatusBar();
+    void                loadToolBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
     /**

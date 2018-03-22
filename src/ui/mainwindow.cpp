@@ -29,6 +29,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QToolButton>
+#include <QToolBar>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
@@ -60,6 +61,10 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     loadIcons();
 
+    m_mainToolBar = new QToolBar("Toolbar");
+    addToolBar(m_mainToolBar);
+    loadToolBar();
+
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
     QAction *separator = new QAction(this);
@@ -84,14 +89,14 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
     // Wire up tool- and menubar visibility.
-    connect(ui->mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(ui->mainToolBar->isVisible());
+    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
     ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
     ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
 
     fixKeyboardShortcuts();
     // Set popup for action_Open in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
+    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->action_Open));
     btnActionOpen->setMenu(ui->menuRecent_Files);
     btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
 
@@ -415,6 +420,53 @@ void MainWindow::createStatusBar()
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
+}
+
+void MainWindow::loadToolBar()
+{
+    m_mainToolBar->clear();
+
+    QString toolbarItems = m_settings.MainWindow.getToolBarItems();
+    auto actions = getActions();
+    auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
+
+    for (const auto& part : parts) {
+        if(part == "Separator") {
+            m_mainToolBar->addSeparator();
+            continue;
+        }
+
+        auto it = std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) {
+            return ac->objectName() == part;
+        });
+
+        if(it != actions.end())
+            m_mainToolBar->addAction( *it );
+    }
+
+    // Create default toolbar if no custom one is set
+    if (parts.isEmpty()) {
+        m_mainToolBar->addAction(ui->action_New);
+        m_mainToolBar->addAction(ui->action_Open);
+        m_mainToolBar->addAction(ui->actionSave);
+        m_mainToolBar->addAction(ui->actionSave_All);
+        m_mainToolBar->addAction(ui->actionClose);
+        m_mainToolBar->addAction(ui->actionC_lose_All);
+        m_mainToolBar->addAction(ui->actionPrint_Now);
+        m_mainToolBar->addSeparator();
+        m_mainToolBar->addAction(ui->actionCu_t);
+        m_mainToolBar->addAction(ui->action_Copy);
+        m_mainToolBar->addAction(ui->action_Paste);
+        m_mainToolBar->addSeparator();
+        m_mainToolBar->addAction(ui->action_Undo);
+        m_mainToolBar->addAction(ui->action_Redo);
+        m_mainToolBar->addSeparator();
+        m_mainToolBar->addAction(ui->actionZoom_In);
+        m_mainToolBar->addAction(ui->actionZoom_Out);
+        m_mainToolBar->addSeparator();
+        m_mainToolBar->addAction(ui->actionWord_wrap);
+        m_mainToolBar->addAction(ui->actionShow_All_Characters);
+    }
 }
 
 bool MainWindow::saveTabsToCache()
@@ -2528,5 +2580,5 @@ void MainWindow::on_actionShow_Menubar_toggled(bool arg1)
 
 void MainWindow::on_actionShow_Toolbar_toggled(bool arg1)
 {
-    ui->mainToolBar->setVisible(arg1);
+    m_mainToolBar->setVisible(arg1);
 }
