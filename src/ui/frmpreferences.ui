@@ -528,12 +528,18 @@
                 <property name="text">
                  <string>Add</string>
                 </property>
+                <property name="icon">
+                 <iconset theme="go-next"/>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="btnToolbarRemove">
                 <property name="text">
                  <string>Remove</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-previous"/>
                 </property>
                </widget>
               </item>
@@ -560,12 +566,18 @@
                 <property name="text">
                  <string>Move Up</string>
                 </property>
+                <property name="icon">
+                 <iconset theme="go-up"/>
+                </property>
                </widget>
               </item>
               <item>
                <widget class="QPushButton" name="btnToolbarDown">
                 <property name="text">
                  <string>Move Down</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-down"/>
                 </property>
                </widget>
               </item>
@@ -592,6 +604,9 @@
              </property>
              <property name="text">
               <string>Reset to Default</string>
+             </property>
+             <property name="icon">
+              <iconset theme="edit-undo"/>
              </property>
             </widget>
            </item>
