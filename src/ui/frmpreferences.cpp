@@ -12,6 +12,7 @@
 #include <QTableWidgetItem>
 #include <QSharedPointer>
 #include <QDialogButtonBox>
+#include <QToolBar>
 
 int frmPreferences::s_lastSelectedTab = 0;
 
@@ -52,6 +53,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     loadAppearanceTab();
     loadTranslations();
     loadShortcuts();
+    loadToolbar();
 
     ui->chkSearch_SearchAsIType->setChecked(m_settings.Search.getSearchAsIType());
     ui->chkSearch_SaveHistory->setChecked(m_settings.Search.getSaveHistory());
@@ -313,6 +315,62 @@ void frmPreferences::saveShortcuts()
     }
 }
 
+void frmPreferences::loadToolbar()
+{
+    auto* wnd = MainWindow::lastActiveInstance();
+
+    auto actions = wnd->getActions();
+
+    auto* widgetItem = new QListWidgetItem("-- Separator --");
+    widgetItem->setData(Qt::UserRole, "Separator");
+    ui->listToolbarAll->addItem(widgetItem);
+
+    for (auto item : actions) {
+        if (item->objectName().isEmpty() || !item->isVisible())
+            continue;
+
+        QString text = item->text().replace("&", "");
+        auto* widgetItem = new QListWidgetItem(item->icon(), text);
+        widgetItem->setData(Qt::UserRole, item->objectName());
+        ui->listToolbarAll->addItem(widgetItem);
+    }
+
+    auto* toolbar = wnd->getToolBar();
+    for (auto item : toolbar->actions()) {
+        if (item->isSeparator()) {
+            auto* widgetItem = new QListWidgetItem("-- Separator --");
+            widgetItem->setData(Qt::UserRole, "Separator");
+            ui->listToolbarCurrent->addItem(widgetItem);
+        }
+        else {
+            QString text = item->text().replace("&", "");
+            auto* widgetItem = new QListWidgetItem(item->icon(), text);
+            widgetItem->setData(Qt::UserRole, item->objectName());
+            ui->listToolbarCurrent->addItem(widgetItem);
+        }
+    }
+}
+
+void frmPreferences::saveToolbar()
+{
+    QStringList list;
+    for (int i=0; i<ui->listToolbarCurrent->count(); ++i) {
+        auto* item = ui->listToolbarCurrent->item(i);
+        list << item->data(Qt::UserRole).toString();
+    }
+
+    auto string = list.join('|');
+
+    // Only update if there's actually a change
+    if (string == m_settings.MainWindow.getToolBarItems())
+        return;
+
+    m_settings.MainWindow.setToolBarItems(string);
+
+    for (auto* wnd : MainWindow::instances())
+        wnd->loadToolBar();
+}
+
 bool frmPreferences::applySettings()
 {
     if (m_keyGrabber->hasConflicts()) {
@@ -339,6 +397,7 @@ bool frmPreferences::applySettings()
     saveAppearanceTab();
     saveTranslation();
     saveShortcuts();
+    saveToolbar();
 
     m_settings.Search.setSearchAsIType(ui->chkSearch_SearchAsIType->isChecked());
     m_settings.Search.setSaveHistory(ui->chkSearch_SaveHistory->isChecked());
@@ -542,5 +601,80 @@ void frmPreferences::on_chkSearch_SaveHistory_toggled(bool checked)
         m_settings.Search.resetReplaceHistory();
         m_settings.Search.resetFileHistory();
         m_settings.Search.resetFilterHistory();
+    }
+}
+
+void frmPreferences::on_btnToolbarAdd_clicked()
+{
+    auto* item = ui->listToolbarAll->currentItem();
+
+    if (!item) return;
+
+    auto idx = ui->listToolbarCurrent->currentRow();
+
+    QListWidgetItem* newItem = new QListWidgetItem(item->icon(), item->text());
+    newItem->setData(Qt::UserRole, item->data(Qt::UserRole));
+
+    ui->listToolbarCurrent->insertItem(idx+1, newItem);
+    ui->listToolbarCurrent->setCurrentRow(idx+1);
+    //ui->listToolbarCurrent->scrollToItem(ui->listToolbarCurrent->currentItem());
+}
+
+void frmPreferences::on_btnToolbarRemove_clicked()
+{
+    auto* item = ui->listToolbarCurrent->currentItem();
+
+    if (item)
+        delete item;
+}
+
+void frmPreferences::on_btnToolbarUp_clicked()
+{
+    auto idx = ui->listToolbarCurrent->currentRow();
+
+    if (idx > 0) {
+        ui->listToolbarCurrent->insertItem(idx-1, ui->listToolbarCurrent->takeItem(idx));
+        ui->listToolbarCurrent->setCurrentRow(idx-1);
+    }
+}
+
+void frmPreferences::on_btnToolbarDown_clicked()
+{
+    auto idx = ui->listToolbarCurrent->currentRow();
+    auto max =ui->listToolbarCurrent->count();
+
+    if (idx < max-1) {
+        ui->listToolbarCurrent->insertItem(idx+1, ui->listToolbarCurrent->takeItem(idx));
+        ui->listToolbarCurrent->setCurrentRow(idx+1);
+    }
+}
+
+void frmPreferences::on_btnToolbarReset_clicked()
+{
+    ui->listToolbarCurrent->clear();
+
+    QString toolbarItems = MainWindow::lastActiveInstance()->getDefaultToolBarString();
+    auto actions = MainWindow::lastActiveInstance()->getActions();
+    auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
+
+    for (const auto& part : parts) {
+        if (part == "Separator") {
+            auto* widgetItem = new QListWidgetItem("-- Separator --");
+            widgetItem->setData(Qt::UserRole, "Separator");
+            ui->listToolbarCurrent->addItem(widgetItem);
+            continue;
+        }
+
+        auto it = std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) {
+            return ac->objectName() == part;
+        });
+
+        if (it != actions.end()) {
+            auto* item = *it;
+            QString text = item->text().replace("&", "");
+            auto* widgetItem = new QListWidgetItem(item->icon(), text);
+            widgetItem->setData(Qt::UserRole, item->objectName());
+            ui->listToolbarCurrent->addItem(widgetItem);
+        }
     }
 }

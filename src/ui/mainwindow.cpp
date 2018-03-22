@@ -61,10 +61,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     loadIcons();
 
-    m_mainToolBar = new QToolBar("Toolbar");
-    addToolBar(m_mainToolBar);
-    loadToolBar();
-
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
     QAction *separator = new QAction(this);
@@ -88,17 +84,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    // Wire up tool- and menubar visibility.
-    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
-    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
-    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
-
     fixKeyboardShortcuts();
-    // Set popup for action_Open in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->action_Open));
-    btnActionOpen->setMenu(ui->menuRecent_Files);
-    btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
 
     // Action group for EOL modes
     QActionGroup *eolActionGroup = new QActionGroup(this);
@@ -134,6 +120,23 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     updateRecentDocsInMenu();
 
     setAcceptDrops(true);
+
+    generateRunMenu();
+
+    m_mainToolBar = new QToolBar("Toolbar");
+    addToolBar(m_mainToolBar);
+    loadToolBar();
+
+    // Wire up tool- and menubar visibility.
+    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
+    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
+    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
+
+    // Set popup for action_Open in toolbar
+    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->action_Open));
+    btnActionOpen->setMenu(ui->menuRecent_Files);
+    btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
 
     // Initialize UI from settings
     initUI();
@@ -176,7 +179,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     setupLanguagesMenu();
-    generateRunMenu();
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
@@ -427,6 +429,9 @@ void MainWindow::loadToolBar()
     m_mainToolBar->clear();
 
     QString toolbarItems = m_settings.MainWindow.getToolBarItems();
+    if(toolbarItems.isEmpty())
+        toolbarItems = getDefaultToolBarString();
+
     auto actions = getActions();
     auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
 
@@ -442,30 +447,6 @@ void MainWindow::loadToolBar()
 
         if(it != actions.end())
             m_mainToolBar->addAction( *it );
-    }
-
-    // Create default toolbar if no custom one is set
-    if (parts.isEmpty()) {
-        m_mainToolBar->addAction(ui->action_New);
-        m_mainToolBar->addAction(ui->action_Open);
-        m_mainToolBar->addAction(ui->actionSave);
-        m_mainToolBar->addAction(ui->actionSave_All);
-        m_mainToolBar->addAction(ui->actionClose);
-        m_mainToolBar->addAction(ui->actionC_lose_All);
-        m_mainToolBar->addAction(ui->actionPrint_Now);
-        m_mainToolBar->addSeparator();
-        m_mainToolBar->addAction(ui->actionCu_t);
-        m_mainToolBar->addAction(ui->action_Copy);
-        m_mainToolBar->addAction(ui->action_Paste);
-        m_mainToolBar->addSeparator();
-        m_mainToolBar->addAction(ui->action_Undo);
-        m_mainToolBar->addAction(ui->action_Redo);
-        m_mainToolBar->addSeparator();
-        m_mainToolBar->addAction(ui->actionZoom_In);
-        m_mainToolBar->addAction(ui->actionZoom_Out);
-        m_mainToolBar->addSeparator();
-        m_mainToolBar->addAction(ui->actionWord_wrap);
-        m_mainToolBar->addAction(ui->actionShow_All_Characters);
     }
 }
 
@@ -2485,6 +2466,38 @@ void MainWindow::on_actionInstall_Extension_triggered()
 void MainWindow::showExtensionsMenu(bool show)
 {
     ui->menu_Extensions->menuAction()->setVisible(show);
+}
+
+QString MainWindow::getDefaultToolBarString() const
+{
+    QStringList list;
+
+    list << ui->action_New->objectName();
+    list << ui->action_Open->objectName();
+    list << ui->actionSave->objectName();
+    list << ui->actionSave_All->objectName();
+    list << ui->actionClose->objectName();
+    list << ui->actionC_lose_All->objectName();
+    list << "Separator";
+    list << ui->actionCu_t->objectName();
+    list << ui->action_Copy->objectName();
+    list << ui->action_Paste->objectName();
+    list << "Separator";
+    list << ui->action_Undo->objectName();
+    list << ui->action_Redo->objectName();
+    list << "Separator";
+    list << ui->actionZoom_In->objectName();
+    list << ui->actionZoom_Out->objectName();
+    list << "Separator";
+    list << ui->actionWord_wrap->objectName();
+    list << ui->actionShow_All_Characters->objectName();
+
+    return list.join('|');
+}
+
+QToolBar*MainWindow::getToolBar() const
+{
+    return m_mainToolBar;
 }
 
 void MainWindow::on_actionFull_Screen_toggled(bool on)

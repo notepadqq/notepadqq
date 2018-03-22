@@ -58,8 +58,18 @@ public:
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
 
+    /**
+     * @brief getDefaultToolBarString
+     * @return Returns a string with all default toolbar actions and separators, split by a '|'
+     */
+    QString getDefaultToolBarString() const;
+
+    QToolBar* getToolBar() const;
     QList<QAction*> getActions() const;
-    QList<const QMenu*> getMenus() const ;
+    QList<const QMenu*> getMenus() const;
+
+    // Creates or re-creates the window's main tool bar.
+    void loadToolBar();
 
     DocEngine*  getDocEngine() const;
     void generateRunMenu();
@@ -221,7 +231,6 @@ private:
     bool                finalizeAllTabs();
 
     void                createStatusBar();
-    void                loadToolBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
     /**
