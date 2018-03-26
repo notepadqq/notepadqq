@@ -29,6 +29,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QToolButton>
+#include <QToolBar>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
@@ -73,7 +74,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionRename);
     m_tabContextMenuActions.append(ui->actionPrint);
     m_tabContextMenuActions.append(separator);
-    m_tabContextMenuActions.append(ui->actionCurrent_Full_File_path_to_Clipboard);
+    m_tabContextMenuActions.append(ui->actionCurrent_Full_File_Path_to_Clipboard);
     m_tabContextMenuActions.append(ui->actionCurrent_Filename_to_Clipboard);
     m_tabContextMenuActions.append(ui->actionCurrent_Directory_Path_to_Clipboard);
     m_tabContextMenuActions.append(separatorBottom);
@@ -83,17 +84,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
     m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    // Wire up tool- and menubar visibility.
-    connect(ui->mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(ui->mainToolBar->isVisible());
-    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
-    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
-
     fixKeyboardShortcuts();
-    // Set popup for action_Open in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(ui->mainToolBar->widgetForAction(ui->action_Open));
-    btnActionOpen->setMenu(ui->menuRecent_Files);
-    btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
 
     // Action group for EOL modes
     QActionGroup *eolActionGroup = new QActionGroup(this);
@@ -103,7 +94,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     // Action group for indentation modes
     QActionGroup *indentationActionGroup = new QActionGroup(this);
-    indentationActionGroup->addAction(ui->actionIndentation_Default_settings);
+    indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
     indentationActionGroup->addAction(ui->actionIndentation_Custom);
 
     connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
@@ -129,6 +120,26 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     updateRecentDocsInMenu();
 
     setAcceptDrops(true);
+
+    generateRunMenu();
+
+    m_mainToolBar = new QToolBar("Toolbar");
+    m_mainToolBar->setObjectName("toolbar");
+    addToolBar(m_mainToolBar);
+    loadToolBar();
+
+    // Wire up tool- and menubar visibility.
+    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
+    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
+    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
+
+    // Set popup for actionOpen in toolbar
+    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->actionOpen));
+    if(btnActionOpen) {
+        btnActionOpen->setMenu(ui->menuRecent_Files);
+        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
+    }
 
     // Initialize UI from settings
     initUI();
@@ -171,7 +182,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     }
 
     setupLanguagesMenu();
-    generateRunMenu();
 
     showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
@@ -255,26 +265,26 @@ void MainWindow::loadIcons()
     // If a system icon doesn't exist, fallback on the already assigned icon.
 
     // File menu
-    ui->action_New->setIcon(IconProvider::fromTheme("document-new"));
-    ui->action_Open->setIcon(IconProvider::fromTheme("document-open"));
+    ui->actionNew->setIcon(IconProvider::fromTheme("document-new"));
+    ui->actionOpen->setIcon(IconProvider::fromTheme("document-open"));
     ui->actionReload_from_Disk->setIcon(IconProvider::fromTheme("view-refresh"));
     ui->actionSave->setIcon(IconProvider::fromTheme("document-save"));
     ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as"));
     ui->actionSave_a_Copy_As->setIcon(IconProvider::fromTheme("document-save-as"));
     ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all"));
     ui->actionClose->setIcon(IconProvider::fromTheme("document-close"));
-    ui->actionC_lose_All->setIcon(IconProvider::fromTheme("document-close-all"));
+    ui->actionClose_All->setIcon(IconProvider::fromTheme("document-close-all"));
     ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent"));
-    ui->actionE_xit->setIcon(IconProvider::fromTheme("application-exit"));
+    ui->actionExit->setIcon(IconProvider::fromTheme("application-exit"));
     ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print")); // currently invisible
 
     // Edit menu
-    ui->action_Undo->setIcon(IconProvider::fromTheme("edit-undo"));
-    ui->action_Redo->setIcon(IconProvider::fromTheme("edit-redo"));
-    ui->actionCu_t->setIcon(IconProvider::fromTheme("edit-cut"));
-    ui->action_Copy->setIcon(IconProvider::fromTheme("edit-copy"));
-    ui->action_Paste->setIcon(IconProvider::fromTheme("edit-paste"));
-    ui->action_Delete->setIcon(IconProvider::fromTheme("edit-delete"));
+    ui->actionUndo->setIcon(IconProvider::fromTheme("edit-undo"));
+    ui->actionRedo->setIcon(IconProvider::fromTheme("edit-redo"));
+    ui->actionCut->setIcon(IconProvider::fromTheme("edit-cut"));
+    ui->actionCopy->setIcon(IconProvider::fromTheme("edit-copy"));
+    ui->actionPaste->setIcon(IconProvider::fromTheme("edit-paste"));
+    ui->actionDelete->setIcon(IconProvider::fromTheme("edit-delete"));
     ui->actionSelect_All->setIcon(IconProvider::fromTheme("edit-select-all"));
 
     // Search menu
@@ -282,7 +292,7 @@ void MainWindow::loadIcons()
     ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next"));
     ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous"));
     ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
-    ui->actionGo_to_line->setIcon(IconProvider::fromTheme("go-jump"));
+    ui->actionGo_to_Line->setIcon(IconProvider::fromTheme("go-jump"));
 
     // View menu
     ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("show-special-chars"));
@@ -296,7 +306,7 @@ void MainWindow::loadIcons()
     ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
 
     // Run menu
-    ui->action_Run->setIcon(IconProvider::fromTheme("system-run"));
+    ui->actionRun->setIcon(IconProvider::fromTheme("system-run"));
 
     // Window menu
     ui->actionOpen_a_New_Window->setIcon(IconProvider::fromTheme("window-new"));
@@ -415,6 +425,32 @@ void MainWindow::createStatusBar()
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
+}
+
+void MainWindow::loadToolBar()
+{
+    m_mainToolBar->clear();
+
+    QString toolbarItems = m_settings.MainWindow.getToolBarItems();
+    if(toolbarItems.isEmpty())
+        toolbarItems = getDefaultToolBarString();
+
+    auto actions = getActions();
+    auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
+
+    for (const auto& part : parts) {
+        if(part == "Separator") {
+            m_mainToolBar->addSeparator();
+            continue;
+        }
+
+        auto it = std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) {
+            return ac->objectName() == part;
+        });
+
+        if(it != actions.end())
+            m_mainToolBar->addAction( *it );
+    }
 }
 
 bool MainWindow::saveTabsToCache()
@@ -563,7 +599,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     if (arguments.count() == 0) {
 
         if(currentlyOpenTabs==0){
-            ui->action_New->trigger();
+            ui->actionNew->trigger();
         }
 
         return;
@@ -576,7 +612,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     if (rawUrls.count() == 0 && currentlyOpenTabs == 0)
     {
         // Open a new empty document
-        ui->action_New->trigger();
+        ui->actionNew->trigger();
     }
     else
     {
@@ -646,9 +682,9 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
     if (ev->key() == Qt::Key_Insert) {
         if (QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
-            on_action_Paste_triggered();
+            on_actionPaste_triggered();
         } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) {
-            on_action_Copy_triggered();
+            on_actionCopy_triggered();
         } else {
             toggleOverwrite();
         }
@@ -704,7 +740,7 @@ void MainWindow::toggleOverwrite()
     }
 }
 
-void MainWindow::on_action_New_triggered()
+void MainWindow::on_actionNew_triggered()
 {
     EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
 
@@ -857,7 +893,7 @@ void MainWindow::removeTabWidgetIfEmpty(EditorTabWidget *tabWidget) {
     }
 }
 
-void MainWindow::on_action_Open_triggered()
+void MainWindow::on_actionOpen_triggered()
 {
     QUrl defaultUrl = currentEditor()->filePath();
     if (defaultUrl.isEmpty())
@@ -1006,7 +1042,7 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
             if(m_settings.General.getExitOnLastTabClose())
                 close();
             else
-                ui->action_New->trigger();
+                ui->actionNew->trigger();
         }
     }
 
@@ -1147,13 +1183,13 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
     saveAs(tabW, tabW->currentIndex(), true);
 }
 
-void MainWindow::on_action_Copy_triggered()
+void MainWindow::on_actionCopy_triggered()
 {
     QStringList sel = currentEditor()->selectedTexts();
     QApplication::clipboard()->setText(sel.join("\n"));
 }
 
-void MainWindow::on_action_Paste_triggered()
+void MainWindow::on_actionPaste_triggered()
 {
     // Normalize foreign text format
     QString text = QApplication::clipboard()->text()
@@ -1162,9 +1198,9 @@ void MainWindow::on_action_Paste_triggered()
     currentEditor()->setSelectionsText(text.split("\n"));
 }
 
-void MainWindow::on_actionCu_t_triggered()
+void MainWindow::on_actionCut_triggered()
 {
-    ui->action_Copy->trigger();
+    ui->actionCopy->trigger();
     currentEditor()->setSelectionsText(QStringList(""));
 }
 
@@ -1370,7 +1406,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     ui->actionOpen_in_New_Window->setEnabled(isClean);
 
     bool allowReloading = !editor->filePath().isEmpty();
-    ui->actionReload_file_interpreted_as->setEnabled(allowReloading);
+    ui->actionReload_File_Interpreted_As->setEnabled(allowReloading);
     ui->actionReload_from_Disk->setEnabled(allowReloading);
 
     // EOL
@@ -1400,11 +1436,11 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     if (editor->isUsingCustomIndentationMode()) {
         ui->actionIndentation_Custom->setChecked(true);
     } else {
-        ui->actionIndentation_Default_settings->setChecked(true);
+        ui->actionIndentation_Default_Settings->setChecked(true);
     }
 }
 
-void MainWindow::on_action_Delete_triggered()
+void MainWindow::on_actionDelete_triggered()
 {
     currentEditor()->setSelectionsText(QStringList(""));
 }
@@ -1428,12 +1464,12 @@ void MainWindow::on_actionAbout_Qt_triggered()
     QApplication::aboutQt();
 }
 
-void MainWindow::on_action_Undo_triggered()
+void MainWindow::on_actionUndo_triggered()
 {
     currentEditor()->sendMessage("C_CMD_UNDO");
 }
 
-void MainWindow::on_action_Redo_triggered()
+void MainWindow::on_actionRedo_triggered()
 {
     currentEditor()->sendMessage("C_CMD_REDO");
 }
@@ -1460,7 +1496,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     disconnect(m_topEditorContainer, 0, this, 0);
 }
 
-void MainWindow::on_actionE_xit_triggered()
+void MainWindow::on_actionExit_triggered()
 {
     close();
 }
@@ -1495,7 +1531,7 @@ void MainWindow::on_actionSearch_triggered()
     m_frmSearchReplace->activateWindow();
 }
 
-void MainWindow::on_actionCurrent_Full_File_path_to_Clipboard_triggered()
+void MainWindow::on_actionCurrent_Full_File_Path_to_Clipboard_triggered()
 {
     Editor *editor = currentEditor();
     if (currentEditor()->filePath().isEmpty())
@@ -1556,7 +1592,7 @@ void MainWindow::on_actionClose_triggered()
              m_topEditorContainer->currentTabWidget()->currentIndex());
 }
 
-void MainWindow::on_actionC_lose_All_triggered()
+void MainWindow::on_actionClose_All_triggered()
 {
     bool canceled = false;
 
@@ -2072,7 +2108,7 @@ void MainWindow::on_actionConvert_to_triggered()
     dialog->deleteLater();
 }
 
-void MainWindow::on_actionReload_file_interpreted_as_triggered()
+void MainWindow::on_actionReload_File_Interpreted_As_triggered()
 {
     Editor *editor = currentEditor();
     frmEncodingChooser *dialog = new frmEncodingChooser(this);
@@ -2087,7 +2123,7 @@ void MainWindow::on_actionReload_file_interpreted_as_triggered()
     dialog->deleteLater();
 }
 
-void MainWindow::on_actionIndentation_Default_settings_triggered()
+void MainWindow::on_actionIndentation_Default_Settings_triggered()
 {
     currentEditor()->clearCustomIndentationMode();
 }
@@ -2108,13 +2144,13 @@ void MainWindow::on_actionIndentation_Custom_triggered()
     if (editor->isUsingCustomIndentationMode()) {
         ui->actionIndentation_Custom->setChecked(true);
     } else {
-        ui->actionIndentation_Default_settings->setChecked(true);
+        ui->actionIndentation_Default_Settings->setChecked(true);
     }
 
     dialog->deleteLater();
 }
 
-void MainWindow::on_actionInterpret_as_triggered()
+void MainWindow::on_actionInterpret_As_triggered()
 {
     Editor *editor = currentEditor();
     frmEncodingChooser *dialog = new frmEncodingChooser(this);
@@ -2408,7 +2444,7 @@ void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
     currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_LEADING");
 }
 
-void MainWindow::on_actionGo_to_line_triggered()
+void MainWindow::on_actionGo_to_Line_triggered()
 {
     Editor *editor = currentEditor();
     int currentLine = editor->cursorPosition().first;
@@ -2433,6 +2469,38 @@ void MainWindow::on_actionInstall_Extension_triggered()
 void MainWindow::showExtensionsMenu(bool show)
 {
     ui->menu_Extensions->menuAction()->setVisible(show);
+}
+
+QString MainWindow::getDefaultToolBarString() const
+{
+    QStringList list;
+
+    list << ui->actionNew->objectName();
+    list << ui->actionOpen->objectName();
+    list << ui->actionSave->objectName();
+    list << ui->actionSave_All->objectName();
+    list << ui->actionClose->objectName();
+    list << ui->actionClose_All->objectName();
+    list << "Separator";
+    list << ui->actionCut->objectName();
+    list << ui->actionCopy->objectName();
+    list << ui->actionPaste->objectName();
+    list << "Separator";
+    list << ui->actionUndo->objectName();
+    list << ui->actionRedo->objectName();
+    list << "Separator";
+    list << ui->actionZoom_In->objectName();
+    list << ui->actionZoom_Out->objectName();
+    list << "Separator";
+    list << ui->actionWord_wrap->objectName();
+    list << ui->actionShow_All_Characters->objectName();
+
+    return list.join('|');
+}
+
+QToolBar*MainWindow::getToolBar() const
+{
+    return m_mainToolBar;
 }
 
 void MainWindow::on_actionFull_Screen_toggled(bool on)
@@ -2528,5 +2596,5 @@ void MainWindow::on_actionShow_Menubar_toggled(bool arg1)
 
 void MainWindow::on_actionShow_Toolbar_toggled(bool arg1)
 {
-    ui->mainToolBar->setVisible(arg1);
+    m_mainToolBar->setVisible(arg1);
 }
