@@ -714,9 +714,18 @@ namespace EditorNS
 
     void Editor::print(QPrinter *printer)
     {
+        // 1. Set theme to default because dark themes would force the printer to color the entire
+        //    document in the background color. Default theme has white background.
+        // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
+        // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
+
+        setTheme(themeFromName("Default"));
+        m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->print(printer);
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
+        m_webView->setStyleSheet("");
+        setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
     }
 
     QString Editor::getCurrentWord()

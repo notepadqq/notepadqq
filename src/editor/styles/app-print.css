@@ -9,3 +9,20 @@
 .editor.print .CodeMirror-activeline-background {
     background: none;
 }
+
+.editor.print .CodeMirror-linenumber {
+   visibility: hidden;
+}
+
+.editor.print .CodeMirror-gutters {
+    visibility: hidden;
+    width: 0px;
+}
+
+.editor.print .CodeMirror-guttermarker {
+    visibility: hidden;
+}
+
+.editor.print .CodeMirror-guttermarker-subtle {
+    visibility: hidden;
+}
