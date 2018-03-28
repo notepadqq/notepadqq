@@ -276,6 +276,7 @@ void MainWindow::loadIcons()
     ui->actionClose_All->setIcon(IconProvider::fromTheme("document-close-all"));
     ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent"));
     ui->actionExit->setIcon(IconProvider::fromTheme("application-exit"));
+    ui->actionPrint->setIcon(IconProvider::fromTheme("document-print"));
     ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print")); // currently invisible
 
     // Edit menu
