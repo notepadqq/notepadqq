@@ -2230,16 +2230,16 @@ void MainWindow::runCommand()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    QPrinter printer(QPrinter::HighResolution);
-    QPrintDialog dialog(&printer);
+    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
+    QPrintDialog dialog(printer.get());
     if (dialog.exec() == QDialog::Accepted)
-        currentEditor()->print(&printer);
+        currentEditor()->print(printer);
 }
 
 void MainWindow::on_actionPrint_Now_triggered()
 {
-    QPrinter printer(QPrinter::HighResolution);
-    currentEditor()->print(&printer);
+    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
+    currentEditor()->print(printer);
 }
 /*
 void MainWindow::on_actionLaunch_in_Chrome_triggered()

@@ -355,7 +355,7 @@ namespace EditorNS
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
-        void print(QPrinter *printer);
+        void print(std::shared_ptr<QPrinter> printer);
     };
 
 }

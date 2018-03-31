@@ -709,7 +709,7 @@ namespace EditorNS
         return out;
     }
 
-    void Editor::print(QPrinter *printer)
+    void Editor::print(std::shared_ptr<QPrinter> printer)
     {
         // 1. Set theme to default because dark themes would force the printer to color the entire
         //    document in the background color. Default theme has white background.
@@ -719,11 +719,12 @@ namespace EditorNS
         setTheme(themeFromName("Default"));
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
-        QWebEngineCallback<bool> cb;
-        m_webView->page()->print(printer, cb);
-        sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
-        m_webView->setStyleSheet("");
-        setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
+        m_webView->page()->print(printer.get(), [printer, this](bool success) {
+            // Note: it is important to capture "printer" in order to keep the shared_ptr alive.
+            sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
+            m_webView->setStyleSheet("");
+            setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
+        });
     }
 
     QString Editor::getCurrentWord()
