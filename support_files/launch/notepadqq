@@ -33,6 +33,13 @@ if [ "$QT_QPA_PLATFORMTHEME" = "appmenu-qt5" ]; then
     export QT_QPA_PLATFORMTHEME=""
 fi
 
+# For less common desktop environments, this doesn't get set at all which will cause QT to default to
+# using KDE's icon theme settings and cause a lot of missing icon errors.  Most enviornments that don't
+# set this preference GTK's settings... so go with that by default.
+if [ -z "$XDG_CURRENT_DESKTOP" ]; then
+    export XDG_CURRENT_DESKTOP="GNOME"
+fi
+
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
     # Nqq is installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin "$@"
