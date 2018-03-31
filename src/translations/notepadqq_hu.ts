@@ -4,251 +4,251 @@
 <context>
     <name>AdvancedSearchDock</name>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="142"/>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="618"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="162"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="649"/>
         <source>Advanced Search</source>
         <translation>Speciális keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="167"/>
         <source>Clear Search History</source>
         <translation>Keresési előzmények törlése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="156"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="176"/>
         <source>Go To Previous Result (Shift+F4)</source>
         <translation>Ugrás az előző találatra (Shift+F4)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="161"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="181"/>
         <source>Go To Next Result (F4)</source>
         <translation>Ugrás a következő találatra (F4)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="165"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="185"/>
         <source>Expand/Collapse All</source>
         <translation>Összes kibontása/összecsukása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="167"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="187"/>
         <source>Redo Search</source>
         <translation>Újra keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="168"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="188"/>
         <source>Copy Selected Contents To Clipboard</source>
         <translation>A kijelölt tartalom másolása a vágólapra</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="169"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="189"/>
         <source>Show Full Lines</source>
         <translation>Teljes sorok megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="171"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="191"/>
         <source>Remove This Search</source>
         <translation>Ennek a keresésnek az eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="176"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="196"/>
         <source>More Options</source>
         <translation>További opciók</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="181"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="201"/>
         <source>Replace Options</source>
         <translation>Csere opciók</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="207"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="227"/>
         <source>Dock/Undock this panel</source>
         <translation>Ennek a panelnak a dokkolása/leválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="233"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="253"/>
         <source>Replace Text</source>
         <translation>Csereszöveg</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="241"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="261"/>
         <source>Replace Selected</source>
         <translation>Kijelölt cseréje</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="242"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="262"/>
         <source>Replace all selected search results.</source>
         <translation>Az összes kiválasztott keresési eredmény cseréje.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="244"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="264"/>
         <source>Use Special Characters (&apos;\n&apos;, &apos;\t&apos;, ...)</source>
         <translation>Speciális karakterek használata (&apos;\n&apos;, &apos;\t&apos;, ...)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="245"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="265"/>
         <source>Replace strings like &apos;\n&apos; with their respective special characters.</source>
         <translation>A karakterláncok mint  a &apos;\\n&apos; cseréje a megfelelő speciális karakterekkel.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="281"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="301"/>
         <source>Search String</source>
         <translation>Keresési karakterlánc</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="288"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="308"/>
         <source>Search in Current Document</source>
         <translation>Keresés az aktuális dokumentumban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="289"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="309"/>
         <source>Search in All Open Documents</source>
         <translation>Keresés az összes megnyitott dokumentumban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="290"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="310"/>
         <source>Search in Files on File System</source>
         <translation>Keresés a fájlrendszer fájljaiban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="305"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="325"/>
         <source>Directory</source>
         <translation>Könyvtár</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="314"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="334"/>
         <source>Select Directory of active Document</source>
         <translation>Az aktív dokumentum könyvtárának kiválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="318"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="338"/>
         <source>Select Search Directory</source>
         <translation>Keresési könyvtár kiválasztása</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="325"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="345"/>
         <source>Search</source>
         <translation>Keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="328"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="348"/>
         <source>Scope:</source>
         <translation>Keresési tartomány:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="330"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="350"/>
         <source>Search:</source>
         <translation>Keresés:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="332"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="352"/>
         <source>Pattern:</source>
         <translation>Minta:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="334"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="354"/>
         <source>Location:</source>
         <translation>Hely:</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="337"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="357"/>
         <source>Match Case</source>
         <translation>Kis- és nagybetűk megkülönböztetése</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="338"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="358"/>
         <source>Match Whole Words Only</source>
         <translation>Csak egész szavas találatok</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="339"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="359"/>
         <source>Use Regular Expressions</source>
         <translation>Reguláris kifejezések használata</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="340"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="360"/>
         <source>Use Special Characters (&apos;\t&apos;, &apos;\n&apos;, ...)</source>
         <translation>Speciális karakterek használata (&apos;\t&apos;, &apos;\n&apos;, ...)</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="341"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="361"/>
         <source>If set, character sequences like &apos;\t&apos; will be replaced by their respective special characters.</source>
         <translation>Ha be van állítva, akkor az olyan karakter szekvenciák helyébe mint a &apos;\\t&apos;, a megfelelő speciális karakterek kerülnek.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="342"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="362"/>
         <source>Include Subdirectories</source>
         <translation>Alkönyvtárakkal együtt</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="392"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="423"/>
         <source>&lt;h3&gt;One or more searches are still in progress&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Egy vagy több keresés még folyamatban van&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="393"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="424"/>
         <source>All searches will be canceled and their results discarded if you continue.</source>
         <translation>Minden keresés meg lesz szakítva, és az összes eredmény el fog veszni, ha folytatja.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="407"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="438"/>
         <source>New Search</source>
         <translation>Új keresés</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="709"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="740"/>
         <source>Search in progress</source>
         <translation>Keresés folyamatban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="710"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="741"/>
         <source>&lt;h3&gt;This search is still in progress.&lt;/h3&gt; The search will be canceled and all results discarded if you continue.</source>
         <translation>&lt;h3&gt;Ez a keresés még folyamatban van.&lt;/h3&gt; A keresés meg lesz szakítva, és az összes eredmény el fog veszni, ha folytatja.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="821"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="852"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="822"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="853"/>
         <source>Specified directory does not exist.</source>
         <translation>A megadott könyvtár nem létezik.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="852"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="883"/>
         <source>Matches in %1 of %2 files replaced.</source>
         <translation>A találatok %1/%2 fájlban lecserélve.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="860"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="891"/>
         <source>&lt;h3&gt;Replacing selected matches...&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;A kiválasztott találatok cseréje...&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="861"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="892"/>
         <source>Replacing in progress</source>
         <translation>Csere folyamatban</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="873"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="904"/>
         <source>Replacing was unsuccessful for %1 file(s):
 </source>
         <translation>A csere %1 fájlban sikertelen volt:
 </translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="879"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="910"/>
         <source>And %1 more.</source>
         <translation>Még %1.</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="882"/>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="885"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="913"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="916"/>
         <source>Replacement Results</source>
         <translation>A csere eredménye</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="886"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="917"/>
         <source>All selected matches successfully replaced.</source>
         <translation>Az összes kiválasztott találat sikeresen lecserélve.</translation>
     </message>
@@ -539,87 +539,82 @@
         <translation>&amp;Ablakok</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="286"/>
-        <source>Toolbar</source>
-        <translation>Eszköztár</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="330"/>
+        <location filename="../ui/mainwindow.ui" line="287"/>
         <source>&amp;Open...</source>
         <translation>Meg&amp;nyitás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="333"/>
+        <location filename="../ui/mainwindow.ui" line="290"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="338"/>
+        <location filename="../ui/mainwindow.ui" line="295"/>
         <source>&amp;New</source>
         <translation>&amp;Új</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="341"/>
+        <location filename="../ui/mainwindow.ui" line="298"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="351"/>
+        <location filename="../ui/mainwindow.ui" line="308"/>
         <source>&amp;Save</source>
         <translation>Menté&amp;s</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="354"/>
+        <location filename="../ui/mainwindow.ui" line="311"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="359"/>
+        <location filename="../ui/mainwindow.ui" line="316"/>
         <source>Save &amp;As...</source>
         <translation>Ment&amp;és másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="362"/>
+        <location filename="../ui/mainwindow.ui" line="319"/>
         <source>Save As...</source>
         <translation>Mentés másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="365"/>
+        <location filename="../ui/mainwindow.ui" line="322"/>
         <source>Ctrl+Alt+S</source>
         <translation>Ctrl+Alt+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="375"/>
+        <location filename="../ui/mainwindow.ui" line="332"/>
         <source>Sav&amp;e All</source>
         <translation>&amp;Összes mentése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="378"/>
+        <location filename="../ui/mainwindow.ui" line="335"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="391"/>
+        <location filename="../ui/mainwindow.ui" line="348"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="396"/>
+        <location filename="../ui/mainwindow.ui" line="353"/>
         <source>C&amp;lose All</source>
         <translation>Összes be&amp;zárása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="406"/>
+        <location filename="../ui/mainwindow.ui" line="363"/>
         <source>Load Session...</source>
         <translation>Munkamenet betöltése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="411"/>
+        <location filename="../ui/mainwindow.ui" line="368"/>
         <source>Save Session...</source>
         <translation>Munkamenet mentése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="419"/>
+        <location filename="../ui/mainwindow.ui" line="379"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
@@ -669,6 +664,11 @@
         <translation>Dokumentum &amp;áthelyezése/klónozása</translation>
     </message>
     <message>
+        <location filename="../ui/mainwindow.ui" line="213"/>
+        <source>En&amp;coding</source>
+        <translation>Kó&amp;dolás</translation>
+    </message>
+    <message>
         <location filename="../ui/mainwindow.ui" line="238"/>
         <source>Settin&amp;gs</source>
         <translation>&amp;Beállítások</translation>
@@ -684,703 +684,698 @@
         <translation>B&amp;ővítmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="346"/>
+        <location filename="../ui/mainwindow.ui" line="303"/>
         <source>&amp;Reload from Disk</source>
         <translation>&amp;Újbóli betöltés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="370"/>
+        <location filename="../ui/mainwindow.ui" line="327"/>
         <source>Sa&amp;ve a Copy As...</source>
         <translation>Más&amp;olat mentése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="383"/>
+        <location filename="../ui/mainwindow.ui" line="340"/>
         <source>Rena&amp;me...</source>
         <translation>&amp;Átnevezés...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="388"/>
+        <location filename="../ui/mainwindow.ui" line="345"/>
         <source>&amp;Close</source>
         <translation>&amp;Bezárás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="401"/>
+        <location filename="../ui/mainwindow.ui" line="358"/>
         <source>Close All &amp;BUT Current Document</source>
         <translation>Összes bezárása a &amp;jelenlegi kivételével</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="416"/>
+        <location filename="../ui/mainwindow.ui" line="376"/>
         <source>&amp;Print...</source>
         <translation>N&amp;yomtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="427"/>
+        <location filename="../ui/mainwindow.ui" line="390"/>
         <source>Pr&amp;int Now</source>
         <translation>Nyomtatás k&amp;özvetlenül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="435"/>
+        <location filename="../ui/mainwindow.ui" line="398"/>
         <source>Open All Recent Files</source>
         <translation>Minden előzmény megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="440"/>
+        <location filename="../ui/mainwindow.ui" line="403"/>
         <source>Empty Recent Files List</source>
         <translation>Előzmények törlése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="445"/>
+        <location filename="../ui/mainwindow.ui" line="408"/>
         <source>E&amp;xit</source>
         <translation>&amp;Kilépés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="448"/>
+        <location filename="../ui/mainwindow.ui" line="411"/>
         <source>Alt+F4</source>
         <translation>Alt+F4</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="453"/>
+        <location filename="../ui/mainwindow.ui" line="416"/>
         <source>&amp;Undo</source>
         <translation>&amp;Visszavonás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="456"/>
+        <location filename="../ui/mainwindow.ui" line="419"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="461"/>
+        <location filename="../ui/mainwindow.ui" line="424"/>
         <source>&amp;Redo</source>
         <translation>Mé&amp;gis</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="464"/>
+        <location filename="../ui/mainwindow.ui" line="427"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="469"/>
+        <location filename="../ui/mainwindow.ui" line="432"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Kivágás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="472"/>
+        <location filename="../ui/mainwindow.ui" line="435"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="477"/>
+        <location filename="../ui/mainwindow.ui" line="440"/>
         <source>&amp;Copy</source>
         <translation>&amp;Másolás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="480"/>
+        <location filename="../ui/mainwindow.ui" line="443"/>
         <source>Ctrl+C</source>
         <translation>Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="485"/>
+        <location filename="../ui/mainwindow.ui" line="448"/>
         <source>&amp;Paste</source>
         <translation>&amp;Beillesztés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="488"/>
+        <location filename="../ui/mainwindow.ui" line="451"/>
         <source>Ctrl+V</source>
         <translation>Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="493"/>
+        <location filename="../ui/mainwindow.ui" line="456"/>
         <source>&amp;Delete</source>
         <translation>&amp;Törlés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="496"/>
+        <location filename="../ui/mainwindow.ui" line="459"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="501"/>
+        <location filename="../ui/mainwindow.ui" line="464"/>
         <source>Select &amp;All</source>
         <translation>Ö&amp;sszes kijelölése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="504"/>
+        <location filename="../ui/mainwindow.ui" line="467"/>
         <source>Ctrl+A</source>
         <translation>Ctrl+A</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="509"/>
+        <location filename="../ui/mainwindow.ui" line="472"/>
         <source>About &amp;Notepadqq...</source>
         <translation>&amp;Notepadqq névjegye...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="517"/>
+        <location filename="../ui/mainwindow.ui" line="480"/>
         <source>&amp;About Qt...</source>
         <translation>Qt név&amp;jegye...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="525"/>
+        <location filename="../ui/mainwindow.ui" line="488"/>
         <source>&amp;Windows Format</source>
         <translation>&amp;Windows formátum</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="536"/>
+        <location filename="../ui/mainwindow.ui" line="499"/>
         <source>&amp;UNIX / OS X Format</source>
         <translation>&amp;UNIX / OS X formátum</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="544"/>
+        <location filename="../ui/mainwindow.ui" line="507"/>
         <source>&amp;Old Mac Format</source>
         <translation>&amp;Régi Mac formátum</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="552"/>
+        <location filename="../ui/mainwindow.ui" line="515"/>
         <source>Show &amp;End of Line</source>
         <translation>Sor&amp;végjelek megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="560"/>
+        <location filename="../ui/mainwindow.ui" line="523"/>
         <source>&amp;Show Tabs</source>
         <translation>&amp;Tabulátorok megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="568"/>
+        <location filename="../ui/mainwindow.ui" line="531"/>
         <source>Show All &amp;Characters</source>
         <translation>Minden &amp;karakter megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="579"/>
+        <location filename="../ui/mainwindow.ui" line="542"/>
         <source>Show &amp;Indent Guide</source>
         <translation>&amp;Behúzás sorvezetőjének megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="587"/>
+        <location filename="../ui/mainwindow.ui" line="550"/>
         <source>Show &amp;Wrap Symbol</source>
         <translation>&amp;Sortörésszimbólum megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="595"/>
+        <location filename="../ui/mainwindow.ui" line="558"/>
         <source>&amp;Word wrap</source>
         <translation>&amp;Sortörés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="600"/>
+        <location filename="../ui/mainwindow.ui" line="563"/>
         <source>&amp;Copy Full Path to Clipboard</source>
         <translation>Teljes fájl elérési út vágólapra &amp;másolása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="605"/>
+        <location filename="../ui/mainwindow.ui" line="568"/>
         <source>Copy &amp;Filename to Clipboard</source>
         <translation>&amp;Fájlnév vágólapra másolása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="610"/>
+        <location filename="../ui/mainwindow.ui" line="573"/>
         <source>Copy &amp;Directory to Clipboard</source>
         <translation>&amp;Könyvtár vágólapra másolása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="631"/>
+        <location filename="../ui/mainwindow.ui" line="594"/>
         <source>&amp;Restore Default Zoom</source>
         <translation>&amp;Alapértelmezett méret visszaállítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="639"/>
+        <location filename="../ui/mainwindow.ui" line="602"/>
         <source>&amp;Move to Other View</source>
         <translation>&amp;Áthelyezés másik nézetbe</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="644"/>
+        <location filename="../ui/mainwindow.ui" line="607"/>
         <source>&amp;Clone to Other View</source>
         <translation>&amp;Klónozás másik nézetbe</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="649"/>
+        <location filename="../ui/mainwindow.ui" line="612"/>
         <source>Move to a &amp;New Window</source>
         <translation>Áthelyezés &amp;új ablakba</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="654"/>
+        <location filename="../ui/mainwindow.ui" line="617"/>
         <source>&amp;Open in a New Window</source>
         <translation>&amp;Megnyitás egy új ablakban</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="718"/>
+        <location filename="../ui/mainwindow.ui" line="681"/>
         <source>&amp;UPPERCASE</source>
         <translation>Formázás &amp;nagybetűsre</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="726"/>
+        <location filename="../ui/mainwindow.ui" line="689"/>
         <source>&amp;lowercase</source>
         <translation>Formázás &amp;kisbetűsre</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="734"/>
+        <location filename="../ui/mainwindow.ui" line="697"/>
         <source>&amp;Convert to UTF-8</source>
         <translation>&amp;Átalakítás UTF-8 kódolásra</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="739"/>
+        <location filename="../ui/mainwindow.ui" line="702"/>
         <source>Convert to UTF-&amp;16BE (UCS-2 Big Endian)</source>
         <translation>Átalakítás UTF-&amp;16BE (UCS-2 Big Endian) kódolásra</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="744"/>
+        <location filename="../ui/mainwindow.ui" line="707"/>
         <source>Convert to UTF-16LE (UCS-&amp;2 Little Endian)</source>
         <translation>Átalakítás UTF-16LE (UCS-&amp;2 Little Endian) kódolásra</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="749"/>
+        <location filename="../ui/mainwindow.ui" line="712"/>
         <source>Convert to &amp;UTF-8 without BOM</source>
         <translation>Átalakítás BOM nélküli &amp;UTF-8 kódolásra</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="799"/>
+        <location filename="../ui/mainwindow.ui" line="762"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Beállítások...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="828"/>
+        <location filename="../ui/mainwindow.ui" line="791"/>
         <source>&amp;Plain text</source>
         <translation>&amp;Egyszerű szöveg</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="833"/>
+        <location filename="../ui/mainwindow.ui" line="796"/>
         <source>&amp;Replace...</source>
         <translation>&amp;Csere...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="841"/>
+        <location filename="../ui/mainwindow.ui" line="804"/>
         <source>&amp;Reload file interpreted as...</source>
         <translation>Fájl &amp;újratöltése másként értelmezve...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="846"/>
+        <location filename="../ui/mainwindow.ui" line="809"/>
         <source>C&amp;onvert to...</source>
         <translation>Áta&amp;lakítás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="851"/>
+        <location filename="../ui/mainwindow.ui" line="814"/>
         <source>Interpret as UTF-16BE (UCS-2 &amp;Big Endian)</source>
         <translation>Értelmezés UTF-16BE (UCS-2 &amp;Big Endian)-ként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="856"/>
+        <location filename="../ui/mainwindow.ui" line="819"/>
         <source>Interpret as UTF-&amp;8 without BOM</source>
         <translation>Értelmezés BOM nélküli UTF-&amp;8-ként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="861"/>
+        <location filename="../ui/mainwindow.ui" line="824"/>
         <source>&amp;Interpret as UTF-8</source>
         <translation>&amp;Értelmezés UTF-8-ként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="866"/>
+        <location filename="../ui/mainwindow.ui" line="829"/>
         <source>Interpret as UTF-16LE (UCS-2 &amp;Little Endian)</source>
         <translation>Értelmezés UTF-16LE (UCS-2 &amp;Little Endian)-ként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="877"/>
+        <location filename="../ui/mainwindow.ui" line="840"/>
         <source>&amp;Default settings</source>
         <translation>&amp;Alapértelmezett beállítások</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="885"/>
+        <location filename="../ui/mainwindow.ui" line="848"/>
         <source>&amp;Custom...</source>
         <translation>&amp;Egyéni...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="890"/>
+        <location filename="../ui/mainwindow.ui" line="853"/>
         <source>I&amp;nterpret as...</source>
         <translation>É&amp;rtelmezés másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="900"/>
+        <location filename="../ui/mainwindow.ui" line="863"/>
         <source>&amp;Open a New Window</source>
         <translation>&amp;Új ablak megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1052"/>
-        <source>Show Menubar</source>
-        <translation>Menüsor megjelenítése</translation>
+        <location filename="../ui/mainwindow.ui" line="1015"/>
+        <source>&amp;Show Menubar</source>
+        <translation>&amp;Menüsor megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1055"/>
+        <location filename="../ui/mainwindow.ui" line="1026"/>
+        <source>S&amp;how Toolbar</source>
+        <translation>&amp;Eszköztár megjelenítése</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.ui" line="1018"/>
         <source>Ctrl+M</source>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1063"/>
-        <source>Show Toolbar</source>
-        <translation>Eszköztár megjelenítése</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="913"/>
+        <location filename="../ui/mainwindow.ui" line="876"/>
         <source>Delete &amp;Current Line</source>
         <translation>Akt&amp;uális sor törlése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="924"/>
+        <location filename="../ui/mainwindow.ui" line="887"/>
         <source>&amp;Duplicate Current Line</source>
         <translation>Aktuális sor &amp;megkettőzése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="935"/>
+        <location filename="../ui/mainwindow.ui" line="898"/>
         <source>&amp;Move Line Up</source>
         <translation>Sor mozgatása &amp;felfelé</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="946"/>
+        <location filename="../ui/mainwindow.ui" line="909"/>
         <source>Move &amp;Line Down</source>
         <translation>Sor mozgatása &amp;lefelé</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="973"/>
+        <location filename="../ui/mainwindow.ui" line="936"/>
         <source>T&amp;rim Leading and Trailing Space</source>
         <translation>So&amp;releji és sorvégi szóközök eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="978"/>
+        <location filename="../ui/mainwindow.ui" line="941"/>
         <source>&amp;EOL to Space</source>
         <translation>Sor&amp;végjel szóközzé alakítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="983"/>
+        <location filename="../ui/mainwindow.ui" line="946"/>
         <source>TA&amp;B to Space</source>
         <translation>Ta&amp;bulátor szóközzé alakítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="988"/>
+        <location filename="../ui/mainwindow.ui" line="951"/>
         <source>&amp;Space to TAB (All)</source>
         <translation>Sz&amp;óközökből tabulátorok (Összes)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="993"/>
+        <location filename="../ui/mainwindow.ui" line="956"/>
         <source>S&amp;pace to TAB (Leading)</source>
         <translation>S&amp;zóközökből tabulátorok (Soreleji)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="998"/>
+        <location filename="../ui/mainwindow.ui" line="961"/>
         <source>Open &amp;Folder...</source>
         <translation>Map&amp;pa megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1003"/>
+        <location filename="../ui/mainwindow.ui" line="966"/>
         <source>&amp;Go to line...</source>
         <translation>U&amp;grás sorra...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1011"/>
+        <location filename="../ui/mainwindow.ui" line="974"/>
         <source>&amp;Install Extension...</source>
         <translation>Bővítmény &amp;telepítése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1019"/>
+        <location filename="../ui/mainwindow.ui" line="982"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Teljes képernyő</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1044"/>
+        <location filename="../ui/mainwindow.ui" line="1007"/>
         <source>&amp;Enable Smart Indent</source>
         <translation>&amp;Intelligens behúzás engedélyezése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="512"/>
+        <location filename="../ui/mainwindow.ui" line="475"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="213"/>
-        <source>E&amp;ncoding</source>
-        <translation>Kó&amp;dolás</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="615"/>
+        <location filename="../ui/mainwindow.ui" line="578"/>
         <source>Zoom &amp;In</source>
         <translation>Nag&amp;yítás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="618"/>
+        <location filename="../ui/mainwindow.ui" line="581"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="623"/>
+        <location filename="../ui/mainwindow.ui" line="586"/>
         <source>Zoom &amp;Out</source>
         <translation>Kicsiny&amp;ítés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="626"/>
+        <location filename="../ui/mainwindow.ui" line="589"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="634"/>
+        <location filename="../ui/mainwindow.ui" line="597"/>
         <source>Ctrl+0</source>
         <translation>Ctrl+0</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="659"/>
+        <location filename="../ui/mainwindow.ui" line="622"/>
         <source>&amp;Start Recording</source>
         <translation>&amp;Makró rögzítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="670"/>
+        <location filename="../ui/mainwindow.ui" line="633"/>
         <source>&amp;Stop Recording</source>
         <translation>&amp;Rögzítés leállítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="681"/>
+        <location filename="../ui/mainwindow.ui" line="644"/>
         <source>&amp;Playback</source>
         <translation>Makró &amp;futtatása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="692"/>
+        <location filename="../ui/mainwindow.ui" line="655"/>
         <source>Save Currently Recorded Macro</source>
         <translation>A rögzített makró mentése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="700"/>
+        <location filename="../ui/mainwindow.ui" line="663"/>
         <source>Run a Macro Multiple Times...</source>
         <translation>Makró többszöri futtatása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="708"/>
+        <location filename="../ui/mainwindow.ui" line="671"/>
         <source>Trim Trailing and save</source>
         <translation>Sorvégi szóközök eltávolítása és mentés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="713"/>
+        <location filename="../ui/mainwindow.ui" line="676"/>
         <source>Modify Shortcut/Delete Macro...</source>
         <translation>Billentyűparancs módosítása / Makró törlése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="721"/>
+        <location filename="../ui/mainwindow.ui" line="684"/>
         <source>Ctrl+Shift+U</source>
         <translation>Ctrl+Shift+U</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="729"/>
+        <location filename="../ui/mainwindow.ui" line="692"/>
         <source>Ctrl+U</source>
         <translation>Ctrl+U</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="754"/>
+        <location filename="../ui/mainwindow.ui" line="717"/>
         <source>&amp;Run...</source>
         <translation>&amp;Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="759"/>
+        <location filename="../ui/mainwindow.ui" line="722"/>
         <source>Launch in Firefox</source>
         <translation>Megnyitás Firefoxban</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="764"/>
+        <location filename="../ui/mainwindow.ui" line="727"/>
         <source>Launch in Chromium</source>
         <translation>Megnyitás Chromiumban</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="769"/>
+        <location filename="../ui/mainwindow.ui" line="732"/>
         <source>Get PHP help</source>
         <translation>PHP súgó</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="774"/>
+        <location filename="../ui/mainwindow.ui" line="737"/>
         <source>Google Search</source>
         <translation>Google keresés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="779"/>
+        <location filename="../ui/mainwindow.ui" line="742"/>
         <source>Wikipedia Search</source>
         <translation>Wikipédia keresés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="784"/>
+        <location filename="../ui/mainwindow.ui" line="747"/>
         <source>Open file(s)</source>
         <translation>Fájl(ok) megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="789"/>
+        <location filename="../ui/mainwindow.ui" line="752"/>
         <source>Open file(s) in a new window</source>
         <translation>Fájl(ok) megnyitása új ablakban</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="794"/>
+        <location filename="../ui/mainwindow.ui" line="757"/>
         <source>Modify Shortcut / Delete Command...</source>
         <translation>Billentyűparancs módosítása / Parancs törlése...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="804"/>
+        <location filename="../ui/mainwindow.ui" line="767"/>
         <source>&amp;Find...</source>
         <translation>K&amp;eresés...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="807"/>
+        <location filename="../ui/mainwindow.ui" line="770"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="812"/>
+        <location filename="../ui/mainwindow.ui" line="775"/>
         <source>Find &amp;Next</source>
         <translation>&amp;Következő keresése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="815"/>
+        <location filename="../ui/mainwindow.ui" line="778"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="820"/>
+        <location filename="../ui/mainwindow.ui" line="783"/>
         <source>Find &amp;Previous</source>
         <translation>E&amp;lőző keresése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="823"/>
+        <location filename="../ui/mainwindow.ui" line="786"/>
         <source>Shift+F3</source>
         <translation>Shift+F3</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="836"/>
+        <location filename="../ui/mainwindow.ui" line="799"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="895"/>
+        <location filename="../ui/mainwindow.ui" line="858"/>
         <source>Launch in Chrome</source>
         <translation>Megnyitás Chrome-ban</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="905"/>
+        <location filename="../ui/mainwindow.ui" line="868"/>
         <source>&amp;Advanced Search</source>
         <translation>&amp;Speciális keresés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="908"/>
+        <location filename="../ui/mainwindow.ui" line="871"/>
         <source>Ctrl+Shift+F</source>
         <translation>Ctrl+Shift+F</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="916"/>
+        <location filename="../ui/mainwindow.ui" line="879"/>
         <source>Delete the current line</source>
         <translation>Az aktuális sor törlése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="919"/>
+        <location filename="../ui/mainwindow.ui" line="882"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="927"/>
+        <location filename="../ui/mainwindow.ui" line="890"/>
         <source>Duplicate the current line</source>
         <translation>Az aktuális sor megkettőzése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="930"/>
+        <location filename="../ui/mainwindow.ui" line="893"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="938"/>
+        <location filename="../ui/mainwindow.ui" line="901"/>
         <source>Move the current line up</source>
         <translation>Aktuális sor mozgatása felfelé</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="941"/>
+        <location filename="../ui/mainwindow.ui" line="904"/>
         <source>Ctrl+Shift+Up</source>
         <translation>Ctrl+Shift+Up</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="949"/>
+        <location filename="../ui/mainwindow.ui" line="912"/>
         <source>Move the current line down</source>
         <translation>Aktuális sor mozgatása lefelé</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="952"/>
+        <location filename="../ui/mainwindow.ui" line="915"/>
         <source>Ctrl+Shift+Down</source>
         <translation>Ctrl+Shift+Down</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="957"/>
+        <location filename="../ui/mainwindow.ui" line="920"/>
         <source>&amp;Trim Trailing Space</source>
         <translation>Sorvégi szóközök &amp;eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="960"/>
+        <location filename="../ui/mainwindow.ui" line="923"/>
         <source>Trim Trailing Space</source>
         <translation>Sorvégi szóközök eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="965"/>
+        <location filename="../ui/mainwindow.ui" line="928"/>
         <source>Trim &amp;Leading Space</source>
         <translation>&amp;Soreleji szóközök eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="968"/>
+        <location filename="../ui/mainwindow.ui" line="931"/>
         <source>Trim Leading Space</source>
         <translation>Soreleji szóközök eltávolítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1006"/>
+        <location filename="../ui/mainwindow.ui" line="969"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1022"/>
+        <location filename="../ui/mainwindow.ui" line="985"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1030"/>
+        <location filename="../ui/mainwindow.ui" line="993"/>
         <source>S&amp;how Spaces</source>
         <translation>Sz&amp;óközök megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1033"/>
+        <location filename="../ui/mainwindow.ui" line="996"/>
         <source>Show Spaces</source>
         <translation>Szóközök megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="398"/>
-        <location filename="../ui/mainwindow.cpp" line="703"/>
+        <location filename="../ui/mainwindow.cpp" line="409"/>
+        <location filename="../ui/mainwindow.cpp" line="740"/>
         <source>INS</source>
         <translation>BEILL</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="701"/>
+        <location filename="../ui/mainwindow.cpp" line="738"/>
         <source>OVR</source>
         <translation>ÁTÍR</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="830"/>
+        <location filename="../ui/mainwindow.cpp" line="867"/>
         <source>Reload</source>
         <translation>Újratöltés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="868"/>
+        <location filename="../ui/mainwindow.cpp" line="905"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="870"/>
+        <location filename="../ui/mainwindow.cpp" line="907"/>
         <source>All files (*)</source>
         <translation>Minden fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="888"/>
+        <location filename="../ui/mainwindow.cpp" line="925"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="929"/>
+        <location filename="../ui/mainwindow.cpp" line="966"/>
         <source>Don&apos;t Save</source>
         <translation>Nincs mentés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="829"/>
+        <location filename="../ui/mainwindow.cpp" line="866"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>A(z) &quot;%1&quot; fájlon végzett módosításai el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="426"/>
+        <location filename="../ui/mainwindow.cpp" line="463"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
@@ -1389,147 +1384,147 @@
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="428"/>
+        <location filename="../ui/mainwindow.cpp" line="465"/>
         <source>By choosing &quot;ignore&quot; your session won&apos;t be saved.</source>
         <translation>Azáltal, hogy &quot;Mellőzés&quot;-t választja, a munkamenet nem lesz elmentve.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="928"/>
+        <location filename="../ui/mainwindow.cpp" line="965"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Szeretné menteni a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="932"/>
+        <location filename="../ui/mainwindow.cpp" line="969"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Szeretné menteni bezárás előtt a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="936"/>
+        <location filename="../ui/mainwindow.cpp" line="973"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Ha nem menti el, a módosítások végleg el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1043"/>
+        <location filename="../ui/mainwindow.cpp" line="1080"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>A fájlt az utolsó beolvasás óta megváltozott a lemezen.
 Biztosan menteni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1046"/>
+        <location filename="../ui/mainwindow.cpp" line="1083"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>A fájl mentése a külső adatok elvesztésével járhat.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1065"/>
+        <location filename="../ui/mainwindow.cpp" line="1102"/>
         <source>Save as</source>
         <translation>Mentés másként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1067"/>
+        <location filename="../ui/mainwindow.cpp" line="1104"/>
         <source>Any file (*)</source>
         <translation>Bármilyen fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1239"/>
+        <location filename="../ui/mainwindow.cpp" line="1277"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1. karakter, %2. sor</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1250"/>
+        <location filename="../ui/mainwindow.cpp" line="1288"/>
         <source>Ln %1, col %2</source>
         <translation>%1. sor, %2 oszlop</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1254"/>
+        <location filename="../ui/mainwindow.cpp" line="1292"/>
         <source>Sel %1 (%2)</source>
         <translation>Kij. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1378"/>
+        <location filename="../ui/mainwindow.cpp" line="1417"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1381"/>
+        <location filename="../ui/mainwindow.cpp" line="1420"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1384"/>
+        <location filename="../ui/mainwindow.cpp" line="1423"/>
         <source>Old Mac</source>
         <translation>Régi Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1391"/>
+        <location filename="../ui/mainwindow.cpp" line="1430"/>
         <source>%1 w/o BOM</source>
         <translation>%1 BOM nélkül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1864"/>
+        <location filename="../ui/mainwindow.cpp" line="1903"/>
         <source>No recent files</source>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1956"/>
+        <location filename="../ui/mainwindow.cpp" line="1995"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
         <translation>Az alábbi fájlok már nem léteznek. Mindenképp szeretné őket megnyitni?
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2064"/>
+        <location filename="../ui/mainwindow.cpp" line="2103"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2078"/>
+        <location filename="../ui/mainwindow.cpp" line="2117"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2120"/>
+        <location filename="../ui/mainwindow.cpp" line="2159"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2135"/>
+        <location filename="../ui/mainwindow.cpp" line="2174"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2147"/>
+        <location filename="../ui/mainwindow.cpp" line="2186"/>
         <source>Modify Run Commands</source>
         <translation>Futtatási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2266"/>
+        <location filename="../ui/mainwindow.cpp" line="2305"/>
         <source>The file &quot;%1&quot; does not exist. Do you want to re-create it?</source>
         <translation>A(z) &quot;%1&quot; fájl nem létezik. Szeretné újra létrehozni?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2423"/>
+        <location filename="../ui/mainwindow.cpp" line="2462"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2469"/>
+        <location filename="../ui/mainwindow.cpp" line="2540"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2471"/>
-        <location filename="../ui/mainwindow.cpp" line="2491"/>
+        <location filename="../ui/mainwindow.cpp" line="2542"/>
+        <location filename="../ui/mainwindow.cpp" line="2562"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2489"/>
+        <location filename="../ui/mainwindow.cpp" line="2560"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2515"/>
+        <location filename="../ui/mainwindow.cpp" line="2586"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
@@ -1671,37 +1666,42 @@ Biztosan menteni szeretné?</translation>
         <translation>%1 meglévő példányának megnyitása új ablakban.</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="91"/>
+        <location filename="../ui/notepadqq.cpp" line="90"/>
+        <source>Allows Notepadqq to be run as root.</source>
+        <translation>A Notepadqq rootként való futtatásának engedélyezése.</translation>
+    </message>
+    <message>
+        <location filename="../ui/notepadqq.cpp" line="94"/>
         <source>Files to open.</source>
         <translation>Megnyitandó fájlok.</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="118"/>
+        <location filename="../ui/notepadqq.cpp" line="121"/>
         <source>You are using an old version of Qt (%1)</source>
         <translation>Ön a Qt egy régi verzióját használja (%1)</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="120"/>
+        <location filename="../ui/notepadqq.cpp" line="123"/>
         <source>Notepadqq will try to do its best, but &lt;b&gt;some things will not work properly&lt;/b&gt;.</source>
         <translation>A Notepadqq megpróbál minden tőle telhetőt megtenni, ennek ellenére &lt;b&gt;bizonyos dolgok nem fognak megfelelően működni&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="121"/>
+        <location filename="../ui/notepadqq.cpp" line="124"/>
         <source>Install a newer Qt version (&amp;ge; %1) from the official repositories of your distribution.&lt;br&gt;&lt;br&gt;If it&apos;s not available, download Qt (&amp;ge; %1) from %2 and install it to &quot;%3&quot; or to &quot;%4&quot;.</source>
         <translation>Telepítse a Qt egy újabb verzióját (&amp;ge; %1) a disztribúciója hivatalos tárolójából.&lt;br&gt;&lt;br&gt;Ha ez nem áll rendelkezésre, töltse le a Qt (&amp;ge; %1) a %2-ról telepítse ide: &quot;%3&quot; vagy ide: &quot;%4&quot;.</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="135"/>
+        <location filename="../ui/notepadqq.cpp" line="138"/>
         <source>Don&apos;t show me this warning again</source>
         <translation>Ne jelenjen meg többet ez a figyelmeztetés</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="434"/>
+        <location filename="../ui/frmpreferences.cpp" line="493"/>
         <source>Restart required</source>
         <translation>Újraindítás szükséges</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="435"/>
+        <location filename="../ui/frmpreferences.cpp" line="494"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
         <translation>A nyelvváltoztatás érvénybe lépéséhez újra kell indítani a Notepadqq-t.</translation>
     </message>
@@ -1721,7 +1721,57 @@ Biztosan menteni szeretné?</translation>
         <translation>A(z) %1 kiválasztott találat le lesz cserélve erre: \&quot;%2\&quot;. Folytatja?</translation>
     </message>
     <message>
-        <location filename="../ui/Search/advancedsearchdock.cpp" line="673"/>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="144"/>
+        <source>Notepadqq supports most of the &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl Regular Expression&lt;/a&gt; syntax when &apos;Use Regular Expressions&apos; is checked.</source>
+        <translation>A Notepadqq a &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl  Reguláris kifejezések&lt;/a&gt; szintaxisának többségét támogatja, ha a &apos;Reguláris kifejezések használata&apos; jelölőnégyzet be van jelölve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="145"/>
+        <source>Here is a quick reference:</source>
+        <translation>Rövid összefoglalás:</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
+        <source>Matches a word character</source>
+        <translation>Egy betű karakterre illeszkedik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="148"/>
+        <source>Matches a 0-9 digit</source>
+        <translation>Egy 0-9 számjegyre illeszekdik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="149"/>
+        <source>Matches any of a, b, or c</source>
+        <translation>a, b, vagy c közül bármelyikre illeszkedik</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="150"/>
+        <source>Matches anything but a, b, or c</source>
+        <translation>illeszkedik bármilyen karakterre, amelyik nem a, b, vagy c</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="151"/>
+        <source>Matches the beginning of a line</source>
+        <translation>Illeszkedik a sor kezdetére</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="152"/>
+        <source>Matches the end of a line</source>
+        <translation>Illeszkedik a sor végére</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="153"/>
+        <source>Matches &apos;abc&apos; and captures it as a group</source>
+        <translation>Illeszkedik &apos;abc&apos;-re és egy csoportként értelmezi őket</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="154"/>
+        <source>Use in a replace operation to refer to the n&apos;th capture group</source>
+        <translation>A csere műveletben használatos, hogy az n-edik találati csoportra hivatkozzon vele</translation>
+    </message>
+    <message>
+        <location filename="../ui/Search/advancedsearchdock.cpp" line="704"/>
         <source>Search in...</source>
         <translation>Keresés ebben...</translation>
     </message>
@@ -1749,6 +1799,11 @@ Biztosan menteni szeretné?</translation>
         <location filename="../ui/Search/searchobjects.cpp" line="13"/>
         <source>Invalid</source>
         <translation>Érvénytelen</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.cpp" line="83"/>
+        <source>Running Notepadqq as root is not recommended. Use --allow-root if you really want to.</source>
+        <translation>A Notepadqq rootként való futtatása nem ajánlott. Ha mindenképpen szükséges, akkor használja a --allow-root opciót.</translation>
     </message>
 </context>
 <context>
@@ -1925,137 +1980,167 @@ Biztosan menteni szeretné?</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="81"/>
+        <source>Toolbar</source>
+        <translation>Eszköztár</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="86"/>
         <source>Extensions</source>
         <translation>Bővítmények</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="105"/>
+        <location filename="../ui/frmpreferences.ui" line="110"/>
         <source>Check Qt version at startup</source>
         <translation>Qt verzió ellenőrzése induláskor</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="112"/>
+        <location filename="../ui/frmpreferences.ui" line="117"/>
         <source>Warn when the indentation doesn&apos;t match the settings</source>
         <translation>Figyelmeztetés, ha a behúzás nem egyezik meg a beállítottal</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="119"/>
+        <location filename="../ui/frmpreferences.ui" line="124"/>
         <source>Remember open tabs when closing Notepadqq</source>
         <translation>Nyitott lapok megjegyzése a Notepadqq bezárásakor</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="126"/>
+        <location filename="../ui/frmpreferences.ui" line="131"/>
         <source>Exit Notepadqq when closing the last Tab</source>
         <translation>Az utolsó lapfül bezárásakor kilépés a Notepadqqból</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="135"/>
+        <location filename="../ui/frmpreferences.ui" line="140"/>
         <source>Localization:</source>
         <translation>Kezelőfelület nyelve:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="192"/>
+        <location filename="../ui/frmpreferences.ui" line="197"/>
         <source>Color scheme:</source>
         <translation>Színséma:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="224"/>
+        <location filename="../ui/frmpreferences.ui" line="229"/>
         <source>Override Font Family</source>
         <translation>Betűtípuscsalád felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="247"/>
+        <location filename="../ui/frmpreferences.ui" line="252"/>
         <source>Override Font Size</source>
         <translation>Betűméret felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="276"/>
+        <location filename="../ui/frmpreferences.ui" line="281"/>
         <source>Override Line Height</source>
         <translation>Sormagasság felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="292"/>
+        <location filename="../ui/frmpreferences.ui" line="297"/>
         <source>em</source>
         <translation>em</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="313"/>
+        <location filename="../ui/frmpreferences.ui" line="318"/>
         <source>Preview</source>
         <translation>Előnézet</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="396"/>
+        <location filename="../ui/frmpreferences.ui" line="401"/>
         <source>Tab size:</source>
         <translation>Tabulátor mérete:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="409"/>
+        <location filename="../ui/frmpreferences.ui" line="414"/>
         <source>Use spaces instead of tabs</source>
         <translation>Szóköz használata tabulátor helyett</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="433"/>
+        <location filename="../ui/frmpreferences.ui" line="438"/>
         <source>Use default settings</source>
         <translation>Alapbeállítások használata</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="469"/>
+        <location filename="../ui/frmpreferences.ui" line="474"/>
         <source>Search as I type</source>
         <translation>Keresés ahogy begépelem</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="476"/>
+        <location filename="../ui/frmpreferences.ui" line="481"/>
         <source>Save search history</source>
         <translation>Keresési előzmények mentése</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="531"/>
+        <location filename="../ui/frmpreferences.ui" line="529"/>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="539"/>
+        <source>Remove</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="567"/>
+        <source>Move Up</source>
+        <translation>Feljebb</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="577"/>
+        <source>Move Down</source>
+        <translation>Lejjebb</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="606"/>
+        <source>Reset to Default</source>
+        <translation>Alaphelyzetbe állítás</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="652"/>
         <source>Node.js runtime</source>
         <translation>Node.js futtatókörnyezet</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="537"/>
+        <location filename="../ui/frmpreferences.ui" line="658"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
         <translation>Támogatott Node verziók: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="544"/>
+        <location filename="../ui/frmpreferences.ui" line="665"/>
         <source>Node.js path:</source>
         <translation>Node.js elérési útja:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="556"/>
-        <location filename="../ui/frmpreferences.ui" line="577"/>
+        <location filename="../ui/frmpreferences.ui" line="677"/>
+        <location filename="../ui/frmpreferences.ui" line="698"/>
         <source>Browse...</source>
         <translation>Tallózás...</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="565"/>
+        <location filename="../ui/frmpreferences.ui" line="686"/>
         <source>NPM path:</source>
         <translation>NPM elérési útja:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="586"/>
+        <location filename="../ui/frmpreferences.ui" line="707"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>FIGYELEM: A bővítmények támogatása KÍSÉRLETI JELLEGŰ.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="326"/>
+        <location filename="../ui/frmpreferences.cpp" line="384"/>
         <source>Keyboard shortcut conflict</source>
         <translation>Billentyűparancs konfliktus</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="327"/>
+        <location filename="../ui/frmpreferences.cpp" line="385"/>
         <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
         <translation>Két vagy több művelet ugyanazon a billentyűparancson osztozkodik. A módosításai mentése előtt ezeket a konfliktusokat fel kell oldani.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="441"/>
+        <location filename="../ui/frmpreferences.cpp" line="500"/>
         <source>Browse</source>
         <translation>Tallózás</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="529"/>
+        <location filename="../ui/frmpreferences.cpp" line="588"/>
         <source>Would you like to clear the existing history now?</source>
         <translation>Szeretné törölni a meglévő előzményeket?</translation>
     </message>

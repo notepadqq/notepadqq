@@ -58,8 +58,18 @@ public:
     QAction*  addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
 
+    /**
+     * @brief getDefaultToolBarString
+     * @return Returns a string with all default toolbar actions and separators, split by a '|'
+     */
+    QString getDefaultToolBarString() const;
+
+    QToolBar* getToolBar() const;
     QList<QAction*> getActions() const;
-    QList<const QMenu*> getMenus() const ;
+    QList<const QMenu*> getMenus() const;
+
+    // Creates or re-creates the window's main tool bar.
+    void loadToolBar();
 
     DocEngine*  getDocEngine() const;
     void generateRunMenu();
@@ -78,36 +88,36 @@ private slots:
     void modifyRunCommands();
     void refreshEditorUiCursorInfo(Editor *editor);
     void searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
-    void on_action_New_triggered();
+    void on_actionNew_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
-    void on_action_Open_triggered();
+    void on_actionOpen_triggered();
     void on_actionOpen_Folder_triggered();
     void on_tabCloseRequested(EditorTabWidget* tabWidget, int tab);
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
     void on_actionSave_a_Copy_As_triggered();
-    void on_action_Copy_triggered();
-    void on_action_Paste_triggered();
-    void on_actionCu_t_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
+    void on_actionCut_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
     void on_cursorActivity();
-    void on_action_Delete_triggered();
+    void on_actionDelete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
     void on_actionAbout_Qt_triggered();
-    void on_action_Undo_triggered();
-    void on_action_Redo_triggered();
-    void on_actionE_xit_triggered();
+    void on_actionUndo_triggered();
+    void on_actionRedo_triggered();
+    void on_actionExit_triggered();
     void on_actionSearch_triggered();
     void setCurrentEditorLanguage(QString language);
-    void on_actionCurrent_Full_File_path_to_Clipboard_triggered();
+    void on_actionCurrent_Full_File_Path_to_Clipboard_triggered();
     void on_actionCurrent_Filename_to_Clipboard_triggered();
     void on_actionCurrent_Directory_Path_to_Clipboard_triggered();
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
-    void on_actionC_lose_All_triggered();
+    void on_actionClose_All_triggered();
     void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
@@ -144,10 +154,10 @@ private slots:
     void on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered();
     void on_actionShow_Tabs_triggered(bool on);
     void on_actionConvert_to_triggered();
-    void on_actionIndentation_Default_settings_triggered();
+    void on_actionIndentation_Default_Settings_triggered();
     void on_actionIndentation_Custom_triggered();
-    void on_actionReload_file_interpreted_as_triggered();
-    void on_actionInterpret_as_triggered();
+    void on_actionReload_File_Interpreted_As_triggered();
+    void on_actionInterpret_As_triggered();
     void on_actionPrint_triggered();
     void on_actionPrint_Now_triggered();
     void on_actionOpen_a_New_Window_triggered();
@@ -169,7 +179,7 @@ private slots:
     void on_actionSpace_to_TAB_All_triggered();
     void on_actionSpace_to_TAB_Leading_triggered();
     void on_editorUrlsDropped(QList<QUrl> urls);
-    void on_actionGo_to_line_triggered();
+    void on_actionGo_to_Line_triggered();
     void on_actionInstall_Extension_triggered();
     void on_actionFull_Screen_toggled(bool on);
     void on_actionShow_End_of_Line_triggered(bool on);
@@ -185,6 +195,7 @@ private:
     static QList<MainWindow*> m_instances;
 
     Ui::MainWindow*       ui;
+    QToolBar*             m_mainToolBar = nullptr;
     TopEditorContainer*   m_topEditorContainer;
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;

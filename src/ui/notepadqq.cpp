@@ -86,6 +86,9 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
                                          .arg(QCoreApplication::applicationName()));
     parser->addOption(newWindowOption);
 
+    QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
+    parser->addOption(allowRootOption);
+
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),
                                  "[urls...]");

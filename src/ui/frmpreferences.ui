@@ -78,6 +78,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Toolbar</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Extensions</string>
         </property>
        </item>
@@ -486,6 +491,122 @@
         </layout>
        </widget>
        <widget class="QWidget" name="pageShortcuts"/>
+       <widget class="QWidget" name="pageToolbar">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QListWidget" name="listToolbarAll"/>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,0">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <widget class="QWidget" name="widget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="btnToolbarAdd">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-next"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnToolbarRemove">
+                <property name="text">
+                 <string>Remove</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-previous"/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_2" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="btnToolbarUp">
+                <property name="text">
+                 <string>Move Up</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-up"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnToolbarDown">
+                <property name="text">
+                 <string>Move Down</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-down"/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QListWidget" name="listToolbarCurrent"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnToolbarReset">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Reset to Default</string>
+             </property>
+             <property name="icon">
+              <iconset theme="edit-undo"/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="pageExtensions">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">

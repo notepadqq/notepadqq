@@ -27,6 +27,19 @@ PERSONAL_QT53=~/Qt/5.3/$GCC_DIR/lib
 
 export LD_LIBRARY_PATH="$OPT_QT510:$PERSONAL_QT510:$OPT_QT59:$PERSONAL_QT59:$OPT_QT58:$PERSONAL_QT58:$OPT_QT57:$PERSONAL_QT57:$OPT_QT56:$PERSONAL_QT56:$OPT_QT55:$PERSONAL_QT55:$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
 
+# In Ubuntu Unity, appmenu-qt5 will try to hide our menubar in order to show it as a global bar. 
+# This may sometimes fail and leave us with no menu bar. So we'll prevent appmenu-qt5 for doing this.
+if [ "$QT_QPA_PLATFORMTHEME" = "appmenu-qt5" ]; then
+    export QT_QPA_PLATFORMTHEME=""
+fi
+
+# For less common desktop environments, this doesn't get set at all which will cause QT to default to
+# using KDE's icon theme settings and cause a lot of missing icon errors.  Most enviornments that don't
+# set this preference GTK's settings... so go with that by default.
+if [ -z "$XDG_CURRENT_DESKTOP" ]; then
+    export XDG_CURRENT_DESKTOP="GNOME"
+fi
+
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
     # Nqq is installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin "$@"

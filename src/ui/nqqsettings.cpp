@@ -14,63 +14,71 @@ void NqqSettings::ensureBackwardsCompatibility()
     const QStringList versionList = nqqVersion.split(".");
 
     // Only proceed with checking version if the key seems valid
-    if (versionList.size() == 3){
-        const int major = versionList[0].toInt();
-        const int minor = versionList[1].toInt();
-        const int revision = versionList[2].toInt();
+    if (versionList.size() != 3)
+        return;
 
-        // return if we're above 0.53.0
-        if (major > 0 || minor > 53 || (minor == 53 && revision > 0))
-            return;
-    }
-
-    const QStringList keys = s.allKeys();
-
-#ifdef QT_DEBUG
-    qDebug() << "Old Nqq version detected. Replacing keys.";
-#endif
+    const int major = versionList[0].toInt();
+    const int minor = versionList[1].toInt();
+    const int revision = versionList[2].toInt();
 
     auto replace = [&](const QString& newKey, const QString& oldKey) {
         s.setValue(newKey, s.value(oldKey));
         s.remove(oldKey);
     };
 
+    // Just clear all settings if we're dealing with stone-age 0.53.0
+    if (major == 0 && (minor <= 53 || (minor == 53 && revision > 0))) {
+        s.clear();
+        return;
+    }
 
-    for (const QString key : keys){
-        if (key.isEmpty())
-            return;
+    // For versions of 1.2.0 and below we need to adjust action names
+    if(major == 1 && minor < 3) {
 
-        QString newKey = key;
+        struct Pair {
+            const char* oldName;
+            const char* newName;
+        };
 
-        if (!key.contains('/')) {
-            // Key is from the [General] section. All keys here just need their first letter fixed.
-            newKey[0] = newKey[0].toUpper();
-        } else if (key == "Extensions/Runtime_Nodejs") {
-            newKey = "Extensions/RuntimeNodeJS";
-        } else if (key == "Extensions/Runtime_Npm") {
-            newKey = "Extensions/RuntimeNpm";
-        } else if (key.startsWith("MainWindow/") || key.startsWith(("Search/"))) {
-            // Only capitalize first letter after the '/'
-            const int c = key.indexOf('/');
-            newKey[c+1] = newKey[c+1].toUpper();
-        } else if (key.startsWith("Languages/")) {
-            // Capitalize first letter after the second '/'
-            int c = key.indexOf('/', 10);
+        Pair arr[] =
+        {
+            {"actionC_lose_All","actionClose_All"},
+            {"actionCu_t","actionCut"},
+            {"actionE_xit","actionExit"},
+            {"actionGo_to_line","actionGo_to_Line"},
+            {"actionReload_file_interpreted_as","actionReload_File_Interpreted_As"},
+            {"action_Copy","actionCopy"},
+            {"action_Delete","actionDelete"},
+            {"action_New","actionNew"},
+            {"action_Open","actionOpen"},
+            {"action_Paste","actionPaste"},
+            {"action_Redo","actionRedo"},
+            {"action_Run","actionRun"},
+            {"action_Undo","actionUndo"},
+            {"actionCurrent_Full_File_path_to_Clipboard","actionCurrent_Full_File_Path_to_Clipboard"},
+            {"actionIndentation_Default_settings","actionIndentation_Default_Settings"},
+            {"actionInterpret_as","actionInterpret_As"},
 
-            // If there is no second '/', we found the settings for the 'default' language.
-            // They'll be migrated to Languages/default.
-            if (c == -1) {
-                newKey.replace("Languages/", "Languages/default/");
-                c = newKey.indexOf('/', 10);
-            }
+        };
 
-            newKey[c+1] = newKey[c+1].toUpper();
-        } else {
-            continue;
+        for (const QString& key : s.allKeys()){
+            if (key.isEmpty() || !key.startsWith("Shortcuts/"))
+                continue;
+
+            QString actionName = key.mid( strlen("Shortcuts/"));
+
+            auto it = std::find_if(std::begin(arr), std::end(arr), [&actionName](const Pair& pair){
+                return pair.oldName == actionName;
+            });
+
+            if (it == std::end(arr))
+                continue;
+
+            replace(QString("Shortcuts/") + it->newName, key);
         }
 
-        replace(newKey, key);
     }
+
 }
 
 NqqSettings&NqqSettings::getInstance(){

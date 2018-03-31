@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -57,8 +57,8 @@
       <string>Recent Files</string>
      </property>
     </widget>
-    <addaction name="action_New"/>
-    <addaction name="action_Open"/>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
     <addaction name="actionOpen_Folder"/>
     <addaction name="actionReload_from_Disk"/>
     <addaction name="actionSave"/>
@@ -67,7 +67,7 @@
     <addaction name="actionSave_All"/>
     <addaction name="actionRename"/>
     <addaction name="actionClose"/>
-    <addaction name="actionC_lose_All"/>
+    <addaction name="actionClose_All"/>
     <addaction name="actionClose_All_BUT_Current_Document"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Session"/>
@@ -77,7 +77,7 @@
     <addaction name="actionPrint_Now"/>
     <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
-    <addaction name="actionE_xit"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -95,7 +95,7 @@
      <property name="title">
       <string>C&amp;opy to Clipboard</string>
      </property>
-     <addaction name="actionCurrent_Full_File_path_to_Clipboard"/>
+     <addaction name="actionCurrent_Full_File_Path_to_Clipboard"/>
      <addaction name="actionCurrent_Filename_to_Clipboard"/>
      <addaction name="actionCurrent_Directory_Path_to_Clipboard"/>
     </widget>
@@ -110,7 +110,7 @@
      <property name="title">
       <string>&amp;Indentation</string>
      </property>
-     <addaction name="actionIndentation_Default_settings"/>
+     <addaction name="actionIndentation_Default_Settings"/>
      <addaction name="actionIndentation_Custom"/>
      <addaction name="separator"/>
      <addaction name="actionToggle_Smart_Indent"/>
@@ -137,13 +137,13 @@
      <addaction name="actionSpace_to_TAB_All"/>
      <addaction name="actionSpace_to_TAB_Leading"/>
     </widget>
-    <addaction name="action_Undo"/>
-    <addaction name="action_Redo"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
     <addaction name="separator"/>
-    <addaction name="actionCu_t"/>
-    <addaction name="action_Copy"/>
-    <addaction name="action_Paste"/>
-    <addaction name="action_Delete"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionDelete"/>
     <addaction name="actionSelect_All"/>
     <addaction name="separator"/>
     <addaction name="menuCopy_to_Clipboard"/>
@@ -164,7 +164,7 @@
     <addaction name="separator"/>
     <addaction name="actionReplace"/>
     <addaction name="separator"/>
-    <addaction name="actionGo_to_line"/>
+    <addaction name="actionGo_to_Line"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -210,15 +210,15 @@
    </widget>
    <widget class="QMenu" name="menu_Encoding">
     <property name="title">
-     <string>E&amp;ncoding</string>
+     <string>En&amp;coding</string>
     </property>
     <addaction name="actionInterpret_as_UTF_8"/>
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
     <addaction name="actionInterpret_as_UTF_16BE_UCS_2_Big_Endian"/>
     <addaction name="actionInterpret_as_UTF_16LE_UCS_2_Little_Endian"/>
-    <addaction name="actionInterpret_as"/>
+    <addaction name="actionInterpret_As"/>
     <addaction name="separator"/>
-    <addaction name="actionReload_file_interpreted_as"/>
+    <addaction name="actionReload_File_Interpreted_As"/>
     <addaction name="separator"/>
     <addaction name="actionUTF_8"/>
     <addaction name="actionUTF_8_without_BOM"/>
@@ -253,7 +253,7 @@
     <property name="title">
      <string>&amp;Run</string>
     </property>
-    <addaction name="action_Run"/>
+    <addaction name="actionRun"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_Window">
@@ -281,51 +281,8 @@
    <addaction name="menu_Window"/>
    <addaction name="menu_Help"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <property name="windowTitle">
-    <string>Toolbar</string>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>16</width>
-     <height>16</height>
-    </size>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="action_New"/>
-   <addaction name="action_Open"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionSave_All"/>
-   <addaction name="actionClose"/>
-   <addaction name="actionC_lose_All"/>
-   <addaction name="actionPrint_Now"/>
-   <addaction name="separator"/>
-   <addaction name="actionCu_t"/>
-   <addaction name="action_Copy"/>
-   <addaction name="action_Paste"/>
-   <addaction name="separator"/>
-   <addaction name="action_Undo"/>
-   <addaction name="action_Redo"/>
-   <addaction name="separator"/>
-   <addaction name="actionZoom_In"/>
-   <addaction name="actionZoom_Out"/>
-   <addaction name="separator"/>
-   <addaction name="actionWord_wrap"/>
-   <addaction name="actionShow_All_Characters"/>
-   <addaction name="separator"/>
-   <addaction name="action_Start_Recording"/>
-   <addaction name="action_Stop_Recording"/>
-   <addaction name="action_Playback"/>
-   <addaction name="actionRun_a_Macro_Multiple_Times"/>
-   <addaction name="actionSave_Currently_Recorded_Macro"/>
-  </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="action_Open">
+  <action name="actionOpen">
    <property name="text">
     <string>&amp;Open...</string>
    </property>
@@ -333,7 +290,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="action_New">
+  <action name="actionNew">
    <property name="text">
     <string>&amp;New</string>
    </property>
@@ -391,7 +348,7 @@
     <string>Ctrl+W</string>
    </property>
   </action>
-  <action name="actionC_lose_All">
+  <action name="actionClose_All">
    <property name="text">
     <string>C&amp;lose All</string>
    </property>
@@ -412,6 +369,9 @@
    </property>
   </action>
   <action name="actionPrint">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Print...</string>
    </property>
@@ -419,10 +379,13 @@
     <string>Ctrl+P</string>
    </property>
    <property name="visible">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionPrint_Now">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Pr&amp;int Now</string>
    </property>
@@ -440,7 +403,7 @@
     <string>Empty Recent Files List</string>
    </property>
   </action>
-  <action name="actionE_xit">
+  <action name="actionExit">
    <property name="text">
     <string>E&amp;xit</string>
    </property>
@@ -448,7 +411,7 @@
     <string>Alt+F4</string>
    </property>
   </action>
-  <action name="action_Undo">
+  <action name="actionUndo">
    <property name="text">
     <string>&amp;Undo</string>
    </property>
@@ -456,7 +419,7 @@
     <string>Ctrl+Z</string>
    </property>
   </action>
-  <action name="action_Redo">
+  <action name="actionRedo">
    <property name="text">
     <string>&amp;Redo</string>
    </property>
@@ -464,7 +427,7 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="actionCu_t">
+  <action name="actionCut">
    <property name="text">
     <string>Cu&amp;t</string>
    </property>
@@ -472,7 +435,7 @@
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="action_Copy">
+  <action name="actionCopy">
    <property name="text">
     <string>&amp;Copy</string>
    </property>
@@ -480,7 +443,7 @@
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="action_Paste">
+  <action name="actionPaste">
    <property name="text">
     <string>&amp;Paste</string>
    </property>
@@ -488,7 +451,7 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="action_Delete">
+  <action name="actionDelete">
    <property name="text">
     <string>&amp;Delete</string>
    </property>
@@ -595,7 +558,7 @@
     <string>&amp;Word wrap</string>
    </property>
   </action>
-  <action name="actionCurrent_Full_File_path_to_Clipboard">
+  <action name="actionCurrent_Full_File_Path_to_Clipboard">
    <property name="text">
     <string>&amp;Copy Full Path to Clipboard</string>
    </property>
@@ -749,7 +712,7 @@
     <string>Convert to &amp;UTF-8 without BOM</string>
    </property>
   </action>
-  <action name="action_Run">
+  <action name="actionRun">
    <property name="text">
     <string>&amp;Run...</string>
    </property>
@@ -836,7 +799,7 @@
     <string>Ctrl+H</string>
    </property>
   </action>
-  <action name="actionReload_file_interpreted_as">
+  <action name="actionReload_File_Interpreted_As">
    <property name="text">
     <string>&amp;Reload file interpreted as...</string>
    </property>
@@ -866,7 +829,7 @@
     <string>Interpret as UTF-16LE (UCS-2 &amp;Little Endian)</string>
    </property>
   </action>
-  <action name="actionIndentation_Default_settings">
+  <action name="actionIndentation_Default_Settings">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -885,7 +848,7 @@
     <string>&amp;Custom...</string>
    </property>
   </action>
-  <action name="actionInterpret_as">
+  <action name="actionInterpret_As">
    <property name="text">
     <string>I&amp;nterpret as...</string>
    </property>
@@ -998,7 +961,7 @@
     <string>Open &amp;Folder...</string>
    </property>
   </action>
-  <action name="actionGo_to_line">
+  <action name="actionGo_to_Line">
    <property name="text">
     <string>&amp;Go to line...</string>
    </property>
@@ -1049,7 +1012,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Menubar</string>
+    <string>&amp;Show Menubar</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
@@ -1060,7 +1023,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Toolbar</string>
+    <string>S&amp;how Toolbar</string>
    </property>
   </action>
  </widget>

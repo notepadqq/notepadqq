@@ -11,6 +11,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QDateTime>
+#include <unistd.h> // For getuid
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -74,7 +75,13 @@ int main(int argc, char *argv[])
         settings.General.setLocalization("en");
     }
     // Check for "run-and-exit" options like -h or -v
-    Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
+    const auto parser = Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
+
+    // Check if we're running as root
+    if( getuid() == 0 && !parser->isSet("allow-root") ) {
+        qWarning() << QObject::tr("Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
+        return EXIT_SUCCESS;
+    }
 
     if (a.attachToOtherInstance()) {
         return EXIT_SUCCESS;
