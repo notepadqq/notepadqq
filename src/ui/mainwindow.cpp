@@ -1343,92 +1343,95 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
-    QString name = data.value("lang").toMap().value("name").toString();
-    m_statusBar_fileFormat->setText(name);
+    editor->asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").then([this, editor](QVariant value){
+        QVariantMap data = value.toMap();
+
+        QString name = data.value("lang").toMap().value("name").toString();
+        m_statusBar_fileFormat->setText(name);
 
 
-    // Update MainWindow title
-    QString newTitle;
-    if (editor->filePath().isEmpty()) {
+        // Update MainWindow title
+        QString newTitle;
+        if (editor->filePath().isEmpty()) {
 
-        EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
-        if (tabWidget != 0) {
-            int tab = tabWidget->indexOf(editor);
-            if (tab != -1) {
-                newTitle = QString("%1 - %2")
-                           .arg(tabWidget->tabText(tab))
-                           .arg(QApplication::applicationName());
+            EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
+            if (tabWidget != 0) {
+                int tab = tabWidget->indexOf(editor);
+                if (tab != -1) {
+                    newTitle = QString("%1 - %2")
+                               .arg(tabWidget->tabText(tab))
+                               .arg(QApplication::applicationName());
+                }
             }
+
+        } else {
+            QUrl url = editor->filePath();
+
+            QString path = url.toDisplayString(QUrl::RemovePassword |
+                                               QUrl::RemoveUserInfo |
+                                               QUrl::RemovePort |
+                                               QUrl::RemoveAuthority |
+                                               QUrl::RemoveQuery |
+                                               QUrl::RemoveFragment |
+                                               QUrl::PreferLocalFile |
+                                               QUrl::RemoveFilename |
+                                               QUrl::NormalizePathSegments |
+                                               QUrl::StripTrailingSlash
+                                               );
+
+            newTitle = QString("%1 (%2) - %3")
+                       .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
+                       .arg(path)
+                       .arg(QApplication::applicationName());
+
         }
 
-    } else {
-        QUrl url = editor->filePath();
-
-        QString path = url.toDisplayString(QUrl::RemovePassword |
-                                           QUrl::RemoveUserInfo |
-                                           QUrl::RemovePort |
-                                           QUrl::RemoveAuthority |
-                                           QUrl::RemoveQuery |
-                                           QUrl::RemoveFragment |
-                                           QUrl::PreferLocalFile |
-                                           QUrl::RemoveFilename |
-                                           QUrl::NormalizePathSegments |
-                                           QUrl::StripTrailingSlash
-                                           );
-
-        newTitle = QString("%1 (%2) - %3")
-                   .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
-                   .arg(path)
-                   .arg(QApplication::applicationName());
-
-    }
-
-    if (newTitle != windowTitle()) {
-        setWindowTitle(newTitle.isNull() ? QApplication::applicationName() : newTitle);
-    }
+        if (newTitle != windowTitle()) {
+            setWindowTitle(newTitle.isNull() ? QApplication::applicationName() : newTitle);
+        }
 
 
-    // Enable / disable menus
-    bool isClean = editor->isClean();
-    QUrl fileName = editor->filePath();
-    ui->actionRename->setEnabled(!fileName.isEmpty());
-    ui->actionMove_to_New_Window->setEnabled(isClean);
-    ui->actionOpen_in_New_Window->setEnabled(isClean);
+        // Enable / disable menus
+        bool isClean = editor->isClean();
+        QUrl fileName = editor->filePath();
+        ui->actionRename->setEnabled(!fileName.isEmpty());
+        ui->actionMove_to_New_Window->setEnabled(isClean);
+        ui->actionOpen_in_New_Window->setEnabled(isClean);
 
-    bool allowReloading = !editor->filePath().isEmpty();
-    ui->actionReload_File_Interpreted_As->setEnabled(allowReloading);
-    ui->actionReload_from_Disk->setEnabled(allowReloading);
+        bool allowReloading = !editor->filePath().isEmpty();
+        ui->actionReload_File_Interpreted_As->setEnabled(allowReloading);
+        ui->actionReload_from_Disk->setEnabled(allowReloading);
 
-    // EOL
-    QString eol = editor->endOfLineSequence();
-    if (eol == "\r\n") {
-        ui->actionWindows_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Windows"));
-    } else if (eol == "\n") {
-        ui->actionUNIX_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("UNIX / OS X"));
-    } else if (eol == "\r") {
-        ui->actionMac_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Old Mac"));
-    }
+        // EOL
+        QString eol = editor->endOfLineSequence();
+        if (eol == "\r\n") {
+            ui->actionWindows_Format->setChecked(true);
+            m_statusBar_EOLstyle->setText(tr("Windows"));
+        } else if (eol == "\n") {
+            ui->actionUNIX_Format->setChecked(true);
+            m_statusBar_EOLstyle->setText(tr("UNIX / OS X"));
+        } else if (eol == "\r") {
+            ui->actionMac_Format->setChecked(true);
+            m_statusBar_EOLstyle->setText(tr("Old Mac"));
+        }
 
-    // Encoding
-    QString encoding;
-    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
-        // Is UTF-8 without BOM
-        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
-    } else {
-        encoding = QString::fromUtf8(editor->codec()->name());
-    }
-    m_statusBar_textFormat->setText(encoding);
+        // Encoding
+        QString encoding;
+        if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
+            // Is UTF-8 without BOM
+            encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
+        } else {
+            encoding = QString::fromUtf8(editor->codec()->name());
+        }
+        m_statusBar_textFormat->setText(encoding);
 
-    // Indentation
-    if (editor->isUsingCustomIndentationMode()) {
-        ui->actionIndentation_Custom->setChecked(true);
-    } else {
-        ui->actionIndentation_Default_Settings->setChecked(true);
-    }
+        // Indentation
+        if (editor->isUsingCustomIndentationMode()) {
+            ui->actionIndentation_Custom->setChecked(true);
+        } else {
+            ui->actionIndentation_Default_Settings->setChecked(true);
+        }
+    });
 }
 
 void MainWindow::on_actionDelete_triggered()

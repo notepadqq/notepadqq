@@ -152,7 +152,7 @@ namespace EditorNS
                 for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
                     if (it->id == id) {
                         AsyncReply r = *it;
-                        r.value->set_value(data);
+                        r.value.resolve(data);
                         this->asyncReplies.erase(it);
 
                         if (r.callback != 0) {
@@ -229,7 +229,7 @@ namespace EditorNS
         m_tabName = name;
     }
 
-    bool Editor::isClean()
+    Promise<bool> Editor::isClean()
     {
         return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0)).get().toBool();
     }
@@ -394,13 +394,13 @@ namespace EditorNS
         sendMessage(msg, 0);
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    Promise<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         static unsigned int messageIdentifier = 0;
 
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
-        std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
+        Promise<QVariant> resultPromise;
 
         AsyncReply asyncmsg;
         asyncmsg.id = currentMsgIdentifier;
@@ -413,24 +413,10 @@ namespace EditorNS
 
         this->sendMessage(message_id, data);
 
-        std::shared_future<QVariant> fut = resultPromise->get_future().share();
-
-
-        std::shared_ptr<QEventLoop> loop = std::make_shared<QEventLoop>();
-        QObject::connect(this, &Editor::asyncReplyReceived, this, [loop, fut, currentMsgIdentifier](unsigned int id, QString, QVariant){
-            if (id == currentMsgIdentifier) {
-                QApplication::processEvents();
-                if (loop->isRunning()) {
-                    loop->quit();
-                }
-            }
-        });
-        loop->exec();
-
-        return fut;
+        return resultPromise;
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    Promise<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
     {
         return this->asyncSendMessageWithResult(msg, 0, callback);
     }

@@ -148,7 +148,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/filesearcher.h \
     include/Search/searchobjects.h \
     include/Search/filereplacer.h \
-    include/Search/searchinstance.h
+    include/Search/searchinstance.h \
+    include/promise.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

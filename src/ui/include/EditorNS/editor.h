@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include "include/EditorNS/customqwebview.h"
+#include "include/promise.h"
 #include <QObject>
 #include <QVariant>
 #include <QQueue>
@@ -174,7 +175,7 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        Q_INVOKABLE bool isClean();
+        Q_INVOKABLE Promise<bool> isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
         QList<QMap<QString, QString> > languages();
@@ -292,7 +293,7 @@ namespace EditorNS
         struct AsyncReply {
             unsigned int id;
             QString message;
-            std::shared_ptr<std::promise<QVariant>> value;
+            Promise<QVariant> value;
             std::function<void (QVariant)> callback;
         };
 
@@ -352,8 +353,17 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
+
+        /**
+         * @brief asyncSendMessageWithResult
+         * @param msg
+         * @param data
+         * @param callback When set, the result is returned asynchronously via the provided function.
+         *                 If set, you should NOT use the return value of this method.
+         * @return
+         */
+        Promise<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        Promise<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         void print(std::shared_ptr<QPrinter> printer);
     };
