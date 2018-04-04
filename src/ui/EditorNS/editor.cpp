@@ -427,6 +427,9 @@ namespace EditorNS
         });
         loop->exec(QEventLoop::WaitForMoreEvents);
 
+        // Make sure to process all the events before this
+        QApplication::processEvents();
+
         return fut;
     }
 
