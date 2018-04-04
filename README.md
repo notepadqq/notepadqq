@@ -56,7 +56,7 @@ Notepadqq might work on Qt 5.2, but it is recommended to use Qt 5.3 or later. If
 Distribution Packages
 ---------------------
 
-#### Most distributions: Snap (recommended) ★
+#### Most distributions: Snap (recommended)
 
 To install the latest stable version:
 
@@ -68,17 +68,17 @@ If, instead, you want to follow the (UNSTABLE) development releases:
 
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
 
-#### Ubuntu (official packages)
+#### Launchpad PPA
 You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
     sudo add-apt-repository ppa:notepadqq-team/notepadqq
     sudo apt-get update
     sudo apt-get install notepadqq
 
-#### Debian (official packages)
+#### Debian
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
-#### Arch Linux
+#### Arch Linux (community-maintained)
 Notepadqq is available from Arch's [community repositories](https://www.archlinux.org/packages/community/x86_64/notepadqq/). To install using pacman:
 
     sudo pacman -S notepadqq
@@ -88,12 +88,12 @@ Alternatively it can be found in the AUR:
  * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
  * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)
 
-#### OpenSUSE
+#### OpenSUSE (community-maintained)
 Notepadqq is avilable in OpenSUSE's main repository:
 
      sudo zypper in notepadqq
      
-#### Solus
+#### Solus (community-maintained)
 Notepadqq is available in the `shannon` (stable) repository:
 
      sudo eopkg it notepadqq
@@ -103,4 +103,4 @@ Use a package for a compatible distribution, or build from [source](https://gith
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
 
 #### Compiling on macOS
-While we do not (yet) officially support it, compiling and running Notepadqq on OSX is not very difficult. Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
+While we do not (yet) officially support it, compiling and running Notepadqq on macOS is not very difficult. Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
