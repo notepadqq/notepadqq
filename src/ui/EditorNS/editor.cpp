@@ -8,7 +8,7 @@
 #include <QEventLoop>
 #include <QUrlQuery>
 #include <QRegularExpression>
-#include <regex>
+#include <QRegExp>
 
 namespace EditorNS
 {
@@ -144,17 +144,15 @@ namespace EditorNS
         emit messageReceived(msg, data);
 
         if (msg.startsWith("[ASYNC_REPLY]")) {
-            std::regex rgx("\\[ID=(\\d+)\\]$");
-            std::smatch matches;
+            QRegExp rgx("\\[ID=(\\d+)\\]$");
 
-            std::string msgstr = msg.toStdString();
-            if(!std::regex_search(msgstr, matches, rgx))
+            if(rgx.indexIn(msg) == -1)
                 return;
 
-            if (matches.size() != 2)
+            if (rgx.captureCount() != 1)
                 return;
 
-            unsigned int id = QString::fromStdString(matches[1].str()).toInt();
+            unsigned int id = rgx.capturedTexts()[1].toInt();
 
             // Look into the list of callbacks
             for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
