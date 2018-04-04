@@ -425,7 +425,7 @@ namespace EditorNS
                 }
             }
         });
-        loop->exec();
+        loop->exec(QEventLoop::WaitForMoreEvents);
 
         return fut;
     }
