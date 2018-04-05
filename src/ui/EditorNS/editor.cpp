@@ -404,10 +404,10 @@ namespace EditorNS
         sendMessage(msg, 0);
     }
 
+    unsigned int messageIdentifier = 0;
+
     Promise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
-        static unsigned int messageIdentifier = 0;
-
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
         Promise<QVariant> resultPromise;
@@ -434,8 +434,6 @@ namespace EditorNS
 
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
-        static unsigned int messageIdentifier = 0;
-
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
@@ -712,10 +710,10 @@ namespace EditorNS
         return out;
     }
 
-    QStringList Editor::selectedTexts()
+    Promise<QStringList> Editor::selectedTexts()
     {
-        QVariant text = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").get();
-        return text.toStringList();
+        return asyncSendMessageWithResultP("C_FUN_GET_SELECTIONS_TEXT")
+                .then<QStringList>([](QVariant text){ return text.toStringList(); });
     }
 
     void Editor::setOverwrite(bool overwrite)
@@ -774,6 +772,6 @@ namespace EditorNS
     Promise<int> Editor::lineCount()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_LINE_COUNT")
-                .then([](QVariant v){ return v.toInt(); });
+                .then<int>([](QVariant v){ return v.toInt(); });
     }
 }

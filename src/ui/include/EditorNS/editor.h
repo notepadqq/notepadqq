@@ -269,7 +269,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList selectedTexts();
+        Q_INVOKABLE Promise<QStringList> selectedTexts();
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
