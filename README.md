@@ -38,9 +38,27 @@ If you encounter errors make sure to have the necessary libraries installed. For
 
     notepadqq$ sudo apt-get install qt5-default qttools5-dev-tools libqt5webkit5 libqt5webkit5-dev libqt5webkit5-qmlwebkitplugin libqt5svg5 libqt5svg5-dev
 
-For CentOS:
+For Fedora(if <20 replace yum by dnf), CentOS RedHat(if <6 replace yum by dnf):
 
-    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
+    notepadqq$ sudo yum install -y qt5 qt5-devel qt5-qtbase-devel qt5-qttools-devel qt5-qtwebkit-devel qt5-qtsvg-devel
+
+For build rpm
+
+for Centos Readhat require epel-release
+
+    notepadqq$ sudo yum install -y epel-release
+   
+Builder dépendencie for build rpm
+    
+    notepadqq$ sudo yum install -y rpmdevtools yum-utils wget
+    notepadqq$ sudo yum -y groupinstall "Fedora Packager"
+    
+Download Source and build rpm
+    
+    notepadqq$ cd ~/rpmbuild/SOURCES
+    notepadqq$ wget https://github.com/notepadqq/notepadqq/archive/v1.3.1.tar.gz - O notepadqq-1.3.1.tar.gz
+    notepadqq$ wget https://github.com/notepadqq/notepadqq/raw/master/notepadqq.spec
+    notepadqq$ rpmbuild -ba notepadqq.spec
     
 #### Install
 
@@ -60,28 +78,38 @@ Distribution Packages
 
 To install the latest stable version:
 
-    sudo snap install notepadqq
+    notepadqq$ sudo snap install notepadqq
 
 If, instead, you want to follow the (UNSTABLE) development releases:
 
-    sudo snap install --edge notepadqq
+    notepadqq$ sudo snap install --edge notepadqq
 
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
 
 #### Launchpad PPA
 You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
 
-    sudo add-apt-repository ppa:notepadqq-team/notepadqq
-    sudo apt-get update
-    sudo apt-get install notepadqq
+    notepadqq$ sudo add-apt-repository -y ppa:notepadqq-team/notepadqq
+    notepadqq$ sudo apt-get update
+    notepadqq$ sudo apt-get -y install notepadqq
 
 #### Debian
 Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
+#### Fedora (Only Stable Version actual 03/2018 version 26 and 27)
+
+    notepadqq$ sudo dnf -y install https://rpms.remirepo.net/fedora/remi-release-$(cat /etc/os-release | grep VERSION_ID= | sed 's|VERSION_ID=||').rpm http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(cat /etc/os-release | grep VERSION_ID= | sed 's|VERSION_ID=||').noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(cat /etc/os-release | grep VERSION_ID= | sed 's|VERSION_ID=||').noarch.rpm
+    notepadqq$ sudo dnf -y copr enable andykimpe/Fedora-Stable
+    notepadqq$ sudo dnf -y install notepadqq
+    
+copr fedora stable project page
+
+https://copr.fedorainfracloud.org/coprs/andykimpe/Fedora-Stable/
+
 #### Arch Linux (community-maintained)
 Notepadqq is available from Arch's [community repositories](https://www.archlinux.org/packages/community/x86_64/notepadqq/). To install using pacman:
 
-    sudo pacman -S notepadqq
+    notepadqq$ sudo pacman -S notepadqq
 
 Alternatively it can be found in the AUR:
 
@@ -91,12 +119,12 @@ Alternatively it can be found in the AUR:
 #### OpenSUSE (community-maintained)
 Notepadqq is avilable in OpenSUSE's main repository:
 
-     sudo zypper in notepadqq
+     notepadqq$ sudo zypper in notepadqq
      
 #### Solus (community-maintained)
 Notepadqq is available in the `shannon` (stable) repository:
 
-     sudo eopkg it notepadqq
+     notepadqq$ sudo eopkg it notepadqq
 
 #### Others
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
