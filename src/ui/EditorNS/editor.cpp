@@ -152,7 +152,11 @@ namespace EditorNS
                 for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
                     if (it->id == id) {
                         AsyncReply r = *it;
-                        r.value.resolve(data);
+                        if (r.value) {
+                            r.value->set_value(data);
+                        } else {
+                            r.valueP.resolve(data);
+                        }
                         this->asyncReplies.erase(it);
 
                         if (r.callback != 0) {
@@ -229,7 +233,13 @@ namespace EditorNS
         m_tabName = name;
     }
 
-    Promise<bool> Editor::isClean()
+    /*Promise<bool> Editor::isClean()
+    {
+        return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0))
+                .then([](QVariant v){ return v.toBool(); });
+    }*/
+
+    bool Editor::isClean()
     {
         return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0)).get().toBool();
     }
@@ -394,13 +404,41 @@ namespace EditorNS
         sendMessage(msg, 0);
     }
 
-    Promise<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    Promise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         static unsigned int messageIdentifier = 0;
 
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
         Promise<QVariant> resultPromise;
+
+        AsyncReply asyncmsg;
+        asyncmsg.id = currentMsgIdentifier;
+        asyncmsg.message = msg;
+        asyncmsg.valueP = resultPromise;
+        asyncmsg.value = nullptr;
+        asyncmsg.callback = callback;
+        this->asyncReplies.push_back((asyncmsg));
+
+        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
+
+        this->sendMessage(message_id, data);
+
+        return resultPromise;
+    }
+
+    Promise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback)
+    {
+        return this->asyncSendMessageWithResultP(msg, 0, callback);
+    }
+
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    {
+        static unsigned int messageIdentifier = 0;
+
+        unsigned int currentMsgIdentifier = ++messageIdentifier;
+
+        std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
 
         AsyncReply asyncmsg;
         asyncmsg.id = currentMsgIdentifier;
@@ -413,10 +451,27 @@ namespace EditorNS
 
         this->sendMessage(message_id, data);
 
-        return resultPromise;
+        std::shared_future<QVariant> fut = resultPromise->get_future().share();
+
+
+        std::shared_ptr<QEventLoop> loop = std::make_shared<QEventLoop>();
+        QObject::connect(this, &Editor::asyncReplyReceived, this, [loop, fut, currentMsgIdentifier](unsigned int id, QString, QVariant){
+            if (id == currentMsgIdentifier) {
+                QApplication::processEvents();
+                if (loop->isRunning()) {
+                    loop->quit();
+                }
+            }
+        });
+        loop->exec(QEventLoop::WaitForMoreEvents);
+
+        // Make sure to process all the events before this
+        QApplication::processEvents();
+
+        return fut;
     }
 
-    Promise<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
     {
         return this->asyncSendMessageWithResult(msg, 0, callback);
     }
@@ -716,8 +771,9 @@ namespace EditorNS
         return asyncSendMessageWithResult("C_FUN_GET_CURRENT_WORD").get().toString();
     }
 
-    int Editor::lineCount()
+    Promise<int> Editor::lineCount()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT").get().toInt();
+        return asyncSendMessageWithResultP("C_FUN_GET_LINE_COUNT")
+                .then([](QVariant v){ return v.toInt(); });
     }
 }

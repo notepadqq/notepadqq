@@ -1262,24 +1262,24 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
     if (editor != 0) {
         // Update status bar
         editor->asyncSendMessageWithResult("C_FUN_GET_TEXT_LENGTH", [=](QVariant len){
-            int lines = editor->lineCount();
+            editor->lineCount().then([=](int lines){
+                m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
 
-            m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
+                QPair<int, int> cursor = editor->cursorPosition();
+                int selectedChars = 0;
+                int selectedPieces = 0;
+                QStringList selections = editor->selectedTexts();
+                for (QString sel : selections) {
+                    selectedChars += sel.length();
+                    selectedPieces += sel.split("\n").count();
+                }
 
-            QPair<int, int> cursor = editor->cursorPosition();
-            int selectedChars = 0;
-            int selectedPieces = 0;
-            QStringList selections = editor->selectedTexts();
-            for (QString sel : selections) {
-                selectedChars += sel.length();
-                selectedPieces += sel.split("\n").count();
-            }
+                m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                            .arg(cursor.first + 1)
+                                            .arg(cursor.second + 1));
 
-            m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                        .arg(cursor.first + 1)
-                                        .arg(cursor.second + 1));
-
-            m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+                m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+            });
         });
     }
 }
@@ -1343,7 +1343,7 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    editor->asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").then([this, editor](QVariant value){
+    editor->asyncSendMessageWithResultP("C_FUN_GET_CURRENT_LANGUAGE").then([this, editor](QVariant value){
         QVariantMap data = value.toMap();
 
         QString name = data.value("lang").toMap().value("name").toString();
@@ -2442,12 +2442,13 @@ void MainWindow::on_actionGo_to_Line_triggered()
 {
     Editor *editor = currentEditor();
     int currentLine = editor->cursorPosition().first;
-    int lines = editor->lineCount();
-    frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
-    if (frm->exec() == QDialog::Accepted) {
-        int line = frm->value();
-        editor->setSelection(line - 1, 0, line - 1, 0);
-    }
+    editor->lineCount().then([=](int lines){
+        frmLineNumberChooser *frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
+        if (frm->exec() == QDialog::Accepted) {
+            int line = frm->value();
+            editor->setSelection(line - 1, 0, line - 1, 0);
+        }
+    });
 }
 
 void MainWindow::on_actionInstall_Extension_triggered()

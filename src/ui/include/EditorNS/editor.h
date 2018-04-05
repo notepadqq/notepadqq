@@ -175,7 +175,7 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        Q_INVOKABLE Promise<bool> isClean();
+        Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
         QList<QMap<QString, QString> > languages();
@@ -285,7 +285,7 @@ namespace EditorNS
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
-        int lineCount();
+        Promise<int> lineCount();
 
     private:
         friend class ::EditorTabWidget;
@@ -293,7 +293,8 @@ namespace EditorNS
         struct AsyncReply {
             unsigned int id;
             QString message;
-            Promise<QVariant> value;
+            Promise<QVariant> valueP;
+            std::shared_ptr<std::promise<QVariant>> value;
             std::function<void (QVariant)> callback;
         };
 
@@ -362,8 +363,11 @@ namespace EditorNS
          *                 If set, you should NOT use the return value of this method.
          * @return
          */
-        Promise<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        Promise<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
+        Promise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        Promise<QVariant> asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback = 0);
+
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         void print(std::shared_ptr<QPrinter> printer);
     };

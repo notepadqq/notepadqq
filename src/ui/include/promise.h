@@ -19,6 +19,11 @@ template <typename T = void>
 class Promise {
 
 public:
+    Promise() {
+        m_private = std::make_shared<Private>();
+    }
+
+
     // Successfull (void) promise
     /*template <typename U = T,
       typename = typename std::enable_if<std::is_same<U, void>::value>::type>
@@ -35,49 +40,54 @@ public:
 
     template <typename U>
     Promise<U> then(std::function<U(T)> fun) { // TODO Shortcut for returning a promise!!
-        Callback<U> c;
-        c.callback = fun;
-
         Promise<U> next;
-        c.then = next;
 
-        m_private->callbacks.push_back(c);
+        auto callback = [next, fun](T input){ next.resolve(fun(input)); };
+
+        m_private->callbacks.push_back(callback);
 
         return next;
     }
 
-    void resolve(T value) {
-        QTimer::singleShot(0, [this, value](){
-            for (auto cb : m_private->callbacks) {
-                auto result = cb.callback(value);
-                for (auto then : cb.then) {
-                    then.resolve(result);
+    // FIXME Fix this... it should return a Promise<void> with a resolve(void) method...
+    Promise<int> then(std::function<void(T)> fun) {
+        std::function<int(T)> f = [fun](T v){ fun(v); return 1; };
+        return this->then(f);
+    }
+
+    void resolve(T value) const {
+        if (m_private->resolved) {
+            throw std::runtime_error("This promise is already resolved");
+        }
+
+        if (m_private->callbacks.size() > 0) {
+            m_private->resolved = true;
+
+            auto callbacks = m_private->callbacks;
+
+            QTimer::singleShot(0, [callbacks, value](){ // At next tick, this object might have been destroyed!
+                for (auto cb : callbacks) {
+                    cb(value);
                 }
-            }
-        });
+            });
+        }
     }
 
 
-    // TODO: explicitly remove context?
-    //Promise(const Promise &other) = default;
-    //Promise(Promise &&other) = default;
-    //Promise &operator=(const Promise &other) = default;
+    Promise(const Promise &other) = default;
+    Promise(Promise &&other) = default;
+    Promise &operator=(const Promise &other) = default;
 
     virtual ~Promise() {}
 
 private:
 
     struct Private {
-        std::vector<ChainableCallback> callbacks;
+        std::vector<std::function<void(T)>> callbacks;
+        bool resolved = false;
     };
 
-    template <typename U>
-    struct Callback: ChainableCallback {
-        std::function<U(T)> callback;
-        std::vector<Promise<U>> then; // promises chained with .then
-    };
-
-    std::shared_ptr<Private> m_private = std::make_shared<Private>();
+    std::shared_ptr<Private> m_private = nullptr;
 
 };
 
