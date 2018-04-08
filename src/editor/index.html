@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="libs/codemirror/addon/fold/foldgutter.css">
     <link rel="stylesheet" href="libs/codemirror/addon/hint/show-hint.css">
 
+    <!-- Load this first to avoid CodeMirror.defineSimpleMode errors -->
+    <script src="libs/codemirror/addon/mode/simple.js"></script>
+
     <!-- MODES -->
     <script src="libs/codemirror/mode/apl/apl.js"></script>
     <script src="libs/codemirror/mode/asciiarmor/asciiarmor.js"></script>
