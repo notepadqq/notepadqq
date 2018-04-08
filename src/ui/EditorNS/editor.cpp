@@ -764,9 +764,10 @@ namespace EditorNS
         });
     }
 
-    QString Editor::getCurrentWord()
+    Promise<QString> Editor::getCurrentWord()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_CURRENT_WORD").get().toString();
+        return asyncSendMessageWithResultP("C_FUN_GET_CURRENT_WORD")
+                .then<QString>([](QVariant v){ return v.toString(); });
     }
 
     Promise<int> Editor::lineCount()

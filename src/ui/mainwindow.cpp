@@ -19,6 +19,7 @@
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
 #include "include/nqqrun.h"
+#include "include/promise.h"
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -2268,9 +2269,11 @@ Promise<QStringList> MainWindow::currentWordOrSelections()
     Editor *editor = currentEditor();
     return editor->selectedTexts().then<QStringList>([=](QStringList selection){
         if (selection.isEmpty() || selection.first().isEmpty()) {
-            return QStringList(editor->getCurrentWord());
+            return editor->getCurrentWord().then<QStringList>([](QString word){
+                return QStringList(word);
+            });
         } else {
-            return selection;
+            return Promise<QStringList>(selection);
         }
     });
 }

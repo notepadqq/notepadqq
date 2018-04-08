@@ -281,7 +281,7 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        QString getCurrentWord();
+        Promise<QString> getCurrentWord();
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
