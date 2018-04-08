@@ -15,8 +15,8 @@ void Stats::init()
     //    in case the user never shuts down his computer.
 
     QJsonObject data;
-    data["version"] = POINTVERSION;
-    data["qt_version"] = qVersion();
+    data["version"] = QString(POINTVERSION);
+    data["qt_version"] = QString(qVersion());
 
     // The other supported fields for now are:
     /*
