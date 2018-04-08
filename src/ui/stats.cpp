@@ -40,14 +40,11 @@ void Stats::send(const QJsonObject &data) {
 
     QObject::connect(manager, &QNetworkAccessManager::finished, [=](QNetworkReply *reply){
         QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-        qDebug() << statusCode;
-        qDebug() << reply->readAll();
         manager->deleteLater();
     });
 
     QJsonDocument doc;
     doc.setObject(data);
-    qDebug() << doc.toJson(QJsonDocument::Compact);
 
     manager->post(request, doc.toJson());
 }
