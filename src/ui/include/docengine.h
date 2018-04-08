@@ -29,6 +29,61 @@ public:
     };
 
     /**
+     * @brief The DocumentLoader struct is an aggregation of all possible arguments for document loading.
+     *        Only setTabWidget and setUrl(s) are necessary settings. All others have sensible defaults.
+     *        Create new instances of this class using DocEngine::getDocumentLoader()
+     */
+    struct DocumentLoader {
+        // Set the URL(s) of files to be loaded
+        DocumentLoader& setUrl(const QUrl& url) { this->urls << url; return *this; }
+        DocumentLoader& setUrls(const QList<QUrl>& urls) { this->urls = urls; return *this; }
+
+        // If true, the documents' parent directory will be remembered as the last opened dir.
+        DocumentLoader& setRememberLastDir(bool rld) { rememberLastDir = rld; return *this; }
+
+        // Set if document has Byte Order Marks set
+        DocumentLoader& setBOM(bool setBom) { bom = setBom; return *this; }
+
+        // Sets the TextCodec to decode the file as.
+        DocumentLoader& setTextCodec(QTextCodec* codec) { textCodec = codec; return *this; }
+
+        // Set the TabWidget the documents should be loaded into
+        DocumentLoader& setTabWidget(EditorTabWidget* tw) { tabWidget = tw; return *this; }
+
+        // If set, the given documents will only be reloaded. If a document isn't opened yet it will be ignored.
+        DocumentLoader& setIsReload(bool reload) { isReload = reload; return *this; }
+
+        /**
+         * @brief execute Runs the load operation.
+         * @return The result of the loading operation (currently always True)
+         */
+        bool execute() {
+            Q_ASSERT(tabWidget != nullptr);
+            return docEngine.loadDocuments(*this);
+        }
+
+        // See here for the arguments' default values
+        QList<QUrl> urls;
+        EditorTabWidget* tabWidget      = nullptr;
+        QTextCodec* textCodec           = nullptr;
+        bool isReload                   = false;
+        bool rememberLastDir            = true;
+        bool bom                        = false;
+
+    private:
+        friend class DocEngine;
+        DocumentLoader(DocEngine& eng) : docEngine(eng) {}
+        DocEngine& docEngine;
+    };
+
+    /**
+     * @brief getDocumentLoader Creates a new DocumentLoader with this DocEngine as its parent.
+     *        Use this object to load or reload documents.
+     */
+    DocumentLoader getDocumentLoader() { return DocumentLoader(*this); }
+
+
+    /**
      * Describes the result of a save process.
      * For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
      */
@@ -58,22 +113,6 @@ public:
     void unmonitorDocument(Editor *editor);
     bool isMonitored(Editor *editor);
 
-    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget);
-    bool loadDocument(const QUrl &fileName, EditorTabWidget *tabWidget);
-
-    /**
-     * @brief loadDocumentSilent Works exactly like loadDocument() except that the
-     *        LastSelectedDir setting will not be set to the parent of the document
-     *        to be loaded. Use this function to load files that you do not wish
-     *        the user to be informed about their origin (such as cached files).
-     * @param fileName Path to the text file to be opened.
-     * @param tabWidget The new editor will be added to this TabWidget
-     * @return Always true.
-     */
-    bool loadDocumentSilent(const QUrl &fileName, EditorTabWidget *tabWidget);
-
-    bool reloadDocument(EditorTabWidget *tabWidget, int tab);
-    bool reloadDocument(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
     void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
     static DocEngine::DecodedText readToString(QFile *file);
@@ -103,20 +142,11 @@ private:
     // FIXME Separate from reload
 
     /**
-     * @brief loadDocuments
-     * @param fileNames
-     * @param tabWidget
-     * @param reload
-     * @param codec
-     * @param bom
-     * @param rememberLastSelectedDir if true, will remember the parent directory of the loaded
-     *        documents as the "last selected dir". This setting is used to display the default
-     *        folder that is shown in the FileDialog when opening files/folders.
-     *        Set this to false to transparently load files (e.g. from a cache directory).
-     *        Default is true.
-     * @return
+     * @brief loadDocuments Responsible for loading or reloading a number of text files.
+     * @param docLoader Contains parameters for document reloading. See DocumentLoader class for info.
+     * @return Always true
      */
-    bool loadDocuments(const QList<QUrl> &fileNames, EditorTabWidget *tabWidget, const bool reload, QTextCodec *codec, bool bom, bool rememberLastSelectedDir=true);
+    bool loadDocuments(const DocumentLoader& docLoader);
 
     /**
      * @brief Write the provided Editor content to the specified IO device, using
