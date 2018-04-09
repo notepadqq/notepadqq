@@ -112,6 +112,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkCollectStatistics">
+           <property name="text">
+            <string>Collect and transmit anonymous statistics to improve Notepadqq</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="chkWarnForDifferentIndentation">
            <property name="text">
             <string>Warn when the indentation doesn't match the settings</string>

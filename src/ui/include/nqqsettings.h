@@ -65,6 +65,7 @@ public:
     BEGIN_GENERAL_CATEGORY(General)
         NQQ_SETTING(Localization,                   QString,    "")
         NQQ_SETTING(CheckVersionAtStartup,          bool,       true)
+        NQQ_SETTING(CollectStatistics,              bool,       false)
         NQQ_SETTING(WarnForDifferentIndentation,    bool,       true)
         NQQ_SETTING(ExitOnLastTabClose,             bool,       false)
 
