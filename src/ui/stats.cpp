@@ -18,7 +18,7 @@ void Stats::init()
     //    in case the user never shuts down his computer.
 
     QTimer* t = new QTimer();
-    connect(t, &QTimer::timeout, [](){
+    QObject::connect(t, &QTimer::timeout, [t](){
         QJsonObject data;
         data["version"] = QString(POINTVERSION);
         data["qt_version"] = QString(qVersion());
@@ -54,7 +54,7 @@ void Stats::send(const QJsonObject &data) {
 
     QNetworkAccessManager *manager = new QNetworkAccessManager();
 
-    QObject::connect(manager, &QNetworkAccessManager::finished, [=](QNetworkReply *reply){
+    QObject::connect(manager, &QNetworkAccessManager::finished, [=](QNetworkReply *){
         manager->deleteLater();
     });
 
