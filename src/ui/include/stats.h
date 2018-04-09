@@ -24,7 +24,17 @@ private:
      */
     static void check();
 
+    static void askUserPermission();
+
     static bool m_longTimerRunning;
+
+    /**
+     * @brief The first time the user opens nqq we don't want to bother him with
+     *        the Stats permission dialog. For this reason, we want to defer it
+     *        to the second run. This variable is set to true and *stays true*
+     *        iff the user never opened nqq before.
+     */
+    static bool m_isFirstNotepadqqRun;
 };
 
 #endif // STATS_H
