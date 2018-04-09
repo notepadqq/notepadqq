@@ -5,7 +5,9 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QSysInfo>
+#include <QTimer>
 #include "include/notepadqq.h"
+#include "include/Extensions/extensionsloader.h"
 
 void Stats::init()
 {
@@ -15,19 +17,32 @@ void Stats::init()
     // 3. Start a timer that will send stats again in a week from now,
     //    in case the user never shuts down his computer.
 
-    QJsonObject data;
-    data["version"] = QString(POINTVERSION);
-    data["qt_version"] = QString(qVersion());
-    data["os"] = QSysInfo::productType();
-    data["os_version"] = QSysInfo::productVersion();
+    QTimer* t = new QTimer();
+    connect(t, &QTimer::timeout, [](){
+        QJsonObject data;
+        data["version"] = QString(POINTVERSION);
+        data["qt_version"] = QString(qVersion());
 
-    // The other supported fields for now are:
-    /*
-     - extensions      (string)
-     - extension_count (int)
-    */
+#if QT_VERSION >= 0x050400
+        data["os"] = QSysInfo::productType();
+        data["os_version"] = QSysInfo::productVersion();
+#endif
 
-    Stats::send(data);
+        auto extensions = Extensions::ExtensionsLoader::loadedExtensions();
+        QJsonArray exts;
+        for (const auto &ext : extensions.values()) { exts.append(ext->name()); }
+
+        data["extensions"] = QString(QJsonDocument(exts).toJson());
+        data["extension_count"] = extensions.count();
+
+        Stats::send(data);
+
+        t->deleteLater();
+    });
+
+    // Start after 10 seconds: we don't want to take time to the startup sequence,
+    // and we want the extensions to be fully loaded.
+    t->start(10000);
 }
 
 
