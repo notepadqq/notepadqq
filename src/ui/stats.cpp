@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QSysInfo>
 #include "include/notepadqq.h"
 
 void Stats::init()
@@ -17,13 +18,13 @@ void Stats::init()
     QJsonObject data;
     data["version"] = QString(POINTVERSION);
     data["qt_version"] = QString(qVersion());
+    data["os"] = QSysInfo::productType();
+    data["os_version"] = QSysInfo::productVersion();
 
     // The other supported fields for now are:
     /*
      - extensions      (string)
      - extension_count (int)
-     - os              (string) (Linux, MacOS, ...)
-     - os_version      (string) (Ubuntu 18.04, MacOS 10.13.4, Arch Linux, ...)
     */
 
     Stats::send(data);
@@ -39,7 +40,6 @@ void Stats::send(const QJsonObject &data) {
     QNetworkAccessManager *manager = new QNetworkAccessManager();
 
     QObject::connect(manager, &QNetworkAccessManager::finished, [=](QNetworkReply *reply){
-        QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         manager->deleteLater();
     });
 
