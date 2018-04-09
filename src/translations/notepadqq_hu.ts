@@ -1391,7 +1391,7 @@
     <message>
         <location filename="../ui/mainwindow.cpp" line="638"/>
         <source>The &apos;--line&apos; and &apos;--column&apos; arguments will be ignored since more than one file is opened.</source>
-        <translation>A &apos;--line&apos; és &apos;--column&apos; argumentumok figyelmen kívül lesz hagyva, mivel több fájl van megynyitva.</translation>
+        <translation>A &apos;--line&apos; és &apos;--column&apos; argumentumok figyelmen kívül lesznek hagyva, mivel több fájl van megynyitva.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="648"/>
