@@ -5,6 +5,7 @@
 #include "include/singleapplication.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/nqqsettings.h"
+#include "include/stats.h"
 #include <QObject>
 #include <QFile>
 #include <QtGlobal>
@@ -138,6 +139,8 @@ int main(int argc, char *argv[])
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
+
+    Stats::init();
 
     return a.exec();
 }
