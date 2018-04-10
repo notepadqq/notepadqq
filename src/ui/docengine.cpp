@@ -94,7 +94,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
     return true;
 }
 
-bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
+void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 {
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
@@ -105,7 +105,7 @@ bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
     auto fileSizeAction = docLoader.fileSizeAction;
 
     if (fileNames.empty())
-        return true;
+        return;
 
     if (rememberLastSelectedDir)
         NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
@@ -271,10 +271,7 @@ bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         } else {
             emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
         }
-
     }
-
-    return true;
 }
 
 QPair<int, int> DocEngine::findOpenEditorByUrl(const QUrl &filename) const
