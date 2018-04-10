@@ -18,7 +18,7 @@ class DocEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = 0);
+    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = nullptr);
     ~DocEngine();
 
     struct DecodedText {

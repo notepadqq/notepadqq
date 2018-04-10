@@ -599,7 +599,7 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
     for (QByteArray codecString : codecStrings) {
         QTextCodec::ConverterState state;
         QTextCodec *codec = QTextCodec::codecForName(codecString);
-        if (codec == 0)
+        if (!codec)
             continue;
 
         const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
@@ -629,7 +629,7 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
     QList<int> mibs = QTextCodec::availableMibs();
     for (int mib : mibs) {
         QTextCodec *codec = QTextCodec::codecForMib(mib);
-        if (codec == 0)
+        if (!codec)
             continue;
 
         if (alreadyTriedMibs.contains(codec->mibEnum()))
