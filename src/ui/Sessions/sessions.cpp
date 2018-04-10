@@ -393,7 +393,11 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (!fileExists && !cacheFileExists)
                 continue;
 
-            const bool success = docEngine->loadDocumentSilent(loadUrl, tabW);
+            const bool success = docEngine->getDocumentLoader()
+                                 .setUrl(loadUrl)
+                                 .setTabWidget(tabW)
+                                 .setRememberLastDir(false)
+                                 .execute();
 
             if (!success)
                 continue;

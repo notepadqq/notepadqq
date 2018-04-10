@@ -5,6 +5,7 @@
 #include "include/singleapplication.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/nqqsettings.h"
+#include "include/stats.h"
 #include <QObject>
 #include <QFile>
 #include <QtGlobal>
@@ -145,6 +146,8 @@ int main(int argc, char *argv[])
     if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
         Notepadqq::showQtVersionWarning(true, w);
     }
+
+    Stats::init();
 
     return a.exec();
 }

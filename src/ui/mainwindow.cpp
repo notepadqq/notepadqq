@@ -625,10 +625,11 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     {
         files.append(stringToUrl(rawUrls.at(i), workingDirectory));
     }
-
-    EditorTabWidget *tabW = m_topEditorContainer->currentTabWidget();
-    m_docEngine->loadDocuments(files, tabW);
-
+  
+    m_docEngine->getDocumentLoader()
+                .setUrls(files)
+                .setTabWidget(m_topEditorContainer->currentTabWidget())
+                .execute();
 
     // Handle --line and --column commandline arguments
     if (!parser->isSet("line") && !parser->isSet("column"))
@@ -659,7 +660,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
 
     // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
     // right after construction of the Editor.
-    Editor* ed = tabW->currentEditor();
+    Editor* ed = m_topEditorContainer->currentTabWidget()->currentEditor();
     QTimer* t = new QTimer();
     connect(t, &QTimer::timeout, [t, l, c, ed](){
         ed->setCursorPosition(l-1, c-1);
@@ -683,10 +684,13 @@ void MainWindow::dropEvent(QDropEvent *e)
     QMainWindow::dropEvent(e);
 
     QList<QUrl> fileNames = e->mimeData()->urls();
-    if (!fileNames.empty()) {
-        m_docEngine->loadDocuments(fileNames,
-                                   m_topEditorContainer->currentTabWidget());
-    }
+    if (fileNames.empty())
+        return;
+
+    m_docEngine->getDocumentLoader()
+            .setUrls(fileNames)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 void MainWindow::on_editorUrlsDropped(QList<QUrl> urls)
@@ -700,23 +704,25 @@ void MainWindow::on_editorUrlsDropped(QList<QUrl> urls)
         tabWidget = m_topEditorContainer->currentTabWidget();
     }
 
-    if (!urls.empty()) {
+    if (urls.empty())
+        return;
 
-        // If only one URL is dropped and it's a directory, we query the dir's entry list and open that one instead.
-        if (urls.size() == 1) {
-            const QString path = urls.front().toLocalFile();
-            QFileInfo fileInfo(path);
-            if (fileInfo.isDir()) {
-                urls.clear();
-                for (QFileInfo fi : QDir(path).entryInfoList(QDir::Files)) {
-                    urls.push_back(QUrl::fromLocalFile(fi.filePath()));
-                }
+    // If only one URL is dropped and it's a directory, we query the dir's entry list and open that one instead.
+    if (urls.size() == 1) {
+        const QString path = urls.front().toLocalFile();
+        QFileInfo fileInfo(path);
+        if (fileInfo.isDir()) {
+            urls.clear();
+            for (QFileInfo fi : QDir(path).entryInfoList(QDir::Files)) {
+                urls.push_back(QUrl::fromLocalFile(fi.filePath()));
             }
         }
-
-        m_docEngine->loadDocuments(urls,
-                                   tabWidget);
     }
+
+    m_docEngine->getDocumentLoader()
+            .setUrls(urls)
+            .setTabWidget(tabWidget)
+            .execute();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ev)
@@ -915,7 +921,15 @@ bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCod
             return false;
     }
 
-    return m_docEngine->reloadDocument(tabWidget, tab, codec, bom);
+    Editor *editor = tabWidget->editor(tab);
+
+    return m_docEngine->getDocumentLoader()
+            .setUrl(editor->filePath())
+            .setTabWidget(tabWidget)
+            .setTextCodec(codec)
+            .setBOM(bom)
+            .setIsReload(true)
+            .execute();
 }
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
@@ -947,12 +961,13 @@ void MainWindow::on_actionOpen_triggered()
                                 tr("All files (*)"),
                                 0, 0);
 
-    if (!fileNames.empty()) {
-        m_docEngine->loadDocuments(fileNames,
-                                   m_topEditorContainer->currentTabWidget());
+    if (fileNames.empty())
+        return;
 
-        m_settings.General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
-    }
+    m_docEngine->getDocumentLoader()
+            .setUrls(fileNames)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 void MainWindow::on_actionOpen_Folder_triggered()
@@ -963,31 +978,29 @@ void MainWindow::on_actionOpen_Folder_triggered()
 
     // Select directory
     QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
-    if (!folder.isEmpty()) {
+    if (folder.isEmpty())
+        return;
 
-        // Get files within directory
-        QDir dir(folder);
-        QStringList files = dir.entryList(QStringList(), QDir::Files);
+    // Get files within directory
+    QDir dir(folder);
+    QStringList files = dir.entryList(QStringList(), QDir::Files);
 
-        // Convert file names to urls
-        QList<QUrl> fileNames;
-        for (QString file : files) {
-            // Exclude hidden and backup files
-            if (!file.startsWith(".") && !file.endsWith("~")) {
-                fileNames.append(stringToUrl(file, folder));
-            }
+    // Convert file names to urls
+    QList<QUrl> fileNames;
+    for (QString file : files) {
+        // Exclude hidden and backup files
+        if (!file.startsWith(".") && !file.endsWith("~")) {
+            fileNames.append(stringToUrl(file, folder));
         }
-
-        if (!fileNames.isEmpty()) {
-
-            m_docEngine->loadDocuments(fileNames,
-                                       m_topEditorContainer->currentTabWidget());
-
-            m_settings.General.setLastSelectedDir(folder);
-
-        }
-
     }
+
+    if (fileNames.isEmpty())
+        return;
+
+    m_docEngine->getDocumentLoader()
+            .setUrls(fileNames)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
@@ -1373,7 +1386,11 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
         if (!QFile(doc.fileName).exists()) return;
 
         QUrl url = stringToUrl(doc.fileName);
-        m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+
+        m_docEngine->getDocumentLoader()
+                .setUrl(url)
+                .setTabWidget(m_topEditorContainer->currentTabWidget())
+                .execute();
 
         QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
 
@@ -1689,7 +1706,11 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
             editor->removeBanner(banner);
             editor->setFocus();
 
-            m_docEngine->reloadDocument(tabWidget, tab);
+            m_docEngine->getDocumentLoader()
+                    .setUrl(editor->filePath())
+                    .setTabWidget(tabWidget)
+                    .setIsReload(true)
+                    .execute();
         });
     }
 }
@@ -2057,7 +2078,10 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
         }
     }
 
-    m_docEngine->loadDocuments(urlsToOpen, m_topEditorContainer->currentTabWidget());
+    m_docEngine->getDocumentLoader()
+            .setUrls(urlsToOpen)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 void MainWindow::on_actionUNIX_Format_triggered()
@@ -2355,7 +2379,10 @@ void MainWindow::openRecentFileEntry(QUrl url)
         }
     }
 
-    m_docEngine->loadDocument(url, m_topEditorContainer->currentTabWidget());
+    m_docEngine->getDocumentLoader()
+            .setUrl(url)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 void MainWindow::on_actionOpen_a_New_Window_triggered()
@@ -2395,15 +2422,18 @@ void MainWindow::on_actionMove_to_New_Window_triggered()
 void MainWindow::on_actionOpen_file_triggered()
 {
     QStringList terms = currentWordOrSelections();
-    if (!terms.isEmpty()) {
-        QList<QUrl> urls;
-        for (QString term : terms) {
-            urls.append(QUrl::fromLocalFile(term));
-        }
+    if (terms.isEmpty())
+        return;
 
-        m_docEngine->loadDocuments(urls,
-                                   m_topEditorContainer->currentTabWidget());
+    QList<QUrl> urls;
+    for (QString term : terms) {
+        urls.append(QUrl::fromLocalFile(term));
     }
+
+    m_docEngine->getDocumentLoader()
+            .setUrls(urls)
+            .setTabWidget(m_topEditorContainer->currentTabWidget())
+            .execute();
 }
 
 void MainWindow::on_actionOpen_in_another_window_triggered()
