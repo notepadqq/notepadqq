@@ -18,7 +18,7 @@ class DocEngine : public QObject
 {
     Q_OBJECT
 public:
-    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = 0);
+    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = nullptr);
     ~DocEngine();
 
     struct DecodedText {
@@ -64,11 +64,10 @@ public:
 
         /**
          * @brief execute Runs the load operation.
-         * @return The result of the loading operation (currently always True)
          */
-        bool execute() {
+        void execute() {
             Q_ASSERT(tabWidget != nullptr);
-            return docEngine.loadDocuments(*this);
+            docEngine.loadDocuments(*this);
         }
 
         // See here for the arguments' default values
@@ -97,8 +96,8 @@ public:
      * For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
      */
     enum saveFileResult {
-         saveFileResult_Saved       /** The file was saved  */
-        ,saveFileResult_Canceled    /** The save process was canceled */
+         saveFileResult_Saved,      /** The file was saved  */
+        saveFileResult_Canceled     /** The save process was canceled */
     };
 
     /**
@@ -152,10 +151,9 @@ private:
 
     /**
      * @brief loadDocuments Responsible for loading or reloading a number of text files.
-     * @param docLoader Contains parameters for document reloading. See DocumentLoader class for info.
-     * @return Always true
+     * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
-    bool loadDocuments(const DocumentLoader& docLoader);
+    void loadDocuments(const DocumentLoader& docLoader);
 
     /**
      * @brief Write the provided Editor content to the specified IO device, using
@@ -231,8 +229,6 @@ signals:
      *        as a recently opened file.
      */
     void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
-
-public slots:
 
 private slots:
     void documentChanged(QString fileName);

@@ -923,13 +923,15 @@ bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCod
 
     Editor *editor = tabWidget->editor(tab);
 
-    return m_docEngine->getDocumentLoader()
+    m_docEngine->getDocumentLoader()
             .setUrl(editor->filePath())
             .setTabWidget(tabWidget)
             .setTextCodec(codec)
             .setBOM(bom)
             .setIsReload(true)
             .execute();
+
+    return true;
 }
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
