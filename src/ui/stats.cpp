@@ -61,7 +61,13 @@ void Stats::check() {
         return;
     }
 
-    // TODO: Check last time that we sent stats, and atomically update the value.
+    // Check if it is time to send the stats (i.e. a week has passed).
+    // If not, return.
+    if (!isTimeToSendStats()) {
+        return;
+    }
+    settings.General.setLastStatisticTransmissionTime(currentUnixTimestamp());
+
 
     QJsonObject data;
     data["version"] = QString(POINTVERSION);
@@ -76,7 +82,7 @@ void Stats::check() {
     QJsonArray exts;
     for (const auto &ext : extensions.values()) { exts.append(ext->name()); }
 
-    data["extensions"] = QString(QJsonDocument(exts).toJson());
+    data["extensions"] = QString(QJsonDocument(exts).toJson(QJsonDocument::Compact));
     data["extension_count"] = extensions.count();
 
     Stats::remoteApiSend(data);
@@ -97,7 +103,7 @@ void Stats::remoteApiSend(const QJsonObject &data) {
     QJsonDocument doc;
     doc.setObject(data);
 
-    manager->post(request, doc.toJson());
+    manager->post(request, doc.toJson(QJsonDocument::Compact));
 }
 
 void Stats::askUserPermission() {
@@ -140,4 +146,17 @@ void Stats::askUserPermission() {
         m_isFirstNotepadqqRun = true;
         settings.General.setStatisticsDialogShown(DIALOG_FIRST_TIME_IGNORED);
     }
+}
+
+bool Stats::isTimeToSendStats() {
+    NqqSettings &settings = NqqSettings::getInstance();
+    return (currentUnixTimestamp() - settings.General.getLastStatisticTransmissionTime()) >= 7*24*60*60*1000;
+}
+
+qint64 Stats::currentUnixTimestamp() {
+#if QT_VERSION >= 0x050800
+    return QDateTime::currentDateTime().toSecsSinceEpoch();
+#else
+    return QDateTime::currentDateTime().toTime_t();
+#endif
 }

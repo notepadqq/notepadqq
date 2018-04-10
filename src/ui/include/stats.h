@@ -26,6 +26,10 @@ private:
 
     static void askUserPermission();
 
+    static bool isTimeToSendStats();
+
+    static qint64 currentUnixTimestamp();
+
     static bool m_longTimerRunning;
 
     /**
