@@ -34,6 +34,7 @@
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QDesktopServices>
 #include <QJsonArray>
+#include <QTimer>
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -615,21 +616,58 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     {
         // Open a new empty document
         ui->actionNew->trigger();
+        return;
     }
-    else
-    {
-        // Open selected files
-        QList<QUrl> files;
-        for(int i = 0; i < rawUrls.count(); i++)
-        {
-            files.append(stringToUrl(rawUrls.at(i), workingDirectory));
-        }
 
-        m_docEngine->getDocumentLoader()
+    // Open selected files
+    QList<QUrl> files;
+    for(int i = 0; i < rawUrls.count(); i++)
+    {
+        files.append(stringToUrl(rawUrls.at(i), workingDirectory));
+    }
+  
+    m_docEngine->getDocumentLoader()
                 .setUrls(files)
                 .setTabWidget(m_topEditorContainer->currentTabWidget())
                 .execute();
+
+    // Handle --line and --column commandline arguments
+    if (!parser->isSet("line") && !parser->isSet("column"))
+        return;
+
+    if (rawUrls.size() > 1) {
+        qWarning() << tr("The '--line' and '--column' arguments will be ignored since more than one file is opened.");
+        return;
     }
+
+    int l = 0;
+    if (parser->isSet("line")) {
+        bool okay;
+        l = parser->value("line").toInt(&okay);
+
+        if(!okay)
+            qWarning() << tr("Invalid value for '--line' argument: %1").arg(parser->value("line"));
+    }
+
+    int c = 0;
+    if (parser->isSet("column")) {
+        bool okay;
+        c = parser->value("column").toInt(&okay);
+
+        if(!okay)
+            qWarning() << tr("Invalid value for '--column' argument: %1").arg(parser->value("column"));
+    }
+
+    // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
+    // right after construction of the Editor.
+    Editor* ed = tabW->currentEditor();
+    QTimer* t = new QTimer();
+    connect(t, &QTimer::timeout, [t, l, c, ed](){
+        ed->setCursorPosition(l-1, c-1);
+        t->deleteLater();
+    });
+    t->start(0);
+
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
