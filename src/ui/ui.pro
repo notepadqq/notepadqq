@@ -103,7 +103,8 @@ SOURCES += main.cpp\
     Search/filesearcher.cpp \
     Search/filereplacer.cpp \
     Search/searchobjects.cpp \
-    Search/searchinstance.cpp
+    Search/searchinstance.cpp \
+    stats.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -149,7 +150,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchobjects.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
-    include/promise.h
+    include/promise.h \
+    include/stats.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

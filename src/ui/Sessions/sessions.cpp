@@ -47,6 +47,9 @@ struct TabData {
     bool active = false;
     QString language;
     qint64 lastModified = 0;
+    bool customIndent = false;
+    bool useTabs = false;
+    int tabSize = 0; 
 };
 
 struct ViewData {
@@ -169,6 +172,9 @@ std::vector<TabData> SessionReader::readTabData() {
             td.language = attrs.value("language").toString();
             td.lastModified = attrs.value("lastModified").toLongLong();
             td.active = attrs.value("active").toInt() != 0;
+            td.customIndent = attrs.value("customIndent").toInt() != 0;
+            td.useTabs = attrs.value("useTabs").toInt() != 0;
+            td.tabSize = attrs.value("tabSize").toInt();
 
             result.push_back(td);
 
@@ -227,6 +233,12 @@ void SessionWriter::addTabData(const TabData& td){
     if (td.active)
         attrs.push_back(QXmlStreamAttribute("active", "1"));
 
+    if (td.customIndent) {
+        attrs.push_back(QXmlStreamAttribute("customIndent", "1"));
+        attrs.push_back(QXmlStreamAttribute("useTabs", td.useTabs ? "1" : "0"));
+        attrs.push_back(QXmlStreamAttribute("tabSize", QString::number(td.tabSize)));
+    }
+
     m_writer.writeAttributes(attrs);
 
     m_writer.writeEndElement();
@@ -270,6 +282,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             Editor* editor = tabWidget->editor(j);
             bool isClean = editor->isClean();
             bool isOrphan = editor->filePath().isEmpty();
+            Editor::IndentationMode indentInfo = editor->indentationMode();
 
             if (isOrphan && !cacheModifiedFiles)
                 continue; // Don't save temporary files if we're not caching tabs
@@ -299,7 +312,13 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             td.scrollY = scrollPos.second;
             td.active = tabWidget->currentEditor() == editor;
             td.language = editor->language();
-
+            
+            // Cache the custom indentation state of the file
+            if (editor->isUsingCustomIndentationMode()) {
+                td.customIndent = true;
+                td.useTabs = indentInfo.useTabs;
+                td.tabSize = indentInfo.size;
+            }
             // If we're caching and there's a file opened in the tab we want to inform the
             // user whether the file's contents have changed since Nqq was last opened.
             // For this we save and later compare the modification date.
@@ -426,6 +445,10 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
 
             editor->setScrollPosition(tab.scrollX, tab.scrollY);
+
+            if (tab.customIndent) {
+                editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
+            }
 
             // loadDocuments() explicitely calls setFocus() so we'll have to undo that.
             editor->clearFocus();

@@ -86,6 +86,18 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
                                          .arg(QCoreApplication::applicationName()));
     parser->addOption(newWindowOption);
 
+    QCommandLineOption setLine({"l", "line"},
+                               QObject::tr("Open file at specified line."),
+                               "line",
+                               "0");
+    parser->addOption(setLine);
+
+    QCommandLineOption setCol({"c", "column"},
+                              QObject::tr("Open file at specified column."),
+                              "column",
+                              "0");
+    parser->addOption(setCol);
+
     QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
     parser->addOption(allowRootOption);
 
