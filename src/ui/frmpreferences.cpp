@@ -6,6 +6,7 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
 #include "include/keygrabber.h"
+#include "include/stats.h"
 #include <QFileDialog>
 #include <QSortFilterProxyModel>
 #include <QInputDialog>
@@ -45,6 +46,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
     ui->chkCheckQtVersionAtStartup->setChecked(m_settings.General.getCheckVersionAtStartup());
+    ui->chkCollectStatistics->setChecked(m_settings.General.getCollectStatistics());
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
     ui->chkExitOnLastTabClose->setChecked(m_settings.General.getExitOnLastTabClose());
@@ -389,6 +391,7 @@ bool frmPreferences::applySettings()
 
 
     m_settings.General.setCheckVersionAtStartup(ui->chkCheckQtVersionAtStartup->isChecked());
+    m_settings.General.setCollectStatistics(ui->chkCollectStatistics->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
     m_settings.General.setExitOnLastTabClose(ui->chkExitOnLastTabClose->isChecked());
@@ -433,6 +436,9 @@ bool frmPreferences::applySettings()
     // Editor to the buffer so we won't have an empty queue.
     Editor::invalidateEditorBuffer();
     Editor::addEditorToBuffer(1);
+
+    // Check if we need to send stats
+    Stats::init();
 
     return true;
 }
