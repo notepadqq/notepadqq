@@ -28,6 +28,12 @@ public:
         bool error = false;
     };
 
+    enum FileSizeAction {
+        FileSizeActionAsk,
+        FileSizeActionYesToAll,
+        FileSizeActionNoToAll
+    };
+
     /**
      * @brief The DocumentLoader struct is an aggregation of all possible arguments for document loading.
      *        Only setTabWidget and setUrl(s) are necessary settings. All others have sensible defaults.
@@ -37,6 +43,9 @@ public:
         // Set the URL(s) of files to be loaded
         DocumentLoader& setUrl(const QUrl& url) { this->urls << url; return *this; }
         DocumentLoader& setUrls(const QList<QUrl>& urls) { this->urls = urls; return *this; }
+
+        // Set how files should be handled that trigger a file-size warning.
+        DocumentLoader& setFileSizeWarning(FileSizeAction fsa) { fileSizeAction = fsa; return *this; }
 
         // If true, the documents' parent directory will be remembered as the last opened dir.
         DocumentLoader& setRememberLastDir(bool rld) { rememberLastDir = rld; return *this; }
@@ -69,6 +78,7 @@ public:
         bool isReload                   = false;
         bool rememberLastDir            = true;
         bool bom                        = false;
+        FileSizeAction fileSizeAction   = FileSizeActionAsk;
 
     private:
         friend class DocEngine;
@@ -81,7 +91,6 @@ public:
      *        Use this object to load or reload documents.
      */
     DocumentLoader getDocumentLoader() { return DocumentLoader(*this); }
-
 
     /**
      * Describes the result of a save process.
