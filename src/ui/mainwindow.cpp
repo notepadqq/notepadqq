@@ -660,7 +660,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
 
     // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
     // right after construction of the Editor.
-    Editor* ed = tabW->currentEditor();
+    Editor* ed = m_topEditorContainer->currentTabWidget()->currentEditor();
     QTimer* t = new QTimer();
     connect(t, &QTimer::timeout, [t, l, c, ed](){
         ed->setCursorPosition(l-1, c-1);
