@@ -94,7 +94,7 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
     return true;
 }
 
-bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
+void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 {
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
@@ -102,9 +102,10 @@ bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
     auto* tabWidget = docLoader.tabWidget;
     const auto& codec = docLoader.textCodec;
     const auto& bom = docLoader.bom;
+    auto fileSizeAction = docLoader.fileSizeAction;
 
     if (fileNames.empty())
-        return true;
+        return;
 
     if (rememberLastSelectedDir)
         NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
@@ -141,6 +142,43 @@ bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 
             emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
             continue;
+        }
+
+        const int warnAtSize = NqqSettings::getInstance().General.getWarnIfFileLargerThan() * 1024 * 1024;
+        const auto fileSize = fi.size();
+
+        // Only warn if warnAtSize is at least 1. Otherwise the warning is disabled.
+        const bool fileTooLarge = warnAtSize > 0 && fileSize > warnAtSize;
+        if (fileSizeAction!=FileSizeActionYesToAll && fileTooLarge) {
+            if (fileSizeAction==FileSizeActionNoToAll)
+                continue;
+
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(QCoreApplication::applicationName());
+            msgBox.setText(tr("The file \"%1\" you are trying to open is %2 MiB in size. Do you want to continue?")
+                           .arg(fi.fileName())
+                           .arg(QString::number(fileSize / 1024.0 / 1024.0, 'f', 2)));
+
+            auto buttons = QMessageBox::Yes | QMessageBox::No;
+            if (fileNames.size() > 1)
+                buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
+            msgBox.setStandardButtons(buttons);
+            msgBox.setDefaultButton(QMessageBox::No);
+            msgBox.setIcon(QMessageBox::Warning);
+            int ret = msgBox.exec();
+
+            switch(ret) {
+            case QMessageBox::YesToAll:
+                fileSizeAction = FileSizeActionYesToAll;
+                break;
+            case QMessageBox::Yes:
+                break;
+            case QMessageBox::NoToAll:
+                fileSizeAction = FileSizeActionNoToAll;
+                continue;
+            case QMessageBox::No:
+                continue;
+            }
         }
 
         int tabIndex;
@@ -233,10 +271,7 @@ bool DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         } else {
             emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
         }
-
     }
-
-    return true;
 }
 
 QPair<int, int> DocEngine::findOpenEditorByUrl(const QUrl &filename) const
@@ -561,7 +596,7 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
     for (QByteArray codecString : codecStrings) {
         QTextCodec::ConverterState state;
         QTextCodec *codec = QTextCodec::codecForName(codecString);
-        if (codec == 0)
+        if (!codec)
             continue;
 
         const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
@@ -591,7 +626,7 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
     QList<int> mibs = QTextCodec::availableMibs();
     for (int mib : mibs) {
         QTextCodec *codec = QTextCodec::codecForMib(mib);
-        if (codec == 0)
+        if (!codec)
             continue;
 
         if (alreadyTriedMibs.contains(codec->mibEnum()))

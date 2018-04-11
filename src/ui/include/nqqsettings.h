@@ -84,6 +84,7 @@ public:
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
         NQQ_SETTING(LastSelectedSessionDir,         QString,    QString())
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
+        NQQ_SETTING(WarnIfFileLargerThan,           int,        1)
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())
         NQQ_SETTING(SmartIndentation,               bool,       true)
