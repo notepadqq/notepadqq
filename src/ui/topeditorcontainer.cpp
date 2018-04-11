@@ -148,6 +148,20 @@ void TopEditorContainer::forEachEditor(std::function<bool (const int, const int,
     forEachEditor(false, callback);
 }
 
+std::vector<Editor*> TopEditorContainer::getOpenEditors()
+{
+    std::vector<Editor*> editors;
+
+    for (int i = 0; i < count(); i++) {
+        EditorTabWidget *tabW = tabWidget(i);
+        for (int j = 0; j < tabW->count(); j++) {
+            editors.push_back(tabW->editor(j));
+        }
+    }
+
+    return editors;
+}
+
 void TopEditorContainer::forEachEditor(bool backwardIndexes,
                                        std::function<bool (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor)> callback)
 {

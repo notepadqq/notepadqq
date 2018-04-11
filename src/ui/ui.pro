@@ -8,7 +8,9 @@ QT       += core gui svg widgets webkitwidgets printsupport network
 
 CONFIG += c++11
 
-TARGET = notepadqq-bin
+!macx: TARGET = notepadqq-bin
+macx: TARGET = notepadqq
+
 TEMPLATE = app
 
 RCC_DIR = ../../out/build_data
@@ -19,7 +21,7 @@ OBJECTS_DIR = ../../out/build_data
 QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
 
 # clear "rpath" so that we can override Qt lib path via LD_LIBRARY_PATH
-QMAKE_RPATH=
+!macx: QMAKE_RPATH=
 
 # Avoid automatic casts from QString to QUrl
 DEFINES += QT_NO_URL_CAST_FROM_STRING
@@ -30,20 +32,29 @@ win32: CMD_FULLDELETE = del /F /S /Q
 isEmpty(DESTDIR) {
     CONFIG(debug, debug|release) {
         message(Debug build)
-        DESTDIR = ../../out/debug/lib
+        !macx: DESTDIR = ../../out/debug/lib
+        macx: DESTDIR = ../../out/debug
     }
     CONFIG(release, debug|release) {
         message(Release build)
-        DESTDIR = ../../out/release/lib
+        !macx: DESTDIR = ../../out/release/lib
+        macx: DESTDIR = ../../out/release
     }
 }
 
 isEmpty(LRELEASE) {
-    LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    !macx:!haiku: LRELEASE = qtchooser -run-tool=lrelease -qt=5
+    haiku: LRELEASE = lrelease
+    macx: LRELEASE = lrelease
 }
 
-APPDATADIR = "$$DESTDIR/../appdata"
-BINDIR = "$$DESTDIR/../bin"
+!macx {
+    APPDATADIR = "$$DESTDIR/../appdata"
+    BINDIR = "$$DESTDIR/../bin"
+}
+macx {
+    APPDATADIR = "$$DESTDIR/$${TARGET}.app/Contents/Resources"
+}
 
 INSTALLFILESDIR = ../../support_files
 
@@ -69,13 +80,9 @@ SOURCES += main.cpp\
     frmindentationmode.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
-    Search/filesearchresultswidget.cpp \
     Search/frmsearchreplace.cpp \
-    Search/searchinfilesworker.cpp \
     Search/searchstring.cpp \
-    Search/replaceinfilesworker.cpp \
-    Search/dlgsearching.cpp \
-    Search/searchresultsitemdelegate.cpp \
+    Search/advancedsearchdock.cpp \
     Extensions/extension.cpp \
     frmlinenumberchooser.cpp \
     Extensions/extensionsserver.cpp \
@@ -92,7 +99,12 @@ SOURCES += main.cpp\
     Sessions/sessions.cpp \
     Sessions/persistentcache.cpp \
     nqqsettings.cpp \  
-    nqqrun.cpp
+    nqqrun.cpp \
+    Search/filesearcher.cpp \
+    Search/filereplacer.cpp \
+    Search/searchobjects.cpp \
+    Search/searchinstance.cpp \
+    stats.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -113,15 +125,10 @@ HEADERS  += include/mainwindow.h \
     include/frmindentationmode.h \
     include/singleapplication.h \
     include/localcommunication.h \
-    include/Search/filesearchresultswidget.h \
-    include/Search/filesearchresult.h \
     include/Search/frmsearchreplace.h \
-    include/Search/searchinfilesworker.h \
-    include/Search/replaceinfilesworker.h \
+    include/Search/advancedsearchdock.h \
     include/Search/searchhelpers.h \
     include/Search/searchstring.h \
-    include/Search/dlgsearching.h \
-    include/Search/searchresultsitemdelegate.h \
     include/Extensions/extension.h \
     include/frmlinenumberchooser.h \
     include/Extensions/extensionsserver.h \
@@ -138,7 +145,12 @@ HEADERS  += include/mainwindow.h \
     include/Sessions/sessions.h \
     include/Sessions/persistentcache.h \
     include/nqqsettings.h \
-    include/nqqrun.h
+    include/nqqrun.h \
+    include/Search/filesearcher.h \
+    include/Search/searchobjects.h \
+    include/Search/filereplacer.h \
+    include/Search/searchinstance.h \
+    include/stats.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -153,14 +165,33 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     resources.qrc
 
+ICON = ../../images/notepadqq.icns
+
 TRANSLATIONS = \
     ../translations/notepadqq_de.ts \
+    ../translations/notepadqq_es.ts \
     ../translations/notepadqq_fr.ts \
     ../translations/notepadqq_hu.ts \
     ../translations/notepadqq_it.ts \
+    ../translations/notepadqq_ja.ts \
     ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_ru.ts \
-    ../translations/notepadqq_sv.ts
+    ../translations/notepadqq_sl.ts \
+    ../translations/notepadqq_sv.ts \
+    ../translations/notepadqq_zh.ts 
+
+QMAKE_CLEAN += \
+    ../translations/notepadqq_de.qm \
+    ../translations/notepadqq_es.qm \
+    ../translations/notepadqq_fr.qm \
+    ../translations/notepadqq_hu.qm \
+    ../translations/notepadqq_it.qm \
+    ../translations/notepadqq_ja.qm \
+    ../translations/notepadqq_pl.qm \
+    ../translations/notepadqq_ru.qm \
+    ../translations/notepadqq_sl.qm \
+    ../translations/notepadqq_sv.qm \
+    ../translations/notepadqq_zh.qm
 
 
 # Build translations so that qmake doesn't complain about missing files in resources.qrc
@@ -182,21 +213,26 @@ extensionToolsTarget.commands = (cd \"$$PWD\" && \
                            cd \"../extension_tools\" && \
                            $(MAKE) DESTDIR=\"$$APPDATADIR/extension_tools\")
 
-launchTarget.target = make_launch
-launchTarget.commands = (cd \"$$PWD\" && \
-                         $${QMAKE_MKDIR} \"$$BINDIR/\" && \
-                         $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
-                         chmod 755 \"$$BINDIR/notepadqq\")
-
 # Rebuild translations
 translationsTarget.target = make_translations
 translationsTarget.commands = ($${LRELEASE} \"$${CURRFILE}\")
 
-QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget launchTarget translationsTarget
-PRE_TARGETDEPS += make_editor make_extensionTools make_launch make_translations
+QMAKE_EXTRA_TARGETS += editorTarget extensionToolsTarget translationsTarget
+PRE_TARGETDEPS += make_editor make_extensionTools make_translations
+
+unix:!macx {
+    launchTarget.target = make_launch
+    launchTarget.commands = (cd \"$$PWD\" && \
+                             $${QMAKE_MKDIR} \"$$BINDIR/\" && \
+                             $${QMAKE_COPY} \"$$INSTALLFILESDIR/launch/notepadqq\" \"$$BINDIR/\" && \
+                             chmod 755 \"$$BINDIR/notepadqq\")
+
+    QMAKE_EXTRA_TARGETS += launchTarget
+    PRE_TARGETDEPS += make_launch
+}
 
 ### INSTALL ###
-unix {
+unix:!macx {
     isEmpty(PREFIX) {
         PREFIX = /usr/local
     }
@@ -241,6 +277,9 @@ unix {
 
     shortcuts.path = "$$INSTALL_ROOT$$PREFIX/share/applications/"
     shortcuts.files += "$$INSTALLFILESDIR/shortcuts/notepadqq.desktop"
+    
+    appstream.path = "$$INSTALL_ROOT$$PREFIX/share/metainfo/"
+    appstream.files += "$$INSTALLFILESDIR/notepadqq.appdata.xml"
 
     # == Dummy target used to fix permissions at the end of the install ==
     # A random path. Without one, qmake refuses to create the rule.
@@ -251,7 +290,7 @@ unix {
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h22 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
-         misc_data launch shortcuts \
+         misc_data launch shortcuts appstream \
          set_permissions
 
 }

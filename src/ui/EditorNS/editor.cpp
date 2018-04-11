@@ -8,6 +8,7 @@
 #include <QEventLoop>
 #include <QUrlQuery>
 #include <QRegularExpression>
+#include <QRegExp>
 
 namespace EditorNS
 {
@@ -55,6 +56,11 @@ namespace EditorNS
         //QString content = QString("<html><body onload='setTimeout(function() { window.location=\"%1\"; }, 1);'>Loading...</body></html>").arg("file://" + Notepadqq::editorPath());
         //m_webView->setContent(content.toUtf8());
 
+		m_webView->pageAction(QWebPage::InspectElement)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionDefault)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionLeftToRight)->setVisible(false);
+		m_webView->pageAction(QWebPage::SetTextDirectionRightToLeft)->setVisible(false);
+
         m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
         QWebSettings *pageSettings = m_webView->page()->settings();
@@ -76,6 +82,7 @@ namespace EditorNS
 
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
+        connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
 
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we
@@ -136,7 +143,33 @@ namespace EditorNS
     {
         emit messageReceived(msg, data);
 
-        if(msg == "J_EVT_READY") {
+        if (msg.startsWith("[ASYNC_REPLY]")) {
+            QRegExp rgx("\\[ID=(\\d+)\\]$");
+
+            if(rgx.indexIn(msg) == -1)
+                return;
+
+            if (rgx.captureCount() != 1)
+                return;
+
+            unsigned int id = rgx.capturedTexts()[1].toInt();
+
+            // Look into the list of callbacks
+            for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
+                if (it->id == id) {
+                    auto cb = it->callback;
+                    it->value->set_value(data);
+                    this->asyncReplies.erase(it);
+
+                    if (cb != 0) {
+                        cb(data);
+                    }
+                    break;
+                }
+            }
+
+
+        } else if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
         } else if(msg == "J_EVT_CONTENT_CHANGED")
@@ -145,13 +178,12 @@ namespace EditorNS
             emit cleanChanged(data.toBool());
         else if(msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
-        else if(msg == "J_EVT_GOT_FOCUS")
-            emit gotFocus();
         else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
             QVariantMap map = data.toMap();
             emit currentLanguageChanged(map.value("id").toString(),
                                         map.value("name").toString());
         }
+
     }
 
     void Editor::setFocus()
@@ -169,29 +201,39 @@ namespace EditorNS
     /**
      * Automatically converts local relative file names to absolute ones.
      */
-    void Editor::setFileName(const QUrl &filename)
+    void Editor::setFilePath(const QUrl &filename)
     {
-        QUrl old = m_fileName;
+        QUrl old = m_filePath;
         QUrl newUrl = filename;
 
         if (newUrl.isLocalFile())
             newUrl = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
 
-        m_fileName = newUrl;
+        m_filePath = newUrl;
         emit fileNameChanged(old, newUrl);
     }
 
     /**
      * Always returns an absolute url.
      */
-    QUrl Editor::fileName() const
+    QUrl Editor::filePath() const
     {
-        return m_fileName;
+        return m_filePath;
+    }
+
+    QString Editor::tabName() const
+    {
+        return m_tabName;
+    }
+
+    void Editor::setTabName(const QString& name)
+    {
+        m_tabName = name;
     }
 
     bool Editor::isClean()
     {
-        return sendMessageWithResult("C_FUN_IS_CLEAN", 0).toBool();
+        return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0)).get().toBool();
     }
 
     void Editor::markClean()
@@ -207,7 +249,7 @@ namespace EditorNS
     QList<QMap<QString, QString>> Editor::languages()
     {
         QMap<QString, QVariant> languages =
-                sendMessageWithResult("C_FUN_GET_LANGUAGES").toMap();
+                asyncSendMessageWithResult("C_FUN_GET_LANGUAGES").get().toMap();
 
         QList<QMap<QString, QString>> out;
 
@@ -229,7 +271,7 @@ namespace EditorNS
 
     QString Editor::language()
     {
-        QVariantMap data = sendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").toMap();
+        QVariantMap data = asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
         return data.value("id").toString();
     }
 
@@ -242,8 +284,8 @@ namespace EditorNS
 
     QString Editor::setLanguageFromFileName(QString fileName)
     {
-        QString lang = sendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName).toString();
+        QString lang = asyncSendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
+                                             fileName).get().toString();
 
         if (!m_customIndentationMode)
             setIndentationMode(lang);
@@ -253,7 +295,7 @@ namespace EditorNS
 
     QString Editor::setLanguageFromFileName()
     {
-        return setLanguageFromFileName(fileName().toString());
+        return setLanguageFromFileName(filePath().toString());
     }
 
     void Editor::setIndentationMode(QString language)
@@ -277,7 +319,7 @@ namespace EditorNS
 
     Editor::IndentationMode Editor::indentationMode()
     {
-        QVariantMap indent = sendMessageWithResult("C_FUN_GET_INDENTATION_MODE").toMap();
+        QVariantMap indent = asyncSendMessageWithResult("C_FUN_GET_INDENTATION_MODE").get().toMap();
         IndentationMode out;
         out.useTabs = indent.value("useTabs", true).toBool();
         out.size = indent.value("size", 4).toInt();
@@ -319,7 +361,7 @@ namespace EditorNS
 
     QString Editor::value()
     {
-        return sendMessageWithResult("C_FUN_GET_VALUE").toString();
+        return asyncSendMessageWithResult("C_FUN_GET_VALUE").get().toString();
     }
 
     bool Editor::fileOnDiskChanged() const
@@ -344,16 +386,6 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
-        sendMessageWithResult(msg, data);
-    }
-
-    void Editor::sendMessage(const QString &msg)
-    {
-        sendMessage(msg, 0);
-    }
-
-    QVariant Editor::sendMessageWithResult(const QString &msg, const QVariant &data)
-    {
         waitAsyncLoad();
 
         QString funCall = "UiDriver.messageReceived('" +
@@ -361,12 +393,37 @@ namespace EditorNS
 
         m_jsToCppProxy->setMsgData(data);
 
-        return m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
+        m_webView->page()->mainFrame()->evaluateJavaScript(funCall);
     }
 
-    QVariant Editor::sendMessageWithResult(const QString &msg)
+    void Editor::sendMessage(const QString &msg)
     {
-        return sendMessageWithResult(msg, 0);
+        sendMessage(msg, 0);
+    }
+
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    {
+        static unsigned int msgid = 0;
+        msgid++;
+
+        std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
+
+        AsyncReply asyncmsg;
+        asyncmsg.id = msgid;
+        asyncmsg.value = resultPromise;
+        asyncmsg.callback = callback;
+        this->asyncReplies.push_back((asyncmsg));
+
+        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(msgid) + "]";
+
+        this->sendMessage(message_id, data);
+
+        return resultPromise->get_future();
+    }
+
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    {
+        return this->asyncSendMessageWithResult(msg, 0, callback);
     }
 
     void Editor::setZoomFactor(const qreal &factor)
@@ -443,7 +500,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::cursorPosition()
     {
-        QList<QVariant> cursor = sendMessageWithResult("C_FUN_GET_CURSOR").toList();
+        QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();
         return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
     }
 
@@ -471,7 +528,7 @@ namespace EditorNS
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = sendMessageWithResult("C_FUN_GET_SCROLL_POS").toList();
+        QList<QVariant> scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
         return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
     }
 
@@ -587,7 +644,7 @@ namespace EditorNS
     {
         QList<Selection> out;
 
-        QList<QVariant> sels = sendMessageWithResult("C_FUN_GET_SELECTIONS").toList();
+        QList<QVariant> sels = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS").get().toList();
         for (int i = 0; i < sels.length(); i++) {
             QVariantMap selMap = sels[i].toMap();
             QVariantMap from = selMap.value("anchor").toMap();
@@ -607,7 +664,7 @@ namespace EditorNS
 
     QStringList Editor::selectedTexts()
     {
-        QVariant text = sendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT");
+        QVariant text = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").get();
         return text.toStringList();
     }
 
@@ -636,7 +693,7 @@ namespace EditorNS
     Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
     {
         QVariantMap indent =
-                sendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").toMap();
+                asyncSendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").get().toMap();
 
         IndentationMode out;
 
@@ -655,19 +712,27 @@ namespace EditorNS
 
     void Editor::print(QPrinter *printer)
     {
+        // 1. Set theme to default because dark themes would force the printer to color the entire
+        //    document in the background color. Default theme has white background.
+        // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
+        // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
+
+        setTheme(themeFromName("Default"));
+        m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->print(printer);
         sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
+        m_webView->setStyleSheet("");
+        setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
     }
 
     QString Editor::getCurrentWord()
     {
-        return sendMessageWithResult("C_FUN_GET_CURRENT_WORD").toString();
+        return asyncSendMessageWithResult("C_FUN_GET_CURRENT_WORD").get().toString();
     }
 
     int Editor::lineCount()
     {
-        return sendMessageWithResult("C_FUN_GET_LINE_COUNT").toInt();
+        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT").get().toInt();
     }
-
 }

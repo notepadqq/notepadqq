@@ -3,22 +3,10 @@ dist: trusty
 sudo: required
 os:
   - linux
-env:
-  - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
+  - git pull --depth=500
 script:
-  - "./configure && make"
-  - "./src/ui-tests/ui-tests"
-before_deploy:
-  - "mv out/release out/notepadqq-${NQQ_VERSION}-linux-x64 && tar -zcf notepadqq-${NQQ_VERSION}-linux-x64.tar.gz -C out notepadqq-${NQQ_VERSION}-linux-x64"
-deploy:
-  provider: releases
-  api_key:
-    secure: OCEuXR1a2dDHKKQpnOeSoeWZeL0clf0eVUZt5QbrnkyvL3/iUHXjYbdVBEGrbuldffLy9YOC63viqh/r7Ak+7k/suG1BxwGczbvtMBvRyUOOI48YX90Ss+JUcpvJVNLoirDqA1hPMho5Rmydu+DFRlpjADfg3KtZZZA+8Xz8Uek=
-  file: "notepadqq-${NQQ_VERSION}-linux-x64.tar.gz"
-  skip_cleanup: true
-  on:
-    repo: notepadqq/notepadqq
-    tags: true
+  - ./configure && make
+  - ./src/ui-tests/ui-tests

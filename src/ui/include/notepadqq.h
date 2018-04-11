@@ -33,9 +33,9 @@
 #include <QList>
 #include "include/mainwindow.h"
 
-#define POINTVERSION "1.0.1" // major.minor.revision
+#define POINTVERSION "1.3.4" // major.minor.revision
 
-#define COPYRIGHT_YEAR "2017"
+#define COPYRIGHT_YEAR "2018"
 
 #define MIB_UTF_8 106
 

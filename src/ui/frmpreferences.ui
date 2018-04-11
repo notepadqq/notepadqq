@@ -78,6 +78,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Toolbar</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Extensions</string>
         </property>
        </item>
@@ -88,7 +93,7 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="page">
+       <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <property name="topMargin">
           <number>9</number>
@@ -107,6 +112,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkCollectStatistics">
+           <property name="text">
+            <string>Collect and transmit anonymous statistics to improve Notepadqq</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="chkWarnForDifferentIndentation">
            <property name="text">
             <string>Warn when the indentation doesn't match the settings</string>
@@ -121,15 +133,22 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkExitOnLastTabClose">
+           <property name="text">
+            <string>Exit Notepadqq when closing the last Tab</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="localizationLabel">
              <property name="text">
               <string>Localization:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QComboBox" name="localizationComboBox"/>
            </item>
           </layout>
@@ -149,7 +168,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_3">
+       <widget class="QWidget" name="pageAppearance">
         <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,1">
          <property name="leftMargin">
           <number>9</number>
@@ -336,7 +355,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_2">
+       <widget class="QWidget" name="pageLanguages">
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <property name="leftMargin">
           <number>9</number>
@@ -445,7 +464,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page_4">
+       <widget class="QWidget" name="pageSearch">
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="topMargin">
           <number>9</number>
@@ -460,6 +479,13 @@
           <widget class="QCheckBox" name="chkSearch_SearchAsIType">
            <property name="text">
             <string>Search as I type</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkSearch_SaveHistory">
+           <property name="text">
+            <string>Save search history</string>
            </property>
           </widget>
          </item>
@@ -479,7 +505,123 @@
         </layout>
        </widget>
        <widget class="QWidget" name="pageShortcuts"/>
-       <widget class="QWidget" name="page_6">
+       <widget class="QWidget" name="pageToolbar">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QListWidget" name="listToolbarAll"/>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,0">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <widget class="QWidget" name="widget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="btnToolbarAdd">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-next"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnToolbarRemove">
+                <property name="text">
+                 <string>Remove</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-previous"/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_2" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="btnToolbarUp">
+                <property name="text">
+                 <string>Move Up</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-up"/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnToolbarDown">
+                <property name="text">
+                 <string>Move Down</string>
+                </property>
+                <property name="icon">
+                 <iconset theme="go-down"/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QListWidget" name="listToolbarCurrent"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnToolbarReset">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Reset to Default</string>
+             </property>
+             <property name="icon">
+              <iconset theme="edit-undo"/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="pageExtensions">
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="leftMargin">
           <number>9</number>
@@ -506,7 +648,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>356</width>
+              <width>362</width>
               <height>205</height>
              </rect>
             </property>
@@ -618,7 +760,10 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

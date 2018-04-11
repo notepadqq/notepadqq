@@ -1,0 +1,3 @@
+doc/* linguist-documentation
+src/editor/libs/* linguist-vendored
+src/extension_tools/node_modules/* linguist-vendored

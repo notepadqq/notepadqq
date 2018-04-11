@@ -1,15 +1,15 @@
 #include "include/notepadqq.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/Extensions/runtimesupport.h"
+#include "include/nqqsettings.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDir>
 #include <QCheckBox>
-#include <QSettings>
 
 const QString Notepadqq::version = POINTVERSION;
-const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/blob/master/CONTRIBUTORS.md";
-const QString Notepadqq::website = "http://notepadqq.altervista.org";
+const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/graphs/contributors";
+const QString Notepadqq::website = "https://notepadqq.com";
 bool Notepadqq::m_oldQt = false;
 
 QString Notepadqq::copyright()
@@ -19,8 +19,13 @@ QString Notepadqq::copyright()
 
 QString Notepadqq::appDataPath(QString fileName)
 {
+#ifdef Q_OS_MACX
+    QString def = QString("%1/../Resources/").
+            arg(qApp->applicationDirPath());
+#else
     QString def = QString("%1/../appdata/").
             arg(qApp->applicationDirPath());
+#endif
 
     if(!QDir(def).exists())
         def = QString("%1/../../share/%2/").
@@ -45,13 +50,13 @@ QString Notepadqq::extensionToolsPath()
 }
 
 QString Notepadqq::nodejsPath() {
-    QSettings s;
-    return s.value("Extensions/Runtime_Nodejs", "").toString();
+    NqqSettings& s = NqqSettings::getInstance();
+    return s.Extensions.getRuntimeNodeJS();
 }
 
 QString Notepadqq::npmPath() {
-    QSettings s;
-    return s.value("Extensions/Runtime_Npm", "").toString();
+    NqqSettings& s = NqqSettings::getInstance();
+    return s.Extensions.getRuntimeNpm();
 }
 
 QString Notepadqq::fileNameFromUrl(const QUrl &url)
@@ -82,6 +87,21 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
                                          .arg(QCoreApplication::applicationName()));
     parser->addOption(newWindowOption);
 
+    QCommandLineOption setLine({"l", "line"},
+                               QObject::tr("Open file at specified line."),
+                               "line",
+                               "0");
+    parser->addOption(setLine);
+
+    QCommandLineOption setCol({"c", "column"},
+                              QObject::tr("Open file at specified column."),
+                              "column",
+                              "0");
+    parser->addOption(setCol);
+
+    QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
+    parser->addOption(allowRootOption);
+
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),
                                  "[urls...]");
@@ -103,7 +123,7 @@ void Notepadqq::setOldQt(bool oldQt)
 
 void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
 {
-    QSettings settings;
+    NqqSettings& settings = NqqSettings::getInstance();
     QString dir = QDir::toNativeSeparators(QDir::homePath() + "/Qt");
     QString altDir = "/opt/Qt";
 
@@ -134,7 +154,7 @@ void Notepadqq::showQtVersionWarning(bool showCheckBox, QWidget *parent)
     msgBox.exec();
 
     if (showCheckBox) {
-        settings.setValue("checkQtVersionAtStartup", !chkDontShowAgain->isChecked());
+        settings.General.setCheckVersionAtStartup(!chkDontShowAgain->isChecked());
         chkDontShowAgain->deleteLater();
     }
 }

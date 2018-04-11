@@ -68,6 +68,34 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
                this, &EditorTabWidget::on_fileNameChanged);
 }
 
+
+QString EditorTabWidget::tabText(Editor* editor) const
+{
+    return editor->tabName();
+}
+
+QString EditorTabWidget::tabText(int index) const
+{
+    return editor(index)->tabName();
+}
+
+void EditorTabWidget::setTabText(int index, const QString& text)
+{
+    QTabWidget::setTabText(index, text);
+    editor(index)->setTabName(text);
+}
+
+
+void EditorTabWidget::setTabText(Editor* editor, const QString& text)
+{
+    int idx = indexOf(editor);
+
+    if(idx >= 0) {
+        QTabWidget::setTabText(idx, text);
+        editor->setTabName(text);
+    }
+}
+
 int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
 {
     return this->rawAddEditorTab(setFocus, QString(), source, tabIndex);
@@ -107,7 +135,8 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     }
 
     m_editorPointers.insert(editor.data(), editor);
-    int index = addTab(editor.data(), create ? title : oldText);
+    int index = addTab(editor.data(), QString());
+    setTabText(index, create ? title : oldText); // this also stores the tab's title in the Editor object
 
     if (!create) {
         source->disconnectEditorSignals(editor.data());
@@ -149,14 +178,14 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
 
     for (int i = 0; i < count(); i++) {
         Editor *editor = this->editor(i);
-        if (editor->fileName() == filename)
+        if (editor->filePath() == filename)
             return i;
     }
 
     return -1;
 }
 
-Editor *EditorTabWidget::editor(int index)
+Editor *EditorTabWidget::editor(int index) const
 {
     return dynamic_cast<Editor *>(this->widget(index));
 }
@@ -199,6 +228,14 @@ void EditorTabWidget::tabRemoved(int)
 Editor *EditorTabWidget::currentEditor()
 {
     return editor(currentIndex());
+}
+
+QString EditorTabWidget::tabTextFromEditor(Editor* ed)
+{
+    for(int i=0; i<count(); ++i)
+        if (editor(i) == ed) return tabText(i);
+
+    return QString();
 }
 
 qreal EditorTabWidget::zoomFactor() const

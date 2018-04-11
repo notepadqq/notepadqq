@@ -12,7 +12,12 @@ namespace EditorNS
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
-        QWebView::wheelEvent(ev);
+        if (ev->modifiers() & Qt::ShiftModifier) {
+            QWheelEvent hScroll (ev->pos(), ev->delta(), ev->buttons(), ev->modifiers(), Qt::Horizontal);
+	    QWebView::wheelEvent(&hScroll);
+        } else {
+            QWebView::wheelEvent(ev);
+        }
     }
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
@@ -36,4 +41,9 @@ namespace EditorNS
         }
     }
 
+    void CustomQWebView::focusInEvent(QFocusEvent* event)
+    {
+        QWebView::focusInEvent(event);
+        emit gotFocus();
+    }
 }

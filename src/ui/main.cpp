@@ -5,12 +5,14 @@
 #include "include/singleapplication.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/nqqsettings.h"
+#include "include/stats.h"
 #include <QObject>
 #include <QFile>
 #include <QtGlobal>
 #include <QTranslator>
 #include <QLocale>
 #include <QDateTime>
+#include <unistd.h> // For getuid
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
@@ -34,6 +36,10 @@ int main(int argc, char *argv[])
     // Initialize random number generator
     qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
 
+#if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
+    SingleApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    SingleApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
     SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
@@ -71,7 +77,13 @@ int main(int argc, char *argv[])
         settings.General.setLocalization("en");
     }
     // Check for "run-and-exit" options like -h or -v
-    Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
+    const auto parser = Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
+
+    // Check if we're running as root
+    if( getuid() == 0 && !parser->isSet("allow-root") ) {
+        qWarning() << QObject::tr("Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
+        return EXIT_SUCCESS;
+    }
 
     if (a.attachToOtherInstance()) {
         return EXIT_SUCCESS;
@@ -135,15 +147,17 @@ int main(int argc, char *argv[])
         Notepadqq::showQtVersionWarning(true, w);
     }
 
+    Stats::init();
+
     return a.exec();
 }
 
 void checkQtVersion()
 {
     QString runtimeVersion = qVersion();
-    if (runtimeVersion.startsWith("5.0") ||
-            runtimeVersion.startsWith("5.1") ||
-            runtimeVersion.startsWith("5.2")) {
+    int minorVersion = runtimeVersion.split(".")[1].toInt();
+    if (runtimeVersion.startsWith("5") &&
+            minorVersion <= 3) {
 
         Notepadqq::setOldQt(true);
     }

@@ -608,7 +608,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="614"/>
         <source>Word wrap</source>
-        <translation>Attiva a copo automatico</translation>
+        <translation>Attiva a capo automatico</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="622"/>

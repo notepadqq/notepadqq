@@ -1,10 +1,19 @@
 #!/bin/sh
 # Don't set `-e'!
 
-test -n "$QMAKE"    || QMAKE="qtchooser -run-tool=qmake -qt=5"
-test -n "$LRELEASE" || LRELEASE="qtchooser -run-tool=lrelease -qt=5"
-test -n "$MAKE"     || MAKE="make"
-test -n "$CXX"      || CXX="c++"
+# Basic environment variables
+test -n "$MAKE"      || MAKE="make"
+test -n "$CXX"       || CXX="c++"
+test -n "$QTCHOOSER" || QTCHOOSER="$(which qtchooser 2> /dev/null)"
+
+# Use qtchooser if we have it, otherwise use which
+if test -n "$QTCHOOSER"; then
+    test -n "$QMAKE"    || QMAKE="$QTCHOOSER -run-tool=qmake -qt=5"
+    test -n "$LRELEASE" || LRELEASE="$QTCHOOSER -run-tool=lrelease -qt=5"
+else
+    test -n "$QMAKE"    || QMAKE="$(which qmake-qt5 2>/dev/null || which qmake 2>/dev/null)"
+    test -n "$LRELEASE" || LRELEASE="$(which lrelease-qt5 2>/dev/null || which lrelease 2>/dev/null)"
+fi
 
 
 errorExit() {
@@ -27,6 +36,8 @@ Defaults for the options are specified in brackets.
 
   --prefix PREFIX,
   --prefix=PREFIX         install files in PREFIX [/usr/local]
+
+  -d, --debug             build with debugging symbols intact
 
   --fail-on-missing       return exit 1 if non-optional components are missing
 
@@ -71,6 +82,10 @@ while [ "$#" -ge 1 ]; do
         -h|--help)
         help
         exit 0
+        ;;
+        -d|--debug)
+        BUILDMODE="debug"
+        echo "WARNING: Building in debug mode!"
         ;;
         --prefix=*) # --prefix=<something>
         PREFIX="${key#*=}"
@@ -142,7 +157,6 @@ printf "checking whether compiled test program works... "
 rm -f test test.cpp
 
 check make "$MAKE" 1
-check git git
 check pkg-config pkg-config
 
 # check for libraries via pkg-config
@@ -156,22 +170,6 @@ if [ $(echo $?) -eq 0 ] ; then
     done
 fi
 
-# If we're in a git repo and git is installed, update the submodules.
-# If ".git" is not found, assume that the complete source
-# code is already available.
-which git 2>/dev/null 1>/dev/null
-if [ -d ".git" ] && [ $(echo $?) -eq 0 ]; then
-    git submodule init
-    git submodule update
-fi
-
-cmdir=src/editor/libs/codemirror
-cmerror="error: CodeMirror submodule not available at \`$cmdir'! Make sure you downloaded the source code using git as specified in README.md."
-# check if directory exists
-test -d "$cmdir" || errorExit "$cmerror" 1
-# check if directory is empty
-test "$(ls -A $cmdir)" || errorExit "$cmerror" 1
-
 if [ -f "Makefile" ]; then
     make distclean 2>/dev/null 1>/dev/null || true
 fi
@@ -184,4 +182,5 @@ QMAKE_CXX="$CXX" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
 LRELEASE="$LRELEASE" \
+CONFIG+="$BUILDMODE" \
 "$@" notepadqq.pro && echo "done" || errorExit "error!" 1

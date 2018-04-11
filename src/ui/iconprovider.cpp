@@ -1,4 +1,5 @@
 #include "include/iconprovider.h"
+#include <QDebug>
 
 IconProvider::IconProvider()
 {
@@ -30,6 +31,13 @@ QIcon IconProvider::fromTheme(const QString &name)
 
         icon.addFile(basePath.arg("scalable").arg(name).arg("svg"),
                      QSize(512, 512));
+
+        // Warn about missing icons.
+        // This works also as a workaround for this Qt bug in macOS: https://bugreports.qt.io/browse/QTBUG-58344
+        if (icon.pixmap(1, 1).isNull()) {
+            qDebug() << "Missing icon: " << name;
+            return QIcon();
+        }
 
         return icon;
     }

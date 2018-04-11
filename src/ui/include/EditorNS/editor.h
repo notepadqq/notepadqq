@@ -8,6 +8,11 @@
 #include <QWheelEvent>
 #include <QVBoxLayout>
 #include <QTextCodec>
+#include <QVariant>
+#include <functional>
+#include <future>
+
+class EditorTabWidget;
 
 namespace EditorNS
 {
@@ -156,13 +161,13 @@ namespace EditorNS
              * @brief Set the file name associated with this editor
              * @param filename full path of the file
              */
-        Q_INVOKABLE void setFileName(const QUrl &filename);
+        Q_INVOKABLE void setFilePath(const QUrl &filename);
 
         /**
              * @brief Get the file name associated with this editor
              * @return
              */
-        Q_INVOKABLE QUrl fileName() const;
+        Q_INVOKABLE QUrl filePath() const;
 
         Q_INVOKABLE bool fileOnDiskChanged() const;
         Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
@@ -190,7 +195,7 @@ namespace EditorNS
          * @param language Language id
          */
         Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE QString setLanguageFromFileName(QString fileName);
+        Q_INVOKABLE QString setLanguageFromFileName(QString filePath);
         Q_INVOKABLE QString setLanguageFromFileName();
         Q_INVOKABLE void setValue(const QString &value);
         Q_INVOKABLE QString value();
@@ -292,11 +297,27 @@ namespace EditorNS
         int lineCount();
 
     private:
+        friend class ::EditorTabWidget;
+
+        struct AsyncReply {
+            unsigned int id;
+            std::shared_ptr<std::promise<QVariant>> value;
+            std::function<void (QVariant)> callback;
+        };
+
+        std::list<AsyncReply> asyncReplies;
+
+        // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
+        // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
+        QString tabName() const;
+        void setTabName(const QString& name);
+
         static QQueue<Editor*> m_editorBuffer;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;
-        QUrl m_fileName = QUrl();
+        QUrl m_filePath = QUrl();
+        QString m_tabName;
         bool m_fileOnDiskChanged = false;
         bool m_loaded = false;
         QString m_endOfLineSequence = "\n";
@@ -340,8 +361,8 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
-        QVariant sendMessageWithResult(const QString &msg, const QVariant &data);
-        QVariant sendMessageWithResult(const QString &msg);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         void print(QPrinter *printer);
     };

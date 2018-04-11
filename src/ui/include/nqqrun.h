@@ -1,5 +1,6 @@
 #ifndef _NQQRUN_H_
 #define _NQQRUN_H_
+
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -33,9 +34,9 @@ class RunDelegate : public QStyledItemDelegate
 public:
     RunDelegate(QObject *parent = 0);
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
-            const QModelIndex &index) const Q_DECL_OVERRIDE;
+            const QModelIndex &index) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model,
-            const QStyleOptionViewItem &option, const QModelIndex &index);
+            const QStyleOptionViewItem &option, const QModelIndex &index) override;
 private:
     QIcon openIcon;
     QIcon rmIcon;

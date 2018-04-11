@@ -8,18 +8,37 @@ else
     GCC_DIR=gcc
 fi
 
+OPT_QT510=/opt/Qt/5.10/$GCC_DIR/lib
+OPT_QT59=/opt/Qt/5.9/$GCC_DIR/lib
+OPT_QT58=/opt/Qt/5.8/$GCC_DIR/lib
 OPT_QT57=/opt/Qt/5.7/$GCC_DIR/lib
 OPT_QT56=/opt/Qt/5.6/$GCC_DIR/lib
 OPT_QT55=/opt/Qt/5.5/$GCC_DIR/lib
 OPT_QT54=/opt/Qt/5.4/$GCC_DIR/lib
 OPT_QT53=/opt/Qt/5.3/$GCC_DIR/lib
+PERSONAL_QT510=~/Qt/5.10/$GCC_DIR/lib
+PERSONAL_QT59=~/Qt/5.9/$GCC_DIR/lib
+PERSONAL_QT58=~/Qt/5.8/$GCC_DIR/lib
 PERSONAL_QT57=~/Qt/5.7/$GCC_DIR/lib
 PERSONAL_QT56=~/Qt/5.6/$GCC_DIR/lib
 PERSONAL_QT55=~/Qt/5.5/$GCC_DIR/lib
 PERSONAL_QT54=~/Qt/5.4/$GCC_DIR/lib
 PERSONAL_QT53=~/Qt/5.3/$GCC_DIR/lib
 
-export LD_LIBRARY_PATH="$OPT_QT57:$PERSONAL_QT57:$OPT_QT56:$PERSONAL_QT56:$OPT_QT55:$PERSONAL_QT55:$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$OPT_QT510:$PERSONAL_QT510:$OPT_QT59:$PERSONAL_QT59:$OPT_QT58:$PERSONAL_QT58:$OPT_QT57:$PERSONAL_QT57:$OPT_QT56:$PERSONAL_QT56:$OPT_QT55:$PERSONAL_QT55:$OPT_QT54:$PERSONAL_QT54:$OPT_QT53:$PERSONAL_QT53:${LD_LIBRARY_PATH}"
+
+# In Ubuntu Unity, appmenu-qt5 will try to hide our menubar in order to show it as a global bar. 
+# This may sometimes fail and leave us with no menu bar. So we'll prevent appmenu-qt5 for doing this.
+if [ "$QT_QPA_PLATFORMTHEME" = "appmenu-qt5" ]; then
+    export QT_QPA_PLATFORMTHEME=""
+fi
+
+# For less common desktop environments, this doesn't get set at all which will cause QT to default to
+# using KDE's icon theme settings and cause a lot of missing icon errors.  Most enviornments that don't
+# set this preference GTK's settings... so go with that by default.
+if [ -z "$XDG_CURRENT_DESKTOP" ]; then
+    export XDG_CURRENT_DESKTOP="GNOME"
+fi
 
 if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
     # Nqq is installed: this script is in bin/
@@ -27,6 +46,10 @@ if [ -f "$SCRIPTPATH"/../lib/notepadqq/notepadqq-bin ]; then
 elif [ -f "$SCRIPTPATH"/../lib/notepadqq-bin ]; then
     # Nqq is not installed: this script is in bin/
     exec "$SCRIPTPATH"/../lib/notepadqq-bin "$@"
+elif [ -f "$SCRIPTPATH"/../../usr/libexec/notepadqq/notepadqq-bin ]; then
+    # Nqq installed via rpm package (Fedora):
+    # Script is installed in /usr/libexec/notepadqq folder for comply with FHS and run without changing much
+    exec "$SCRIPTPATH"/../../usr/libexec/notepadqq/notepadqq-bin "$@"
 else
     # Nqq is installed via deb package:
     # this script is in the same directory as the binary file.

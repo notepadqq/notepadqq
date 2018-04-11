@@ -1,3 +1,0 @@
-[submodule "src/editor/libs/codemirror"]
-	path = src/editor/libs/codemirror
-	url = https://github.com/notepadqq/CodeMirror.git

@@ -1,6 +1,7 @@
 #include <QString>
 #include <QtTest>
 #include "include/notepadqq.h"
+#include "nqqsettings.cpp"
 #include "notepadqq.cpp"
 
 class NotepadqqTest : public QObject
