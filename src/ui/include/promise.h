@@ -2,6 +2,7 @@
 #define PROMISE_H
 
 #include <QTimer>
+#include <memory>
 
 // Lightweight promise for async use *in the same thread*.
 
