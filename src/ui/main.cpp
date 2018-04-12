@@ -14,6 +14,10 @@
 #include <QDateTime>
 #include <unistd.h> // For getuid
 
+#include "include/Sessions/persistentcache.h"
+#include "include/Sessions/sessions.h"
+#include "include/Sessions/autosave.h"
+
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
 #endif
@@ -135,8 +139,23 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    MainWindow *w = new MainWindow(QApplication::arguments(), 0);
-    w->show();
+    // Check whether Nqq was properly shut down. If not, attempt to restore from the last autosave backup if enabled.
+    const bool wantToRestore = settings.General.getAutosaveInterval() > 0 && Autosave::detectImproperShutdown();
+    if (wantToRestore)
+        Autosave::restoreFromAutosave();
+
+    if (MainWindow::instances().isEmpty()) {
+        MainWindow* wnd = new MainWindow(QApplication::arguments(), nullptr);
+
+        if (!wantToRestore && settings.General.getRememberTabsOnExit()) {
+            Sessions::loadSession(wnd->getDocEngine(), wnd->topEditorContainer(), PersistentCache::cacheSessionPath());
+        }
+
+        wnd->show();
+    }
+
+    if (settings.General.getAutosaveInterval() > 0)
+        Autosave::enableAutosave(5000);
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
@@ -144,12 +163,15 @@ int main(int argc, char *argv[])
 #endif
 
     if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
-        Notepadqq::showQtVersionWarning(true, w);
+        Notepadqq::showQtVersionWarning(true, MainWindow::instances().back());
     }
 
     Stats::init();
 
-    return a.exec();
+    auto retVal = a.exec();
+
+    Autosave::clearAutosaveData(); // Clear autosave cache on proper shutdown
+    return retVal;
 }
 
 void checkQtVersion()
