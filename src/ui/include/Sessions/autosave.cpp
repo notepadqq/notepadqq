@@ -82,7 +82,7 @@ void Autosave::executeAutosave() {
     s_autosaveData = savedData;
 }
 
-void Autosave::restoreFromAutosave()
+bool Autosave::restoreFromAutosave()
 {
     const auto& autosavePath = PersistentCache::autosaveDirPath();
 
@@ -93,13 +93,16 @@ void Autosave::restoreFromAutosave()
     const auto& dirs = autosaveDir.entryInfoList();
 
     if (dirs.isEmpty())
-        return;
+        return false;
 
-    QMessageBox::question(nullptr,
+    auto ret = QMessageBox::question(nullptr,
                           "",
                           QObject::tr("It appears Notepadqq crashed. Do you want to restore the latest backup?"),
                           QMessageBox::Yes | QMessageBox::No,
                           QMessageBox::Yes);
+
+    if (ret == QMessageBox::No)
+        return false;
 
     for (const auto& dirInfo : dirs) {
         const auto sessPath = dirInfo.filePath() + "/window.xml";
@@ -109,6 +112,7 @@ void Autosave::restoreFromAutosave()
         wnd->show();
     }
 
+    return true;
 }
 
 bool Autosave::detectImproperShutdown()

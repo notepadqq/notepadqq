@@ -141,9 +141,13 @@ int main(int argc, char *argv[])
 
     // Check whether Nqq was properly shut down. If not, attempt to restore from the last autosave backup if enabled.
     const bool wantToRestore = settings.General.getAutosaveInterval() > 0 && Autosave::detectImproperShutdown();
-    if (wantToRestore)
-        Autosave::restoreFromAutosave();
+    if (wantToRestore) {
+        // Attempt to restore from backup. Don't forget to handle commandline arguments.
+        if (Autosave::restoreFromAutosave())
+            MainWindow::instances().back()->openCommandLineProvidedUrls(QDir::currentPath(), QApplication::arguments());
+    }
 
+    // If we don't have a window by now (e.g. through restoring backup), we'll create one normally.
     if (MainWindow::instances().isEmpty()) {
         MainWindow* wnd = new MainWindow(QApplication::arguments(), nullptr);
 

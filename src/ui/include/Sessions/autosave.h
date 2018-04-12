@@ -18,7 +18,7 @@ public:
      * @brief restoreFromAutosave Reads the autosave sessions and recreates
      *        all windows and their tabs.
      */
-    static void restoreFromAutosave();
+    static bool restoreFromAutosave();
 
     static bool detectImproperShutdown();
 
