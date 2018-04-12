@@ -63,6 +63,12 @@
   MT("import_trailing_comma",
      "[keyword import] {[def foo], [def bar],} [keyword from] [string 'baz']")
 
+  MT("import_dynamic",
+     "[keyword import]([string 'baz']).[property then]")
+
+  MT("import_dynamic",
+     "[keyword const] [def t] [operator =] [keyword import]([string 'baz']).[property then]")
+
   MT("const",
      "[keyword function] [def f]() {",
      "  [keyword const] [[ [def a], [def b] ]] [operator =] [[ [number 1], [number 2] ]];",
@@ -70,6 +76,9 @@
 
   MT("for/of",
      "[keyword for]([keyword let] [def of] [keyword of] [variable something]) {}");
+
+  MT("for await",
+     "[keyword for] [keyword await]([keyword let] [def of] [keyword of] [variable something]) {}");
 
   MT("generator",
      "[keyword function*] [def repeat]([def n]) {",
@@ -382,6 +391,25 @@
      "      [keyword throw] [keyword new] [variable Error]();",
      "  }",
      "}")
+
+  TS("type as variable",
+     "[variable type] [operator =] [variable x] [keyword as] [type Bar];");
+
+  TS("enum body",
+     "[keyword export] [keyword const] [keyword enum] [def CodeInspectionResultType] {",
+     "  [def ERROR] [operator =] [string 'problem_type_error'],",
+     "  [def WARNING] [operator =] [string 'problem_type_warning'],",
+     "  [def META],",
+     "}")
+
+  TS("parenthesized type",
+     "[keyword class] [def Foo] {",
+     "  [property x] [operator =] [keyword new] [variable A][operator <][type B], [type string][operator |](() [operator =>] [type void])[operator >]();",
+     "  [keyword private] [property bar]();",
+     "}")
+
+  TS("abstract class",
+     "[keyword export] [keyword abstract] [keyword class] [def Foo] {}")
 
   var jsonld_mode = CodeMirror.getMode(
     {indentUnit: 2},
