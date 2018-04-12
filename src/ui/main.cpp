@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     if (MainWindow::instances().isEmpty()) {
         MainWindow* wnd = new MainWindow(QApplication::arguments(), nullptr);
 
-        if (!wantToRestore && settings.General.getRememberTabsOnExit()) {
+        if (settings.General.getRememberTabsOnExit()) {
             Sessions::loadSession(wnd->getDocEngine(), wnd->topEditorContainer(), PersistentCache::cacheSessionPath());
         }
 
