@@ -6,4 +6,3 @@
 *.swp
 .idea
 *.iml
-/lib/codemirror.js
