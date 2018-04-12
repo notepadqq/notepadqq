@@ -116,21 +116,30 @@ bool Autosave::detectImproperShutdown()
     return QDir(PersistentCache::autosaveDirPath()).exists();
 }
 
-void Autosave::enableAutosave(int interval)
+void Autosave::enableAutosave(int intervalInSeconds)
 {
     if (s_autosaveTimer.isActive())
         return;
 
     clearAutosaveData();
 
-    QObject::connect(&Autosave::s_autosaveTimer, &QTimer::timeout, &Autosave::executeAutosave);
+    static bool initializer = false;
+    if (!initializer) {
+        // Only create this connection once. Since we're connecting to a plain old function we can't use
+        // Qt::UniqueConnection or QObject::disconnect() to make things easier.
+        initializer = true;
+        QObject::connect(&Autosave::s_autosaveTimer, &QTimer::timeout, &Autosave::executeAutosave);
+    }
 
-    s_autosaveTimer.setInterval(interval);
-    s_autosaveTimer.start(interval);
+    s_autosaveTimer.setInterval(intervalInSeconds * 1000);
+    s_autosaveTimer.start(intervalInSeconds * 1000);
 }
 
 void Autosave::disableAutosave()
 {
+    if (!s_autosaveTimer.isActive())
+        return;
+
     s_autosaveTimer.stop();
     clearAutosaveData();
 }

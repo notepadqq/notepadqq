@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     }
 
     if (settings.General.getAutosaveInterval() > 0)
-        Autosave::enableAutosave(5000);
+        Autosave::enableAutosave(settings.General.getAutosaveInterval());
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();

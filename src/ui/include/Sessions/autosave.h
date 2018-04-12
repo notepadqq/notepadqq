@@ -25,7 +25,7 @@ public:
     /**
      * @brief enableAutosave Starts periodic autosaving.
      */
-    static void enableAutosave(int interval);
+    static void enableAutosave(int intervalInSeconds);
 
     /**
      * @brief disableAutosave Stops periodic autosaving.
