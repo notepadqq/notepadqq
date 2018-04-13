@@ -137,6 +137,7 @@ void BackupService::enableAutosave(int intervalInSeconds)
         QObject::connect(&BackupService::s_autosaveTimer, &QTimer::timeout, &BackupService::executeBackup);
     }
 
+    s_autosaveTimer.setTimerType(Qt::VeryCoarseTimer);
     s_autosaveTimer.setInterval(intervalInSeconds * 1000);
     s_autosaveTimer.start(intervalInSeconds * 1000);
 }
