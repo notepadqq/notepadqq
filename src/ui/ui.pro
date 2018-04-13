@@ -105,7 +105,7 @@ SOURCES += main.cpp\
     Search/searchobjects.cpp \
     Search/searchinstance.cpp \
     stats.cpp \
-    include/Sessions/autosave.cpp
+    Sessions/backupservice.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -152,7 +152,7 @@ HEADERS  += include/mainwindow.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
     include/stats.h \
-    include/Sessions/autosave.h
+    include/Sessions/backupservice.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \

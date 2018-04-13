@@ -16,7 +16,7 @@
 
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
-#include "include/Sessions/autosave.h"
+#include "include/Sessions/backupservice.h"
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>
