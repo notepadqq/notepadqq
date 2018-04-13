@@ -30,6 +30,7 @@ void Stats::init()
 
     // Start a timer that will check very soon if we need to send stats.
     QTimer* t = new QTimer();
+    t->setTimerType(Qt::VeryCoarseTimer);
     QObject::connect(t, &QTimer::timeout, [t](){
         Stats::check();
         t->deleteLater();
@@ -44,6 +45,7 @@ void Stats::init()
     // it's time to transmit new information.
     if (!m_longTimerRunning) {
         QTimer* tlong = new QTimer();
+        tlong->setTimerType(Qt::VeryCoarseTimer);
         QObject::connect(tlong, &QTimer::timeout, [t](){
             Stats::check();
         });
