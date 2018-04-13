@@ -86,7 +86,7 @@ bool BackupService::restoreFromBackup()
 
     auto ret = QMessageBox::question(nullptr,
                           "",
-                          QObject::tr("It appears Notepadqq crashed. Do you want to restore the latest backup?"),
+                          QObject::tr("Notepadqq was not closed properly. Do you want to restore unsaved changes?"),
                           QMessageBox::Yes | QMessageBox::No,
                           QMessageBox::Yes);
 
