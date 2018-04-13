@@ -7,12 +7,12 @@
 #include "include/mainwindow.h"
 
 QTimer BackupService::s_autosaveTimer;
-std::vector<BackupService::WindowData> BackupService::s_backupWindowData;
+std::set<BackupService::WindowData> BackupService::s_backupWindowData;
 
 void BackupService::executeBackup() {
     const auto& backupPath = PersistentCache::backupDirPath();
 
-    std::vector<WindowData> newData, unionOfData, savedData;
+    std::set<WindowData> newData, savedData, temp;
 
     // Fill newData with up-to-date window data
     for (const auto& wnd : MainWindow::instances()) {
@@ -22,55 +22,62 @@ void BackupService::executeBackup() {
             wd.editors.push_back( std::make_pair(ed, ed->getHistoryGeneration()) );
             return true;
         });
-        newData.push_back(std::move(wd));
+        newData.insert(std::move(wd));
     }
 
-    // Set unionOfData to set union of old and new window data
-    std::set_union(s_backupWindowData.begin(), s_backupWindowData.end(),
-                   newData.begin(), newData.end(),
-                   std::back_inserter(unionOfData));
+    // Find all closed windows and remove their backups
+    std::set_difference(s_backupWindowData.begin(), s_backupWindowData.end(),
+                        newData.begin(), newData.end(),
+                        std::inserter(temp, temp.end()));
 
-    for (const auto& item : unionOfData) {
-        const auto oldIter = std::find(s_backupWindowData.begin(), s_backupWindowData.end(), item);
-        const auto newIter = std::find(newData.begin(), newData.end(), item);
-
-        const bool isInOld = oldIter != s_backupWindowData.end();
-        const bool isInNew = newIter != newData.end();
-
-        if (!isInNew) {
-            // These windows have been closed by the user. Remove their session caches.
-            const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
-            const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
-            QDir(cachePath).removeRecursively();
-            continue;
-        }
-
-        if (isInOld && oldIter->isFullyEqual(*newIter)) {
-            // These windows are unchanged. Don't save them
-            savedData.push_back(*newIter);
-            continue;
-        }
-
-        // If we reach this point, the current item needs to be backed up. This means that:
-        // 1. the window is either new (!isInOld && isInNew), or
-        // 2. the window contents are changed (isInOld && !isFullyEqual(new,old)).
-
-        // Save this MainWindow as a session inside the autosave path.
-        // MainWindow's address is used to have a unique path name.
-        MainWindow* wnd = item.ptr;
-        const auto ptrToInt = reinterpret_cast<uintptr_t>(wnd);
+    for (const auto& item : temp) {
+        const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
         const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
-        const QString sessPath = backupPath + QString("/window_%1/window.xml").arg(ptrToInt);
+        QDir(cachePath).removeRecursively();
+    }
 
-        bool success = Sessions::saveSession(wnd->getDocEngine(), wnd->topEditorContainer(), sessPath, cachePath);
+    // Find all newly created windows and create their backups
+    temp.clear();
+    std::set_difference(newData.begin(), newData.end(),
+                        s_backupWindowData.begin(), s_backupWindowData.end(),
+                        std::inserter(temp, temp.end()));
 
-        // If the session couldn't be saved we won't add this to the saved windows, since it hasn't been.
-        // Another save attempt will be made when the autosave timer times out next time.
-        if(success)
-            savedData.push_back(*newIter);
+    for (const auto& item : temp) {
+        if (writeBackup(item.ptr))
+            savedData.insert(item);
+    }
+
+    // Find all persisting windows and re-check whether to save them
+    temp.clear();
+    std::set_intersection(newData.begin(), newData.end(),
+                          s_backupWindowData.begin(), s_backupWindowData.end(),
+                          std::inserter(temp, temp.end()));
+
+    for (const auto& oldItem : temp) { // oldItem is always from the first set (newData)
+        const auto& newItem = *newData.find(oldItem);
+
+        if (oldItem.isFullyEqual(newItem)) {
+            savedData.insert(newItem);
+            continue;
+        }
+
+        if (writeBackup(newItem.ptr))
+            savedData.insert(newItem);
     }
 
     s_backupWindowData = savedData;
+}
+
+bool BackupService::writeBackup(MainWindow* wnd)
+{
+    // Save this MainWindow as a session inside the autosave path.
+    // MainWindow's address is used to have a unique path name.
+    const auto& backupPath = PersistentCache::backupDirPath();
+    const auto ptrToInt = reinterpret_cast<uintptr_t>(wnd);
+    const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
+    const QString sessPath = backupPath + QString("/window_%1/window.xml").arg(ptrToInt);
+
+    return Sessions::saveSession(wnd->getDocEngine(), wnd->topEditorContainer(), sessPath, cachePath);
 }
 
 bool BackupService::restoreFromBackup()

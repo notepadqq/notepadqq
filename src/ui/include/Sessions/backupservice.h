@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <QString>
 #include <tuple>
-#include <vector>
+#include <set>
 
 namespace EditorNS{
 class Editor;
@@ -63,13 +63,22 @@ private:
         bool isFullyEqual(const WindowData& other) const { return ptr == other.ptr && editors == other.editors; }
     };
 
-    static std::vector<WindowData> s_backupWindowData;
+    /**
+     * @brief s_backupWindowData contains the WindowData at the time of the last backup.
+     */
+    static std::set<WindowData> s_backupWindowData;
 
     /**
      * @brief executeAutosave Updates the data inside s_autosaveData and executes saveSession
      *        for every open MainWindow that needs it.
      */
     static void executeBackup();
+
+    /**
+     * @brief writeBackup Writes a backup of the given MainWindow into a unique location inside the backupCache
+     * @return True if the backup was created successfully
+     */
+    static bool writeBackup(MainWindow* wnd);
 };
 
 #endif // AUTOSAVE_H
