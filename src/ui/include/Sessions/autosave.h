@@ -20,6 +20,10 @@ public:
      */
     static bool restoreFromAutosave();
 
+    /**
+     * @brief detectImproperShutdown
+     * @return True if the system suspects that Nqq has crashed. This means backup data was found.
+     */
     static bool detectImproperShutdown();
 
     /**

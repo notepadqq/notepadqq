@@ -42,7 +42,7 @@ void Autosave::executeAutosave() {
         const bool isInOld = oldIter != s_autosaveData.end();
         const bool isInNew = newIter != newData.end();
 
-        if (isInOld && !isInNew) {
+        if (!isInNew) {
             // These windows have been closed by the user. Remove their session caches.
             const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
             const QString cachePath = autosavePath + QString("/window_%1").arg(ptrToInt);
@@ -52,7 +52,7 @@ void Autosave::executeAutosave() {
             continue;
         }
 
-        if (isInOld && isInOld && oldIter->isFullyEqual(*newIter)) {
+        if (isInOld && oldIter->isFullyEqual(*newIter)) {
             // These windows are unchanged. Don't save them
             qDebug() << item.ptr << "is unchanged. Not doing anything.";
             savedData.push_back(*newIter);
@@ -155,4 +155,6 @@ void Autosave::clearAutosaveData()
 
     if (autosaveDir.exists())
         autosaveDir.removeRecursively();
+
+    s_autosaveData.clear();
 }
