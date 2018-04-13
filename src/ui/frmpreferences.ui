@@ -136,8 +136,11 @@
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QCheckBox" name="chkAutosave">
+             <property name="toolTip">
+              <string>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</string>
+             </property>
              <property name="text">
-              <string>Backup your documents every</string>
+              <string>Backup open documents every</string>
              </property>
             </widget>
            </item>
