@@ -10,7 +10,7 @@ QTimer BackupService::s_autosaveTimer;
 std::vector<BackupService::WindowData> BackupService::s_backupWindowData;
 
 void BackupService::executeBackup() {
-    const auto& autosavePath = PersistentCache::autosaveDirPath();
+    const auto& autosavePath = PersistentCache::backupDirPath();
 
     std::vector<WindowData> newData, unionOfData, savedData;
 
@@ -30,11 +30,6 @@ void BackupService::executeBackup() {
                    newData.begin(), newData.end(),
                    std::back_inserter(unionOfData));
 
-    qDebug() << QString("Running Autosave. %1 old windows, %2 new windows, %3 union size.")
-                .arg(s_backupWindowData.size())
-                .arg(newData.size())
-                .arg(unionOfData.size());
-
     for (const auto& item : unionOfData) {
         const auto oldIter = std::find(s_backupWindowData.begin(), s_backupWindowData.end(), item);
         const auto newIter = std::find(newData.begin(), newData.end(), item);
@@ -47,22 +42,16 @@ void BackupService::executeBackup() {
             const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
             const QString cachePath = autosavePath + QString("/window_%1").arg(ptrToInt);
             QDir(cachePath).removeRecursively();
-
-            qDebug() << "One item refers to a closed window. Cache removed.";
             continue;
         }
 
         if (isInOld && oldIter->isFullyEqual(*newIter)) {
             // These windows are unchanged. Don't save them
-            qDebug() << item.ptr << "is unchanged. Not doing anything.";
             savedData.push_back(*newIter);
             continue;
         }
 
-        if (isInOld)
-            qDebug() << item.ptr << "has changed. Saving.";
-        else
-            qDebug() << item.ptr << "is newly opened. Saving.";
+        // At this point the window is either new (!isInOld && isInNew) or changed (isInOld && !isFullyEqual(new,old)).
 
         // Save this MainWindow as a session inside the autosave path.
         // MainWindow's address is used to have a unique path name.
@@ -84,7 +73,7 @@ void BackupService::executeBackup() {
 
 bool BackupService::restoreFromBackup()
 {
-    const auto& autosavePath = PersistentCache::autosaveDirPath();
+    const auto& autosavePath = PersistentCache::backupDirPath();
 
     // Each window is saved as a separate session inside a subdirectory.
     // Grab all subdirs and load the session files inside.
@@ -117,7 +106,7 @@ bool BackupService::restoreFromBackup()
 
 bool BackupService::detectImproperShutdown()
 {
-    return QDir(PersistentCache::autosaveDirPath()).exists();
+    return QDir(PersistentCache::backupDirPath()).exists();
 }
 
 void BackupService::enableAutosave(int intervalInSeconds)
@@ -150,7 +139,7 @@ void BackupService::disableAutosave()
 
 void BackupService::clearBackupData()
 {
-    const auto& autosavePath = PersistentCache::autosaveDirPath();
+    const auto& autosavePath = PersistentCache::backupDirPath();
     QDir autosaveDir(autosavePath);
 
     if (autosaveDir.exists())

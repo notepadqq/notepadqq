@@ -18,9 +18,9 @@ public:
     static QString cacheDirPath();
 
     /**
-    * @brief Returns the path to the directory that contains the autosave cache.
+    * @brief Returns the path to the directory that contains the backup cache.
     */
-    static QString autosaveDirPath();
+    static QString backupDirPath();
 
     /**
      * @brief Generates a QUrl to a file within the a directory.

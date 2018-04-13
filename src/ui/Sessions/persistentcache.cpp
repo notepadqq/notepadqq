@@ -11,8 +11,8 @@ QString PersistentCache::cacheDirPath() {
     return tabpath;
 }
 
-QString PersistentCache::autosaveDirPath() {
-    static QString path = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/autosaveCache");
+QString PersistentCache::backupDirPath() {
+    static QString path = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/backupCache");
     return path;
 }
 
