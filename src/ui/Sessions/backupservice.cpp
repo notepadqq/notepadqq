@@ -43,6 +43,8 @@ void BackupService::executeBackup() {
                         std::inserter(temp, temp.end()));
 
     for (const auto& item : temp) {
+        // If writeBackup() fails we don't mark this window as saved. Another attempt at saving will be made
+        // next time executeBackup() runs.
         if (writeBackup(item.ptr))
             savedData.insert(item);
     }
@@ -56,11 +58,13 @@ void BackupService::executeBackup() {
     for (const auto& oldItem : temp) { // oldItem is always from the first set (newData)
         const auto& newItem = *newData.find(oldItem);
 
+        // If oldItem and newItem are fully equal, their contents haven't changed and need not be backed up...
         if (oldItem.isFullyEqual(newItem)) {
             savedData.insert(newItem);
             continue;
         }
 
+        // ...otherwise we attempt saving the backup
         if (writeBackup(newItem.ptr))
             savedData.insert(newItem);
     }
