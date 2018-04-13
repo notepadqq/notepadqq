@@ -45,6 +45,7 @@ public:
 
 private:
     static QTimer s_autosaveTimer;
+    static bool s_autosaveEnabled;
 
     /**
      * @brief The WindowData struct contains a list Editor*'s and the history generation

@@ -1,3 +1,5 @@
+#include <QApplication>
+
 #include <set>
 
 #include "include/Sessions/backupservice.h"
@@ -7,6 +9,7 @@
 #include "include/mainwindow.h"
 
 QTimer BackupService::s_autosaveTimer;
+bool BackupService::s_autosaveEnabled = false;
 std::set<BackupService::WindowData> BackupService::s_backupWindowData;
 
 void BackupService::executeBackup() {
@@ -124,7 +127,7 @@ bool BackupService::detectImproperShutdown()
 
 void BackupService::enableAutosave(int intervalInSeconds)
 {
-    if (s_autosaveTimer.isActive())
+    if (s_autosaveEnabled)
         return;
 
     clearBackupData();
@@ -135,18 +138,31 @@ void BackupService::enableAutosave(int intervalInSeconds)
         // Qt::UniqueConnection or QObject::disconnect() to make things easier.
         initializer = true;
         QObject::connect(&BackupService::s_autosaveTimer, &QTimer::timeout, &BackupService::executeBackup);
+
+        // Disable the autosave timer when the application goes out of focus.
+        QObject::connect(qApp, &QGuiApplication::applicationStateChanged, [](Qt::ApplicationState state) {
+            if (!s_autosaveEnabled) return;
+
+            switch (state) {
+            case Qt::ApplicationInactive: s_autosaveTimer.stop(); break;
+            case Qt::ApplicationActive: s_autosaveTimer.start(); break;
+            default: break;
+            }
+        });
     }
 
+    s_autosaveEnabled = true;
     s_autosaveTimer.setTimerType(Qt::VeryCoarseTimer);
     s_autosaveTimer.setInterval(intervalInSeconds * 1000);
-    s_autosaveTimer.start(intervalInSeconds * 1000);
+    s_autosaveTimer.start();
 }
 
 void BackupService::disableAutosave()
 {
-    if (!s_autosaveTimer.isActive())
+    if (!s_autosaveEnabled)
         return;
 
+    s_autosaveEnabled = false;
     s_autosaveTimer.stop();
     clearBackupData();
 }
