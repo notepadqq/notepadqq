@@ -51,11 +51,11 @@ void BackupService::executeBackup() {
 
     // Find all persisting windows and re-check whether to save them
     temp.clear();
-    std::set_intersection(newData.begin(), newData.end(),
-                          s_backupWindowData.begin(), s_backupWindowData.end(),
+    std::set_intersection(s_backupWindowData.begin(), s_backupWindowData.end(),
+                          newData.begin(), newData.end(),
                           std::inserter(temp, temp.end()));
 
-    for (const auto& oldItem : temp) { // oldItem is always from the first set (newData)
+    for (const auto& oldItem : temp) { // oldItem is always from the first set (s_backupWindowData)
         const auto& newItem = *newData.find(oldItem);
 
         // If oldItem and newItem are fully equal, their contents haven't changed and need not be backed up...
