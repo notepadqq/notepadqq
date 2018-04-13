@@ -51,7 +51,9 @@ void BackupService::executeBackup() {
             continue;
         }
 
-        // At this point the window is either new (!isInOld && isInNew) or changed (isInOld && !isFullyEqual(new,old)).
+        // If we reach this point, the current item needs to be backed up. This means that:
+        // 1. the window is either new (!isInOld && isInNew), or
+        // 2. the window contents are changed (isInOld && !isFullyEqual(new,old)).
 
         // Save this MainWindow as a session inside the autosave path.
         // MainWindow's address is used to have a unique path name.
