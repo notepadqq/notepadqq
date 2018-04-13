@@ -11,7 +11,11 @@ class Editor;
 }
 class MainWindow;
 
-
+/**
+ * @brief The BackupService class handles automatic saving of currently open windows, tabs, and documents.
+ *        When this system is used, clearBackupData() should be called at program shutdown.
+ *        If, on program start, there is backup data to be found, the system will assume an improper shutdown.
+ */
 class BackupService {
 public:
 
@@ -52,6 +56,7 @@ private:
         MainWindow* ptr;
         std::vector<std::pair<EditorNS::Editor*, int>> editors;
 
+        // Note this is only a shallow comparison. Do deep compares using isFullyEqual().
         bool operator==(const WindowData& other) const { return ptr == other.ptr; }
         bool operator<(const WindowData& other) const { return ptr < other.ptr; }
 
