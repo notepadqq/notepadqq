@@ -10,7 +10,7 @@ QTimer BackupService::s_autosaveTimer;
 std::vector<BackupService::WindowData> BackupService::s_backupWindowData;
 
 void BackupService::executeBackup() {
-    const auto& autosavePath = PersistentCache::backupDirPath();
+    const auto& backupPath = PersistentCache::backupDirPath();
 
     std::vector<WindowData> newData, unionOfData, savedData;
 
@@ -40,7 +40,7 @@ void BackupService::executeBackup() {
         if (!isInNew) {
             // These windows have been closed by the user. Remove their session caches.
             const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
-            const QString cachePath = autosavePath + QString("/window_%1").arg(ptrToInt);
+            const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
             QDir(cachePath).removeRecursively();
             continue;
         }
@@ -57,8 +57,8 @@ void BackupService::executeBackup() {
         // MainWindow's address is used to have a unique path name.
         MainWindow* wnd = item.ptr;
         const auto ptrToInt = reinterpret_cast<uintptr_t>(wnd);
-        const QString cachePath = autosavePath + QString("/window_%1").arg(ptrToInt);
-        const QString sessPath = autosavePath + QString("/window_%1/window.xml").arg(ptrToInt);
+        const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
+        const QString sessPath = backupPath + QString("/window_%1/window.xml").arg(ptrToInt);
 
         bool success = Sessions::saveSession(wnd->getDocEngine(), wnd->topEditorContainer(), sessPath, cachePath);
 
@@ -73,11 +73,11 @@ void BackupService::executeBackup() {
 
 bool BackupService::restoreFromBackup()
 {
-    const auto& autosavePath = PersistentCache::backupDirPath();
+    const auto& backupPath = PersistentCache::backupDirPath();
 
     // Each window is saved as a separate session inside a subdirectory.
     // Grab all subdirs and load the session files inside.
-    QDir autosaveDir(autosavePath);
+    QDir autosaveDir(backupPath);
     autosaveDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     const auto& dirs = autosaveDir.entryInfoList();
 
@@ -139,11 +139,11 @@ void BackupService::disableAutosave()
 
 void BackupService::clearBackupData()
 {
-    const auto& autosavePath = PersistentCache::backupDirPath();
-    QDir autosaveDir(autosavePath);
+    const auto& backupPath = PersistentCache::backupDirPath();
+    QDir backupDir(backupPath);
 
-    if (autosaveDir.exists())
-        autosaveDir.removeRecursively();
+    if (backupDir.exists())
+        backupDir.removeRecursively();
 
     s_backupWindowData.clear();
 }
