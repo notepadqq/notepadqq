@@ -6,10 +6,10 @@
 
 #include "include/mainwindow.h"
 
-QTimer Autosave::s_autosaveTimer;
-std::vector<Autosave::WindowData> Autosave::s_autosaveData;
+QTimer BackupService::s_autosaveTimer;
+std::vector<BackupService::WindowData> BackupService::s_backupWindowData;
 
-void Autosave::executeAutosave() {
+void BackupService::executeBackup() {
     const auto& autosavePath = PersistentCache::autosaveDirPath();
 
     std::vector<WindowData> newData, unionOfData, savedData;
@@ -26,20 +26,20 @@ void Autosave::executeAutosave() {
     }
 
     // Set unionOfData to set union of old and new window data
-    std::set_union(s_autosaveData.begin(), s_autosaveData.end(),
+    std::set_union(s_backupWindowData.begin(), s_backupWindowData.end(),
                    newData.begin(), newData.end(),
                    std::back_inserter(unionOfData));
 
     qDebug() << QString("Running Autosave. %1 old windows, %2 new windows, %3 union size.")
-                .arg(s_autosaveData.size())
+                .arg(s_backupWindowData.size())
                 .arg(newData.size())
                 .arg(unionOfData.size());
 
     for (const auto& item : unionOfData) {
-        const auto oldIter = std::find(s_autosaveData.begin(), s_autosaveData.end(), item);
+        const auto oldIter = std::find(s_backupWindowData.begin(), s_backupWindowData.end(), item);
         const auto newIter = std::find(newData.begin(), newData.end(), item);
 
-        const bool isInOld = oldIter != s_autosaveData.end();
+        const bool isInOld = oldIter != s_backupWindowData.end();
         const bool isInNew = newIter != newData.end();
 
         if (!isInNew) {
@@ -79,10 +79,10 @@ void Autosave::executeAutosave() {
             savedData.push_back(*newIter);
     }
 
-    s_autosaveData = savedData;
+    s_backupWindowData = savedData;
 }
 
-bool Autosave::restoreFromAutosave()
+bool BackupService::restoreFromBackup()
 {
     const auto& autosavePath = PersistentCache::autosaveDirPath();
 
@@ -115,40 +115,40 @@ bool Autosave::restoreFromAutosave()
     return true;
 }
 
-bool Autosave::detectImproperShutdown()
+bool BackupService::detectImproperShutdown()
 {
     return QDir(PersistentCache::autosaveDirPath()).exists();
 }
 
-void Autosave::enableAutosave(int intervalInSeconds)
+void BackupService::enableAutosave(int intervalInSeconds)
 {
     if (s_autosaveTimer.isActive())
         return;
 
-    clearAutosaveData();
+    clearBackupData();
 
     static bool initializer = false;
     if (!initializer) {
         // Only create this connection once. Since we're connecting to a plain old function we can't use
         // Qt::UniqueConnection or QObject::disconnect() to make things easier.
         initializer = true;
-        QObject::connect(&Autosave::s_autosaveTimer, &QTimer::timeout, &Autosave::executeAutosave);
+        QObject::connect(&BackupService::s_autosaveTimer, &QTimer::timeout, &BackupService::executeBackup);
     }
 
     s_autosaveTimer.setInterval(intervalInSeconds * 1000);
     s_autosaveTimer.start(intervalInSeconds * 1000);
 }
 
-void Autosave::disableAutosave()
+void BackupService::disableAutosave()
 {
     if (!s_autosaveTimer.isActive())
         return;
 
     s_autosaveTimer.stop();
-    clearAutosaveData();
+    clearBackupData();
 }
 
-void Autosave::clearAutosaveData()
+void BackupService::clearBackupData()
 {
     const auto& autosavePath = PersistentCache::autosaveDirPath();
     QDir autosaveDir(autosavePath);
@@ -156,5 +156,5 @@ void Autosave::clearAutosaveData()
     if (autosaveDir.exists())
         autosaveDir.removeRecursively();
 
-    s_autosaveData.clear();
+    s_backupWindowData.clear();
 }

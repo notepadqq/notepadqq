@@ -450,9 +450,9 @@ bool frmPreferences::applySettings()
 
 
     if (autosaveInSeconds > 0)
-        Autosave::enableAutosave(autosaveInSeconds);
+        BackupService::enableAutosave(autosaveInSeconds);
     else
-        Autosave::disableAutosave();
+        BackupService::disableAutosave();
 
     return true;
 }

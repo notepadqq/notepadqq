@@ -140,10 +140,10 @@ int main(int argc, char *argv[])
     }
 
     // Check whether Nqq was properly shut down. If not, attempt to restore from the last autosave backup if enabled.
-    const bool wantToRestore = settings.General.getAutosaveInterval() > 0 && Autosave::detectImproperShutdown();
+    const bool wantToRestore = settings.General.getAutosaveInterval() > 0 && BackupService::detectImproperShutdown();
     if (wantToRestore) {
         // Attempt to restore from backup. Don't forget to handle commandline arguments.
-        if (Autosave::restoreFromAutosave())
+        if (BackupService::restoreFromBackup())
             MainWindow::instances().back()->openCommandLineProvidedUrls(QDir::currentPath(), QApplication::arguments());
     }
 
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
     }
 
     if (settings.General.getAutosaveInterval() > 0)
-        Autosave::enableAutosave(settings.General.getAutosaveInterval());
+        BackupService::enableAutosave(settings.General.getAutosaveInterval());
 
 #ifdef QT_DEBUG
     qint64 __aet_elapsed = __aet_timer.nsecsElapsed();
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 
     auto retVal = a.exec();
 
-    Autosave::clearAutosaveData(); // Clear autosave cache on proper shutdown
+    BackupService::clearBackupData(); // Clear autosave cache on proper shutdown
     return retVal;
 }
 

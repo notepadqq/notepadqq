@@ -11,14 +11,15 @@ class Editor;
 }
 class MainWindow;
 
-class Autosave {
+
+class BackupService {
 public:
 
     /**
      * @brief restoreFromAutosave Reads the autosave sessions and recreates
      *        all windows and their tabs.
      */
-    static bool restoreFromAutosave();
+    static bool restoreFromBackup();
 
     /**
      * @brief detectImproperShutdown
@@ -36,7 +37,7 @@ public:
      */
     static void disableAutosave();
 
-    static void clearAutosaveData();
+    static void clearBackupData();
 
 private:
     static QTimer s_autosaveTimer;
@@ -57,13 +58,13 @@ private:
         bool isFullyEqual(const WindowData& other) const { return ptr == other.ptr && editors == other.editors; }
     };
 
-    static std::vector<WindowData> s_autosaveData;
+    static std::vector<WindowData> s_backupWindowData;
 
     /**
      * @brief executeAutosave Updates the data inside s_autosaveData and executes saveSession
      *        for every open MainWindow that needs it.
      */
-    static void executeAutosave();
+    static void executeBackup();
 };
 
 #endif // AUTOSAVE_H
