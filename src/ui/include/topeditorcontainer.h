@@ -49,6 +49,11 @@ public:
 
     std::vector<Editor*> getOpenEditors();
 
+    /**
+     * @brief Returns the number of editors in all of the TopEditorWidget's children.
+     */
+    int getNumEditors();
+
 private:
     EditorTabWidget *m_currentTabWidget;
 

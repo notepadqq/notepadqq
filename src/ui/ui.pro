@@ -104,7 +104,8 @@ SOURCES += main.cpp\
     Search/filereplacer.cpp \
     Search/searchobjects.cpp \
     Search/searchinstance.cpp \
-    stats.cpp
+    stats.cpp \
+    Sessions/backupservice.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -151,7 +152,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
     include/promise.h \
-    include/stats.h
+    include/stats.h \
+    include/Sessions/backupservice.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -180,6 +182,7 @@ TRANSLATIONS = \
     ../translations/notepadqq_ru.ts \
     ../translations/notepadqq_sl.ts \
     ../translations/notepadqq_sv.ts \
+    ../translations/notepadqq_uk.ts \
     ../translations/notepadqq_zh.ts 
 
 QMAKE_CLEAN += \
@@ -194,6 +197,7 @@ QMAKE_CLEAN += \
     ../translations/notepadqq_ru.qm \
     ../translations/notepadqq_sl.qm \
     ../translations/notepadqq_sv.qm \
+    ../translations/notepadqq_uk.qm \
     ../translations/notepadqq_zh.qm
 
 

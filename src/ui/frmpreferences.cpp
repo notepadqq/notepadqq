@@ -6,6 +6,7 @@
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
 #include "include/keygrabber.h"
+#include "include/Sessions/backupservice.h"
 #include "include/stats.h"
 #include <QFileDialog>
 #include <QSortFilterProxyModel>
@@ -49,6 +50,9 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
     ui->chkExitOnLastTabClose->setChecked(m_settings.General.getExitOnLastTabClose());
+
+    ui->chkAutosave->setChecked(m_settings.General.getAutosaveInterval() > 0);
+    ui->sbAutosaveInterval->setValue(m_settings.General.getAutosaveInterval());
 
     loadLanguages();
     loadAppearanceTab();
@@ -390,6 +394,10 @@ bool frmPreferences::applySettings()
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
     m_settings.General.setExitOnLastTabClose(ui->chkExitOnLastTabClose->isChecked());
 
+    const int autosaveInSeconds = ui->chkAutosave->isChecked() ?
+                                     ui->sbAutosaveInterval->value() : 0;
+    m_settings.General.setAutosaveInterval(autosaveInSeconds);
+
     saveLanguages();
     saveAppearanceTab();
     saveTranslation();
@@ -433,6 +441,12 @@ bool frmPreferences::applySettings()
 
     // Check if we need to send stats
     Stats::init();
+
+
+    if (autosaveInSeconds > 0)
+        BackupService::enableAutosave(autosaveInSeconds);
+    else
+        BackupService::disableAutosave();
 
     return true;
 }
@@ -677,4 +691,9 @@ void frmPreferences::on_btnToolbarReset_clicked()
             ui->listToolbarCurrent->addItem(widgetItem);
         }
     }
+}
+
+void frmPreferences::on_chkAutosave_toggled(bool checked)
+{
+    ui->sbAutosaveInterval->setEnabled(checked);
 }

@@ -254,6 +254,12 @@ namespace EditorNS
         sendMessage("C_CMD_MARK_DIRTY");
     }
 
+    int EditorNS::Editor::getHistoryGeneration()
+    {
+        return asyncSendMessageWithResult("C_FUN_GET_HISTORY_GENERATION", QVariant(0))
+                .get().toInt();
+    }
+
     QList<QMap<QString, QString>> Editor::languages()
     {
         QMap<QString, QVariant> languages =

@@ -178,6 +178,13 @@ namespace EditorNS
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
+
+        /**
+         * @brief Returns an integer that denotes the editor's history state. Making changes to
+         *        the contents increments the integer while reverting changes decrements it again.
+         */
+        Q_INVOKABLE int getHistoryGeneration();
+
         QList<QMap<QString, QString> > languages();
 
         /**

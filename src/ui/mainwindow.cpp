@@ -147,16 +147,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     initUI();
 
-    // We want to restore tabs only if...
-    if (    m_instances.size()==1 && // this window is the first one to be opened,
-            m_settings.General.getRememberTabsOnExit() // and the Remember-tabs option is enabled
-    ) {
-        Sessions::loadSession(m_docEngine, m_topEditorContainer, PersistentCache::cacheSessionPath());
-        if (m_topEditorContainer->count() > 0 && m_topEditorContainer->currentTabWidget()->count() > 0) {
-            refreshEditorUiInfo(m_topEditorContainer->currentTabWidget()->currentEditor());
-        }
-    }
-
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
     // From now on, there is at least an Editor and at least
