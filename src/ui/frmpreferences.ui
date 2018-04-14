@@ -133,6 +133,46 @@
           </widget>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="chkAutosave">
+             <property name="toolTip">
+              <string>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</string>
+             </property>
+             <property name="text">
+              <string>Backup open documents every</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbAutosaveInterval">
+             <property name="suffix">
+              <string> seconds</string>
+             </property>
+             <property name="maximum">
+              <number>3600</number>
+             </property>
+             <property name="value">
+              <number>60</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QCheckBox" name="chkExitOnLastTabClose">
            <property name="text">
             <string>Exit Notepadqq when closing the last Tab</string>
@@ -536,7 +576,8 @@
                  <string>Add</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="go-next"/>
+                 <iconset theme="go-next">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -546,7 +587,8 @@
                  <string>Remove</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="go-previous"/>
+                 <iconset theme="go-previous">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -574,7 +616,8 @@
                  <string>Move Up</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="go-up"/>
+                 <iconset theme="go-up">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -584,7 +627,8 @@
                  <string>Move Down</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="go-down"/>
+                 <iconset theme="go-down">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -613,7 +657,8 @@
               <string>Reset to Default</string>
              </property>
              <property name="icon">
-              <iconset theme="edit-undo"/>
+              <iconset theme="edit-undo">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
