@@ -62,11 +62,9 @@ To install the latest stable version:
 
     sudo snap install notepadqq
 
-If, instead, you want to follow the (UNSTABLE) development releases:
-
-    sudo snap install --edge notepadqq
-
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
+
+You can follow the unstable development releases from the "edge" channel.
 
 #### Launchpad PPA
 You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
