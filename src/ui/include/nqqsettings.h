@@ -81,7 +81,7 @@ public:
         NQQ_SETTING(ShowEOL,                        bool,       false)
 
         NQQ_SETTING(RememberTabsOnExit,             bool,       true)
-        NQQ_SETTING(AutosaveInterval,               int,        0)      // In seconds
+        NQQ_SETTING(AutosaveInterval,               int,        15)      // In seconds
         NQQ_SETTING(LastSelectedDir,                QString,    ".")
         NQQ_SETTING(LastSelectedSessionDir,         QString,    QString())
         NQQ_SETTING(RecentDocuments,                QList<QVariant>, QList<QVariant>())
