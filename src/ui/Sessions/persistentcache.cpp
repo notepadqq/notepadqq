@@ -11,6 +11,11 @@ QString PersistentCache::cacheDirPath() {
     return tabpath;
 }
 
+QString PersistentCache::backupDirPath() {
+    static QString path = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/backupCache");
+    return path;
+}
+
 QUrl PersistentCache::createValidCacheName(const QDir& parent, const QString &fileName)
 {
     QUrl cacheFile;

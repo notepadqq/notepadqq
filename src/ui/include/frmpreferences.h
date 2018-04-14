@@ -59,6 +59,8 @@ private slots:
 
     void on_btnToolbarReset_clicked();
 
+    void on_chkAutosave_toggled(bool checked);
+
 private:
     /**
      * @brief s_lastSelectedTab Contains the index of the last selected preferences tab. Default is 0.
