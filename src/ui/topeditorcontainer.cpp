@@ -162,6 +162,16 @@ std::vector<Editor*> TopEditorContainer::getOpenEditors()
     return editors;
 }
 
+int TopEditorContainer::getNumEditors()
+{
+    int total = 0;
+
+    for(int i = 0; i < count(); ++i)
+        total += tabWidget(i)->count();
+
+    return total;
+}
+
 void TopEditorContainer::forEachEditor(bool backwardIndexes,
                                        std::function<bool (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor)> callback)
 {
