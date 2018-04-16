@@ -5,7 +5,7 @@ description: |
   It helps developers by providing all you can expect from a general purpose text editor, such as syntax highlighting for more than 100 different languages, code folding, color schemes, file monitoring, multiple selection and much more.
   You can search text using the power of regular expressions. You can organize documents side by side. You can use real-time highlighting to find near identifiers in no time.
 grade: stable
-confinement: strict
+confinement: classic
 icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
 
 
