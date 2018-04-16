@@ -1339,48 +1339,48 @@
         <translation>Szóközök megjelenítése</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="411"/>
-        <location filename="../ui/mainwindow.cpp" line="786"/>
+        <location filename="../ui/mainwindow.cpp" line="401"/>
+        <location filename="../ui/mainwindow.cpp" line="776"/>
         <source>INS</source>
         <translation>BEILL</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="784"/>
+        <location filename="../ui/mainwindow.cpp" line="774"/>
         <source>OVR</source>
         <translation>ÁTÍR</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="913"/>
+        <location filename="../ui/mainwindow.cpp" line="903"/>
         <source>Reload</source>
         <translation>Újratöltés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="961"/>
+        <location filename="../ui/mainwindow.cpp" line="951"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="963"/>
+        <location filename="../ui/mainwindow.cpp" line="953"/>
         <source>All files (*)</source>
         <translation>Minden fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="982"/>
+        <location filename="../ui/mainwindow.cpp" line="972"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1021"/>
+        <location filename="../ui/mainwindow.cpp" line="1011"/>
         <source>Don&apos;t Save</source>
         <translation>Nincs mentés</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="912"/>
+        <location filename="../ui/mainwindow.cpp" line="902"/>
         <source>Your changes to «%1» will be discarded.</source>
         <translation>A(z) &quot;%1&quot; fájlon végzett módosításai el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="465"/>
+        <location filename="../ui/mainwindow.cpp" line="455"/>
         <source>Error while trying to save this session. Please ensure the following directory is accessible:
 
 </source>
@@ -1389,162 +1389,162 @@
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="467"/>
+        <location filename="../ui/mainwindow.cpp" line="457"/>
         <source>By choosing &quot;ignore&quot; your session won&apos;t be saved.</source>
         <translation>Azáltal, hogy &quot;Mellőzés&quot;-t választja, a munkamenet nem lesz elmentve.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="639"/>
+        <location filename="../ui/mainwindow.cpp" line="629"/>
         <source>The &apos;--line&apos; and &apos;--column&apos; arguments will be ignored since more than one file is opened.</source>
         <translation>A &apos;--line&apos; és &apos;--column&apos; argumentumok figyelmen kívül lesznek hagyva, mivel több fájl van megynyitva.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="649"/>
+        <location filename="../ui/mainwindow.cpp" line="639"/>
         <source>Invalid value for &apos;--line&apos; argument: %1</source>
         <translation>Érvénytelen érték a &apos;--line&apos; argumentumhoz: %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="658"/>
+        <location filename="../ui/mainwindow.cpp" line="648"/>
         <source>Invalid value for &apos;--column&apos; argument: %1</source>
         <translation>Érvénytelen érték a &apos;--column&apos; argumentumhoz: %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1020"/>
+        <location filename="../ui/mainwindow.cpp" line="1010"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Szeretné menteni a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1024"/>
+        <location filename="../ui/mainwindow.cpp" line="1014"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Szeretné menteni bezárás előtt a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1028"/>
+        <location filename="../ui/mainwindow.cpp" line="1018"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Ha nem menti el, a módosítások végleg el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1135"/>
+        <location filename="../ui/mainwindow.cpp" line="1125"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>A fájlt az utolsó beolvasás óta megváltozott a lemezen.
 Biztosan menteni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1138"/>
+        <location filename="../ui/mainwindow.cpp" line="1128"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>A fájl mentése a külső adatok elvesztésével járhat.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1157"/>
+        <location filename="../ui/mainwindow.cpp" line="1147"/>
         <source>Save as</source>
         <translation>Mentés másként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1159"/>
+        <location filename="../ui/mainwindow.cpp" line="1149"/>
         <source>Any file (*)</source>
         <translation>Bármilyen fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1332"/>
+        <location filename="../ui/mainwindow.cpp" line="1322"/>
         <source>%1 chars, %2 lines</source>
         <translation>%1. karakter, %2. sor</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1343"/>
+        <location filename="../ui/mainwindow.cpp" line="1333"/>
         <source>Ln %1, col %2</source>
         <translation>%1. sor, %2 oszlop</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1347"/>
+        <location filename="../ui/mainwindow.cpp" line="1337"/>
         <source>Sel %1 (%2)</source>
         <translation>Kij. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1476"/>
+        <location filename="../ui/mainwindow.cpp" line="1466"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1479"/>
+        <location filename="../ui/mainwindow.cpp" line="1469"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1482"/>
+        <location filename="../ui/mainwindow.cpp" line="1472"/>
         <source>Old Mac</source>
         <translation>Régi Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1489"/>
+        <location filename="../ui/mainwindow.cpp" line="1479"/>
         <source>%1 w/o BOM</source>
         <translation>%1 BOM nélkül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1966"/>
+        <location filename="../ui/mainwindow.cpp" line="1956"/>
         <source>No recent files</source>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2058"/>
+        <location filename="../ui/mainwindow.cpp" line="2048"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
         <translation>Az alábbi fájlok már nem léteznek. Mindenképp szeretné őket megnyitni?
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2169"/>
+        <location filename="../ui/mainwindow.cpp" line="2159"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2183"/>
+        <location filename="../ui/mainwindow.cpp" line="2173"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2225"/>
+        <location filename="../ui/mainwindow.cpp" line="2215"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2240"/>
+        <location filename="../ui/mainwindow.cpp" line="2230"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2252"/>
+        <location filename="../ui/mainwindow.cpp" line="2242"/>
         <source>Modify Run Commands</source>
         <translation>Futtatási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2371"/>
+        <location filename="../ui/mainwindow.cpp" line="2361"/>
         <source>The file &quot;%1&quot; does not exist. Do you want to re-create it?</source>
         <translation>A(z) &quot;%1&quot; fájl nem létezik. Szeretné újra létrehozni?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2534"/>
+        <location filename="../ui/mainwindow.cpp" line="2524"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2612"/>
+        <location filename="../ui/mainwindow.cpp" line="2602"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2614"/>
-        <location filename="../ui/mainwindow.cpp" line="2634"/>
+        <location filename="../ui/mainwindow.cpp" line="2604"/>
+        <location filename="../ui/mainwindow.cpp" line="2624"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2632"/>
+        <location filename="../ui/mainwindow.cpp" line="2622"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2658"/>
+        <location filename="../ui/mainwindow.cpp" line="2648"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
@@ -1726,12 +1726,12 @@ Biztosan menteni szeretné?</translation>
         <translation>Ne jelenjen meg többet ez a figyelmeztetés</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="499"/>
+        <location filename="../ui/frmpreferences.cpp" line="513"/>
         <source>Restart required</source>
         <translation>Újraindítás szükséges</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="500"/>
+        <location filename="../ui/frmpreferences.cpp" line="514"/>
         <source>You need to restart Notepadqq for the localization changes to take effect.</source>
         <translation>A nyelvváltoztatás érvénybe lépéséhez újra kell indítani a Notepadqq-t.</translation>
     </message>
@@ -1831,39 +1831,44 @@ Biztosan menteni szeretné?</translation>
         <translation>Érvénytelen</translation>
     </message>
     <message>
-        <location filename="../ui/main.cpp" line="84"/>
+        <location filename="../ui/main.cpp" line="88"/>
         <source>Running Notepadqq as root is not recommended. Use --allow-root if you really want to.</source>
         <translation>A Notepadqq rootként való futtatása nem ajánlott. Ha mindenképpen szükséges, akkor használja a --allow-root opciót.</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="118"/>
+        <location filename="../ui/stats.cpp" line="120"/>
         <source>Do you want to help?</source>
         <translation>Szeretne segíteni nekünk?</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="120"/>
+        <location filename="../ui/stats.cpp" line="122"/>
         <source>You can help to improve Notepadqq by allowing us to collect &lt;b&gt;anonymous statistics&lt;/b&gt;.</source>
         <translation>Segíthet a Notepadqq fejlesztésében, ha engedélyezi nekünk a &lt;b&gt;névtelen statisztikák&lt;/b&gt; gyűjtését.</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="121"/>
+        <location filename="../ui/stats.cpp" line="123"/>
         <source>What will we collect?</source>
         <translation>Milyen adatokat fogunk gyűjteni?</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="122"/>
+        <location filename="../ui/stats.cpp" line="124"/>
         <source>We will collect information such as the version of Qt, the version of the OS, or the number of extensions.&lt;br&gt;You don&apos;t have to trust us: Notepadqq is open source, so you can %1check by yourself%2 :)</source>
         <translation>Információkat fogunk gyűjteni például a Qt verziójáról, az operációs rendszer verziójáról vagy a bővítmények számáról.&lt;br&gt;Ha nem bízik meg bennünk: a Notepadqq nyílt forráskódú, így %1saját maga is ellenőrizheti%2 :)</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="129"/>
+        <location filename="../ui/stats.cpp" line="131"/>
         <source>Okay, I agree</source>
         <translation>Rendben, beleegyezek</translation>
     </message>
     <message>
-        <location filename="../ui/stats.cpp" line="130"/>
+        <location filename="../ui/stats.cpp" line="132"/>
         <source>No</source>
         <translation>Nem</translation>
+    </message>
+    <message>
+        <location filename="../ui/Sessions/backupservice.cpp" line="105"/>
+        <source>Notepadqq was not closed properly. Do you want to recover unsaved changes?</source>
+        <translation>A Notepadqq bezárása nem megfelelően ment végbe. Szeretné visszaállítani a nem mentett változásokat?</translation>
     </message>
 </context>
 <context>
@@ -2069,143 +2074,158 @@ Biztosan menteni szeretné?</translation>
         <translation>Nyitott lapok megjegyzése a Notepadqq bezárásakor</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="138"/>
+        <location filename="../ui/frmpreferences.ui" line="140"/>
+        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
+        <translation>Ez az opció lehetővé teszi a Notepadqq számára, hogy egy összeomlást követően helyreállítsa a dokumentumokat, még akkor is, ha azok nem lettek elmentetve.</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="143"/>
+        <source>Backup open documents every</source>
+        <translation>A megnyitott dokumentumok mentése minden</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="150"/>
+        <source> seconds</source>
+        <translation>. másodpercben</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.ui" line="178"/>
         <source>Exit Notepadqq when closing the last Tab</source>
         <translation>Az utolsó lapfül bezárásakor kilépés a Notepadqqból</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="147"/>
+        <location filename="../ui/frmpreferences.ui" line="187"/>
         <source>Localization:</source>
         <translation>Kezelőfelület nyelve:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="204"/>
+        <location filename="../ui/frmpreferences.ui" line="244"/>
         <source>Color scheme:</source>
         <translation>Színséma:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="236"/>
+        <location filename="../ui/frmpreferences.ui" line="276"/>
         <source>Override Font Family</source>
         <translation>Betűtípuscsalád felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="259"/>
+        <location filename="../ui/frmpreferences.ui" line="299"/>
         <source>Override Font Size</source>
         <translation>Betűméret felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="288"/>
+        <location filename="../ui/frmpreferences.ui" line="328"/>
         <source>Override Line Height</source>
         <translation>Sormagasság felülbírálása</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="304"/>
+        <location filename="../ui/frmpreferences.ui" line="344"/>
         <source>em</source>
         <translation>em</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="325"/>
+        <location filename="../ui/frmpreferences.ui" line="365"/>
         <source>Preview</source>
         <translation>Előnézet</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="408"/>
+        <location filename="../ui/frmpreferences.ui" line="448"/>
         <source>Tab size:</source>
         <translation>Tabulátor mérete:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="421"/>
+        <location filename="../ui/frmpreferences.ui" line="461"/>
         <source>Use spaces instead of tabs</source>
         <translation>Szóköz használata tabulátor helyett</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="445"/>
+        <location filename="../ui/frmpreferences.ui" line="485"/>
         <source>Use default settings</source>
         <translation>Alapbeállítások használata</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="481"/>
+        <location filename="../ui/frmpreferences.ui" line="521"/>
         <source>Search as I type</source>
         <translation>Keresés ahogy begépelem</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="488"/>
+        <location filename="../ui/frmpreferences.ui" line="528"/>
         <source>Save search history</source>
         <translation>Keresési előzmények mentése</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="536"/>
+        <location filename="../ui/frmpreferences.ui" line="576"/>
         <source>Add</source>
         <translation>Hozzáadás</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="546"/>
+        <location filename="../ui/frmpreferences.ui" line="587"/>
         <source>Remove</source>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="574"/>
+        <location filename="../ui/frmpreferences.ui" line="616"/>
         <source>Move Up</source>
         <translation>Feljebb</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="584"/>
+        <location filename="../ui/frmpreferences.ui" line="627"/>
         <source>Move Down</source>
         <translation>Lejjebb</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="613"/>
+        <location filename="../ui/frmpreferences.ui" line="657"/>
         <source>Reset to Default</source>
         <translation>Alaphelyzetbe állítás</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="659"/>
+        <location filename="../ui/frmpreferences.ui" line="704"/>
         <source>Node.js runtime</source>
         <translation>Node.js futtatókörnyezet</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="665"/>
+        <location filename="../ui/frmpreferences.ui" line="710"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
         <translation>Támogatott Node verziók: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="672"/>
+        <location filename="../ui/frmpreferences.ui" line="717"/>
         <source>Node.js path:</source>
         <translation>Node.js elérési útja:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="684"/>
-        <location filename="../ui/frmpreferences.ui" line="705"/>
+        <location filename="../ui/frmpreferences.ui" line="729"/>
+        <location filename="../ui/frmpreferences.ui" line="750"/>
         <source>Browse...</source>
         <translation>Tallózás...</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="693"/>
+        <location filename="../ui/frmpreferences.ui" line="738"/>
         <source>NPM path:</source>
         <translation>NPM elérési útja:</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.ui" line="714"/>
+        <location filename="../ui/frmpreferences.ui" line="759"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>FIGYELEM: A bővítmények támogatása KÍSÉRLETI JELLEGŰ.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="386"/>
+        <location filename="../ui/frmpreferences.cpp" line="390"/>
         <source>Keyboard shortcut conflict</source>
         <translation>Billentyűparancs konfliktus</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="387"/>
+        <location filename="../ui/frmpreferences.cpp" line="391"/>
         <source>Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved.</source>
         <translation>Két vagy több művelet ugyanazon a billentyűparancson osztozkodik. A módosításai mentése előtt ezeket a konfliktusokat fel kell oldani.</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="506"/>
+        <location filename="../ui/frmpreferences.cpp" line="520"/>
         <source>Browse</source>
         <translation>Tallózás</translation>
     </message>
     <message>
-        <location filename="../ui/frmpreferences.cpp" line="594"/>
+        <location filename="../ui/frmpreferences.cpp" line="608"/>
         <source>Would you like to clear the existing history now?</source>
         <translation>Szeretné törölni a meglévő előzményeket?</translation>
     </message>
