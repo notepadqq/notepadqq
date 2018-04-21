@@ -48,7 +48,7 @@ public:
         QAction* getAction() { return action; }
         QTreeWidgetItem* getTreeItem() { return treeItem; }
 
-        void setText(QString seq) { treeItem->setText(1,seq); }
+        void setText(const QString& seq) { treeItem->setText(1,seq); }
         QString text() const { return treeItem->text(1); }
 
         NodeItem(QAction* a, QTreeWidgetItem* item) : treeItem(item), action(a) {}
