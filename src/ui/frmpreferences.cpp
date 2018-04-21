@@ -289,8 +289,8 @@ void frmPreferences::loadShortcuts()
     QVBoxLayout *layout = new QVBoxLayout();
     QHBoxLayout *btnLayout = new QHBoxLayout();
 
-    QPushButton *resetSelected = new QPushButton("Reset Selected");
-    QPushButton *resetAll = new QPushButton("Reset All");
+    QPushButton *resetSelected = new QPushButton(tr("Reset Selected"));
+    QPushButton *resetAll = new QPushButton(tr("Reset All"));
 
     QObject::connect(resetSelected, &QPushButton::clicked, this, &frmPreferences::resetSelectedShortcut);
     QObject::connect(resetAll, &QPushButton::clicked, this, &frmPreferences::resetAllShortcuts);
