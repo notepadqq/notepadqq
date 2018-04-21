@@ -1,5 +1,6 @@
 #include "include/EditorNS/customqwebview.h"
 #include <QMimeData>
+#include <QMenu>
 
 namespace EditorNS
 {
@@ -7,6 +8,19 @@ namespace EditorNS
     CustomQWebView::CustomQWebView(QWidget *parent) :
         QWebView(parent)
     {
+        setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(this, &CustomQWebView::customContextMenuRequested,
+                this, &CustomQWebView::onCustomContextMenuRequested);
+    }
+
+    void CustomQWebView::onCustomContextMenuRequested(const QPoint& pos)
+    {
+        QMenu menu;
+        menu.addAction(page()->action(QWebPage::Cut));
+        menu.addAction(page()->action(QWebPage::Copy));
+        menu.addAction(page()->action(QWebPage::Paste));
+        menu.addAction(page()->action(QWebPage::SelectAll));
+        menu.exec(mapToGlobal(pos));
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
