@@ -1,19 +1,18 @@
-#include "include/frmpreferences.h"
-#include "include/EditorNS/editor.h"
 #include "ui_frmpreferences.h"
-#include "include/EditorNS/editor.h"
-#include "include/mainwindow.h"
-#include "include/Extensions/extensionsloader.h"
-#include "include/notepadqq.h"
+#include "include/frmpreferences.h"
 #include "include/keygrabber.h"
-#include "include/Sessions/backupservice.h"
+#include "include/mainwindow.h"
+#include "include/notepadqq.h"
 #include "include/stats.h"
-#include <QFileDialog>
-#include <QSortFilterProxyModel>
-#include <QInputDialog>
-#include <QTableWidgetItem>
-#include <QSharedPointer>
+#include "include/EditorNS/editor.h"
+#include "include/Extensions/extensionsloader.h"
+#include "include/Sessions/backupservice.h"
+
 #include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QSharedPointer>
+#include <QSortFilterProxyModel>
 #include <QToolBar>
 
 int frmPreferences::s_lastSelectedTab = 0;
@@ -151,10 +150,10 @@ void frmPreferences::loadLanguages()
     langs.push_front({{"id", "default"}, {"name", "Default"}});
 
     // Add all languages to the comboBox and write their current settings to a temp list
-    for (const auto& currentLang : langs) {
-        const QString langId = currentLang.value("id", "");
+    for (const auto& map : langs) {
+        const QString langId = map.value("id", "");
 
-        ui->cmbLanguages->addItem(currentLang.value("name", "?"), langId);
+        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
 
         LanguageSettings ls = {
             langId,
