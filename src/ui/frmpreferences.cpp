@@ -148,26 +148,22 @@ void frmPreferences::loadLanguages()
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     // Add "Default" language into the list.
-    QMap<QString,QString> defaultMap;
-    defaultMap.insert("id", "default");
-    defaultMap.insert("name", "Default");
-    langs.push_front(defaultMap);
+    langs.push_front({{"id", "default"}, {"name", "Default"}});
 
     // Add all languages to the comboBox and write their current settings to a temp list
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-        const QString langId = map.value("id", "");
+    for (const auto& currentLang : langs) {
+        const QString langId = currentLang.value("id", "");
 
-        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
+        ui->cmbLanguages->addItem(currentLang.value("name", "?"), langId);
 
-        LanguageSettings lang = {
+        LanguageSettings ls = {
             langId,
             m_settings.Languages.getTabSize(langId),
             m_settings.Languages.getIndentWithSpaces(langId),
             m_settings.Languages.getUseDefaultSettings(langId)
         };
 
-        m_tempLangSettings.push_back(lang);
+        m_tempLangSettings.push_back(ls);
     }
 
     ui->cmbLanguages->setCurrentIndex(0);
