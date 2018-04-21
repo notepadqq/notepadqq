@@ -1,8 +1,7 @@
 #include "include/keygrabber.h"
-#include <QHeaderView>
+#include <QMenu>
 #include <QPainter>
 
-#include <QMenu>
 
 KeyGrabber::KeyGrabber(QWidget* parent) : QTreeWidget(parent)
 {
