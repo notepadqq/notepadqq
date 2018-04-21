@@ -190,6 +190,7 @@ private slots:
     void on_actionSave_Session_triggered();
     void on_actionShow_Menubar_toggled(bool arg1);
     void on_actionShow_Toolbar_toggled(bool arg1);
+    void on_actionMath_Rendering_toggled(bool on);
 
 private:
     static QList<MainWindow*> m_instances;
