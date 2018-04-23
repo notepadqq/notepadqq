@@ -11,7 +11,6 @@
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QSharedPointer>
 #include <QSortFilterProxyModel>
 #include <QToolBar>
 
@@ -239,12 +238,9 @@ void frmPreferences::loadTranslations()
 
     QString localizationSetting = m_settings.General.getLocalization();
 
-    for (QString langCode : translations) {
+    for (const auto& langCode : translations) {
         QString langName = QLocale::languageToString(QLocale(langCode).language());
-
-        QMap<QString, QVariant> tmap;
-        tmap.insert("langName", langName);
-        tmap.insert("langCode", langCode);
+        QMap<QString, QVariant> tmap {{"langName", langName}, {"langCode", langCode}};
 
         ui->localizationComboBox->addItem(langName, tmap);
     }
@@ -513,12 +509,10 @@ void frmPreferences::on_localizationComboBox_activated(int /*index*/)
 bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
-    if (fn.isNull()) {
+    if (fn.isNull())
         return false;
-    } else {
-        lineEdit->setText(fn);
-        return true;
-    }
+    lineEdit->setText(fn);
+    return true;
 }
 
 void frmPreferences::checkExecutableExists(QLineEdit *path)
