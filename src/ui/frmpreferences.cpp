@@ -186,7 +186,7 @@ void frmPreferences::loadAppearanceTab()
 
     QString themeSetting = m_settings.Appearance.getColorScheme();
 
-    for (Editor::Theme theme : themes) {
+    for (const auto& theme : themes) {
         ui->cmbColorScheme->addItem(theme.name, theme.name); // First is display text, second is item data.
 
         if (themeSetting == theme.name) {
@@ -240,9 +240,7 @@ void frmPreferences::loadTranslations()
 
     for (const auto& langCode : translations) {
         QString langName = QLocale::languageToString(QLocale(langCode).language());
-        QMap<QString, QVariant> tmap {{"langName", langName}, {"langCode", langCode}};
-
-        ui->localizationComboBox->addItem(langName, tmap);
+        ui->localizationComboBox->addItem(langName, langCode);
     }
 
     QSortFilterProxyModel* proxy = new QSortFilterProxyModel(ui->localizationComboBox);
@@ -258,8 +256,8 @@ void frmPreferences::loadTranslations()
 
 void frmPreferences::saveTranslation()
 {
-    QMap<QString, QVariant> selected = ui->localizationComboBox->currentData().toMap();
-    m_settings.General.setLocalization(selected.value("langCode").toString());
+    const auto selected = ui->localizationComboBox->currentData().toString();
+    m_settings.General.setLocalization(selected);
 }
 
 void frmPreferences::loadShortcuts()
