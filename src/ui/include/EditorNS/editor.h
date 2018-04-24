@@ -202,6 +202,7 @@ namespace EditorNS
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE QString setLanguageFromFileName(QString filePath);
         Q_INVOKABLE QString setLanguageFromFileName();
+		Q_INVOKABLE void detectLanguageFromContent(QString rawTxt);
         Q_INVOKABLE void setValue(const QString &value);
         Q_INVOKABLE QString value();
 

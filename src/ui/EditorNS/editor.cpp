@@ -286,6 +286,24 @@ namespace EditorNS
         return lang;
     }
 
+    void Editor::detectLanguageFromContent(QString rawTxt)
+    {
+        auto& cache = LanguageCache::getInstance();
+        QTextStream stream(&rawTxt);
+        stream.skipWhiteSpace();
+        QString test = stream.readLine();
+        for (auto& l : cache.languages()) {
+            if (!l.firstNonBlankLine.isEmpty()) {
+                for (auto& t : l.firstNonBlankLine) {
+                    if (test.contains(QRegularExpression(t))) {
+                        setLanguage(l.id);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     QString Editor::setLanguageFromFileName()
     {
         return setLanguageFromFileName(filePath().toString());
@@ -349,6 +367,7 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
+		detectLanguageFromContent(value);
         sendMessage("C_CMD_SET_VALUE", value);
     }
 
