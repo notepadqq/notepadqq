@@ -173,13 +173,6 @@ namespace EditorNS
             selectMode_selected
         };
 
-        enum LanguageData {
-            id,
-            name,
-            mime,
-            mode
-        };
-
         void insertBanner(QWidget *banner);
         void removeBanner(QWidget *banner);
         void removeBanner(QString objectName);
@@ -228,11 +221,10 @@ namespace EditorNS
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QVariant getLanguageData(LanguageData ld);
-        Q_INVOKABLE QString getLanguageId() {return getLanguageData(LanguageData::id).toString();}
-        Q_INVOKABLE QString getLanguageName() {return getLanguageData(LanguageData::name).toString();}
-        Q_INVOKABLE QString getLanguageMime() {return getLanguageData(LanguageData::mime).toString();}
-        Q_INVOKABLE QString getLanguageMode() {return getLanguageData(LanguageData::mode).toString();}
+        Q_INVOKABLE QString getLanguageId() {return m_language.id;}
+        Q_INVOKABLE QString getLanguageName() {return m_language.name;}
+        Q_INVOKABLE QString getLanguageMime() {return m_language.mime;}
+        Q_INVOKABLE QString getLanguageMode() {return m_language.mode;}
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);

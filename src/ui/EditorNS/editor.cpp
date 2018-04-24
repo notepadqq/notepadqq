@@ -241,17 +241,6 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    QVariant Editor::getLanguageData(LanguageData ld)
-    {
-		switch(ld) {
-			case id:   return m_language.id;
-			case name: return m_language.name;
-			case mime: return m_language.mime;
-			case mode: return m_language.mode;
-			default:   return QString();
-		}
-    }
-
     void Editor::setLanguage(const QString& language)
     {
 		auto& cache = LanguageCache::getInstance();
