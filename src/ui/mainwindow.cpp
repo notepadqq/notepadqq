@@ -1,7 +1,6 @@
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "include/EditorNS/editor.h"
-#include "include/EditorNS/languagecache.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"

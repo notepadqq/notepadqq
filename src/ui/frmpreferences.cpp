@@ -5,7 +5,6 @@
 #include "include/notepadqq.h"
 #include "include/stats.h"
 #include "include/EditorNS/editor.h"
-#include "include/EditorNS/languagecache.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/Sessions/backupservice.h"
 

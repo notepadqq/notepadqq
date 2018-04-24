@@ -241,36 +241,39 @@ namespace EditorNS
                 .get().toInt();
     }
 
-	void Editor::setLanguage(const Language& language)
-	{
+    void Editor::setLanguage(const Language& language)
+    {
         if (!m_customIndentationMode) {
             setIndentationMode(language.id);
-		}
-		m_language = language;
-		sendMessage("C_CMD_SET_LANGUAGE", m_language.mime.isEmpty() ? m_language.mode : m_language.mime);
-		emit currentLanguageChanged(m_language.id, m_language.name);
-	}
+        }
+        m_language = language;
+        sendMessage("C_CMD_SET_LANGUAGE", m_language.mime.isEmpty() ? m_language.mode : m_language.mime);
+        emit currentLanguageChanged(m_language.id, m_language.name);
+    }
 
     void Editor::setLanguage(const QString& language)
     {
-		auto& cache = LanguageCache::getInstance();
-		auto index = cache.lookupById(language);
-		if (index == -1)
-			return;
-		setLanguage(cache[index]);
-		emit currentLanguageChanged(m_language.id, m_language.name);
+        auto& cache = LanguageCache::getInstance();
+        auto index = cache.lookupById(language);
+        if (index == -1)
+            return;
+        setLanguage(cache[index]);
+        emit currentLanguageChanged(m_language.id, m_language.name);
     }
 
-    QString Editor::setLanguageFromFileName(QString fileName)
+    void Editor::setLanguageFromFileName(QString fileName)
     {
-		auto& cache = LanguageCache::getInstance();
-		auto test = cache.lookupByFileName(fileName);
-		auto index = (test != -1) ? test : cache.lookupByExtension(fileName);
-		if (index != -1) {
-			setLanguage(cache[index]);
-			return cache[index].id;
-		}
-        return "plaintext";
+        auto& cache = LanguageCache::getInstance();
+        auto test = cache.lookupByFileName(fileName);
+        auto index = (test != -1) ? test : cache.lookupByExtension(fileName);
+        if (index != -1) {
+            setLanguage(cache[index]);
+        }
+    }
+
+    void Editor::setLanguageFromFileName()
+    {
+        setLanguageFromFileName(filePath().toString());
     }
 
     void Editor::detectLanguageFromContent(QString rawTxt)
@@ -283,17 +286,12 @@ namespace EditorNS
             if (!l.firstNonBlankLine.isEmpty()) {
                 for (auto& t : l.firstNonBlankLine) {
                     if (test.contains(QRegularExpression(t))) {
-                        setLanguage(l.id);
+                        setLanguage(l);
                         return;
                     }
                 }
             }
         }
-    }
-
-    QString Editor::setLanguageFromFileName()
-    {
-        return setLanguageFromFileName(filePath().toString());
     }
 
     void Editor::setIndentationMode(QString language)
@@ -354,7 +352,7 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
-		detectLanguageFromContent(value);
+        detectLanguageFromContent(value);
         sendMessage("C_CMD_SET_VALUE", value);
     }
 
