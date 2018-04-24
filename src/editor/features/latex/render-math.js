@@ -1,9 +1,5 @@
 // Original source: https://github.com/cben/CodeMirror-MathJax#16ee8d496625c11adee264d3136c55da061a15d7
 
-// dependencies:
-//   defineMathMode(): addon/mode/multiplex.js, optionally addon/mode/stex/stex.js
-//   hookMath(): MathJax
-
 define([], function() {
     // Sequence of functions for unregistering the event handlers
     stopSequence = [];
@@ -60,27 +56,6 @@ define([], function() {
         }
     }
 
-    // Wrap mode to skip formulas (e.g. $x*y$ shouldn't start italics in markdown).
-    // TODO: doesn't handle escaping, e.g. \$.  Doesn't check spaces before/after $ like pandoc.
-    // TODO: this might not exactly match the same things as formulaRE in processLine().
-
-    // We can't just construct a mode object, because there would be no
-    // way to use; we have to register a constructor, with a name.
-    /*InlineMath.defineMathMode = function(name, outerModeSpec) {
-    CodeMirror.defineMode(name, function(cmConfig) {
-        var outerMode = CodeMirror.getMode(cmConfig, outerModeSpec);
-        var innerMode = CodeMirror.getMode(cmConfig, "text/x-stex");
-        return CodeMirror.multiplexingMode(
-        outerMode,
-        // "keyword" is how stex styles math delimiters.
-        // "delim" tells us not to pick up this style as math style.
-        {open: "$$", close: "$$", mode: innerMode, delimStyle: "keyword delim"},
-        {open:  "$", close: "$",  mode: innerMode, delimStyle: "keyword delim"},
-        {open: "\\(", close: "\\)", mode: innerMode, delimStyle: "keyword delim"},
-        {open: "\\[", close: "\\]", mode: innerMode, delimStyle: "keyword delim"});
-    });
-    };*/
-
     // Usage: first call CodeMirror.hookMath(editor, MathJax),
     // then editor.renderAllMath() to process initial content.
     // TODO: simplify usage when initial pass becomes cheap.
@@ -109,12 +84,11 @@ define([], function() {
                 var oldRange = unrenderedMath.find();
                 if (oldRange !== undefined) {
                     var text = doc.getRange(oldRange.from, oldRange.to);
-                    console.error("overriding previous unrenderedMath:", text);
+                    //console.error("overriding previous unrenderedMath:", text);
                 } else {
-                    console.error("overriding unrenderedMath whose .find() === undefined", text);
+                    //console.error("overriding unrenderedMath whose .find() === undefined", text);
                 }
             }
-            console.log("unrendering math", doc.getRange(fromTo.from, fromTo.to));
             unrenderedMath = doc.markText(fromTo.from, fromTo.to);
             unrenderedMath.xMathState = "unrendered"; // helps later remove only our marks.
         }
@@ -141,9 +115,9 @@ define([], function() {
                     return;
                 }
                 if (posInsideRange(cursor, unrenderedRange)) {
-                    console.log("cursorActivity", cursor, "in unrenderedRange", unrenderedRange);
+                    // console.log("cursorActivity", cursor, "in unrenderedRange", unrenderedRange);
                 } else {
-                    console.log("cursorActivity", cursor, "left unrenderedRange.", unrenderedRange);
+                    // console.log("cursorActivity", cursor, "left unrenderedRange.", unrenderedRange);
                     unrenderedMath = null;
                     processMath(unrenderedRange.from, unrenderedRange.to);
                     flushTypesettingQueue(flushMarkTextQueue);
@@ -157,7 +131,6 @@ define([], function() {
         // --------------------
 
         function createMathElement(from, to) {
-            // TODO: would MathJax.HTML make this more portable?
             var text = doc.getRange(from, to);
             var elem = document.createElement("span");
             // Display math becomes a <div> (inside this <span>), which
@@ -223,7 +196,7 @@ define([], function() {
             typesettingQueue = [];
 
             typesettingDiv.appendChild(currentDiv);
-            console.log("-- typesetting", currentDiv.children.length, "formulas --");
+
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, currentDiv]);
             MathJax.Hub.Queue(function () {
                 currentDiv.parentNode.removeChild(currentDiv);
@@ -254,17 +227,16 @@ define([], function() {
             typesettingDiv.appendChild(elem);
 
             var text = elem.innerHTML;
-            console.log("going to typeset", text, elem);
+
             typesettingQueueDiv.appendChild(elem);
             typesettingQueue.push(function () {
-                console.log("done typesetting", text);
+                // Done typesetting `text`
                 elem.parentNode.removeChild(elem);
                 elem.style.position = "static";
 
                 var range = typesettingMark.find();
                 if (!range) {
                     // Was removed by deletion and/or clearOurMarksInRange().
-                    console.log("done typesetting but range disappered, dropping.");
                     return;
                 }
                 var from = range.from;
@@ -277,7 +249,7 @@ define([], function() {
                 if (posInsideRange(cursor, { from: from, to: to })) {
                     // This doesn't normally happen during editing, more likely
                     // during initial pass.
-                    console.error("posInsideRange", cursor, from, to, "=> not rendering");
+                    //console.error("posInsideRange", cursor, from, to, "=> not rendering");
                     unrenderRange({ from: from, to: to });
                 } else {
                     markTextQueue.push(function () {
@@ -330,7 +302,7 @@ define([], function() {
             for (var i = 0; i < oldMarks.length; i++) {
                 var mark = oldMarks[i];
                 if (mark.xMathState === undefined) {
-                    console.log("not touching foreign mark at", mark.find());
+                    // not touching foreign mark
                     continue;
                 }
 
@@ -340,7 +312,6 @@ define([], function() {
                 if (found.line !== undefined ?
                     /* bookmark */ posInsideRange(found, { from: from, to: to }) :
                     /* marked range */ rangesOverlap(found, { from: from, to: to })) {
-                    console.log("cleared mark at", found, "as part of range:", from, to);
                     mark.clear();
                 }
             }
@@ -350,7 +321,6 @@ define([], function() {
         // have to chase - and what's worse, adjust all coordinates.
         // Documents' "change" events were never batched, so not a problem.
         var onChange = catchAllErrors(function(doc, changeObj) {
-            console.log("change", changeObj);
             // changeObj.{from,to} are pre-change coordinates; adding text.length
             // (number of inserted lines) is a conservative(?) fix.
             // TODO: use cm.changeEnd()
@@ -358,7 +328,6 @@ define([], function() {
             clearOurMarksInRange(Pos(changeObj.from.line, 0), Pos(endLine, 0));
             doc.eachLine(changeObj.from.line, endLine, processLine);
             if ("next" in changeObj) {
-                console.error("next");
                 processChange(changeObj.next);
             }
             flushTypesettingQueue(flushMarkTextQueue);
@@ -371,7 +340,7 @@ define([], function() {
             doc.eachLine(processLine);
             flushTypesettingQueue(function () {
                 flushMarkTextQueue();
-                console.log("---- All math rendered. ----");
+                // All math rendered.
                 if (callback) {
                     callback();
                 }
@@ -381,14 +350,12 @@ define([], function() {
         // Make sure stuff doesn't somehow remain in the batching queues.
         var int1 = setInterval(function () {
             if (typesettingQueue.length !== 0) {
-                console.error("Fallaback flushTypesettingQueue:", typesettingQueue.length, "elements");
                 flushTypesettingQueue();
             }
         }, 500);
         editor._mathStopSequence.push(function() { clearInterval(int1) })
         var int2 = setInterval(function () {
             if (markTextQueue.length !== 0) {
-                console.error("Fallaback flushMarkTextQueue:", markTextQueue.length, "elements");
                 flushMarkTextQueue();
             }
         }, 500);

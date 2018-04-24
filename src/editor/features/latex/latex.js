@@ -10,7 +10,6 @@ define([], function () {
     
             var config = {
                 jax: ["input/TeX", "output/CommonHTML"], // TODO: Use HTML-CSS when on WebEngine
-                //extensions: ["tex2jax.js","MathMenu.js","MathZoom.js", "fast-preview.js", "AssistiveMML.js", "a11y/accessibility-menu.js"],
                 extensions: ["tex2jax.js"],
                 tex2jax: {
                     //inlineMath: [ ['$','$'], ["\\(","\\)"] ],
@@ -21,9 +20,6 @@ define([], function () {
                     /* Previews of all kinds are useless — math is hidden until fully rendered. */
                     preview: "none"
                 },
-                /* "CHTML-preview" is for MathJax 2.5, "fast-preview" is for 2.6. */
-                //"CHTML-preview": { disabled: true },
-                //"fast-preview": { disabled: true },
                 "HTML-CSS": {
                     imageFont: null // Prevent the use of image fonts, as we deleted them
                 },
