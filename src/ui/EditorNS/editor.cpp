@@ -255,10 +255,10 @@ namespace EditorNS
     {
         auto& cache = LanguageCache::getInstance();
         auto index = cache.lookupById(language);
-        if (index == -1)
-            return;
-        setLanguage(cache[index]);
-        emit currentLanguageChanged(m_language.id, m_language.name);
+        if (index != -1) {
+            setLanguage(cache[index]);
+            emit currentLanguageChanged(m_language.id, m_language.name);
+        }
     }
 
     void Editor::setLanguageFromFileName(QString fileName)
