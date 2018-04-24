@@ -89,6 +89,7 @@ define([], function() {
         if (InlineMath.isHooked(editor))
             return;
 
+        // Collection of functions without parameters that will deregister all events
         editor._mathStopSequence = [];
 
         // Track currently-edited formula
@@ -243,6 +244,13 @@ define([], function() {
 
             var elem = createMathElement(from, to);
             elem.style.position = "absolute";
+            // Unrender the formula when clicking on it
+            elem.addEventListener("click", function(){
+                editor.focus();
+                var x = Math.min(from.ch, to.ch)
+                var y = Math.max(from.ch, to.ch)
+                editor.setCursor(Pos(from.line, x + Math.ceil((y-x)/2)));
+            })
             typesettingDiv.appendChild(elem);
 
             var text = elem.innerHTML;
