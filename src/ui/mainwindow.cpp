@@ -1404,15 +1404,12 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
-    QString name = data.value("lang").toMap().value("name").toString();
+    QString name = editor->getLanguageName();
     m_statusBar_fileFormat->setText(name);
-
 
     // Update MainWindow title
     QString newTitle;
     if (editor->filePath().isEmpty()) {
-
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
             int tab = tabWidget->indexOf(editor);

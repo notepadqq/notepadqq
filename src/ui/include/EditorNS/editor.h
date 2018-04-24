@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include "include/EditorNS/customqwebview.h"
+#include "include/EditorNS/languagecache.h"
 #include <QObject>
 #include <QVariant>
 #include <QQueue>
@@ -172,6 +173,13 @@ namespace EditorNS
             selectMode_selected
         };
 
+        enum LanguageData {
+            id,
+            name,
+            mime,
+            mode
+        };
+
         void insertBanner(QWidget *banner);
         void removeBanner(QWidget *banner);
         void removeBanner(QString objectName);
@@ -196,7 +204,7 @@ namespace EditorNS
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE QString setLanguageFromFileName(QString filePath);
         Q_INVOKABLE QString setLanguageFromFileName();
-		Q_INVOKABLE void detectLanguageFromContent(QString rawTxt);
+        Q_INVOKABLE void detectLanguageFromContent(QString rawTxt);
         Q_INVOKABLE void setValue(const QString &value);
         Q_INVOKABLE QString value();
 
@@ -220,7 +228,11 @@ namespace EditorNS
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString language();
+        Q_INVOKABLE QVariant getLanguageData(LanguageData ld);
+        Q_INVOKABLE QString getLanguageId() {return getLanguageData(LanguageData::id).toString();}
+        Q_INVOKABLE QString getLanguageName() {return getLanguageData(LanguageData::name).toString();}
+        Q_INVOKABLE QString getLanguageMime() {return getLanguageData(LanguageData::mime).toString();}
+        Q_INVOKABLE QString getLanguageMode() {return getLanguageData(LanguageData::mode).toString();}
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -325,7 +337,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
-		QString m_currentLanguage;
+        Language m_language;
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 

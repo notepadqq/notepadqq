@@ -1,5 +1,4 @@
 #include "include/EditorNS/editor.h"
-#include "include/EditorNS/languagecache.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
 #include <QWebFrame>
@@ -174,12 +173,6 @@ namespace EditorNS
             emit cleanChanged(data.toBool());
         else if(msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
-        else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-            QVariantMap map = data.toMap();
-            emit currentLanguageChanged(map.value("id").toString(),
-                                        map.value("name").toString());
-        }
-
     }
 
     void Editor::setFocus()
@@ -248,9 +241,15 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    QString Editor::language()
+    QVariant Editor::getLanguageData(LanguageData ld)
     {
-        return m_currentLanguage;
+		switch(ld) {
+			case id:   return m_language.id;
+			case name: return m_language.name;
+			case mime: return m_language.mime;
+			case mode: return m_language.mode;
+			default:   return QString();
+		}
     }
 
     void Editor::setLanguage(const QString& language)
@@ -264,9 +263,10 @@ namespace EditorNS
 			return;
 		auto& lang = cache[success];
 		auto mode = lang.mime.isEmpty() ? lang.mode : lang.mime;
-		m_currentLanguage = lang.id;
+		m_language = lang;
 		QVariantMap data {{"id", lang.id}, {"mode", mode}};
 		sendMessage("C_CMD_SET_LANGUAGE", data);
+		emit currentLanguageChanged(lang.id, lang.name);
     }
 
     QString Editor::setLanguageFromFileName(QString fileName)
@@ -352,7 +352,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
-        setIndentationMode(language());
+        setIndentationMode(getLanguageId());
     }
 
     bool Editor::isUsingCustomIndentationMode() const
