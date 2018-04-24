@@ -486,12 +486,12 @@
 <context>
     <name>KeyGrabber</name>
     <message>
-        <location filename="../ui/keygrabber.cpp" line="13"/>
+        <location filename="../ui/keygrabber.cpp" line="9"/>
         <source>Action</source>
         <translation>Művelet</translation>
     </message>
     <message>
-        <location filename="../ui/keygrabber.cpp" line="13"/>
+        <location filename="../ui/keygrabber.cpp" line="9"/>
         <source>Keyboard Shortcut</source>
         <translation>Billentyűparancs</translation>
     </message>
@@ -2208,6 +2208,16 @@ Biztosan menteni szeretné?</translation>
         <location filename="../ui/frmpreferences.ui" line="759"/>
         <source>WARNING: support for extensions is EXPERIMENTAL.</source>
         <translation>FIGYELEM: A bővítmények támogatása KÍSÉRLETI JELLEGŰ.</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.cpp" line="292"/>
+        <source>Reset Selected</source>
+        <translation>Kijelölt visszaállítása</translation>
+    </message>
+    <message>
+        <location filename="../ui/frmpreferences.cpp" line="293"/>
+        <source>Reset All</source>
+        <translation>Összes visszaállítása</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="390"/>

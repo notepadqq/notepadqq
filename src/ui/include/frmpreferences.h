@@ -1,12 +1,12 @@
 #ifndef FRMPREFERENCES_H
 #define FRMPREFERENCES_H
 
-#include <QDialog>
-#include <QTreeWidgetItem>
-#include <QTableWidgetItem>
 #include "include/topeditorcontainer.h"
 #include "include/keygrabber.h"
 #include "include/nqqsettings.h"
+
+#include <QDialog>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class frmPreferences;
