@@ -39,7 +39,7 @@ UiDriver.registerEventHandler("C_FUN_GET_HISTORY_GENERATION", function(msg, data
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
-    editor.setOption('mode', data.mode);
+    editor.setOption('mode', data);
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_INDENTATION_MODE", function(msg, data, prevReturn) {

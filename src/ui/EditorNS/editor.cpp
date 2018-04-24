@@ -241,38 +241,36 @@ namespace EditorNS
                 .get().toInt();
     }
 
+	void Editor::setLanguage(const Language& language)
+	{
+        if (!m_customIndentationMode) {
+            setIndentationMode(language.id);
+		}
+		m_language = language;
+		sendMessage("C_CMD_SET_LANGUAGE", m_language.mime.isEmpty() ? m_language.mode : m_language.mime);
+		emit currentLanguageChanged(m_language.id, m_language.name);
+	}
+
     void Editor::setLanguage(const QString& language)
     {
 		auto& cache = LanguageCache::getInstance();
-        if (!m_customIndentationMode) {
-            setIndentationMode(language);
-		}
-		auto success = cache.lookupById(language);
-		if (success == -1)
+		auto index = cache.lookupById(language);
+		if (index == -1)
 			return;
-		auto& lang = cache[success];
-		auto mode = lang.mime.isEmpty() ? lang.mode : lang.mime;
-		m_language = lang;
-		QVariantMap data {{"id", lang.id}, {"mode", mode}};
-		sendMessage("C_CMD_SET_LANGUAGE", data);
-		emit currentLanguageChanged(lang.id, lang.name);
+		setLanguage(cache[index]);
+		emit currentLanguageChanged(m_language.id, m_language.name);
     }
 
     QString Editor::setLanguageFromFileName(QString fileName)
     {
 		auto& cache = LanguageCache::getInstance();
-		auto success = cache.lookupByFileName(fileName);
-		QString lang = "text/plain";
-		if (success != -1) {
-			lang = cache[success].id;
-		} else {
-			success = cache.lookupByExtension(fileName);
-			if (success != -1) {
-				lang = cache[success].id;
-			}
+		auto test = cache.lookupByFileName(fileName);
+		auto index = (test != -1) ? test : cache.lookupByExtension(fileName);
+		if (index != -1) {
+			setLanguage(cache[index]);
+			return cache[index].id;
 		}
-		setLanguage(lang);
-        return lang;
+        return "plaintext";
     }
 
     void Editor::detectLanguageFromContent(QString rawTxt)

@@ -194,6 +194,7 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
+		Q_INVOKABLE void setLanguage(const Language& language);
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE QString setLanguageFromFileName(QString filePath);
         Q_INVOKABLE QString setLanguageFromFileName();
