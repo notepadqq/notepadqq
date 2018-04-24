@@ -21,6 +21,8 @@
 		<file alias="16x16/edit-paste.png">icons/notepadqq/16x16/edit-paste.png</file>
 		<file alias="16x16/edit-redo.png">icons/notepadqq/16x16/edit-redo.png</file>
 		<file alias="16x16/edit-undo.png">icons/notepadqq/16x16/edit-undo.png</file>
+                <file alias="16x16/math-rendering.png">icons/notepadqq/16x16/math-rendering.png</file>
+                <file alias="128x128/math-rendering.png">icons/notepadqq/128x128/math-rendering.png</file>
 		<file alias="16x16/media-playback-start.png">icons/notepadqq/16x16/media-playback-start.png</file>
 		<file alias="16x16/media-playback-stop.png">icons/notepadqq/16x16/media-playback-stop.png</file>
 		<file alias="16x16/media-record.png">icons/notepadqq/16x16/media-record.png</file>

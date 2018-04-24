@@ -196,6 +196,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
 
+    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+    on_actionMath_Rendering_toggled(m_settings.General.getMathRendering());
+
     //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
 }
@@ -293,6 +296,7 @@ void MainWindow::loadIcons()
     ui->actionZoom_Out->setIcon(IconProvider::fromTheme("zoom-out"));
     ui->actionRestore_Default_Zoom->setIcon(IconProvider::fromTheme("zoom-original"));
     ui->actionWord_wrap->setIcon(IconProvider::fromTheme("word-wrap"));
+    ui->actionMath_Rendering->setIcon(IconProvider::fromTheme("math-rendering"));
     ui->actionFull_Screen->setIcon(IconProvider::fromTheme("view-fullscreen"));
 
     // Settings menu
@@ -875,6 +879,16 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
     m_settings.General.setShowAllSymbols(on);
 }
 
+void MainWindow::on_actionMath_Rendering_toggled(bool on)
+{
+    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+        editor->setMathEnabled(on);
+        return true;
+    });
+
+    m_settings.General.setMathRendering(on);
+}
+
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
 {
     // Don't do anything if there is no file to reload from.
@@ -1277,6 +1291,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
                     m_settings.Appearance.getOverrideFontSize(),
                     m_settings.Appearance.getOverrideLineHeight());
     editor->setSmartIndent(m_settings.General.getSmartIndentation());
+    editor->setMathEnabled(ui->actionMath_Rendering->isChecked());
 }
 
 void MainWindow::on_cursorActivity()

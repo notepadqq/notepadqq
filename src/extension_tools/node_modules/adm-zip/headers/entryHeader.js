@@ -213,7 +213,7 @@ module.exports = function () {
             // modification time (2 bytes time, 2 bytes date)
             data.writeUInt32LE(_time, Constants.CENTIM);
             // uncompressed file crc-32 value
-            data.writeInt32LE(_crc, Constants.CENCRC, true);
+            data.writeInt32LE(_crc, Constants.CENCRC);
             // compressed size
             data.writeUInt32LE(_compressedSize, Constants.CENSIZ);
             // uncompressed size
