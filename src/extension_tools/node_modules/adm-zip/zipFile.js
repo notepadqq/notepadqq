@@ -7,7 +7,7 @@ module.exports = function(/*String|Buffer*/input, /*Number*/inputType) {
         entryTable = {},
         _comment = new Buffer(0),
         filename = "",
-        fs = require("fs"),
+        fs = Utils.FileSystem.require(),
         inBuffer = null,
         mainHeader = new Headers.MainHeader();
 

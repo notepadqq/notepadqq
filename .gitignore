@@ -19,4 +19,7 @@ build-notepadqq-Desktop*
 /src/ui/ui.pro.user.*
 /notepadqq.pro.user
 
+/.qmake.stash
+/src/ui-tests/moc_predefs.h
+
 /src/translations/*.qm
