@@ -1,4 +1,5 @@
 #include "include/EditorNS/editor.h"
+#include "include/EditorNS/languagecache.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
 #include <QWebFrame>
@@ -247,50 +248,41 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    QList<QMap<QString, QString>> Editor::languages()
-    {
-        QMap<QString, QVariant> languages =
-                asyncSendMessageWithResult("C_FUN_GET_LANGUAGES").get().toMap();
-
-        QList<QMap<QString, QString>> out;
-
-        QMap<QString, QVariant>::iterator lang;
-        for (lang = languages.begin(); lang != languages.end(); ++lang) {
-            QMap<QString, QVariant> mode = lang.value().toMap();
-
-            QMap<QString, QString> newMode;
-            newMode.insert("id", lang.key());
-            newMode.insert("name", mode.value("name").toString());
-            newMode.insert("mime", mode.value("mime").toString());
-            newMode.insert("mode", mode.value("mode").toString());
-
-            out.append(newMode);
-        }
-
-        return out;
-    }
-
     QString Editor::language()
     {
-        QVariantMap data = asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
-        return data.value("id").toString();
+        return m_currentLanguage;
     }
 
-    void Editor::setLanguage(const QString &language)
+    void Editor::setLanguage(const QString& language)
     {
-        sendMessage("C_CMD_SET_LANGUAGE", language);
-        if (!m_customIndentationMode)
+		auto& cache = LanguageCache::getInstance();
+        if (!m_customIndentationMode) {
             setIndentationMode(language);
+		}
+		auto success = cache.lookupById(language);
+		if (success == -1)
+			return;
+		auto& lang = cache[success];
+		auto mode = lang.mime.isEmpty() ? lang.mode : lang.mime;
+		m_currentLanguage = lang.id;
+		QVariantMap data {{"id", lang.id}, {"mode", mode}};
+		sendMessage("C_CMD_SET_LANGUAGE", data);
     }
 
     QString Editor::setLanguageFromFileName(QString fileName)
     {
-        QString lang = asyncSendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName).get().toString();
-
-        if (!m_customIndentationMode)
-            setIndentationMode(lang);
-
+		auto& cache = LanguageCache::getInstance();
+		auto success = cache.lookupByFileName(fileName);
+		QString lang = "text/plain";
+		if (success != -1) {
+			lang = cache[success].id;
+		} else {
+			success = cache.lookupByExtension(fileName);
+			if (success != -1) {
+				lang = cache[success].id;
+			}
+		}
+		setLanguage(lang);
         return lang;
     }
 

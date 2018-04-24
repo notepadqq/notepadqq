@@ -5,6 +5,7 @@
 #include "include/notepadqq.h"
 #include "include/stats.h"
 #include "include/EditorNS/editor.h"
+#include "include/EditorNS/languagecache.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/Sessions/backupservice.h"
 
@@ -141,27 +142,26 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    QList<QMap<QString, QString>> langs = m_topEditorContainer->currentTabWidget()->currentEditor()->languages();
+    auto &ls = m_settings.Languages;
+    //"Default" language
+    ui->cmbLanguages->addItem("Default", "default");
+    LanguageSettings lang = {
+        "default",
+        ls.getTabSize("default"),
+        ls.getIndentWithSpaces("default"),
+        ls.getUseDefaultSettings("default")
+    };
 
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    // Add "Default" language into the list.
-    langs.push_front({{"id", "default"}, {"name", "Default"}});
-
-    // Add all languages to the comboBox and write their current settings to a temp list
-    for (const auto& map : langs) {
-        const QString langId = map.value("id", "");
-
-        ui->cmbLanguages->addItem(map.value("name", "?"), langId);
-
-        LanguageSettings ls = {
-            langId,
-            m_settings.Languages.getTabSize(langId),
-            m_settings.Languages.getIndentWithSpaces(langId),
-            m_settings.Languages.getUseDefaultSettings(langId)
+    for(const auto& l : LanguageCache::getInstance().languages()) {
+        ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
+        LanguageSettings lang = {
+            l.id,
+            ls.getTabSize(l.id),
+            ls.getIndentWithSpaces(l.id),
+            ls.getUseDefaultSettings(l.id)
         };
 
-        m_tempLangSettings.push_back(ls);
+        m_tempLangSettings.push_back(lang);
     }
 
     ui->cmbLanguages->setCurrentIndex(0);

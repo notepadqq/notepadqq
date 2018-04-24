@@ -1,6 +1,7 @@
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "include/EditorNS/editor.h"
+#include "include/EditorNS/languagecache.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"
@@ -518,37 +519,23 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    Editor *editor = currentEditor();
-    if (editor == 0) {
-        qDebug() << "currentEditor is null";
-        throw;
-    }
-
-    QList<QMap<QString, QString>> langs = editor->languages();
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
     //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
-    QMap<QChar, QMenu*> menuInitials;
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-
-        QString name = map.value("name", "?");
-        if (name.length() == 0) name = "?";
-        QChar letter = name.at(0).toUpper();
-
+    std::map<QChar, QMenu*> menuInitials;
+    for (const auto& l : LanguageCache::getInstance().languages()) {
+        QString id = l.id;
+        QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
-            letterMenu = menuInitials.value(letter, 0);
+        if (menuInitials.count(letter)) {
+            letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
-            menuInitials.insert(letter, letterMenu);
+            menuInitials.emplace(std::make_pair(letter, letterMenu));
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QString langId = map.value("id", "");
-        QAction *action = new QAction(map.value("name"), this);
-        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
-            currentEditor()->setLanguage(langId);
+        QAction *action = new QAction(l.name, this);
+        connect(action, &QAction::triggered, this, [id, this](bool = false) {
+            currentEditor()->setLanguage(id);
         });
         letterMenu->insertAction(0, action);
     }

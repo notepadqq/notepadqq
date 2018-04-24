@@ -193,8 +193,6 @@ namespace EditorNS
          */
         Q_INVOKABLE int getHistoryGeneration();
 
-        QList<QMap<QString, QString> > languages();
-
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
@@ -331,7 +329,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
-
+		QString m_currentLanguage;
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
