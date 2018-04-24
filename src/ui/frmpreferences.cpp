@@ -1,19 +1,17 @@
-#include "include/frmpreferences.h"
-#include "include/EditorNS/editor.h"
 #include "ui_frmpreferences.h"
-#include "include/EditorNS/editor.h"
-#include "include/mainwindow.h"
-#include "include/Extensions/extensionsloader.h"
-#include "include/notepadqq.h"
+#include "include/frmpreferences.h"
 #include "include/keygrabber.h"
-#include "include/Sessions/backupservice.h"
+#include "include/mainwindow.h"
+#include "include/notepadqq.h"
 #include "include/stats.h"
-#include <QFileDialog>
-#include <QSortFilterProxyModel>
-#include <QInputDialog>
-#include <QTableWidgetItem>
-#include <QSharedPointer>
+#include "include/EditorNS/editor.h"
+#include "include/Extensions/extensionsloader.h"
+#include "include/Sessions/backupservice.h"
+
 #include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QSortFilterProxyModel>
 #include <QToolBar>
 
 int frmPreferences::s_lastSelectedTab = 0;
@@ -148,26 +146,22 @@ void frmPreferences::loadLanguages()
     std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
 
     // Add "Default" language into the list.
-    QMap<QString,QString> defaultMap;
-    defaultMap.insert("id", "default");
-    defaultMap.insert("name", "Default");
-    langs.push_front(defaultMap);
+    langs.push_front({{"id", "default"}, {"name", "Default"}});
 
     // Add all languages to the comboBox and write their current settings to a temp list
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
+    for (const auto& map : langs) {
         const QString langId = map.value("id", "");
 
         ui->cmbLanguages->addItem(map.value("name", "?"), langId);
 
-        LanguageSettings lang = {
+        LanguageSettings ls = {
             langId,
             m_settings.Languages.getTabSize(langId),
             m_settings.Languages.getIndentWithSpaces(langId),
             m_settings.Languages.getUseDefaultSettings(langId)
         };
 
-        m_tempLangSettings.push_back(lang);
+        m_tempLangSettings.push_back(ls);
     }
 
     ui->cmbLanguages->setCurrentIndex(0);
@@ -192,7 +186,7 @@ void frmPreferences::loadAppearanceTab()
 
     QString themeSetting = m_settings.Appearance.getColorScheme();
 
-    for (Editor::Theme theme : themes) {
+    for (const auto& theme : themes) {
         ui->cmbColorScheme->addItem(theme.name, theme.name); // First is display text, second is item data.
 
         if (themeSetting == theme.name) {
@@ -244,14 +238,9 @@ void frmPreferences::loadTranslations()
 
     QString localizationSetting = m_settings.General.getLocalization();
 
-    for (QString langCode : translations) {
+    for (const auto& langCode : translations) {
         QString langName = QLocale::languageToString(QLocale(langCode).language());
-
-        QMap<QString, QVariant> tmap;
-        tmap.insert("langName", langName);
-        tmap.insert("langCode", langCode);
-
-        ui->localizationComboBox->addItem(langName, tmap);
+        ui->localizationComboBox->addItem(langName, langCode);
     }
 
     QSortFilterProxyModel* proxy = new QSortFilterProxyModel(ui->localizationComboBox);
@@ -267,8 +256,8 @@ void frmPreferences::loadTranslations()
 
 void frmPreferences::saveTranslation()
 {
-    QMap<QString, QVariant> selected = ui->localizationComboBox->currentData().toMap();
-    m_settings.General.setLocalization(selected.value("langCode").toString());
+    const auto selected = ui->localizationComboBox->currentData().toString();
+    m_settings.General.setLocalization(selected);
 }
 
 void frmPreferences::loadShortcuts()
@@ -518,12 +507,10 @@ void frmPreferences::on_localizationComboBox_activated(int /*index*/)
 bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
-    if (fn.isNull()) {
+    if (fn.isNull())
         return false;
-    } else {
-        lineEdit->setText(fn);
-        return true;
-    }
+    lineEdit->setText(fn);
+    return true;
 }
 
 void frmPreferences::checkExecutableExists(QLineEdit *path)
