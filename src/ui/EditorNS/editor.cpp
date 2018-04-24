@@ -510,6 +510,11 @@ namespace EditorNS
         sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
     }
 
+    void Editor::setMathEnabled(const bool enabled)
+    {
+        sendMessage("C_CMD_ENABLE_MATH", enabled);
+    }
+
     QPair<int, int> Editor::cursorPosition()
     {
         QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();

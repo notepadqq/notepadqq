@@ -537,6 +537,25 @@ UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_SPACE", function(msg, data, pr
     editLines(function (x) { return x.replace(/^\s+/, ""); });
 });
 
+UiDriver.registerEventHandler("C_CMD_ENABLE_MATH", function(msg, data, prevReturn) {
+    require(['features/latex/latex'], function(math) {
+        if (data) {
+            math.enable(editor);
+        } else {
+            math.disable(editor);
+        }
+    });
+})
+
+UiDriver.registerEventHandler("C_FUN_IS_MATH_ENABLED", function(msg, data, prevReturn) {
+    if (!require.defined('features/latex/latex')) {
+        return false
+    }
+
+    var math = require('features/latex/latex');
+    return math.isEnabled();
+})
+
 var tabToSpaceCounter = 0;
 function tabToSpaceHelper(match, offset, tabSize) {
     /*
