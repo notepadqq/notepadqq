@@ -45,22 +45,22 @@ define([], function () {
 
     var obj = {};
 
-    obj.enable = function() {
+    obj.enable = function(editor) {
         // Put configuration object inside head *before* loading MathJax.
         appendConfig();
 
         enabled = true;
 
-        requirejs(['features/latex/render-math'], function(InlineMath){
+        requirejs(['features/latex/render-math', 'libs/MathJax/MathJax'], function(InlineMath){
             InlineMath.hookMath(editor, window.MathJax);
             editor.renderAllMath();
         })
     }
 
-    obj.disable = function() {
+    obj.disable = function(editor) {
         enabled = false;
         requirejs(['features/latex/render-math'], function(InlineMath){
-            InlineMath.unhookMath(editor, window.MathJax);
+            InlineMath.unhookMath(editor);
         })
     }
 

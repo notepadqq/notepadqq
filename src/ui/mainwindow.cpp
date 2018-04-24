@@ -196,6 +196,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
 
+    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+    on_actionMath_Rendering_toggled(m_settings.General.getMathRendering());
+
     //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
 }
@@ -894,7 +897,7 @@ void MainWindow::on_actionMath_Rendering_toggled(bool on)
         return true;
     });
 
-    //m_settings.General.setShowAllSymbols(on);
+    m_settings.General.setMathRendering(on);
 }
 
 bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
@@ -1299,6 +1302,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
                     m_settings.Appearance.getOverrideFontSize(),
                     m_settings.Appearance.getOverrideLineHeight());
     editor->setSmartIndent(m_settings.General.getSmartIndentation());
+    editor->setMathEnabled(ui->actionMath_Rendering->isChecked());
 }
 
 void MainWindow::on_cursorActivity()

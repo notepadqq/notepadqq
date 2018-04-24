@@ -4,7 +4,7 @@
 //   defineMathMode(): addon/mode/multiplex.js, optionally addon/mode/stex/stex.js
 //   hookMath(): MathJax
 
-define(['libs/MathJax/MathJax'], function() {
+define([], function() {
     // Sequence of functions for unregistering the event handlers
     stopSequence = [];
 
@@ -50,6 +50,16 @@ define(['libs/MathJax/MathJax'], function() {
         return false;
     }
 
+    function catchAllErrors(func) {
+        return function (var_args) {
+            try {
+                return func.apply(this, arguments);
+            } catch (err) {
+                console.error("catching error: " + err);
+            }
+        }
+    }
+
     // Wrap mode to skip formulas (e.g. $x*y$ shouldn't start italics in markdown).
     // TODO: doesn't handle escaping, e.g. \$.  Doesn't check spaces before/after $ like pandoc.
     // TODO: this might not exactly match the same things as formulaRE in processLine().
@@ -76,16 +86,10 @@ define(['libs/MathJax/MathJax'], function() {
     // TODO: simplify usage when initial pass becomes cheap.
     // TODO: use defineOption(), support clearing widgets and removing handlers.
     InlineMath.hookMath = function (editor, MathJax) {
+        if (InlineMath.isHooked(editor))
+            return;
 
-        function catchAllErrors(func) {
-            return function (var_args) {
-                try {
-                    return func.apply(this, arguments);
-                } catch (err) {
-                    console.error("catching error: " + err);
-                }
-            }
-        }
+        editor._mathStopSequence = [];
 
         // Track currently-edited formula
         // ------------------------------
@@ -146,7 +150,7 @@ define(['libs/MathJax/MathJax'], function() {
             }
         });
         editor.on("cursorActivity", onCursorActivity)
-        stopSequence.push(function(){ editor.off("cursorActivity", onCursorActivity) })
+        editor._mathStopSequence.push(function(){ editor.off("cursorActivity", onCursorActivity) })
 
         // Rendering on changes
         // --------------------
@@ -278,8 +282,8 @@ define(['libs/MathJax/MathJax'], function() {
                             unrenderMark(mark);
                         });
                         CodeMirror.on(mark, "beforeCursorEnter", onBeforeCursorEnter)
-                        stopSequence.push(function(){ editor.off(mark, "beforeCursorEnter", onBeforeCursorEnter) })
-                        stopSequence.push(function(){ onBeforeCursorEnter(); }) // Transform all the formulas back to text
+                        editor._mathStopSequence.push(function(){ editor.off(mark, "beforeCursorEnter", onBeforeCursorEnter) })
+                        editor._mathStopSequence.push(function(){ onBeforeCursorEnter(); }) // Transform all the formulas back to text
                     });
                 }
             });
@@ -352,7 +356,7 @@ define(['libs/MathJax/MathJax'], function() {
             flushTypesettingQueue(flushMarkTextQueue);
         });
         CodeMirror.on(doc, "change", onChange)
-        stopSequence.push(function(){ editor.off(doc, "change", onChange) })
+        editor._mathStopSequence.push(function(){ editor.off(doc, "change", onChange) })
 
         // First pass - process whole document.
         editor.renderAllMath = function(callback) {
@@ -373,21 +377,29 @@ define(['libs/MathJax/MathJax'], function() {
                 flushTypesettingQueue();
             }
         }, 500);
-        stopSequence.push(function() { clearInterval(int1) })
+        editor._mathStopSequence.push(function() { clearInterval(int1) })
         var int2 = setInterval(function () {
             if (markTextQueue.length !== 0) {
                 console.error("Fallaback flushMarkTextQueue:", markTextQueue.length, "elements");
                 flushMarkTextQueue();
             }
         }, 500);
-        stopSequence.push(function() { clearInterval(int2) })
+        editor._mathStopSequence.push(function() { clearInterval(int2) })
     }
 
 
-    InlineMath.unhookMath = function (editor, MathJax) {
-        for (i = 0; i < stopSequence.length; i++) {
-            stopSequence[i]();
+    InlineMath.unhookMath = function (editor) {
+        if (InlineMath.isHooked(editor)) {
+            const copy = editor._mathStopSequence;
+            editor._mathStopSequence = [];
+            for (i = 0; i < copy.length; i++) {
+                copy[i]();
+            }
         }
+    }
+
+    InlineMath.isHooked = function (editor) {
+        return Array.isArray(editor._mathStopSequence) && editor._mathStopSequence.length > 0;
     }
 
     return InlineMath;

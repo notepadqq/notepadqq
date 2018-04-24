@@ -558,9 +558,9 @@ UiDriver.registerEventHandler("C_CMD_TRIM_LEADING_SPACE", function(msg, data, pr
 UiDriver.registerEventHandler("C_CMD_ENABLE_MATH", function(msg, data, prevReturn) {
     require(['features/latex/latex'], function(math) {
         if (data) {
-            math.enable();
+            math.enable(editor);
         } else {
-            math.disable();
+            math.disable(editor);
         }
     });
 })
