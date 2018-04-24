@@ -1,8 +1,9 @@
 #ifndef _LANGUAGECACHE_H_
 #define _LANGUAGECACHE_H_
 
-#include <QString>
 #include <QList>
+#include <QString>
+#include <QStringList>
 #include <QVector>
 
 /**
