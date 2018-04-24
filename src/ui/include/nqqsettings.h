@@ -89,6 +89,7 @@ public:
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())
         NQQ_SETTING(SmartIndentation,               bool,       true)
+        NQQ_SETTING(MathRendering,                  bool,       false)
     END_CATEGORY(General)
 
     BEGIN_CATEGORY(Appearance)
