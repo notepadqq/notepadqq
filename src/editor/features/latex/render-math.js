@@ -1,3 +1,5 @@
+// Original source: https://github.com/cben/CodeMirror-MathJax#16ee8d496625c11adee264d3136c55da061a15d7
+
 // dependencies:
 //   defineMathMode(): addon/mode/multiplex.js, optionally addon/mode/stex/stex.js
 //   hookMath(): MathJax
