@@ -8,28 +8,6 @@
 
 namespace EditorNS {
 
-Language::Language(const Language& o) :
-    id(o.id),
-    name(o.name),
-    mime(o.mime),
-    mode(o.mode),
-    fileNames(o.fileNames),
-    fileExtensions(o.fileExtensions),
-    firstNonBlankLine(o.firstNonBlankLine) 
-{
-}
-
-Language::Language(Language&& o) noexcept :
-    id(std::move(o.id)),
-    name(std::move(o.name)),
-    mime(std::move(o.mime)),
-    mode(std::move(o.mode)),
-    fileNames(std::move(o.fileNames)),
-    fileExtensions(std::move(o.fileExtensions)),
-    firstNonBlankLine(std::move(o.firstNonBlankLine))
-{
-}
-
 LanguageCache::LanguageCache()
 {
     QFileInfo fileInfo(Notepadqq::editorPath());

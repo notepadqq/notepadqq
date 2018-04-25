@@ -22,8 +22,8 @@ struct Language {
     QStringList fileExtensions;
     QStringList firstNonBlankLine;
     Language() {};
-    Language(const Language& o);
-    Language(Language&& o) noexcept;
+    Language(const Language& o) = default;
+    Language(Language&& o) noexcept = default;
     Language& operator=(const Language& o) = default;
     Language& operator=(Language&& o) = default;
 };
