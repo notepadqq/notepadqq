@@ -38,11 +38,6 @@ LanguageCache::LanguageCache()
     }
 }
 
-const LanguageList& LanguageCache::languages()
-{
-    return m_languages;
-}
-
 int LanguageCache::lookupById(const QString& id)
 {
     auto it = std::find_if (m_languages.begin(), m_languages.end(), [&id] (const Language& l) {

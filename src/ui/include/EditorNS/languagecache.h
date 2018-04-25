@@ -75,7 +75,7 @@ class LanguageCache
          *        cache.
          * @return QVector<Language>
          */
-        const LanguageList& languages();
+        const LanguageList& languages() {return m_languages;};
         
     private:
         LanguageCache();
