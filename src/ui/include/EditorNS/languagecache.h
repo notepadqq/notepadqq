@@ -23,7 +23,7 @@ struct Language {
     QStringList firstNonBlankLine;
     Language() {};
     Language(const Language& o) = default;
-    Language(Language&& o) noexcept = default;
+    Language(Language&& o) = default;
     Language& operator=(const Language& o) = default;
     Language& operator=(Language&& o) = default;
 };
