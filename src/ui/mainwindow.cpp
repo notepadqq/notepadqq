@@ -522,13 +522,12 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
     std::map<QChar, QMenu*> menuInitials;
     for (const auto& l : LanguageCache::getInstance().languages()) {
         QString id = l.id;
         QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.count(letter)) {
+        if (menuInitials.contains(letter)) {
             letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
