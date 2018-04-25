@@ -527,7 +527,7 @@ void MainWindow::setupLanguagesMenu()
         QString id = l.id;
         QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
+        if (menuInitials.count(letter) != 0) {
             letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
