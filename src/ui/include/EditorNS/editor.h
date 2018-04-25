@@ -222,10 +222,10 @@ namespace EditorNS
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString getLanguageId() {return m_language.id;}
-        Q_INVOKABLE QString getLanguageName() {return m_language.name;}
-        Q_INVOKABLE QString getLanguageMime() {return m_language.mime;}
-        Q_INVOKABLE QString getLanguageMode() {return m_language.mode;}
+        Q_INVOKABLE QString getLanguageId() {return m_currentLanguage.id;}
+        Q_INVOKABLE QString getLanguageName() {return m_currentLanguage.name;}
+        Q_INVOKABLE QString getLanguageMime() {return m_currentLanguage.mime;}
+        Q_INVOKABLE QString getLanguageMode() {return m_currentLanguage.mode;}
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -330,7 +330,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
-        Language m_language;
+        Language m_currentLanguage;
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 

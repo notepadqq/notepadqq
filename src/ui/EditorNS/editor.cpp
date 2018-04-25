@@ -246,9 +246,9 @@ namespace EditorNS
         if (!m_customIndentationMode) {
             setIndentationMode(language.id);
         }
-        m_language = language;
-        sendMessage("C_CMD_SET_LANGUAGE", m_language.mime.isEmpty() ? m_language.mode : m_language.mime);
-        emit currentLanguageChanged(m_language.id, m_language.name);
+        m_currentLanguage = language;
+        sendMessage("C_CMD_SET_LANGUAGE", m_currentLanguage.mime.isEmpty() ? m_currentLanguage.mode : m_currentLanguage.mime);
+        emit currentLanguageChanged(m_currentLanguage.id, m_currentLanguage.name);
     }
 
     void Editor::setLanguage(const QString& language)
@@ -257,7 +257,7 @@ namespace EditorNS
         auto index = cache.lookupById(language);
         if (index != -1) {
             setLanguage(cache[index]);
-            emit currentLanguageChanged(m_language.id, m_language.name);
+            emit currentLanguageChanged(m_currentLanguage.id, m_currentLanguage.name);
         }
     }
 
