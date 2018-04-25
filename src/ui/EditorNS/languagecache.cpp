@@ -21,7 +21,7 @@ LanguageCache::LanguageCache()
     m_languages.reserve(json.object().count());
 
     // Begin iterating our QJsonDocument's object and adding languages.
-    for (const auto& key : json.object().keys()) {
+    for (auto&& key : json.object().keys()) {
         auto mode = json.object().value(key).toObject();
         Language newMode;
         newMode.id = key;
@@ -48,9 +48,8 @@ int LanguageCache::lookupById(const QString& id)
     auto it = std::find_if (m_languages.begin(), m_languages.end(), [&id] (const Language& l) {
         return (l.id == id);
     });
-    if (it != m_languages.end())
-        return it - m_languages.begin();
-    return -1;
+    if (it == m_languages.end()) return -1;
+    return it - m_languages.begin();
 }
 
 int LanguageCache::lookupByFileName(const QString& fileName)
@@ -58,27 +57,19 @@ int LanguageCache::lookupByFileName(const QString& fileName)
     auto it = std::find_if(m_languages.begin(), m_languages.end(), [&fileName] (const Language& l) {
         return (l.fileNames.contains(fileName));
     });
-    if (it != m_languages.end())
-        return it - m_languages.begin();
-    return -1;
+    if (it == m_languages.end()) return -1;
+    return it - m_languages.begin();
 }
 
 int LanguageCache::lookupByExtension(const QString& fileName)
 {
-    auto start = m_languages.constBegin();
-    auto end = m_languages.constEnd();
-    auto pos = fileName.lastIndexOf('.');
-    if (pos == -1) {
-        return -1;
-    }
-
-    auto ext = fileName.mid(pos+1);
-    for (auto it = start; it != end; ++it) {
-        if (it->fileExtensions.contains(ext, Qt::CaseInsensitive)) {
-            return it - start;
-        }
-    }
-    return -1;
+    QFileInfo fi(fileName);
+    auto ext = fi.suffix();
+    auto it = std::find_if(m_languages.begin(), m_languages.end(), [&ext] (const Language& l) {
+        return (l.fileExtensions.contains(ext,Qt::CaseInsensitive));
+    });
+    if (it == m_languages.end()) return -1;
+    return it - m_languages.begin();
 }
 
 LanguageCache& LanguageCache::getInstance()
