@@ -43,16 +43,8 @@ class LanguageCache
          * @param i
          * @return Language struct
          */
-        Language operator [](int i) const {return m_languages[i];}
+        const Language& operator [](int i) const {return m_languages[i];}
         
-        /**
-         * @brief Returns a reference to the Language struct at the given
-         *        position. No bounds checking is performed in this function!
-         * @param i
-         * @return Language struct reference.
-         */
-        Language& operator [](int i) {return m_languages[i];}
-
         /**
          * @brief Look up a language by its given Id and return an integer
          *        containing the position of the language in the cache.
