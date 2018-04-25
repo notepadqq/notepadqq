@@ -30,30 +30,6 @@ Language::Language(Language&& o) noexcept :
 {
 }
 
-Language& Language::operator=(const Language& o)
-{
-    id = o.id;
-    name = o.name;
-    mime = o.mime;
-    mode = o.mode;
-    fileNames = o.fileNames;
-    fileExtensions = o.fileExtensions;
-    firstNonBlankLine = o.firstNonBlankLine;
-    return *this;
-}
-
-Language& Language::operator=(Language&& o)
-{
-    id = std::move(o.id);
-    name = std::move(o.name);
-    mime = std::move(o.mime);
-    mode = std::move(o.mode);
-    fileNames = std::move(o.fileNames);
-    fileExtensions = std::move(o.fileExtensions);
-    firstNonBlankLine = std::move(o.firstNonBlankLine);
-    return *this;
-}
-
 LanguageCache::LanguageCache()
 {
     QFileInfo fileInfo(Notepadqq::editorPath());
@@ -91,24 +67,21 @@ const LanguageList& LanguageCache::languages()
 
 int LanguageCache::lookupById(const QString& id)
 {
-    auto end = m_languages.constEnd();
-    for (auto it = m_languages.constBegin(); it != end; ++ it) {
-        if (it->id == id) {
-            return it - m_languages.constBegin();
-        }
-    }
+    auto it = std::find_if (m_languages.begin(), m_languages.end(), [&id] (const Language& l) {
+        return (l.id == id);
+    });
+    if (it != m_languages.end())
+        return it - m_languages.begin();
     return -1;
 }
 
 int LanguageCache::lookupByFileName(const QString& fileName)
 {
-    auto start = m_languages.constBegin();
-    auto end = m_languages.constEnd();
-    for (auto it = start; it != end; ++it) {
-        if (it->fileNames.contains(fileName)) {
-            return it - start;
-        }
-    }
+    auto it = std::find_if(m_languages.begin(), m_languages.end(), [&fileName] (const Language& l) {
+        return (l.fileNames.contains(fileName));
+    });
+    if (it != m_languages.end())
+        return it - m_languages.begin();
     return -1;
 }
 

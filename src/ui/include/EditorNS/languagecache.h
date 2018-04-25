@@ -24,8 +24,8 @@ struct Language {
     Language() {};
     Language(const Language& o);
     Language(Language&& o) noexcept;
-    Language& operator=(const Language& o);
-    Language& operator=(Language&& o);
+    Language& operator=(const Language& o) = default;
+    Language& operator=(Language&& o) = default;
 };
 
 typedef QVector<Language> LanguageList;
@@ -33,7 +33,6 @@ typedef QVector<Language> LanguageList;
 class LanguageCache
 {
     public:
-        LanguageCache();
         static LanguageCache& getInstance();
         LanguageCache(LanguageCache const&) = delete;
         void operator=(LanguageCache const&) = delete;
@@ -53,14 +52,6 @@ class LanguageCache
          * @return Language struct reference.
          */
         Language& operator [](int i) {return m_languages[i];}
-
-        /**
-         * @brief Returns a const reference to the Language struct at
-         *        the given position 'i'
-         * @param i
-         * @return const Language struct reference
-         */
-        const Language& at(const int& i) {return m_languages.at(i);}
 
         /**
          * @brief Look up a language by its given Id and return an integer
@@ -95,6 +86,7 @@ class LanguageCache
         const LanguageList& languages();
         
     private:
+        LanguageCache();
         LanguageList m_languages;
 };
 
