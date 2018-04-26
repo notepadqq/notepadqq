@@ -13,20 +13,20 @@ apps:
   notepadqq: 
     command: desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     desktop: usr/local/share/applications/notepadqq.desktop
-    plugs:
-      - browser-support
-      - desktop
-      - desktop-legacy
-      - gsettings
-      - home
-      - media-hub
-      - network-bind
-      - network-manager
-      - opengl
-      - optical-drive
-      - removable-media
-      - unity7
-      - x11
+#   plugs:  # Plugs are not needed for classic confinement
+#     - browser-support
+#     - desktop
+#     - desktop-legacy
+#     - gsettings
+#     - home
+#     - media-hub
+#     - network-bind
+#     - network-manager
+#     - opengl
+#     - optical-drive
+#     - removable-media
+#     - unity7
+#     - x11
 
 parts:
   fixicon:
