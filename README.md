@@ -60,7 +60,7 @@ Distribution Packages
 
 To install the latest stable version:
 
-    sudo snap install notepadqq
+    sudo snap install --classic notepadqq
 
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
 
