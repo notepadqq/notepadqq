@@ -1046,9 +1046,6 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
     int result = MainWindow::tabCloseResult_AlreadySaved;
     Editor *editor = tabWidget->editor(tab);
 
-
-    auto v = editor->value();
-
     // If the tab is the only existing one, is not associated with a file, and has no contents,
     // we'll not close it.
     if ( m_topEditorContainer->count()==1 && tabWidget->count()==1 &&
