@@ -38,7 +38,7 @@ class LanguageService
         void operator=(LanguageService const&) = delete;
 
         /**
-         * @brief Look up a language by its given Id and return an integer
+         * @brief Look up a language by its given Id
          *        containing the position of the language in the cache.
          * @param id
          * @return const Language pointer
@@ -46,7 +46,7 @@ class LanguageService
         const Language* lookupById(const QString& id);
 
         /**
-         * @brief Look up a language by its file name and return an integer
+         * @brief Look up a language by its file name
          *        containing the position of the language in the cache.
          * @param fileName
          * @return const Language pointer
@@ -54,24 +54,29 @@ class LanguageService
         const Language* lookupByFileName(const QString& fileName);
 
         /**
-         * @brief Look up a language by the file extension, if any, and return
-         *        an integer containing the position of the language in the
-         *        cache.
+         * @brief Look up a language by the file extension
          * @param fileName
          * @return const Language pointer
          */
         const Language* lookupByExtension(const QString& fileName);
 
         /**
+         * @brief Provides a basic language struct for initializing an editor.
+         * @return const Language pointer
+         */
+        const Language* getDefaultLanguage() {return &m_defaultLanguage;};
+
+        /**
          * @brief Return a list of all the languages currently available in
          *        cache.
-         * @return QVector<Language>
+         * @return const QVector<Language>
          */
         const LanguageList& languages() {return m_languages;};
         
     private:
         LanguageService();
         LanguageList m_languages;
+        Language m_defaultLanguage;
 };
 
 }

@@ -34,6 +34,7 @@ namespace EditorNS
 
     void Editor::fullConstructor(const Theme &theme)
     {
+        m_currentLanguage = LanguageService::getInstance().getDefaultLanguage();
         m_jsToCppProxy = new JsToCppProxy(this);
         connect(m_jsToCppProxy,
                 &JsToCppProxy::messageReceived,
