@@ -244,6 +244,12 @@ namespace EditorNS
 
     void Editor::setLanguage(const Language* lang)
     {
+        if (lang == nullptr) {
+            lang = LanguageService::getInstance().lookupById("plaintext");
+        }
+        if (m_currentLanguage == lang) {
+            return;
+        }
         if (!m_customIndentationMode) {
             setIndentationMode(lang->id);
         }
