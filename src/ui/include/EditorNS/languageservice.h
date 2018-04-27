@@ -61,12 +61,6 @@ class LanguageService
         const Language* lookupByExtension(const QString& fileName);
 
         /**
-         * @brief Provides a basic language struct for initializing an editor.
-         * @return const Language pointer
-         */
-        const Language* getDefaultLanguage() {return &m_defaultLanguage;};
-
-        /**
          * @brief Return a list of all the languages currently available in
          *        cache.
          * @return const QVector<Language>
@@ -76,7 +70,6 @@ class LanguageService
     private:
         LanguageService();
         LanguageList m_languages;
-        Language m_defaultLanguage;
 };
 
 }
