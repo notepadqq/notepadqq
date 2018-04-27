@@ -78,7 +78,7 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
         connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
-        setLanguage("plaintext");
+        setLanguage(nullptr);
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we
         // get stuck waiting a J_EVT_READY that will never come.
