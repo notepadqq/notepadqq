@@ -267,7 +267,7 @@ namespace EditorNS
         }
     }
 
-    void Editor::setLanguageFromFileName(QString fileName)
+    void Editor::setLanguageFromFileName(const QString& fileName)
     {
         auto& cache = LanguageService::getInstance();
         auto lang = cache.lookupByFileName(fileName);
