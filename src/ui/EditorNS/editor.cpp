@@ -241,33 +241,36 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    void Editor::setLanguage(const Language& language)
+    void Editor::setLanguage(Language* lang)
     {
         if (!m_customIndentationMode) {
-            setIndentationMode(language.id);
+            setIndentationMode(lang->id);
         }
-        m_currentLanguage = language;
-        sendMessage("C_CMD_SET_LANGUAGE", m_currentLanguage.mime.isEmpty() ? m_currentLanguage.mode : m_currentLanguage.mime);
-        emit currentLanguageChanged(m_currentLanguage.id, m_currentLanguage.name);
+        m_currentLanguage = lang;
+        sendMessage("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime);
+        emit currentLanguageChanged(lang->id, lang->name);
     }
 
     void Editor::setLanguage(const QString& language)
     {
-        auto& cache = LanguageCache::getInstance();
-        auto index = cache.lookupById(language);
-        if (index != -1) {
-            setLanguage(cache[index]);
-            emit currentLanguageChanged(m_currentLanguage.id, m_currentLanguage.name);
+        auto& cache = LanguageService::getInstance();
+        auto lang = cache.lookupById(language);
+        if (lang != nullptr) {
+            setLanguage(lang);
         }
     }
 
     void Editor::setLanguageFromFileName(QString fileName)
     {
-        auto& cache = LanguageCache::getInstance();
-        auto test = cache.lookupByFileName(fileName);
-        auto index = (test != -1) ? test : cache.lookupByExtension(fileName);
-        if (index != -1) {
-            setLanguage(cache[index]);
+        auto& cache = LanguageService::getInstance();
+        auto lang = cache.lookupByFileName(fileName);
+        if (lang != nullptr) {
+            setLanguage(lang);
+            return;
+        }
+        lang = cache.lookupByExtension(fileName);
+        if (lang != nullptr) {
+            setLanguage(lang);
         }
     }
 
@@ -278,15 +281,15 @@ namespace EditorNS
 
     void Editor::detectLanguageFromContent(QString rawTxt)
     {
-        auto& cache = LanguageCache::getInstance();
+        auto& cache = LanguageService::getInstance();
         QTextStream stream(&rawTxt);
         stream.skipWhiteSpace();
         QString test = stream.readLine();
-        for (auto& l : cache.languages()) {
+        for (auto l : cache.languages()) {
             if (!l.firstNonBlankLine.isEmpty()) {
                 for (auto& t : l.firstNonBlankLine) {
                     if (test.contains(QRegularExpression(t))) {
-                        setLanguage(l);
+                        setLanguage(&l);
                         return;
                     }
                 }

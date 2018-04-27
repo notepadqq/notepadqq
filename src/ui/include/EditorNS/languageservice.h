@@ -30,28 +30,20 @@ struct Language {
 
 typedef QVector<Language> LanguageList;
 
-class LanguageCache
+class LanguageService
 {
     public:
-        static LanguageCache& getInstance();
-        LanguageCache(LanguageCache const&) = delete;
-        void operator=(LanguageCache const&) = delete;
+        static LanguageService& getInstance();
+        LanguageService(LanguageService const&) = delete;
+        void operator=(LanguageService const&) = delete;
 
-        /**
-         * @brief Returns a Language struct at the given position by value
-         *        No bounds checking is performed in this function!
-         * @param i
-         * @return Language struct
-         */
-        const Language& operator [](int i) const {return m_languages[i];}
-        
         /**
          * @brief Look up a language by its given Id and return an integer
          *        containing the position of the language in the cache.
          * @param id
          * @return int
          */
-        int lookupById(const QString& id);
+        Language* lookupById(const QString& id);
 
         /**
          * @brief Look up a language by its file name and return an integer
@@ -59,7 +51,7 @@ class LanguageCache
          * @param fileName
          * @return int
          */
-        int lookupByFileName(const QString& fileName);
+        Language* lookupByFileName(const QString& fileName);
 
         /**
          * @brief Look up a language by the file extension, if any, and return
@@ -68,7 +60,7 @@ class LanguageCache
          * @param fileName
          * @return int
          */
-        int lookupByExtension(const QString& fileName);
+        Language* lookupByExtension(const QString& fileName);
 
         /**
          * @brief Return a list of all the languages currently available in
@@ -78,7 +70,7 @@ class LanguageCache
         const LanguageList& languages() {return m_languages;};
         
     private:
-        LanguageCache();
+        LanguageService();
         LanguageList m_languages;
 };
 

@@ -151,7 +151,7 @@ void frmPreferences::loadLanguages()
         ls.getUseDefaultSettings("default")
     };
 
-    for (const auto& l : LanguageCache::getInstance().languages()) {
+    for (const auto& l : LanguageService::getInstance().languages()) {
         ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
         LanguageSettings lang = {
             l.id,

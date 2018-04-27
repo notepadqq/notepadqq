@@ -523,7 +523,7 @@ QList<QAction*> MainWindow::getActions() const
 void MainWindow::setupLanguagesMenu()
 {
     std::map<QChar, QMenu*> menuInitials;
-    for (const auto& l : LanguageCache::getInstance().languages()) {
+    for (const auto& l : LanguageService::getInstance().languages()) {
         QString id = l.id;
         QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;

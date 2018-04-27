@@ -1,14 +1,14 @@
+#include "include/EditorNS/languageservice.h"
+#include "include/notepadqq.h"
+
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
 
-#include "include/EditorNS/languagecache.h"
-#include "include/notepadqq.h"
-
 namespace EditorNS {
 
-LanguageCache::LanguageCache()
+LanguageService::LanguageService()
 {
     QFileInfo fileInfo(Notepadqq::editorPath());
     QString fileName = fileInfo.absolutePath() + "/Languages.json";
@@ -38,38 +38,38 @@ LanguageCache::LanguageCache()
     }
 }
 
-int LanguageCache::lookupById(const QString& id)
+Language* LanguageService::lookupById(const QString& id)
 {
     auto it = std::find_if (m_languages.begin(), m_languages.end(), [&id] (const Language& l) {
         return (l.id == id);
     });
-    if (it == m_languages.end()) return -1;
-    return it - m_languages.begin();
+    if (it == m_languages.end()) return nullptr;
+    return &(*it);
 }
 
-int LanguageCache::lookupByFileName(const QString& fileName)
+Language* LanguageService::lookupByFileName(const QString& fileName)
 {
     auto it = std::find_if(m_languages.begin(), m_languages.end(), [&fileName] (const Language& l) {
         return (l.fileNames.contains(fileName));
     });
-    if (it == m_languages.end()) return -1;
-    return it - m_languages.begin();
+    if (it == m_languages.end()) return nullptr;
+    return &(*it);
 }
 
-int LanguageCache::lookupByExtension(const QString& fileName)
+Language* LanguageService::lookupByExtension(const QString& fileName)
 {
     QFileInfo fi(fileName);
     auto ext = fi.suffix();
     auto it = std::find_if(m_languages.begin(), m_languages.end(), [&ext] (const Language& l) {
         return (l.fileExtensions.contains(ext,Qt::CaseInsensitive));
     });
-    if (it == m_languages.end()) return -1;
-    return it - m_languages.begin();
+    if (it == m_languages.end()) return nullptr;
+    return &(*it);
 }
 
-LanguageCache& LanguageCache::getInstance()
+LanguageService& LanguageService::getInstance()
 {
-    static LanguageCache instance;
+    static LanguageService instance;
     return instance;
 }
 
