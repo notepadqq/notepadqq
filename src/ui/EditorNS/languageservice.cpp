@@ -20,8 +20,10 @@ LanguageService::LanguageService()
     // Reserve the space we need to prevent resize and copy constructs.
     m_languages.reserve(json.object().count());
 
+    bool hasPlainText = false;
     // Begin iterating our QJsonDocument's object and adding languages.
     for (auto&& key : json.object().keys()) {
+        if (key == "plaintext") hasPlainText = true;
         auto mode = json.object().value(key).toObject();
         Language newMode;
         newMode.id = key;
@@ -36,6 +38,8 @@ LanguageService::LanguageService()
             .toVariant().toStringList();
         m_languages.append(std::move(newMode));
     }
+
+    Q_ASSERT(hasPlainText);
 }
 
 const Language* LanguageService::lookupById(const QString& id)
