@@ -34,7 +34,6 @@ namespace EditorNS
 
     void Editor::fullConstructor(const Theme &theme)
     {
-        m_currentLanguage = LanguageService::getInstance().lookupById("plaintext");
         m_jsToCppProxy = new JsToCppProxy(this);
         connect(m_jsToCppProxy,
                 &JsToCppProxy::messageReceived,
@@ -79,7 +78,7 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
         connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
-
+        setLanguage("plaintext");
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we
         // get stuck waiting a J_EVT_READY that will never come.
