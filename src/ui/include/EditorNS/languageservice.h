@@ -41,26 +41,26 @@ class LanguageService
          * @brief Look up a language by its given Id and return an integer
          *        containing the position of the language in the cache.
          * @param id
-         * @return int
+         * @return const Language pointer
          */
-        Language* lookupById(const QString& id);
+        const Language* lookupById(const QString& id);
 
         /**
          * @brief Look up a language by its file name and return an integer
          *        containing the position of the language in the cache.
          * @param fileName
-         * @return int
+         * @return const Language pointer
          */
-        Language* lookupByFileName(const QString& fileName);
+        const Language* lookupByFileName(const QString& fileName);
 
         /**
          * @brief Look up a language by the file extension, if any, and return
          *        an integer containing the position of the language in the
          *        cache.
          * @param fileName
-         * @return int
+         * @return const Language pointer
          */
-        Language* lookupByExtension(const QString& fileName);
+        const Language* lookupByExtension(const QString& fileName);
 
         /**
          * @brief Return a list of all the languages currently available in

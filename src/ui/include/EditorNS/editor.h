@@ -194,7 +194,7 @@ namespace EditorNS
          *        the default configuration for the specified language.
          * @param language Language id
          */
-        Q_INVOKABLE void setLanguage(Language* language);
+        Q_INVOKABLE void setLanguage(const Language* language);
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFileName(QString filePath);
         Q_INVOKABLE void setLanguageFromFileName();
@@ -330,7 +330,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
-        Language* m_currentLanguage = nullptr;
+        const Language* m_currentLanguage = nullptr;
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 

@@ -241,7 +241,7 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    void Editor::setLanguage(Language* lang)
+    void Editor::setLanguage(const Language* lang)
     {
         if (!m_customIndentationMode) {
             setIndentationMode(lang->id);

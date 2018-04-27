@@ -38,7 +38,7 @@ LanguageService::LanguageService()
     }
 }
 
-Language* LanguageService::lookupById(const QString& id)
+const Language* LanguageService::lookupById(const QString& id)
 {
     auto it = std::find_if (m_languages.begin(), m_languages.end(), [&id] (const Language& l) {
         return (l.id == id);
@@ -47,7 +47,7 @@ Language* LanguageService::lookupById(const QString& id)
     return &(*it);
 }
 
-Language* LanguageService::lookupByFileName(const QString& fileName)
+const Language* LanguageService::lookupByFileName(const QString& fileName)
 {
     auto it = std::find_if(m_languages.begin(), m_languages.end(), [&fileName] (const Language& l) {
         return (l.fileNames.contains(fileName));
@@ -56,7 +56,7 @@ Language* LanguageService::lookupByFileName(const QString& fileName)
     return &(*it);
 }
 
-Language* LanguageService::lookupByExtension(const QString& fileName)
+const Language* LanguageService::lookupByExtension(const QString& fileName)
 {
     QFileInfo fi(fileName);
     auto ext = fi.suffix();
