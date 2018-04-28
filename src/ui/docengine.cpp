@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QPushButton>
 
+#include "include/iconprovider.h"
 #include "include/mainwindow.h"
 #include "include/nqqsettings.h"
 #include "include/Sessions/persistentcache.h"
@@ -94,11 +95,48 @@ bool DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
     return true;
 }
 
+int showFileSizeDialog(const QString docName, long long fileSize, bool multipleFiles) {
+    QMessageBox msgBox;
+
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    auto buttons = QMessageBox::Yes | QMessageBox::No;
+    if (multipleFiles)
+        buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
+    msgBox.setStandardButtons(buttons);
+    msgBox.setDefaultButton(QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Warning);
+
+    msgBox.setText(QObject::tr("The file \"%1\" you are trying to open is %2 MiB in size. Do you want to continue?")
+                   .arg(docName)
+                   .arg(QString::number(fileSize / 1024.0 / 1024.0, 'f', 2)));
+
+    return msgBox.exec();
+}
+
+int showReloadDialog(const QString docName) {
+    QMessageBox msgBox;
+
+    msgBox.setWindowTitle(QCoreApplication::applicationName());
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+
+    msgBox.setText("<h3>" + QObject::tr("Do you want to reload «%1»?").arg(docName) + "</h3>");
+    msgBox.setInformativeText(QObject::tr("Any changes made by you to this document will be lost."));
+
+    QPixmap img = IconProvider::fromTheme("view-refresh")
+                  .pixmap(64,64)
+                  .scaled(64,64,Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    msgBox.setIconPixmap(img);
+
+    return msgBox.exec();
+}
+
 void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 {
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
-    const auto& reload = docLoader.isReload;
+    const auto& reloadAction = docLoader.reloadAction;
     auto* tabWidget = docLoader.tabWidget;
     const auto& codec = docLoader.textCodec;
     const auto& bom = docLoader.bom;
@@ -131,7 +169,9 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         QFileInfo fi(localFileName);
 
         QPair<int, int> openPos = findOpenEditorByUrl(url);
-        if(!reload && openPos.first > -1) {
+        const bool isReloading = openPos.first > -1; //'true' when we're reloading a tab
+
+        if(isReloading && reloadAction == ReloadActionDont) {
             EditorTabWidget *tabW = static_cast<EditorTabWidget *>
                                     (m_topEditorContainer->widget(openPos.first));
 
@@ -153,19 +193,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             if (fileSizeAction==FileSizeActionNoToAll)
                 continue;
 
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(QCoreApplication::applicationName());
-            msgBox.setText(tr("The file \"%1\" you are trying to open is %2 MiB in size. Do you want to continue?")
-                           .arg(fi.fileName())
-                           .arg(QString::number(fileSize / 1024.0 / 1024.0, 'f', 2)));
-
-            auto buttons = QMessageBox::Yes | QMessageBox::No;
-            if (fileNames.size() > 1)
-                buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
-            msgBox.setStandardButtons(buttons);
-            msgBox.setDefaultButton(QMessageBox::No);
-            msgBox.setIcon(QMessageBox::Warning);
-            int ret = msgBox.exec();
+            int ret = showFileSizeDialog(fi.fileName(), fileSize, fileNames.size() > 1);
 
             switch(ret) {
             case QMessageBox::YesToAll:
@@ -182,7 +210,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         int tabIndex;
-        if (reload) {
+        if (isReloading) {
             tabWidget = m_topEditorContainer->tabWidget(openPos.first);
             tabIndex = openPos.second;
         } else {
@@ -194,9 +222,19 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         // In case of a reload, save cursor and scroll position
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
-        if (reload) {
+        if (isReloading) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
+        }
+
+        if (reloadAction == DocEngine::ReloadActionAsk && !editor->isClean()) {
+            EditorTabWidget *tabW = static_cast<EditorTabWidget *>
+                                    (m_topEditorContainer->widget(openPos.first));
+            tabW->setCurrentIndex(openPos.second);
+
+            int retVal = showReloadDialog(fi.fileName());
+            if (retVal == QMessageBox::Cancel)
+                continue;
         }
 
         QFile file(localFileName);
@@ -226,7 +264,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         // In case of reload, restore cursor and scroll position
-        if (reload) {
+        if (isReloading) {
             editor->setScrollPosition(scrollPosition);
             editor->setCursorPosition(cursorPosition);
         }
@@ -250,12 +288,12 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         file.close();
-        if (!reload) {
+        if (isReloading) {
+            editor->setFileOnDiskChanged(false);
+        } else {
             editor->setFilePath(url);
             tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
             editor->setLanguageFromFileName();
-        } else {
-            editor->setFileOnDiskChanged(false);
         }
 
         monitorDocument(editor);
@@ -266,7 +304,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             tabWidget->editor(tabIndex)->setFocus();
         }
 
-        if (reload) {
+        if (isReloading) {
             emit documentReloaded(tabWidget, tabIndex);
         } else {
             emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
