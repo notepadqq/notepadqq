@@ -168,7 +168,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         QString localFileName = url.toLocalFile();
         QFileInfo fi(localFileName);
 
-        QPair<int, int> openPos = findOpenEditorByUrl(url);
+        const QPair<int, int> openPos = findOpenEditorByUrl(url);
         const bool isReloading = openPos.first > -1; //'true' when we're reloading a tab
 
         if(isReloading && reloadAction == ReloadActionDont) {
