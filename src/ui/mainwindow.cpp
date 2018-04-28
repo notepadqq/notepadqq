@@ -1412,7 +1412,7 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QString name = editor->getLanguageName();
+    QString name = editor->getLanguage()->name;
     m_statusBar_fileFormat->setText(name);
 
     // Update MainWindow title

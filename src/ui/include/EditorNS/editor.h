@@ -221,10 +221,10 @@ namespace EditorNS
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString getLanguageId() {return m_currentLanguage->id;}
+        /*Q_INVOKABLE QString getLanguageId() {return m_currentLanguage->id;}
         Q_INVOKABLE QString getLanguageName() {return m_currentLanguage->name;}
         Q_INVOKABLE QString getLanguageMime() {return m_currentLanguage->mime;}
-        Q_INVOKABLE QString getLanguageMode() {return m_currentLanguage->mode;}
+        Q_INVOKABLE QString getLanguageMode() {return m_currentLanguage->mode;}*/
         const Language* getLanguage() { return m_currentLanguage; }
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
@@ -337,7 +337,7 @@ namespace EditorNS
         void fullConstructor(const Theme &theme);
 
         void setIndentationMode(const bool useTabs, const int size);
-        void setIndentationMode(QString language);
+        void setIndentationMode(const Language*);
 
     private slots:
         void on_javaScriptWindowObjectCleared();
