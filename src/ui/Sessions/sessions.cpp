@@ -311,7 +311,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             td.scrollX = scrollPos.first;
             td.scrollY = scrollPos.second;
             td.active = tabWidget->currentEditor() == editor;
-            td.language = editor->language();
+            td.language = editor->getLanguageId();
             
             // Cache the custom indentation state of the file
             if (editor->isUsingCustomIndentationMode()) {

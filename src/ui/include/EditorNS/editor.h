@@ -2,6 +2,7 @@
 #define EDITOR_H
 
 #include "include/EditorNS/customqwebview.h"
+#include "include/EditorNS/languageservice.h"
 #include <QObject>
 #include <QVariant>
 #include <QQueue>
@@ -92,12 +93,6 @@ namespace EditorNS
         static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
 
         static void invalidateEditorBuffer();
-
-        struct LanguageGreater {
-            inline bool operator()(const QMap<QString, QString> &v1, const QMap<QString, QString> &v2) const {
-                return v1.value("name").toLower() < v2.value("name").toLower();
-            }
-        };
 
         struct Cursor {
             int line;
@@ -193,17 +188,16 @@ namespace EditorNS
          */
         Q_INVOKABLE int getHistoryGeneration();
 
-        QList<QMap<QString, QString> > languages();
-
         /**
          * @brief Set the language to use for the editor.
          *        It automatically adjusts tab settings from
          *        the default configuration for the specified language.
          * @param language Language id
          */
+        Q_INVOKABLE void setLanguage(const Language* language);
         Q_INVOKABLE void setLanguage(const QString &language);
-        Q_INVOKABLE QString setLanguageFromFileName(QString filePath);
-        Q_INVOKABLE QString setLanguageFromFileName();
+        Q_INVOKABLE void setLanguageFromFileName(const QString& fileName);
+        Q_INVOKABLE void setLanguageFromFileName();
         Q_INVOKABLE void setValue(const QString &value);
         Q_INVOKABLE QString value();
 
@@ -227,7 +221,10 @@ namespace EditorNS
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
-        Q_INVOKABLE QString language();
+        Q_INVOKABLE QString getLanguageId() {return m_currentLanguage->id;}
+        Q_INVOKABLE QString getLanguageName() {return m_currentLanguage->name;}
+        Q_INVOKABLE QString getLanguageMime() {return m_currentLanguage->mime;}
+        Q_INVOKABLE QString getLanguageMode() {return m_currentLanguage->mode;}
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
@@ -332,7 +329,7 @@ namespace EditorNS
         QTextCodec *m_codec = QTextCodec::codecForName("UTF-8");
         bool m_bom = false;
         bool m_customIndentationMode = false;
-
+        const Language* m_currentLanguage = nullptr;
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
