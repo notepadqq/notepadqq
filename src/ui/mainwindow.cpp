@@ -1151,7 +1151,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
                            tr("Save as"),
                            getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
                            tr("Any file (*)"),
-                           0, 0);
+                           nullptr, nullptr);
 
     if (filename != "") {
         m_settings.General.setLastSelectedDir(QFileInfo(filename).absolutePath());
