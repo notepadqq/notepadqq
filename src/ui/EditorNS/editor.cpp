@@ -81,7 +81,7 @@ namespace EditorNS
         connect(m_webView, &CustomQWebView::mouseWheel, this, &Editor::mouseWheel);
         connect(m_webView, &CustomQWebView::urlsDropped, this, &Editor::urlsDropped);
         connect(m_webView, &CustomQWebView::gotFocus, this, &Editor::gotFocus);
-
+        setLanguage(nullptr);
         // TODO Display a message if a javascript error gets triggered.
         // Right now, if there's an error in the javascript code, we
         // get stuck waiting a J_EVT_READY that will never come.
@@ -175,11 +175,6 @@ namespace EditorNS
                 emit cleanChanged(data.toBool());
             else if(msg == "J_EVT_CURSOR_ACTIVITY")
                 emit cursorActivity();
-            else if(msg == "J_EVT_CURRENT_LANGUAGE_CHANGED") {
-                QVariantMap map = data.toMap();
-                emit currentLanguageChanged(map.value("id").toString(),
-                                            map.value("name").toString());
-            }
 
         });
     }
@@ -250,56 +245,48 @@ namespace EditorNS
                 .get().toInt();
     }
 
-    QList<QMap<QString, QString>> Editor::languages()
+    void Editor::setLanguage(const Language* lang)
     {
-        QMap<QString, QVariant> languages =
-                asyncSendMessageWithResult("C_FUN_GET_LANGUAGES").get().toMap();
-
-        QList<QMap<QString, QString>> out;
-
-        QMap<QString, QVariant>::iterator lang;
-        for (lang = languages.begin(); lang != languages.end(); ++lang) {
-            QMap<QString, QVariant> mode = lang.value().toMap();
-
-            QMap<QString, QString> newMode;
-            newMode.insert("id", lang.key());
-            newMode.insert("name", mode.value("name").toString());
-            newMode.insert("mime", mode.value("mime").toString());
-            newMode.insert("mode", mode.value("mode").toString());
-
-            out.append(newMode);
+        if (lang == nullptr) {
+            lang = LanguageService::getInstance().lookupById("plaintext");
         }
-
-        return out;
+        if (m_currentLanguage == lang) {
+            return;
+        }
+        if (!m_customIndentationMode) {
+            setIndentationMode(lang->id);
+        }
+        m_currentLanguage = lang;
+        sendMessage("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime);
+        emit currentLanguageChanged(lang->id, lang->name);
     }
 
-    QString Editor::language()
+    void Editor::setLanguage(const QString& language)
     {
-        QVariantMap data = asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
-        return data.value("id").toString();
+        auto& cache = LanguageService::getInstance();
+        auto lang = cache.lookupById(language);
+        if (lang != nullptr) {
+            setLanguage(lang);
+        }
     }
 
-    void Editor::setLanguage(const QString &language)
+    void Editor::setLanguageFromFileName(const QString& fileName)
     {
-        sendMessage("C_CMD_SET_LANGUAGE", language);
-        if (!m_customIndentationMode)
-            setIndentationMode(language);
+        auto& cache = LanguageService::getInstance();
+        auto lang = cache.lookupByFileName(fileName);
+        if (lang != nullptr) {
+            setLanguage(lang);
+            return;
+        }
+        lang = cache.lookupByExtension(fileName);
+        if (lang != nullptr) {
+            setLanguage(lang);
+        }
     }
 
-    QString Editor::setLanguageFromFileName(QString fileName)
+    void Editor::setLanguageFromFileName()
     {
-        QString lang = asyncSendMessageWithResult("C_FUN_SET_LANGUAGE_FROM_FILENAME",
-                                             fileName).get().toString();
-
-        if (!m_customIndentationMode)
-            setIndentationMode(lang);
-
-        return lang;
-    }
-
-    QString Editor::setLanguageFromFileName()
-    {
-        return setLanguageFromFileName(filePath().toString());
+        setLanguageFromFileName(filePath().toString());
     }
 
     void Editor::setIndentationMode(QString language)
@@ -345,7 +332,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
-        setIndentationMode(language());
+        setIndentationMode(getLanguageId());
     }
 
     bool Editor::isUsingCustomIndentationMode() const
@@ -360,6 +347,7 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
+        setLanguage(LanguageService::getInstance().lookupByContent(value));
         sendMessage("C_CMD_SET_VALUE", value);
     }
 

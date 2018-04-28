@@ -511,37 +511,22 @@ QList<QAction*> MainWindow::getActions() const
 
 void MainWindow::setupLanguagesMenu()
 {
-    Editor *editor = currentEditor();
-    if (editor == 0) {
-        qDebug() << "currentEditor is null";
-        throw;
-    }
-
-    QList<QMap<QString, QString>> langs = editor->languages();
-    std::sort(langs.begin(), langs.end(), Editor::LanguageGreater());
-
-    //ui->menu_Language->setStyleSheet("* { menu-scrollable: 1 }");
-    QMap<QChar, QMenu*> menuInitials;
-    for (int i = 0; i < langs.length(); i++) {
-        const QMap<QString, QString> &map = langs.at(i);
-
-        QString name = map.value("name", "?");
-        if (name.length() == 0) name = "?";
-        QChar letter = name.at(0).toUpper();
-
+    std::map<QChar, QMenu*> menuInitials;
+    for (const auto& l : LanguageService::getInstance().languages()) {
+        QString id = l.id;
+        QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
         QMenu *letterMenu;
-        if (menuInitials.contains(letter)) {
-            letterMenu = menuInitials.value(letter, 0);
+        if (menuInitials.count(letter) != 0) {
+            letterMenu = menuInitials[letter];
         } else {
             letterMenu = new QMenu(letter, this);
-            menuInitials.insert(letter, letterMenu);
+            menuInitials.emplace(std::make_pair(letter, letterMenu));
             ui->menu_Language->insertMenu(0, letterMenu);
         }
 
-        QString langId = map.value("id", "");
-        QAction *action = new QAction(map.value("name"), this);
-        connect(action, &QAction::triggered, this, [=](bool /*checked*/ = false) {
-            currentEditor()->setLanguage(langId);
+        QAction *action = new QAction(l.name, this);
+        connect(action, &QAction::triggered, this, [id, this](bool = false) {
+            currentEditor()->setLanguage(id);
         });
         letterMenu->insertAction(0, action);
     }
@@ -608,7 +593,7 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     {
         files.append(stringToUrl(rawUrls.at(i), workingDirectory));
     }
-  
+
     m_docEngine->getDocumentLoader()
                 .setUrls(files)
                 .setTabWidget(m_topEditorContainer->currentTabWidget())
@@ -1035,66 +1020,71 @@ int MainWindow::closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool 
     int result = MainWindow::tabCloseResult_AlreadySaved;
     Editor *editor = tabWidget->editor(tab);
 
-    // Don't remove the tab if it's the last tab, it's empty, in an unmodified state and it's not associated with a file name.
-    // Else, continue.
-    if (! (m_topEditorContainer->count() == 1 && tabWidget->count() == 1
-           && editor->filePath().isEmpty() && editor->isClean())) {
+    // If the tab is the only existing one, is not associated with a file, and has no contents,
+    // we'll not close it.
+    if ( m_topEditorContainer->count()==1 && tabWidget->count()==1 &&
+         editor->filePath().isEmpty() && editor->value().isEmpty()) {
 
-        if(!force && !editor->isClean()) {
-            tabWidget->setCurrentIndex(tab);
-            int ret = askIfWantToSave(tabWidget, tab, askToSaveChangesReason_tabClosing);
-            if(ret == QMessageBox::Save) {
-                // Save
-                int saveResult = save(tabWidget, tab);
-                if(saveResult == DocEngine::saveFileResult_Canceled)
-                {
-                    // The user canceled the "save dialog". Let's ignore the close event.
-                    result = MainWindow::tabCloseResult_Canceled;
-                } else if(saveResult == DocEngine::saveFileResult_Saved)
-                {
-                    if (remove) m_docEngine->closeDocument(tabWidget, tab);
-                    result = MainWindow::tabCloseResult_Saved;
-                }
-            } else if(ret == QMessageBox::Discard) {
-                // Don't save and close
-                if (remove) m_docEngine->closeDocument(tabWidget, tab);
-                result = MainWindow::tabCloseResult_NotSaved;
-            } else if(ret == QMessageBox::Cancel) {
-                // Don't save and cancel closing
-                result = MainWindow::tabCloseResult_Canceled;
-            }
-        } else {
-            // The tab is already saved: we can remove it safely.
-            if (remove) m_docEngine->closeDocument(tabWidget, tab);
-            result = MainWindow::tabCloseResult_AlreadySaved;
-        }
-
-        // Ensure the focus is still on this tabWidget
-        if (tabWidget->count() > 0) {
-            tabWidget->currentEditor()->setFocus();
-        }
-    } else {
         // If user tried to close last open (clean) tab, check if Nqq should just quit.
         if(m_settings.General.getExitOnLastTabClose())
             close();
+
+        goto cleanup;
     }
 
-    if(tabWidget->count() == 0) {
-        /* Not so good... 0 tabs opened is a bad idea. So, if there are more
-         * than one TabWidgets opened (split-screen) then we completely
-         * remove this one. Otherwise, we add a new empty tab.
-        */
-        if(m_topEditorContainer->count() > 1) {
-            delete tabWidget;
-            m_topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
-        } else {
-            if(m_settings.General.getExitOnLastTabClose())
-                close();
-            else
-                ui->actionNew->trigger();
+    if (force || editor->isClean() || (editor->filePath().isEmpty() && editor->value().isEmpty())) {
+        if (remove) m_docEngine->closeDocument(tabWidget, tab);
+        goto cleanup;
+    }
+
+    // Ask the user to choose what to do with the modified contents.
+    tabWidget->setCurrentIndex(tab);
+    switch(askIfWantToSave(tabWidget, tab, askToSaveChangesReason_tabClosing)) {
+    case QMessageBox::Save: {
+        switch(save(tabWidget, tab)) {
+        case DocEngine::saveFileResult_Canceled:
+            result = MainWindow::tabCloseResult_Canceled;
+            break;
+        case DocEngine::saveFileResult_Saved:
+            if (remove) m_docEngine->closeDocument(tabWidget, tab);
+            result = MainWindow::tabCloseResult_Saved;
+            break;
         }
+        break;
+    }
+    case QMessageBox::Discard: {
+        if (remove) m_docEngine->closeDocument(tabWidget, tab);
+        result = MainWindow::tabCloseResult_NotSaved;
+        break;
+    }
+    case QMessageBox::Cancel: {
+        // Don't save and cancel closing
+        result = MainWindow::tabCloseResult_Canceled;
+    }
     }
 
+    // Ensure the focus is still on this tabWidget
+    if (tabWidget->count() > 0) {
+        tabWidget->currentEditor()->setFocus();
+    }
+
+cleanup:
+    if(tabWidget->count() > 0)
+        return result;
+
+    // If we just closed the last tab we'll either
+    // * close the tabWidget and switch to a different one,
+    // * close the editor if ExitOnLastTabClose() is enabled, or
+    // * open a new tab.
+    if(m_topEditorContainer->count() > 1) {
+        delete tabWidget;
+        m_topEditorContainer->tabWidget(0)->currentEditor()->setFocus();
+    } else {
+        if(m_settings.General.getExitOnLastTabClose())
+            close();
+        else
+            ui->actionNew->trigger();
+    }
 
     return result;
 }
@@ -1265,13 +1255,13 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
 {
     Editor *editor = tabWidget->editor(tab);
-    
+
     // If the tab is not newly opened but only transferred (e.g. with "Move to other View") it may
     // have a banner attached to it. We need to disconnect previous signals to prevent
     // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
     // created a few lines below).
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
-    
+
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
@@ -1406,15 +1396,12 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QVariantMap data = editor->asyncSendMessageWithResult("C_FUN_GET_CURRENT_LANGUAGE").get().toMap();
-    QString name = data.value("lang").toMap().value("name").toString();
+    QString name = editor->getLanguageName();
     m_statusBar_fileFormat->setText(name);
-
 
     // Update MainWindow title
     QString newTitle;
     if (editor->filePath().isEmpty()) {
-
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
             int tab = tabWidget->indexOf(editor);
@@ -2230,7 +2217,7 @@ void MainWindow::generateRunMenu()
     QMap <QString, QString> runners = m_settings.Run.getCommands();
     QMapIterator<QString, QString> i(runners);
     ui->menu_Run->clear();
-    
+
     QAction *a = ui->menu_Run->addAction(tr("Run..."));
     connect(a, &QAction::triggered, this, &MainWindow::runCommand);
     ui->menu_Run->addSeparator();
@@ -2265,7 +2252,7 @@ void MainWindow::runCommand()
     } else {
         NqqRun::RunDialog rd;
         int ok = rd.exec();
-        
+
         if (rd.saved()) {
             generateRunMenu();
         }
@@ -2294,7 +2281,7 @@ void MainWindow::runCommand()
     if (!args.isEmpty()) {
         cmd = args.takeFirst();
         if(!QProcess::startDetached(cmd, args)) {
-        
+
         }
     }
 }

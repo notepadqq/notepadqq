@@ -9,7 +9,7 @@ ABSOLUTE_DESTDIR := $(shell mkdir -p $$(dirname "$(DESTDIR)") && cd $$(dirname "
 
 all:
 	mkdir -p "$(DESTDIR)"
-	cp -r classes styles features app.js index.html init.js "$(DESTDIR)"/
+	cp -r classes styles features app.js index.html init.js Languages.json "$(DESTDIR)"/
 	mkdir -p "$(DESTDIR)"/libs
 	cp -r libs/jquery "$(DESTDIR)"/libs/jquery/
 	cp -r libs/MathJax "$(DESTDIR)"/libs/MathJax/
