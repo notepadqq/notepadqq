@@ -1167,8 +1167,13 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
     QUrl docFileName = tabWidget->editor(tab)->filePath();
 
     if (docFileName.isEmpty()) {
+        // For tabs that don't have a filename associated with them we'll composite one using
+        // its tab title and the language mode's file extension.
+        const auto& extensions = tabWidget->editor(tab)->getLanguage()->fileExtensions;
+        QString ext = extensions.isEmpty() ? "" : "." + extensions.first();
+
         return QUrl::fromLocalFile(m_settings.General.getLastSelectedDir()
-                                   + "/" + tabWidget->tabText(tab));
+                                   + "/" + tabWidget->tabText(tab) + ext);
     } else {
         return docFileName;
     }

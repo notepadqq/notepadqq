@@ -225,6 +225,7 @@ namespace EditorNS
         Q_INVOKABLE QString getLanguageName() {return m_currentLanguage->name;}
         Q_INVOKABLE QString getLanguageMime() {return m_currentLanguage->mime;}
         Q_INVOKABLE QString getLanguageMode() {return m_currentLanguage->mode;}
+        const Language* getLanguage() { return m_currentLanguage; }
         Q_INVOKABLE void setLineWrap(const bool wrap);
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
