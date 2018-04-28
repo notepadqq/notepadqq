@@ -1,38 +1,38 @@
 name: notepadqq 
-version: '1.4.0'
+version: '1.4.0+git'
 summary: A Notepad++-like editor for Linux.
 description: |
   It helps developers by providing all you can expect from a general purpose text editor, such as syntax highlighting for more than 100 different languages, code folding, color schemes, file monitoring, multiple selection and much more.
   You can search text using the power of regular expressions. You can organize documents side by side. You can use real-time highlighting to find near identifiers in no time.
 grade: stable
-confinement: strict
+confinement: classic
 icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
 
 
 apps:
   notepadqq: 
-    command: desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
+    command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     desktop: usr/local/share/applications/notepadqq.desktop
-    plugs:
-      - browser-support
-      - desktop
-      - desktop-legacy
-      - gsettings
-      - home
-      - media-hub
-      - network-bind
-      - network-manager
-      - opengl
-      - optical-drive
-      - removable-media
-      - unity7
-      - x11
+#   plugs:  # Plugs are not needed for classic confinement
+#     - browser-support
+#     - desktop
+#     - desktop-legacy
+#     - gsettings
+#     - home
+#     - media-hub
+#     - network-bind
+#     - network-manager
+#     - opengl
+#     - optical-drive
+#     - removable-media
+#     - unity7
+#     - x11
 
 parts:
   fixicon:
     plugin: nil
     after: [my-part]
-    install: |
+    override-build: |
       sed -i 's|Icon=notepadqq|Icon=/usr/local/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/local/share/applications/notepadqq.desktop
 
   my-part:
@@ -74,3 +74,7 @@ parts:
     source: . 
     after: [desktop-qt5] 
     plugin: qmake
+
+    override-build: |
+      sed -i '/.*QMAKE_RPATH=$/d' src/ui/ui.pro  # Hack for forcing the use of RPATH
+      snapcraftctl build
