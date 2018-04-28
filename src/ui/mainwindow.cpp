@@ -1151,7 +1151,7 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
                            tr("Save as"),
                            getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
                            tr("Any file (*)"),
-                           0, 0);
+                           nullptr, nullptr);
 
     if (filename != "") {
         m_settings.General.setLastSelectedDir(QFileInfo(filename).absolutePath());
@@ -1167,8 +1167,13 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int ta
     QUrl docFileName = tabWidget->editor(tab)->filePath();
 
     if (docFileName.isEmpty()) {
+        // For tabs that don't have a filename associated with them we'll composite one using
+        // its tab title and the language mode's file extension.
+        const auto& extensions = tabWidget->editor(tab)->getLanguage()->fileExtensions;
+        QString ext = extensions.isEmpty() ? "" : "." + extensions.first();
+
         return QUrl::fromLocalFile(m_settings.General.getLastSelectedDir()
-                                   + "/" + tabWidget->tabText(tab));
+                                   + "/" + tabWidget->tabText(tab) + ext);
     } else {
         return docFileName;
     }
@@ -1407,7 +1412,7 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
-    QString name = editor->getLanguageName();
+    QString name = editor->getLanguage()->name;
     m_statusBar_fileFormat->setText(name);
 
     // Update MainWindow title
