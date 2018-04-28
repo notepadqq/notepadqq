@@ -61,6 +61,14 @@ class LanguageService
         const Language* lookupByExtension(const QString& fileName);
 
         /**
+         * @brief Look up a language by the content of the first few lines
+         *        i.e. shebang
+         * @param content
+         * @return const Language pointer
+         */
+        const Language* lookupByContent(QString content);
+
+        /**
          * @brief Return a list of all the languages currently available in
          *        cache.
          * @return const QVector<Language>

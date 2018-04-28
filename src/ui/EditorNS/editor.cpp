@@ -285,24 +285,6 @@ namespace EditorNS
         setLanguageFromFileName(filePath().toString());
     }
 
-    void Editor::detectLanguageFromContent(QString rawTxt)
-    {
-        auto& cache = LanguageService::getInstance();
-        QTextStream stream(&rawTxt);
-        stream.skipWhiteSpace();
-        QString test = stream.readLine();
-        for (auto l : cache.languages()) {
-            if (!l.firstNonBlankLine.isEmpty()) {
-                for (auto& t : l.firstNonBlankLine) {
-                    if (test.contains(QRegularExpression(t))) {
-                        setLanguage(&l);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
     void Editor::setIndentationMode(QString language)
     {
         NqqSettings& s = NqqSettings::getInstance();
@@ -361,7 +343,7 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
-        detectLanguageFromContent(value);
+        setLanguage(LanguageService::getInstance().lookupByContent(value));
         sendMessage("C_CMD_SET_VALUE", value);
     }
 

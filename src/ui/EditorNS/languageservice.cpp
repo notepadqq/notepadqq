@@ -71,6 +71,25 @@ const Language* LanguageService::lookupByExtension(const QString& fileName)
     return &(*it);
 }
 
+const Language* LanguageService::lookupByContent(QString content)
+{
+    if (content.isEmpty()) {
+        return nullptr;
+    }
+    QTextStream stream(&content);
+    stream.skipWhiteSpace();
+    auto test = stream.readLine();
+    for (auto&& l : m_languages) {
+        if (l.firstNonBlankLine.isEmpty()) continue;
+        for (auto&& t : l.firstNonBlankLine) {
+            if (test.contains(QRegularExpression(t))) {
+                return &l;
+            }
+        }
+    }
+    return nullptr;
+}
+
 LanguageService& LanguageService::getInstance()
 {
     static LanguageService instance;
