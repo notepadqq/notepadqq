@@ -463,9 +463,8 @@ namespace EditorNS
 
     void Editor::removeBanner(QString objectName)
     {
-        QList<QWidget *> list = findChildren<QWidget *>(objectName);
-        for (int i = 0; i < list.length(); i++) {
-            removeBanner(list[i]);
+        for (auto&& banner : findChildren<QWidget *>(objectName)) {
+            removeBanner(banner);
         }
     }
 
@@ -492,13 +491,12 @@ namespace EditorNS
     QPair<int, int> Editor::cursorPosition()
     {
         QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();
-        return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+        return {cursor[0].toInt(), cursor[1].toInt()};
     }
 
     void Editor::setCursorPosition(const int line, const int column)
     {
-        QList<QVariant> arg = QList<QVariant>({line, column});
-        sendMessage("C_CMD_SET_CURSOR", QVariant(arg));
+        sendMessage("C_CMD_SET_CURSOR", QList<QVariant>{line, column});
     }
 
     void Editor::setCursorPosition(const QPair<int, int> &position)
