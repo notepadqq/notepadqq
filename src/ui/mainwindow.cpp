@@ -1779,7 +1779,7 @@ void MainWindow::transformSelectedText(std::function<QString (const QString &)> 
         sel.replace(i, func(sel.at(i)));
     }
 
-    editor->setSelectionsText(sel, Editor::selectMode_selected);
+    editor->setSelectionsText(sel, Editor::SelectMode::Selected);
 }
 
 void MainWindow::on_actionUPPERCASE_triggered()

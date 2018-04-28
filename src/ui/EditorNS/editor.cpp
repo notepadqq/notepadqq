@@ -429,26 +429,23 @@ namespace EditorNS
         return m_webView->zoomFactor();
     }
 
-    void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
+    void Editor::setSelectionsText(const QStringList &texts, SelectMode mode)
     {
-        QString modeStr = "";
-        if (mode == selectMode_cursorAfter)
-            modeStr = "after";
-        else if (mode == selectMode_cursorBefore)
-            modeStr = "before";
-        else
-            modeStr = "selected";
-
-        QVariantMap data;
-        data.insert("text", texts);
-        data.insert("select", modeStr);
-
+        QVariantMap data {{"text", texts}};
+        switch (mode) {
+            case SelectMode::After:
+                data.insert("select", "after"); break;
+            case SelectMode::Before:
+                data.insert("select", "before"); break;
+            default:
+                data.insert("select", "selected"); break;
+        }
         sendMessage("C_CMD_SET_SELECTIONS_TEXT", data);
     }
 
     void Editor::setSelectionsText(const QStringList &texts)
     {
-        setSelectionsText(texts, selectMode_cursorAfter);
+        setSelectionsText(texts, SelectMode::After);
     }
 
     void Editor::insertBanner(QWidget *banner)
@@ -602,25 +599,17 @@ namespace EditorNS
 
     QList<Editor::Theme> Editor::themes()
     {
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
 
-        QStringList filters;
-        filters << "*.css";
-        bundledThemesDir.setNameFilters(filters);
-
-        QStringList themeFiles = bundledThemesDir.entryList();
+        bundledThemesDir.setNameFilters({"*.css"});
 
         QList<Theme> out;
-        for (QString themeStr : themeFiles) {
-            QFileInfo theme = QFileInfo(themeStr);
+        for (auto&& themeStr : bundledThemesDir.entryList()) {
+            auto theme = QFileInfo(themeStr);
             QString nameWithoutExt = theme.fileName()
                     .replace(QRegularExpression("\\.css$"), "");
-
-            Theme t;
-            t.name = nameWithoutExt;
-            t.path = bundledThemesDir.filePath(themeStr);
-            out.append(t);
+            out.append({nameWithoutExt, bundledThemesDir.filePath(themeStr)});
         }
 
         return out;
