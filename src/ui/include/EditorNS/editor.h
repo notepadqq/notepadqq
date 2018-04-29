@@ -72,6 +72,10 @@ namespace EditorNS
         struct Theme {
             QString name;
             QString path;
+            Theme(const QString& name = "default", const QString& path = "") {
+                this->name = name;
+                this->path = path;
+            }
         };
 
         explicit Editor(const Theme &theme, QWidget *parent = 0);
@@ -159,10 +163,10 @@ namespace EditorNS
         Q_INVOKABLE bool fileOnDiskChanged() const;
         Q_INVOKABLE void setFileOnDiskChanged(bool fileOnDiskChanged);
 
-        enum selectMode {
-            selectMode_cursorBefore,
-            selectMode_cursorAfter,
-            selectMode_selected
+        enum class SelectMode {
+            Before,
+            After,
+            Selected
         };
 
         void insertBanner(QWidget *banner);
@@ -211,7 +215,7 @@ namespace EditorNS
         Q_INVOKABLE void setSmartIndent(bool enabled);
         Q_INVOKABLE qreal zoomFactor() const;
         Q_INVOKABLE void setZoomFactor(const qreal &factor);
-        Q_INVOKABLE void setSelectionsText(const QStringList &texts, selectMode mode);
+        Q_INVOKABLE void setSelectionsText(const QStringList &texts, SelectMode mode);
         Q_INVOKABLE void setSelectionsText(const QStringList &texts);
         const Language* getLanguage() { return m_currentLanguage; }
         Q_INVOKABLE void setLineWrap(const bool wrap);

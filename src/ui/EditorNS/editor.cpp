@@ -22,8 +22,6 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "")
-            themeName = "default";
 
         fullConstructor(themeFromName(themeName));
     }
@@ -301,22 +299,17 @@ namespace EditorNS
 
     void Editor::setIndentationMode(const Language* lang)
     {
-        QString langId = lang->id;
-        NqqSettings& s = NqqSettings::getInstance();
+        const auto& s = NqqSettings::getInstance().Languages;
+        const bool useDefaults = s.getUseDefaultSettings(lang->id);
+        const auto& langId = useDefaults ? "default" : lang->id;
 
-        if (s.Languages.getUseDefaultSettings(langId))
-            langId = "default";
-
-        setIndentationMode(!s.Languages.getIndentWithSpaces(langId),
-                            s.Languages.getTabSize(langId));
+        setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size)
     {
-        QMap<QString, QVariant> data;
-        data.insert("useTabs", useTabs);
-        data.insert("size", size);
-        sendMessage("C_CMD_SET_INDENTATION_MODE", data);
+        sendMessage("C_CMD_SET_INDENTATION_MODE",
+            QVariantMap{{"useTabs", useTabs}, {"size", size}});
     }
 
     Editor::IndentationMode Editor::indentationMode()
@@ -486,26 +479,23 @@ namespace EditorNS
         return m_webView->zoomFactor();
     }
 
-    void Editor::setSelectionsText(const QStringList &texts, selectMode mode)
+    void Editor::setSelectionsText(const QStringList &texts, SelectMode mode)
     {
-        QString modeStr = "";
-        if (mode == selectMode_cursorAfter)
-            modeStr = "after";
-        else if (mode == selectMode_cursorBefore)
-            modeStr = "before";
-        else
-            modeStr = "selected";
-
-        QVariantMap data;
-        data.insert("text", texts);
-        data.insert("select", modeStr);
-
+        QVariantMap data {{"text", texts}};
+        switch (mode) {
+            case SelectMode::After:
+                data.insert("select", "after"); break;
+            case SelectMode::Before:
+                data.insert("select", "before"); break;
+            default:
+                data.insert("select", "selected"); break;
+        }
         sendMessage("C_CMD_SET_SELECTIONS_TEXT", data);
     }
 
     void Editor::setSelectionsText(const QStringList &texts)
     {
-        setSelectionsText(texts, selectMode_cursorAfter);
+        setSelectionsText(texts, SelectMode::After);
     }
 
     void Editor::insertBanner(QWidget *banner)
@@ -523,9 +513,8 @@ namespace EditorNS
 
     void Editor::removeBanner(QString objectName)
     {
-        QList<QWidget *> list = findChildren<QWidget *>(objectName);
-        for (int i = 0; i < list.length(); i++) {
-            removeBanner(list[i]);
+        for (auto&& banner : findChildren<QWidget *>(objectName)) {
+            removeBanner(banner);
         }
     }
 
@@ -552,13 +541,12 @@ namespace EditorNS
     QPair<int, int> Editor::cursorPosition()
     {
         QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();
-        return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+        return {cursor[0].toInt(), cursor[1].toInt()};
     }
 
     void Editor::setCursorPosition(const int line, const int column)
     {
-        QList<QVariant> arg = QList<QVariant>({line, column});
-        sendMessage("C_CMD_SET_CURSOR", QVariant(arg));
+        sendMessage("C_CMD_SET_CURSOR", QList<QVariant>{line, column});
     }
 
     void Editor::setCursorPosition(const QPair<int, int> &position)
@@ -573,20 +561,19 @@ namespace EditorNS
 
     void Editor::setSelection(int fromLine, int fromCol, int toLine, int toCol)
     {
-        QList<QVariant> arg = QList<QVariant>({fromLine, fromCol, toLine, toCol});
+        QVariantList arg{fromLine, fromCol, toLine, toCol};
         sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
     }
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
-        return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
+        QVariantList scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
+        return {scroll[0].toInt(), scroll[1].toInt()};
     }
 
     void Editor::setScrollPosition(const int left, const int top)
     {
-        QList<QVariant> arg = QList<QVariant>({left, top});
-        sendMessage("C_CMD_SET_SCROLL_POS", QVariant(arg));
+        sendMessage("C_CMD_SET_SCROLL_POS", QVariantList{left, top});
     }
 
     void Editor::setScrollPosition(const QPair<int, int> &position)
@@ -635,60 +622,33 @@ namespace EditorNS
 
     Editor::Theme Editor::themeFromName(QString name)
     {
-        Theme defaultTheme;
-        defaultTheme.name = "default";
-        defaultTheme.path = "";
+        if (name == "default" || name.isEmpty())
+            return Theme();
 
-        if (name == "default" || name == "")
-            return defaultTheme;
+        QFileInfo editorPath(Notepadqq::editorPath());
+        QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
 
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        if (bundledThemesDir.exists(name + ".css"))
+            return Theme(name, bundledThemesDir.filePath(name + ".css"));
 
-        Theme t;
-        QString themeFile = bundledThemesDir.filePath(name + ".css");
-        if (QFile(themeFile).exists()) {
-            t.name = name;
-            t.path = themeFile;
-        } else {
-            t = defaultTheme;
-        }
-
-        return t;
+        return Theme();
     }
 
     QList<Editor::Theme> Editor::themes()
     {
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        QStringList filters;
-        filters << "*.css";
-        bundledThemesDir.setNameFilters(filters);
-
-        QStringList themeFiles = bundledThemesDir.entryList();
+        auto editorPath = QFileInfo(Notepadqq::editorPath());
+        QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/", "*.css");
 
         QList<Theme> out;
-        for (QString themeStr : themeFiles) {
-            QFileInfo theme = QFileInfo(themeStr);
-            QString nameWithoutExt = theme.fileName()
-                    .replace(QRegularExpression("\\.css$"), "");
-
-            Theme t;
-            t.name = nameWithoutExt;
-            t.path = bundledThemesDir.filePath(themeStr);
-            out.append(t);
+        for (auto&& theme : bundledThemesDir.entryInfoList()) {
+            out.append(Theme(theme.completeBaseName(), theme.filePath()));
         }
-
         return out;
     }
 
     void Editor::setTheme(Theme theme)
     {
-        QMap<QString, QVariant> tmap;
-        tmap.insert("name", theme.name == "" ? "default" : theme.name);
-        tmap.insert("path", theme.path);
-        sendMessage("C_CMD_SET_THEME", tmap);
+        sendMessage("C_CMD_SET_THEME", QVariantMap{{"name",theme.name},{"path",theme.path}});
     }
 
     QList<Editor::Selection> Editor::selections()
@@ -756,7 +716,7 @@ namespace EditorNS
         // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
         // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
 
-        setTheme(themeFromName("Default"));
+        setTheme(themeFromName("default"));
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->page()->print(printer.get(), [printer, this](bool success) {
