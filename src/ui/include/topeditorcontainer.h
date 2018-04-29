@@ -5,6 +5,7 @@
 #include <QWheelEvent>
 #include "editortabwidget.h"
 #include "EditorNS/editor.h"
+#include "include/promise.h"
 #include <functional>
 #include <vector>
 
@@ -46,6 +47,27 @@ public:
      */
     void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
     void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
+
+    /**
+     * @brief Executes the specified asynchronous function for each editor in this container, in order.
+     *        Every callback can be asynchronous and should call goOn() as soon as it finishes to invoke
+     *        the next iteration. If stop() is called, the loop is stopped. Never call both goOn() and
+     *        stop() from the same callback.
+     * @param backwardIndices True if you want to get the items in the reverse order
+     *                        (useful for example if you're deleting the items
+     *                         while iterating over them).
+     * @param callback
+     * @return Returns a promise which is resolved when all the callbacks have finished.
+     */
+    Promise<int> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> goOn, std::function<void()> stop)> callback);
+
+    /**
+     * @brief Executes the specified asynchronous function for each editor in this container, concurrently.
+     *        Every callback can be asynchronous and should call done() when it finishes.
+     * @param callback
+     * @return Returns a promise which is resolved when all the callbacks have called done().
+     */
+    Promise<int> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> done)> callback);
 
     std::vector<Editor*> getOpenEditors();
 

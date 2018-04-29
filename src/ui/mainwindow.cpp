@@ -801,9 +801,9 @@ bool MainWindow::updateSymbols(bool on)
 
 void MainWindow::on_actionShow_Tabs_triggered(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor, std::function<void()> done) {
         editor->setTabsVisible(on);
-        return true;
+        done();
     });
     if (!updateSymbols(on)) {
         m_settings.General.setTabsVisible(on);
@@ -812,9 +812,9 @@ void MainWindow::on_actionShow_Tabs_triggered(bool on)
 
 void MainWindow::on_actionShow_Spaces_triggered(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor, std::function<void()> done) {
         editor->setWhitespaceVisible(on);
-        return true;
+        done();
     });
     if (!updateSymbols(on)) {
         m_settings.General.setSpacesVisisble(on);
@@ -823,9 +823,9 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
 
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor, std::function<void()> done) {
         editor->setEOLVisible(on);
-        return true;
+        done();
     });
     if (!updateSymbols(on)) {
         m_settings.General.setShowEOL(on);
@@ -855,11 +855,11 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
         ui->actionShow_Spaces->setChecked(showSpaces);
     }
 
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor, std::function<void()> done) {
         editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
         editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
         editor->setWhitespaceVisible(on);
-        return true;
+        done();
     });
 
     m_settings.General.setShowAllSymbols(on);
@@ -867,9 +867,9 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
 
 void MainWindow::on_actionMath_Rendering_toggled(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor) {
+    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget */*tabWidget*/, Editor *editor, std::function<void()> done) {
         editor->setMathEnabled(on);
-        return true;
+        done();
     });
 
     m_settings.General.setMathRendering(on);
