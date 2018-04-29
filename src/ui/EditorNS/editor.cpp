@@ -590,9 +590,7 @@ namespace EditorNS
     QList<Editor::Theme> Editor::themes()
     {
         auto editorPath = QFileInfo(Notepadqq::editorPath());
-        auto bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
-
-        bundledThemesDir.setNameFilters({"*.css"});
+        QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/", "*.css");
 
         QList<Theme> out;
         for (auto&& theme : bundledThemesDir.entryInfoList()) {
