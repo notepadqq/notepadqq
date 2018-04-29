@@ -504,7 +504,7 @@ namespace EditorNS
 
     void Editor::setSelection(int fromLine, int fromCol, int toLine, int toCol)
     {
-        QList<QVariant> arg{fromLine, fromCol, toLine, toCol};
+        QVariantList arg{fromLine, fromCol, toLine, toCol};
         sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
     }
 
@@ -595,13 +595,9 @@ namespace EditorNS
         bundledThemesDir.setNameFilters({"*.css"});
 
         QList<Theme> out;
-        for (auto&& themeStr : bundledThemesDir.entryList()) {
-            auto theme = QFileInfo(themeStr);
-            QString nameWithoutExt = theme.fileName()
-                    .replace(QRegularExpression("\\.css$"), "");
-            out.append({nameWithoutExt, bundledThemesDir.filePath(themeStr)});
+        for (auto&& theme : bundledThemesDir.entryInfoList()) {
+            out.append({theme.completeBaseName(), theme.filePath()});
         }
-
         return out;
     }
 
