@@ -161,6 +161,7 @@ namespace EditorNS
                 }
             }
 
+
         } else if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
