@@ -20,8 +20,6 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        if (themeName == "")
-            themeName = "default";
 
         fullConstructor(themeFromName(themeName));
     }
