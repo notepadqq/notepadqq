@@ -295,10 +295,8 @@ namespace EditorNS
 
     void Editor::setIndentationMode(const bool useTabs, const int size)
     {
-        QMap<QString, QVariant> data;
-        data.insert("useTabs", useTabs);
-        data.insert("size", size);
-        sendMessage("C_CMD_SET_INDENTATION_MODE", data);
+        sendMessage("C_CMD_SET_INDENTATION_MODE",
+            QVariantMap{{"useTabs", useTabs}, {"size", size}});
     }
 
     Editor::IndentationMode Editor::indentationMode()
