@@ -271,9 +271,8 @@ private:
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
     void                checkIndentationMode(Editor *editor);
-    bool                reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom);
-    Promise<QStringList> currentWordOrSelections();
-    Promise<QString>     currentWordOrSelection();
+    QStringList         currentWordOrSelections();
+    QString             currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**
