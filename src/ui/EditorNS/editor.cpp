@@ -670,7 +670,7 @@ namespace EditorNS
         // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
         // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
 
-        setTheme(themeFromName("Default"));
+        setTheme(themeFromName("default"));
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
         m_webView->print(printer);
