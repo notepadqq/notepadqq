@@ -169,9 +169,9 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         QFileInfo fi(localFileName);
 
         const QPair<int, int> openPos = findOpenEditorByUrl(url);
-        const bool isReloading = openPos.first > -1; //'true' when we're reloading a tab
+        const bool isAlreadyOpen = openPos.first > -1; //'true' when we're reloading a tab
 
-        if(isReloading && reloadAction == ReloadActionDont) {
+        if(isAlreadyOpen && reloadAction == ReloadActionDont) {
             EditorTabWidget *tabW = static_cast<EditorTabWidget *>
                                     (m_topEditorContainer->widget(openPos.first));
 
@@ -210,7 +210,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         int tabIndex;
-        if (isReloading) {
+        if (isAlreadyOpen) {
             tabWidget = m_topEditorContainer->tabWidget(openPos.first);
             tabIndex = openPos.second;
         } else {
@@ -222,7 +222,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         // In case of a reload, save cursor and scroll position
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
-        if (isReloading) {
+        if (isAlreadyOpen) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
         }
@@ -264,7 +264,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         // In case of reload, restore cursor and scroll position
-        if (isReloading) {
+        if (isAlreadyOpen) {
             editor->setScrollPosition(scrollPosition);
             editor->setCursorPosition(cursorPosition);
         }
@@ -288,7 +288,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
         }
 
         file.close();
-        if (isReloading) {
+        if (isAlreadyOpen) {
             editor->setFileOnDiskChanged(false);
         } else {
             editor->setFilePath(url);
@@ -304,7 +304,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             tabWidget->editor(tabIndex)->setFocus();
         }
 
-        if (isReloading) {
+        if (isAlreadyOpen) {
             emit documentReloaded(tabWidget, tabIndex);
         } else {
             emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
