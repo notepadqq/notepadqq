@@ -565,26 +565,16 @@ namespace EditorNS
 
     Editor::Theme Editor::themeFromName(QString name)
     {
-        Theme defaultTheme;
-        defaultTheme.name = "default";
-        defaultTheme.path = "";
+        if (name == "default" || name.isEmpty())
+            return Theme();
 
-        if (name == "default" || name == "")
-            return defaultTheme;
+        QFileInfo editorPath(Notepadqq::editorPath());
+        QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
 
-        QFileInfo editorPath = QFileInfo(Notepadqq::editorPath());
-        QDir bundledThemesDir = QDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
+        if (bundledThemesDir.exists(name + ".css"))
+            return Theme(name, bundledThemesDir.filePath(name + ".css"));
 
-        Theme t;
-        QString themeFile = bundledThemesDir.filePath(name + ".css");
-        if (QFile(themeFile).exists()) {
-            t.name = name;
-            t.path = themeFile;
-        } else {
-            t = defaultTheme;
-        }
-
-        return t;
+        return Theme();
     }
 
     QList<Editor::Theme> Editor::themes()
@@ -594,17 +584,14 @@ namespace EditorNS
 
         QList<Theme> out;
         for (auto&& theme : bundledThemesDir.entryInfoList()) {
-            out.append({theme.completeBaseName(), theme.filePath()});
+            out.append(Theme(theme.completeBaseName(), theme.filePath()));
         }
         return out;
     }
 
     void Editor::setTheme(Theme theme)
     {
-        QMap<QString, QVariant> tmap;
-        tmap.insert("name", theme.name == "" ? "default" : theme.name);
-        tmap.insert("path", theme.path);
-        sendMessage("C_CMD_SET_THEME", tmap);
+        sendMessage("C_CMD_SET_THEME", QVariantMap{{"name",theme.name},{"path",theme.path}});
     }
 
     QList<Editor::Selection> Editor::selections()

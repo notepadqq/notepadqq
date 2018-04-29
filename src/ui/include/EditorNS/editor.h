@@ -80,6 +80,10 @@ namespace EditorNS
         struct Theme {
             QString name;
             QString path;
+            Theme(const QString& name = "default", const QString& path = "") {
+                this->name = name;
+                this->path = path;
+            }
         };
 
         explicit Editor(const Theme &theme, QWidget *parent = 0);
