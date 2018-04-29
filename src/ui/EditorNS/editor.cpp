@@ -333,10 +333,7 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
-        auto lang = LanguageService::getInstance().lookupByContent(value);
-        if (lang != nullptr) {
-            setLanguage(lang);
-        }
+        setLanguage(LanguageService::getInstance().lookupByContent(value));
         sendMessage("C_CMD_SET_VALUE", value);
     }
 
