@@ -161,14 +161,14 @@ namespace EditorNS
                 }
             }
 
-        } else if (msg == "J_EVT_READY") {
+        } else if(msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if (msg == "J_EVT_CONTENT_CHANGED")
+        } else if(msg == "J_EVT_CONTENT_CHANGED")
             emit contentChanged();
-        else if (msg == "J_EVT_CLEAN_CHANGED")
+        else if(msg == "J_EVT_CLEAN_CHANGED")
             emit cleanChanged(data.toBool());
-        else if (msg == "J_EVT_CURSOR_ACTIVITY")
+        else if(msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
     }
 
