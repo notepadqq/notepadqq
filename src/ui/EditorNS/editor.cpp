@@ -141,26 +141,23 @@ namespace EditorNS
         if (msg.startsWith("[ASYNC_REPLY]")) {
             QRegExp rgx("\\[ID=(\\d+)\\]$");
 
-            if(rgx.indexIn(msg) == -1)
-                return;
-
-            if (rgx.captureCount() != 1)
+            if(rgx.indexIn(msg) == -1 || rgx.captureCount() != 1)
                 return;
 
             unsigned int id = rgx.capturedTexts()[1].toInt();
 
             // Look into the list of callbacks
-            for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
-                if (it->id == id) {
-                    auto cb = it->callback;
-                    it->value->set_value(data);
-                    this->asyncReplies.erase(it);
+            auto it = std::find_if(asyncReplies.begin(), asyncReplies.end(), [&id] (const AsyncReply& reply) {
+                return (reply.id == id);
+            });
+            if (it == asyncReplies.end())
+                return;
+            auto cb = it->callback;
+            it->value->set_value(data);
+            this->asyncReplies.erase(it);
 
-                    if (cb != 0) {
-                        cb(data);
-                    }
-                    break;
-                }
+            if (cb != 0) {
+                cb(data);
             }
 
 
