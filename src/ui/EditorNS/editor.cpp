@@ -546,7 +546,7 @@ namespace EditorNS
 
     void Editor::setMathEnabled(const bool enabled)
     {
-        sendMessage("C_CMD_ENABLE_MATH", enabled);
+        asyncSendMessageWithResultP("C_CMD_ENABLE_MATH", enabled);
     }
 
     QPair<int, int> Editor::cursorPosition()
