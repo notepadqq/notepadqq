@@ -371,8 +371,7 @@ namespace EditorNS
     {
         waitAsyncLoad();
 
-        QString funCall = "UiDriver.messageReceived('" +
-                jsStringEscape(msg) + "');";
+        auto funCall = QString("UiDriver.messageReceived('%1');").arg(jsStringEscape(msg));
 
         m_jsToCppProxy->setMsgData(data);
 
@@ -505,20 +504,19 @@ namespace EditorNS
 
     void Editor::setSelection(int fromLine, int fromCol, int toLine, int toCol)
     {
-        QList<QVariant> arg = QList<QVariant>({fromLine, fromCol, toLine, toCol});
+        QList<QVariant> arg{fromLine, fromCol, toLine, toCol};
         sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
     }
 
     QPair<int, int> Editor::scrollPosition()
     {
-        QList<QVariant> scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
-        return QPair<int, int>(scroll[0].toInt(), scroll[1].toInt());
+        QVariantList scroll = asyncSendMessageWithResult("C_FUN_GET_SCROLL_POS").get().toList();
+        return {scroll[0].toInt(), scroll[1].toInt()};
     }
 
     void Editor::setScrollPosition(const int left, const int top)
     {
-        QList<QVariant> arg = QList<QVariant>({left, top});
-        sendMessage("C_CMD_SET_SCROLL_POS", QVariant(arg));
+        sendMessage("C_CMD_SET_SCROLL_POS", QVariantList{left, top});
     }
 
     void Editor::setScrollPosition(const QPair<int, int> &position)
