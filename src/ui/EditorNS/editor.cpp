@@ -141,7 +141,7 @@ namespace EditorNS
         if (msg.startsWith("[ASYNC_REPLY]")) {
             QRegExp rgx("\\[ID=(\\d+)\\]$");
 
-            if(rgx.indexIn(msg) == -1 || rgx.captureCount() != 1)
+            if (rgx.indexIn(msg) == -1 || rgx.captureCount() != 1)
                 return;
 
             unsigned int id = rgx.capturedTexts()[1].toInt();
@@ -160,15 +160,14 @@ namespace EditorNS
                 cb(data);
             }
 
-
-        } else if(msg == "J_EVT_READY") {
+        } else if (msg == "J_EVT_READY") {
             m_loaded = true;
             emit editorReady();
-        } else if(msg == "J_EVT_CONTENT_CHANGED")
+        } else if (msg == "J_EVT_CONTENT_CHANGED")
             emit contentChanged();
-        else if(msg == "J_EVT_CLEAN_CHANGED")
+        else if (msg == "J_EVT_CLEAN_CHANGED")
             emit cleanChanged(data.toBool());
-        else if(msg == "J_EVT_CURSOR_ACTIVITY")
+        else if (msg == "J_EVT_CURSOR_ACTIVITY")
             emit cursorActivity();
     }
 
