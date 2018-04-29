@@ -146,6 +146,9 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     // Initialize UI from settings
     initUI();
 
+    // Initialize toggles and values from settings
+    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+
     // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
     // From now on, there is at least an Editor and at least
@@ -195,9 +198,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
-
-    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
-    on_actionMath_Rendering_toggled(m_settings.General.getMathRendering());
 
     //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
@@ -883,44 +883,6 @@ void MainWindow::on_actionMath_Rendering_toggled(bool on)
     });
 
     m_settings.General.setMathRendering(on);
-}
-
-bool MainWindow::reloadWithWarning(EditorTabWidget *tabWidget, int tab, QTextCodec *codec, bool bom)
-{
-    // Don't do anything if there is no file to reload from.
-    if (tabWidget->editor(tab)->filePath().isEmpty())
-        return false;
-
-    if (!tabWidget->editor(tab)->isClean()) {
-        QMessageBox msgBox(this);
-        QString name = tabWidget->tabText(tab).toHtmlEscaped();
-
-        msgBox.setWindowTitle(QCoreApplication::applicationName());
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-
-        msgBox.setText("<h3>" + tr("Your changes to «%1» will be discarded.").arg(name) + "</h3>");
-        msgBox.setButtonText(QMessageBox::Ok, tr("Reload"));
-
-        msgBox.setDefaultButton(QMessageBox::Cancel);
-        msgBox.setEscapeButton(QMessageBox::Cancel);
-
-        msgBox.exec();
-
-        if (msgBox.standardButton(msgBox.clickedButton()) == QMessageBox::Cancel)
-            return false;
-    }
-
-    Editor *editor = tabWidget->editor(tab);
-
-    m_docEngine->getDocumentLoader()
-            .setUrl(editor->filePath())
-            .setTabWidget(tabWidget)
-            .setTextCodec(codec)
-            .setBOM(bom)
-            .setIsReload(true)
-            .execute();
-
-    return true;
 }
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
@@ -1708,7 +1670,7 @@ void MainWindow::on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool 
             m_docEngine->getDocumentLoader()
                     .setUrl(editor->filePath())
                     .setTabWidget(tabWidget)
-                    .setIsReload(true)
+                    .setReloadAction(DocEngine::ReloadActionDo)
                     .execute();
         });
     }
@@ -1779,7 +1741,7 @@ void MainWindow::transformSelectedText(std::function<QString (const QString &)> 
         sel.replace(i, func(sel.at(i)));
     }
 
-    editor->setSelectionsText(sel, Editor::selectMode_selected);
+    editor->setSelectionsText(sel, Editor::SelectMode::Selected);
 }
 
 void MainWindow::on_actionUPPERCASE_triggered()
@@ -1979,10 +1941,15 @@ void MainWindow::on_actionReload_from_Disk_triggered()
     EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
     Editor *editor = tabWidget->currentEditor();
 
-    reloadWithWarning(tabWidget,
-                      tabWidget->currentIndex(),
-                      editor->codec(),
-                      editor->bom());
+    if (editor->filePath().isEmpty())
+        return;
+
+    m_docEngine->getDocumentLoader()
+            .setUrl(editor->filePath())
+            .setTabWidget(tabWidget)
+            .setTextCodec(editor->codec())
+            .setBOM(editor->bom())
+            .execute();
 }
 
 void MainWindow::on_actionFind_Next_triggered()
@@ -2175,13 +2142,22 @@ void MainWindow::on_actionConvert_to_triggered()
 void MainWindow::on_actionReload_File_Interpreted_As_triggered()
 {
     Editor *editor = currentEditor();
+
+    if (editor->filePath().isEmpty())
+        return;
+
     frmEncodingChooser *dialog = new frmEncodingChooser(this);
     dialog->setEncoding(editor->codec());
     dialog->setInfoText(tr("Reload as:"));
 
     if (dialog->exec() == QDialog::Accepted) {
         EditorTabWidget *tabWidget = m_topEditorContainer->currentTabWidget();
-        reloadWithWarning(tabWidget, tabWidget->currentIndex(), dialog->selectedCodec(), false);
+
+        m_docEngine->getDocumentLoader()
+                .setUrl(editor->filePath())
+                .setTabWidget(tabWidget)
+                .setTextCodec(dialog->selectedCodec())
+                .execute();
     }
 
     dialog->deleteLater();
