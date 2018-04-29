@@ -64,5 +64,11 @@ define([], function () {
         return enabled;
     }
 
+    obj.refresh = function(editor) {
+        if (obj.isEnabled && editor.renderAllMath) {
+            editor.renderAllMath();
+        }
+    }
+
     return obj;
 });
