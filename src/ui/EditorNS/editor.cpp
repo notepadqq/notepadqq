@@ -156,7 +156,7 @@ namespace EditorNS
             it->value->set_value(data);
             this->asyncReplies.erase(it);
 
-            if (cb != 0) {
+            if (cb != nullptr) {
                 cb(data);
             }
 
