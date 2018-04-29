@@ -283,14 +283,11 @@ namespace EditorNS
 
     void Editor::setIndentationMode(const Language* lang)
     {
-        QString langId = lang->id;
-        NqqSettings& s = NqqSettings::getInstance();
+        const auto& s = NqqSettings::getInstance().Languages;
+        const bool useDefaults = s.getUseDefaultSettings(lang->id);
+        const auto& langId = useDefaults ? "default" : lang->id;
 
-        if (s.Languages.getUseDefaultSettings(langId))
-            langId = "default";
-
-        setIndentationMode(!s.Languages.getIndentWithSpaces(langId),
-                            s.Languages.getTabSize(langId));
+        setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size)
