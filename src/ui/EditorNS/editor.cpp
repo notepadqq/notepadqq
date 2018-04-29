@@ -254,7 +254,7 @@ namespace EditorNS
             return;
         }
         if (!m_customIndentationMode) {
-            setIndentationMode(lang->id);
+            setIndentationMode(lang);
         }
         m_currentLanguage = lang;
         sendMessage("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime);
@@ -289,15 +289,16 @@ namespace EditorNS
         setLanguageFromFileName(filePath().toString());
     }
 
-    void Editor::setIndentationMode(QString language)
+    void Editor::setIndentationMode(const Language* lang)
     {
+        QString langId = lang->id;
         NqqSettings& s = NqqSettings::getInstance();
 
-        if (s.Languages.getUseDefaultSettings(language))
-            language = "default";
+        if (s.Languages.getUseDefaultSettings(langId))
+            langId = "default";
 
-        setIndentationMode(!s.Languages.getIndentWithSpaces(language),
-                            s.Languages.getTabSize(language));
+        setIndentationMode(!s.Languages.getIndentWithSpaces(langId),
+                            s.Languages.getTabSize(langId));
     }
 
     void Editor::setIndentationMode(const bool useTabs, const int size)
@@ -332,7 +333,7 @@ namespace EditorNS
     void Editor::clearCustomIndentationMode()
     {
         m_customIndentationMode = false;
-        setIndentationMode(getLanguageId());
+        setIndentationMode(getLanguage());
     }
 
     bool Editor::isUsingCustomIndentationMode() const
@@ -347,7 +348,10 @@ namespace EditorNS
 
     void Editor::setValue(const QString &value)
     {
-        setLanguage(LanguageService::getInstance().lookupByContent(value));
+        auto lang = LanguageService::getInstance().lookupByContent(value);
+        if (lang != nullptr) {
+            setLanguage(lang);
+        }
         sendMessage("C_CMD_SET_VALUE", value);
     }
 

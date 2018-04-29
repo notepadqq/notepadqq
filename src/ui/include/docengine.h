@@ -34,6 +34,12 @@ public:
         FileSizeActionNoToAll
     };
 
+    enum ReloadAction {
+        ReloadActionDont,   // Don't reload documents, instead just focus them
+        ReloadActionAsk,    // Ask user to reload if it would cause unsaved changes to be discarded
+        ReloadActionDo      // Always reload documents
+    };
+
     /**
      * @brief The DocumentLoader struct is an aggregation of all possible arguments for document loading.
      *        Only setTabWidget and setUrl(s) are necessary settings. All others have sensible defaults.
@@ -59,8 +65,8 @@ public:
         // Set the TabWidget the documents should be loaded into
         DocumentLoader& setTabWidget(EditorTabWidget* tw) { tabWidget = tw; return *this; }
 
-        // If set, the given documents will only be reloaded. If a document isn't opened yet it will be ignored.
-        DocumentLoader& setIsReload(bool reload) { isReload = reload; return *this; }
+        // Determines how already opened documents should be treated.
+        DocumentLoader& setReloadAction(ReloadAction reload) { reloadAction = reload; return *this; }
 
         /**
          * @brief execute Runs the load operation.
@@ -74,7 +80,7 @@ public:
         QList<QUrl> urls;
         EditorTabWidget* tabWidget      = nullptr;
         QTextCodec* textCodec           = nullptr;
-        bool isReload                   = false;
+        ReloadAction reloadAction       = ReloadActionAsk;
         bool rememberLastDir            = true;
         bool bom                        = false;
         FileSizeAction fileSizeAction   = FileSizeActionAsk;
