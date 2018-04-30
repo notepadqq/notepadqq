@@ -35,9 +35,10 @@ define([], function() {
 
         // Allow Markdown if within a simple text portion
         if (editor.getMode().name === "markdown" || editor.getMode().name === "gfm") {
-            if (editor.getTokenTypeAt(startPosition) === null) return true;
-            else return false; // For some reason, code blocks are marked as comments. Make sure to
-                               // not display math in such cases.
+            // For some reason, code blocks are marked as comments. Make sure to
+            // not display math in such cases.
+            var blacklist = ['comment'];
+            return blacklist.indexOf(editor.getTokenTypeAt(startPosition)) === -1;
         }
 
         // Allow any other language if within a comment
