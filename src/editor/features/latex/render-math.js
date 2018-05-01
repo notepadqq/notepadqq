@@ -348,7 +348,7 @@ define([], function() {
             // TODO: use cm.changeEnd()
 
             var endLine = changeObj.to.line + changeObj.text.length + 1;
-            clearOurMarksInRange(Pos(changeObj.from.line, 0), Pos(endLine, 0));
+            clearOurMarksInRange(changeObj.from, changeObj.to);
             doc.eachLine(changeObj.from.line, endLine, processLine);
             flushTypesettingQueue(flushMarkTextQueue);
         } catch (e) { }
