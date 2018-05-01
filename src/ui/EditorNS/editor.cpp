@@ -426,6 +426,9 @@ namespace EditorNS
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
+#ifdef QT_DEBUG
+        qDebug() << "Legacy message " << msg << " sent.";
+#endif
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
 
