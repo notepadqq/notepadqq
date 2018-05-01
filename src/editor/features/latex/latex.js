@@ -49,14 +49,14 @@ define([], function () {
 
         requirejs(['features/latex/render-math', 'libs/MathJax/MathJax'], function(InlineMath){
             InlineMath.hookMath(editor, window.MathJax);
-            editor.renderAllMath();
+            InlineMath.renderAll();
         })
     }
 
     obj.disable = function(editor) {
         enabled = false;
         requirejs(['features/latex/render-math'], function(InlineMath){
-            InlineMath.unhookMath(editor);
+            InlineMath.unhookMath();
         })
     }
 
@@ -65,8 +65,10 @@ define([], function () {
     }
 
     obj.refresh = function(editor) {
-        if (obj.isEnabled && editor.renderAllMath) {
-            editor.renderAllMath();
+        if (obj.isEnabled) {
+            requirejs(['features/latex/render-math'], function(InlineMath){
+                InlineMath.renderAll();
+            })
         }
     }
 
