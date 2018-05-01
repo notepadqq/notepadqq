@@ -1283,21 +1283,22 @@ void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
             editor->lineCount().then([=](int lines){
                 m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
 
-                QPair<int, int> cursor = editor->cursorPosition();
-                editor->selectedTexts().then([=](QStringList selections){
-                    int selectedChars = 0;
-                    int selectedPieces = 0;
+                editor->cursorPositionP().then([=](QPair<int, int> cursor) {
+                    editor->selectedTexts().then([=](QStringList selections){
+                        int selectedChars = 0;
+                        int selectedPieces = 0;
 
-                    for (QString sel : selections) {
-                        selectedChars += sel.length();
-                        selectedPieces += sel.split("\n").count();
-                    }
+                        for (QString sel : selections) {
+                            selectedChars += sel.length();
+                            selectedPieces += sel.split("\n").count();
+                        }
 
-                    m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                                .arg(cursor.first + 1)
-                                                .arg(cursor.second + 1));
+                        m_statusBar_curPos->setText(tr("Ln %1, col %2")
+                                                    .arg(cursor.first + 1)
+                                                    .arg(cursor.second + 1));
 
-                    m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+                        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
+                    });
                 });
             });
         });
@@ -1411,13 +1412,13 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
         setWindowTitle(newTitle.isNull() ? QApplication::applicationName() : newTitle);
     }
 
-
     // Enable / disable menus
-    bool isClean = editor->isClean();
-    QUrl fileName = editor->filePath();
-    ui->actionRename->setEnabled(!fileName.isEmpty());
-    ui->actionMove_to_New_Window->setEnabled(isClean);
-    ui->actionOpen_in_New_Window->setEnabled(isClean);
+    editor->isCleanP().then([=](bool isClean){
+        QUrl fileName = editor->filePath();
+        ui->actionRename->setEnabled(!fileName.isEmpty());
+        ui->actionMove_to_New_Window->setEnabled(isClean);
+        ui->actionOpen_in_New_Window->setEnabled(isClean);
+    });
 
     bool allowReloading = !editor->filePath().isEmpty();
     ui->actionReload_File_Interpreted_As->setEnabled(allowReloading);
@@ -1452,6 +1453,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     } else {
         ui->actionIndentation_Default_Settings->setChecked(true);
     }
+
 }
 
 void MainWindow::on_actionDelete_triggered()

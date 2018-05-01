@@ -174,6 +174,7 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
+        Promise<bool> isCleanP();
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
@@ -228,6 +229,7 @@ namespace EditorNS
          * @return a <line, column> pair.
          */
         QPair<int, int> cursorPosition();
+        Promise<QPair<int, int>> cursorPositionP();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);

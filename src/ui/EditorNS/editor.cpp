@@ -226,11 +226,11 @@ namespace EditorNS
         m_tabName = name;
     }
 
-    /*Promise<bool> Editor::isClean()
+    Promise<bool> Editor::isCleanP()
     {
-        return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0))
-                .then([](QVariant v){ return v.toBool(); });
-    }*/
+        return asyncSendMessageWithResultP("C_FUN_IS_CLEAN", QVariant(0))
+                .then<bool>([](QVariant v){ return v.toBool(); });
+    }
 
     bool Editor::isClean()
     {
@@ -536,6 +536,16 @@ namespace EditorNS
     void Editor::setMathEnabled(const bool enabled)
     {
         asyncSendMessageWithResultP("C_CMD_ENABLE_MATH", enabled);
+    }
+
+    Promise<QPair<int, int>> Editor::cursorPositionP()
+    {
+        return asyncSendMessageWithResultP("C_FUN_GET_CURSOR")
+               .then<QPair<int, int>>([](QVariant v){
+             QList<QVariant> cursor = v.toList();
+             return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+        });
+
     }
 
     QPair<int, int> Editor::cursorPosition()
