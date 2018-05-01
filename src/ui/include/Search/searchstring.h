@@ -1,25 +1,19 @@
-#ifndef __SEARCHSTRING_H__
-#define __SEARCHSTRING_H__
+#ifndef SEARCHSTRING_H
+#define SEARCHSTRING_H
 #include "include/Search/searchhelpers.h"
 #include <QString>
 
 class SearchString {
 public:
    /**
-    * @brief Build a raw version of `data` to be used for the search.
-    * @param `data`:          The string to be worked on.
-    * @param `searchMode`:    The search mode to be used.
-    * @param `searchOptions`: The search options to be used.
-    * @return `QString`:      Converted string based on `searchMode` and `searchOptions`
+    * @brief Formats a search string for use in CodeMirror.
+    * @param regex          The string to be worked on, either regex or not.
+    * @param searchMode     If mode==regex, will return an escaped string
+    * @param searchOptions  Handles wholeWord search option
+    * @return QString       A regex string
     */
-    static QString toRaw(const QString &data, const SearchHelpers::SearchMode &searchMode, const SearchHelpers::SearchOptions &searchOptions);
-   /**
-    * @brief Convert string to its regex counterpart.
-    * @param `data`:           The string to be worked on.
-    * @param `matchWholeWord`: Whether to add boundary checks to converted string.
-    * @return `QString`:       String converted for use in regex operations.
-    */
-    static QString toRegex(const QString &data, bool matchWholeWord);
+    static QString format(QString regex, SearchHelpers::SearchMode searchMode, const SearchHelpers::SearchOptions &searchOptions);
+
    /**
     * @brief Unescape escape sequences in `data`
     * @param `data`:     The string to be worked on.
@@ -28,4 +22,4 @@ public:
     static QString unescape(const QString &data);
 };
 
-#endif //__SEARCHSTRING_H_
+#endif // SEARCHSTRING_H
