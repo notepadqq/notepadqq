@@ -470,7 +470,12 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
     // Give focus to the first tab widget
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
-    firstTabW->currentEditor()->setFocus();
+    Editor* currEd = firstTabW->currentEditor();
+    currEd->setFocus();
+
+    // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
+    // on start-up. The easiest way is to emit a cleanChanged() event.
+    emit currEd->cleanChanged(currEd->isClean());
 
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);
