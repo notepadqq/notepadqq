@@ -483,6 +483,11 @@ namespace EditorNS
         sendMessage("C_CMD_ENABLE_MATH", enabled);
     }
 
+    void Editor::setReadOnly(const bool readOnly)
+    {
+        sendMessage("C_CMD_SET_READ_ONLY", readOnly);
+    }
+
     QPair<int, int> Editor::cursorPosition()
     {
         QList<QVariant> cursor = asyncSendMessageWithResult("C_FUN_GET_CURSOR").get().toList();

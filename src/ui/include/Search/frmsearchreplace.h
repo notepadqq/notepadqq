@@ -32,7 +32,18 @@ public:
     * @param `string`: Value to change the search input text to.
     */
     void setSearchText(QString string);
-
+    /**
+     * @brief Sets the advanced search mode to value specified in 'searchMode'.
+     * @param `searchMode`: Value to change the search mode to.
+     */
+    void setSearchMode(SearchHelpers::SearchMode searchMode);
+    /**
+     * @brief Sets the advanced search options to values specified in 'searchOptions'.
+     * @param `searchOptions`: Values to change the search options to.
+     * @param `toggleAdvancedSearchChk`: If true then toggle checkbox 'Show advanced options' depending on `searchOptions`
+     *        parameter values. Default value is false.
+     */
+    void setSearchOptions(SearchHelpers::SearchOptions searchOptions, bool toggleAdvancedSearchChk = false);
    /**
     * @brief Runs a "find next" or "find prev", taking the options from the UI.
     * @param `forward`: Direction in which to iterate.

@@ -187,6 +187,32 @@ int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode search
     return count.toInt();
 }
 
+void frmSearchReplace::setSearchMode(SearchHelpers::SearchMode searchMode)
+{
+    switch(searchMode)
+    {
+    case SearchHelpers::SearchMode::SpecialChars:
+        ui->radSearchWithSpecialChars->setChecked(true);
+        break;
+    case SearchHelpers::SearchMode::Regex:
+        ui->radSearchWithRegex->setChecked(true);
+        break;
+    default:
+        ui->radSearchPlainText->setChecked(true);
+    }
+}
+
+void frmSearchReplace::setSearchOptions(SearchHelpers::SearchOptions searchOptions, bool toggleAdvancedSearchChk)
+{
+    ui->chkMatchCase->setChecked(searchOptions.MatchCase);
+    ui->chkMatchWholeWord->setChecked(searchOptions.MatchWholeWord);
+
+    if(toggleAdvancedSearchChk) {
+        const bool checkedState = searchOptions.MatchCase || searchOptions.MatchWholeWord;
+        ui->chkShowAdvanced->setChecked(checkedState);
+    }
+}
+
 SearchHelpers::SearchMode frmSearchReplace::searchModeFromUI()
 {
     if (ui->radSearchPlainText->isChecked())

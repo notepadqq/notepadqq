@@ -38,6 +38,13 @@ UiDriver.registerEventHandler("C_FUN_GET_HISTORY_GENERATION", function(msg, data
     return editor.getHistoryGeneration();
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_READ_ONLY", function(msg, data, prevReturn) {
+    if(data)
+        editor.setOption('readOnly', "nocursor");
+    else
+        editor.setOption('readOnly', false);
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_LANGUAGE", function(msg, data, prevReturn) {
     editor.setOption('mode', data);
 
@@ -303,6 +310,10 @@ SearchMode = {
    data[3]: string to use as replacement
 */
 UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
+    if(editor.isReadOnly()){
+        return;
+    }
+    
     var regexStr = data[0];
     var regexModifiers = data[1];
     var forward = data[2];
@@ -326,6 +337,10 @@ UiDriver.registerEventHandler("C_FUN_REPLACE", function(msg, data, prevReturn) {
 });
 
 UiDriver.registerEventHandler("C_FUN_REPLACE_ALL", function(msg, data, prevReturn) {
+    if(editor.isReadOnly()){
+        return;
+    }
+
     var regexStr = data[0];
     var regexModifiers = data[1];
     var replacement = data[2];
