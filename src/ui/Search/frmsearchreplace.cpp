@@ -123,7 +123,7 @@ QString frmSearchReplace::regexModifiersFromSearchOptions(SearchHelpers::SearchO
 
 void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
     if (!string.isEmpty()) {
-        QString rawSearch = SearchString::toRaw(string, searchMode, searchOptions);
+        QString rawSearch = SearchString::format(string, searchMode, searchOptions);
 
         Editor *editor = currentEditor();
 
@@ -141,7 +141,7 @@ void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMo
 
 void frmSearchReplace::replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
     if (!string.isEmpty()) {
-        QString rawSearch = SearchString::toRaw(string, searchMode, searchOptions);
+        QString rawSearch = SearchString::format(string, searchMode, searchOptions);
         if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
             replacement = SearchString::unescape(replacement);
         }
@@ -163,7 +163,7 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchHelper
 }
 
 int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
-    QString rawSearch = SearchString::toRaw(string, searchMode, searchOptions);
+    QString rawSearch = SearchString::format(string, searchMode, searchOptions);
     if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
             replacement = SearchString::unescape(replacement);
     }
@@ -178,7 +178,7 @@ int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelp
 }
 
 int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
-    QString rawSearch = SearchString::toRaw(string, searchMode, searchOptions);
+    QString rawSearch = SearchString::format(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
