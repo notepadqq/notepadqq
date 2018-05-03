@@ -263,8 +263,9 @@ namespace EditorNS
             setIndentationMode(lang);
         }
         m_currentLanguage = lang;
-        sendMessage("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime);
-        emit currentLanguageChanged(lang->id, lang->name);
+        asyncSendMessageWithResultP("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime).then([=](){
+            emit currentLanguageChanged(m_currentLanguage->id, m_currentLanguage->name);
+        });
     }
 
     void Editor::setLanguage(const QString& language)
