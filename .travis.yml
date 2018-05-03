@@ -2,7 +2,7 @@ sudo: required
 services:
   - docker
 before_install:
-  - docker run --name nqq -v $(pwd):/build -d -it ubuntu:17.10 bash
+  - docker run --name nqq -v $(pwd):/build -d -it ubuntu:18.04 bash
   - docker exec nqq apt-get -qq update
   - docker exec nqq apt-get -y install coreutils build-essential gcc pkg-config qtbase5-dev qtwebengine5-dev libqt5svg5-dev qttools5-dev-tools libqt5websockets5-dev
   - git pull --depth=500
