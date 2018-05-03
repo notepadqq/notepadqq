@@ -3,7 +3,6 @@
 
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/languageservice.h"
-#include "include/promise.h"
 #include <QObject>
 #include <QVariant>
 #include <QQueue>
@@ -13,8 +12,11 @@
 #include <QVariant>
 #include <functional>
 #include <future>
+#include <QtPromise>
 
 class EditorTabWidget;
+
+using namespace QtPromise;
 
 namespace EditorNS
 {
@@ -174,7 +176,7 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        Promise<bool> isCleanP();
+        QPromise<bool> isCleanP();
         Q_INVOKABLE bool isClean();
         Q_INVOKABLE void markClean();
         Q_INVOKABLE void markDirty();
@@ -229,7 +231,7 @@ namespace EditorNS
          * @return a <line, column> pair.
          */
         QPair<int, int> cursorPosition();
-        Promise<QPair<int, int>> cursorPositionP();
+        QPromise<QPair<int, int>> cursorPositionP();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);
@@ -277,7 +279,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE Promise<QStringList> selectedTexts();
+        Q_INVOKABLE QPromise<QStringList> selectedTexts();
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
@@ -289,11 +291,11 @@ namespace EditorNS
         Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
         Editor::IndentationMode indentationMode();
 
-        Promise<QString> getCurrentWord();
+        QPromise<QString> getCurrentWord();
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
-        Promise<int> lineCount();
+        QPromise<int> lineCount();
 
     private:
         friend class ::EditorTabWidget;
@@ -301,7 +303,6 @@ namespace EditorNS
         struct AsyncReply {
             unsigned int id;
             QString message;
-            Promise<QVariant> valueP;
             std::shared_ptr<std::promise<QVariant>> value;
             std::function<void (QVariant)> callback;
         };
@@ -371,8 +372,8 @@ namespace EditorNS
          *                 If set, you should NOT use the return value of this method.
          * @return
          */
-        Promise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        Promise<QVariant> asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback = 0);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback = 0);
 
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);

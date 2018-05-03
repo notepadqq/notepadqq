@@ -152,8 +152,6 @@ namespace EditorNS
                         AsyncReply r = *it;
                         if (r.value) {
                             r.value->set_value(data);
-                        } else {
-                            r.valueP.resolve(data);
                         }
                         this->asyncReplies.erase(it);
 
@@ -226,10 +224,10 @@ namespace EditorNS
         m_tabName = name;
     }
 
-    Promise<bool> Editor::isCleanP()
+    QPromise<bool> Editor::isCleanP()
     {
         return asyncSendMessageWithResultP("C_FUN_IS_CLEAN", QVariant(0))
-                .then<bool>([](QVariant v){ return v.toBool(); });
+                .then([](QVariant v){ return v.toBool(); });
     }
 
     bool Editor::isClean()
@@ -397,16 +395,27 @@ namespace EditorNS
 
     unsigned int messageIdentifier = 0;
 
-    Promise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
-        Promise<QVariant> resultPromise;
+        QPromise<QVariant> resultPromise = QPromise<QVariant>([&](
+                                                              const QPromiseResolve<QVariant>& resolve,
+                                                              const QPromiseReject<QVariant>& reject) {
+
+            auto conn = std::make_shared<QMetaObject::Connection>();
+            *conn = QObject::connect(this, &Editor::asyncReplyReceived, this, [=](unsigned int id, QString, QVariant data){
+                if (id == currentMsgIdentifier) {
+                    QObject::disconnect(*conn);
+                    resolve(data);
+                }
+            });
+
+        });
 
         AsyncReply asyncmsg;
         asyncmsg.id = currentMsgIdentifier;
         asyncmsg.message = msg;
-        asyncmsg.valueP = resultPromise;
         asyncmsg.value = nullptr;
         asyncmsg.callback = callback;
         this->asyncReplies.push_back((asyncmsg));
@@ -418,7 +427,7 @@ namespace EditorNS
         return resultPromise;
     }
 
-    Promise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback)
     {
         return this->asyncSendMessageWithResultP(msg, 0, callback);
     }
@@ -541,10 +550,10 @@ namespace EditorNS
         asyncSendMessageWithResultP("C_CMD_ENABLE_MATH", enabled);
     }
 
-    Promise<QPair<int, int>> Editor::cursorPositionP()
+    QPromise<QPair<int, int>> Editor::cursorPositionP()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_CURSOR")
-               .then<QPair<int, int>>([](QVariant v){
+               .then([](QVariant v){
              QList<QVariant> cursor = v.toList();
              return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
         });
@@ -686,10 +695,10 @@ namespace EditorNS
         return out;
     }
 
-    Promise<QStringList> Editor::selectedTexts()
+    QPromise<QStringList> Editor::selectedTexts()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_SELECTIONS_TEXT")
-                .then<QStringList>([](QVariant text){ return text.toStringList(); });
+                .then([](QVariant text){ return text.toStringList(); });
     }
 
     void Editor::setOverwrite(bool overwrite)
@@ -740,15 +749,15 @@ namespace EditorNS
         });
     }
 
-    Promise<QString> Editor::getCurrentWord()
+    QPromise<QString> Editor::getCurrentWord()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_CURRENT_WORD")
-                .then<QString>([](QVariant v){ return v.toString(); });
+                .then([](QVariant v){ return v.toString(); });
     }
 
-    Promise<int> Editor::lineCount()
+    QPromise<int> Editor::lineCount()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_LINE_COUNT")
-                .then<int>([](QVariant v){ return v.toInt(); });
+                .then([](QVariant v){ return v.toInt(); });
     }
 }

@@ -19,7 +19,6 @@
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
 #include "include/nqqrun.h"
-#include "include/promise.h"
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -36,6 +35,9 @@
 #include <QDesktopServices>
 #include <QJsonArray>
 #include <QTimer>
+#include <QtPromise>
+
+using namespace QtPromise;
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -2303,23 +2305,25 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
     }
 }
 */
-Promise<QStringList> MainWindow::currentWordOrSelections()
+QPromise<QStringList> MainWindow::currentWordOrSelections()
 {
     Editor *editor = currentEditor();
-    return editor->selectedTexts().then<QStringList>([=](QStringList selection){
+    return editor->selectedTexts().then([=](QStringList selection){
         if (selection.isEmpty() || selection.first().isEmpty()) {
-            return editor->getCurrentWord().then<QStringList>([](QString word){
+            return editor->getCurrentWord().then([](QString word){
                 return QStringList(word);
             });
         } else {
-            return Promise<QStringList>(selection);
+            return QPromise<QStringList>([=](const QPromiseResolve<QStringList>& resolve, const QPromiseReject<QStringList>&) {
+                resolve(selection);
+            });
         }
     });
 }
 
-Promise<QString> MainWindow::currentWordOrSelection()
+QPromise<QString> MainWindow::currentWordOrSelection()
 {
-    return currentWordOrSelections().then<QString>([=](QStringList terms){
+    return currentWordOrSelections().then([=](QStringList terms){
         if (terms.isEmpty()) {
             return QString();
         } else {

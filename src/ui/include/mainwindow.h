@@ -12,6 +12,9 @@
 #include "include/Extensions/extension.h"
 #include "include/nqqsettings.h"
 #include "include/Search/advancedsearchdock.h"
+#include <QtPromise>
+
+using namespace QtPromise;
 
 namespace Ui {
 class MainWindow;
@@ -271,8 +274,8 @@ private:
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
     void                checkIndentationMode(Editor *editor);
-    Promise<QStringList> currentWordOrSelections();
-    Promise<QString>     currentWordOrSelection();
+    QPromise<QStringList> currentWordOrSelections();
+    QPromise<QString>     currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**

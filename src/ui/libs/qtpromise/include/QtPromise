@@ -1,0 +1,8 @@
+#ifndef QTPROMISE_MODULE_H
+#define QTPROMISE_MODULE_H
+
+#include "../src/qtpromise/qpromise.h"
+#include "../src/qtpromise/qpromisefuture.h"
+#include "../src/qtpromise/qpromisehelpers.h"
+
+#endif // ifndef QTPROMISE_MODULE_H

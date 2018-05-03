@@ -60,6 +60,8 @@ INSTALLFILESDIR = ../../support_files
 
 CURRFILE = $$PWD/ui.pro
 
+include(libs/qtpromise/qtpromise.pri)
+
 SOURCES += main.cpp\
     mainwindow.cpp \
     topeditorcontainer.cpp \
@@ -153,7 +155,6 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchobjects.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
-    include/promise.h \
     include/stats.h \
     include/Sessions/backupservice.h
 
