@@ -178,8 +178,8 @@ namespace EditorNS
         // Lower-level message wrappers:
         QPromise<bool> isCleanP();
         Q_INVOKABLE bool isClean();
-        Q_INVOKABLE void markClean();
-        Q_INVOKABLE void markDirty();
+        Q_INVOKABLE QPromise<void> markClean();
+        Q_INVOKABLE QPromise<void> markDirty();
 
         /**
          * @brief Returns an integer that denotes the editor's history state. Making changes to
@@ -197,7 +197,7 @@ namespace EditorNS
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFileName(const QString& fileName);
         Q_INVOKABLE void setLanguageFromFileName();
-        Q_INVOKABLE void setValue(const QString &value);
+        Q_INVOKABLE QPromise<void> setValue(const QString &value);
         Q_INVOKABLE QString value();
 
         /**

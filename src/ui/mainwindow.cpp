@@ -600,7 +600,8 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
     m_docEngine->getDocumentLoader()
                 .setUrls(files)
                 .setTabWidget(m_topEditorContainer->currentTabWidget())
-                .execute();
+                .execute()
+                .wait(); // FIXME Transform to async
 
     // Handle --line and --column commandline arguments
     if (!parser->isSet("line") && !parser->isSet("column"))
@@ -1350,7 +1351,8 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
         m_docEngine->getDocumentLoader()
                 .setUrl(url)
                 .setTabWidget(m_topEditorContainer->currentTabWidget())
-                .execute();
+                .execute()
+                .wait(); // FIXME Transform to async
 
         QPair<int, int> pos = m_docEngine->findOpenEditorByUrl(url);
 

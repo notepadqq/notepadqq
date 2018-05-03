@@ -397,7 +397,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                      .setUrl(loadUrl)
                      .setTabWidget(tabW)
                      .setRememberLastDir(false)
-                     .execute();
+                     .execute()
+                     .wait(); // FIXME Transform to async
 
             int idx = tabW->findOpenEditorByUrl(loadUrl);
 
@@ -475,7 +476,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
     // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
     // on start-up. The easiest way is to emit a cleanChanged() event.
-    emit currEd->cleanChanged(currEd->isClean());
+    currEd->isCleanP().then([=](bool isClean){ emit currEd->cleanChanged(isClean); });
 
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);

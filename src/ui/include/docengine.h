@@ -71,9 +71,9 @@ public:
         /**
          * @brief execute Runs the load operation.
          */
-        void execute() {
+        QPromise<void> execute() {
             Q_ASSERT(tabWidget != nullptr);
-            docEngine.loadDocuments(*this);
+            return docEngine.loadDocuments(*this);
         }
 
         // See here for the arguments' default values
@@ -149,17 +149,17 @@ private:
      *        detect the encoding.
      * @param file
      * @param editor
-     * @return true if successful, false otherwise
+     * @return fulfilled if successful, rejected otherwise
      */
-    bool read(QFile *file, Editor *editor);
-    bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
+    QPromise<void> read(QFile *file, Editor *editor);
+    QPromise<void> read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
 
     /**
      * @brief loadDocuments Responsible for loading or reloading a number of text files.
      * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
-    void loadDocuments(const DocumentLoader& docLoader);
+    QPromise<void> loadDocuments(const DocumentLoader& docLoader);
 
     /**
      * @brief Write the provided Editor content to the specified IO device, using
