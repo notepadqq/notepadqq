@@ -5,9 +5,11 @@
 #include <QWheelEvent>
 #include "editortabwidget.h"
 #include "EditorNS/editor.h"
-#include "include/promise.h"
 #include <functional>
 #include <vector>
+#include <QtPromise>
+
+using namespace QtPromise;
 
 /**
  * @brief Contains one or more EditorTabWidgets. This class
@@ -59,7 +61,7 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have finished.
      */
-    Promise<int> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> goOn, std::function<void()> stop)> callback);
+    QPromise<void> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> goOn, std::function<void()> stop)> callback);
 
     /**
      * @brief Executes the specified asynchronous function for each editor in this container, concurrently.
@@ -67,7 +69,7 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have called done().
      */
-    Promise<int> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> done)> callback);
+    QPromise<void> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> done)> callback);
 
     std::vector<Editor*> getOpenEditors();
 
