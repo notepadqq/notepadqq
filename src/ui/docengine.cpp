@@ -163,6 +163,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             msgBox.setWindowTitle(QCoreApplication::applicationName());
             msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(url.toDisplayString()));
             msgBox.exec();
+            continue;
         }
 
         QString localFileName = url.toLocalFile();
