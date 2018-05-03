@@ -395,6 +395,9 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
+#ifdef QT_DEBUG
+        qDebug() << "Legacy message " << msg << " sent.";
+#endif
         waitAsyncLoad();
 
         emit m_jsToCppProxy->messageReceivedByJs(msg, data);
@@ -443,7 +446,7 @@ namespace EditorNS
             *conn = QObject::connect(this, &Editor::editorReady, this, [=](){
                 QObject::disconnect(*conn);
                 m_loaded = true;
-                this->sendMessage(message_id, data);
+                emit m_jsToCppProxy->messageReceivedByJs(msg, data);
             });
         }
 
@@ -458,9 +461,6 @@ namespace EditorNS
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
-#ifdef QT_DEBUG
-        qDebug() << "Legacy message " << msg << " sent.";
-#endif
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
 
