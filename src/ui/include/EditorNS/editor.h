@@ -334,8 +334,8 @@ namespace EditorNS
 
         void fullConstructor(const Theme &theme);
 
-        void setIndentationMode(const bool useTabs, const int size);
-        void setIndentationMode(const Language*);
+        QPromise<void> setIndentationMode(const bool useTabs, const int size);
+        QPromise<void> setIndentationMode(const Language*);
 
     private slots:
         void on_proxyMessageReceived(QString msg, QVariant data);

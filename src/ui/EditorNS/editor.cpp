@@ -296,19 +296,19 @@ namespace EditorNS
         setLanguageFromFileName(filePath().toString());
     }
 
-    void Editor::setIndentationMode(const Language* lang)
+    QPromise<void> Editor::setIndentationMode(const Language* lang)
     {
         const auto& s = NqqSettings::getInstance().Languages;
         const bool useDefaults = s.getUseDefaultSettings(lang->id);
         const auto& langId = useDefaults ? "default" : lang->id;
 
-        setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
+        return setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
     }
 
-    void Editor::setIndentationMode(const bool useTabs, const int size)
+    QPromise<void> Editor::setIndentationMode(const bool useTabs, const int size)
     {
-        sendMessage("C_CMD_SET_INDENTATION_MODE",
-            QVariantMap{{"useTabs", useTabs}, {"size", size}});
+        return asyncSendMessageWithResultP("C_CMD_SET_INDENTATION_MODE",
+                                           QVariantMap{{"useTabs", useTabs}, {"size", size}}).then([](){});
     }
 
     Editor::IndentationMode Editor::indentationMode()
@@ -434,7 +434,18 @@ namespace EditorNS
 
         QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
 
-        this->sendMessage(message_id, data);
+        if (m_loaded) {
+            // Send it right now
+            this->sendMessage(message_id, data);
+        } else {
+            // Send it as soon as the editor becomes ready
+            auto conn = std::make_shared<QMetaObject::Connection>();
+            *conn = QObject::connect(this, &Editor::editorReady, this, [=](){
+                QObject::disconnect(*conn);
+                m_loaded = true;
+                this->sendMessage(message_id, data);
+            });
+        }
 
         return resultPromise;
     }
