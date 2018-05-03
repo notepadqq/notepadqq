@@ -286,10 +286,12 @@ namespace EditorNS
 
         /**
          * @brief Detect the indentation mode used within the current document.
-         * @return
+         * @return a pair whose first element is the document indentation, that is
+         *         significative only if the second element ("found") is true.
          */
-        Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
+        QPromise<std::pair<IndentationMode, bool>> detectDocumentIndentation();
         Editor::IndentationMode indentationMode();
+        QPromise<IndentationMode> indentationModeP();
 
         QPromise<QString> getCurrentWord();
 

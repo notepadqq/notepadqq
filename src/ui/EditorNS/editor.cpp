@@ -319,6 +319,17 @@ namespace EditorNS
         return out;
     }
 
+    QPromise<Editor::IndentationMode> Editor::indentationModeP()
+    {
+        return asyncSendMessageWithResultP("C_FUN_GET_INDENTATION_MODE").then([](QVariant result){
+            QVariantMap indent = result.toMap();
+            IndentationMode out;
+            out.useTabs = indent.value("useTabs", true).toBool();
+            out.size = indent.value("size", 4).toInt();
+            return out;
+        });
+    }
+
     void Editor::setCustomIndentationMode(const bool useTabs, const int size)
     {
         m_customIndentationMode = true;
@@ -711,24 +722,21 @@ namespace EditorNS
         sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
+    QPromise<std::pair<Editor::IndentationMode, bool>> Editor::detectDocumentIndentation()
     {
-        QVariantMap indent =
-                asyncSendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").get().toMap();
+        return asyncSendMessageWithResultP("C_FUN_DETECT_INDENTATION_MODE").then([](QVariant result){
+            QVariantMap indent = result.toMap();
+            IndentationMode out;
 
-        IndentationMode out;
+            bool found = indent.value("found", false).toBool();
 
-        bool _found = indent.value("found", false).toBool();
-        if (found != nullptr) {
-            *found = _found;
-        }
+            if (found) {
+                out.useTabs = indent.value("useTabs", true).toBool();
+                out.size = indent.value("size", 4).toInt();
+            }
 
-        if (_found) {
-            out.useTabs = indent.value("useTabs", true).toBool();
-            out.size = indent.value("size", 4).toInt();
-        }
-
-        return out;
+            return std::make_pair(out, found);
+        });
     }
 
     void Editor::print(std::shared_ptr<QPrinter> printer)
