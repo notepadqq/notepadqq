@@ -2314,9 +2314,7 @@ QPromise<QStringList> MainWindow::currentWordOrSelections()
                 return QStringList(word);
             });
         } else {
-            return QPromise<QStringList>([=](const QPromiseResolve<QStringList>& resolve, const QPromiseReject<QStringList>&) {
-                resolve(selection);
-            });
+            return QPromise<QStringList>::resolve(selection);
         }
     });
 }
