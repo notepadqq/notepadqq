@@ -374,8 +374,8 @@ namespace EditorNS
          *                 If set, you should NOT use the return value of this method.
          * @return
          */
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback = 0);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg);
 
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);

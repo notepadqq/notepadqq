@@ -410,7 +410,7 @@ namespace EditorNS
 
     unsigned int messageIdentifier = 0;
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
@@ -428,11 +428,12 @@ namespace EditorNS
 
         });
 
+        // FIXME We can probably remove this->asyncReplies after we've converted everything
         AsyncReply asyncmsg;
         asyncmsg.id = currentMsgIdentifier;
         asyncmsg.message = msg;
         asyncmsg.value = nullptr;
-        asyncmsg.callback = callback;
+        asyncmsg.callback = nullptr;
         this->asyncReplies.push_back((asyncmsg));
 
         QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
@@ -453,9 +454,9 @@ namespace EditorNS
         return resultPromise;
     }
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, std::function<void(QVariant)> callback)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg)
     {
-        return this->asyncSendMessageWithResultP(msg, 0, callback);
+        return this->asyncSendMessageWithResultP(msg, 0);
     }
 
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
