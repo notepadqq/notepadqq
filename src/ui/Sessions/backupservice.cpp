@@ -130,8 +130,6 @@ void BackupService::enableAutosave(int intervalInSeconds)
     if (s_autosaveEnabled)
         return;
 
-    clearBackupData();
-
     static bool initializer = false;
     if (!initializer) {
         // Only create this connection once. Since we're connecting to a plain old function we can't use
