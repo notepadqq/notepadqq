@@ -248,10 +248,10 @@ namespace EditorNS
                 .wait(); // FIXME Remove
     }
 
-    int EditorNS::Editor::getHistoryGeneration()
+    QPromise<int> Editor::getHistoryGeneration()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_HISTORY_GENERATION", QVariant(0))
-                .get().toInt();
+        return asyncSendMessageWithResultP("C_FUN_GET_HISTORY_GENERATION")
+                .then([](QVariant v){return v.toInt();});
     }
 
     void Editor::setLanguage(const Language* lang)

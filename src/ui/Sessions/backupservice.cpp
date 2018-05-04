@@ -22,7 +22,9 @@ void BackupService::executeBackup() {
         WindowData wd;
         wd.ptr = wnd;
         wnd->topEditorContainer()->forEachEditor([&wd](int,int,EditorTabWidget*,Editor* ed) {
-            wd.editors.push_back( std::make_pair(ed, ed->getHistoryGeneration()) );
+            int gen = -1;
+            ed->getHistoryGeneration().wait().tap([&](int value){gen = value;});
+            wd.editors.push_back( std::make_pair(ed, gen) );
             return true;
         });
         newData.insert(std::move(wd));
