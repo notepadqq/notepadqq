@@ -1513,6 +1513,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     // Disconnect signals to avoid handling events while
     // the UI is being destroyed.
+    m_topEditorContainer->disconnectAllTabWidgets(); // Fixes segfault on exit
     disconnect(m_topEditorContainer, 0, this, 0);
 }
 

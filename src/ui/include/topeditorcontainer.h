@@ -78,6 +78,13 @@ public:
      */
     int getNumEditors();
 
+    /**
+     * @brief Disconnects all the signals emitted by all the tabWidgets owned by this object.
+     *        This method must only be called on exit, as the TopEditorContainer will become
+     *        unusable.
+     */
+    void disconnectAllTabWidgets();
+
 private:
     EditorTabWidget *m_currentTabWidget;
 

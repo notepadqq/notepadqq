@@ -172,6 +172,13 @@ int TopEditorContainer::getNumEditors()
     return total;
 }
 
+void TopEditorContainer::disconnectAllTabWidgets()
+{
+    for (int i = 0; i < count(); ++i) {
+        tabWidget(i)->disconnect();
+    }
+}
+
 void TopEditorContainer::forEachEditor(bool backwardIndexes,
                                        std::function<bool (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor)> callback)
 {
