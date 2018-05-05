@@ -573,6 +573,15 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
     return writeFromString(io, info);
 }
 
+bool DocEngine::write(QUrl outFileName, Editor *editor)
+{
+    QFile file(outFileName.toLocalFile());
+    bool result = write(&file, editor);
+    file.close();
+
+    return result;
+}
+
 void DocEngine::reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom)
 {
     QPair<int, int> scrollPosition = editor->scrollPosition();

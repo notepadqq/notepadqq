@@ -295,7 +295,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
                 td.cacheFilePath = cacheFilePath.toLocalFile();
 
-                if (docEngine->saveDocument(tabWidget, j, cacheFilePath, true) != DocEngine::saveFileResult_Saved) {
+                if (!docEngine->write(cacheFilePath, editor)) {
                     return false;
                 }
             } else if (isOrphan) {

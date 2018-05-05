@@ -134,6 +134,16 @@ public:
     static bool writeFromString(QIODevice *io, const DecodedText &write);
 
     /**
+     * @brief Write the provided Editor content to the specified IO device, using
+     *        the encoding and the BOM settings specified in the Editor.
+     * @param io
+     * @param editor
+     * @return true if successful, false otherwise
+     */
+    bool write(QIODevice *io, Editor *editor);
+    bool write(QUrl outFileName, Editor *editor);
+
+    /**
      * @brief getNewDocumentName
      * @return Returns a QString with a fitting name for a new document tab.
      */
@@ -161,14 +171,6 @@ private:
      */
     QPromise<void> loadDocuments(const DocumentLoader& docLoader);
 
-    /**
-     * @brief Write the provided Editor content to the specified IO device, using
-     *        the encoding and the BOM settings specified in the Editor.
-     * @param io
-     * @param editor
-     * @return true if successful, false otherwise
-     */
-    bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
 
