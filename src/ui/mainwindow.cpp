@@ -579,11 +579,6 @@ bool MainWindow::handleLineAndColumnCmdArgs(QCommandLineParser* parser, const QS
     if (!parser->isSet("line") && !parser->isSet("column"))
         return false;
 
-    if(parser->isSet("search")) {
-        qWarning() << tr("The '--line' and '--column' arguments will be ignored since search parameter is passed.");
-        return false;
-    }
-
     if (rawUrls.size() > 1) {
         qWarning() << tr("The '--line' and '--column' arguments will be ignored since more than one file is opened.");
         return false;
@@ -642,43 +637,9 @@ bool MainWindow::handleReadOnlyCmdArg(QCommandLineParser* parser, const QStringL
     return true;
 }
 
-bool MainWindow::handleSearchCmdArg(QCommandLineParser* parser, const QStringList &rawUrls)
-{
-    if (!parser->isSet("search"))
-    {
-        if(parser->isSet("matchCase") || parser->isSet("matchWholeWord"))
-            qWarning() << tr("The '--matchCase' and '--matchWholeWord' arguments will be ignored since '--search' parameter is not passed.");
 
-        return false;
-    }
 
-    if (rawUrls.size() > 1) {
-        qWarning() << tr("The '--search' argument will be ignored since more than one file is opened.");
-        return false;
-    }
 
-    // prepare search dialog
-    SearchHelpers::SearchOptions searchOptions;
-    searchOptions.MatchCase = parser->isSet("matchCase");
-    searchOptions.MatchWholeWord = parser->isSet("matchWholeWord");
-
-    QString searchText = parser->value("search");
-
-    // do search
-    QTimer* t = new QTimer();
-    connect(t, &QTimer::timeout, [this, searchText, searchOptions, t](){
-        on_actionSearch_triggered();
-        m_frmSearchReplace->setSearchOptions(searchOptions, true/*toggleAdvancedSearchChk*/);
-        m_frmSearchReplace->setSearchMode(SearchHelpers::SearchMode::PlainText);
-        m_frmSearchReplace->setSearchText(searchText);
-        m_frmSearchReplace->findFromUI(true/*forward*/, true/*searchFromStart*/);
-        m_frmSearchReplace->hide();
-        t->deleteLater();
-    });
-    t->start(0);
-
-    return true;
-}
 
 void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments)
 {
@@ -717,7 +678,6 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
                 .execute();
 
     handleReadOnlyCmdArg(parser.data(), rawUrls);
-    handleSearchCmdArg(parser.data(), rawUrls);
     handleLineAndColumnCmdArgs(parser.data(), rawUrls);
 }
 

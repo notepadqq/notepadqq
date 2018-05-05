@@ -106,19 +106,6 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
                                     QObject::tr("Open file in read only mode."));
     parser->addOption(readOnlyMode);
 
-    QCommandLineOption openWithSearch("search",
-                                    QObject::tr("Open file at line with first search phrases occurance."),
-                                    "phrase",
-                                    "");
-    parser->addOption(openWithSearch);
-
-    QCommandLineOption matchCaseSearch("matchCase", QObject::tr("Case sensitive search."));
-    parser->addOption(matchCaseSearch);
-
-    QCommandLineOption matchWholeWordSearch("matchWholeWord", QObject::tr("Match whole word search."));
-    parser->addOption(matchWholeWordSearch);
-
-
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),
                                  "[urls...]");

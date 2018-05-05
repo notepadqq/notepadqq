@@ -319,14 +319,6 @@ private:
      * @return bool: `true` if parameter is passed properly, `false` otherwise.
      */
     bool handleReadOnlyCmdArg(QCommandLineParser* parser, const QStringList &rawUrls);
-
-    /**
-     * @brief Handle command line `search`, `matchCase` and `matchWholeWord` parameters.
-     * @param parser Pointer to command line parser instance
-     * @param rawUrls List of files to open passed through command line parameters
-     * @return bool: `true` if parameters are passed properly, `false` otherwise.
-     */
-    bool handleSearchCmdArg(QCommandLineParser* parser, const QStringList &rawUrls);
 };
 
 #endif // MAINWINDOW_H
