@@ -18,6 +18,7 @@
 #include "include/Extensions/installextension.h"
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
+#include "include/Sessions/backupservice.h"
 #include "include/nqqrun.h"
 #include <QFileDialog>
 #include <QLineEdit>
@@ -900,6 +901,9 @@ void MainWindow::on_actionOpen_triggered()
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
 
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
+
     QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
                                 this,
                                 tr("Open"),
@@ -921,6 +925,9 @@ void MainWindow::on_actionOpen_Folder_triggered()
     QUrl defaultUrl = currentEditor()->filePath();
     if (defaultUrl.isEmpty())
         defaultUrl = QUrl::fromLocalFile(m_settings.General.getLastSelectedDir());
+
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
 
     // Select directory
     QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
@@ -1100,6 +1107,9 @@ int MainWindow::save(EditorTabWidget *tabWidget, int tab)
 
 int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
 {
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
+
     // Ask for a file name
     QString filename = QFileDialog::getSaveFileName(
                            this,
@@ -2520,6 +2530,9 @@ void MainWindow::on_actionGo_to_Line_triggered()
 
 void MainWindow::on_actionInstall_Extension_triggered()
 {
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
+
     QString file = QFileDialog::getOpenFileName(this, tr("Extension"), QString(), "Notepadqq extensions (*.nqqext)");
     if (!file.isNull()) {
         Extensions::InstallExtension *installExt = new Extensions::InstallExtension(file, this);
@@ -2592,6 +2605,9 @@ void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
 
 void MainWindow::on_actionLoad_Session_triggered()
 {
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
+
     QString recentFolder = QUrl::fromLocalFile(
                                m_settings.General.getLastSelectedSessionDir())
                                .toLocalFile();
@@ -2613,6 +2629,9 @@ void MainWindow::on_actionLoad_Session_triggered()
 
 void MainWindow::on_actionSave_Session_triggered()
 {
+    // See https://github.com/notepadqq/notepadqq/issues/654
+    BackupServicePauser bsp; bsp.pause();
+
     QString recentFolder = QUrl::fromLocalFile(
                                m_settings.General.getLastSelectedSessionDir())
                                .toLocalFile();

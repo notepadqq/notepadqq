@@ -177,3 +177,16 @@ void BackupService::clearBackupData()
 
     s_backupWindowData.clear();
 }
+
+void BackupService::pause()
+{
+    s_autosaveTimer.stop();
+}
+
+void BackupService::resume()
+{
+    if (s_autosaveEnabled) {
+        // The previous interval is persisted in s_autosaveTimer.interval()
+        s_autosaveTimer.start();
+    }
+}
