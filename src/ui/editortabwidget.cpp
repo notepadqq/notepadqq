@@ -141,8 +141,12 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     }
 
     m_editorPointers.insert(editor.data(), editor);
-    int index = addTab(editor.data(), QString());
-    setTabText(index, create ? title : oldText); // this also stores the tab's title in the Editor object
+
+    // Calling adTab() triggers MainWindow::refreshEditorUiInfo. We want to set the tab title
+    // before that happens so it can be displayed properly.
+    const QString& tabTitle = create ? title : oldText;
+    editor->setTabName(tabTitle);
+    int index = addTab(editor.data(), tabTitle);
 
     if (!create) {
         source->disconnectEditorSignals(editor.data());
