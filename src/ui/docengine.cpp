@@ -163,6 +163,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             msgBox.setWindowTitle(QCoreApplication::applicationName());
             msgBox.setText(tr("Protocol not supported for file \"%1\".").arg(url.toDisplayString()));
             msgBox.exec();
+            continue;
         }
 
         QString localFileName = url.toLocalFile();
@@ -227,7 +228,7 @@ void DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
             cursorPosition = editor->cursorPosition();
         }
 
-        if (reloadAction == DocEngine::ReloadActionAsk && !editor->isClean()) {
+        if (isAlreadyOpen && reloadAction == DocEngine::ReloadActionAsk && !editor->isClean()) {
             EditorTabWidget *tabW = static_cast<EditorTabWidget *>
                                     (m_topEditorContainer->widget(openPos.first));
             tabW->setCurrentIndex(openPos.second);

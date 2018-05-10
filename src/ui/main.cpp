@@ -50,6 +50,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Notepadqq");
     QCoreApplication::setApplicationVersion(Notepadqq::version);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+    QGuiApplication::setDesktopFileName("notepadqq");
+#endif
+
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
 
@@ -149,12 +153,13 @@ int main(int argc, char *argv[])
 
     // If we don't have a window by now (e.g. through restoring backup), we'll create one normally.
     if (MainWindow::instances().isEmpty()) {
-        MainWindow* wnd = new MainWindow(QApplication::arguments(), nullptr);
+        MainWindow* wnd = new MainWindow(QStringList(), nullptr);
 
         if (settings.General.getRememberTabsOnExit()) {
             Sessions::loadSession(wnd->getDocEngine(), wnd->topEditorContainer(), PersistentCache::cacheSessionPath());
         }
 
+        wnd->openCommandLineProvidedUrls(QDir::currentPath(), QApplication::arguments());
         wnd->show();
     }
 
