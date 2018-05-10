@@ -408,17 +408,6 @@ void MainWindow::createStatusBar()
     layout->addWidget(label);
     m_statusBar_overtypeNotify = label;
 
-    if (Notepadqq::oldQt()) {
-        ClickableLabel *cklabel = new ClickableLabel(QString("Qt ") + qVersion(), this);
-        cklabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        cklabel->setStyleSheet("QLabel { background-color: #FF4136; color: white; }");
-        cklabel->setCursor(Qt::PointingHandCursor);
-        connect(cklabel, &ClickableLabel::clicked, this, [&]() {
-            Notepadqq::showQtVersionWarning(false, this);
-        });
-        layout->addWidget(cklabel);
-    }
-
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
@@ -2280,16 +2269,16 @@ void MainWindow::runCommand()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    QPrinter printer(QPrinter::HighResolution);
-    QPrintDialog dialog(&printer);
+    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
+    QPrintDialog dialog(printer.get());
     if (dialog.exec() == QDialog::Accepted)
-        currentEditor()->print(&printer);
+        currentEditor()->print(printer);
 }
 
 void MainWindow::on_actionPrint_Now_triggered()
 {
-    QPrinter printer(QPrinter::HighResolution);
-    currentEditor()->print(&printer);
+    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
+    currentEditor()->print(printer);
 }
 /*
 void MainWindow::on_actionLaunch_in_Chrome_triggered()

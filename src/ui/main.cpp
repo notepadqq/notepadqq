@@ -22,7 +22,6 @@
 #include <QElapsedTimer>
 #endif
 
-void checkQtVersion();
 void forceDefaultSettings();
 void loadExtensions();
 
@@ -135,8 +134,6 @@ int main(int argc, char *argv[])
     }
     file.close();
 
-    checkQtVersion();
-
     if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
         Extensions::ExtensionsLoader::startExtensionsServer();
         Extensions::ExtensionsLoader::loadExtensions(Notepadqq::extensionsPath());
@@ -174,27 +171,12 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
-        Notepadqq::showQtVersionWarning(true, MainWindow::instances().back());
-    }
-
     Stats::init();
 
     auto retVal = a.exec();
 
     BackupService::clearBackupData(); // Clear autosave cache on proper shutdown
     return retVal;
-}
-
-void checkQtVersion()
-{
-    QString runtimeVersion = qVersion();
-    int minorVersion = runtimeVersion.split(".")[1].toInt();
-    if (runtimeVersion.startsWith("5") &&
-            minorVersion <= 3) {
-
-        Notepadqq::setOldQt(true);
-    }
 }
 
 void forceDefaultSettings()

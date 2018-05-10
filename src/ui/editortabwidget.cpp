@@ -19,8 +19,14 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
 
+#ifdef Q_OS_MACX
+    this->tabBar()->setExpanding(true);
+    this->setUsesScrollButtons(true);
+#else
     QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
     setStyleSheet(style);
+#endif
+
 }
 
 EditorTabWidget::~EditorTabWidget()

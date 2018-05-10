@@ -1,13 +1,13 @@
 #ifndef CUSTOMQWEBVIEW_H
 #define CUSTOMQWEBVIEW_H
 
-#include <QWebView>
+#include <QWebEngineView>
 #include <QWheelEvent>
 
 namespace EditorNS
 {
 
-    class CustomQWebView : public QWebView
+    class CustomQWebView : public QWebEngineView
     {
         Q_OBJECT
     public:
@@ -23,9 +23,7 @@ namespace EditorNS
         void keyPressEvent(QKeyEvent *ev) override;
         void dropEvent(QDropEvent *ev) override;
         void focusInEvent(QFocusEvent* event) override;
-
-    private slots:
-        void onCustomContextMenuRequested(const QPoint& pos);
+        void contextMenuEvent(QContextMenuEvent* ev) override;
     };
 
 }

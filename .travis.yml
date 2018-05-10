@@ -1,12 +1,10 @@
-language: cpp
-dist: trusty
 sudo: required
-os:
-  - linux
+services:
+  - docker
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
+  - docker run --name nqq -v $(pwd):/build -d -it ubuntu:17.10 bash
+  - docker exec nqq apt-get -qq update
+  - docker exec nqq apt-get -y install coreutils build-essential gcc pkg-config qtbase5-dev qtwebengine5-dev libqt5svg5-dev qttools5-dev-tools libqt5websockets5-dev
   - git pull --depth=500
 script:
-  - ./configure && make
-  - ./src/ui-tests/ui-tests
+  - docker exec nqq /build/.travis/script.sh
