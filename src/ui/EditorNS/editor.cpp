@@ -150,7 +150,9 @@ namespace EditorNS
                 for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
                     if (it->id == id) {
                         AsyncReply r = *it;
-                        r.value->set_value(data);
+                        if (r.value) {
+                            r.value->set_value(data);
+                        }
                         this->asyncReplies.erase(it);
 
                         if (r.callback != 0) {
@@ -180,13 +182,14 @@ namespace EditorNS
     void Editor::setFocus()
     {
         m_webView->setFocus();
-        sendMessage("C_CMD_SET_FOCUS");
+        asyncSendMessageWithResultP("C_CMD_SET_FOCUS")
+                .wait(); // FIXME Remove
     }
 
     void Editor::clearFocus()
     {
         m_webView->clearFocus();
-        sendMessage("C_CMD_BLUR");
+        asyncSendMessageWithResultP("C_CMD_BLUR");
     }
 
     /**
@@ -222,25 +225,33 @@ namespace EditorNS
         m_tabName = name;
     }
 
+    QPromise<bool> Editor::isCleanP()
+    {
+        return asyncSendMessageWithResultP("C_FUN_IS_CLEAN", QVariant(0))
+                .then([](QVariant v){ return v.toBool(); });
+    }
+
     bool Editor::isClean()
     {
         return asyncSendMessageWithResult("C_FUN_IS_CLEAN", QVariant(0)).get().toBool();
     }
 
-    void Editor::markClean()
+    QPromise<void> Editor::markClean()
     {
-        sendMessage("C_CMD_MARK_CLEAN");
+        return asyncSendMessageWithResultP("C_CMD_MARK_CLEAN").then([](){})
+                .wait(); // FIXME Remove
     }
 
-    void Editor::markDirty()
+    QPromise<void> Editor::markDirty()
     {
-        sendMessage("C_CMD_MARK_DIRTY");
+        return asyncSendMessageWithResultP("C_CMD_MARK_DIRTY").then([](){})
+                .wait(); // FIXME Remove
     }
 
-    int EditorNS::Editor::getHistoryGeneration()
+    QPromise<int> Editor::getHistoryGeneration()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_HISTORY_GENERATION", QVariant(0))
-                .get().toInt();
+        return asyncSendMessageWithResultP("C_FUN_GET_HISTORY_GENERATION")
+                .then([](QVariant v){return v.toInt();});
     }
 
     void Editor::setLanguage(const Language* lang)
@@ -255,8 +266,9 @@ namespace EditorNS
             setIndentationMode(lang);
         }
         m_currentLanguage = lang;
-        sendMessage("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime);
-        emit currentLanguageChanged(lang->id, lang->name);
+        asyncSendMessageWithResultP("C_CMD_SET_LANGUAGE", lang->mime.isEmpty() ? lang->mode : lang->mime).then([=](){
+            emit currentLanguageChanged(m_currentLanguage->id, m_currentLanguage->name);
+        });
     }
 
     void Editor::setLanguage(const QString& language)
@@ -287,19 +299,19 @@ namespace EditorNS
         setLanguageFromFileName(filePath().toString());
     }
 
-    void Editor::setIndentationMode(const Language* lang)
+    QPromise<void> Editor::setIndentationMode(const Language* lang)
     {
         const auto& s = NqqSettings::getInstance().Languages;
         const bool useDefaults = s.getUseDefaultSettings(lang->id);
         const auto& langId = useDefaults ? "default" : lang->id;
 
-        setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
+        return setIndentationMode(!s.getIndentWithSpaces(langId), s.getTabSize(langId));
     }
 
-    void Editor::setIndentationMode(const bool useTabs, const int size)
+    QPromise<void> Editor::setIndentationMode(const bool useTabs, const int size)
     {
-        sendMessage("C_CMD_SET_INDENTATION_MODE",
-            QVariantMap{{"useTabs", useTabs}, {"size", size}});
+        return asyncSendMessageWithResultP("C_CMD_SET_INDENTATION_MODE",
+                                           QVariantMap{{"useTabs", useTabs}, {"size", size}}).then([](){});
     }
 
     Editor::IndentationMode Editor::indentationMode()
@@ -309,6 +321,17 @@ namespace EditorNS
         out.useTabs = indent.value("useTabs", true).toBool();
         out.size = indent.value("size", 4).toInt();
         return out;
+    }
+
+    QPromise<Editor::IndentationMode> Editor::indentationModeP()
+    {
+        return asyncSendMessageWithResultP("C_FUN_GET_INDENTATION_MODE").then([](QVariant result){
+            QVariantMap indent = result.toMap();
+            IndentationMode out;
+            out.useTabs = indent.value("useTabs", true).toBool();
+            out.size = indent.value("size", 4).toInt();
+            return out;
+        });
     }
 
     void Editor::setCustomIndentationMode(const bool useTabs, const int size)
@@ -336,16 +359,17 @@ namespace EditorNS
 
     void Editor::setSmartIndent(bool enabled)
     {
-        sendMessage("C_CMD_SET_SMART_INDENT", enabled);
+        asyncSendMessageWithResultP("C_CMD_SET_SMART_INDENT", enabled);
     }
 
-    void Editor::setValue(const QString &value)
+    QPromise<void> Editor::setValue(const QString &value)
     {
         auto lang = LanguageService::getInstance().lookupByContent(value);
         if (lang != nullptr) {
             setLanguage(lang);
         }
-        sendMessage("C_CMD_SET_VALUE", value);
+        return asyncSendMessageWithResultP("C_CMD_SET_VALUE", value).then([](){})
+                .wait(); // FIXME Remove
     }
 
     QString Editor::value()
@@ -375,6 +399,9 @@ namespace EditorNS
 
     void Editor::sendMessage(const QString &msg, const QVariant &data)
     {
+#ifdef QT_DEBUG
+        qDebug() << "Legacy message " << msg << " sent.";
+#endif
         waitAsyncLoad();
 
         emit m_jsToCppProxy->messageReceivedByJs(msg, data);
@@ -385,10 +412,59 @@ namespace EditorNS
         sendMessage(msg, 0);
     }
 
+    unsigned int messageIdentifier = 0;
+
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data)
+    {
+        unsigned int currentMsgIdentifier = ++messageIdentifier;
+
+        QPromise<QVariant> resultPromise = QPromise<QVariant>([&](
+                                                              const QPromiseResolve<QVariant>& resolve,
+                                                              const QPromiseReject<QVariant>& reject) {
+
+            auto conn = std::make_shared<QMetaObject::Connection>();
+            *conn = QObject::connect(this, &Editor::asyncReplyReceived, this, [=](unsigned int id, QString, QVariant data){
+                if (id == currentMsgIdentifier) {
+                    QObject::disconnect(*conn);
+                    resolve(data);
+                }
+            });
+
+        });
+
+        // FIXME We can probably remove this->asyncReplies after we've converted everything
+        AsyncReply asyncmsg;
+        asyncmsg.id = currentMsgIdentifier;
+        asyncmsg.message = msg;
+        asyncmsg.value = nullptr;
+        asyncmsg.callback = nullptr;
+        this->asyncReplies.push_back((asyncmsg));
+
+        QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
+
+        if (m_loaded) {
+            // Send it right now
+            emit m_jsToCppProxy->messageReceivedByJs(message_id, data);
+        } else {
+            // Send it as soon as the editor becomes ready
+            auto conn = std::make_shared<QMetaObject::Connection>();
+            *conn = QObject::connect(this, &Editor::editorReady, this, [=](){
+                QObject::disconnect(*conn);
+                m_loaded = true;
+                emit m_jsToCppProxy->messageReceivedByJs(message_id, data);
+            });
+        }
+
+        return resultPromise;
+    }
+
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg)
+    {
+        return this->asyncSendMessageWithResultP(msg, 0);
+    }
+
     std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
     {
-        static unsigned int messageIdentifier = 0;
-
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
         std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
@@ -484,22 +560,32 @@ namespace EditorNS
 
     void Editor::setLineWrap(const bool wrap)
     {
-        sendMessage("C_CMD_SET_LINE_WRAP", wrap);
+        asyncSendMessageWithResultP("C_CMD_SET_LINE_WRAP", wrap);
     }
 
     void Editor::setEOLVisible(const bool showeol)
     {
-        sendMessage("C_CMD_SHOW_END_OF_LINE",showeol);
+        asyncSendMessageWithResultP("C_CMD_SHOW_END_OF_LINE", showeol);
     }
 
     void Editor::setWhitespaceVisible(const bool showspace)
     {
-        sendMessage("C_CMD_SHOW_WHITESPACE",showspace);
+        asyncSendMessageWithResultP("C_CMD_SHOW_WHITESPACE", showspace);
     }
 
     void Editor::setMathEnabled(const bool enabled)
     {
-        sendMessage("C_CMD_ENABLE_MATH", enabled);
+        asyncSendMessageWithResultP("C_CMD_ENABLE_MATH", enabled);
+    }
+
+    QPromise<QPair<int, int>> Editor::cursorPositionP()
+    {
+        return asyncSendMessageWithResultP("C_FUN_GET_CURSOR")
+               .then([](QVariant v){
+             QList<QVariant> cursor = v.toList();
+             return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
+        });
+
     }
 
     QPair<int, int> Editor::cursorPosition()
@@ -510,7 +596,7 @@ namespace EditorNS
 
     void Editor::setCursorPosition(const int line, const int column)
     {
-        sendMessage("C_CMD_SET_CURSOR", QList<QVariant>{line, column});
+        asyncSendMessageWithResultP("C_CMD_SET_CURSOR", QList<QVariant>{line, column});
     }
 
     void Editor::setCursorPosition(const QPair<int, int> &position)
@@ -526,7 +612,7 @@ namespace EditorNS
     void Editor::setSelection(int fromLine, int fromCol, int toLine, int toCol)
     {
         QVariantList arg{fromLine, fromCol, toLine, toCol};
-        sendMessage("C_CMD_SET_SELECTION", QVariant(arg));
+        asyncSendMessageWithResultP("C_CMD_SET_SELECTION", QVariant(arg));
     }
 
     QPair<int, int> Editor::scrollPosition()
@@ -537,7 +623,7 @@ namespace EditorNS
 
     void Editor::setScrollPosition(const int left, const int top)
     {
-        sendMessage("C_CMD_SET_SCROLL_POS", QVariantList{left, top});
+        asyncSendMessageWithResultP("C_CMD_SET_SCROLL_POS", QVariantList{left, top});
     }
 
     void Editor::setScrollPosition(const QPair<int, int> &position)
@@ -561,7 +647,7 @@ namespace EditorNS
         tmap.insert("family", fontFamily == nullptr ? "" : fontFamily);
         tmap.insert("size", QString::number(fontSize));
         tmap.insert("lineHeight", QString::number(lineHeight,'f',2));
-        sendMessage("C_CMD_SET_FONT", tmap);
+        asyncSendMessageWithResultP("C_CMD_SET_FONT", tmap);
     }
 
     QTextCodec *Editor::codec() const
@@ -637,40 +723,37 @@ namespace EditorNS
         return out;
     }
 
-    QStringList Editor::selectedTexts()
+    QPromise<QStringList> Editor::selectedTexts()
     {
-        QVariant text = asyncSendMessageWithResult("C_FUN_GET_SELECTIONS_TEXT").get();
-        return text.toStringList();
+        return asyncSendMessageWithResultP("C_FUN_GET_SELECTIONS_TEXT")
+                .then([](QVariant text){ return text.toStringList(); });
     }
 
     void Editor::setOverwrite(bool overwrite)
     {
-        sendMessage("C_CMD_SET_OVERWRITE", overwrite);
+        asyncSendMessageWithResultP("C_CMD_SET_OVERWRITE", overwrite);
     }
 
     void Editor::setTabsVisible(bool visible)
     {
-        sendMessage("C_CMD_SET_TABS_VISIBLE", visible);
+        asyncSendMessageWithResultP("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    Editor::IndentationMode Editor::detectDocumentIndentation(bool *found)
+    QPromise<std::pair<Editor::IndentationMode, bool>> Editor::detectDocumentIndentation()
     {
-        QVariantMap indent =
-                asyncSendMessageWithResult("C_FUN_DETECT_INDENTATION_MODE").get().toMap();
+        return asyncSendMessageWithResultP("C_FUN_DETECT_INDENTATION_MODE").then([](QVariant result){
+            QVariantMap indent = result.toMap();
+            IndentationMode out;
 
-        IndentationMode out;
+            bool found = indent.value("found", false).toBool();
 
-        bool _found = indent.value("found", false).toBool();
-        if (found != nullptr) {
-            *found = _found;
-        }
+            if (found) {
+                out.useTabs = indent.value("useTabs", true).toBool();
+                out.size = indent.value("size", 4).toInt();
+            }
 
-        if (_found) {
-            out.useTabs = indent.value("useTabs", true).toBool();
-            out.size = indent.value("size", 4).toInt();
-        }
-
-        return out;
+            return std::make_pair(out, found);
+        });
     }
 
     void Editor::print(std::shared_ptr<QPrinter> printer)
@@ -691,13 +774,15 @@ namespace EditorNS
         });
     }
 
-    QString Editor::getCurrentWord()
+    QPromise<QString> Editor::getCurrentWord()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_CURRENT_WORD").get().toString();
+        return asyncSendMessageWithResultP("C_FUN_GET_CURRENT_WORD")
+                .then([](QVariant v){ return v.toString(); });
     }
 
-    int Editor::lineCount()
+    QPromise<int> Editor::lineCount()
     {
-        return asyncSendMessageWithResult("C_FUN_GET_LINE_COUNT").get().toInt();
+        return asyncSendMessageWithResultP("C_FUN_GET_LINE_COUNT")
+                .then([](QVariant v){ return v.toInt(); });
     }
 }

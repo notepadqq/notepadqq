@@ -9,5 +9,7 @@ TEMPLATE = app
 TARGET = ui-tests
 INCLUDEPATH += ../ui/
 
+include(../ui/libs/qtpromise/qtpromise.pri)
+
 # Input
 SOURCES += tst_notepadqqtest.cpp

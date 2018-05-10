@@ -6,7 +6,7 @@
 
 QT       += core gui svg widgets printsupport network webenginewidgets webchannel websockets
 
-CONFIG += c++11
+CONFIG += c++14
 
 !macx: TARGET = notepadqq-bin
 macx: TARGET = notepadqq
@@ -59,6 +59,8 @@ macx {
 INSTALLFILESDIR = ../../support_files
 
 CURRFILE = $$PWD/ui.pro
+
+include(libs/qtpromise/qtpromise.pri)
 
 SOURCES += main.cpp\
     mainwindow.cpp \

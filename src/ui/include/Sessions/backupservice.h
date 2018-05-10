@@ -43,6 +43,19 @@ public:
 
     static void clearBackupData();
 
+    /**
+     * @brief Pause the timer, if it is running.
+     */
+    static void pause();
+    /**
+     * @brief Resume the timer, if it was paused.
+     *        You can safely call this method even if the
+     *        backup service is disabled by the user, as
+     *        the timer is resumed only if it was previously
+     *        running.
+     */
+    static void resume();
+
 private:
     static QTimer s_autosaveTimer;
     static bool s_autosaveEnabled;
@@ -80,6 +93,22 @@ private:
      * @return True if the backup was created successfully
      */
     static bool writeBackup(MainWindow* wnd);
+};
+
+/**
+ * @brief Utility class used to pause the BackupService within a block of code.
+ *        The service is automatically resumed as soon as the program exits
+ *        the block.
+ */
+class BackupServicePauser {
+public:
+    inline explicit BackupServicePauser() {}
+
+    // We can't pause it from the constructor because then we get a "unused var" warning
+    // whenever this object is instantiated.
+    inline void pause() { BackupService::pause(); }
+
+    inline ~BackupServicePauser() { BackupService::resume(); }
 };
 
 #endif // AUTOSAVE_H
