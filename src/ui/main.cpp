@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
     // Check if we're running as root
     if( getuid() == 0 && !parser->isSet("allow-root") ) {
         qWarning() << QObject::tr("Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
+        qWarning() << QObject::tr("Notepadqq can ask for root priviledges when either 'kdesu' or 'gksu' are installed.");
         return EXIT_SUCCESS;
     }
 
