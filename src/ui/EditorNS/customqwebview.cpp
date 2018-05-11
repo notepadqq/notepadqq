@@ -6,31 +6,19 @@ namespace EditorNS
 {
 
     CustomQWebView::CustomQWebView(QWidget *parent) :
-        QWebView(parent)
+        QWebEngineView(parent)
     {
-        setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(this, &CustomQWebView::customContextMenuRequested,
-                this, &CustomQWebView::onCustomContextMenuRequested);
-    }
-
-    void CustomQWebView::onCustomContextMenuRequested(const QPoint& pos)
-    {
-        QMenu menu;
-        menu.addAction(page()->action(QWebPage::Cut));
-        menu.addAction(page()->action(QWebPage::Copy));
-        menu.addAction(page()->action(QWebPage::Paste));
-        menu.addAction(page()->action(QWebPage::SelectAll));
-        menu.exec(mapToGlobal(pos));
     }
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
         emit mouseWheel(ev);
+
         if (ev->modifiers() & Qt::ShiftModifier) {
             QWheelEvent hScroll (ev->pos(), ev->delta(), ev->buttons(), ev->modifiers(), Qt::Horizontal);
-	    QWebView::wheelEvent(&hScroll);
+            QWebEngineView::wheelEvent(&hScroll);
         } else {
-            QWebView::wheelEvent(ev);
+            QWebEngineView::wheelEvent(ev);
         }
     }
 
@@ -41,7 +29,7 @@ namespace EditorNS
             ev->ignore();
             break;
         default:
-            QWebView::keyPressEvent(ev);
+            QWebEngineView::keyPressEvent(ev);
         }
     }
 
@@ -51,13 +39,25 @@ namespace EditorNS
             ev->ignore();
             emit urlsDropped(ev->mimeData()->urls());
         } else {
-            QWebView::dropEvent(ev);
+            QWebEngineView::dropEvent(ev);
         }
     }
 
     void CustomQWebView::focusInEvent(QFocusEvent* event)
     {
-        QWebView::focusInEvent(event);
+        QWebEngineView::focusInEvent(event);
         emit gotFocus();
+    }
+
+    void CustomQWebView::contextMenuEvent(QContextMenuEvent* event)
+    {
+        QMenu *menu = new QMenu(this);
+
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Cut));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Copy));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::Paste));
+        menu->insertAction(nullptr, page()->action(QWebEnginePage::SelectAll));
+
+        menu->popup(event->globalPos());
     }
 }

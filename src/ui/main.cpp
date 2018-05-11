@@ -22,7 +22,6 @@
 #include <QElapsedTimer>
 #endif
 
-void checkQtVersion();
 void forceDefaultSettings();
 void loadExtensions();
 
@@ -89,7 +88,10 @@ int main(int argc, char *argv[])
 
     // Check if we're running as root
     if( getuid() == 0 && !parser->isSet("allow-root") ) {
-        qWarning() << QObject::tr("Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
+        qWarning() << QObject::tr(
+            "Notepadqq will ask for root privileges whenever they are needed if either 'kdesu' or 'gksu' are installed."
+            " Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
+
         return EXIT_SUCCESS;
     }
 
@@ -123,7 +125,7 @@ int main(int argc, char *argv[])
     // There are no other instances: start a new server.
     a.startServer();
 
-    Editor::addEditorToBuffer();
+    Editor::addEditorToBuffer(10);
 
     QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {
@@ -131,8 +133,6 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     file.close();
-
-    checkQtVersion();
 
     if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
         Extensions::ExtensionsLoader::startExtensionsServer();
@@ -171,27 +171,12 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    if (Notepadqq::oldQt() && settings.General.getCheckVersionAtStartup()) {
-        Notepadqq::showQtVersionWarning(true, MainWindow::instances().back());
-    }
-
     Stats::init();
 
     auto retVal = a.exec();
 
     BackupService::clearBackupData(); // Clear autosave cache on proper shutdown
     return retVal;
-}
-
-void checkQtVersion()
-{
-    QString runtimeVersion = qVersion();
-    int minorVersion = runtimeVersion.split(".")[1].toInt();
-    if (runtimeVersion.startsWith("5") &&
-            minorVersion <= 3) {
-
-        Notepadqq::setOldQt(true);
-    }
 }
 
 void forceDefaultSettings()

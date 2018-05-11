@@ -1,0 +1,16 @@
+_book
+dist
+node_modules
+*.gcno
+*.gcda
+*.moc
+*.o
+*.obj
+*.exe
+*.user
+Makefile*
+moc_*.cpp
+moc_*.h
+coverage.info
+package-lock.json
+target_wrapper.bat

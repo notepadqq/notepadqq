@@ -160,7 +160,7 @@ check make "$MAKE" 1
 check pkg-config pkg-config
 
 # check for libraries via pkg-config
-libraries="Qt5Core Qt5Gui Qt5Network Qt5WebKit Qt5Widgets Qt5WebKitWidgets Qt5PrintSupport Qt5Svg"
+libraries="Qt5Core Qt5Gui Qt5Network Qt5WebEngine Qt5Widgets Qt5WebEngineWidgets Qt5PrintSupport Qt5Svg Qt5WebSockets Qt5WebChannel"
 which pkg-config 2>/dev/null 1>/dev/null
 if [ $(echo $?) -eq 0 ] ; then
     for l in $libraries ; do

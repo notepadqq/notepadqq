@@ -12,8 +12,11 @@
 #include <QVariant>
 #include <functional>
 #include <future>
+#include <QtPromise>
 
 class EditorTabWidget;
+
+using namespace QtPromise;
 
 namespace EditorNS
 {
@@ -36,18 +39,7 @@ namespace EditorNS
     public:
         JsToCppProxy(QObject *parent) : QObject(parent) { }
 
-        /**
-             * @brief Set C++-to-JS message data. This method should
-             *        be called from the C++ part
-             * @param data
-             */
-        void setMsgData(QVariant data) { m_msgData = data; }
-
-        /**
-             * @brief Get the message data set by setMsgData(). This
-             *        method should be called from the JavaScript part.
-             */
-        Q_INVOKABLE QVariant getMsgData() { return m_msgData; }
+        Q_INVOKABLE void receiveMessage(QString msg, QVariant data) { emit messageReceived(msg, data); }
 
     signals:
         /**
@@ -56,6 +48,8 @@ namespace EditorNS
              * @param data Message data
              */
         void messageReceived(QString msg, QVariant data);
+
+        void messageReceivedByJs(QString msg, QVariant data);
     };
 
 
@@ -182,15 +176,16 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
+        QPromise<bool> isCleanP();
         Q_INVOKABLE bool isClean();
-        Q_INVOKABLE void markClean();
-        Q_INVOKABLE void markDirty();
+        Q_INVOKABLE QPromise<void> markClean();
+        Q_INVOKABLE QPromise<void> markDirty();
 
         /**
          * @brief Returns an integer that denotes the editor's history state. Making changes to
          *        the contents increments the integer while reverting changes decrements it again.
          */
-        Q_INVOKABLE int getHistoryGeneration();
+        Q_INVOKABLE QPromise<int> getHistoryGeneration();
 
         /**
          * @brief Set the language to use for the editor.
@@ -202,7 +197,7 @@ namespace EditorNS
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFileName(const QString& fileName);
         Q_INVOKABLE void setLanguageFromFileName();
-        Q_INVOKABLE void setValue(const QString &value);
+        Q_INVOKABLE QPromise<void> setValue(const QString &value);
         Q_INVOKABLE QString value();
 
         /**
@@ -236,6 +231,7 @@ namespace EditorNS
          * @return a <line, column> pair.
          */
         QPair<int, int> cursorPosition();
+        QPromise<QPair<int, int>> cursorPositionP();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);
@@ -283,30 +279,32 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QStringList selectedTexts();
+        Q_INVOKABLE QPromise<QStringList> selectedTexts();
 
         void setOverwrite(bool overwrite);
-        void forceRender(QSize size);
         void setTabsVisible(bool visible);
 
         /**
          * @brief Detect the indentation mode used within the current document.
-         * @return
+         * @return a pair whose first element is the document indentation, that is
+         *         significative only if the second element ("found") is true.
          */
-        Editor::IndentationMode detectDocumentIndentation(bool *found = nullptr);
+        QPromise<std::pair<IndentationMode, bool>> detectDocumentIndentation();
         Editor::IndentationMode indentationMode();
+        QPromise<IndentationMode> indentationModeP();
 
-        QString getCurrentWord();
+        QPromise<QString> getCurrentWord();
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
-        int lineCount();
+        QPromise<int> lineCount();
 
     private:
         friend class ::EditorTabWidget;
 
         struct AsyncReply {
             unsigned int id;
+            QString message;
             std::shared_ptr<std::promise<QVariant>> value;
             std::function<void (QVariant)> callback;
         };
@@ -336,15 +334,15 @@ namespace EditorNS
 
         void fullConstructor(const Theme &theme);
 
-        void setIndentationMode(const bool useTabs, const int size);
-        void setIndentationMode(const Language*);
+        QPromise<void> setIndentationMode(const bool useTabs, const int size);
+        QPromise<void> setIndentationMode(const Language*);
 
     private slots:
-        void on_javaScriptWindowObjectCleared();
         void on_proxyMessageReceived(QString msg, QVariant data);
 
     signals:
         void messageReceived(QString msg, QVariant data);
+        void asyncReplyReceived(unsigned int id, QString msg, QVariant data);
         void gotFocus();
         void mouseWheel(QWheelEvent *ev);
         void urlsDropped(QList<QUrl> urls);
@@ -367,10 +365,22 @@ namespace EditorNS
     public slots:
         void sendMessage(const QString &msg, const QVariant &data);
         void sendMessage(const QString &msg);
+
+        /**
+         * @brief asyncSendMessageWithResult
+         * @param msg
+         * @param data
+         * @param callback When set, the result is returned asynchronously via the provided function.
+         *                 If set, you should NOT use the return value of this method.
+         * @return
+         */
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg);
+
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
-        void print(QPrinter *printer);
+        void print(std::shared_ptr<QPrinter> printer);
     };
 
 }

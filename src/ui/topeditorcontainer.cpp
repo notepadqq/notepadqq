@@ -172,6 +172,13 @@ int TopEditorContainer::getNumEditors()
     return total;
 }
 
+void TopEditorContainer::disconnectAllTabWidgets()
+{
+    for (int i = 0; i < count(); ++i) {
+        tabWidget(i)->disconnect();
+    }
+}
+
 void TopEditorContainer::forEachEditor(bool backwardIndexes,
                                        std::function<bool (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor)> callback)
 {
@@ -192,4 +199,82 @@ void TopEditorContainer::forEachEditor(bool backwardIndexes,
             }
         }
     }
+}
+
+QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
+                                                    std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> goOn, std::function<void()> stop)> callback)
+{
+    return QPromise<void>([=](const auto& resolve, const auto&) {
+
+        if (backwardIndices) {
+            std::function<std::function<void()>(int,int)> iteration = [=](int i, int j) {
+                return [=]() {
+                    if (i < 0) {
+                        resolve();
+                        return;
+                    }
+                    if (j < 0) {
+                        if (i-1 >= 0) {
+                            iteration(i-1, tabWidget(i-1)->count() - 1);
+                        }
+                        return;
+                    }
+
+                    EditorTabWidget *tabW = tabWidget(i);
+                    callback(i, j, tabW, tabW->editor(j), iteration(i, j-1), [resolve](){ resolve(); });
+                };
+            };
+
+            iteration(count() - 1, tabWidget(0)->count() - 1)();
+
+        } else {
+            std::function<std::function<void()>(int,int)> iteration = [=](int i, int j) {
+                return [=]() {
+                    if (i >= count()) {
+                        resolve();
+                        return;
+                    }
+                    if (j >= tabWidget(i)->count()) {
+                        iteration(i+1, 0);
+                        return;
+                    }
+
+                    EditorTabWidget *tabW = tabWidget(i);
+                    callback(i, j, tabW, tabW->editor(j), iteration(i, j+1), [resolve](){ resolve(); });
+                };
+            };
+
+            iteration(0, 0)();
+        }
+    });
+}
+
+QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> done)> callback)
+{
+    return QPromise<void>([=](const auto& resolve, const auto&) {
+
+        // Collect all the indices we're going to use
+        std::vector<std::pair<int,int>> indices;
+        for (int i = 0; i < count(); i++) {
+            EditorTabWidget *tabW = tabWidget(i);
+            for (int j = 0; j < tabW->count(); j++) {
+                indices.push_back(std::make_pair(i, j));
+            }
+        }
+
+        // Counts the number of iterations
+        std::shared_ptr<int> cnt = std::make_shared<int>(indices.size());
+
+        for (const auto idx : indices) {
+            int i = idx.first;
+            int j = idx.second;
+            callback(i, j, tabWidget(i), tabWidget(i)->editor(j), [cnt, resolve](){
+                (*cnt)--;
+                if (*cnt == 0) {
+                    resolve();
+                }
+            });
+        }
+
+    });
 }
