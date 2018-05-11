@@ -668,7 +668,7 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
 
 int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName, bool copy)
 {
-    Editor *editor = tabWidget->editor(tab);
+    QSharedPointer<Editor> editor = tabWidget->editorSharedPtr(tabWidget->editor(tab));
 
     if (!copy)
         unmonitorDocument(editor);
@@ -681,7 +681,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         do
         {
-            if (write(&file, editor)) {
+            if (write(&file, editor.data())) {
                 break;
             } else {
                 static QString sudoProgram = getAvailableSudoProgram();
@@ -705,7 +705,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 } else if (clicked == retry) {
                     continue;
                 } else if (clicked == retryRoot) {
-                    if (trySudoSave(sudoProgram, outFileName, editor))
+                    if (trySudoSave(sudoProgram, outFileName, editor.data()))
                         break;
                     else {
                         continue;
@@ -727,7 +727,13 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         file.close();
 
+#ifdef Q_OS_MACX
+        // On macOS we need to give it a little bit of time, otherwise we get the
+        // "document changed" banner as soon as the document is saved.
+        QTimer::singleShot(100, [=](){ monitorDocument(editor); });
+#else
         monitorDocument(editor);
+#endif
 
         if (!copy) {
             emit documentSaved(tabWidget, tab);
@@ -775,6 +781,16 @@ void DocEngine::monitorDocument(Editor *editor)
 }
 
 void DocEngine::unmonitorDocument(Editor *editor)
+{
+    unmonitorDocument(editor->filePath().toLocalFile());
+}
+
+void DocEngine::monitorDocument(QSharedPointer<Editor> editor)
+{
+    monitorDocument(editor->filePath().toLocalFile());
+}
+
+void DocEngine::unmonitorDocument(QSharedPointer<Editor> editor)
 {
     unmonitorDocument(editor->filePath().toLocalFile());
 }

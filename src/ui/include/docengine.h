@@ -124,7 +124,9 @@ public:
     QPair<int, int> findOpenEditorByUrl(const QUrl &filename) const;
 
     void monitorDocument(Editor *editor);
+    void monitorDocument(QSharedPointer<Editor> editor);
     void unmonitorDocument(Editor *editor);
+    void unmonitorDocument(QSharedPointer<Editor> editor);
     bool isMonitored(Editor *editor);
 
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
