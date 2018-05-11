@@ -420,7 +420,7 @@ namespace EditorNS
 
         QPromise<QVariant> resultPromise = QPromise<QVariant>([&](
                                                               const QPromiseResolve<QVariant>& resolve,
-                                                              const QPromiseReject<QVariant>& reject) {
+                                                              const QPromiseReject<QVariant>& /* reject */) {
 
             auto conn = std::make_shared<QMetaObject::Connection>();
             *conn = QObject::connect(this, &Editor::asyncReplyReceived, this, [=](unsigned int id, QString, QVariant data){
@@ -766,7 +766,7 @@ namespace EditorNS
         setTheme(themeFromName("default"));
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
-        m_webView->page()->print(printer.get(), [printer, this](bool success) {
+        m_webView->page()->print(printer.get(), [printer, this](bool /*success*/) {
             // Note: it is important to capture "printer" in order to keep the shared_ptr alive.
             sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
             m_webView->setStyleSheet("");
