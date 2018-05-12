@@ -7,7 +7,6 @@ description: |
 grade: stable
 confinement: classic
 icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
-base: core18
 
 
 apps:
