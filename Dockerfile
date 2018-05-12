@@ -1,3 +1,4 @@
+FROM ubuntu:18.04
 MAINTAINER Notepadqq
 
 RUN apt-get -qq update && apt-get -y install \
