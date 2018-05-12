@@ -53,6 +53,7 @@ namespace EditorNS
         m_webView->page()->setWebChannel(channel);
         channel->registerObject(QStringLiteral("cpp_ui_driver"), m_jsToCppProxy);
 
+        m_webView->page()->setBackgroundColor(qApp->palette().color(QPalette::Background));
         m_webView->setUrl(url);
 
         // To load the page in the background (http://stackoverflow.com/a/10520029):
