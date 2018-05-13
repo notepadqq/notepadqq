@@ -7,4 +7,5 @@ before_install:
   - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq 
   - git pull --depth=500
 script:
+  - docker exec nqq .travis/check-format.sh
   - docker exec nqq .travis/script.sh
