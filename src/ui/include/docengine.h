@@ -71,9 +71,9 @@ public:
         /**
          * @brief execute Runs the load operation.
          */
-        void execute() {
+        QPromise<void> execute() {
             Q_ASSERT(tabWidget != nullptr);
-            docEngine.loadDocuments(*this);
+            return docEngine.loadDocuments(*this);
         }
 
         // See here for the arguments' default values
@@ -124,7 +124,9 @@ public:
     QPair<int, int> findOpenEditorByUrl(const QUrl &filename) const;
 
     void monitorDocument(Editor *editor);
+    void monitorDocument(QSharedPointer<Editor> editor);
     void unmonitorDocument(Editor *editor);
+    void unmonitorDocument(QSharedPointer<Editor> editor);
     bool isMonitored(Editor *editor);
 
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
@@ -132,6 +134,16 @@ public:
     static DocEngine::DecodedText readToString(QFile *file);
     static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
     static bool writeFromString(QIODevice *io, const DecodedText &write);
+
+    /**
+     * @brief Write the provided Editor content to the specified IO device, using
+     *        the encoding and the BOM settings specified in the Editor.
+     * @param io
+     * @param editor
+     * @return true if successful, false otherwise
+     */
+    bool write(QIODevice *io, Editor *editor);
+    bool write(QUrl outFileName, Editor *editor);
 
     /**
      * @brief getNewDocumentName
@@ -149,26 +161,18 @@ private:
      *        detect the encoding.
      * @param file
      * @param editor
-     * @return true if successful, false otherwise
+     * @return fulfilled if successful, rejected otherwise
      */
-    bool read(QFile *file, Editor *editor);
-    bool read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
+    QPromise<void> read(QFile *file, Editor *editor);
+    QPromise<void> read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
 
     /**
      * @brief loadDocuments Responsible for loading or reloading a number of text files.
      * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
-    void loadDocuments(const DocumentLoader& docLoader);
+    QPromise<void> loadDocuments(const DocumentLoader& docLoader);
 
-    /**
-     * @brief Write the provided Editor content to the specified IO device, using
-     *        the encoding and the BOM settings specified in the Editor.
-     * @param io
-     * @param editor
-     * @return true if successful, false otherwise
-     */
-    bool write(QIODevice *io, Editor *editor);
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
 

@@ -22,7 +22,9 @@ void BackupService::executeBackup() {
         WindowData wd;
         wd.ptr = wnd;
         wnd->topEditorContainer()->forEachEditor([&wd](int,int,EditorTabWidget*,Editor* ed) {
-            wd.editors.push_back( std::make_pair(ed, ed->getHistoryGeneration()) );
+            int gen = -1;
+            ed->getHistoryGeneration().wait().tap([&](int value){gen = value;});
+            wd.editors.push_back( std::make_pair(ed, gen) );
             return true;
         });
         newData.insert(std::move(wd));
@@ -130,8 +132,6 @@ void BackupService::enableAutosave(int intervalInSeconds)
     if (s_autosaveEnabled)
         return;
 
-    clearBackupData();
-
     static bool initializer = false;
     if (!initializer) {
         // Only create this connection once. Since we're connecting to a plain old function we can't use
@@ -176,4 +176,17 @@ void BackupService::clearBackupData()
         backupDir.removeRecursively();
 
     s_backupWindowData.clear();
+}
+
+void BackupService::pause()
+{
+    s_autosaveTimer.stop();
+}
+
+void BackupService::resume()
+{
+    if (s_autosaveEnabled) {
+        // The previous interval is persisted in s_autosaveTimer.interval()
+        s_autosaveTimer.start();
+    }
 }

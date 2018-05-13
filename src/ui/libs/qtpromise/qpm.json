@@ -1,0 +1,18 @@
+{
+    "name": "com.github.simonbrunel.qtpromise",
+    "description": "Promises/A+ implementation for Qt/C++",
+    "author": {
+        "name": "Simon Brunel",
+        "email": "simonbrunel@users.noreply.github.com"
+    },
+    "repository": {
+        "type": "GITHUB",
+        "url": "https://github.com/simonbrunel/qtpromise.git"
+    },
+    "version": {
+        "label": "0.3.0"
+    },
+    "license": "MIT",
+    "pri_filename": "qtpromise.pri",
+    "webpage": "https://github.com/simonbrunel/qtpromise"
+}

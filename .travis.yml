@@ -1,12 +1,10 @@
-language: cpp
-dist: trusty
 sudo: required
-os:
-  - linux
+services:
+  - docker
+language: cpp
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y qtbase5-dev libqt5webkit5-dev libqt5svg5-dev qttools5-dev-tools
+  - docker build -t nqq .
+  - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq 
   - git pull --depth=500
 script:
-  - ./configure && make
-  - ./src/ui-tests/ui-tests
+  - docker exec nqq .travis/script.sh

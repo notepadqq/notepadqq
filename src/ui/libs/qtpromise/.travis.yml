@@ -1,0 +1,36 @@
+sudo: required
+dist: trusty
+language: cpp
+compiler: gcc
+
+before_install:
+  - sudo add-apt-repository -y ppa:beineri/opt-qt542-trusty
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -qq qt54base
+  - source /opt/qt54/bin/qt54-env.sh
+  - wget http://archive.ubuntu.com/ubuntu/pool/universe/l/lcov/lcov_1.13.orig.tar.gz
+  - tar xf lcov_1.13.orig.tar.gz
+  - cd lcov-1.13/
+  - sudo make install
+  - cd ..
+
+before_script:
+  - qmake --version
+  - lcov --version
+  - gcc --version
+
+script:
+  - qmake qtpromise.pro CONFIG+=coverage
+  - make -j4
+  - make check --quiet
+  - lcov -capture --directory . --o coverage.info
+  - lcov -e coverage.info '**/src/**/*' -o coverage.info
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info
+
+
+# gitbook install .
+# gitbook build . dist/docs

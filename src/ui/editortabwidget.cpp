@@ -19,8 +19,14 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
 
+#ifdef Q_OS_MACX
+    this->tabBar()->setExpanding(true);
+    this->setUsesScrollButtons(true);
+#else
     QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
     setStyleSheet(style);
+#endif
+
 }
 
 EditorTabWidget::~EditorTabWidget()
@@ -135,8 +141,12 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     }
 
     m_editorPointers.insert(editor.data(), editor);
-    int index = addTab(editor.data(), QString());
-    setTabText(index, create ? title : oldText); // this also stores the tab's title in the Editor object
+
+    // Calling adTab() triggers MainWindow::refreshEditorUiInfo. We want to set the tab title
+    // before that happens so it can be displayed properly.
+    const QString& tabTitle = create ? title : oldText;
+    editor->setTabName(tabTitle);
+    int index = addTab(editor.data(), tabTitle);
 
     if (!create) {
         source->disconnectEditorSignals(editor.data());
