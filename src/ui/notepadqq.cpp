@@ -16,10 +16,10 @@ QString Notepadqq::copyright()
     return QObject::trUtf8("Copyright © 2010-%1, Daniele Di Sarli").arg(COPYRIGHT_YEAR);
 }
 
-QString Notepadqq::appDataPath(QString fileName)
+QString Notepadqq::appDataPath (QString fileName)
 {
 #ifdef Q_OS_MACX
-    QString def = QString("%1/../Resources/").
+      QString def = QString("%1/../Resources/").
             arg(qApp->applicationDirPath());
 #else
     QString def = QString("%1/../appdata/").
@@ -31,11 +31,11 @@ QString Notepadqq::appDataPath(QString fileName)
                 arg(qApp->applicationDirPath()).
                 arg(qApp->applicationName().toLower());
 
-    if (!fileName.isNull()) {
+    if(!fileName.isNull()) {
         def.append(fileName);
     }
 
-    return def;
+       return def;
 }
 
 QString Notepadqq::editorPath()
