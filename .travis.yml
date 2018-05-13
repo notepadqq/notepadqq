@@ -1,10 +1,25 @@
-sudo: required
-services:
-  - docker
-before_install:
-  - docker run --name nqq -v $(pwd):/build -d -it ubuntu:18.04 bash
-  - docker exec nqq apt-get -qq update
-  - docker exec nqq apt-get -y install coreutils build-essential gcc pkg-config qtbase5-dev qtwebengine5-dev libqt5svg5-dev qttools5-dev-tools libqt5websockets5-dev
-  - git pull --depth=500
+language: cpp
+sudo: false
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: NQQ_BUILD_TYPE=FORMAT
+  include:
+    - os: linux
+      env: NQQ_BUILD_TYPE=FORMAT
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-format-6.0
+    - os: linux
+      env: NQQ_BUILD_TYPE=COMPILE
+      sudo: true
+      services:
+        - docker
+
 script:
-  - docker exec nqq /build/.travis/script.sh
+  - .travis/script.sh

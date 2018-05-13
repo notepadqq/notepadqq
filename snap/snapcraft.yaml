@@ -40,7 +40,8 @@ parts:
     build-packages:
 
       - qtbase5-dev
-      - libqt5webkit5-dev
+      - qtwebengine5-dev
+      - libqt5websockets5-dev
       - libqt5svg5-dev
       - qttools5-dev-tools
       
