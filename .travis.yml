@@ -1,10 +1,25 @@
-sudo: required
-services:
-  - docker
 language: cpp
-before_install:
-  - docker build -t nqq .
-  - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq 
-  - git pull --depth=500
+sudo: false
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: NQQ_BUILD_TYPE=FORMAT
+  include:
+    - os: linux
+      env: NQQ_BUILD_TYPE=FORMAT
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-format-6.0
+    - os: linux
+      env: NQQ_BUILD_TYPE=COMPILE
+      sudo: true
+      services:
+        - docker
+
 script:
-  - docker exec nqq .travis/script.sh
+  - .travis/script.sh
