@@ -1,25 +1,22 @@
-sudo: required
-services:
-  - docker
-language: cpp
-stages:
-  - Check Formatting
-  - Build
-jobs:
+dist: trusty
+sudo: false
+
+matrix:
+  fast_finish: true
   include:
-    fast_finish: true
-    - stage: Check Formatting
-      script:
-        - sudo apt-get update
-        - sudo apt-get install clang-format-3.9
-        - .travis/check-format.sh
+    - os: linux
+    sudo: false
+    addons:
+      apt:
+        packages:
+          - clang-format-3.9
+    env: BUILD_TYPE="FORMAT"
 
-    - stage: Build
-      script:
-        - docker build -t nqq .
-        - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq
-        - git pull --depth=500
-        - docker exec nqq .travis/script.sh
+    - os: linux
+    sudo: true
+    services:
+      - docker
+    env: BUILD_TYPE="COMPILE"
 
-  allow_failures:
-    - stage: Check Formatting
+script:
+  - .travis/script.sh
