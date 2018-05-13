@@ -3,18 +3,23 @@ services:
   - docker
 language: cpp
 stages:
-  - formatting
-  - build
+  - Check Formatting
+  - Build
 jobs:
   include:
-    - stage: formatting
+    fast_finish: true
+    - stage: Check Formatting
       script:
         - sudo apt-get update
         - sudo apt-get install clang-format-3.9
         - .travis/check-format.sh
-    - stage: build
+
+    - stage: Build
       script:
         - docker build -t nqq .
         - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq
         - git pull --depth=500
         - docker exec nqq .travis/script.sh
+
+  allow_failures:
+    - stage: Check Formatting
