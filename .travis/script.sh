@@ -23,7 +23,12 @@ check_format()
 
 compile()
 {
-    ./configure && make && ./src/ui-tests/ui-tests
+    docker build -t nqq .
+    docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq
+    git pull --depth=500
+    docker exec nqq ./configure
+    docker exec nqq make
+    docker exec nqq src/ui-tests/ui-tests
 }
 
 
