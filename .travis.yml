@@ -10,8 +10,11 @@ matrix:
       env: NQQ_BUILD_TYPE=FORMAT
       addons:
         apt:
+          sources:
+            - llvm-toolchain-trusty-6.0
+            - ubuntu-toolchain-r-test
           packages:
-            - clang-format-3.9
+            - clang-format-6.0
     - os: linux
       env: NQQ_BUILD_TYPE=COMPILE
       sudo: true
