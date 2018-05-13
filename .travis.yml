@@ -2,10 +2,19 @@ sudo: required
 services:
   - docker
 language: cpp
-before_install:
-  - docker build -t nqq .
-  - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq 
-  - git pull --depth=500
-script:
-  - docker exec nqq .travis/check-format.sh
-  - docker exec nqq .travis/script.sh
+stages:
+  - formatting
+  - build
+jobs:
+  include:
+    - stage: formatting
+      script:
+        - sudo apt-get update
+        - sudo apt-get install clang-format-3.9
+        - .travis/check-format.sh
+    - stage: build
+      script:
+        - docker build -t nqq .
+        - docker run -e TRAVIS_PULL_REQUEST -e TRAVIS_BRANCH --name nqq -v $(pwd):/build -d -it nqq
+        - git pull --depth=500
+        - docker exec nqq .travis/script.sh

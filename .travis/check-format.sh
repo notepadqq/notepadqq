@@ -1,5 +1,5 @@
 #!/bin/bash
-gcf_cmd="$(which git-clang-format-6.0) --binary $(which clang-format-6.0)"
+gcf_cmd="$(which git-clang-format-3.9) --binary $(which clang-format-3.9)"
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     base_commit="HEAD^"
     echo "Running clang-format against parent commit $(git rev-parse $base_commit)"
