@@ -163,7 +163,7 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
     label->setMaximumWidth(label->fontMetrics().width(label->text()));
 
     m_btnClearHistory = new QToolButton;
-    m_btnClearHistory->setIcon(IconProvider::fromTheme("document-new"));
+    m_btnClearHistory->setIcon(IconProvider::fromTheme("edit-clear"));
     m_btnClearHistory->setToolTip(tr("Clear Search History"));
 
     m_cmbSearchHistory = new QComboBox;
@@ -192,7 +192,7 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
 
     m_btnMoreOptions = new QToolButton;
     m_btnMoreOptions->setIcon(IconProvider::fromTheme("preferences-other"));
-    m_btnMoreOptions->setEnabled(false);
+    m_btnMoreOptions->setVisible(false);
     m_btnMoreOptions->setToolTip(tr("More Options"));
     m_btnMoreOptions->setPopupMode(QToolButton::InstantPopup);
     m_btnMoreOptions->setMenu(menu);
@@ -205,9 +205,9 @@ QLayout* AdvancedSearchDock::buildLeftTitlebar() {
     layout->addWidget(label);
     layout->addWidget(m_btnClearHistory);
     layout->addWidget(m_cmbSearchHistory);
+    layout->addSpacerItem(new QSpacerItem(40, 1, QSizePolicy::Fixed, QSizePolicy::Minimum));
     layout->addWidget(m_btnPrevResult);
     layout->addWidget(m_btnNextResult);
-    layout->addWidget(makeDivider(QFrame::VLine));
     layout->addWidget(m_btnMoreOptions);
     layout->addWidget(m_btnToggleReplaceOptions);
     layout->setSizeConstraint(QHBoxLayout::SetNoConstraint);
@@ -330,12 +330,12 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchDirectory->setCurrentText("");
 
     m_btnSelectCurrentDirectory = new QToolButton;
-    m_btnSelectCurrentDirectory->setIcon(IconProvider::fromTheme("edit-copy"));
-    m_btnSelectCurrentDirectory->setToolTip(tr("Select Directory of active Document"));
+    m_btnSelectCurrentDirectory->setIcon(IconProvider::fromTheme("go-bottom"));
+    m_btnSelectCurrentDirectory->setToolTip(tr("Select the directory of the active document"));
 
     m_btnSelectSearchDirectory = new QToolButton;
     m_btnSelectSearchDirectory->setIcon(IconProvider::fromTheme("edit-find"));
-    m_btnSelectSearchDirectory->setToolTip(tr("Select Search Directory"));
+    m_btnSelectSearchDirectory->setToolTip(tr("Select search directory"));
 
     QHBoxLayout* m2 = new QHBoxLayout;
     m2->addWidget(m_cmbSearchDirectory);
@@ -375,6 +375,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     mini->addWidget(m_chkUseSpecialChars, 3, 0);
     mini->addWidget(makeDivider(QFrame::HLine, 180), 4, 0);
     mini->addWidget(m_chkIncludeSubdirs, 5, 0);
+    mini->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), 6, 0);
 
     QLabel* regexInfo = new QLabel("(<a href='info'>?</a>)");
     QObject::connect(regexInfo, &QLabel::linkActivated, &showRegexInfo);
@@ -386,13 +387,15 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     gl->addWidget(srp, 3,0);
 
     gl->addWidget(m_cmbSearchTerm, 0,1);
+    gl->addWidget(m_btnSearch, 0,2);
     gl->addWidget(m_cmbSearchScope, 1,1);
     gl->addLayout(m2, 2,1);
     gl->addWidget(m_cmbSearchPattern, 3,1);
 
     gl->addLayout(mini, 0, 3, 4, 1);
     gl->addWidget(m_btnSelectCurrentDirectory, 2, 2);
-    gl->addWidget(m_btnSearch, 3,2);
+
+    gl->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0);
 
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
@@ -461,10 +464,10 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
 
         m_dockWidget->setWidget(m_searchPanelWidget);
         m_btnToggleReplaceOptions->setChecked(false);
-        m_btnToggleReplaceOptions->setEnabled(false);
-        m_btnMoreOptions->setEnabled(false);
-        m_btnPrevResult->setEnabled(false);
-        m_btnNextResult->setEnabled(false);
+        m_btnToggleReplaceOptions->setVisible(false);
+        m_btnMoreOptions->setVisible(false);
+        m_btnPrevResult->setVisible(false);
+        m_btnNextResult->setVisible(false);
         m_cmbSearchTerm->setFocus();
     } else {
         m_currentSearchInstance = m_searchInstances[index-1].get();
@@ -478,10 +481,10 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
                    this, &AdvancedSearchDock::itemInteracted);
 
         m_dockWidget->setWidget( m_currentSearchInstance->getResultTreeWidget() );
-        m_btnToggleReplaceOptions->setEnabled(true);
-        m_btnMoreOptions->setEnabled(true);
-        m_btnPrevResult->setEnabled(true);
-        m_btnNextResult->setEnabled(true);
+        m_btnToggleReplaceOptions->setVisible(true);
+        m_btnMoreOptions->setVisible(true);
+        m_btnPrevResult->setVisible(true);
+        m_btnNextResult->setVisible(true);
         m_actExpandAll->setChecked( m_currentSearchInstance->areResultsExpanded() );
         m_actShowFullLines->setChecked( m_currentSearchInstance->getShowFullLines() );
 
@@ -498,14 +501,14 @@ void AdvancedSearchDock::onChangeSearchScope(int index)
         m_cmbSearchDirectory->setEnabled(false);
         m_btnSelectSearchDirectory->setEnabled(false);
         m_btnSelectCurrentDirectory->setEnabled(false);
-        m_chkIncludeSubdirs->setEnabled(false);
+        m_chkIncludeSubdirs->setVisible(false);
         break;
     case 2: // Search in file system
         m_cmbSearchPattern->setEnabled(true);
         m_cmbSearchDirectory->setEnabled(true);
         m_btnSelectSearchDirectory->setEnabled(true);
         m_btnSelectCurrentDirectory->setEnabled(true);
-        m_chkIncludeSubdirs->setEnabled(true);
+        m_chkIncludeSubdirs->setVisible(true);
         break;
     }
     onUserInput();
@@ -542,10 +545,10 @@ void AdvancedSearchDock::updateSearchInProgressUi()
     m_actExpandAll->setEnabled(!progress);
     m_actCopyContents->setEnabled(!progress);
     m_actShowFullLines->setEnabled(!progress);
-    m_btnToggleReplaceOptions->setEnabled(!progress);
+    m_btnToggleReplaceOptions->setVisible(!progress);
 
-    m_btnPrevResult->setEnabled(!progress);
-    m_btnNextResult->setEnabled(!progress);
+    m_btnPrevResult->setVisible(!progress);
+    m_btnNextResult->setVisible(!progress);
 }
 
 void AdvancedSearchDock::startReplace()
