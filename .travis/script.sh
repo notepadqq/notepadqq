@@ -32,7 +32,7 @@ compile()
 }
 
 
-if [ "$BUILD_TYPE" == "FORMAT"]; then
+if [ "$BUILD_TYPE" == "FORMAT" ]; then
     check_format
 else
     compile
