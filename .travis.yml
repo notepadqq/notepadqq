@@ -1,12 +1,9 @@
 language: cpp
 sudo: false
 
-matrix:
-  fast_finish: true
-  allow_failures:
-    - env: NQQ_BUILD_TYPE=FORMAT
+jobs:
   include:
-    - os: linux
+    - stage: format
       env: NQQ_BUILD_TYPE=FORMAT
       addons:
         apt:
@@ -15,7 +12,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-format-6.0
-    - os: linux
+    - stage: compile
       env: NQQ_BUILD_TYPE=COMPILE
       sudo: true
       services:
