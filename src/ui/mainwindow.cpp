@@ -280,15 +280,10 @@ void MainWindow::setupIcons()
 
 void MainWindow::setupStatusBar()
 {
-    auto* status = statusBar();
-    status->setStyleSheet("QStatusBar::item { border: none; }; ");
-    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
     auto* container = new QWidget(this);
-    container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     container->setLayout(new QHBoxLayout());
     container->layout()->setContentsMargins(0, 0, 0, 0);
-    
+
     auto* scrollArea = new QScrollArea(this);
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
@@ -298,15 +293,14 @@ void MainWindow::setupStatusBar()
     scrollArea->setWidgetResizable(true);
     scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+    statusBar()->setStyleSheet("QStatusBar::item { border: none; }; ");
+    statusBar()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    statusBar()->addWidget(scrollArea, 1);
 
-    auto createLabel = [&](const QString& txt, int minwidth, bool clickable = false,
-            QSizePolicy::Policy hPolicy = QSizePolicy::Minimum) {
-        QLabel* label = nullptr;
-        if (clickable) {
-            label = new ClickableLabel(txt, this);
-        } else {
-            label = new QLabel(txt, this);
-        }
+    auto createLabel = [&container](const QString& txt, int minwidth,
+                           bool clickable = false,
+                           QSizePolicy::Policy hPolicy = QSizePolicy::Minimum) {
+        auto* label = clickable ? new ClickableLabel(txt) : new QLabel(txt);
         QMargins marginFix = label->contentsMargins();
         marginFix.setRight(marginFix.right() + 10);
         label->setSizePolicy(hPolicy, QSizePolicy::Fixed);
@@ -331,9 +325,6 @@ void MainWindow::setupStatusBar()
     connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Encoding->exec(QCursor::pos());
     });
-
-    status->addWidget(scrollArea, 1);
-    scrollArea->setFixedHeight(frame->height());
 }
 
 void MainWindow::setupToolBar()
