@@ -71,11 +71,10 @@ public:
     QList<QAction*> getActions() const;
     QList<const QMenu*> getMenus() const;
 
-    // Creates or re-creates the window's main tool bar.
-    void loadToolBar();
+    void setupRunMenu();
+    void setupToolBar();
 
     DocEngine*  getDocEngine() const;
-    void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
 
@@ -234,7 +233,6 @@ private:
      */
     bool                finalizeAllTabs();
 
-    void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
     /**
@@ -266,10 +264,17 @@ private:
     int                 save(EditorTabWidget *tabWidget, int tab);
     int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
     QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
+
+    void                setupDocEngine();
+    void                setupIcons();
+    void                setupKeyboardShortcuts();
     void                setupLanguagesMenu();
+    void                setupStatusBar();
+    void                setupTabContextMenu();
+    void                setupUserInterface();
+
     void                transformSelectedText(std::function<QString (const QString &)> func);
     void                restoreWindowSettings();
-    void                loadIcons();
     void                updateRecentDocsInMenu();
     void                convertEditorEncoding(Editor *editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
@@ -288,14 +293,8 @@ private:
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
      */
-    void                fixKeyboardShortcuts();
     void                instantiateFrmSearchReplace();
     QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
-
-    /**
-     * @brief Initialize UI from settings
-     */
-    void initUI();
 
     /**
      * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.
