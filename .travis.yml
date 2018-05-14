@@ -2,8 +2,10 @@ language: cpp
 sudo: false
 
 jobs:
+  allow_failures:
+    - env: NQQ_BUILD_TYPE=FORMAT
   include:
-    - stage: format
+    - stage: build
       env: NQQ_BUILD_TYPE=FORMAT
       addons:
         apt:
@@ -12,7 +14,7 @@ jobs:
             - ubuntu-toolchain-r-test
           packages:
             - clang-format-6.0
-    - stage: compile
+    - stage: build
       env: NQQ_BUILD_TYPE=COMPILE
       sudo: true
       services:
