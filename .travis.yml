@@ -2,8 +2,6 @@ language: cpp
 sudo: false
 
 jobs:
-  allow_failures:
-    - env: NQQ_BUILD_TYPE=FORMAT
   include:
     - stage: build
       env: NQQ_BUILD_TYPE=FORMAT
