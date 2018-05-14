@@ -66,7 +66,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     setupLanguagesMenu();
     setupKeyboardShortcuts();
 
-    //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -114,7 +113,7 @@ void MainWindow::setupUserInterface()
 
     // Set popup for actionOpen in toolbar
     auto* btnActionOpen = static_cast<QToolButton*>(m_mainToolBar->widgetForAction(ui->actionOpen));
-    if(btnActionOpen) {
+    if (btnActionOpen) {
         btnActionOpen->setMenu(ui->menuRecent_Files);
         btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
     }
@@ -285,59 +284,53 @@ void MainWindow::setupStatusBar()
     status->setStyleSheet("QStatusBar::item { border: none; }; ");
     status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
+    auto* container = new QWidget(this);
+    container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    container->setLayout(new QHBoxLayout());
+    container->layout()->setContentsMargins(0, 0, 0, 0);
+    
     auto* scrollArea = new QScrollArea(this);
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     scrollArea->setStyleSheet("* { background: transparent; }");
-
-    auto* frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::NoFrame);
-    frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    auto* layout = new QHBoxLayout(frame);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    scrollArea->setWidget(frame);
+    scrollArea->setWidget(container);
     scrollArea->setWidgetResizable(true);
     scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
 
-    auto setupLabel = [&layout](QLabel* label, int minwidth, QSizePolicy::Policy hPolicy = QSizePolicy::Minimum) {
+    auto createLabel = [&](const QString& txt, int minwidth, bool clickable = false,
+            QSizePolicy::Policy hPolicy = QSizePolicy::Minimum) {
+        QLabel* label = nullptr;
+        if (clickable) {
+            label = new ClickableLabel(txt, this);
+        } else {
+            label = new QLabel(txt, this);
+        }
         QMargins marginFix = label->contentsMargins();
         marginFix.setRight(marginFix.right() + 10);
         label->setSizePolicy(hPolicy, QSizePolicy::Fixed);
         label->setMinimumWidth(minwidth);
         label->setContentsMargins(marginFix);
-        layout->addWidget(label);
+        container->layout()->addWidget(label);
+        return label;
     };
 
-    m_statusBar_fileFormat = new ClickableLabel("File Format", this);
-    setupLabel(m_statusBar_fileFormat, 150);
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this](){
-        ui->menu_Language->exec( QCursor::pos() );
+    m_statusBar_fileFormat = createLabel("File Format", 150, true);
+    m_statusBar_curPos = createLabel("Ln 0, col 0", 120);
+    m_statusBar_selection = createLabel("Sel 0, 0", 120);
+    m_statusBar_length_lines = createLabel("0 chars, 0 lines", 0, false, QSizePolicy::MinimumExpanding);
+    m_statusBar_EOLstyle = createLabel("EOL", 118);
+    m_statusBar_textFormat = createLabel("Encoding", 118, true);
+    m_statusBar_overtypeNotify = createLabel(tr("INS"), 40);
+
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this]() {
+        ui->menu_Language->exec(QCursor::pos());
     });
 
-    m_statusBar_curPos= new QLabel("Ln 0, col 0", this);
-    setupLabel(m_statusBar_curPos, 120);
-
-    m_statusBar_selection = new QLabel("Sel 0, 0", this);
-    setupLabel(m_statusBar_selection, 120);
-
-    m_statusBar_length_lines = new QLabel("0 chars, 0 lines", this);
-    setupLabel(m_statusBar_length_lines, 0, QSizePolicy::MinimumExpanding);
-
-    m_statusBar_EOLstyle = new QLabel("EOL", this);
-    setupLabel(m_statusBar_EOLstyle, 118);
-
-    m_statusBar_textFormat = new ClickableLabel("Encoding", this);
-    setupLabel(m_statusBar_textFormat, 118);
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this](){
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Encoding->exec(QCursor::pos());
     });
-
-    m_statusBar_overtypeNotify = new QLabel(tr("INS"), this);
-    setupLabel(m_statusBar_overtypeNotify, 40);
 
     status->addWidget(scrollArea, 1);
     scrollArea->setFixedHeight(frame->height());
@@ -362,7 +355,7 @@ void MainWindow::setupToolBar()
     auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
 
     for (const auto& part : parts) {
-        if(part == "Separator") {
+        if (part == "Separator") {
             m_mainToolBar->addSeparator();
             continue;
         }
