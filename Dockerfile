@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
-MAINTAINER Notepadqq
+LABEL maintainer="Notepadqq"
 
-RUN apt-get -qq update && apt-get -y install \
+RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     build-essential \
     clang-format-6.0 \
     coreutils \
