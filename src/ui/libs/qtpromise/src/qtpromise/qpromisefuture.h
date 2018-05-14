@@ -2,8 +2,8 @@
 #define QTPROMISE_QPROMISEFUTURE_P_H
 
 // Qt
-#include <QFutureWatcher>
 #include <QFuture>
+#include <QFutureWatcher>
 
 namespace QtPromise {
 

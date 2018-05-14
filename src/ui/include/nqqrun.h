@@ -1,6 +1,8 @@
 #ifndef _NQQRUN_H_
 #define _NQQRUN_H_
 
+#include "include/nqqsettings.h"
+
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -8,7 +10,6 @@
 #include <QPaintEvent>
 #include <QStyledItemDelegate>
 #include <QTableWidget>
-#include "include/nqqsettings.h"
 
 namespace NqqRun {
 class RunPreferences : public QDialog

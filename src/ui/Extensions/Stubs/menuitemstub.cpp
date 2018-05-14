@@ -1,4 +1,5 @@
 #include "include/Extensions/Stubs/menuitemstub.h"
+
 #include "include/Extensions/runtimesupport.h"
 
 namespace Extensions {

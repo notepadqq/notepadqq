@@ -1,8 +1,9 @@
 #ifndef FRMINDENTATIONMODE_H
 #define FRMINDENTATIONMODE_H
 
-#include <QDialog>
 #include "include/EditorNS/editor.h"
+
+#include <QDialog>
 
 namespace Ui {
 class frmIndentationMode;

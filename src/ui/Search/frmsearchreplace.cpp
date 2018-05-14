@@ -1,13 +1,15 @@
 #include "include/Search/frmsearchreplace.h"
+
 #include "include/Search/searchstring.h"
 #include "include/iconprovider.h"
 #include "include/nqqsettings.h"
 #include "ui_frmsearchreplace.h"
+
+#include <QCompleter>
+#include <QFileDialog>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QThread>
-#include <QCompleter>
 
 frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
     QMainWindow(parent),

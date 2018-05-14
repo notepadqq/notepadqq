@@ -1,8 +1,8 @@
 #ifndef LOCALCOMMUNICATION_H
 #define LOCALCOMMUNICATION_H
 
-#include <QString>
 #include <QLocalSocket>
+#include <QString>
 
 /**
  * @brief Send and receive messages through local sockets.

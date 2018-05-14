@@ -1,4 +1,5 @@
 #include "include/keygrabber.h"
+
 #include <QMenu>
 
 KeyGrabber::KeyGrabber(QWidget* parent) : QTreeWidget(parent)

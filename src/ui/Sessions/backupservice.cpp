@@ -1,12 +1,12 @@
+#include "include/Sessions/backupservice.h"
+
+#include "include/Sessions/persistentcache.h"
+#include "include/Sessions/sessions.h"
+#include "include/mainwindow.h"
+
 #include <QApplication>
 
 #include <set>
-
-#include "include/Sessions/backupservice.h"
-#include "include/Sessions/persistentcache.h"
-#include "include/Sessions/sessions.h"
-
-#include "include/mainwindow.h"
 
 QTimer BackupService::s_autosaveTimer;
 bool BackupService::s_autosaveEnabled = false;

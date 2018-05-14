@@ -1,9 +1,10 @@
 #ifndef WINDOWSTUB_H
 #define WINDOWSTUB_H
 
-#include <QObject>
 #include "include/Extensions/Stubs/stub.h"
 #include "include/mainwindow.h"
+
+#include <QObject>
 
 namespace Extensions {
     namespace Stubs {

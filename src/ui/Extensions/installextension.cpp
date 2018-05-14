@@ -1,12 +1,14 @@
 #include "include/Extensions/installextension.h"
+
 #include "include/Extensions/extension.h"
 #include "include/notepadqq.h"
 #include "ui_installextension.h"
+
+#include <QDebug>
+#include <QDir>
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QProcess>
-#include <QDir>
-#include <QDebug>
 
 namespace Extensions {
 

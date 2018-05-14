@@ -1,9 +1,10 @@
 #ifndef EDITORTABWIDGET_H
 #define EDITORTABWIDGET_H
 
+#include "EditorNS/editor.h"
+
 #include <QTabWidget>
 #include <QWheelEvent>
-#include "EditorNS/editor.h"
 
 using namespace EditorNS;
 

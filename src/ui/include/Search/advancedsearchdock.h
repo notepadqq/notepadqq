@@ -1,15 +1,15 @@
 #ifndef ADVANCEDSEARCHDOCK_H
 #define ADVANCEDSEARCHDOCK_H
 
-#include <QObject>
-#include <QDockWidget>
+#include "searchinstance.h"
+
 #include <QAbstractButton>
+#include <QDockWidget>
+#include <QObject>
 #include <QString>
 
 #include <memory>
 #include <vector>
-
-#include "searchinstance.h"
 
 class QWidget;
 class QLayout;

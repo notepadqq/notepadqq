@@ -1,18 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include "include/topeditorcontainer.h"
-#include <QLabel>
-#include <QCloseEvent>
 #include "docengine.h"
-#include "include/Search/frmsearchreplace.h"
-#include <functional>
-#include "QtPrintSupport/QPrinter"
 #include "include/Extensions/extension.h"
-#include "include/nqqsettings.h"
 #include "include/Search/advancedsearchdock.h"
+#include "include/Search/frmsearchreplace.h"
+#include "include/nqqsettings.h"
+#include "include/topeditorcontainer.h"
+
+#include "QtPrintSupport/QPrinter"
+#include <QCloseEvent>
+#include <QLabel>
+#include <QMainWindow>
 #include <QtPromise>
+
+#include <functional>
 
 using namespace QtPromise;
 

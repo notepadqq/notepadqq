@@ -1,9 +1,11 @@
 #include "include/singleapplication.h"
-#include <QLocalSocket>
-#include <QDir>
-#include <QRegularExpression>
-#include <QDataStream>
+
 #include "include/localcommunication.h"
+
+#include <QDataStream>
+#include <QDir>
+#include <QLocalSocket>
+#include <QRegularExpression>
 
 #if defined(Q_OS_WIN)
 #include <QLibrary>

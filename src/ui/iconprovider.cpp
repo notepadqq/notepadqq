@@ -1,4 +1,5 @@
 #include "include/iconprovider.h"
+
 #include <QDebug>
 
 IconProvider::IconProvider()

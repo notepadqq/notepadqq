@@ -1,8 +1,10 @@
 #include "include/editortabwidget.h"
+
 #include "include/iconprovider.h"
-#include <QTabBar>
+
 #include <QApplication>
 #include <QFileInfo>
+#include <QTabBar>
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>

@@ -1,8 +1,9 @@
 #include "include/EditorNS/bannerfileremoved.h"
+
 #include <QLabel>
+#include <QPainter>
 #include <QPushButton>
 #include <QStyleOption>
-#include <QPainter>
 
 namespace EditorNS
 {

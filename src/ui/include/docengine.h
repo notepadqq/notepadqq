@@ -1,12 +1,13 @@
 #ifndef DOCENGINE_H
 #define DOCENGINE_H
 
-#include <QObject>
-#include <QFileSystemWatcher>
-#include <QFile>
-#include <QUrl>
 #include "editortabwidget.h"
 #include "topeditorcontainer.h"
+
+#include <QFile>
+#include <QFileSystemWatcher>
+#include <QObject>
+#include <QUrl>
 
 /**
  * @brief Provides methods for managing documents

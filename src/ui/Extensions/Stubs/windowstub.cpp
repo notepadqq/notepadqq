@@ -1,7 +1,8 @@
-#include "include/Extensions/runtimesupport.h"
 #include "include/Extensions/Stubs/windowstub.h"
+
 #include "include/Extensions/Stubs/editorstub.h"
 #include "include/Extensions/Stubs/menuitemstub.h"
+#include "include/Extensions/runtimesupport.h"
 
 namespace Extensions {
     namespace Stubs {

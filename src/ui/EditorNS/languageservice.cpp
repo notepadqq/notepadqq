@@ -1,4 +1,5 @@
 #include "include/EditorNS/languageservice.h"
+
 #include "include/notepadqq.h"
 
 #include <QFileInfo>

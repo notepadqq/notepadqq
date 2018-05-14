@@ -1,9 +1,10 @@
 #ifndef EXTENSIONLOADER_H
 #define EXTENSIONLOADER_H
 
-#include <QObject>
 #include "include/Extensions/extension.h"
 #include "include/Extensions/extensionsserver.h"
+
+#include <QObject>
 
 namespace Extensions {
 

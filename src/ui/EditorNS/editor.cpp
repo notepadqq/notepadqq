@@ -1,16 +1,18 @@
 #include "include/EditorNS/editor.h"
+
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
-#include <QVBoxLayout>
-#include <QMessageBox>
+
 #include <QDir>
 #include <QEventLoop>
-#include <QUrlQuery>
+#include <QMessageBox>
+#include <QRegExp>
 #include <QRegularExpression>
+#include <QTimer>
+#include <QUrlQuery>
+#include <QVBoxLayout>
 #include <QWebChannel>
 #include <QWebEngineSettings>
-#include <QTimer>
-#include <QRegExp>
 
 namespace EditorNS
 {

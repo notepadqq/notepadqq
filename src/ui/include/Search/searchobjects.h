@@ -1,12 +1,12 @@
 #ifndef SEARCHOBJECTS_H
 #define SEARCHOBJECTS_H
 
+#include "include/Search/searchhelpers.h"
+
 #include <QObject>
+#include <QRegularExpressionMatch>
 #include <QString>
 #include <QVector>
-#include <QRegularExpressionMatch>
-
-#include "include/Search/searchhelpers.h"
 
 class MainWindow;
 

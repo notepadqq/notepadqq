@@ -23,15 +23,16 @@
 #ifndef NOTEPADQQ_H
 #define NOTEPADQQ_H
 
-#include <QObject>
-#include <QString>
-#include <QFile>
-#include <QProcessEnvironment>
-#include <QApplication>
-#include <QUrl>
-#include <QCommandLineParser>
-#include <QList>
 #include "include/mainwindow.h"
+
+#include <QApplication>
+#include <QCommandLineParser>
+#include <QFile>
+#include <QList>
+#include <QObject>
+#include <QProcessEnvironment>
+#include <QString>
+#include <QUrl>
 
 #define POINTVERSION "1.4.8" // major.minor.revision
 

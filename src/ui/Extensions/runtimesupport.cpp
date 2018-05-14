@@ -1,7 +1,9 @@
 #include "include/Extensions/runtimesupport.h"
+
 #include "include/Extensions/Stubs/notepadqqstub.h"
-#include "include/Extensions/extensionsserver.h"
 #include "include/Extensions/extensionsloader.h"
+#include "include/Extensions/extensionsserver.h"
+
 #include <QJsonArray>
 
 namespace Extensions {

@@ -1,8 +1,8 @@
 #ifndef __KEYGRABBER_H__
 #define __KEYGRABBER_H__
 
-#include <QTreeWidget>
 #include <QKeyEvent>
+#include <QTreeWidget>
 
 class KeyGrabber : public QTreeWidget {
 Q_OBJECT

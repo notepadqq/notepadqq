@@ -1,11 +1,13 @@
 #include "include/notepadqq.h"
+
 #include "include/Extensions/extensionsloader.h"
 #include "include/Extensions/runtimesupport.h"
 #include "include/nqqsettings.h"
+
+#include <QCheckBox>
+#include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QDir>
-#include <QCheckBox>
 
 const QString Notepadqq::version = POINTVERSION;
 const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepadqq/graphs/contributors";

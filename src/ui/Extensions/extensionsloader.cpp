@@ -1,8 +1,10 @@
 #include "include/Extensions/extensionsloader.h"
+
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
-#include <QDirIterator>
+
 #include <QDateTime>
+#include <QDirIterator>
 
 namespace Extensions {
 
