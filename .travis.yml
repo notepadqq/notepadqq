@@ -3,8 +3,6 @@ sudo: false
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: NQQ_BUILD_TYPE=FORMAT
   include:
     - os: linux
       env: NQQ_BUILD_TYPE=FORMAT
