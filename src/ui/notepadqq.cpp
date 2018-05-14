@@ -53,6 +53,9 @@ QString Notepadqq::nodejsPath() {
     return s.Extensions.getRuntimeNodeJS();
 }
 
+
+
+
 QString Notepadqq::npmPath() {
     NqqSettings& s = NqqSettings::getInstance();
     return s.Extensions.getRuntimeNpm();
