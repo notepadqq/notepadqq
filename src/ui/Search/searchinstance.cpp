@@ -1,16 +1,16 @@
 #include "include/Search/searchinstance.h"
 
+#include "include/EditorNS/editor.h"
+#include "include/mainwindow.h"
+
+#include <QAbstractTextDocumentLayout>
 #include <QApplication>
+#include <QClipboard>
+#include <QHeaderView>
+#include <QMenu>
 #include <QPainter>
 #include <QStyledItemDelegate>
 #include <QTextDocument>
-#include <QAbstractTextDocumentLayout>
-#include <QClipboard>
-#include <QMenu>
-#include <QHeaderView>
-
-#include "include/mainwindow.h"
-#include "include/EditorNS/editor.h"
 
 /**
  * @brief getFormattedLocationText Creates a html-formatted string to use as the text of a toplevel QTreeWidget item.

@@ -1,8 +1,10 @@
-#include "include/globals.h"
 #include "include/Extensions/Stubs/notepadqqstub.h"
+
 #include "include/Extensions/Stubs/windowstub.h"
-#include "include/notepadqq.h"
 #include "include/Extensions/runtimesupport.h"
+#include "include/globals.h"
+#include "include/notepadqq.h"
+
 #include <QApplication>
 
 namespace Extensions {

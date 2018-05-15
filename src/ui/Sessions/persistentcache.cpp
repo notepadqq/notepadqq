@@ -1,4 +1,5 @@
 #include "include/Sessions/persistentcache.h"
+
 #include "include/notepadqq.h"
 
 QString PersistentCache::cacheSessionPath() {

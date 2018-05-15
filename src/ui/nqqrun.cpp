@@ -1,17 +1,19 @@
+#include "include/nqqrun.h"
+
+#include "include/iconprovider.h"
+
 #include <QApplication>
 #include <QEasingCurve>
 #include <QFileDialog>
+#include <QGraphicsOpacityEffect>
 #include <QHeaderView>
 #include <QInputDialog>
-#include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSortFilterProxyModel>
 #include <QVBoxLayout>
-#include "include/nqqrun.h"
-#include "include/iconprovider.h"
 
 using namespace NqqRun;
 

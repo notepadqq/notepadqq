@@ -3,16 +3,17 @@
 
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/languageservice.h"
+
 #include <QObject>
-#include <QVariant>
 #include <QQueue>
-#include <QWheelEvent>
-#include <QVBoxLayout>
 #include <QTextCodec>
+#include <QVBoxLayout>
 #include <QVariant>
+#include <QWheelEvent>
+#include <QtPromise>
+
 #include <functional>
 #include <future>
-#include <QtPromise>
 
 class EditorTabWidget;
 

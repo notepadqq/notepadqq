@@ -1,4 +1,5 @@
 #include "include/globals.h"
+
 #include <QTextStream>
 #include <QtPromise>
 

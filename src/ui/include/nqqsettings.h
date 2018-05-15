@@ -1,10 +1,10 @@
 #ifndef NQQSETTINGS_H
 #define NQQSETTINGS_H
 
+#include <QAction>
+#include <QList>
 #include <QSettings>
 #include <QString>
-#include <QList>
-#include <QAction>
 
 /*
  * The use of NQQ_SETTING creates several functions:

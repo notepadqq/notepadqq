@@ -1,4 +1,5 @@
 #include "include/topeditorcontainer.h"
+
 #include <QTabBar>
 
 TopEditorContainer::TopEditorContainer(QWidget *parent) :

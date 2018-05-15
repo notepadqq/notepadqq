@@ -1,12 +1,12 @@
 #ifndef FILESEARCHER_H
 #define FILESEARCHER_H
 
-#include <QObject>
-#include <QThread>
-#include <QRegularExpression>
-
 #include "searchhelpers.h"
 #include "searchobjects.h"
+
+#include <QObject>
+#include <QRegularExpression>
+#include <QThread>
 
 /**
  * @brief The FileSearcher class contains the tools to search strings and files asynchronously and synchronously.

@@ -1,6 +1,7 @@
 #ifndef SEARCHSTRING_H
 #define SEARCHSTRING_H
 #include "include/Search/searchhelpers.h"
+
 #include <QString>
 
 class SearchString {

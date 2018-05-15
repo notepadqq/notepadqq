@@ -22,15 +22,16 @@
 #ifndef EXTENSIONS_STUBS_STUB_H
 #define EXTENSIONS_STUBS_STUB_H
 
-#include <QObject>
-#include <QWeakPointer>
-#include <QJsonValue>
-#include <functional>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QVariant>
+#include <QJsonValue>
 #include <QMetaMethod>
+#include <QObject>
+#include <QVariant>
+#include <QWeakPointer>
+
+#include <functional>
 
 namespace Extensions {
 

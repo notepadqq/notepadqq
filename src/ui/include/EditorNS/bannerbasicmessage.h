@@ -1,10 +1,10 @@
 #ifndef BANNERBASICMESSAGE_H
 #define BANNERBASICMESSAGE_H
 
-#include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QWidget>
 
 namespace EditorNS
 {

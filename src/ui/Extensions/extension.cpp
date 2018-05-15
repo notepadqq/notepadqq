@@ -1,11 +1,13 @@
 #include "include/Extensions/extension.h"
+
 #include "include/notepadqq.h"
+
+#include <QDebug>
 #include <QFile>
-#include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextStream>
 #include <QTime>
-#include <QDebug>
 
 namespace Extensions {
 

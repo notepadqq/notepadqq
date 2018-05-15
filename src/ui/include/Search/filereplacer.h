@@ -1,11 +1,11 @@
 #ifndef FILEREPLACER_H
 #define FILEREPLACER_H
 
+#include "searchobjects.h"
+
 #include <QObject>
 #include <QThread>
 #include <QVector>
-
-#include "searchobjects.h"
 
 /**
  * @brief The FileReplacer class can be used to replace text in strings and files.

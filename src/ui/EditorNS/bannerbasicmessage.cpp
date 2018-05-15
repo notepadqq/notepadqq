@@ -1,6 +1,7 @@
 #include "include/EditorNS/bannerbasicmessage.h"
-#include <QStyleOption>
+
 #include <QPainter>
+#include <QStyleOption>
 
 namespace EditorNS
 {

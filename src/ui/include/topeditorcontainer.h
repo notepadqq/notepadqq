@@ -1,13 +1,15 @@
 #ifndef TOPEDITORCONTAINER_H
 #define TOPEDITORCONTAINER_H
 
+#include "EditorNS/editor.h"
+#include "editortabwidget.h"
+
 #include <QSplitter>
 #include <QWheelEvent>
-#include "editortabwidget.h"
-#include "EditorNS/editor.h"
+#include <QtPromise>
+
 #include <functional>
 #include <vector>
-#include <QtPromise>
 
 using namespace QtPromise;
 

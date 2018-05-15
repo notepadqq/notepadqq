@@ -1,7 +1,8 @@
 #include "include/Extensions/extensionsserver.h"
-#include <QMessageBox>
-#include <QLocalSocket>
+
 #include <QJsonDocument>
+#include <QLocalSocket>
+#include <QMessageBox>
 
 namespace Extensions {
 

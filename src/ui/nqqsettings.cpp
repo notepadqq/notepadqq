@@ -1,4 +1,5 @@
 #include "include/nqqsettings.h"
+
 #include "include/notepadqq.h"
 
 #ifdef QT_DEBUG

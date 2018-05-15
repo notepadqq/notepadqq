@@ -1,4 +1,5 @@
 #include "include/frmindentationmode.h"
+
 #include "include/EditorNS/editor.h"
 #include "ui_frmindentationmode.h"
 

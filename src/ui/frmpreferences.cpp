@@ -1,12 +1,13 @@
-#include "ui_frmpreferences.h"
 #include "include/frmpreferences.h"
+
+#include "include/EditorNS/editor.h"
+#include "include/Extensions/extensionsloader.h"
+#include "include/Sessions/backupservice.h"
 #include "include/keygrabber.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
 #include "include/stats.h"
-#include "include/EditorNS/editor.h"
-#include "include/Extensions/extensionsloader.h"
-#include "include/Sessions/backupservice.h"
+#include "ui_frmpreferences.h"
 
 #include <QDialogButtonBox>
 #include <QFileDialog>

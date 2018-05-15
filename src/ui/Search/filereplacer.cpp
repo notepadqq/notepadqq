@@ -1,9 +1,9 @@
 #include "include/Search/filereplacer.h"
 
+#include "include/docengine.h"
+
 #include <QFile>
 #include <QTextStream>
-
-#include "include/docengine.h"
 
 FileReplacer::FileReplacer(const SearchResult& results, const QString &replacement)
     : m_searchResult(results),

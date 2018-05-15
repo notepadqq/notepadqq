@@ -1,6 +1,8 @@
 #include "include/frmencodingchooser.h"
-#include "ui_frmencodingchooser.h"
+
 #include "include/notepadqq.h"
+#include "ui_frmencodingchooser.h"
+
 #include <QTextCodec>
 
 frmEncodingChooser::frmEncodingChooser(QWidget *parent) :
