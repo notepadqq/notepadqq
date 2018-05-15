@@ -1,10 +1,12 @@
 #include "include/frmabout.h"
-#include "ui_frmabout.h"
-#include "include/notepadqq.h"
+
 #include "include/iconprovider.h"
+#include "include/notepadqq.h"
+#include "ui_frmabout.h"
+
 #include <QDesktopServices>
-#include <QUrl>
 #include <QMessageBox>
+#include <QUrl>
 
 frmAbout::frmAbout(QWidget *parent) :
     QDialog(parent),

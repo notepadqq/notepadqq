@@ -5,8 +5,8 @@
 #include <QtGlobal>
 
 // STL
-#include <functional>
 #include <array>
+#include <functional>
 
 namespace QtPromisePrivate
 {

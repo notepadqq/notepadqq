@@ -1,4 +1,5 @@
 #include "include/Search/searchstring.h"
+
 #include <QRegularExpression>
 
 QString SearchString::format(QString regex, SearchHelpers::SearchMode searchMode, const SearchHelpers::SearchOptions& searchOptions)

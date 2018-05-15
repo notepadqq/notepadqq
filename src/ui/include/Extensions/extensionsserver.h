@@ -1,9 +1,10 @@
 #ifndef EXTENSIONSSERVER_H
 #define EXTENSIONSSERVER_H
 
-#include <QObject>
-#include <QLocalServer>
 #include "include/Extensions/runtimesupport.h"
+
+#include <QLocalServer>
+#include <QObject>
 
 namespace Extensions {
 

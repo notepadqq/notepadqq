@@ -1,14 +1,16 @@
 #include "include/stats.h"
-#include <QUrl>
-#include <QNetworkAccessManager>
+
+#include "include/Extensions/extensionsloader.h"
+#include "include/notepadqq.h"
+
 #include <QJsonDocument>
-#include <QNetworkRequest>
+#include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QPushButton>
 #include <QSysInfo>
 #include <QTimer>
-#include <QPushButton>
-#include "include/notepadqq.h"
-#include "include/Extensions/extensionsloader.h"
+#include <QUrl>
 
 bool Stats::m_longTimerRunning = false;
 bool Stats::m_isFirstNotepadqqRun = false;

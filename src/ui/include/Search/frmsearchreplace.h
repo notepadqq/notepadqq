@@ -1,13 +1,14 @@
 #ifndef FRMSEARCHREPLACE_H
 #define FRMSEARCHREPLACE_H
 
-#include "include/topeditorcontainer.h"
 #include "include/Search/searchhelpers.h"
+#include "include/topeditorcontainer.h"
+
+#include <QComboBox>
 #include <QDialog>
 #include <QMainWindow>
-#include <QStandardItemModel>
 #include <QMessageBox>
-#include <QComboBox>
+#include <QStandardItemModel>
 
 namespace Ui {
 class frmSearchReplace;

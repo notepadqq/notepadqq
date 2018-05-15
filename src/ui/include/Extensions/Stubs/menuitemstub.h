@@ -1,9 +1,10 @@
 #ifndef MENUITEMSTUB_H
 #define MENUITEMSTUB_H
 
-#include <QObject>
 #include "include/Extensions/Stubs/stub.h"
+
 #include <QAction>
+#include <QObject>
 
 namespace Extensions {
     namespace Stubs {

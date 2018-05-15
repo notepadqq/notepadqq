@@ -1,17 +1,18 @@
 #include "include/docengine.h"
-#include "include/notepadqq.h"
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QTextCodec>
-#include <QTextStream>
-#include <QCoreApplication>
-#include <QPushButton>
 
-#include "include/iconprovider.h"
-#include "include/mainwindow.h"
-#include "include/nqqsettings.h"
 #include "include/Sessions/persistentcache.h"
 #include "include/globals.h"
+#include "include/iconprovider.h"
+#include "include/mainwindow.h"
+#include "include/notepadqq.h"
+#include "include/nqqsettings.h"
+
+#include <QCoreApplication>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTextCodec>
+#include <QTextStream>
 
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),

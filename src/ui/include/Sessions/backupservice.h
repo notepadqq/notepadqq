@@ -1,10 +1,11 @@
 #ifndef AUTOSAVE_H
 #define AUTOSAVE_H
 
-#include <QTimer>
 #include <QString>
-#include <tuple>
+#include <QTimer>
+
 #include <set>
+#include <tuple>
 
 namespace EditorNS{
 class Editor;

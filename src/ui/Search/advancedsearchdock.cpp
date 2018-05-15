@@ -1,32 +1,31 @@
 #include "include/Search/advancedsearchdock.h"
 
-#include <QWidget>
-#include <QLayout>
-#include <QVBoxLayout>
-#include <QToolButton>
-#include <QComboBox>
-#include <QLineEdit>
+#include "include/EditorNS/editor.h"
+#include "include/Search/filereplacer.h"
+#include "include/Search/searchstring.h"
+#include "include/iconprovider.h"
+#include "include/mainwindow.h"
+#include "include/nqqsettings.h"
+
+#include <QApplication>
 #include <QCheckBox>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QSpinBox>
+#include <QComboBox>
+#include <QCompleter>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QFrame>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
-#include <QFileDialog>
-#include <QApplication>
 #include <QPainter>
-#include <QCompleter>
-
-#include "include/nqqsettings.h"
-#include "include/iconprovider.h"
-#include "include/Search/searchstring.h"
-#include "include/Search/filereplacer.h"
-
-#include "include/mainwindow.h"
-#include "include/EditorNS/editor.h"
+#include <QPushButton>
+#include <QSpinBox>
+#include <QToolButton>
+#include <QVBoxLayout>
+#include <QWidget>
 
 /**
  * @brief addUniqueToList Adds the given item to the given list. Also removes duplicates from list.

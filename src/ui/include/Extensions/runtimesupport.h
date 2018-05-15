@@ -1,11 +1,12 @@
 #ifndef EXTENSIONSRTS_H
 #define EXTENSIONSRTS_H
 
-#include <QObject>
-#include <QHash>
-#include <QSharedPointer>
-#include <QJsonObject>
 #include "include/Extensions/Stubs/stub.h"
+
+#include <QHash>
+#include <QJsonObject>
+#include <QObject>
+#include <QSharedPointer>
 
 namespace Extensions {
 

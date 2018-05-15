@@ -1,22 +1,23 @@
+#include "include/EditorNS/editor.h"
+#include "include/Extensions/extensionsloader.h"
+#include "include/Sessions/backupservice.h"
+#include "include/Sessions/persistentcache.h"
+#include "include/Sessions/sessions.h"
 #include "include/globals.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
-#include "include/EditorNS/editor.h"
-#include "include/singleapplication.h"
-#include "include/Extensions/extensionsloader.h"
 #include "include/nqqsettings.h"
+#include "include/singleapplication.h"
 #include "include/stats.h"
-#include <QObject>
-#include <QFile>
-#include <QtGlobal>
-#include <QTranslator>
-#include <QLocale>
-#include <QDateTime>
-#include <unistd.h> // For getuid
 
-#include "include/Sessions/persistentcache.h"
-#include "include/Sessions/sessions.h"
-#include "include/Sessions/backupservice.h"
+#include <QDateTime>
+#include <QFile>
+#include <QLocale>
+#include <QObject>
+#include <QTranslator>
+#include <QtGlobal>
+
+#include <unistd.h> // For getuid
 
 #ifdef QT_DEBUG
 #include <QElapsedTimer>

@@ -1,4 +1,5 @@
 #include "include/frmlinenumberchooser.h"
+
 #include "ui_frmlinenumberchooser.h"
 
 frmLineNumberChooser::frmLineNumberChooser(int min, int max, int defaultValue, QWidget *parent) :

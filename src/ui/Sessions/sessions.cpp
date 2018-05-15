@@ -1,16 +1,16 @@
 #include "include/Sessions/sessions.h"
 
+#include "include/Sessions/persistentcache.h"
+#include "include/docengine.h"
+#include "include/topeditorcontainer.h"
+
+#include <QDateTime>
+#include <QFile>
 #include <QFileInfo>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include <QFile>
-#include <QDateTime>
 
 #include <vector>
-
-#include "include/docengine.h"
-#include "include/topeditorcontainer.h"
-#include "include/Sessions/persistentcache.h"
 
 
 /* Session XML structure:

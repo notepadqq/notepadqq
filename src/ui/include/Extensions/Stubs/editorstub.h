@@ -1,9 +1,10 @@
 #ifndef EDITORSTUB_H
 #define EDITORSTUB_H
 
-#include <QObject>
-#include "include/Extensions/Stubs/stub.h"
 #include "include/EditorNS/editor.h"
+#include "include/Extensions/Stubs/stub.h"
+
+#include <QObject>
 
 namespace Extensions {
     namespace Stubs {

@@ -1,16 +1,16 @@
 #ifndef SEARCHINSTANCE_H
 #define SEARCHINSTANCE_H
 
+#include "filesearcher.h"
+#include "searchobjects.h"
+
 #include <QObject>
+#include <QScopedPointer>
 #include <QString>
 #include <QTreeWidget>
-#include <QScopedPointer>
 
-#include <memory>
 #include <map>
-
-#include "searchobjects.h"
-#include "filesearcher.h"
+#include <memory>
 
 /**
  * @brief The SearchInstance class contains all the data that represents a search, including the

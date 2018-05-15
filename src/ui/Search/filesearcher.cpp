@@ -1,12 +1,12 @@
 #include "include/Search/filesearcher.h"
 
-#include <QDirIterator>
-
-#include <vector>
-#include <algorithm>
-
 #include "include/Search/searchstring.h"
 #include "include/docengine.h"
+
+#include <QDirIterator>
+
+#include <algorithm>
+#include <vector>
 
 
 /**
