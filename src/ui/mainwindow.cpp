@@ -119,7 +119,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     generateRunMenu();
 
-    // Initialize at least one editor here so things like restoring "zoom" 
+    // Initialize at least one editor here so things like restoring "zoom"
     // work properly
     openCommandLineProvidedUrls(workingDirectory, arguments);
     configureUserInterface();
@@ -183,35 +183,35 @@ TopEditorContainer *MainWindow::topEditorContainer()
 void MainWindow::configureUserInterface()
 {
     // Group EOL modes
-    QActionGroup *eolActionGroup = new QActionGroup(this);
+    QActionGroup* eolActionGroup = new QActionGroup(this);
     eolActionGroup->addAction(ui->actionWindows_Format);
     eolActionGroup->addAction(ui->actionUNIX_Format);
     eolActionGroup->addAction(ui->actionMac_Format);
 
     // Group indentation modes
-    QActionGroup *indentationActionGroup = new QActionGroup(this);
+    QActionGroup* indentationActionGroup = new QActionGroup(this);
     indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
     indentationActionGroup->addAction(ui->actionIndentation_Custom);
 
     // Create the toolbar
     m_mainToolBar = new QToolBar("Toolbar");
-    m_mainToolBar->setIconSize(QSize(16,16));
+    m_mainToolBar->setIconSize(QSize(16, 16));
     m_mainToolBar->setObjectName("toolbar");
     addToolBar(m_mainToolBar);
 
     // Wire up toolbar and menubar visibility.
     connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
     ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
-    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
+    ui->menuBar->setVisible(m_settings.MainWindow.getMenuBarVisible());
     ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
 
     // Set popup for actionOpen in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->actionOpen));
-    if(btnActionOpen) {
+    QToolButton* btnActionOpen = static_cast<QToolButton*>(m_mainToolBar->widgetForAction(ui->actionOpen));
+    if (btnActionOpen) {
         btnActionOpen->setMenu(ui->menuRecent_Files);
         btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
     }
-    
+
     // Restore symbol visibility
     bool showAll = m_settings.General.getShowAllSymbols();
     ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
@@ -225,8 +225,9 @@ void MainWindow::configureUserInterface()
     ui->actionFull_Screen->setChecked(isFullScreen());
 
     // Initialize the advanced search dock and hook its signals up
-    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
-    m_advSearchDock->getDockWidget()->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
+    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget());
+    m_advSearchDock->getDockWidget()
+        ->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
     connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
 
     // Restore smart indent
@@ -240,7 +241,6 @@ void MainWindow::configureUserInterface()
     }
 
     restoreWindowSettings();
-
 }
 
 void MainWindow::restoreWindowSettings()
