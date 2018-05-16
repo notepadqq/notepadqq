@@ -150,6 +150,7 @@ void frmPreferences::loadLanguages()
         ls.getIndentWithSpaces("default"),
         ls.getUseDefaultSettings("default")
     };
+    m_tempLangSettings.push_back(lang);
 
     for (const auto& l : LanguageService::getInstance().languages()) {
         ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
