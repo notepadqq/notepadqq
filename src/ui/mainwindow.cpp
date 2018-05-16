@@ -53,159 +53,21 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     m_advSearchDock(new AdvancedSearchDock(this))
 {
     ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);
 
     MainWindow::m_instances.append(this);
 
-    // Gets company name from QCoreApplication::setOrganizationName(). Same for app name.
-    setCentralWidget(m_topEditorContainer);
-
-    m_docEngine = new DocEngine(m_topEditorContainer);
-    connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
-    connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
-    connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
-    connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
-
-    loadIcons();
-
-    // Context menu initialization
-    m_tabContextMenu = new QMenu(this);
-    QAction *separator = new QAction(this);
-    separator->setSeparator(true);
-    QAction *separatorBottom = new QAction(this);
-    separatorBottom->setSeparator(true);
-    m_tabContextMenuActions.append(ui->actionClose);
-    m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
-    m_tabContextMenuActions.append(ui->actionSave);
-    m_tabContextMenuActions.append(ui->actionSave_as);
-    m_tabContextMenuActions.append(ui->actionRename);
-    m_tabContextMenuActions.append(ui->actionPrint);
-    m_tabContextMenuActions.append(separator);
-    m_tabContextMenuActions.append(ui->actionCurrent_Full_File_Path_to_Clipboard);
-    m_tabContextMenuActions.append(ui->actionCurrent_Filename_to_Clipboard);
-    m_tabContextMenuActions.append(ui->actionCurrent_Directory_Path_to_Clipboard);
-    m_tabContextMenuActions.append(separatorBottom);
-    m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
-    m_tabContextMenuActions.append(ui->actionClone_to_Other_View);
-    m_tabContextMenuActions.append(ui->actionMove_to_New_Window);
-    m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
-    m_tabContextMenu->addActions(m_tabContextMenuActions);
-
-    fixKeyboardShortcuts();
-
-    // Action group for EOL modes
-    QActionGroup *eolActionGroup = new QActionGroup(this);
-    eolActionGroup->addAction(ui->actionWindows_Format);
-    eolActionGroup->addAction(ui->actionUNIX_Format);
-    eolActionGroup->addAction(ui->actionMac_Format);
-
-    // Action group for indentation modes
-    QActionGroup *indentationActionGroup = new QActionGroup(this);
-    indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
-    indentationActionGroup->addAction(ui->actionIndentation_Custom);
-
-    connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
-            this, &MainWindow::on_customTabContextMenuRequested);
-
-    connect(m_topEditorContainer, &TopEditorContainer::tabCloseRequested,
-            this, &MainWindow::on_tabCloseRequested);
-
-    connect(m_topEditorContainer, &TopEditorContainer::currentEditorChanged,
-            this, &MainWindow::on_currentEditorChanged);
-
-    connect(m_topEditorContainer, &TopEditorContainer::editorAdded,
-            this, &MainWindow::on_editorAdded);
-
-    connect(m_topEditorContainer, &TopEditorContainer::editorMouseWheel,
-            this, &MainWindow::on_editorMouseWheel);
-
-    connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked,
-            this, &MainWindow::on_tabBarDoubleClicked);
-
-    createStatusBar();
-
+    setupDocEngine();
+    setupTabContextMenu();
+    setupIcons();
+    setupStatusBar();
+    setupRunMenu();
+    setupToolBar();
     updateRecentDocsInMenu();
-
-    setAcceptDrops(true);
-
-    generateRunMenu();
-
-    m_mainToolBar = new QToolBar("Toolbar");
-    m_mainToolBar->setIconSize(QSize(16,16));
-    m_mainToolBar->setObjectName("toolbar");
-    addToolBar(m_mainToolBar);
-    loadToolBar();
-
-    // Wire up tool- and menubar visibility.
-    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
-    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
-    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
-
-    // Set popup for actionOpen in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->actionOpen));
-    if(btnActionOpen) {
-        btnActionOpen->setMenu(ui->menuRecent_Files);
-        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
-    }
-
-    // Initialize UI from settings
-    initUI();
-
-    // Initialize toggles and values from settings
-    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
-
-    // Inserts at least an editor
     openCommandLineProvidedUrls(workingDirectory, arguments);
-    // From now on, there is at least an Editor and at least
-    // an EditorTabWidget within m_topEditorContainer.
-
-    // Set zoom from settings
-    const qreal zoom = m_settings.General.getZoom();
-    for (int i = 0; i < m_topEditorContainer->count(); i++) {
-        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
-    }
-
-    ui->actionFull_Screen->setChecked(isFullScreen());
-
-    // Initialize the advanced search dock and hook its signals up
-    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
-    m_advSearchDock->getDockWidget()->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
-    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
-
-    restoreWindowSettings();
-
-    // If there was another window already opened, move this window
-    // slightly to the bottom-right, so that they won't completely overlap.
-    if (!isMaximized() && m_instances.count() > 1) {
-        QPoint curPos = pos();
-        move(curPos.x() + 50, curPos.y() + 50);
-    }
-
+    setupUserInterface();
     setupLanguagesMenu();
+    setupKeyboardShortcuts();
 
-    showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
-
-    //Registers all actions so that NqqSettings knows their default and current shortcuts.
-    const QList<QAction*> allActions = getActions();
-
-    m_settings.Shortcuts.initShortcuts(allActions);
-
-    //At this point, all actions still have their default shortcuts so we set all actions'
-    //shortcuts from settings.
-    for (QAction* a : allActions){
-        if (a->objectName().isEmpty())
-            continue;
-
-        QKeySequence shortcut = m_settings.Shortcuts.getShortcut(a->objectName());
-
-        a->setShortcut(shortcut);
-    }
-
-    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
-    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
-
-    //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
 }
 
@@ -230,9 +92,8 @@ MainWindow *MainWindow::lastActiveInstance()
 {
     if (m_instances.length() > 0) {
         return m_instances.last();
-    } else {
-        return nullptr;
     }
+    return nullptr;
 }
 
 TopEditorContainer *MainWindow::topEditorContainer()
@@ -240,31 +101,124 @@ TopEditorContainer *MainWindow::topEditorContainer()
     return m_topEditorContainer;
 }
 
-void MainWindow::initUI()
+void MainWindow::setupUserInterface()
 {
-    bool showAll = m_settings.General.getShowAllSymbols();
-    ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
+    setCentralWidget(m_topEditorContainer);
+    setAttribute(Qt::WA_DeleteOnClose);
+    setAcceptDrops(true);
 
-    // Simply emitting a signal here initializes actionShow_Tab and
-    // actionShow_End_of_Line, due to how action_Show_All_Characters works.
+    // Wire up toolbar and menubar visibility.
+    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
+    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
+    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
+
+    // Set popup for actionOpen in toolbar
+    auto* btnActionOpen = static_cast<QToolButton*>(m_mainToolBar->widgetForAction(ui->actionOpen));
+    if (btnActionOpen) {
+        btnActionOpen->setMenu(ui->menuRecent_Files);
+        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
+    }
+
+    // Action group for end-of-line modes
+    auto* groupEOL = new QActionGroup(this);
+    groupEOL->addAction(ui->actionWindows_Format);
+    groupEOL->addAction(ui->actionUNIX_Format);
+    groupEOL->addAction(ui->actionMac_Format);
+
+    // Action group for indentation modes
+    auto* groupIndent = new QActionGroup(this);
+    groupIndent->addAction(ui->actionIndentation_Default_Settings);
+    groupIndent->addAction(ui->actionIndentation_Custom);
+
+    // Restore symbol settings 
+    const bool showAll = m_settings.General.getShowAllSymbols();
+    ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
     ui->actionShow_All_Characters->setChecked(showAll);
     emit on_actionShow_All_Characters_toggled(showAll);
+
+    // Restore math render settings
+    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+
+    // Restore smart indent settings
+    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
+    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
+
+    // Restore zoom settings
+    const auto zoom = m_settings.General.getZoom();
+    for (int i = 0; i < m_topEditorContainer->count(); i++) {
+        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
+    }
+
+    // Restore full screen setting
+    ui->actionFull_Screen->setChecked(isFullScreen());
+
+    // Initialize the advanced search dock and hook its signals up
+    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
+    m_advSearchDock->getDockWidget()->hide();
+    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
+
+    showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
+
+    restoreWindowSettings();
+
 }
 
-void MainWindow::restoreWindowSettings()
+void MainWindow::setupDocEngine()
 {
-    restoreGeometry(m_settings.MainWindow.getGeometry());
-    restoreState(m_settings.MainWindow.getWindowState());
+    m_docEngine = new DocEngine(m_topEditorContainer);
+    connect(m_docEngine, &DocEngine::fileOnDiskChanged, this, &MainWindow::on_fileOnDiskChanged);
+    connect(m_docEngine, &DocEngine::documentSaved, this, &MainWindow::on_documentSaved);
+    connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
+    connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 }
 
-void MainWindow::loadIcons()
+void MainWindow::setupTabContextMenu()
 {
-    // To test fallback icons:
-    // QIcon::setThemeSearchPaths(QStringList(""));
+    m_tabContextMenu = new QMenu(this);
+    QAction *separator = new QAction(this);
+    separator->setSeparator(true);
+    QAction *separatorBottom = new QAction(this);
+    separatorBottom->setSeparator(true);
+    m_tabContextMenuActions.append(ui->actionClose);
+    m_tabContextMenuActions.append(ui->actionClose_All_BUT_Current_Document);
+    m_tabContextMenuActions.append(ui->actionSave);
+    m_tabContextMenuActions.append(ui->actionSave_as);
+    m_tabContextMenuActions.append(ui->actionRename);
+    m_tabContextMenuActions.append(ui->actionPrint);
+    m_tabContextMenuActions.append(separator);
+    m_tabContextMenuActions.append(ui->actionCurrent_Full_File_Path_to_Clipboard);
+    m_tabContextMenuActions.append(ui->actionCurrent_Filename_to_Clipboard);
+    m_tabContextMenuActions.append(ui->actionCurrent_Directory_Path_to_Clipboard);
+    m_tabContextMenuActions.append(separatorBottom);
+    m_tabContextMenuActions.append(ui->actionMove_to_Other_View);
+    m_tabContextMenuActions.append(ui->actionClone_to_Other_View);
+    m_tabContextMenuActions.append(ui->actionMove_to_New_Window);
+    m_tabContextMenuActions.append(ui->actionOpen_in_New_Window);
+    m_tabContextMenu->addActions(m_tabContextMenuActions);
 
-    // Assign (where possible) system theme icons to our actions.
-    // If a system icon doesn't exist, fallback on the already assigned icon.
+    connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
+            this, &MainWindow::on_customTabContextMenuRequested);
 
+    connect(m_topEditorContainer, &TopEditorContainer::tabCloseRequested,
+            this, &MainWindow::on_tabCloseRequested);
+
+    connect(m_topEditorContainer, &TopEditorContainer::currentEditorChanged,
+            this, &MainWindow::on_currentEditorChanged);
+
+    connect(m_topEditorContainer, &TopEditorContainer::editorAdded,
+            this, &MainWindow::on_editorAdded);
+
+    connect(m_topEditorContainer, &TopEditorContainer::editorMouseWheel,
+            this, &MainWindow::on_editorMouseWheel);
+
+    connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked,
+            this, &MainWindow::on_tabBarDoubleClicked);
+
+}
+
+void MainWindow::setupIcons()
+{
     // File menu
     ui->actionNew->setIcon(IconProvider::fromTheme("document-new"));
     ui->actionOpen->setIcon(IconProvider::fromTheme("document-open"));
@@ -326,112 +280,75 @@ void MainWindow::loadIcons()
     ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
 }
 
-void MainWindow::createStatusBar()
+void MainWindow::setupStatusBar()
 {
-    QStatusBar *status = statusBar();
-    status->setStyleSheet("QStatusBar::item { border: none; }; ");
-    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    auto* container = new QWidget(this);
+    container->setLayout(new QHBoxLayout());
+    container->layout()->setContentsMargins(0, 0, 0, 0);
 
-    QScrollArea *scrollArea = new QScrollArea(this);
+    auto* scrollArea = new QScrollArea(this);
     scrollArea->setFrameStyle(QScrollArea::NoFrame);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     scrollArea->setStyleSheet("* { background: transparent; }");
-
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::NoFrame);
-    frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    QHBoxLayout *layout = new QHBoxLayout(frame);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    scrollArea->setWidget(frame);
+    scrollArea->setWidget(container);
     scrollArea->setWidgetResizable(true);
     scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
+    statusBar()->setStyleSheet("QStatusBar::item { border: none; }; ");
+    statusBar()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    statusBar()->addWidget(scrollArea, 1);
 
+    auto createLabel = [&container](const QString& txt, int minwidth,
+                           bool clickable = false,
+                           QSizePolicy::Policy hPolicy = QSizePolicy::Minimum) {
+        auto* label = clickable ? new ClickableLabel(txt) : new QLabel(txt);
+        QMargins marginFix = label->contentsMargins();
+        marginFix.setRight(marginFix.right() + 10);
+        label->setSizePolicy(hPolicy, QSizePolicy::Fixed);
+        label->setMinimumWidth(minwidth);
+        label->setContentsMargins(marginFix);
+        container->layout()->addWidget(label);
+        return label;
+    };
 
-    QLabel *label;
-    QMargins tmpMargins;
+    m_statusBar_fileFormat = createLabel("File Format", 150, true);
+    m_statusBar_curPos = createLabel("Ln 0, col 0", 120);
+    m_statusBar_selection = createLabel("Sel 0, 0", 120);
+    m_statusBar_length_lines = createLabel("0 chars, 0 lines", 0, false, QSizePolicy::MinimumExpanding);
+    m_statusBar_EOLstyle = createLabel("EOL", 118);
+    m_statusBar_textFormat = createLabel("Encoding", 118, true);
+    m_statusBar_overtypeNotify = createLabel(tr("INS"), 40);
 
-    label = new ClickableLabel("File Format", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(150);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_fileFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
-        ui->menu_Language->exec( QCursor::pos() );
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this]() {
+        ui->menu_Language->exec(QCursor::pos());
     });
 
-
-    label = new QLabel("Ln 0, col 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_curPos = label;
-
-    label = new QLabel("Sel 0, 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_selection = label;
-
-    label = new QLabel("0 chars, 0 lines", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_length_lines = label;
-
-    label = new QLabel("EOL", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_EOLstyle = label;
-
-    label = new ClickableLabel("Encoding", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_textFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Encoding->exec(QCursor::pos());
     });
-
-    label = new QLabel(tr("INS"), this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(40);
-    layout->addWidget(label);
-    m_statusBar_overtypeNotify = label;
-
-
-    status->addWidget(scrollArea, 1);
-    scrollArea->setFixedHeight(frame->height());
 }
 
-void MainWindow::loadToolBar()
+void MainWindow::setupToolBar()
 {
+    if (m_mainToolBar == nullptr) {
+        m_mainToolBar = new QToolBar("Toolbar");
+        m_mainToolBar->setIconSize(QSize(16,16));
+        m_mainToolBar->setObjectName("toolbar");
+        addToolBar(m_mainToolBar);
+    }
+
     m_mainToolBar->clear();
 
     QString toolbarItems = m_settings.MainWindow.getToolBarItems();
-    if(toolbarItems.isEmpty())
+    if (toolbarItems.isEmpty())
         toolbarItems = getDefaultToolBarString();
 
     auto actions = getActions();
     auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
 
     for (const auto& part : parts) {
-        if(part == "Separator") {
+        if (part == "Separator") {
             m_mainToolBar->addSeparator();
             continue;
         }
@@ -440,8 +357,20 @@ void MainWindow::loadToolBar()
             return ac->objectName() == part;
         });
 
-        if(it != actions.end())
+        if (it != actions.end())
             m_mainToolBar->addAction( *it );
+    }
+}
+
+void MainWindow::restoreWindowSettings()
+{
+    restoreGeometry(m_settings.MainWindow.getGeometry());
+    restoreState(m_settings.MainWindow.getWindowState());
+
+    // Offset the window if another is already present
+    if (!isMaximized() && m_instances.count() > 1) {
+        QPoint curPos = pos();
+        move(curPos.x() + 50, curPos.y() + 50);
     }
 }
 
@@ -538,15 +467,20 @@ void MainWindow::setupLanguagesMenu()
     }
 }
 
-void MainWindow::fixKeyboardShortcuts()
+void MainWindow::setupKeyboardShortcuts()
 {
-    QList<QMenu*> lst;
-    lst = ui->menuBar->findChildren<QMenu*>();
-
-    foreach (QMenu* m, lst)
-    {
+    auto& sc = m_settings.Shortcuts;
+    const QList<const QMenu*> menus = ui->menuBar->findChildren<const QMenu*>();
+    for (auto* m : menus) {
         addAction(m->menuAction());
         addActions(m->actions());
+    }
+
+    QList<QAction*> actions = getActions();
+    for (auto* a : actions) {
+        if (a->objectName().isEmpty())
+            continue;
+        a->setShortcut(sc.getShortcut(a->objectName()));
     }
 }
 
@@ -2224,7 +2158,7 @@ void MainWindow::on_actionInterpret_As_triggered()
     dialog->deleteLater();
 }
 
-void MainWindow::generateRunMenu()
+void MainWindow::setupRunMenu()
 {
     QMap <QString, QString> runners = m_settings.Run.getCommands();
     QMapIterator<QString, QString> i(runners);
@@ -2250,7 +2184,7 @@ void MainWindow::modifyRunCommands()
 {
     NqqRun::RunPreferences p;
     if(p.exec() == 1) {
-        generateRunMenu();
+        setupRunMenu();
     }
 }
 
@@ -2266,7 +2200,7 @@ void MainWindow::runCommand()
         int ok = rd.exec();
 
         if (rd.saved()) {
-            generateRunMenu();
+            setupRunMenu();
         }
 
         if (!ok) {

@@ -359,7 +359,7 @@ void frmPreferences::saveToolbar()
     m_settings.MainWindow.setToolBarItems(string);
 
     for (auto* wnd : MainWindow::instances())
-        wnd->loadToolBar();
+        wnd->setupToolBar();
 }
 
 bool frmPreferences::applySettings()
