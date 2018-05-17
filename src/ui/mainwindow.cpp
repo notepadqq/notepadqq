@@ -93,17 +93,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     fixKeyboardShortcuts();
 
-    // Action group for EOL modes
-    QActionGroup *eolActionGroup = new QActionGroup(this);
-    eolActionGroup->addAction(ui->actionWindows_Format);
-    eolActionGroup->addAction(ui->actionUNIX_Format);
-    eolActionGroup->addAction(ui->actionMac_Format);
-
-    // Action group for indentation modes
-    QActionGroup *indentationActionGroup = new QActionGroup(this);
-    indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
-    indentationActionGroup->addAction(ui->actionIndentation_Custom);
-
     connect(m_topEditorContainer, &TopEditorContainer::customTabContextMenuRequested,
             this, &MainWindow::on_customTabContextMenuRequested);
 
@@ -130,57 +119,11 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     generateRunMenu();
 
-    m_mainToolBar = new QToolBar("Toolbar");
-    m_mainToolBar->setIconSize(QSize(16,16));
-    m_mainToolBar->setObjectName("toolbar");
-    addToolBar(m_mainToolBar);
-    loadToolBar();
-
-    // Wire up tool- and menubar visibility.
-    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
-    ui->menuBar->setVisible( m_settings.MainWindow.getMenuBarVisible() );
-    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
-
-    // Set popup for actionOpen in toolbar
-    QToolButton *btnActionOpen = static_cast<QToolButton *>(m_mainToolBar->widgetForAction(ui->actionOpen));
-    if(btnActionOpen) {
-        btnActionOpen->setMenu(ui->menuRecent_Files);
-        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
-    }
-
-    // Initialize UI from settings
-    initUI();
-
-    // Initialize toggles and values from settings
-    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
-
-    // Inserts at least an editor
+    // Initialize at least one editor here so things like restoring "zoom"
+    // work properly
     openCommandLineProvidedUrls(workingDirectory, arguments);
-    // From now on, there is at least an Editor and at least
-    // an EditorTabWidget within m_topEditorContainer.
-
-    // Set zoom from settings
-    const qreal zoom = m_settings.General.getZoom();
-    for (int i = 0; i < m_topEditorContainer->count(); i++) {
-        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
-    }
-
-    ui->actionFull_Screen->setChecked(isFullScreen());
-
-    // Initialize the advanced search dock and hook its signals up
-    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget() );
-    m_advSearchDock->getDockWidget()->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
-    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
-
-    restoreWindowSettings();
-
-    // If there was another window already opened, move this window
-    // slightly to the bottom-right, so that they won't completely overlap.
-    if (!isMaximized() && m_instances.count() > 1) {
-        QPoint curPos = pos();
-        move(curPos.x() + 50, curPos.y() + 50);
-    }
+    configureUserInterface();
+    loadToolBar();
 
     setupLanguagesMenu();
 
@@ -201,9 +144,6 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
         a->setShortcut(shortcut);
     }
-
-    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
-    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
 
     //Register our meta types for signal/slot calls here.
     emit Notepadqq::getInstance().newWindow(this);
@@ -240,21 +180,77 @@ TopEditorContainer *MainWindow::topEditorContainer()
     return m_topEditorContainer;
 }
 
-void MainWindow::initUI()
+void MainWindow::configureUserInterface()
 {
+    // Group EOL modes
+    QActionGroup* eolActionGroup = new QActionGroup(this);
+    eolActionGroup->addAction(ui->actionWindows_Format);
+    eolActionGroup->addAction(ui->actionUNIX_Format);
+    eolActionGroup->addAction(ui->actionMac_Format);
+
+    // Group indentation modes
+    QActionGroup* indentationActionGroup = new QActionGroup(this);
+    indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
+    indentationActionGroup->addAction(ui->actionIndentation_Custom);
+
+    // Create the toolbar
+    m_mainToolBar = new QToolBar("Toolbar");
+    m_mainToolBar->setIconSize(QSize(16, 16));
+    m_mainToolBar->setObjectName("toolbar");
+    addToolBar(m_mainToolBar);
+
+    // Wire up toolbar and menubar visibility.
+    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
+    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
+    ui->menuBar->setVisible(m_settings.MainWindow.getMenuBarVisible());
+    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
+
+    // Set popup for actionOpen in toolbar
+    QToolButton* btnActionOpen = static_cast<QToolButton*>(m_mainToolBar->widgetForAction(ui->actionOpen));
+    if (btnActionOpen) {
+        btnActionOpen->setMenu(ui->menuRecent_Files);
+        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
+    }
+
+    // Restore symbol visibility
     bool showAll = m_settings.General.getShowAllSymbols();
     ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
-
-    // Simply emitting a signal here initializes actionShow_Tab and
-    // actionShow_End_of_Line, due to how action_Show_All_Characters works.
     ui->actionShow_All_Characters->setChecked(showAll);
     emit on_actionShow_All_Characters_toggled(showAll);
+
+    // Restore math rendering
+    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+
+    // Restore full screen
+    ui->actionFull_Screen->setChecked(isFullScreen());
+
+    // Initialize the advanced search dock and hook its signals up
+    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget());
+    m_advSearchDock->getDockWidget()
+        ->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
+    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
+
+    // Restore smart indent
+    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
+    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
+
+    // Restore zoom
+    const qreal zoom = m_settings.General.getZoom();
+    for (int i = 0; i < m_topEditorContainer->count(); i++) {
+        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
+    }
+
+    restoreWindowSettings();
 }
 
 void MainWindow::restoreWindowSettings()
 {
     restoreGeometry(m_settings.MainWindow.getGeometry());
     restoreState(m_settings.MainWindow.getWindowState());
+    if (!isMaximized() && m_instances.count() > 1) {
+        QPoint curPos = pos();
+        move(curPos.x() + 50, curPos.y() + 50);
+    }
 }
 
 void MainWindow::loadIcons()
