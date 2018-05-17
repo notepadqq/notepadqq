@@ -297,7 +297,7 @@ private:
     /**
      * @brief Initialize UI from settings
      */
-    void initUI();
+    void configureUserInterface();
 
     /**
      * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.
