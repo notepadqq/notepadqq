@@ -1416,11 +1416,10 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                            );
 
         newTitle = QString("%1%2 (%3) - %5")
-                   .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
-                   .arg(editor->isClean() ? "" : "*")
-                   .arg(path)
-                   .arg(QApplication::applicationName());
-
+                       .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
+                       .arg(editor->isClean() ? "" : "*")
+                       .arg(path)
+                       .arg(QApplication::applicationName());
     }
 
     if (newTitle != windowTitle()) {
