@@ -326,7 +326,6 @@ void MainWindow::createStatusBar()
     auto createStatusLabel = [&](const QString& txt, int minWidth, bool clickable = false, bool right = false) {
         QLabel* label = clickable ? new ClickableLabel(txt) : new QLabel(txt);
         QMargins marginFix = label->contentsMargins();
-//        marginFix.setRight(marginFix.right() + 10);
         label->setContentsMargins(marginFix);
         if (right) {
             statusBar()->addPermanentWidget(label);
@@ -342,10 +341,10 @@ void MainWindow::createStatusBar()
     m_statusBar_EOLstyle = createStatusLabel("EOL", 84, false, true);
     m_statusBar_textFormat = createStatusLabel("Encoding", 110, true, true);
     m_statusBar_overtypeNotify = createStatusLabel("INS", 32, false, true);
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this](){
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Language->exec( QCursor::pos() );
     });
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this](){
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Encoding->exec(QCursor::pos());
     });
 }

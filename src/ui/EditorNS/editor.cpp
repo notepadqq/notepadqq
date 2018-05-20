@@ -176,7 +176,7 @@ namespace EditorNS
                 emit contentChanged();
             else if(msg == "J_EVT_CLEAN_CHANGED")
                 emit cleanChanged(data.toBool());
-            else if(msg == "J_EVT_CURSOR_ACTIVITY") {
+            else if (msg == "J_EVT_CURSOR_ACTIVITY") {
                 emit cursorActivity(data.toMap());
             }
 
