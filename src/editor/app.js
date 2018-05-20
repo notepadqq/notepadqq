@@ -667,6 +667,17 @@ UiDriver.registerEventHandler("C_CMD_EOL_TO_SPACE", function(msg, data, prevRetu
     editor.setValue(text.replace(/\n/gm," "));
 });
 
+function getActivityInfo()
+{
+    var map = new Object();
+    var selections = editor.getSelection("\n");
+    var cursor = editor.getCursor("head");
+    map["cursor"] = [cursor.line, cursor.ch];
+    map["selections"] = [selections.split(/\r\n|\r|\n/).length, selections.length];
+    map["content"] = [editor.lineCount(), editor.getValue().length];
+    return map;
+}
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
@@ -712,12 +723,17 @@ $(document).ready(function () {
         UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
-    editor.on("cursorActivity", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY");
+    editor.on("cursorActivity", function(instance) {
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
     });
 
     editor.on("focus", function() {
         UiDriver.sendMessage("J_EVT_GOT_FOCUS");
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
+    });
+
+    $(document).mouseenter(function() {
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
     });
 
     UiDriver.sendMessage("J_EVT_READY", null);

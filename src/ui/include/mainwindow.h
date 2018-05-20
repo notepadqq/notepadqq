@@ -91,7 +91,6 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiCursorInfo(Editor *editor);
     void searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
     void on_actionNew_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -107,7 +106,7 @@ private slots:
     void on_actionCut_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
-    void on_cursorActivity();
+    void on_cursorActivity(QMap<QString, QVariant> data);
     void on_actionDelete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
@@ -207,9 +206,6 @@ private:
     QMenu*                m_tabContextMenu;
     QList<QAction *>      m_tabContextMenuActions;
     QLabel*               m_statusBar_fileFormat;
-    QLabel*               m_statusBar_length_lines;
-    QLabel*               m_statusBar_curPos;
-    QLabel*               m_statusBar_selection;
     QLabel*               m_statusBar_EOLstyle;
     QLabel*               m_statusBar_textFormat;
     QLabel*               m_statusBar_overtypeNotify;

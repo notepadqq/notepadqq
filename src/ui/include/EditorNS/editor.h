@@ -351,7 +351,7 @@ namespace EditorNS
 
         // Pre-interpreted messages:
         void contentChanged();
-        void cursorActivity();
+        void cursorActivity(QMap<QString, QVariant> data);
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
 

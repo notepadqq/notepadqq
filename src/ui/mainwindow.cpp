@@ -26,7 +26,6 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QJsonArray>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QMimeData>
@@ -324,95 +323,31 @@ void MainWindow::loadIcons()
 
 void MainWindow::createStatusBar()
 {
-    QStatusBar *status = statusBar();
-    status->setStyleSheet("QStatusBar::item { border: none; }; ");
-    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    QScrollArea *scrollArea = new QScrollArea(this);
-    scrollArea->setFrameStyle(QScrollArea::NoFrame);
-    scrollArea->setAlignment(Qt::AlignCenter);
-    scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    scrollArea->setStyleSheet("* { background: transparent; }");
-
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::NoFrame);
-    frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    QHBoxLayout *layout = new QHBoxLayout(frame);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    scrollArea->setWidget(frame);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
-    scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
-
-
-    QLabel *label;
-    QMargins tmpMargins;
-
-    label = new ClickableLabel("File Format", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(150);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_fileFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
+    auto createStatusLabel = [&](const QString& txt, int minWidth, bool clickable = false, bool right = false) {
+        QLabel* label = clickable ? new ClickableLabel(txt) : new QLabel(txt);
+        QMargins marginFix = label->contentsMargins();
+//        marginFix.setRight(marginFix.right() + 10);
+        label->setContentsMargins(marginFix);
+        if (right) {
+            statusBar()->addPermanentWidget(label);
+        } else {
+            statusBar()->addWidget(label);
+        }
+        label->setMinimumWidth(minWidth);
+        label->setFrameStyle(QFrame::StyledPanel /*| QFrame::Sunken*/);
+        label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        return label;
+    };
+    m_statusBar_fileFormat = createStatusLabel("File Format", 110, true, true);
+    m_statusBar_EOLstyle = createStatusLabel("EOL", 84, false, true);
+    m_statusBar_textFormat = createStatusLabel("Encoding", 110, true, true);
+    m_statusBar_overtypeNotify = createStatusLabel("INS", 32, false, true);
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this](){
         ui->menu_Language->exec( QCursor::pos() );
     });
-
-
-    label = new QLabel("Ln 0, col 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_curPos = label;
-
-    label = new QLabel("Sel 0, 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_selection = label;
-
-    label = new QLabel("0 chars, 0 lines", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_length_lines = label;
-
-    label = new QLabel("EOL", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_EOLstyle = label;
-
-    label = new ClickableLabel("Encoding", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_textFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this](){
         ui->menu_Encoding->exec(QCursor::pos());
     });
-
-    label = new QLabel(tr("INS"), this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(40);
-    layout->addWidget(label);
-    m_statusBar_overtypeNotify = label;
-
-
-    status->addWidget(scrollArea, 1);
-    scrollArea->setFixedHeight(frame->height());
 }
 
 void MainWindow::loadToolBar()
@@ -1228,7 +1163,6 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
     if (tab != -1) {
         Editor *editor = tabWidget->editor(tab);
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
     }
 }
 
@@ -1264,14 +1198,20 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setMathEnabled(ui->actionMath_Rendering->isChecked());
 }
 
-void MainWindow::on_cursorActivity()
+void MainWindow::on_cursorActivity(QMap<QString, QVariant> data)
 {
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
 
     if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(editor);
+        auto curData = data["cursor"].toList();
+        auto selData = data["selections"].toList();
+        auto conData = data["content"].toList();
+        QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt()).arg(curData[1].toInt());
+        msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
+        msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
+        statusBar()->showMessage(msg);
     }
 }
 
@@ -1283,36 +1223,6 @@ void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
-    }
-}
-
-void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
-{
-    if (editor != 0) {
-        // Update status bar
-        editor->asyncSendMessageWithResultP("C_FUN_GET_TEXT_LENGTH").then([=](QVariant len){
-            editor->lineCount().then([=](int lines){
-                m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
-
-                editor->cursorPositionP().then([=](QPair<int, int> cursor) {
-                    editor->selectedTexts().then([=](QStringList selections){
-                        int selectedChars = 0;
-                        int selectedPieces = 0;
-
-                        for (QString sel : selections) {
-                            selectedChars += sel.length();
-                            selectedPieces += sel.split("\n").count();
-                        }
-
-                        m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                                    .arg(cursor.first + 1)
-                                                    .arg(cursor.second + 1));
-
-                        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
-                    });
-                });
-            });
-        });
     }
 }
 
@@ -1839,7 +1749,6 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
     }
 }
 
