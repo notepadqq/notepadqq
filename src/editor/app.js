@@ -667,7 +667,7 @@ UiDriver.registerEventHandler("C_CMD_EOL_TO_SPACE", function(msg, data, prevRetu
     editor.setValue(text.replace(/\n/gm," "));
 });
 
-function getActivityInfo()
+function getDocumentInfo()
 {
     var map = new Object();
     var selections = editor.getSelection("\n");
@@ -677,6 +677,13 @@ function getActivityInfo()
     map["content"] = [editor.lineCount(), editor.getValue().length];
     return map;
 }
+
+/**
+* @brief Replies to the request for document information. 
+*/
+UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, prevReturn) {
+    UiDriver.sendMessage("J_EVT_DOCUMENT_INFO", getDocumentInfo());
+});
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
@@ -724,16 +731,11 @@ $(document).ready(function () {
     });
 
     editor.on("cursorActivity", function(instance) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getDocumentInfo());
     });
 
     editor.on("focus", function() {
         UiDriver.sendMessage("J_EVT_GOT_FOCUS");
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
-    });
-
-    $(document).mouseenter(function() {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getActivityInfo());
     });
 
     UiDriver.sendMessage("J_EVT_READY", null);

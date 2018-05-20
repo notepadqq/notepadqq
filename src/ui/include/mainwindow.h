@@ -80,6 +80,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
+    void refreshEditorUiCursorInfo(QMap<QString, QVariant> data);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -205,10 +206,10 @@ private:
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;
     QList<QAction *>      m_tabContextMenuActions;
-    QLabel*               m_statusBar_fileFormat;
-    QLabel*               m_statusBar_EOLstyle;
-    QLabel*               m_statusBar_textFormat;
-    QLabel*               m_statusBar_overtypeNotify;
+    QPushButton*          m_sbFileFormatBtn;
+    QPushButton*          m_sbEOLFormatBtn;
+    QPushButton*          m_sbTextFormatBtn;
+    QPushButton*          m_sbOvertypeBtn;
     NqqSettings&          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode

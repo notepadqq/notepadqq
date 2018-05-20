@@ -238,6 +238,12 @@ namespace EditorNS
         void setCursorPosition(const Cursor &cursor);
 
         /**
+         * @brief Tells the editor that mainwindow needs an update on the contents,
+         *        selection, and cursor position of the current document
+         */
+        void requestDocumentInfo();
+
+        /**
          * @brief Get the current scroll position
          * @return a <left, top> pair.
          */
@@ -352,6 +358,7 @@ namespace EditorNS
         // Pre-interpreted messages:
         void contentChanged();
         void cursorActivity(QMap<QString, QVariant> data);
+        void documentInfoRequested(QMap<QString, QVariant> data);
         void cleanChanged(bool isClean);
         void fileNameChanged(const QUrl &oldFileName, const QUrl &newFileName);
 

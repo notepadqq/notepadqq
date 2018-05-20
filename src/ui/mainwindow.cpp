@@ -323,35 +323,20 @@ void MainWindow::loadIcons()
 
 void MainWindow::createStatusBar()
 {
-    auto createStatusLabel = [&](const QString& txt, int minWidth) {
-        QLabel* label = new ClickableLabel(txt);
-        QMargins marginFix = label->contentsMargins();
-        label->setContentsMargins(marginFix);
-        label->setMinimumWidth(minWidth);
-        label->setFrameStyle(QFrame::StyledPanel /*| QFrame::Sunken*/);
-        label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        statusBar()->addPermanentWidget(label);
-        return label;
+    auto createStatusButton = [&](const QString& txt, int minWidth, QMenu* mnu = nullptr) {
+        auto* btn = new QPushButton(txt);
+        btn->setFlat(true);
+        btn->setMenu(mnu);
+        btn->setMinimumWidth(minWidth);
+        btn->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        statusBar()->addPermanentWidget(btn);
+        return btn;
     };
-    m_statusBar_fileFormat = createStatusLabel("File Format", 110);
-    m_statusBar_EOLstyle = createStatusLabel("EOL", 84);
-    m_statusBar_textFormat = createStatusLabel("Encoding", 110);
-    m_statusBar_overtypeNotify = createStatusLabel("INS", 36);
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this]() {
-        ui->menu_Language->exec( QCursor::pos() );
-    });
-
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_EOLstyle), &ClickableLabel::clicked, [this]() {
-        ui->menuEOL_Conversion->exec(QCursor::pos());
-    });
-
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
-        ui->menu_Encoding->exec(QCursor::pos());
-    });
-
-    connect(dynamic_cast<ClickableLabel*>(m_statusBar_overtypeNotify), &ClickableLabel::clicked, [this]() {
-        toggleOverwrite();
-    });
+    m_sbFileFormatBtn = createStatusButton("File Format", 110, ui->menu_Language);
+    m_sbEOLFormatBtn = createStatusButton("EOL", 84, ui->menuEOL_Conversion);
+    m_sbTextFormatBtn = createStatusButton("Encoding", 110, ui->menu_Encoding);
+    m_sbOvertypeBtn = createStatusButton("INS", 36);
+    connect(m_sbOvertypeBtn, &QPushButton::clicked, this, &MainWindow::toggleOverwrite);
 }
 
 void MainWindow::loadToolBar()
@@ -691,9 +676,9 @@ void MainWindow::toggleOverwrite()
     });
 
     if (m_overwrite) {
-        m_statusBar_overtypeNotify->setText(tr("OVR"));
+        m_sbOvertypeBtn->setText(tr("OVR"));
     } else {
-        m_statusBar_overtypeNotify->setText(tr("INS"));
+        m_sbOvertypeBtn->setText(tr("INS"));
     }
 }
 
@@ -1167,6 +1152,7 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
     if (tab != -1) {
         Editor *editor = tabWidget->editor(tab);
         refreshEditorUiInfo(editor);
+        editor->requestDocumentInfo();
     }
 }
 
@@ -1181,6 +1167,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
 
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(editor, &Editor::documentInfoRequested, this, &MainWindow::refreshEditorUiCursorInfo);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
     connect(editor, &Editor::cleanChanged, this, [=]() {
@@ -1209,14 +1196,19 @@ void MainWindow::on_cursorActivity(QMap<QString, QVariant> data)
         return;
 
     if (currentEditor() == editor) {
-        auto curData = data["cursor"].toList();
-        auto selData = data["selections"].toList();
-        auto conData = data["content"].toList();
-        QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
-        msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
-        msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
-        statusBar()->showMessage(msg);
+        refreshEditorUiCursorInfo(data);
     }
+}
+
+void MainWindow::refreshEditorUiCursorInfo(QMap<QString, QVariant> data)
+{
+    auto curData = data["cursor"].toList();
+    auto selData = data["selections"].toList();
+    auto conData = data["content"].toList();
+    QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
+    msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
+    msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
+    statusBar()->showMessage(msg);
 }
 
 void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
@@ -1295,7 +1287,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
     QString name = editor->getLanguage()->name;
-    m_statusBar_fileFormat->setText(name);
+    m_sbFileFormatBtn->setText(name);
 
 
     // Update MainWindow title
@@ -1354,13 +1346,13 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     QString eol = editor->endOfLineSequence();
     if (eol == "\r\n") {
         ui->actionWindows_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Windows"));
+        m_sbEOLFormatBtn->setText(tr("Windows"));
     } else if (eol == "\n") {
         ui->actionUNIX_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("UNIX / OS X"));
+        m_sbEOLFormatBtn->setText(tr("UNIX / OS X"));
     } else if (eol == "\r") {
         ui->actionMac_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Old Mac"));
+        m_sbEOLFormatBtn->setText(tr("Old Mac"));
     }
 
     // Encoding
@@ -1371,7 +1363,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     } else {
         encoding = QString::fromUtf8(editor->codec()->name());
     }
-    m_statusBar_textFormat->setText(encoding);
+    m_sbTextFormatBtn->setText(encoding);
 
     // Indentation
     if (editor->isUsingCustomIndentationMode()) {
@@ -1753,6 +1745,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
+        editor->requestDocumentInfo();
     }
 }
 
