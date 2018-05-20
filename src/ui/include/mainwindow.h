@@ -206,10 +206,10 @@ private:
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;
     QList<QAction *>      m_tabContextMenuActions;
-    QPushButton*          m_sbFileFormatBtn;
-    QPushButton*          m_sbEOLFormatBtn;
-    QPushButton*          m_sbTextFormatBtn;
-    QPushButton*          m_sbOvertypeBtn;
+    QPushButton* m_sbFileFormatBtn;
+    QPushButton* m_sbEOLFormatBtn;
+    QPushButton* m_sbTextFormatBtn;
+    QPushButton* m_sbOvertypeBtn;
     NqqSettings&          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode

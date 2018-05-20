@@ -1289,7 +1289,6 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     QString name = editor->getLanguage()->name;
     m_sbFileFormatBtn->setText(name);
 
-
     // Update MainWindow title
     QString newTitle;
     if (editor->filePath().isEmpty()) {
