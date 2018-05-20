@@ -1207,7 +1207,7 @@ void MainWindow::on_cursorActivity(QMap<QString, QVariant> data)
         auto curData = data["cursor"].toList();
         auto selData = data["selections"].toList();
         auto conData = data["content"].toList();
-        QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt()).arg(curData[1].toInt());
+        QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
         msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
         msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
         statusBar()->showMessage(msg);
