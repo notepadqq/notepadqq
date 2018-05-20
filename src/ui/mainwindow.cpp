@@ -1413,11 +1413,11 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
                                            QUrl::StripTrailingSlash
                                            );
 
-        newTitle = QString("%1 (%2) - %3")
-                   .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
-                   .arg(path)
-                   .arg(QApplication::applicationName());
-
+        newTitle = QString("%1%2 (%3) - %5")
+                       .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
+                       .arg(editor->isClean() ? "" : "*")
+                       .arg(path)
+                       .arg(QApplication::applicationName());
     }
 
     if (newTitle != windowTitle()) {
