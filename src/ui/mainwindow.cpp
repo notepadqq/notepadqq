@@ -323,29 +323,34 @@ void MainWindow::loadIcons()
 
 void MainWindow::createStatusBar()
 {
-    auto createStatusLabel = [&](const QString& txt, int minWidth, bool clickable = false, bool right = false) {
-        QLabel* label = clickable ? new ClickableLabel(txt) : new QLabel(txt);
+    auto createStatusLabel = [&](const QString& txt, int minWidth) {
+        QLabel* label = new ClickableLabel(txt);
         QMargins marginFix = label->contentsMargins();
         label->setContentsMargins(marginFix);
-        if (right) {
-            statusBar()->addPermanentWidget(label);
-        } else {
-            statusBar()->addWidget(label);
-        }
         label->setMinimumWidth(minWidth);
         label->setFrameStyle(QFrame::StyledPanel /*| QFrame::Sunken*/);
         label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        statusBar()->addPermanentWidget(label);
         return label;
     };
-    m_statusBar_fileFormat = createStatusLabel("File Format", 110, true, true);
-    m_statusBar_EOLstyle = createStatusLabel("EOL", 84, false, true);
-    m_statusBar_textFormat = createStatusLabel("Encoding", 110, true, true);
-    m_statusBar_overtypeNotify = createStatusLabel("INS", 32, false, true);
+    m_statusBar_fileFormat = createStatusLabel("File Format", 110);
+    m_statusBar_EOLstyle = createStatusLabel("EOL", 84);
+    m_statusBar_textFormat = createStatusLabel("Encoding", 110);
+    m_statusBar_overtypeNotify = createStatusLabel("INS", 36);
     connect(dynamic_cast<ClickableLabel*>(m_statusBar_fileFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Language->exec( QCursor::pos() );
     });
+
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_EOLstyle), &ClickableLabel::clicked, [this]() {
+        ui->menuEOL_Conversion->exec(QCursor::pos());
+    });
+
     connect(dynamic_cast<ClickableLabel*>(m_statusBar_textFormat), &ClickableLabel::clicked, [this]() {
         ui->menu_Encoding->exec(QCursor::pos());
+    });
+
+    connect(dynamic_cast<ClickableLabel*>(m_statusBar_overtypeNotify), &ClickableLabel::clicked, [this]() {
+        toggleOverwrite();
     });
 }
 
