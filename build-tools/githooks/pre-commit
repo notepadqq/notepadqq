@@ -1,5 +1,10 @@
 #!/bin/sh
 
-echo -n "Formatting..."
+# Run the format
+echo "========== Formatting =========="
 git clang-format --style file --extensions 'cpp,h'
-echo "Done."
+echo "============= Done ============="
+
+echo "==== Adding files to commit ===="
+git add -v -u
+echo "============= Done ============="
