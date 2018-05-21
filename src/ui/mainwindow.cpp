@@ -330,8 +330,6 @@ void MainWindow::createStatusBar()
         auto* btn = new QPushButton(txt);
         btn->setFlat(true);
         btn->setMenu(mnu);
-        btn->setMinimumWidth(minWidth);
-        btn->setMaximumWidth(minWidth);
         btn->setFocusPolicy(Qt::NoFocus);
         statusBar()->addPermanentWidget(btn);
         return btn;
