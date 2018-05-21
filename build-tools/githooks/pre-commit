@@ -1,10 +1,13 @@
 #!/bin/sh
 
-# Run the format
+# Perform git clang-format on the necessary files
 echo "========== Formatting =========="
 git clang-format --style file --extensions 'cpp,h'
 echo "============= Done ============="
 
+# Only add the files that have been previously staged for commit
 echo "==== Adding files to commit ===="
-git add -v -u
+for f in $(git commit --short | awk '/^[AM]/{print $2}');do
+    git add -v "$f"
+done
 echo "============= Done ============="
