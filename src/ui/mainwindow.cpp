@@ -323,19 +323,23 @@ void MainWindow::loadIcons()
 
 void MainWindow::createStatusBar()
 {
+    m_sbDocumentInfoLabel = new QLabel;
+    m_sbDocumentInfoLabel->setMinimumWidth(1);
+    statusBar()->addWidget(m_sbDocumentInfoLabel);
     auto createStatusButton = [&](const QString& txt, int minWidth, QMenu* mnu = nullptr) {
         auto* btn = new QPushButton(txt);
         btn->setFlat(true);
         btn->setMenu(mnu);
         btn->setMinimumWidth(minWidth);
-        btn->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        btn->setMaximumWidth(minWidth);
+        btn->setFocusPolicy(Qt::NoFocus);
         statusBar()->addPermanentWidget(btn);
         return btn;
     };
-    m_sbFileFormatBtn = createStatusButton("File Format", 110, ui->menu_Language);
-    m_sbEOLFormatBtn = createStatusButton("EOL", 84, ui->menuEOL_Conversion);
-    m_sbTextFormatBtn = createStatusButton("Encoding", 110, ui->menu_Encoding);
-    m_sbOvertypeBtn = createStatusButton("INS", 36);
+    m_sbFileFormatBtn = createStatusButton("File Format", 120, ui->menu_Language);
+    m_sbEOLFormatBtn = createStatusButton("EOL", 92, ui->menuEOL_Conversion);
+    m_sbTextFormatBtn = createStatusButton("Encoding", 120, ui->menu_Encoding);
+    m_sbOvertypeBtn = createStatusButton("INS", 40);
     connect(m_sbOvertypeBtn, &QPushButton::clicked, this, &MainWindow::toggleOverwrite);
 }
 
@@ -1208,7 +1212,7 @@ void MainWindow::refreshEditorUiCursorInfo(QMap<QString, QVariant> data)
     QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
     msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
     msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
-    statusBar()->showMessage(msg);
+    m_sbDocumentInfoLabel->setText(msg);
 }
 
 void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
