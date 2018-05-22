@@ -234,7 +234,6 @@ private:
      */
     bool                finalizeAllTabs();
 
-    void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
     /**
@@ -296,6 +295,7 @@ private:
      * @brief Initialize UI from settings
      */
     void configureUserInterface();
+    void configureStatusBar();
 
     /**
      * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.

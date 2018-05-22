@@ -110,7 +110,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked,
             this, &MainWindow::on_tabBarDoubleClicked);
 
-    createStatusBar();
+    configureStatusBar();
 
     updateRecentDocsInMenu();
 
@@ -321,7 +321,7 @@ void MainWindow::loadIcons()
     ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
 }
 
-void MainWindow::createStatusBar()
+void MainWindow::configureStatusBar()
 {
     m_sbDocumentInfoLabel = new QLabel;
     m_sbDocumentInfoLabel->setMinimumWidth(1);
