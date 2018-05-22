@@ -1,13 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-# Perform git clang-format on the necessary files
-echo "========== Formatting =========="
-git clang-format --style file --extensions 'cpp,h'
-echo "============= Done ============="
+CHANGED="$(git clang-format --style file --extensions 'cpp')"
 
-# Only add the files that have been previously staged for commit
-echo "==== Adding files to commit ===="
-for f in $(git commit --short | awk '/^[AM]/{print $2}');do
-    git add -v "$f"
-done
-echo "============= Done ============="
+if [[ $CHANGED == "changed files:"* ]]; then
+    echo "Files have been modified due to formatting, please re-add them before committing"
+    exit 1
+fi
+
+
