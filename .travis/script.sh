@@ -10,7 +10,7 @@ check_format()
         base_commit="$TRAVIS_BRANCH"
         echo "Running clang-format against branch $base_commit, with hash $(git rev-parse $base_commit)"
     fi
-    output="$($gcf_cmd --commit $base_commit --diff --extensions 'cpp,h')"
+    output="$($gcf_cmd --commit $base_commit --diff --extensions 'cpp')"
     if [ "$output" == "no modified files to format" ] || [ "$output" == "clang-format did not modify any files" ]; then
         echo "clang-format passed."
         exit 0

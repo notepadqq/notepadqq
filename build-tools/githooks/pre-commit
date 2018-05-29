@@ -1,5 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-echo -n "Formatting..."
-git clang-format --style file --extensions 'cpp,h'
-echo "Done."
+CHANGED="$(git clang-format --style file --extensions 'cpp')"
+
+if [[ $CHANGED == "changed files:"* ]]; then
+    echo "Files have been modified due to formatting, please re-add them before committing"
+    exit 1
+fi
+
+
