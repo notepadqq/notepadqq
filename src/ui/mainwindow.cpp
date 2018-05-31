@@ -565,6 +565,73 @@ QUrl MainWindow::stringToUrl(QString fileName, QString workingDirectory)
     }
 }
 
+bool MainWindow::handleLineAndColumnCmdArgs(QCommandLineParser* parser, const QStringList &rawUrls)
+{
+    if (!parser->isSet("line") && !parser->isSet("column"))
+        return false;
+
+    if (rawUrls.size() > 1) {
+        qWarning() << tr("The '--line' and '--column' arguments will be ignored since more than one file is opened.");
+        return false;
+    }
+
+    int l = 0;
+    if (parser->isSet("line")) {
+        bool okay;
+        l = parser->value("line").toInt(&okay);
+
+        if(!okay)
+            qWarning() << tr("Invalid value for '--line' argument: %1").arg(parser->value("line"));
+    }
+
+    int c = 0;
+    if (parser->isSet("column")) {
+        bool okay;
+        c = parser->value("column").toInt(&okay);
+
+        if(!okay)
+            qWarning() << tr("Invalid value for '--column' argument: %1").arg(parser->value("column"));
+    }
+
+    // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
+    // right after construction of the Editor.
+    Editor* ed = m_topEditorContainer->currentTabWidget()->currentEditor();
+    QTimer* t = new QTimer();
+    connect(t, &QTimer::timeout, [t, l, c, ed](){
+        ed->setCursorPosition(l-1, c-1);
+        t->deleteLater();
+    });
+    t->start(0);
+
+    return true;
+}
+
+bool MainWindow::handleReadOnlyCmdArg(QCommandLineParser* parser, const QStringList &rawUrls)
+{
+    if (!parser->isSet("read-only"))
+        return false;
+
+    if (rawUrls.size() > 1) {
+        //TODO extend read-only parameter for multiple files
+        qWarning() << tr("The '--read-only' argument will be ignored since more than one file is opened.");
+        return false;
+    }
+
+    Editor* ed = m_topEditorContainer->currentTabWidget()->currentEditor();
+    QTimer* t = new QTimer();
+    connect(t, &QTimer::timeout, [ed, t](){
+        ed->setReadOnly(true);
+        t->deleteLater();
+    });
+    t->start(0);
+
+    return true;
+}
+
+
+
+
+
 void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments)
 {
     const int currentlyOpenTabs = m_topEditorContainer->currentTabWidget()->count();
@@ -602,43 +669,8 @@ void MainWindow::openCommandLineProvidedUrls(const QString &workingDirectory, co
                 .execute()
                 .wait(); // FIXME Transform to async
 
-    // Handle --line and --column commandline arguments
-    if (!parser->isSet("line") && !parser->isSet("column"))
-        return;
-
-    if (rawUrls.size() > 1) {
-        qWarning() << tr("The '--line' and '--column' arguments will be ignored since more than one file is opened.");
-        return;
-    }
-
-    int l = 0;
-    if (parser->isSet("line")) {
-        bool okay;
-        l = parser->value("line").toInt(&okay);
-
-        if(!okay)
-            qWarning() << tr("Invalid value for '--line' argument: %1").arg(parser->value("line"));
-    }
-
-    int c = 0;
-    if (parser->isSet("column")) {
-        bool okay;
-        c = parser->value("column").toInt(&okay);
-
-        if(!okay)
-            qWarning() << tr("Invalid value for '--column' argument: %1").arg(parser->value("column"));
-    }
-
-    // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
-    // right after construction of the Editor.
-    Editor* ed = m_topEditorContainer->currentTabWidget()->currentEditor();
-    QTimer* t = new QTimer();
-    connect(t, &QTimer::timeout, [t, l, c, ed](){
-        ed->setCursorPosition(l-1, c-1);
-        t->deleteLater();
-    });
-    t->start(0);
-
+    handleReadOnlyCmdArg(parser.data(), rawUrls);
+    handleLineAndColumnCmdArgs(parser.data(), rawUrls);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)

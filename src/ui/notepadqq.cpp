@@ -103,6 +103,10 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
     QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
     parser->addOption(allowRootOption);
 
+    QCommandLineOption readOnlyMode("read-only",
+                                    QObject::tr("Open file in read only mode."));
+    parser->addOption(readOnlyMode);
+
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),
                                  "[urls...]");

@@ -226,6 +226,7 @@ namespace EditorNS
         Q_INVOKABLE void setEOLVisible(const bool showeol);
         Q_INVOKABLE void setWhitespaceVisible(const bool showspace);
         Q_INVOKABLE void setMathEnabled(const bool enabled);
+        Q_INVOKABLE void setReadOnly(const bool readOnly);
 
         /**
          * @brief Get the current cursor position

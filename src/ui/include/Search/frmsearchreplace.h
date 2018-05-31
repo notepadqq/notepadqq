@@ -33,7 +33,6 @@ public:
     * @param `string`: Value to change the search input text to.
     */
     void setSearchText(QString string);
-
    /**
     * @brief Runs a "find next" or "find prev", taking the options from the UI.
     * @param `forward`: Direction in which to iterate.
