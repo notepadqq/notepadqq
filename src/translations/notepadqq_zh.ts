@@ -571,7 +571,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="214"/>
         <source>En&amp;coding</source>
-        <translation>编码(&amp;c)</translation>
+        <translation>编码(&amp;C)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="232"/>
@@ -826,7 +826,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="489"/>
         <source>&amp;Windows Format</source>
-        <translation>视窗格式(&amp;W)</translation>
+        <translation>Windows格式(&amp;O)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="500"/>
@@ -836,7 +836,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="508"/>
         <source>&amp;Old Mac Format</source>
-        <translation>老麦金塔格式(&amp;O)</translation>
+        <translation>老Mac格式(&amp;O)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="516"/>
@@ -1453,7 +1453,7 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1443"/>
         <source>Windows</source>
-        <translation>视窗</translation>
+        <translation>Windows</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1446"/>
@@ -1463,7 +1463,7 @@ Do you want to save it anyway?</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1449"/>
         <source>Old Mac</source>
-        <translation>老麦金塔</translation>
+        <translation>Old Mac</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="1456"/>
