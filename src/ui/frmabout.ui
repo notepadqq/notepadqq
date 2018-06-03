@@ -5,12 +5,15 @@
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
-    <height>292</height>
+    <width>542</width>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +32,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>250</y>
+     <x>430</x>
+     <y>260</y>
      <width>91</width>
      <height>27</height>
     </rect>
@@ -44,8 +47,8 @@
     <rect>
      <x>230</x>
      <y>190</y>
-     <width>311</width>
-     <height>21</height>
+     <width>300</width>
+     <height>60</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -54,14 +57,17 @@
    <property name="text">
     <string notr="true">copyright placeholder</string>
    </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="lblVersion">
    <property name="geometry">
     <rect>
      <x>230</x>
      <y>70</y>
-     <width>211</width>
-     <height>16</height>
+     <width>210</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -98,8 +104,8 @@
   <widget class="QPushButton" name="btnLicense">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>250</y>
+     <x>330</x>
+     <y>260</y>
      <width>91</width>
      <height>27</height>
     </rect>
@@ -112,7 +118,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
+     <y>30</y>
      <width>192</width>
      <height>192</height>
     </rect>
@@ -128,9 +134,9 @@
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>130</y>
-     <width>299</width>
-     <height>21</height>
+     <y>110</y>
+     <width>300</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -151,8 +157,8 @@
     <rect>
      <x>230</x>
      <y>150</y>
-     <width>301</width>
-     <height>21</height>
+     <width>300</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
