@@ -26,7 +26,6 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QJsonArray>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QMimeData>
@@ -111,7 +110,7 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
     connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked,
             this, &MainWindow::on_tabBarDoubleClicked);
 
-    createStatusBar();
+    configureStatusBar();
 
     updateRecentDocsInMenu();
 
@@ -322,97 +321,24 @@ void MainWindow::loadIcons()
     ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
 }
 
-void MainWindow::createStatusBar()
+void MainWindow::configureStatusBar()
 {
-    QStatusBar *status = statusBar();
-    status->setStyleSheet("QStatusBar::item { border: none; }; ");
-    status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    QScrollArea *scrollArea = new QScrollArea(this);
-    scrollArea->setFrameStyle(QScrollArea::NoFrame);
-    scrollArea->setAlignment(Qt::AlignCenter);
-    scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    scrollArea->setStyleSheet("* { background: transparent; }");
-
-    QFrame *frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::NoFrame);
-    frame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-
-    QHBoxLayout *layout = new QHBoxLayout(frame);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    scrollArea->setWidget(frame);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
-    scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
-
-
-    QLabel *label;
-    QMargins tmpMargins;
-
-    label = new ClickableLabel("File Format", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(150);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_fileFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
-        ui->menu_Language->exec( QCursor::pos() );
-    });
-
-
-    label = new QLabel("Ln 0, col 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_curPos = label;
-
-    label = new QLabel("Sel 0, 0", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(120);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_selection = label;
-
-    label = new QLabel("0 chars, 0 lines", this);
-    label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_length_lines = label;
-
-    label = new QLabel("EOL", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_EOLstyle = label;
-
-    label = new ClickableLabel("Encoding", this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(118);
-    tmpMargins = label->contentsMargins();
-    label->setContentsMargins(tmpMargins.left(), tmpMargins.top(), tmpMargins.right() + 10, tmpMargins.bottom());
-    layout->addWidget(label);
-    m_statusBar_textFormat = label;
-    connect(dynamic_cast<ClickableLabel*>(label), &ClickableLabel::clicked, [this](){
-        ui->menu_Encoding->exec(QCursor::pos());
-    });
-
-    label = new QLabel(tr("INS"), this);
-    label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    label->setMinimumWidth(40);
-    layout->addWidget(label);
-    m_statusBar_overtypeNotify = label;
-
-
-    status->addWidget(scrollArea, 1);
-    scrollArea->setFixedHeight(frame->height());
+    m_sbDocumentInfoLabel = new QLabel;
+    m_sbDocumentInfoLabel->setMinimumWidth(1);
+    statusBar()->addWidget(m_sbDocumentInfoLabel);
+    auto createStatusButton = [&](const QString& txt, int minWidth, QMenu* mnu = nullptr) {
+        auto* btn = new QPushButton(txt);
+        btn->setFlat(true);
+        btn->setMenu(mnu);
+        btn->setFocusPolicy(Qt::NoFocus);
+        statusBar()->addPermanentWidget(btn);
+        return btn;
+    };
+    m_sbFileFormatBtn = createStatusButton("File Format", 120, ui->menu_Language);
+    m_sbEOLFormatBtn = createStatusButton("EOL", 92, ui->menuEOL_Conversion);
+    m_sbTextFormatBtn = createStatusButton("Encoding", 120, ui->menu_Encoding);
+    m_sbOvertypeBtn = createStatusButton("INS", 40);
+    connect(m_sbOvertypeBtn, &QPushButton::clicked, this, &MainWindow::toggleOverwrite);
 }
 
 void MainWindow::loadToolBar()
@@ -752,9 +678,9 @@ void MainWindow::toggleOverwrite()
     });
 
     if (m_overwrite) {
-        m_statusBar_overtypeNotify->setText(tr("OVR"));
+        m_sbOvertypeBtn->setText(tr("OVR"));
     } else {
-        m_statusBar_overtypeNotify->setText(tr("INS"));
+        m_sbOvertypeBtn->setText(tr("INS"));
     }
 }
 
@@ -1228,7 +1154,7 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
     if (tab != -1) {
         Editor *editor = tabWidget->editor(tab);
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
+        editor->requestDocumentInfo();
     }
 }
 
@@ -1243,6 +1169,7 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     disconnect(editor, &Editor::bannerRemoved, 0, 0);
 
     connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(editor, &Editor::documentInfoRequested, this, &MainWindow::refreshEditorUiCursorInfo);
     connect(editor, &Editor::currentLanguageChanged, this, &MainWindow::on_currentLanguageChanged);
     connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
     connect(editor, &Editor::cleanChanged, this, [=]() {
@@ -1264,15 +1191,26 @@ void MainWindow::on_editorAdded(EditorTabWidget *tabWidget, int tab)
     editor->setMathEnabled(ui->actionMath_Rendering->isChecked());
 }
 
-void MainWindow::on_cursorActivity()
+void MainWindow::on_cursorActivity(QMap<QString, QVariant> data)
 {
     Editor *editor = dynamic_cast<Editor *>(sender());
     if (!editor)
         return;
 
     if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(editor);
+        refreshEditorUiCursorInfo(data);
     }
+}
+
+void MainWindow::refreshEditorUiCursorInfo(QMap<QString, QVariant> data)
+{
+    auto curData = data["cursor"].toList();
+    auto selData = data["selections"].toList();
+    auto conData = data["content"].toList();
+    QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
+    msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
+    msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
+    m_sbDocumentInfoLabel->setText(msg);
 }
 
 void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
@@ -1283,36 +1221,6 @@ void MainWindow::on_currentLanguageChanged(QString /*id*/, QString /*name*/)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
-    }
-}
-
-void MainWindow::refreshEditorUiCursorInfo(Editor *editor)
-{
-    if (editor != 0) {
-        // Update status bar
-        editor->asyncSendMessageWithResultP("C_FUN_GET_TEXT_LENGTH").then([=](QVariant len){
-            editor->lineCount().then([=](int lines){
-                m_statusBar_length_lines->setText(tr("%1 chars, %2 lines").arg(len.toInt()).arg(lines));
-
-                editor->cursorPositionP().then([=](QPair<int, int> cursor) {
-                    editor->selectedTexts().then([=](QStringList selections){
-                        int selectedChars = 0;
-                        int selectedPieces = 0;
-
-                        for (QString sel : selections) {
-                            selectedChars += sel.length();
-                            selectedPieces += sel.split("\n").count();
-                        }
-
-                        m_statusBar_curPos->setText(tr("Ln %1, col %2")
-                                                    .arg(cursor.first + 1)
-                                                    .arg(cursor.second + 1));
-
-                        m_statusBar_selection->setText(tr("Sel %1 (%2)").arg(selectedChars).arg(selectedPieces));
-                    });
-                });
-            });
-        });
     }
 }
 
@@ -1381,8 +1289,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
 {
     // Update current language in statusbar
     QString name = editor->getLanguage()->name;
-    m_statusBar_fileFormat->setText(name);
-
+    m_sbFileFormatBtn->setText(name);
 
     // Update MainWindow title
     QString newTitle;
@@ -1440,13 +1347,13 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     QString eol = editor->endOfLineSequence();
     if (eol == "\r\n") {
         ui->actionWindows_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Windows"));
+        m_sbEOLFormatBtn->setText(tr("Windows"));
     } else if (eol == "\n") {
         ui->actionUNIX_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("UNIX / OS X"));
+        m_sbEOLFormatBtn->setText(tr("UNIX / OS X"));
     } else if (eol == "\r") {
         ui->actionMac_Format->setChecked(true);
-        m_statusBar_EOLstyle->setText(tr("Old Mac"));
+        m_sbEOLFormatBtn->setText(tr("Old Mac"));
     }
 
     // Encoding
@@ -1457,7 +1364,7 @@ void MainWindow::refreshEditorUiInfo(Editor *editor)
     } else {
         encoding = QString::fromUtf8(editor->codec()->name());
     }
-    m_statusBar_textFormat->setText(encoding);
+    m_sbTextFormatBtn->setText(encoding);
 
     // Indentation
     if (editor->isUsingCustomIndentationMode()) {
@@ -1839,7 +1746,7 @@ void MainWindow::on_documentReloaded(EditorTabWidget *tabWidget, int tab)
 
     if (currentEditor() == editor) {
         refreshEditorUiInfo(editor);
-        refreshEditorUiCursorInfo(editor);
+        editor->requestDocumentInfo();
     }
 }
 

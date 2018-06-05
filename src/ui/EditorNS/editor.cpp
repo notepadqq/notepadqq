@@ -176,9 +176,11 @@ namespace EditorNS
                 emit contentChanged();
             else if(msg == "J_EVT_CLEAN_CHANGED")
                 emit cleanChanged(data.toBool());
-            else if(msg == "J_EVT_CURSOR_ACTIVITY")
-                emit cursorActivity();
-
+            else if (msg == "J_EVT_CURSOR_ACTIVITY") {
+                emit cursorActivity(data.toMap());
+            } else if (msg == "J_EVT_DOCUMENT_INFO") {
+                emit documentInfoRequested(data.toMap());
+            }
         });
     }
 
@@ -589,6 +591,11 @@ namespace EditorNS
              return QPair<int, int>(cursor[0].toInt(), cursor[1].toInt());
         });
 
+    }
+
+    void Editor::requestDocumentInfo()
+    {
+        asyncSendMessageWithResultP("C_CMD_GET_DOCUMENT_INFO");
     }
 
     QPair<int, int> Editor::cursorPosition()
