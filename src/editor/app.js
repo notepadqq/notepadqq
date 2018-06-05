@@ -667,6 +667,24 @@ UiDriver.registerEventHandler("C_CMD_EOL_TO_SPACE", function(msg, data, prevRetu
     editor.setValue(text.replace(/\n/gm," "));
 });
 
+function getDocumentInfo()
+{
+    var map = new Object();
+    var selections = editor.getSelection("\n");
+    var cursor = editor.getCursor("head");
+    map["cursor"] = [cursor.line, cursor.ch];
+    map["selections"] = [selections.split(/\r\n|\r|\n/).length, selections.length];
+    map["content"] = [editor.lineCount(), editor.getValue().length];
+    return map;
+}
+
+/**
+* @brief Replies to the request for document information. 
+*/
+UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, prevReturn) {
+    UiDriver.sendMessage("J_EVT_DOCUMENT_INFO", getDocumentInfo());
+});
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
@@ -712,8 +730,8 @@ $(document).ready(function () {
         UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
     });
 
-    editor.on("cursorActivity", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY");
+    editor.on("cursorActivity", function(instance) {
+        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getDocumentInfo());
     });
 
     editor.on("focus", function() {

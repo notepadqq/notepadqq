@@ -80,6 +80,7 @@ public:
     void generateRunMenu();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
+    void refreshEditorUiCursorInfo(QMap<QString, QVariant> data);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -91,7 +92,6 @@ protected:
 private slots:
     void runCommand();
     void modifyRunCommands();
-    void refreshEditorUiCursorInfo(Editor *editor);
     void searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
     void on_actionNew_triggered();
     void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
@@ -107,7 +107,7 @@ private slots:
     void on_actionCut_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
-    void on_cursorActivity();
+    void on_cursorActivity(QMap<QString, QVariant> data);
     void on_actionDelete_triggered();
     void on_actionSelect_All_triggered();
     void on_actionAbout_Notepadqq_triggered();
@@ -206,13 +206,11 @@ private:
     DocEngine*            m_docEngine;
     QMenu*                m_tabContextMenu;
     QList<QAction *>      m_tabContextMenuActions;
-    QLabel*               m_statusBar_fileFormat;
-    QLabel*               m_statusBar_length_lines;
-    QLabel*               m_statusBar_curPos;
-    QLabel*               m_statusBar_selection;
-    QLabel*               m_statusBar_EOLstyle;
-    QLabel*               m_statusBar_textFormat;
-    QLabel*               m_statusBar_overtypeNotify;
+    QLabel* m_sbDocumentInfoLabel;
+    QPushButton* m_sbFileFormatBtn;
+    QPushButton* m_sbEOLFormatBtn;
+    QPushButton* m_sbTextFormatBtn;
+    QPushButton* m_sbOvertypeBtn;
     NqqSettings&          m_settings;
     frmSearchReplace*     m_frmSearchReplace = 0;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
@@ -236,7 +234,6 @@ private:
      */
     bool                finalizeAllTabs();
 
-    void                createStatusBar();
     int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
 
     /**
@@ -298,6 +295,7 @@ private:
      * @brief Initialize UI from settings
      */
     void configureUserInterface();
+    void configureStatusBar();
 
     /**
      * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.
