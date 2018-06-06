@@ -3,7 +3,7 @@
 
 #pragma GCC diagnostic push
 
-#pragma GCC diagnostic ignored "-Wunused-local-typedef"
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
 #include "../src/qtpromise/qpromise.h"
