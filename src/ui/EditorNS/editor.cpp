@@ -238,7 +238,7 @@ namespace EditorNS
 
     bool Editor::isClean()
     {
-        QVariant data(0); // avoid crash on Mac OS X
+        QVariant data(0); // avoid crash on Mac OS X, see issue #702
         return asyncSendMessageWithResult("C_FUN_IS_CLEAN", data).get().toBool();
     }
 
