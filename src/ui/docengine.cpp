@@ -295,7 +295,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         } else {
             editor->setFilePath(url);
             tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-            editor->setLanguageFromFileName();
+            editor->setLanguageFromFilePath();
         }
 
         monitorDocument(editor);
@@ -720,7 +720,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         if (!copy) {
             if (editor->filePath() != outFileName) {
                 editor->setFilePath(outFileName);
-                editor->setLanguageFromFileName();
+                editor->setLanguageFromFilePath();
             }
             editor->markClean();
             editor->setFileOnDiskChanged(false);

@@ -412,7 +412,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if (cacheFileExists) {
                 editor->markDirty();
-                editor->setLanguageFromFileName();
+                editor->setLanguageFromFilePath();
                 // Since we loaded from cache we want to unmonitor the cache file.
                 docEngine->unmonitorDocument(editor);
             }
