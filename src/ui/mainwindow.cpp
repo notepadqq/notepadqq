@@ -326,7 +326,7 @@ void MainWindow::configureStatusBar()
     m_sbDocumentInfoLabel = new QLabel;
     m_sbDocumentInfoLabel->setMinimumWidth(1);
     statusBar()->addWidget(m_sbDocumentInfoLabel);
-    auto createStatusButton = [&](const QString& txt, int minWidth, QMenu* mnu = nullptr) {
+    auto createStatusButton = [&](const QString& txt, QMenu* mnu = nullptr) {
         auto* btn = new QPushButton(txt);
         btn->setFlat(true);
         btn->setMenu(mnu);
@@ -340,10 +340,10 @@ void MainWindow::configureStatusBar()
         statusBar()->addPermanentWidget(btn);
         return btn;
     };
-    m_sbFileFormatBtn = createStatusButton("File Format", 120, ui->menu_Language);
-    m_sbEOLFormatBtn = createStatusButton("EOL", 92, ui->menuEOL_Conversion);
-    m_sbTextFormatBtn = createStatusButton("Encoding", 120, ui->menu_Encoding);
-    m_sbOvertypeBtn = createStatusButton("INS", 40);
+    m_sbFileFormatBtn = createStatusButton("File Format", ui->menu_Language);
+    m_sbEOLFormatBtn = createStatusButton("EOL", ui->menuEOL_Conversion);
+    m_sbTextFormatBtn = createStatusButton("Encoding", ui->menu_Encoding);
+    m_sbOvertypeBtn = createStatusButton("INS");
     connect(m_sbOvertypeBtn, &QPushButton::clicked, this, &MainWindow::toggleOverwrite);
 }
 
