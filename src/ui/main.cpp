@@ -126,8 +126,6 @@ int main(int argc, char *argv[])
     // There are no other instances: start a new server.
     a.startServer();
 
-    Editor::addEditorToBuffer(10);
-
     QFile file(Notepadqq::editorPath());
     if (!file.open(QIODevice::ReadOnly)) {
         qCritical() << "Can't open file: " + file.fileName();
