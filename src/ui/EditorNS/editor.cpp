@@ -286,23 +286,25 @@ namespace EditorNS
         }
     }
 
-    void Editor::setLanguageFromFileName(const QString& fileName)
+    void Editor::setLanguageFromFilePath(const QString& filePath)
     {
+        auto name = QFileInfo(filePath).fileName();
+
         auto& cache = LanguageService::getInstance();
-        auto lang = cache.lookupByFileName(fileName);
+        auto lang = cache.lookupByFileName(name);
         if (lang != nullptr) {
             setLanguage(lang);
             return;
         }
-        lang = cache.lookupByExtension(fileName);
+        lang = cache.lookupByExtension(name);
         if (lang != nullptr) {
             setLanguage(lang);
         }
     }
 
-    void Editor::setLanguageFromFileName()
+    void Editor::setLanguageFromFilePath()
     {
-        setLanguageFromFileName(filePath().toString());
+        setLanguageFromFilePath(filePath().toString());
     }
 
     QPromise<void> Editor::setIndentationMode(const Language* lang)
