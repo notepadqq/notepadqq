@@ -331,6 +331,12 @@ void MainWindow::configureStatusBar()
         btn->setFlat(true);
         btn->setMenu(mnu);
         btn->setFocusPolicy(Qt::NoFocus);
+
+#ifdef Q_OS_MACX
+        // MacOS style issues workaround (see #708)
+        btn->setStyleSheet(QString("QPushButton { background: %1; }").arg(QPalette().shadow().color().name()));
+#endif
+
         statusBar()->addPermanentWidget(btn);
         return btn;
     };
