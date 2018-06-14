@@ -615,6 +615,9 @@
    <property name="text">
     <string>&amp;Clone to Other View</string>
    </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionMove_to_New_Window">
    <property name="text">
