@@ -627,6 +627,10 @@ QString DocEngine::getAvailableSudoProgram() const
     p.start("which gksu");
     p.waitForFinished(10);
     if (p.exitCode() == 0) return "gksu";
+    
+    p.start("which pkexec");
+    p.waitForFinished(10);
+    if (p.exitCode() == 0) return "pkexec";
 
     return "";
 }
@@ -657,6 +661,8 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
                 << "-S" << "-m" << tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
                 .arg(outFileName.toLocalFile())
                 << "cp" << filePath << outFileName.toLocalFile());
+    else if (sudoProgram == "pkexec")
+        p.start("pkexec", QStringList() << "cp" << filePath << outFileName.toLocalFile());
     else
         return false;
 
