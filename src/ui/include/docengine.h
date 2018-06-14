@@ -197,13 +197,13 @@ private:
 
     /**
      * @brief getAvailableSudoProgram Queries the system to find a supported graphical sudo tool.
-     * @return Empty string if none found. Else either 'kdesu' or 'gksu'.
+     * @return Empty string if none found. Else either 'kdesu', 'gksu', or 'pkexec'.
      */
     QString getAvailableSudoProgram() const;
 
     /**
      * @brief Attempts to save the contents of editor to outFileName using a graphical sudo program.
-     * @param sudoProgram Name of the sudo tool to use. Only 'kdesu' and 'gksu' supported.
+     * @param sudoProgram Name of the sudo tool to use. Only 'kdesu', 'gksu' and 'pkexec' supported.
      * @param outFileName Target location of file
      * @param editor Editor to be saved
      * @return True if successful.
