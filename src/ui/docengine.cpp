@@ -621,16 +621,16 @@ QString DocEngine::getAvailableSudoProgram() const
     QProcess p;
 
     p.start("which kdesu");
-    p.waitForFinished(10);
-    if (p.exitCode() == 0) return "kdesu";
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "kdesu";
 
     p.start("which gksu");
-    p.waitForFinished(10);
-    if (p.exitCode() == 0) return "gksu";
-    
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "gksu";
+
     p.start("which pkexec");
-    p.waitForFinished(10);
-    if (p.exitCode() == 0) return "pkexec";
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "pkexec";
 
     return "";
 }
