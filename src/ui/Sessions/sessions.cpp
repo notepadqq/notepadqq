@@ -394,11 +394,12 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 continue;
 
             docEngine->getDocumentLoader()
-                     .setUrl(loadUrl)
-                     .setTabWidget(tabW)
-                     .setRememberLastDir(false)
-                     .execute()
-                     .wait(); // FIXME Transform to async
+                .setUrl(loadUrl)
+                .setTabWidget(tabW)
+                .setRememberLastDir(false)
+                .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
+                .execute()
+                .wait(); // FIXME Transform to async
 
             int idx = tabW->findOpenEditorByUrl(loadUrl);
 
@@ -411,7 +412,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             if (cacheFileExists) {
                 editor->markDirty();
-                editor->setLanguageFromFileName();
+                editor->setLanguageFromFilePath();
                 // Since we loaded from cache we want to unmonitor the cache file.
                 docEngine->unmonitorDocument(editor);
             }

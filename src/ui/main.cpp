@@ -11,7 +11,7 @@
 #include "include/stats.h"
 
 #include <QDateTime>
-#include <QFile>
+#include <QFileInfo>
 #include <QLocale>
 #include <QObject>
 #include <QTranslator>
@@ -126,14 +126,11 @@ int main(int argc, char *argv[])
     // There are no other instances: start a new server.
     a.startServer();
 
-    Editor::addEditorToBuffer(10);
-
-    QFile file(Notepadqq::editorPath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << "Can't open file: " + file.fileName();
+    QFileInfo finfo(Notepadqq::editorPath());
+    if (!finfo.isReadable()) {
+        qCritical() << "Can't open file: " + finfo.filePath();
         return EXIT_FAILURE;
     }
-    file.close();
 
     if (Extensions::ExtensionsLoader::extensionRuntimePresent()) {
         Extensions::ExtensionsLoader::startExtensionsServer();

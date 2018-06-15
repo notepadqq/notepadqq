@@ -70,7 +70,8 @@ parts:
       - unity-gtk-module-common
       - unity-schemas
       
-      
+    options:
+        DEFINES+=BUILD_SNAP 
 
     source: . 
     after: [desktop-qt5] 

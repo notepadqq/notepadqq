@@ -295,7 +295,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         } else {
             editor->setFilePath(url);
             tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-            editor->setLanguageFromFileName();
+            editor->setLanguageFromFilePath();
         }
 
         monitorDocument(editor);
@@ -621,12 +621,16 @@ QString DocEngine::getAvailableSudoProgram() const
     QProcess p;
 
     p.start("which kdesu");
-    p.waitForFinished(10);
-    if (p.exitCode() == 0) return "kdesu";
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "kdesu";
 
     p.start("which gksu");
-    p.waitForFinished(10);
-    if (p.exitCode() == 0) return "gksu";
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "gksu";
+
+    p.start("which pkexec");
+    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
+        return "pkexec";
 
     return "";
 }
@@ -657,6 +661,8 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
                 << "-S" << "-m" << tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
                 .arg(outFileName.toLocalFile())
                 << "cp" << filePath << outFileName.toLocalFile());
+    else if (sudoProgram == "pkexec")
+        p.start("pkexec", QStringList() << "cp" << filePath << outFileName.toLocalFile());
     else
         return false;
 
@@ -720,7 +726,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
         if (!copy) {
             if (editor->filePath() != outFileName) {
                 editor->setFilePath(outFileName);
-                editor->setLanguageFromFileName();
+                editor->setLanguageFromFilePath();
             }
             editor->markClean();
             editor->setFileOnDiskChanged(false);

@@ -216,17 +216,17 @@ QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
                     }
                     if (j < 0) {
                         if (i-1 >= 0) {
-                            iteration(i-1, tabWidget(i-1)->count() - 1);
+                            iteration(i-1, this->tabWidget(i-1)->count() - 1);
                         }
                         return;
                     }
 
-                    EditorTabWidget *tabW = tabWidget(i);
+                    EditorTabWidget *tabW = this->tabWidget(i);
                     callback(i, j, tabW, tabW->editor(j), iteration(i, j-1), [resolve](){ resolve(); });
                 };
             };
 
-            iteration(count() - 1, tabWidget(0)->count() - 1)();
+            iteration(count() - 1, this->tabWidget(0)->count() - 1)();
 
         } else {
             std::function<std::function<void()>(int,int)> iteration = [=](int i, int j) {
@@ -235,12 +235,12 @@ QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
                         resolve();
                         return;
                     }
-                    if (j >= tabWidget(i)->count()) {
+                    if (j >= this->tabWidget(i)->count()) {
                         iteration(i+1, 0);
                         return;
                     }
 
-                    EditorTabWidget *tabW = tabWidget(i);
+                    EditorTabWidget *tabW = this->tabWidget(i);
                     callback(i, j, tabW, tabW->editor(j), iteration(i, j+1), [resolve](){ resolve(); });
                 };
             };
