@@ -75,7 +75,11 @@ void Stats::check() {
 
     QJsonObject data;
     data["version"] = QString(POINTVERSION);
+#ifndef BUILD_SNAP
     data["qt_version"] = QString(qVersion());
+#else
+    data["qt_version"] = QString(qVersion()) + " (Snap)";
+#endif
 
 #if QT_VERSION >= 0x050400
     data["os"] = QSysInfo::productType();
