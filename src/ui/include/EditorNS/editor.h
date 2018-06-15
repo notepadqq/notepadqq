@@ -11,6 +11,7 @@
 #include <QVariant>
 #include <QWheelEvent>
 #include <QtPromise>
+#include <QPrinter>
 
 #include <functional>
 #include <future>
