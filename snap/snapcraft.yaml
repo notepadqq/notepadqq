@@ -40,7 +40,7 @@ parts:
       #add-apt-repository -y ppa:beineri/opt-qt595-xenial
       #add-apt-repository -y ppa:ubuntu-toolchain-r/test
       apt-get update
-      apt-get install -y qt59base qt59webengine qt59webchannel qt59websockets qt59svg qt59tools
+      apt-get install -y --allow-unauthenticated qt59base qt59webengine qt59webchannel qt59websockets qt59svg qt59tools
       #apt-get install -y gcc-7 g++-7
 
   qt:
@@ -54,6 +54,7 @@ parts:
 
   nqq:
     build-packages:
+      - build-essential
       - freeglut3-dev
 
     stage-packages:

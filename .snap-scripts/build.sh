@@ -29,6 +29,11 @@ export LRELEASE=$(which lrelease)
 
 export CXX=$(which g++-7)
 
+# Make g++-7 the default version
+# Fixes a bug where during the build of src/ui we somehow
+# produce a call to "g++" instead of "g++-7"
+ln -fs $(which g++-7) /usr/bin/g++
+
 ./configure --prefix $SNAPCRAFT_PART_INSTALL/usr/local
 make BUILD_SNAP=1
 make install
