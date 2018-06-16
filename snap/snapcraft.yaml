@@ -32,6 +32,8 @@ parts:
 
   qt-get:
     plugin: nil
+    build-packages:
+      - software-properties-common
     override-build: |
       add-apt-repository -y ppa:beineri/opt-qt595-xenial
       add-apt-repository -y ppa:ubuntu-toolchain-r/test
