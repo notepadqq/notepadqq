@@ -11,7 +11,7 @@ icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
 
 apps:
   notepadqq: 
-    command: bash $SNAP/usr/bin/notepadqq-launch.sh $SNAP/usr/local/lib/notepadqq/notepadqq-bin
+    command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     desktop: usr/local/share/applications/notepadqq.desktop
 #   plugs:  # Plugs are not needed for classic confinement
 #     - browser-support
@@ -29,39 +29,25 @@ apps:
 #     - x11
 
 parts:
-
-  qt-get:
+  fixicon:
     plugin: nil
+    after: [my-part]
     override-build: |
-      echo "deb http://ppa.launchpad.net/beineri/opt-qt592-xenial/ubuntu xenial main" >> /etc/apt/sources.list
-      echo "deb-src http://ppa.launchpad.net/beineri/opt-qt592-xenial/ubuntu xenial main" >> /etc/apt/sources.list
-      echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
-      echo "deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main" >> /etc/apt/sources.list
-      #add-apt-repository -y ppa:beineri/opt-qt595-xenial
-      #add-apt-repository -y ppa:ubuntu-toolchain-r/test
-      apt-get update
-      apt-get install -y --allow-unauthenticated qt59base qt59webengine qt59webchannel qt59websockets qt59svg qt59tools
-      #apt-get install -y gcc-7 g++-7
+      sed -i 's|Icon=notepadqq|Icon=/usr/local/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/local/share/applications/notepadqq.desktop
 
-  qt:
-    after: [qt-get]
-    source: /opt
-    plugin: dump
-    organize:
-      'qt59' : opt/qt59
-    stage:
-      - opt/qt59
+  my-part:
 
-  nqq:
     build-packages:
-      - build-essential
-      - freeglut3-dev
 
-    stage-packages:
-      - gcc-7
-      - g++-7
-      - libstdc++6
-      - libnss3
+      - qtbase5-dev
+      - qtwebengine5-dev
+      - libqt5websockets5-dev
+      - libqt5svg5-dev
+      - qttools5-dev-tools
+      
+      
+    stage-packages: 
+      
       - adwaita-icon-theme-full
       - bamfdaemon
       - coreutils
@@ -72,32 +58,25 @@ parts:
       - libatk-adaptor
       - libcanberra-gtk-module
       - libgail-common
+      - libqt5svg5
+      - libqt5webkit5
       - light-themes
       - man-db
       - mime-support
       - numix-gtk-theme
       - overlay-scrollbar-gtk2
       - packagekit-gtk3-module
+      - qtbase5-dev 
       - unity-gtk-module-common
       - unity-schemas
+      
+    options:
+        DEFINES+=BUILD_SNAP 
 
     source: . 
-    after: [qt]
-    plugin: nil
+    after: [desktop-qt5] 
+    plugin: qmake
+
     override-build: |
       sed -i '/.*QMAKE_RPATH=$/d' src/ui/ui.pro  # Hack for forcing the use of RPATH
-      bash "$SNAPCRAFT_STAGE"/../.snap-scripts/build.sh
-
-  fixicon:
-    plugin: nil
-    after: [nqq]
-    override-build: |
-      sed -i 's|Icon=notepadqq|Icon=/usr/local/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/local/share/applications/notepadqq.desktop
-
-  launch-scripts:
-    source: .snap-scripts
-    plugin: dump
-    organize:
-      'notepadqq-launch.sh' : usr/bin/notepadqq-launch.sh
-    stage:
-      - usr/bin/notepadqq-launch.sh
+      snapcraftctl build
