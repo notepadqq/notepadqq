@@ -169,7 +169,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         QString localFileName = url.toLocalFile();
         QFileInfo fi(localFileName);
 
-        const QPair<int, int> openPos = findOpenEditorByUrl(url);
+        const QPair<int, int> openPos = this->findOpenEditorByUrl(url);
         const bool isAlreadyOpen = openPos.first > -1; //'true' when we're reloading a tab
 
         if(isAlreadyOpen && reloadAction == ReloadActionDont) {
@@ -181,7 +181,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
                 tabW->setCurrentIndex(openPos.second);
             }
 
-            emit documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
+            emit this->documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
             return _continue;
         }
 
@@ -241,7 +241,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
 
         QFile file(localFileName);
         if (file.exists()) {
-            QPromise<void> readResult = read(&file, editor, codec, bom).wait(); // FIXME To async!
+            QPromise<void> readResult = this->read(&file, editor, codec, bom).wait(); // FIXME To async!
 
             while (readResult.isRejected()) {
                 // Handle error
@@ -298,7 +298,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
             editor->setLanguageFromFilePath();
         }
 
-        monitorDocument(editor);
+        this->monitorDocument(editor);
 
         if (*isFirstDocument) {
             *isFirstDocument = false;
@@ -307,9 +307,9 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         }
 
         if (isAlreadyOpen) {
-            emit documentReloaded(tabWidget, tabIndex);
+            emit this->documentReloaded(tabWidget, tabIndex);
         } else {
-            emit documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
+            emit this->documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
         }
 
         return _continue;

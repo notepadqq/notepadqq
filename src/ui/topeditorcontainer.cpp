@@ -226,12 +226,12 @@ QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
                 };
             };
 
-            iteration(count() - 1, this->tabWidget(0)->count() - 1)();
+            iteration(this->count() - 1, this->tabWidget(0)->count() - 1)();
 
         } else {
             std::function<std::function<void()>(int,int)> iteration = [=](int i, int j) {
                 return [=]() {
-                    if (i >= count()) {
+                    if (i >= this->count()) {
                         resolve();
                         return;
                     }
@@ -256,8 +256,8 @@ QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (c
 
         // Collect all the indices we're going to use
         std::vector<std::pair<int,int>> indices;
-        for (int i = 0; i < count(); i++) {
-            EditorTabWidget *tabW = tabWidget(i);
+        for (int i = 0; i < this->count(); i++) {
+            EditorTabWidget *tabW = this->tabWidget(i);
             for (int j = 0; j < tabW->count(); j++) {
                 indices.push_back(std::make_pair(i, j));
             }
@@ -269,7 +269,7 @@ QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (c
         for (const auto idx : indices) {
             int i = idx.first;
             int j = idx.second;
-            callback(i, j, tabWidget(i), tabWidget(i)->editor(j), [cnt, resolve](){
+            callback(i, j, this->tabWidget(i), this->tabWidget(i)->editor(j), [cnt, resolve](){
                 (*cnt)--;
                 if (*cnt == 0) {
                     resolve();

@@ -67,6 +67,12 @@ MainWindow::MainWindow(const QString &workingDirectory, const QStringList &argum
 
     loadIcons();
 
+    // Printing a WebEnginePage not supported prior to 5.8
+#if QT_VERSION < QT_VERSION_CHECK(5,8,0)
+    ui->actionPrint->setEnabled(false);
+    ui->actionPrint->setVisible(false);
+#endif
+
     // Context menu initialization
     m_tabContextMenu = new QMenu(this);
     QAction *separator = new QAction(this);
