@@ -776,6 +776,7 @@ namespace EditorNS
         // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
         // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,8,0)
         setTheme(themeFromName("default"));
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
@@ -785,6 +786,7 @@ namespace EditorNS
             m_webView->setStyleSheet("");
             setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
         });
+#endif
     }
 
     QPromise<QString> Editor::getCurrentWord()
