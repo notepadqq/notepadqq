@@ -145,6 +145,7 @@
     <addaction name="actionPaste"/>
     <addaction name="actionDelete"/>
     <addaction name="actionSelect_All"/>
+    <addaction name="actionBegin_End_Select"/>
     <addaction name="separator"/>
     <addaction name="menuCopy_to_Clipboard"/>
     <addaction name="menuConvert_Case_to"/>
@@ -1036,6 +1037,14 @@
    </property>
    <property name="text">
     <string>S&amp;how Toolbar</string>
+   </property>
+  </action>
+  <action name="actionBegin_End_Select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Begin/End Select</string>
    </property>
   </action>
  </widget>

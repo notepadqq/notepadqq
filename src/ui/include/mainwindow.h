@@ -105,6 +105,7 @@ private slots:
     void on_actionCopy_triggered();
     void on_actionPaste_triggered();
     void on_actionCut_triggered();
+    void on_actionBegin_End_Select_triggered();
     void on_currentEditorChanged(EditorTabWidget* tabWidget, int tab);
     void on_editorAdded(EditorTabWidget* tabWidget, int tab);
     void on_cursorActivity(QMap<QString, QVariant> data);
@@ -216,6 +217,8 @@ private:
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
+    QPair<int, int>       beginSelectPosition;
+    bool                  beginSelectPositionSet = false;
 
     AdvancedSearchDock*  m_advSearchDock;
 
