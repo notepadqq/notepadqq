@@ -1161,6 +1161,19 @@ void MainWindow::on_actionCut_triggered()
     currentEditor()->setSelectionsText(QStringList(""));
 }
 
+void MainWindow::on_actionBegin_End_Select_triggered()
+{
+    if (!beginSelectPositionSet) {
+        beginSelectPosition = currentEditor()->cursorPosition();
+        beginSelectPositionSet = true;
+    } else {
+        QPair<int, int> endSelectPosition = currentEditor()->cursorPosition();
+        currentEditor()->setSelection(
+            beginSelectPosition.first, beginSelectPosition.second, endSelectPosition.first, endSelectPosition.second);
+        beginSelectPositionSet = false;
+    }
+}
+
 void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
 {
     if (tab != -1) {
