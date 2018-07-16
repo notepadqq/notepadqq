@@ -1016,7 +1016,6 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1047"/>
         <source>Begin/End Select</source>
-        <translatorcomment>Kijelölés kezdete/vége</translatorcomment>
         <translation>Kijelölés kezdete/vége</translation>
     </message>
     <message>
