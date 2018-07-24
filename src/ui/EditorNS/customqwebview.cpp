@@ -61,4 +61,35 @@ namespace EditorNS
 
         menu->popup(event->globalPos());
     }
+
+    bool EditorNS::CustomQWebView::eventFilter(QObject* obj, QEvent* ev)
+    {
+        if (obj != childObj)
+            return QWebEngineView::eventFilter(obj, ev);
+
+        switch (ev->type()) {
+        case QEvent::FocusIn:
+            focusInEvent(static_cast<QFocusEvent*>(ev));
+            break;
+        case QEvent::KeyPress:
+            keyPressEvent(static_cast<QKeyEvent*>(ev));
+            break;
+        }
+
+        return QWebEngineView::eventFilter(obj, ev);
+    }
+
+    bool EditorNS::CustomQWebView::event(QEvent* evt)
+    {
+        if (evt->type() == QEvent::ChildPolished) {
+            QChildEvent* child_ev = static_cast<QChildEvent*>(evt);
+            childObj = child_ev->child();
+
+            if (childObj) {
+                childObj->installEventFilter(this);
+            }
+        }
+
+        return QWebEngineView::event(evt);
+    }
 }
