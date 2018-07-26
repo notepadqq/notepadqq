@@ -66,12 +66,17 @@ public:
     void setTabText(Editor* editor, const QString& text);
     void setTabText(int index, const QString& text);
 
+    int formerTabIndex();
+
 private:
 
     // Smart pointers to the editors within this TabWidget
     QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;
 
     qreal m_zoomFactor = 1;
+
+    int m_formerTabIndex = 0;
+    int m_mostRecentTabIndex = 0;
 
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
@@ -91,6 +96,7 @@ private slots:
     void on_cleanChanged(bool isClean); 
     void on_editorMouseWheel(QWheelEvent *ev);
     void on_fileNameChanged(const QUrl &, const QUrl &newFileName);
+    void on_currentTabChanged(int index);
 signals:
     void gotFocus();
     void editorAdded(int index);

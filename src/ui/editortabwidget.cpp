@@ -21,6 +21,8 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     this->setTabBarHidden(false);
     this->setTabBarHighlight(false);
 
+    connect(this, &EditorTabWidget::currentChanged, this, &EditorTabWidget::on_currentTabChanged);
+
 #ifdef Q_OS_MACX
     this->tabBar()->setExpanding(true);
     this->setUsesScrollButtons(true);
@@ -354,4 +356,18 @@ void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUr
 
     setTabText(index, fileName);
     setTabToolTip(index, fullFileName);
+}
+
+int EditorTabWidget::formerTabIndex()
+{
+    return m_formerTabIndex;
+}
+
+void EditorTabWidget::on_currentTabChanged(int index)
+{
+    // Store current index to become former index on next tab change.
+    if (m_mostRecentTabIndex != index) {
+        m_formerTabIndex = m_mostRecentTabIndex;
+        m_mostRecentTabIndex = index;
+    }
 }

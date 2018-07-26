@@ -2609,3 +2609,9 @@ void MainWindow::on_actionShow_Toolbar_toggled(bool arg1)
 {
     m_mainToolBar->setVisible(arg1);
 }
+
+void MainWindow::on_actionToggle_To_Former_Tab_triggered()
+{
+    EditorTabWidget* curTabWidget = m_topEditorContainer->currentTabWidget();
+    curTabWidget->setCurrentIndex(curTabWidget->formerTabIndex());
+}
