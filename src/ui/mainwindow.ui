@@ -206,6 +206,7 @@
     <addaction name="menuMove_Clone_Current_Document"/>
     <addaction name="actionWord_wrap"/>
     <addaction name="actionMath_Rendering"/>
+    <addaction name="actionToggle_To_Former_Tab"/>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionFull_Screen"/>
@@ -1045,6 +1046,17 @@
    </property>
    <property name="text">
     <string>Begin/End Select</string>
+   </property>
+  </action>
+  <action name="actionToggle_To_Former_Tab">
+   <property name="text">
+    <string>Toggle To Former Tab</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Back to Former Tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
