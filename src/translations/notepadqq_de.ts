@@ -2081,7 +2081,7 @@ Wollen Sie dennoch speichern?</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="140"/>
-        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
+        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitly saved.</source>
         <translation>Hilft dabei Dokumente nach einem Absturz wieder herzustellen, auch ohne diese vorher explizit zu sichern.</translation>
     </message>
     <message>

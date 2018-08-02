@@ -2075,7 +2075,7 @@ A Notepadqq rootként való futtatása nem ajánlott. Ha mindenképpen szükség
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="133"/>
-        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
+        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitly saved.</source>
         <translation>Ez az opció lehetővé teszi a Notepadqq számára, hogy egy összeomlást követően helyreállítsa a dokumentumokat, még akkor is, ha azok nem lettek elmentetve.</translation>
     </message>
     <message>
