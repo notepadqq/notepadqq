@@ -17,7 +17,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="176"/>
         <source>Go To Previous Result (Shift+F4)</source>
-        <translation>Zum vorherigen Ergebis (Umschalt+F4)</translation>
+        <translation>Zum vorherigen Ergebnis (Umschalt+F4)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="181"/>
@@ -182,7 +182,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="423"/>
         <source>&lt;h3&gt;One or more searches are still in progress&lt;/h3&gt;</source>
-        <translation>&lt;h3&gt;Ein oder mehr Suchvorgänge noch am laufen&lt;/h3&gt;</translation>
+        <translation>&lt;h3&gt;Ein oder mehr Suchvorgänge laufen noch&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="424"/>
@@ -1131,7 +1131,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="672"/>
         <source>Run a Macro Multiple Times...</source>
-        <translation>Lasse ein Makro mehrfach laufen...</translation>
+        <translation>Makro mehrmals ausführen...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="680"/>
@@ -2051,7 +2051,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="81"/>
         <source>Toolbar</source>
-        <translation>Wergzeugleiste</translation>
+        <translation>Werkzeugleiste</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="86"/>
