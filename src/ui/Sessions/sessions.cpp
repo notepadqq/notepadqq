@@ -453,7 +453,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
             }
 
-            // loadDocuments() explicitely calls setFocus() so we'll have to undo that.
+            // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
             editor->clearFocus();
         } // end for
 

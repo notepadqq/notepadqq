@@ -840,12 +840,11 @@ void MainWindow::on_actionOpen_triggered()
     // See https://github.com/notepadqq/notepadqq/issues/654
     BackupServicePauser bsp; bsp.pause();
 
-    QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
-                                this,
-                                tr("Open"),
-                                defaultUrl,
-                                tr("All files (*)"),
-                                0, 0);
+    auto dialogOption =
+        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
+
+    QList<QUrl> fileNames =
+        QFileDialog::getOpenFileUrls(this, tr("Open"), defaultUrl, tr("All files (*)"), nullptr, dialogOption);
 
     if (fileNames.empty())
         return;
@@ -865,8 +864,11 @@ void MainWindow::on_actionOpen_Folder_triggered()
     // See https://github.com/notepadqq/notepadqq/issues/654
     BackupServicePauser bsp; bsp.pause();
 
+    auto dialogOption =
+        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
+
     // Select directory
-    QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), 0);
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Open Folder"), defaultUrl.toLocalFile(), dialogOption);
     if (folder.isEmpty())
         return;
 
@@ -1046,13 +1048,16 @@ int MainWindow::saveAs(EditorTabWidget *tabWidget, int tab, bool copy)
     // See https://github.com/notepadqq/notepadqq/issues/654
     BackupServicePauser bsp; bsp.pause();
 
+    auto dialogOption =
+        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
+
     // Ask for a file name
-    QString filename = QFileDialog::getSaveFileName(
-                           this,
-                           tr("Save as"),
-                           getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
-                           tr("Any file (*)"),
-                           nullptr, nullptr);
+    QString filename = QFileDialog::getSaveFileName(this,
+        tr("Save as"),
+        getSaveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
+        tr("Any file (*)"),
+        nullptr,
+        dialogOption);
 
     if (filename != "") {
         m_settings.General.setLastSelectedDir(QFileInfo(filename).absolutePath());
@@ -2542,12 +2547,11 @@ void MainWindow::on_actionLoad_Session_triggered()
                                m_settings.General.getLastSelectedSessionDir())
                                .toLocalFile();
 
+    auto dialogOption =
+        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
+
     QString filePath = QFileDialog::getOpenFileName(
-                           this,
-                           tr("Open Session..."),
-                           recentFolder,
-                           tr("Session file (*.xml);;Any file (*)"),
-                           0, 0);
+        this, tr("Open Session..."), recentFolder, tr("Session file (*.xml);;Any file (*)"), nullptr, dialogOption);
 
     if (filePath.isEmpty())
         return;
@@ -2574,6 +2578,7 @@ void MainWindow::on_actionSave_Session_triggered()
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("xml");
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setOption(QFileDialog::DontUseNativeDialog, !m_settings.General.getUseNativeFilePicker());
 
     if (!dialog.exec())
         return;

@@ -130,7 +130,7 @@
            <item>
             <widget class="QCheckBox" name="chkAutosave">
              <property name="toolTip">
-              <string>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</string>
+              <string>This option allows Notepadqq to recover your documents after a crash even if they were not explicitly saved.</string>
              </property>
              <property name="text">
               <string>Backup open documents every</string>

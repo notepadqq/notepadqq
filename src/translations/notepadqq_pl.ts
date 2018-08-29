@@ -2073,7 +2073,7 @@ Czy chcesz go zapisać mimo to?</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="133"/>
-        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
+        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitly saved.</source>
         <translation>Ta opcja pozwala Notepadqq na odzyskanie dokumentów po awarii, nawet jeśli nie zostały zapisane.</translation>
     </message>
     <message>
