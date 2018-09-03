@@ -601,7 +601,8 @@
     "mode":"javascript",
     "mime":"application/typescript",
     "fileExtensions":[
-      "ts"
+      "ts",
+	    "tsx"
     ]
   },
   "jinja2":{
