@@ -59,7 +59,6 @@ parts:
       - libcanberra-gtk-module
       - libgail-common
       - libqt5svg5
-      - libqt5webkit5
       - light-themes
       - man-db
       - mime-support
@@ -71,6 +70,7 @@ parts:
       - unity-schemas
       - libnss3
       - libcanberra-gtk3-module
+      - libqt5webenginecore5
       
     source: . 
     after: [desktop-qt5-my] # FIXME: Use upstream desktop-qt5 as soon as they support core18
