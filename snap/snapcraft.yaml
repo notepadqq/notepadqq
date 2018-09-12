@@ -35,6 +35,20 @@ parts:
     override-build: |
       sed -i 's|Icon=notepadqq|Icon=/usr/local/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/local/share/applications/notepadqq.desktop
 
+  qtconf-nqq:
+    plugin: dump
+    source: .snap-data/
+    organize:
+      qt.conf: usr/local/lib/notepadqq/qt.conf
+    after: [my-part]
+
+  qtconf-webengine:
+    plugin: dump
+    source: .snap-data/
+    organize:
+      qt.WebEngineProcess.conf: usr/lib/x86_64-linux-gnu/qt5/libexec/qt.conf
+    after: [my-part]
+
   my-part:
 
     build-packages:
@@ -70,7 +84,7 @@ parts:
       - unity-schemas
       - libnss3
       - libcanberra-gtk3-module
-      - libqt5webenginecore5
+      - libqt5webengine5
       
     source: . 
     after: [desktop-qt5-my] # FIXME: Use upstream desktop-qt5 as soon as they support core18
