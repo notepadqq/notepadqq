@@ -1,9 +1,6 @@
 language: cpp
 sudo: false
 
-env:
-  - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
-
 jobs:
   include:
     - stage: build
@@ -26,7 +23,9 @@ jobs:
         - docker
     - stage: deploy
       os: osx
-      env: NQQ_BUILD_TYPE=DEPLOY
+      env:
+        - NQQ_BUILD_TYPE=DEPLOY
+        - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
       script: .travis/macos-script.sh
       deploy:
         provider: releases
