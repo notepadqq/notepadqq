@@ -490,20 +490,10 @@ namespace EditorNS
 
         std::shared_future<QVariant> fut = resultPromise->get_future().share();
 
-
-        std::shared_ptr<QEventLoop> loop = std::make_shared<QEventLoop>();
-        QObject::connect(this, &Editor::asyncReplyReceived, this, [loop, fut, currentMsgIdentifier](unsigned int id, QString, QVariant){
-            if (id == currentMsgIdentifier) {
-                QApplication::processEvents();
-                if (loop->isRunning()) {
-                    loop->quit();
-                }
-            }
-        });
-        loop->exec(QEventLoop::WaitForMoreEvents);
-
-        // Make sure to process all the events before this
-        QApplication::processEvents();
+        while (fut.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+            QCoreApplication::processEvents(QEventLoop::AllEvents);
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+        }
 
         return fut;
     }
