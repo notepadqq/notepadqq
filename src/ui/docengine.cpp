@@ -221,12 +221,14 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
 
         Editor* editor = tabWidget->editor(tabIndex);
 
-        // In case of a reload, save cursor and scroll position
+        // In case of a reload, save cursor, scroll position, language
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
+        const EditorNS::Language *language;
         if (isAlreadyOpen) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
+            language = editor->getLanguage();
         }
 
         if (isAlreadyOpen && reloadAction == DocEngine::ReloadActionAsk && !editor->isClean()) {
@@ -265,10 +267,11 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
             }
         }
 
-        // In case of reload, restore cursor and scroll position
+        // In case of reload, restore cursor, scroll position, language
         if (isAlreadyOpen) {
             editor->setScrollPosition(scrollPosition);
             editor->setCursorPosition(cursorPosition);
+            editor->setLanguage(language);
         }
 
         if (!file.exists()) {
