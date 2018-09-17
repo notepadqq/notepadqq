@@ -224,7 +224,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         // In case of a reload, save cursor, scroll position, language
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
-        const EditorNS::Language *language;
+        const EditorNS::Language* language;
         if (isAlreadyOpen) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
