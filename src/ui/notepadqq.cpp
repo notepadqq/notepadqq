@@ -103,6 +103,9 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
     QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
     parser->addOption(allowRootOption);
 
+    QCommandLineOption printDebugOption("print-debug-info", QObject::tr("Print system information for debugging."));
+    parser->addOption(printDebugOption);
+
     parser->addPositionalArgument("urls",
                                  QObject::tr("Files to open."),
                                  "[urls...]");
@@ -141,4 +144,21 @@ QList<QString> Notepadqq::translations()
     }
 
     return out;
+}
+
+void Notepadqq::printEnvironmentInfo()
+{
+    qDebug() << QString("Notepadqq: %1").arg(POINTVERSION).toStdString().c_str();
+#ifdef BUILD_SNAP
+    qDebug() << "Snap build: yes";
+#else
+    qDebug() << "Snap build: no";
+#endif
+    qDebug() << QString("Qt: %1 - %2").arg(qVersion(), QSysInfo::buildAbi()).toStdString().c_str();
+    qDebug() << QString("OS: %1 (%2 %3)")
+                    .arg(QSysInfo::prettyProductName(), QSysInfo::productType(), QSysInfo::productVersion())
+                    .toStdString()
+                    .c_str();
+    qDebug() << QString("CPU: %1").arg(QSysInfo::currentCpuArchitecture()).toStdString().c_str();
+    qDebug() << QString("Kernel: %1 - %2").arg(QSysInfo::kernelType(), QSysInfo::kernelVersion()).toStdString().c_str();
 }
