@@ -87,6 +87,11 @@ int main(int argc, char *argv[])
     // Check for "run-and-exit" options like -h or -v
     const auto parser = Notepadqq::getCommandLineArgumentsParser(QApplication::arguments());
 
+    if (parser->isSet("print-debug-info")) {
+        Notepadqq::printEnvironmentInfo();
+        return EXIT_SUCCESS;
+    }
+
     // Check if we're running as root
     if( getuid() == 0 && !parser->isSet("allow-root") ) {
         qWarning() << QObject::tr(
