@@ -155,7 +155,10 @@ void Notepadqq::printEnvironmentInfo()
     qDebug() << "Snap build: no";
 #endif
     qDebug() << QString("Qt: %1 - %2").arg(qVersion(), QSysInfo::buildAbi()).toStdString().c_str();
-    qDebug() << QString("OS: %1 (%2 %3)").arg(QSysInfo::prettyProductName(), QSysInfo::productType(), QSysInfo::productVersion()).toStdString().c_str();
+    qDebug() << QString("OS: %1 (%2 %3)")
+                    .arg(QSysInfo::prettyProductName(), QSysInfo::productType(), QSysInfo::productVersion())
+                    .toStdString()
+                    .c_str();
     qDebug() << QString("CPU: %1").arg(QSysInfo::currentCpuArchitecture()).toStdString().c_str();
     qDebug() << QString("Kernel: %1 - %2").arg(QSysInfo::kernelType(), QSysInfo::kernelVersion()).toStdString().c_str();
 }
