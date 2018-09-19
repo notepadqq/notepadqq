@@ -820,27 +820,30 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
         return decodeText(contents, bomCodec, true);
     }
 
-    // Default to UTF-8
-    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-    DecodedText bestDecodedText;
+    QTextCodec* codec = nullptr;
+
+    // Limit decoding to the first 4 kilobytes
+    int detectionSize = contents.size();
+    if (detectionSize > 4096) {
+        detectionSize = 4096;
+    }
 
     // Use uchardet to try and detect file encoding if no BOM was found
     uchardet_t encodingDetector = uchardet_new();
-    if (uchardet_handle_data(encodingDetector, contents.data(), contents.size()) == 0) {
+    if (uchardet_handle_data(encodingDetector, contents.data(), detectionSize) == 0) {
         uchardet_data_end(encodingDetector);
         codec = QTextCodec::codecForName(uchardet_get_charset(encodingDetector));
         uchardet_delete(encodingDetector);
     }
 
+    // Fallback to UTF-8 if for some reason uchardet fails
     if (!codec) {
         codec = QTextCodec::codecForName("UTF-8");
     }
 
-    QTextCodec::ConverterState state;
-    const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
-
+    DecodedText bestDecodedText;
     bestDecodedText.codec = codec;
-    bestDecodedText.text = text;
+    bestDecodedText.text = codec->toUnicode(contents);
     bestDecodedText.bom = false;
 
     return bestDecodedText;
