@@ -72,6 +72,11 @@ public:
 
     static QList<QString> translations();
 
+    /**
+     * @brief Print environment information for debugging purposes.
+     */
+    static void printEnvironmentInfo();
+
 signals:
     void newWindow(MainWindow *window);
 
