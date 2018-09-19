@@ -14,6 +14,8 @@
 #include <QTextCodec>
 #include <QTextStream>
 
+#include <uchardet/uchardet.h>
+
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
     m_topEditorContainer(topEditorContainer),
@@ -818,71 +820,28 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
         return decodeText(contents, bomCodec, true);
     }
 
-
-    // FIXME Could potentially be slow on large files!!
-    //       We should try checking only the first few KB.
-
-    int bestInvalidChars = -1;
+    // Default to UTF-8
+    QTextCodec* codec = QTextCodec::codecForName("UTF-8");
     DecodedText bestDecodedText;
 
-    QList<int> alreadyTriedMibs;
-
-    // First try with these known codecs, in order.
-    // The first one without invalid characters is good.
-    QList<QByteArray> codecStrings = QList<QByteArray>
-            ({"UTF-8", "ISO-8859-1", "Windows-1251",
-              "Shift-JIS", "Windows-1252",
-              QTextCodec::codecForLocale()->name() });
-
-    for (QByteArray codecString : codecStrings) {
-        QTextCodec::ConverterState state;
-        QTextCodec *codec = QTextCodec::codecForName(codecString);
-        if (!codec)
-            continue;
-
-        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
-
-        if (state.invalidChars == 0) {
-            bestDecodedText.codec = codec;
-            bestDecodedText.text = text;
-            bestDecodedText.bom = false;
-
-            return bestDecodedText;
-
-        } else {
-            alreadyTriedMibs.append(codec->mibEnum());
-
-            if (bestInvalidChars == -1 || state.invalidChars < bestInvalidChars) {
-                bestInvalidChars = state.invalidChars;
-                bestDecodedText.codec = codec;
-                bestDecodedText.text = text;
-                bestDecodedText.bom = false;
-            }
-        }
+    // Use uchardet to try and detect file encoding if no BOM was found
+    uchardet_t encodingDetector = uchardet_new();
+    if (uchardet_handle_data(encodingDetector, contents.data(), contents.size()) == 0) {
+        uchardet_data_end(encodingDetector);
+        codec = QTextCodec::codecForName(uchardet_get_charset(encodingDetector));
+        uchardet_delete(encodingDetector);
     }
 
-    // If we're here, none of the codecs in codecStrings worked
-    // (and variables bestCodec & co. *are* set).
-    // We try the other codecs hoping to find the best one.
-    QList<int> mibs = QTextCodec::availableMibs();
-    for (int mib : mibs) {
-        QTextCodec *codec = QTextCodec::codecForMib(mib);
-        if (!codec)
-            continue;
-
-        if (alreadyTriedMibs.contains(codec->mibEnum()))
-            continue;
-
-        QTextCodec::ConverterState state;
-        const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
-
-        if (state.invalidChars < bestInvalidChars) {
-            bestInvalidChars = state.invalidChars;
-            bestDecodedText.codec = codec;
-            bestDecodedText.text = text;
-            bestDecodedText.bom = false;
-        }
+    if (!codec) {
+        codec = QTextCodec::codecForName("UTF-8");
     }
+
+    QTextCodec::ConverterState state;
+    const QString text = codec->toUnicode(contents.constData(), contents.size(), &state);
+
+    bestDecodedText.codec = codec;
+    bestDecodedText.text = text;
+    bestDecodedText.bom = false;
 
     return bestDecodedText;
 }

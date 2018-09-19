@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui svg widgets printsupport network webenginewidgets webchannel websockets
-
+LIBS     += -luchardet
 CONFIG += c++14
 
 !macx: TARGET = notepadqq-bin
