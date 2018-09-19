@@ -74,6 +74,8 @@ namespace EditorNS
         case QEvent::KeyPress:
             keyPressEvent(static_cast<QKeyEvent*>(ev));
             break;
+        default:
+            break;
         }
 
         return QWebEngineView::eventFilter(obj, ev);
