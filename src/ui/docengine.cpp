@@ -14,7 +14,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 
-#include <uchardet/uchardet.h>
+#include <uchardet.h>
 
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
     QObject(parent),
