@@ -3,7 +3,7 @@
 compile()
 {
     brew install qt
-    uchardet
+    brew install uchardet
     export PATH="/usr/local/opt/qt/bin:$PATH"
     export PKG_CONFIG_PATH="/usr/local/opt/qt/lib/pkgconfig"
 
