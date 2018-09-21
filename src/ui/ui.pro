@@ -173,39 +173,19 @@ RESOURCES += \
 
 ICON = ../../images/notepadqq.icns
 
-TRANSLATIONS = \
-    ../translations/notepadqq_de.ts \
-    ../translations/notepadqq_es.ts \
-    ../translations/notepadqq_fr.ts \
-    ../translations/notepadqq_hu.ts \
-    ../translations/notepadqq_it.ts \
-    ../translations/notepadqq_ja.ts \
-    ../translations/notepadqq_pl.ts \
-    ../translations/notepadqq_pt.ts \
-    ../translations/notepadqq_ru.ts \
-    ../translations/notepadqq_sl.ts \
-    ../translations/notepadqq_sv.ts \
-    ../translations/notepadqq_uk.ts \
-    ../translations/notepadqq_zh.ts 
-
-QMAKE_CLEAN += \
-    ../translations/notepadqq_de.qm \
-    ../translations/notepadqq_es.qm \
-    ../translations/notepadqq_fr.qm \
-    ../translations/notepadqq_hu.qm \
-    ../translations/notepadqq_it.qm \
-    ../translations/notepadqq_ja.qm \
-    ../translations/notepadqq_pl.qm \
-    ../translations/notepadqq_pt.qm \
-    ../translations/notepadqq_ru.qm \
-    ../translations/notepadqq_sl.qm \
-    ../translations/notepadqq_sv.qm \
-    ../translations/notepadqq_uk.qm \
-    ../translations/notepadqq_zh.qm
-
-
-# Build translations so that qmake doesn't complain about missing files in resources.qrc
-system($${LRELEASE} \"$${CURRFILE}\")
+# Automated translation building
+TRANSLATIONS = $$files("../translations/*.ts")
+qtPrepareTool(LRELEASE, lrelease)
+for (tsfile, TRANSLATIONS) {
+    qmfile = $$shadowed($$tsfile)
+    qmfile ~= s,.ts$,.qm,
+    qmdir = $$dirname(qmfile)
+    !exists($$qmdir) {
+        mkpath($$qmdir)|error("Failed to create directory: $$qmdir")
+    }
+    command = $$LRELEASE -removeidentical $$tsfile -qm $$qmfile
+    QMAKE_CLEAN += $$qmfile
+}
 
 ### EXTRA TARGETS ###
 
