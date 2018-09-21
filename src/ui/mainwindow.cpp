@@ -2246,7 +2246,8 @@ void MainWindow::on_actionPrint_triggered()
     QPageSetupDialog dlg;
     if (dlg.exec() == QDialog::Accepted) {
         currentEditor()->printToPdf(dlg.printer()->pageLayout()).then([this](QByteArray data) {
-            QFile file(QDir::tempPath() + "/notepadqq.print." + QString::number(QDateTime::currentMSecsSinceEpoch(), 16) + ".pdf");
+            QFile file(QDir::tempPath() + "/notepadqq.print." +
+                       QString::number(QDateTime::currentMSecsSinceEpoch(), 16) + ".pdf");
 
             if (file.open(QIODevice::WriteOnly)) { // FIXME: Delete the file when we're done
                 file.write(data);
@@ -2255,10 +2256,11 @@ void MainWindow::on_actionPrint_triggered()
                 bool ok = QDesktopServices::openUrl(QUrl::fromLocalFile(file.fileName()));
                 if (!ok) {
                     QMessageBox::warning(this,
-                                         QCoreApplication::applicationName(),
-                                         tr("%1 wasn't able to open the produced pdf file:\n%2").arg(QCoreApplication::applicationName(), file.fileName()),
-                                         QMessageBox::Ok,
-                                         QMessageBox::Ok);
+                        QCoreApplication::applicationName(),
+                        tr("%1 wasn't able to open the produced pdf file:\n%2")
+                            .arg(QCoreApplication::applicationName(), file.fileName()),
+                        QMessageBox::Ok,
+                        QMessageBox::Ok);
                 }
             }
         });
