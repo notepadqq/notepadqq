@@ -767,14 +767,21 @@ namespace EditorNS
         // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,8,0)
+        QColor prevBackgroundColor = m_webView->page()->backgroundColor();
+        QString prevStylesheet = m_webView->styleSheet();
+
+        this->setLineWrap(true);
         setTheme(themeFromName("default"));
+        m_webView->page()->setBackgroundColor(Qt::transparent);
         m_webView->setStyleSheet("background-color: white");
         sendMessage("C_CMD_DISPLAY_PRINT_STYLE");
-        m_webView->page()->print(printer.get(), [printer, this](bool /*success*/) {
+        m_webView->page()->print(printer.get(), [=](bool /*success*/) {
             // Note: it is important to capture "printer" in order to keep the shared_ptr alive.
             sendMessage("C_CMD_DISPLAY_NORMAL_STYLE");
-            m_webView->setStyleSheet("");
+            m_webView->setStyleSheet(prevStylesheet);
+            m_webView->page()->setBackgroundColor(prevBackgroundColor);
             setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
+            this->setLineWrap(NqqSettings::getInstance().General.getWordWrap());
         });
 #endif
     }
@@ -793,6 +800,7 @@ namespace EditorNS
                 QColor prevBackgroundColor = m_webView->page()->backgroundColor();
                 QString prevStylesheet = m_webView->styleSheet();
 
+                this->setLineWrap(true);
                 setTheme(themeFromName("default"));
                 m_webView->page()->setBackgroundColor(Qt::transparent);
                 m_webView->setStyleSheet("background-color: white");
@@ -805,6 +813,7 @@ namespace EditorNS
                             m_webView->setStyleSheet(prevStylesheet);
                             m_webView->page()->setBackgroundColor(prevBackgroundColor);
                             setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
+                            this->setLineWrap(NqqSettings::getInstance().General.getWordWrap());
                         });
 
                         if (data.isEmpty() || data.isNull()) {
