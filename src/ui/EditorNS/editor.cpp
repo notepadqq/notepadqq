@@ -818,7 +818,6 @@ namespace EditorNS
 #else
                 reject(QByteArray());
 #endif
-
             });
     }
 
