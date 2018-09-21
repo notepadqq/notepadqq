@@ -5,8 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui svg widgets printsupport network webenginewidgets webchannel websockets
-
-CONFIG += c++14
+CONFIG += c++14 link_pkgconfig
+PKGCONFIG += uchardet
 
 !macx: TARGET = notepadqq-bin
 macx: TARGET = notepadqq
