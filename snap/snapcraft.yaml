@@ -50,6 +50,7 @@ parts:
       - libqt5websockets5-dev
       - libqt5svg5-dev
       - qttools5-dev-tools
+      - libuchardet-dev
     stage-packages: 
       - adwaita-icon-theme-full
       - bamfdaemon
