@@ -12,7 +12,8 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     pkg-config \
     qtbase5-dev \
     qttools5-dev-tools \
-    qtwebengine5-dev
+    qtwebengine5-dev \
+    libuchardet-dev
 
 WORKDIR /build/
 CMD bash
