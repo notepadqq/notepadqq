@@ -779,6 +779,48 @@ namespace EditorNS
 #endif
     }
 
+    QPromise<QByteArray> Editor::printToPdf(const QPageLayout& pageLayout)
+    {
+        // 1. Set theme to default because dark themes would force the printer to color the entire
+        //    document in the background color. Default theme has white background.
+        // 2. Set WebView's bg-color to white to prevent visual artifacts when printing less than one page.
+        // 3. Set C_CMD_DISPLAY_PRINT_STYLE to hide UI elements like the gutter.
+
+        return QPromise<QByteArray>(
+            [&](const QPromiseResolve<QByteArray>& resolve, const QPromiseReject<QByteArray>& reject) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
+                QColor prevBackgroundColor = m_webView->page()->backgroundColor();
+                QString prevStylesheet = m_webView->styleSheet();
+
+                setTheme(themeFromName("default"));
+                m_webView->page()->setBackgroundColor(Qt::transparent);
+                m_webView->setStyleSheet("background-color: white");
+                asyncSendMessageWithResultP("C_CMD_DISPLAY_PRINT_STYLE").wait();
+
+                m_webView->page()->printToPdf(
+                    [=](const QByteArray& data) {
+                        QTimer::singleShot(0, [=]() {
+                            asyncSendMessageWithResultP("C_CMD_DISPLAY_NORMAL_STYLE").wait();
+                            m_webView->setStyleSheet(prevStylesheet);
+                            m_webView->page()->setBackgroundColor(prevBackgroundColor);
+                            setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
+                        });
+
+                        if (data.isEmpty() || data.isNull()) {
+                            reject(QByteArray());
+                        } else {
+                            resolve(data);
+                        }
+                    },
+                    pageLayout);
+
+#else
+                reject(QByteArray());
+#endif
+            });
+    }
+
     QPromise<QString> Editor::getCurrentWord()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_CURRENT_WORD")
