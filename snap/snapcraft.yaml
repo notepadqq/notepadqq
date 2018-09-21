@@ -77,6 +77,7 @@ parts:
       - libcanberra-gtk3-module
       - libqt5webengine5
       - libc6 # For Ubuntu 16.06
+      - libuchardet0
       
     source: . 
     after: [desktop-qt5-my] # FIXME: Use upstream desktop-qt5 as soon as they support core18
