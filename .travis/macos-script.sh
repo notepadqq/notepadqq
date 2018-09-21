@@ -4,7 +4,8 @@ compile()
 {
     brew install qt
     export PATH="/usr/local/opt/qt/bin:$PATH"
-    
+    export PKG_CONFIG_PATH="/usr/local/opt/qt/lib/pkgconfig"
+
     ./configure
     make || return 1
 }
