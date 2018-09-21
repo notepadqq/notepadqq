@@ -29,8 +29,10 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QPageSetupDialog>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QTemporaryFile>
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
@@ -2235,16 +2237,37 @@ void MainWindow::runCommand()
 
 void MainWindow::on_actionPrint_triggered()
 {
-    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
-    QPrintDialog dialog(printer.get());
-    if (dialog.exec() == QDialog::Accepted)
-        currentEditor()->print(printer);
+    // TODO If ghostscript is available on the system, we could
+    //        - show a QPrintDialog to the user
+    //        - generate the pdf file
+    //        - print the pdf via ghostscript
+    //      https://stackoverflow.com/questions/2599925/how-to-print-pdf-on-default-network-printer-using-ghostscript-gswin32c-exe-she
+
+    QPageSetupDialog dlg;
+    if (dlg.exec() == QDialog::Accepted) {
+        currentEditor()->printToPdf(dlg.printer()->pageLayout()).then([this](QByteArray data) {
+            QFile file(QDir::tempPath() + "/notepadqq.print." + QString::number(QDateTime::currentMSecsSinceEpoch(), 16) + ".pdf");
+
+            if (file.open(QIODevice::WriteOnly)) { // FIXME: Delete the file when we're done
+                file.write(data);
+                file.close();
+
+                bool ok = QDesktopServices::openUrl(QUrl::fromLocalFile(file.fileName()));
+                if (!ok) {
+                    QMessageBox::warning(this,
+                                         QCoreApplication::applicationName(),
+                                         tr("%1 wasn't able to open the produced pdf file:\n%2").arg(QCoreApplication::applicationName(), file.fileName()),
+                                         QMessageBox::Ok,
+                                         QMessageBox::Ok);
+                }
+            }
+        });
+    }
 }
 
 void MainWindow::on_actionPrint_Now_triggered()
 {
-    std::shared_ptr<QPrinter> printer = std::make_shared<QPrinter>(QPrinter::HighResolution);
-    currentEditor()->print(printer);
+    qWarning() << "Not implemented.";
 }
 /*
 void MainWindow::on_actionLaunch_in_Chrome_triggered()

@@ -389,7 +389,19 @@ namespace EditorNS
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
         std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
 
+        /**
+         * @brief Print the editor. As of Qt 5.11, it produces low-quality, non-vector graphics with big dimension.
+         * @param printer
+         */
         void print(std::shared_ptr<QPrinter> printer);
+
+        /**
+         * @brief Returns the content of the editor layed out in a pdf file that can be directly saved to disk.
+         *        This method produces light, vector graphics.
+         * @param pageLayout
+         * @return
+         */
+        QPromise<QByteArray> printToPdf(const QPageLayout &pageLayout = QPageLayout(QPageSize(QPageSize::A4), QPageLayout::Portrait, QMarginsF()));
     };
 
 }
