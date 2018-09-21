@@ -822,10 +822,10 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
 
     QTextCodec* codec = nullptr;
 
-    // Limit decoding to the first 4 kilobytes
+    // Limit decoding to the first 64 kilobytes
     int detectionSize = contents.size();
-    if (detectionSize > 4096) {
-        detectionSize = 4096;
+    if (detectionSize > 65536) {
+        detectionSize = 65536;
     }
 
     // Use uchardet to try and detect file encoding if no BOM was found
