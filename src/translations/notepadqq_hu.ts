@@ -337,23 +337,23 @@
 <context>
     <name>DocEngine</name>
     <message>
-        <location filename="../ui/docengine.cpp" line="40"/>
+        <location filename="../ui/docengine.cpp" line="42"/>
         <source>new %1</source>
         <translation>új %1</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="252"/>
+        <location filename="../ui/docengine.cpp" line="254"/>
         <source>Error trying to open &quot;%1&quot;</source>
         <translation>Hiba történt a(z) &quot;%1&quot; megnyitásakor</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="164"/>
-        <location filename="../ui/docengine.cpp" line="758"/>
+        <location filename="../ui/docengine.cpp" line="166"/>
+        <location filename="../ui/docengine.cpp" line="760"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
         <translation>A protokoll nem támogatja a(z) &quot;%1&quot; fájlt.</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="664"/>
+        <location filename="../ui/docengine.cpp" line="666"/>
         <source>Notepadqq asks permission to overwrite the following file:
 
 %1</source>
@@ -362,22 +362,22 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="702"/>
+        <location filename="../ui/docengine.cpp" line="704"/>
         <source>Error trying to write to &quot;%1&quot;</source>
         <translation>Hiba a(z) &quot;%1&quot; írása közben</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="704"/>
+        <location filename="../ui/docengine.cpp" line="706"/>
         <source>Abort</source>
         <translation>Megszakítás</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="705"/>
+        <location filename="../ui/docengine.cpp" line="707"/>
         <source>Retry</source>
         <translation>Újra</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="707"/>
+        <location filename="../ui/docengine.cpp" line="709"/>
         <source>Retry as Root</source>
         <translation>Újra Root-ként</translation>
     </message>
@@ -1860,17 +1860,17 @@ Biztosan menteni szeretné?</translation>
         <translation>A Notepadqq bezárása nem megfelelően ment végbe. Szeretné visszaállítani a nem mentett változásokat?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="111"/>
+        <location filename="../ui/docengine.cpp" line="113"/>
         <source>The file &quot;%1&quot; you are trying to open is %2 MiB in size. Do you want to continue?</source>
         <translation>A megnyitni kívánt &quot;%1&quot; fájl %2 MiB méretű. Folytatni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="125"/>
+        <location filename="../ui/docengine.cpp" line="127"/>
         <source>Do you want to reload «%1»?</source>
         <translation>Szeretné újratölteni a(z) «%1»-t?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="126"/>
+        <location filename="../ui/docengine.cpp" line="128"/>
         <source>Any changes made by you to this document will be lost.</source>
         <translation>A dokumentumon végzett minden módosítás elvész.</translation>
     </message>
