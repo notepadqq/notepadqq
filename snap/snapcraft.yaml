@@ -45,6 +45,7 @@ parts:
 
   my-part:
     build-packages:
+      - pkg-config
       - qtbase5-dev
       - qtwebengine5-dev
       - libqt5websockets5-dev
