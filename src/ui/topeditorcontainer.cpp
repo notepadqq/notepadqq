@@ -266,7 +266,7 @@ QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (c
         // Counts the number of iterations
         std::shared_ptr<int> cnt = std::make_shared<int>(indices.size());
 
-        for (const auto idx : indices) {
+        for (const auto& idx : indices) {
             int i = idx.first;
             int j = idx.second;
             callback(i, j, this->tabWidget(i), this->tabWidget(i)->editor(j), [cnt, resolve](){
