@@ -337,23 +337,23 @@
 <context>
     <name>DocEngine</name>
     <message>
-        <location filename="../ui/docengine.cpp" line="40"/>
+        <location filename="../ui/docengine.cpp" line="42"/>
         <source>new %1</source>
         <translation>új %1</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="250"/>
+        <location filename="../ui/docengine.cpp" line="254"/>
         <source>Error trying to open &quot;%1&quot;</source>
         <translation>Hiba történt a(z) &quot;%1&quot; megnyitásakor</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="164"/>
-        <location filename="../ui/docengine.cpp" line="755"/>
+        <location filename="../ui/docengine.cpp" line="166"/>
+        <location filename="../ui/docengine.cpp" line="760"/>
         <source>Protocol not supported for file &quot;%1&quot;.</source>
         <translation>A protokoll nem támogatja a(z) &quot;%1&quot; fájlt.</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="661"/>
+        <location filename="../ui/docengine.cpp" line="666"/>
         <source>Notepadqq asks permission to overwrite the following file:
 
 %1</source>
@@ -362,22 +362,22 @@
 %1</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="699"/>
+        <location filename="../ui/docengine.cpp" line="704"/>
         <source>Error trying to write to &quot;%1&quot;</source>
         <translation>Hiba a(z) &quot;%1&quot; írása közben</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="701"/>
+        <location filename="../ui/docengine.cpp" line="706"/>
         <source>Abort</source>
         <translation>Megszakítás</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="702"/>
+        <location filename="../ui/docengine.cpp" line="707"/>
         <source>Retry</source>
         <translation>Újra</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="704"/>
+        <location filename="../ui/docengine.cpp" line="709"/>
         <source>Retry as Root</source>
         <translation>Újra Root-ként</translation>
     </message>
@@ -1369,7 +1369,7 @@
         <translation>ÁTÍR</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="845"/>
+        <location filename="../ui/mainwindow.cpp" line="847"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
@@ -1379,12 +1379,12 @@
         <translation>Minden fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="869"/>
+        <location filename="../ui/mainwindow.cpp" line="871"/>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="908"/>
+        <location filename="../ui/mainwindow.cpp" line="910"/>
         <source>Don&apos;t Save</source>
         <translation>Nincs mentés</translation>
     </message>
@@ -1418,142 +1418,142 @@
         <translation>Érvénytelen érték a &apos;--column&apos; argumentumhoz: %1</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="907"/>
+        <location filename="../ui/mainwindow.cpp" line="909"/>
         <source>Do you want to save changes to «%1»?</source>
         <translation>Szeretné menteni a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="911"/>
+        <location filename="../ui/mainwindow.cpp" line="913"/>
         <source>Do you want to save changes to «%1» before closing?</source>
         <translation>Szeretné menteni bezárás előtt a(z) «%1» módosításait?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="915"/>
+        <location filename="../ui/mainwindow.cpp" line="917"/>
         <source>If you don&apos;t save the changes you made, you&apos;ll lose them forever.</source>
         <translation>Ha nem menti el, a módosítások végleg el fognak veszni.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1027"/>
+        <location filename="../ui/mainwindow.cpp" line="1029"/>
         <source>The file on disk has changed since the last read.
 Do you want to save it anyway?</source>
         <translation>A fájlt az utolsó beolvasás óta megváltozott a lemezen.
 Biztosan menteni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1030"/>
+        <location filename="../ui/mainwindow.cpp" line="1032"/>
         <source>Saving the file might cause loss of external data.</source>
         <translation>A fájl mentése a külső adatok elvesztésével járhat.</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1052"/>
+        <location filename="../ui/mainwindow.cpp" line="1056"/>
         <source>Save as</source>
         <translation>Mentés másként</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1054"/>
+        <location filename="../ui/mainwindow.cpp" line="1058"/>
         <source>Any file (*)</source>
         <translation>Bármilyen fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1235"/>
+        <location filename="../ui/mainwindow.cpp" line="1240"/>
         <source>Ln %1, Col %2</source>
         <translation>%1. sor, %2 oszlop</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1236"/>
+        <location filename="../ui/mainwindow.cpp" line="1241"/>
         <source>    Sel %1 (%2)</source>
         <translation>    Kij. %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1237"/>
+        <location filename="../ui/mainwindow.cpp" line="1242"/>
         <source>    %1 chars, %2 lines</source>
         <translation>    %1. karakter, %2. sor</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1375"/>
+        <location filename="../ui/mainwindow.cpp" line="1380"/>
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1378"/>
+        <location filename="../ui/mainwindow.cpp" line="1383"/>
         <source>UNIX / OS X</source>
         <translation>UNIX / OS X</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1381"/>
+        <location filename="../ui/mainwindow.cpp" line="1386"/>
         <source>Old Mac</source>
         <translation>Régi Mac</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1388"/>
+        <location filename="../ui/mainwindow.cpp" line="1393"/>
         <source>%1 w/o BOM</source>
         <translation>%1 BOM nélkül</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1873"/>
+        <location filename="../ui/mainwindow.cpp" line="1878"/>
         <source>No recent files</source>
         <translation>Nincsenek előzmények</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1970"/>
+        <location filename="../ui/mainwindow.cpp" line="1975"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
         <translation>Az alábbi fájlok már nem léteznek. Mindenképp szeretné őket megnyitni?
 </translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2081"/>
+        <location filename="../ui/mainwindow.cpp" line="2086"/>
         <source>Convert to:</source>
         <translation>Átalakítás erre:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2099"/>
+        <location filename="../ui/mainwindow.cpp" line="2104"/>
         <source>Reload as:</source>
         <translation>Újratöltés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2146"/>
+        <location filename="../ui/mainwindow.cpp" line="2151"/>
         <source>Interpret as:</source>
         <translation>Értelmezés mint:</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2161"/>
+        <location filename="../ui/mainwindow.cpp" line="2166"/>
         <source>Run...</source>
         <translation>Futtatás...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2173"/>
+        <location filename="../ui/mainwindow.cpp" line="2178"/>
         <source>Modify Run Commands</source>
         <translation>Futtatási parancsok módosítása</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2297"/>
+        <location filename="../ui/mainwindow.cpp" line="2302"/>
         <source>The file &quot;%1&quot; does not exist. Do you want to re-create it?</source>
         <translation>A(z) &quot;%1&quot; fájl nem létezik. Szeretné újra létrehozni?</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2466"/>
+        <location filename="../ui/mainwindow.cpp" line="2471"/>
         <source>Extension</source>
         <translation>Bővítmény</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2547"/>
+        <location filename="../ui/mainwindow.cpp" line="2554"/>
         <source>Open Session...</source>
         <translation>Munkamenet megnyitása...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2549"/>
-        <location filename="../ui/mainwindow.cpp" line="2572"/>
+        <location filename="../ui/mainwindow.cpp" line="2554"/>
+        <location filename="../ui/mainwindow.cpp" line="2576"/>
         <source>Session file (*.xml);;Any file (*)</source>
         <translation>Munkamenetfájl (*.xml);;Bármely fájl (*)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2570"/>
+        <location filename="../ui/mainwindow.cpp" line="2574"/>
         <source>Save Session as...</source>
         <translation>Munkamenet mentése másként...</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="2596"/>
+        <location filename="../ui/mainwindow.cpp" line="2601"/>
         <source>Error while trying to save this session. Please try a different file name.</source>
         <translation>Hiba a munkamenet mentése közben. Kérem, próbálja meg egy másik fájlnévvel.</translation>
     </message>
@@ -1710,7 +1710,12 @@ Biztosan menteni szeretné?</translation>
         <translation>A Notepadqq rootként való futtatásának engedélyezése.</translation>
     </message>
     <message>
-        <location filename="../ui/notepadqq.cpp" line="107"/>
+        <location filename="../ui/notepadqq.cpp" line="106"/>
+        <source>Print system information for debugging.</source>
+        <translation>Rendszeradatok megjelenítése hibakereséshez.</translation>
+    </message>
+    <message>
+        <location filename="../ui/notepadqq.cpp" line="110"/>
         <source>Files to open.</source>
         <translation>Megnyitandó fájlok.</translation>
     </message>
@@ -1855,22 +1860,22 @@ Biztosan menteni szeretné?</translation>
         <translation>A Notepadqq bezárása nem megfelelően ment végbe. Szeretné visszaállítani a nem mentett változásokat?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="111"/>
+        <location filename="../ui/docengine.cpp" line="113"/>
         <source>The file &quot;%1&quot; you are trying to open is %2 MiB in size. Do you want to continue?</source>
         <translation>A megnyitni kívánt &quot;%1&quot; fájl %2 MiB méretű. Folytatni szeretné?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="125"/>
+        <location filename="../ui/docengine.cpp" line="127"/>
         <source>Do you want to reload «%1»?</source>
         <translation>Szeretné újratölteni a(z) «%1»-t?</translation>
     </message>
     <message>
-        <location filename="../ui/docengine.cpp" line="126"/>
+        <location filename="../ui/docengine.cpp" line="128"/>
         <source>Any changes made by you to this document will be lost.</source>
         <translation>A dokumentumon végzett minden módosítás elvész.</translation>
     </message>
     <message>
-        <location filename="../ui/main.cpp" line="92"/>
+        <location filename="../ui/main.cpp" line="97"/>
         <source>Notepadqq will ask for root privileges whenever they are needed if either &apos;kdesu&apos; or &apos;gksu&apos; are installed. Running Notepadqq as root is not recommended. Use --allow-root if you really want to.</source>
         <translation>Notepadqq szükség estén root jogosultságokat fog kérni, ha „kdesu” vagy „gksu” telepítve van.
 A Notepadqq rootként való futtatása nem ajánlott. Ha mindenképpen szükséges, akkor használja a --allow-root opciót.</translation>
