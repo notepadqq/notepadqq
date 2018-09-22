@@ -167,7 +167,8 @@ RESOURCES += \
 
 ICON = ../../images/notepadqq.icns
 
-# Automated translation building
+# Automated translation building (.ts -> .qm)
+# Source translation files (.ts) are obtained from ../translations/
 TRANSLATIONS = $$files("../translations/*.ts")
 qtPrepareTool(LRELEASE, lrelease)
 for (tsfile, TRANSLATIONS) {
