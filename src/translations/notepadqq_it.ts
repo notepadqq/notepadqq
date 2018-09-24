@@ -162,47 +162,47 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="358"/>
         <source>Use Regular Expressions</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa le Espressioni Regolari</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="359"/>
         <source>Use Special Characters (&apos;\t&apos;, &apos;\n&apos;, ...)</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa Caratteri Speciali(&apos;\t&apos;, &apos;\n&apos;, ...)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="360"/>
         <source>If set, character sequences like &apos;\t&apos; will be replaced by their respective special characters.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se attivo, sequenze di caratteri come &apos;\t&apos; verranno rimpiazzate dai rispettivi caratteri speciali</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="361"/>
         <source>Include Subdirectories</source>
-        <translation type="unfinished"></translation>
+        <translation>Includi le sottocartelle</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="425"/>
         <source>&lt;h3&gt;One or more searches are still in progress&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Una o più ricerche sono ancora in corso&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="426"/>
         <source>All searches will be canceled and their results discarded if you continue.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutte le ricerche saranno cancellate e i loro risultati scartati se si continua.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="440"/>
         <source>New Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova Ricerca</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="742"/>
         <source>Search in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca in corso</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="743"/>
         <source>&lt;h3&gt;This search is still in progress.&lt;/h3&gt; The search will be canceled and all results discarded if you continue.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Questa ricerca è ancora in corso.&lt;/h3&gt; La ricerca sarà cancellata e tutti i risultati scartati se si continua.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="854"/>
@@ -212,28 +212,28 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="855"/>
         <source>Specified directory does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>La cartella specificata non esiste.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="885"/>
         <source>Matches in %1 of %2 files replaced.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le corrispondenze in %1 di %2 file saranno sostituite.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="893"/>
         <source>&lt;h3&gt;Replacing selected matches...&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;Sostituendo le corrispondenze selezionate...&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="894"/>
         <source>Replacing in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituzione in corso</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="906"/>
         <source>Replacing was unsuccessful for %1 file(s):
 </source>
-        <translation type="unfinished"></translation>
+        <translation>La sostituzione non ha avuto successo per %1 file.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="912"/>
@@ -244,12 +244,12 @@
         <location filename="../ui/Search/advancedsearchdock.cpp" line="915"/>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="918"/>
         <source>Replacement Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Risultati della sostituzione</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="919"/>
         <source>All selected matches successfully replaced.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutte le corrispondenze selezionate sono state sostituite.</translation>
     </message>
 </context>
 <context>
@@ -1078,7 +1078,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1029"/>
         <source>&amp;Show Menubar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mosta la Barra dei Menu</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1032"/>
@@ -1366,6 +1366,7 @@
 
 </source>
         <translation>Errore nel tentativo di salvare la sessione. Assicurarsi che la seguente directory sia accessibile:
+			
 </translation>
     </message>
     <message>
@@ -1386,7 +1387,7 @@
     <message>
         <location filename="../ui/mainwindow.cpp" line="567"/>
         <source>Invalid value for &apos;--column&apos; argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Valore non valido per &apos;--column&apos; argomento: %1</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="693"/>
@@ -2316,7 +2317,7 @@ Vuoi salvare comunque?</translation>
         <location filename="../ui/Search/frmsearchreplace.ui" line="334"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="337"/>
         <source>Advanced Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca Avanzata</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="255"/>

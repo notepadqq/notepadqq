@@ -14,6 +14,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 
+#include <algorithm>
 #include <uchardet.h>
 
 DocEngine::DocEngine(TopEditorContainer *topEditorContainer, QObject *parent) :
@@ -822,11 +823,8 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
 
     QTextCodec* codec = nullptr;
 
-    // Limit decoding to the first 4 kilobytes
-    int detectionSize = contents.size();
-    if (detectionSize > 4096) {
-        detectionSize = 4096;
-    }
+    // Limit decoding to the first 64 kilobytes
+    size_t detectionSize = static_cast<size_t>(std::min(contents.size(), 65536));
 
     // Use uchardet to try and detect file encoding if no BOM was found
     uchardet_t encodingDetector = uchardet_new();
