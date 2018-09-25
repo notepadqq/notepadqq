@@ -108,7 +108,8 @@ SOURCES += main.cpp\
     Search/searchobjects.cpp \
     Search/searchinstance.cpp \
     stats.cpp \
-    Sessions/backupservice.cpp
+    Sessions/backupservice.cpp \
+    svgiconengine.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -156,7 +157,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
     include/stats.h \
-    include/Sessions/backupservice.h
+    include/Sessions/backupservice.h \
+    include/svgiconengine.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
