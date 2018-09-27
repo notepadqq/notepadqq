@@ -52,7 +52,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="195"/>
         <source>More Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Più Opzioni</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="200"/>
@@ -238,7 +238,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="912"/>
         <source>And %1 more.</source>
-        <translation type="unfinished"></translation>
+        <translation>E %1 in più.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="915"/>
@@ -620,7 +620,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="88"/>
         <source>&amp;End of line</source>
-        <translation type="unfinished">Formato &amp;EOL</translation>
+        <translation>Formato &amp;EOL</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="96"/>
@@ -635,7 +635,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="111"/>
         <source>&amp;Indentation</source>
-        <translation type="unfinished">&amp;Indentazione</translation>
+        <translation>&amp;Indentazione</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="120"/>
@@ -705,17 +705,17 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="361"/>
         <source>Close All &amp;BUT Current Document</source>
-        <translation type="unfinished">Chiudi tutti tranne il documento corrente</translation>
+        <translation type="unfinished">Chiudi tutti TRANNE il documento corrente</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="379"/>
         <source>&amp;Print...</source>
-        <translation type="unfinished">Stam&amp;pa...</translation>
+        <translation>Stam&amp;pa...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="393"/>
         <source>Pr&amp;int Now</source>
-        <translation type="unfinished">Stampa sub&amp;ito!</translation>
+        <translation>Stampa sub&amp;ito!</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="401"/>
@@ -830,17 +830,17 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="510"/>
         <source>&amp;Old Mac Format</source>
-        <translation type="unfinished">Vecchi&amp;o formato Mac</translation>
+        <translation>Vecchi&amp;o formato Mac</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="518"/>
         <source>Show &amp;End of Line</source>
-        <translation type="unfinished">Mostra caratt&amp;eri di fine riga</translation>
+        <translation>Mostra caratt&amp;eri di fine riga</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="526"/>
         <source>&amp;Show Tabs</source>
-        <translation type="unfinished">Mostra tabulazioni</translation>
+        <translation>Mo&amp;stra tabulazioni</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="534"/>
@@ -865,12 +865,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="569"/>
         <source>&amp;Math Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rendering &amp;Matematico</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="574"/>
         <source>&amp;Copy Full Path to Clipboard</source>
-        <translation type="unfinished">Per&amp;corso file corrente</translation>
+        <translation>Per&amp;corso file corrente</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="579"/>
@@ -890,7 +890,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="613"/>
         <source>&amp;Move to Other View</source>
-        <translation type="unfinished">Sposta nell&apos;altra vista</translation>
+        <translation>&amp;Muovi nell&apos;altra vista</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="618"/>
@@ -905,17 +905,17 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="631"/>
         <source>&amp;Open in a New Window</source>
-        <translation type="unfinished">Apri in una nu&amp;ova finestra</translation>
+        <translation>Apri in una nu&amp;ova finestra</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="695"/>
         <source>&amp;UPPERCASE</source>
-        <translation type="unfinished">MAI&amp;USCOLE</translation>
+        <translation>MAI&amp;USCOLE</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="703"/>
         <source>&amp;lowercase</source>
-        <translation type="unfinished">minuscu&amp;le</translation>
+        <translation>minuscu&amp;le</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="711"/>
@@ -985,7 +985,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="854"/>
         <source>&amp;Default settings</source>
-        <translation type="unfinished">Impostazioni predefinite</translation>
+        <translation>Impostazioni pre&amp;definite</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="862"/>
@@ -1000,12 +1000,12 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="877"/>
         <source>&amp;Open a New Window</source>
-        <translation type="unfinished">Aprire una nu&amp;ova finestra</translation>
+        <translation>Aprire una nu&amp;ova finestra</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="882"/>
         <source>&amp;Advanced Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca &amp;Avanzata</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="890"/>
@@ -1035,7 +1035,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="955"/>
         <source>&amp;EOL to Space</source>
-        <translation type="unfinished">Converti &amp;EOL in Spazio</translation>
+        <translation>Converti &amp;EOL in Spazio</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="960"/>
@@ -1075,7 +1075,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1021"/>
         <source>&amp;Enable Smart Indent</source>
-        <translation type="unfinished">Attiva indentazione int&amp;elligente</translation>
+        <translation>Attiva indentazione int&amp;elligente</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1029"/>
@@ -1090,7 +1090,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1040"/>
         <source>S&amp;how Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mo&amp;stra Barra degli Strumenti</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1048"/>
@@ -1330,7 +1330,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="942"/>
         <source>Trim &amp;Leading Space</source>
-        <translation type="unfinished">Elimina spazi inizia&amp;li</translation>
+        <translation>Elimina spazi inizia&amp;li</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="945"/>
@@ -1350,7 +1350,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1007"/>
         <source>S&amp;how Spaces</source>
-        <translation type="unfinished">Mostra spazi</translation>
+        <translation>Mo&amp;stra spazi</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1010"/>
@@ -1374,17 +1374,17 @@
     <message>
         <location filename="../ui/mainwindow.cpp" line="390"/>
         <source>By choosing &quot;ignore&quot; your session won&apos;t be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegliendo di &quot;ignorare&quot; la sessione non sarà salvata.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="548"/>
         <source>The &apos;--line&apos; and &apos;--column&apos; arguments will be ignored since more than one file is opened.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gli argomenti &apos;--line&apos; e &apos;--column&apos; saranno ignorati in quanto più di un file è aperto.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="558"/>
         <source>Invalid value for &apos;--line&apos; argument: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Valore non valido per &apos;--line&apos; argomento: %1</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="567"/>
@@ -1497,7 +1497,8 @@ Vuoi salvare comunque?</translation>
         <location filename="../ui/mainwindow.cpp" line="1970"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
-        <translation type="unfinished">I seguenti file non esitono pi</translation>
+        <translation type="unfinished">I seguenti file non esitono più. Aprirli comunque?
+</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2081"/>
@@ -1735,17 +1736,17 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="52"/>
         <source>This will replace %1 selected matches with &quot;%2&quot;. Continue?</source>
-        <translation type="unfinished">Questo sostituira</translation>
+        <translation>Questo sostituira %1 corrispondenze selezionate con &quot;%2&quot. Continuare?</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="143"/>
         <source>Notepadqq supports most of the &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl Regular Expression&lt;/a&gt; syntax when &apos;Use Regular Expressions&apos; is checked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Notepadqq supporta la maggior parte della &lt;a href=&apos;http://perldoc.perl.org/perlre.html&apos;&gt;Perl Regular Expression&lt;/a&gt; sintassi quando &apos;Usa Espressioni Regolari&apos; è attivato.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="144"/>
         <source>Here is a quick reference:</source>
-        <translation type="unfinished"></translation>
+        <translation>Qui un rapido riderimento:</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="146"/>
@@ -1785,27 +1786,27 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="153"/>
         <source>Use in a replace operation to refer to the n&apos;th capture group</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa in un&amp;operazione di sostituzione per riferirsi all&apos;ennesimo gruppo di cattura</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="706"/>
         <source>Search in...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca in...</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="27"/>
         <source>&lt;b&gt;%1&lt;/b&gt; Results for:   &apos;&lt;b&gt;%2&lt;/b&gt;&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; Risultati per:    &apos;&lt;b&gt;%2&lt;/b&gt;&apos;</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="10"/>
         <source>Current Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Documento Corrente</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="11"/>
         <source>All Documents</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutti i Documenti</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="12"/>
@@ -1815,57 +1816,57 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="13"/>
         <source>Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Non valido</translation>
     </message>
     <message>
         <location filename="../ui/Sessions/backupservice.cpp" line="107"/>
         <source>Notepadqq was not closed properly. Do you want to recover unsaved changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Notepadqq non è stato chiuso correttamente. Ripristinare i cambiamenti non salvati?</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="111"/>
         <source>The file &quot;%1&quot; you are trying to open is %2 MiB in size. Do you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file &quot;%1&quot; che si sta cercando di aprire misura %2 MiB. Continuare? </translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="125"/>
         <source>Do you want to reload «%1»?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricaricare «%1»?</translation>
     </message>
     <message>
         <location filename="../ui/docengine.cpp" line="126"/>
         <source>Any changes made by you to this document will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Qualsiasi cambiamento fatto su questo documento sarà perso.</translation>
     </message>
     <message>
         <location filename="../ui/main.cpp" line="92"/>
         <source>Notepadqq will ask for root privileges whenever they are needed if either &apos;kdesu&apos; or &apos;gksu&apos; are installed. Running Notepadqq as root is not recommended. Use --allow-root if you really want to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Notepadqq richiederà i privilegi root ogni qual volta sono necessari se &apos;kdesu&apos; o &apos;gksu&apos; è installato. Eseguire Notepadqq come root non è raccomandato. Usare --allow-root se si vuole veramente.</translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="126"/>
         <source>Do you want to help?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vuoi aiuto?</translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="128"/>
         <source>You can help to improve Notepadqq by allowing us to collect &lt;b&gt;anonymous statistics&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puoi aiutarci a migliorare Notepadqq autorizzandoci di raccogliere &lt;b&gt; statistiche anonime/b&gt;. </translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="129"/>
         <source>What will we collect?</source>
-        <translation type="unfinished"></translation>
+        <translation>Cosa raccogliamo?</translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="130"/>
         <source>We will collect information such as the version of Qt, the version of the OS, or the number of extensions.&lt;br&gt;You don&apos;t have to trust us: Notepadqq is open source, so you can %1check by yourself%2 :)</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccogliamo informazioni come la versione di Qt, la versione del SO, o il numero di estensioni.&lt;br&gt;Non hai bisogno a fidarti: Notepadqq è open source, quindi puoi %1controllare da te%2 :)</translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="137"/>
         <source>Okay, I agree</source>
-        <translation type="unfinished"></translation>
+        <translation>Okay, sono d&apos;accordo</translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="138"/>
@@ -2047,7 +2048,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="81"/>
         <source>Toolbar</source>
-        <translation type="unfinished">Barra degli strumenti</translation>
+        <translation>Barra degli strumenti</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="86"/>
@@ -2057,7 +2058,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="110"/>
         <source>Collect and transmit anonymous statistics to improve Notepadqq</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccogli e trasmetti statistiche anonime per migliorare Notepadqq</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="117"/>
@@ -2072,22 +2073,22 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="133"/>
         <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa opzione permette a Notepadqq di ripristinare i tuoi documenti dopo un crash anche se non sono stati esplicitamente salvati.</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="136"/>
         <source>Backup open documents every</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai il backup dei documenti ogni</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="143"/>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation> secondi</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="171"/>
         <source>Exit Notepadqq when closing the last Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Esci da Notepadqq quando chiudi l&apos;ultima Scheda</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="180"/>
@@ -2147,32 +2148,32 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="521"/>
         <source>Save search history</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva la cronologia di ricerca</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="569"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="580"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="609"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta Sù</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="620"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta Giù</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="650"/>
         <source>Reset to Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina i Predefiniti</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="697"/>
@@ -2208,12 +2209,12 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="277"/>
         <source>Reset Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina Selezionati</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="278"/>
         <source>Reset All</source>
-        <translation type="unfinished"></translation>
+        <translation>Ripristina Tutti</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="375"/>
@@ -2233,7 +2234,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.cpp" line="590"/>
         <source>Would you like to clear the existing history now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vuoi cancellare la cronologia esistente adesso?</translation>
     </message>
 </context>
 <context>
@@ -2276,7 +2277,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="123"/>
         <source>Search &amp;plain text</source>
-        <translation type="unfinished">Cerca sem&amp;plice testo</translation>
+        <translation>Cerca sem&amp;plice testo</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="163"/>
