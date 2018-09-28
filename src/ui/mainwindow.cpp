@@ -2192,10 +2192,10 @@ void MainWindow::modifyRunCommands()
 void MainWindow::runCommand()
 {
     QAction *a = qobject_cast<QAction*>(sender());
-    QString cmd;
+    QString command;
 
     if (a->data().toString().size()) {
-        cmd = a->data().toString();
+        command = a->data().toString();
     } else {
         NqqRun::RunDialog rd;
         int ok = rd.exec();
@@ -2208,14 +2208,14 @@ void MainWindow::runCommand()
             return;
         }
 
-        cmd = rd.getCommandInput();
+        command = rd.getCommandInput();
     }
 
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->filePath();
     editor->selectedTexts().then([=](QStringList selection){
-        QString cmd = cmd;
+        QString cmd = command;
         if (!url.isEmpty()) {
             cmd.replace("\%url\%", url.toString(QUrl::None));
             cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
@@ -2253,7 +2253,30 @@ void MainWindow::on_actionPrint_triggered()
                 file.write(data);
                 file.close();
 
+#ifdef BUILD_SNAP
+                // In Snap, the launched application inherits our snap env vars, which is bad.
+                // We need to clear them before launching the process, so we manually use xdg-open.
+                QProcess process;
+                qDebug() << QProcessEnvironment::systemEnvironment().toStringList();
+                QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+                for (auto k : env.keys()) {
+                    if (env.value(k).contains("snap")) {
+                        auto vals = env.value(k).split(":");
+                        for (int i = vals.length()-1; i >= 0; i--) {
+                            if (vals[i].contains("snap")) {
+                                vals.removeAt(i);
+                            }
+                        }
+                        env.remove(k);
+                        env.insert(k, vals.join(":"));
+                    }
+                }
+                process.setProcessEnvironment(env);
+                bool ok = process.startDetached("xdg-open", QStringList() << file.fileName());
+                //bool ok = QProcess::startDetached("xdg-open", QStringList() << file.fileName());
+#else
                 bool ok = QDesktopServices::openUrl(QUrl::fromLocalFile(file.fileName()));
+#endif
                 if (!ok) {
                     QMessageBox::warning(this,
                         QCoreApplication::applicationName(),
