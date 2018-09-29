@@ -187,7 +187,7 @@ namespace EditorNS
     void Editor::setFocus()
     {
         m_webView->setFocus();
-        asyncSendMessageWithResultP("C_CMD_SET_FOCUS").wait();
+        asyncSendMessageWithResultP("C_CMD_SET_FOCUS");
     }
 
     void Editor::clearFocus(bool widgetOnly)
