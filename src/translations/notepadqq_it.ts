@@ -1736,7 +1736,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="52"/>
         <source>This will replace %1 selected matches with &quot;%2&quot;. Continue?</source>
-        <translation>Questo sostituira %1 corrispondenze selezionate con &quot;%2&quot. Continuare?</translation>
+        <translation>Questo sostituira %1 corrispondenze selezionate con &quot;%2&quot; Continuare?</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="143"/>
