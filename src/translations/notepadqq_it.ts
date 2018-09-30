@@ -660,7 +660,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="196"/>
         <source>&amp;Move/Clone Current Document</source>
-        <translation type="unfinished">Sposta/Clona documento corrente</translation>
+        <translation>Sposta/Clona docu&amp;mento corrente</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="216"/>
@@ -865,7 +865,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="569"/>
         <source>&amp;Math Rendering</source>
-        <translation type="unfinished">Rendering &amp;Matematico</translation>
+        <translation>Rendering &amp;Matematico</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="574"/>
@@ -990,7 +990,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="862"/>
         <source>&amp;Custom...</source>
-        <translation type="unfinished">Personalizzata...</translation>
+        <translation type="unfinished">Personalizza...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="867"/>
@@ -1030,7 +1030,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="950"/>
         <source>T&amp;rim Leading and Trailing Space</source>
-        <translation type="unfinished">Elimina spazi iniziali e finali</translation>
+        <translation>&amp;Rimuovi spazi iniziali e finali</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="955"/>
@@ -1320,7 +1320,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="934"/>
         <source>&amp;Trim Trailing Space</source>
-        <translation type="unfinished">Elimina spazi a fine riga</translation>
+        <translation type="unfinished">Rimuovi Spazi a Fine Riga</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="937"/>
@@ -1497,7 +1497,7 @@ Vuoi salvare comunque?</translation>
         <location filename="../ui/mainwindow.cpp" line="1970"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
-        <translation type="unfinished">I seguenti file non esitono più. Aprirli comunque?
+        <translation>I seguenti file non esitono più. Aprirli comunque?
 </translation>
     </message>
     <message>
