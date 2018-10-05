@@ -241,6 +241,8 @@ unix:!macx {
     PRE_TARGETDEPS += make_launch
 }
 
+macx: QMAKE_INFO_PLIST = ../../support_files/launch/Info.plist.app
+
 ### INSTALL ###
 unix:!macx {
     isEmpty(PREFIX) {

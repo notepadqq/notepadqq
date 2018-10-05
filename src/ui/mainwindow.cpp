@@ -2192,10 +2192,10 @@ void MainWindow::modifyRunCommands()
 void MainWindow::runCommand()
 {
     QAction *a = qobject_cast<QAction*>(sender());
-    QString cmd;
+    QString command;
 
     if (a->data().toString().size()) {
-        cmd = a->data().toString();
+        command = a->data().toString();
     } else {
         NqqRun::RunDialog rd;
         int ok = rd.exec();
@@ -2208,14 +2208,14 @@ void MainWindow::runCommand()
             return;
         }
 
-        cmd = rd.getCommandInput();
+        command = rd.getCommandInput();
     }
 
     Editor *editor = currentEditor();
 
     QUrl url = currentEditor()->filePath();
     editor->selectedTexts().then([=](QStringList selection){
-        QString cmd = cmd;
+        QString cmd = command;
         if (!url.isEmpty()) {
             cmd.replace("\%url\%", url.toString(QUrl::None));
             cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));

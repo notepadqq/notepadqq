@@ -123,13 +123,13 @@ void Stats::askUserPermission() {
         QMessageBox msgBox;
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText("<h3>" + QObject::tr("Do you want to help?") + "</h3>");
+        msgBox.setText("<h3>" + QObject::tr("Would you like to help?") + "</h3>");
         msgBox.setInformativeText("<html><body>"
             "<p>" + QObject::tr("You can help to improve Notepadqq by allowing us to collect <b>anonymous statistics</b>.") + "</p>" +
             "<b>" + QObject::tr("What will we collect?") + "</b><br>" +
             QObject::tr(
                 "We will collect information such as the version of Qt, the version of the OS, or the number of extensions.<br>"
-                "You don't have to trust us: Notepadqq is open source, so you can %1check by yourself%2 :)").
+                "You don't have to trust us: Notepadqq is open source, so you can %1check by yourself%2 😊").
                       arg("<a href=\"https://github.com/notepadqq/notepadqq/blob/master/src/ui/stats.cpp\">").
                       arg("</a>") +
             "</body></html>");
