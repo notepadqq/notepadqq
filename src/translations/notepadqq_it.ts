@@ -7,72 +7,72 @@
         <location filename="../ui/Search/advancedsearchdock.cpp" line="161"/>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="651"/>
         <source>Advanced Search</source>
-        <translation>Ricerca Avanzata</translation>
+        <translation>Ricerca avanzata</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="166"/>
         <source>Clear Search History</source>
-        <translation>Cancella la Cronologia di Ricerca</translation>
+        <translation>Cancella la cronologia di ricerca</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="175"/>
         <source>Go To Previous Result (Shift+F4)</source>
-        <translation>Vai al Risultato Precedente (Shift+F4)</translation>
+        <translation>Vai al risultato precedente (Shift+F4)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="180"/>
         <source>Go To Next Result (F4)</source>
-        <translation>Vai al Risultato Successivo (F4)</translation>
+        <translation>Vai al risultato successivo (F4)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="184"/>
         <source>Expand/Collapse All</source>
-        <translation>Espandi/Collassa Tutto</translation>
+        <translation>Espandi/collassa tutto</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="186"/>
         <source>Redo Search</source>
-        <translation>Ripeti Ricerca</translation>
+        <translation>Ripeti ricerca</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="187"/>
         <source>Copy Selected Contents To Clipboard</source>
-        <translation>Copia i Risultati Selezionati negli Appunti</translation>
+        <translation>Copia i risultati selezionati negli appunti</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="188"/>
         <source>Show Full Lines</source>
-        <translation>Mostra le Righe per Intero</translation>
+        <translation>Mostra le righe per intero</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="190"/>
         <source>Remove This Search</source>
-        <translation>Rimuovi questa Ricerca</translation>
+        <translation>Rimuovi questa ricerca</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="195"/>
         <source>More Options</source>
-        <translation type="unfinished">Più Opzioni</translation>
+        <translation type="unfinished">Più opzioni</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="200"/>
         <source>Replace Options</source>
-        <translation>Opzioni Sostituzione</translation>
+        <translation>Opzioni sostituzione</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="226"/>
         <source>Dock/Undock this panel</source>
-        <translation>Aggancia/Sgancia questo pannello</translation>
+        <translation>Aggancia/sgancia questo pannello</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="252"/>
         <source>Replace Text</source>
-        <translation>Sostituisci Testo</translation>
+        <translation>Sostituisci testo</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="260"/>
         <source>Replace Selected</source>
-        <translation>Sostituisci Selezionati</translation>
+        <translation>Sostituisci selezionati</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="261"/>
@@ -82,7 +82,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="263"/>
         <source>Use Special Characters (&apos;\n&apos;, &apos;\t&apos;, ...)</source>
-        <translation>Usa Caratteri Speciali (&apos;\n&apos;, &apos;\t&apos;, ...)</translation>
+        <translation>Usa caratteri speciali (&apos;\n&apos;, &apos;\t&apos;, ...)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="264"/>
@@ -92,22 +92,22 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="300"/>
         <source>Search String</source>
-        <translation>Ricerca Stringa</translation>
+        <translation>Ricerca stringa</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="307"/>
         <source>Search in Current Document</source>
-        <translation>Cerca nel Documento Corrente</translation>
+        <translation>Cerca nel documento corrente</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="308"/>
         <source>Search in All Open Documents</source>
-        <translation>Cerca in Tutti i Documenti Aperti</translation>
+        <translation>Cerca in Tutti i documenti aperti</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="309"/>
         <source>Search in Files on File System</source>
-        <translation>Cerca nei File sul File System</translation>
+        <translation>Cerca nei File sul file system</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="324"/>
@@ -152,22 +152,22 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="356"/>
         <source>Match Case</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova parole con lo stesso caso</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="357"/>
         <source>Match Whole Words Only</source>
-        <translation>Corrispondi Solo Parole Intere</translation>
+        <translation>Trova solo parole intere</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="358"/>
         <source>Use Regular Expressions</source>
-        <translation>Usa le Espressioni Regolari</translation>
+        <translation>Usa le espressioni regolari</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="359"/>
         <source>Use Special Characters (&apos;\t&apos;, &apos;\n&apos;, ...)</source>
-        <translation>Usa Caratteri Speciali(&apos;\t&apos;, &apos;\n&apos;, ...)</translation>
+        <translation>Usa caratteri speciali(&apos;\t&apos;, &apos;\n&apos;, ...)</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="360"/>
@@ -192,7 +192,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="440"/>
         <source>New Search</source>
-        <translation>Nuova Ricerca</translation>
+        <translation>Nuova ricerca</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="742"/>
@@ -356,7 +356,7 @@
         <source>Notepadqq asks permission to overwrite the following file:
 
 %1</source>
-        <translation>Notepadqq richiede i permessi per sovrascrivere il seguente file:
+        <translation>Notepadqq richiede i permessi per sovrascrivere il file seguente:
 
 %1</translation>
     </message>
@@ -378,7 +378,7 @@
     <message>
         <location filename="../ui/docengine.cpp" line="704"/>
         <source>Retry as Root</source>
-        <translation>Riprova come Root</translation>
+        <translation>Riprova come root</translation>
     </message>
 </context>
 <context>
@@ -620,7 +620,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="88"/>
         <source>&amp;End of line</source>
-        <translation>Formato &amp;EOL</translation>
+        <translation>Formato di fin&amp;e riga</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="96"/>
@@ -880,7 +880,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="584"/>
         <source>Copy &amp;Directory to Clipboard</source>
-        <translation type="unfinished">Cartella corrente</translation>
+        <translation type="unfinished">Copia la cartella negli appunti</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="605"/>
@@ -1080,7 +1080,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1029"/>
         <source>&amp;Show Menubar</source>
-        <translation>&amp;Mosta la Barra dei Menu</translation>
+        <translation>&amp;Mosta la barra dei menu</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1032"/>
@@ -1090,22 +1090,22 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="1040"/>
         <source>S&amp;how Toolbar</source>
-        <translation>Mo&amp;stra Barra degli Strumenti</translation>
+        <translation>Mo&amp;stra barra degli strumenti</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1048"/>
         <source>Begin/End Select</source>
-        <translation>Inizio/Fine Selezione</translation>
+        <translation>Inizio/fine selezione</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1053"/>
         <source>Toggle To Former Tab</source>
-        <translation>Passa Alla Scheda</translation>
+        <translation>Passa alla scheda</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1056"/>
         <source>Toggle Back to Former Tab</source>
-        <translation>Torna Alla Scheda</translation>
+        <translation>Torna alla scheda</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1059"/>
@@ -1175,7 +1175,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="690"/>
         <source>Modify Shortcut/Delete Macro...</source>
-        <translation>Modificare scorciatoia/Eliminare macro...</translation>
+        <translation>Modificare scorciatoia/eliminare macro...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="698"/>
