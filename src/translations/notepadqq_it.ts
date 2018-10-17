@@ -1175,7 +1175,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="690"/>
         <source>Modify Shortcut/Delete Macro...</source>
-        <translation>Modificare scorciatoia/eliminare macro...</translation>
+        <translation>Modificare scorciatoie/eliminare macro...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="698"/>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="771"/>
         <source>Modify Shortcut / Delete Command...</source>
-        <translation>Modificare scorciatoia / Elimina comando...</translation>
+        <translation>Modificare scorciatoia / elimina comando...</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="781"/>
@@ -1368,7 +1368,7 @@
 
 </source>
         <translation>Errore nel tentativo di salvare la sessione. Assicurarsi che la seguente directory sia accessibile:
-			
+
 </translation>
     </message>
     <message>
@@ -1379,7 +1379,7 @@
     <message>
         <location filename="../ui/mainwindow.cpp" line="548"/>
         <source>The &apos;--line&apos; and &apos;--column&apos; arguments will be ignored since more than one file is opened.</source>
-        <translation>Gli argomenti &apos;--line&apos; e &apos;--column&apos; saranno ignorati in quanto più di un file è aperto.</translation>
+        <translation>Gli argomenti &apos;--line&apos; e &apos;--column&apos; saranno ignorati in quanto è aperto più di un file.</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="558"/>
@@ -1503,7 +1503,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2081"/>
         <source>Convert to:</source>
-        <translation>Convertire in:</translation>
+        <translation>Converti in:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2099"/>
@@ -1513,7 +1513,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2146"/>
         <source>Interpret as:</source>
-        <translation>Interpretare come:</translation>
+        <translation>Interpreta come:</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2161"/>
@@ -1595,7 +1595,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="273"/>
         <source>Full path of the currently active file.</source>
-        <translation>Percorso Completo del file attivo corrente.</translation>
+        <translation>Percorso completo del file attivo corrente.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="274"/>
@@ -1648,7 +1648,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/nqqrun.cpp" line="35"/>
         <source>Full URL of the currently active file.</source>
-        <translation>URL Completo del file attivo corrente.</translation>
+        <translation>URL completo del file attivo corrente.</translation>
     </message>
     <message>
         <location filename="../ui/nqqrun.cpp" line="36"/>
@@ -1731,7 +1731,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="51"/>
         <source>Confirm Replacement</source>
-        <translation>conferma Sostituzione</translation>
+        <translation>Conferma sostituzione</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="52"/>
@@ -1746,42 +1746,42 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="144"/>
         <source>Here is a quick reference:</source>
-        <translation>Qui un rapido riderimento:</translation>
+        <translation>Qui un rapido riferimento:</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="146"/>
         <source>Matches a word character</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova un carattere in una parola</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
         <source>Matches a 0-9 digit</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova una cifra da 0 a 9</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="148"/>
         <source>Matches any of a, b, or c</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova uno qualsiasi tra a, b o c</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="149"/>
         <source>Matches anything but a, b, or c</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova tutto tranne a, b o c</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="150"/>
         <source>Matches the beginning of a line</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova l&apos;inizio della riga</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="151"/>
         <source>Matches the end of a line</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova la fine della riga</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="152"/>
         <source>Matches &apos;abc&apos; and captures it as a group</source>
-        <translation type="unfinished"></translation>
+        <translation>Trova &apos;abc&apos; e le cattura in un gruppo</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="153"/>
@@ -1796,22 +1796,22 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="27"/>
         <source>&lt;b&gt;%1&lt;/b&gt; Results for:   &apos;&lt;b&gt;%2&lt;/b&gt;&apos;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; Risultati per:    &apos;&lt;b&gt;%2&lt;/b&gt;&apos;</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt; Risultati per:   &apos;&lt;b&gt;%2&lt;/b&gt;&apos;</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="10"/>
         <source>Current Document</source>
-        <translation>Documento Corrente</translation>
+        <translation>Documento corrente</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="11"/>
         <source>All Documents</source>
-        <translation>Tutti i Documenti</translation>
+        <translation>Tutti i documenti</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="12"/>
         <source>File System</source>
-        <translation type="unfinished"></translation>
+        <translation>File System</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchobjects.cpp" line="13"/>
@@ -1871,7 +1871,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/stats.cpp" line="138"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>No</translation>
     </message>
 </context>
 <context>
@@ -1889,22 +1889,22 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="125"/>
         <source>Copy Line to Clipboard</source>
-        <translation>Copia la Riga negli Appunti</translation>
+        <translation>Copia la riga negli appunti</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="133"/>
         <source>Open Document</source>
-        <translation>Apri Documento</translation>
+        <translation>Apri documento</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="142"/>
         <source>Open Folder in File Browser</source>
-        <translation>Apri Cartella nell&apos;Esplora File</translation>
+        <translation>Apri cartella nell&apos;esplora file</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="155"/>
         <source>Search Results in: %1</source>
-        <translation>Risultati della Ricerca in: %1</translation>
+        <translation>Risultati della ricerca in: %1</translation>
     </message>
     <message>
         <location filename="../ui/Search/searchinstance.cpp" line="231"/>
@@ -2033,7 +2033,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/frmpreferences.ui" line="66"/>
         <source>Languages</source>
-        <translation>Linguaggio</translation>
+        <translation>Linguaggi</translation>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="71"/>
@@ -2267,12 +2267,12 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="149"/>
         <source>Match whole word only</source>
-        <translation>Solo parole intere</translation>
+        <translation>Trova solo parole intere</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="156"/>
         <source>Match case</source>
-        <translation>Distingui tra maiuscole e minuscole</translation>
+        <translation>Distingui maiuscole e minuscole</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="123"/>
@@ -2282,7 +2282,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="163"/>
         <source>Search &amp;with special characters (\n, \r, \t, \0, \u..., \x...)</source>
-        <translation type="unfinished">Cerca con caratteri speciali (\n, \r, \t, \0, \u..., \x...)</translation>
+        <translation>Cerca con caratteri speciali (\n, \r, \t, \0, \u..., \x...)</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="170"/>
@@ -2320,7 +2320,7 @@ Vuoi salvare comunque?</translation>
         <location filename="../ui/Search/frmsearchreplace.ui" line="334"/>
         <location filename="../ui/Search/frmsearchreplace.ui" line="337"/>
         <source>Advanced Search</source>
-        <translation>Ricerca Avanzata</translation>
+        <translation>Ricerca avanzata</translation>
     </message>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="255"/>
