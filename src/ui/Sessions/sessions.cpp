@@ -464,7 +464,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             }
 
             // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
-            editor->clearFocus(true);
+            editor->clearFocus();
         } // end for
 
         // In case a new tabwidget was created but no tabs were actually added to it,

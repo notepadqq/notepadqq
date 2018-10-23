@@ -152,7 +152,7 @@ namespace EditorNS
              *
              * @param widgetOnly only clear the focus on the actual widget
              */
-        Q_INVOKABLE void clearFocus(bool widgetOnly = false);
+        Q_INVOKABLE void clearFocus();
 
         /**
              * @brief Set the file name associated with this editor
