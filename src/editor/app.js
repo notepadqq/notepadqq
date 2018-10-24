@@ -738,5 +738,7 @@ $(document).ready(function () {
         UiDriver.sendMessage("J_EVT_GOT_FOCUS");
     });
 
+    editor.focus();
+
     UiDriver.sendMessage("J_EVT_READY", null);
 });

@@ -149,6 +149,8 @@ namespace EditorNS
 
         /**
              * @brief Remove the focus from the editor.
+             *
+             * @param widgetOnly only clear the focus on the actual widget
              */
         Q_INVOKABLE void clearFocus();
 

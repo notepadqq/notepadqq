@@ -1187,6 +1187,7 @@ void MainWindow::on_currentEditorChanged(EditorTabWidget *tabWidget, int tab)
         Editor *editor = tabWidget->editor(tab);
         refreshEditorUiInfo(editor);
         editor->requestDocumentInfo();
+        editor->setFocus();
     }
 }
 

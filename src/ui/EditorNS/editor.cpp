@@ -187,14 +187,11 @@ namespace EditorNS
     void Editor::setFocus()
     {
         m_webView->setFocus();
-        asyncSendMessageWithResultP("C_CMD_SET_FOCUS")
-                .wait(); // FIXME Remove
     }
 
     void Editor::clearFocus()
     {
         m_webView->clearFocus();
-        asyncSendMessageWithResultP("C_CMD_BLUR");
     }
 
     /**
