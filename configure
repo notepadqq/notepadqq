@@ -9,10 +9,8 @@ test -n "$QTCHOOSER" || QTCHOOSER="$(which qtchooser 2> /dev/null)"
 # Use qtchooser if we have it, otherwise use which
 if test -n "$QTCHOOSER"; then
     test -n "$QMAKE"    || QMAKE="$QTCHOOSER -run-tool=qmake -qt=5"
-    test -n "$LRELEASE" || LRELEASE="$QTCHOOSER -run-tool=lrelease -qt=5"
 else
     test -n "$QMAKE"    || QMAKE="$(which qmake-qt5 2>/dev/null || which qmake 2>/dev/null)"
-    test -n "$LRELEASE" || LRELEASE="$(which lrelease-qt5 2>/dev/null || which lrelease 2>/dev/null)"
 fi
 
 
@@ -40,9 +38,6 @@ Defaults for the options are specified in brackets.
   -d, --debug             build with debugging symbols intact
 
   --fail-on-missing       return exit 1 if non-optional components are missing
-
-  --lrelease COMMAND,
-  --lrelease=COMMAND      specify lrelease command [$LRELEASE]
 
   --qmake COMMAND,
   --qmake=COMMAND         specify qmake command [$QMAKE]
@@ -97,13 +92,6 @@ while [ "$#" -ge 1 ]; do
         --fail-on-missing)
         fail_on_missing="yes"
         ;;
-        --lrelease=*)
-        LRELEASE="${key#*=}"
-        ;;
-        --lrelease)
-        LRELEASE="$1"
-        shift
-        ;;
         --qmake=*)
         QMAKE="${key#*=}"
         ;;
@@ -127,12 +115,6 @@ printf "checking for QT5 qmake... "
 $QMAKE -help 2>/dev/null 1>/dev/null
 test $? -eq 0 && echo "$QMAKE" || \
     errorExit "not found!\n  Try to run configure with \`--qmake /path/to/qmake-executable'." 1
-
-# check for lrelease
-printf "checking for lrelease... "
-$LRELEASE -help 2>/dev/null 1>/dev/null
-test $? -eq 0 && echo "$LRELEASE" || \
-    errorExit "not found!\n  Try to run configure with \`--lrelease /path/to/lrelease-executable'." 1
 
 check c++ "$CXX" 1
 
@@ -181,6 +163,5 @@ $QMAKE PREFIX="$PREFIX" \
 QMAKE_CXX="$CXX" \
 QMAKE_CXXFLAGS="$CXXFLAGS $CPPFLAGS" \
 QMAKE_LFLAGS="$LDFLAGS" \
-LRELEASE="$LRELEASE" \
 CONFIG+="$BUILDMODE" \
 "$@" notepadqq.pro && echo "done" || errorExit "error!" 1

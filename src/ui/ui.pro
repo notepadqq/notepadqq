@@ -42,11 +42,7 @@ isEmpty(DESTDIR) {
     }
 }
 
-isEmpty(LRELEASE) {
-    !macx:!haiku: LRELEASE = qtchooser -run-tool=lrelease -qt=5
-    haiku: LRELEASE = lrelease
-    macx: LRELEASE = lrelease
-}
+qtPrepareTool(LRELEASE, lrelease)
 
 !macx {
     APPDATADIR = "$$DESTDIR/../appdata"
