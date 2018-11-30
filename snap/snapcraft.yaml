@@ -12,6 +12,8 @@ base: core18
 apps:
   notepadqq: 
     command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
+    environment:
+        DISABLE_WAYLAND: 1
     desktop: usr/local/share/applications/notepadqq.desktop
 #   plugs:  # Plugs are not needed for classic confinement
 #     - browser-support
@@ -78,6 +80,7 @@ parts:
       - libqt5webengine5
       - libc6 # For Ubuntu 16.06
       - libuchardet0
+      - qtwayland5
       
     source: . 
     after: [desktop-qt5-my] # FIXME: Use upstream desktop-qt5 as soon as they support core18
