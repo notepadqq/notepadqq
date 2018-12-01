@@ -1,4 +1,4 @@
- <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
   <id>notepadqq.desktop</id>
   <metadata_license>MIT</metadata_license>
@@ -28,4 +28,10 @@
   <url type="homepage">https://github.com/notepadqq/notepadqq</url>
   <url type="bugtracker">https://github.com/notepadqq/notepadqq/issues</url>
   <url type="help">https://github.com/notepadqq/notepadqq/wiki</url>
+  <provides>
+    <binary>notepadqq</binary>
+  </provides>
+  <releases>
+    <release version="1.4.8" date="2018-05-10"/>
+  </releases>
 </component>
