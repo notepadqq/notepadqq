@@ -8,7 +8,7 @@
 
 #### What is it?
 
-Notepadqq is a text editor designed from developers, for developers. 
+Notepadqq is a text editor designed by developers, for developers. 
 
 ![screenshot_20180302_163505](https://notepadqq.com/s/images/snapshot1.png)
 
