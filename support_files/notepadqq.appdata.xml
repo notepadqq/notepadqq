@@ -28,6 +28,9 @@
   <url type="homepage">https://github.com/notepadqq/notepadqq</url>
   <url type="bugtracker">https://github.com/notepadqq/notepadqq/issues</url>
   <url type="help">https://github.com/notepadqq/notepadqq/wiki</url>
+  <content_rating type="oars-1.0">
+    <content_attribute id="social-info">moderate</content_attribute>
+  </content_rating>
   <provides>
     <binary>notepadqq</binary>
   </provides>
