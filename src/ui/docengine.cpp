@@ -625,7 +625,7 @@ void DocEngine::unmonitorDocument(const QString &fileName)
 QString DocEngine::getAvailableSudoProgram() const
 {
 #ifdef __linux__
-    const QStringList sudoPrograms {"gksu", "kdesu", "pkexec"};
+    const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
     QString envPath = qEnvironmentVariable("PATH");
     if (!envPath.isEmpty()) {
         QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
@@ -661,11 +661,12 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
     if (sudoBinaryName == "kdesu") {
         arguments = QStringList({"--noignorebutton", "-n", "-c"});
     } else if (sudoBinaryName == "gksu") {
-        arguments = QStringList({"-S", "-m", tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
-            .arg(outFileName.toLocalFile())});
+        arguments = QStringList({"-S",
+            "-m",
+            tr("Notepadqq asks permission to overwrite the following file:\n\n%1").arg(outFileName.toLocalFile())});
     }
     arguments.append({"cp", filePath, outFileName.toLocalFile()});
-    
+
     QProcess p;
     p.start(sudoProgram, arguments);
 
