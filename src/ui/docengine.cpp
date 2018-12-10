@@ -626,7 +626,7 @@ QString DocEngine::getAvailableSudoProgram() const
 {
 #ifdef __linux__
     const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
-    QString envPath = qEnvironmentVariable("PATH");
+    QString envPath = QString::fromLocal8Bit(qgetenv("PATH"));
     if (!envPath.isEmpty()) {
         QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
         for (const auto& path : pathList) {
