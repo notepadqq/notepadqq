@@ -624,22 +624,28 @@ void DocEngine::unmonitorDocument(const QString &fileName)
 
 QString DocEngine::getAvailableSudoProgram() const
 {
+    //NOTE: Don't rely on `which` for this information.  Some slower hard
+    //drives were exceeding the 10ms execution limit and failing to
+    //find any sudo program at all.
+    static QString sudoProgram;
 #ifdef __linux__
-    const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
-    QString envPath = QString::fromLocal8Bit(qgetenv("PATH"));
-    if (!envPath.isEmpty()) {
-        QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
-        for (const auto& path : pathList) {
-            QDir dir(path);
-            for (const auto& executable : sudoPrograms) {
-                if (dir.exists(executable)) {
-                    return dir.absoluteFilePath(executable);
+    if (sudoProgram.isEmpty()) {
+        const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
+        QString envPath = QString::fromLocal8Bit(qgetenv("PATH"));
+        if (!envPath.isEmpty()) {
+            QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
+            for (const auto& path : pathList) {
+                QDir dir(path);
+                for (const auto& executable : sudoPrograms) {
+                    if (dir.exists(executable)) {
+                        return dir.absoluteFilePath(executable);
+                    }
                 }
             }
         }
     }
 #endif
-    return {};
+    return sudoProgram;
 }
 
 bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor)
@@ -694,7 +700,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
             if (write(&file, editor.data())) {
                 break;
             } else {
-                static QString sudoProgram = getAvailableSudoProgram();
+                QString sudoProgram = getAvailableSudoProgram();
 
                 // Handle error
                 QMessageBox msgBox;
