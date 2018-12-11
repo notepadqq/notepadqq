@@ -624,9 +624,9 @@ void DocEngine::unmonitorDocument(const QString &fileName)
 
 QString DocEngine::getAvailableSudoProgram() const
 {
-    //NOTE: Don't rely on `which` for this information.  Some slower hard
-    //drives were exceeding the 10ms execution limit and failing to
-    //find any sudo program at all.
+    // NOTE: Don't rely on `which` for this information.  Some slower hard
+    // drives were exceeding the 10ms execution limit and failing to
+    // find any sudo program at all.
     static QString sudoProgram;
 #ifdef __linux__
     if (sudoProgram.isEmpty()) {
