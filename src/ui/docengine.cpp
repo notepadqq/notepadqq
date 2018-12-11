@@ -624,24 +624,32 @@ void DocEngine::unmonitorDocument(const QString &fileName)
 
 QString DocEngine::getAvailableSudoProgram() const
 {
-    QProcess p;
-
-    p.start("which kdesu");
-    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
-        return "kdesu";
-
-    p.start("which gksu");
-    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
-        return "gksu";
-
-    p.start("which pkexec");
-    if (p.waitForFinished(10) && p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0)
-        return "pkexec";
-
-    return "";
+    // NOTE: Don't rely on `which` for this information.  Some slower hard
+    // drives were exceeding the 10ms execution limit and failing to
+    // find any sudo program at all.
+    static QString sudoProgram;
+#ifdef __linux__
+    if (sudoProgram.isEmpty()) {
+        const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
+        QString envPath = QString::fromLocal8Bit(qgetenv("PATH"));
+        if (!envPath.isEmpty()) {
+            QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
+            for (const auto& path : pathList) {
+                QDir dir(path);
+                for (const auto& executable : sudoPrograms) {
+                    if (dir.exists(executable)) {
+                        return dir.absoluteFilePath(executable);
+                    }
+                }
+            }
+        }
+    }
+#endif
+    return sudoProgram;
 }
 
-bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor) {
+bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor)
+{
     if(sudoProgram.isEmpty())
         return false;
 
@@ -651,27 +659,22 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
             .toLocalFile();
 
     QFile file(filePath);
-
     if (!write(&file, editor))
         return false;
 
+    QString sudoBinaryName = QFileInfo(sudoProgram).baseName();
+    QStringList arguments;
+    if (sudoBinaryName == "kdesu") {
+        arguments = QStringList({"--noignorebutton", "-n", "-c"});
+    } else if (sudoBinaryName == "gksu") {
+        arguments = QStringList({"-S",
+            "-m",
+            tr("Notepadqq asks permission to overwrite the following file:\n\n%1").arg(outFileName.toLocalFile())});
+    }
+    arguments.append({"cp", filePath, outFileName.toLocalFile()});
+
     QProcess p;
-
-    if (sudoProgram == "kdesu")
-        p.start("kdesu", QStringList()
-                << "--noignorebutton"
-                << "-n"
-                << "-c" << "cp" << filePath << outFileName.toLocalFile());
-    else if (sudoProgram == "gksu")
-        p.start("gksu", QStringList()
-                << "-S" << "-m" << tr("Notepadqq asks permission to overwrite the following file:\n\n%1")
-                .arg(outFileName.toLocalFile())
-                << "cp" << filePath << outFileName.toLocalFile());
-    else if (sudoProgram == "pkexec")
-        p.start("pkexec", QStringList() << "cp" << filePath << outFileName.toLocalFile());
-    else
-        return false;
-
+    p.start(sudoProgram, arguments);
 
     p.waitForFinished(-1);
     file.remove();
@@ -697,7 +700,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
             if (write(&file, editor.data())) {
                 break;
             } else {
-                static QString sudoProgram = getAvailableSudoProgram();
+                QString sudoProgram = getAvailableSudoProgram();
 
                 // Handle error
                 QMessageBox msgBox;
