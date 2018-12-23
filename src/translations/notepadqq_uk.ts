@@ -187,7 +187,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="426"/>
         <source>All searches will be canceled and their results discarded if you continue.</source>
-        <translation>Якщо ви продовжите, усі пошуки буде скасовано і їх результати будуть відхилені.</translation>
+        <translation>Якщо ви продовжите, всі пошуки буде скасовано і їх результати будуть відхилені.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="440"/>
