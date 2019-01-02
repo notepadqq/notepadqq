@@ -6,7 +6,7 @@ description: |
   You can search text using the power of regular expressions. You can organize documents side by side. You can use real-time highlighting to find near identifiers in no time.
 grade: stable
 confinement: classic
-icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
+icon: ../support_files/icons/hicolor/scalable/apps/notepadqq.svg
 base: core18
 
 apps:
@@ -39,7 +39,7 @@ parts:
 
   qtconf:
     plugin: dump
-    source: .snap-data/
+    source: ../
     organize:
       qt.conf: usr/local/lib/notepadqq/qt.conf
       qt.WebEngineProcess.conf: usr/lib/x86_64-linux-gnu/qt5/libexec/qt.conf
@@ -82,7 +82,7 @@ parts:
       - libuchardet0
       - qtwayland5
       
-    source: . 
+    source: ../ 
     after: [desktop-qt5-my] # FIXME: Use upstream desktop-qt5 as soon as they support core18
     plugin: qmake
     options:
@@ -93,7 +93,7 @@ parts:
       snapcraftctl build
 
   desktop-qt5-my:
-    source: snap/snapcraft-desktop-helpers/qt
+    source: ./snapcraft-desktop-helpers/qt
     plugin: make
     make-parameters: ["FLAVOR=qt5"]
     build-packages:
