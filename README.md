@@ -47,7 +47,7 @@ For CentOS:
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
-by following the above steps, then run
+by following the above steps, then run:
 
     notepadqq$ sudo make install
 
