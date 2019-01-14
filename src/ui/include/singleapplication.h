@@ -2,8 +2,9 @@
 #define SINGLEAPPLICATION_H
 
 #include <QApplication>
+#ifndef USE_DBUS
 #include <QLocalServer>
-
+#endif
 /**
  * @brief QApplication subclass which, using local sockets, makes sure only
  *        one instance of the application is running at the same time.
@@ -26,8 +27,10 @@ public:
 signals:
     void receivedArguments(const QString &workingDirectory, const QStringList &arguments);
 
+#ifdef USE_DBUS
 public slots:
-
+    Q_SCRIPTABLE void receive(const QString& workingDirectory, const QStringList& arguments);
+#else
 private:
     QLocalServer *m_localServer = nullptr;
 
@@ -35,6 +38,7 @@ private:
     QLocalSocket *alreadyRunningInstance();
     void newConnection();
     QString socketNameForUser();
+#endif
 };
 
 #endif // SINGLEAPPLICATION_H
