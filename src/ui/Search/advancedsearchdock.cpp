@@ -642,6 +642,18 @@ void AdvancedSearchDock::selectNextResult()
     if (m_currentSearchInstance) m_currentSearchInstance->selectNextResult();
 }
 
+bool AdvancedSearchDock::isVisible() const
+{
+    return getDockWidget()->isVisible();
+}
+
+void AdvancedSearchDock::show(bool show, bool setFocus)
+{
+    getDockWidget()->setVisible(show);
+    if (show && setFocus)
+        m_cmbSearchTerm->setFocus();
+}
+
 AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     : QObject(mainWindow),
       m_mainWindow(mainWindow),
