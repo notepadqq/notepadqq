@@ -1478,8 +1478,7 @@ void MainWindow::instantiateFrmSearchReplace()
                                  this);
 
         connect(m_frmSearchReplace, &frmSearchReplace::toggleAdvancedSearch, [this](){
-            QWidget* dockWidget = m_advSearchDock->getDockWidget();
-            dockWidget->setVisible( !dockWidget->isVisible() );
+            m_advSearchDock->show(!m_advSearchDock->isVisible(), true);
         });
     }
 }
@@ -2417,8 +2416,7 @@ void MainWindow::on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab)
 
 void MainWindow::on_actionFind_in_Files_triggered()
 {
-    QWidget* dockWidget = m_advSearchDock->getDockWidget();
-    dockWidget->setVisible( !dockWidget->isVisible() );
+    m_advSearchDock->show(!m_advSearchDock->isVisible(), true);
 }
 
 void MainWindow::on_actionDelete_Line_triggered()
