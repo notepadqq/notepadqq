@@ -78,6 +78,7 @@ public:
 
     DocEngine*  getDocEngine() const;
     void generateRunMenu();
+    void configurePostSessionUserInterface();
 public slots:
     void refreshEditorUiInfo(Editor *editor);
     void refreshEditorUiCursorInfo(QMap<QString, QVariant> data);
