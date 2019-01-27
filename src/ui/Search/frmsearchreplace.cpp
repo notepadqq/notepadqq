@@ -385,6 +385,7 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 
     // Workaround. See comment in setSearchText().
     ui->cmbSearch->setAutoCompletion(true);
+    ui->cmbSearch->completer()->setCaseSensitivity(Qt::CaseSensitive);
 }
 
 /**
