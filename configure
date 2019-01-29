@@ -157,7 +157,7 @@ printf "checking whether compiled test program works... "
 rm -f test test.cpp
 
 check make "$MAKE" 1
-check pkg-config pkg-config
+check pkg-config pkg-config 1
 
 # check for libraries via pkg-config
 libraries="Qt5Core Qt5Gui Qt5Network Qt5WebEngine Qt5Widgets Qt5WebEngineWidgets Qt5PrintSupport Qt5Svg Qt5WebSockets Qt5WebChannel uchardet"
