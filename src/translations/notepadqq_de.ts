@@ -107,7 +107,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="310"/>
         <source>Search in Files on File System</source>
-        <translation>Such in Dateien auf Datenträger</translation>
+        <translation>Suche in Dateien auf Datenträger</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="325"/>
@@ -157,7 +157,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="358"/>
         <source>Match Whole Words Only</source>
-        <translation>Nur Ganze Wörter</translation>
+        <translation>Nur ganze Wörter</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="359"/>
@@ -202,7 +202,7 @@
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="741"/>
         <source>&lt;h3&gt;This search is still in progress.&lt;/h3&gt; The search will be canceled and all results discarded if you continue.</source>
-        <translation>&lt;h3&gt;Suchvorgang noch nicht beendet.&lt;/h3&gt; Falls Sie fortfahren wird die Suche abgebrochen und die Ergebnisse verworfen.</translation>
+        <translation>&lt;h3&gt;Suchvorgang noch nicht beendet.&lt;/h3&gt; Falls Sie fortfahren, wird die Suche abgebrochen und die Ergebnisse verworfen.</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="852"/>
@@ -233,7 +233,8 @@
         <location filename="../ui/Search/advancedsearchdock.cpp" line="904"/>
         <source>Replacing was unsuccessful for %1 file(s):
 </source>
-        <translation>Konnte Treffer in %1 Datei(en) nicht ersetzen:</translation>
+        <translation>Konnte Treffer in %1 Datei(en) nicht ersetzen:
+</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="910"/>
@@ -1495,7 +1496,8 @@ Wollen Sie dennoch speichern?</translation>
         <location filename="../ui/mainwindow.cpp" line="2055"/>
         <source>The following files do not exist anymore. Do you want to open them anyway?
 </source>
-        <translation>Die folgenden Dateien existieren nicht mehr. Sollen sie dennoch geöffnet werden?</translation>
+        <translation>Die folgenden Dateien existieren nicht mehr. Sollen sie dennoch geöffnet werden?
+</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="2166"/>
@@ -1768,7 +1770,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="147"/>
         <source>Matches a word character</source>
-        <translation>Entspricht einem Word</translation>
+        <translation>Entspricht einem Zeichen in einem Wort</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="148"/>
@@ -1803,7 +1805,7 @@ Wollen Sie dennoch speichern?</translation>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="154"/>
         <source>Use in a replace operation to refer to the n&apos;th capture group</source>
-        <translation>In Operation verwenden um Bezug zu nehmen auf die n&apos;te erfasste Gruppe</translation>
+        <translation>Im Ersetzungs-Vorgang verwenden, um auf die n&apos;te erfasste Gruppe zu verweisen</translation>
     </message>
     <message>
         <location filename="../ui/Search/advancedsearchdock.cpp" line="704"/>
