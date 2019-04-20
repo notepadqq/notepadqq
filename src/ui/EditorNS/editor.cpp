@@ -24,6 +24,7 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
+        
         bool showLineNumbers = NqqSettings::getInstance().Appearance.getShowLineNumbers();
 
         fullConstructor(themeFromName(themeName), showLineNumbers);
@@ -48,7 +49,7 @@ namespace EditorNS
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
-        
+
         if (showLineNumbers) {
             query.addQueryItem("showLineNumbers", "true");
         } else {
