@@ -48,8 +48,7 @@ namespace EditorNS
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
-        if (showLineNumbers)
-        {
+        if (showLineNumbers) {
             query.addQueryItem("showLineNumbers", "true");
         } else {
             query.addQueryItem("showLineNumbers", "false");
