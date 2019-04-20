@@ -42,6 +42,10 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
                               R"(})" "\n"
                               );
 
+    // Update the preview editor so that the editor's current settings are applied and shown properly
+    // in the editor preview
+    updatePreviewEditorFont();
+
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
