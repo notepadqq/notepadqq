@@ -24,19 +24,17 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
-        
-        bool showLineNumbers = NqqSettings::getInstance().Appearance.getShowLineNumbers();
 
-        fullConstructor(themeFromName(themeName), showLineNumbers);
+        fullConstructor(themeFromName(themeName));
     }
 
-    Editor::Editor(const Theme &theme, bool showLineNumbers, QWidget *parent) :
+    Editor::Editor(const Theme &theme, QWidget *parent) :
         QWidget(parent)
     {
-        fullConstructor(theme, showLineNumbers);
+        fullConstructor(theme);
     }
 
-    void Editor::fullConstructor(const Theme &theme, bool showLineNumbers)
+    void Editor::fullConstructor(const Theme &theme)
     {
         m_jsToCppProxy = new JsToCppProxy(this);
         connect(m_jsToCppProxy,
@@ -49,12 +47,6 @@ namespace EditorNS
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
-
-        if (showLineNumbers) {
-            query.addQueryItem("showLineNumbers", "true");
-        } else {
-            query.addQueryItem("showLineNumbers", "false");
-        }
 
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);

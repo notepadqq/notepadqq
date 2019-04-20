@@ -14,7 +14,7 @@
    <string>Preferences</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../CLionProjects/notepadqq/src/ui/resources.qrc">
+   <iconset resource="resources.qrc">
     <normaloff>:/icons/notepadqq/scalable/notepadqq.svg</normaloff>:/icons/notepadqq/scalable/notepadqq.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">

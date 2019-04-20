@@ -82,7 +82,7 @@ namespace EditorNS
             }
         };
 
-        explicit Editor(const Theme &theme, bool showLineNumbers, QWidget *parent = 0);
+        explicit Editor(const Theme &theme, QWidget *parent = 0);
         explicit Editor(QWidget *parent = 0);
 
         /**
@@ -349,7 +349,7 @@ namespace EditorNS
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
-        void fullConstructor(const Theme &theme, bool showLineNumbers);
+        void fullConstructor(const Theme &theme);
 
         QPromise<void> setIndentationMode(const bool useTabs, const int size);
         QPromise<void> setIndentationMode(const Language*);

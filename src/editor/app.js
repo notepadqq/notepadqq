@@ -692,7 +692,7 @@ UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, pre
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
-        lineNumbers: _showLineNumbers,
+        lineNumbers: true,
         mode: { name: "" },
         highlightSelectionMatches: {style: "selectedHighlight", wordsOnly: true, delay: 25},
         styleSelectedText: true,
