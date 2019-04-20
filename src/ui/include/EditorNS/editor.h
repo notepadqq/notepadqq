@@ -82,7 +82,7 @@ namespace EditorNS
             }
         };
 
-        explicit Editor(const Theme &theme, QWidget *parent = 0);
+        explicit Editor(const Theme &theme, bool showLineNumbers, QWidget *parent = 0);
         explicit Editor(QWidget *parent = 0);
 
         /**
@@ -264,6 +264,13 @@ namespace EditorNS
          */
         void setFont(QString fontFamily, int fontSize, double lineHeight);
 
+        /**
+         * @brief Toggles line numbers on/off in the editor
+         * @param visible when true, the line numbers will be visible,
+         * when false the line numbers will be hidden.
+         */
+        void setLineNumbersVisible(bool visible);
+
         QTextCodec *codec() const;
 
         /**
@@ -342,7 +349,7 @@ namespace EditorNS
         inline void waitAsyncLoad();
         QString jsStringEscape(QString str) const;
 
-        void fullConstructor(const Theme &theme);
+        void fullConstructor(const Theme &theme, bool showLineNumbers);
 
         QPromise<void> setIndentationMode(const bool useTabs, const int size);
         QPromise<void> setIndentationMode(const Language*);

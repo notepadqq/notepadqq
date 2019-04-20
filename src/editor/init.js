@@ -6,6 +6,7 @@
 
 var _initialized = false;
 var _defaultTheme = "";
+var _showLineNumbers = true;
 
 function addStylesheet(path) {
     var link = document.createElement("link");
@@ -34,6 +35,11 @@ function init()
     var themeName = getParameterByName("themeName");
     if (themePath !== "") {
         addStylesheet(themePath);
+    }
+
+    var showLineNumbers = getParameterByName("showLineNumbers");
+    if (showLineNumbers === "false") {
+        _showLineNumbers = false;
     }
     
     _defaultTheme = themeName === "" ? "default" : themeName;

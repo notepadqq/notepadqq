@@ -14,7 +14,7 @@
    <string>Preferences</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../CLionProjects/notepadqq/src/ui/resources.qrc">
     <normaloff>:/icons/notepadqq/scalable/notepadqq.svg</normaloff>:/icons/notepadqq/scalable/notepadqq.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -91,7 +91,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -350,6 +350,13 @@
              </property>
             </widget>
            </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="chkShowLineNumbers">
+             <property name="text">
+              <string>Show line numbers</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -570,7 +577,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-next">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
                 </property>
                </widget>
               </item>
@@ -581,7 +588,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-previous">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
                 </property>
                </widget>
               </item>
@@ -610,7 +617,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-up">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
                 </property>
                </widget>
               </item>
@@ -621,7 +628,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-down">
-                  <normaloff>.</normaloff>.</iconset>
+                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
                 </property>
                </widget>
               </item>
@@ -651,7 +658,7 @@
              </property>
              <property name="icon">
               <iconset theme="edit-undo">
-               <normaloff>.</normaloff>.</iconset>
+               <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
              </property>
             </widget>
            </item>
@@ -686,8 +693,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>362</width>
-              <height>205</height>
+              <width>565</width>
+              <height>390</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -808,7 +815,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../CLionProjects/notepadqq/src/ui/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

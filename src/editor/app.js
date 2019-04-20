@@ -412,6 +412,11 @@ UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn)
     }
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_LINE_NUMBERS_VISIBLE", function (msg, data, prevReturn) {
+    editor.setOption("lineNumbers", data);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
     editor.toggleOverwrite(data);
 });
@@ -687,7 +692,7 @@ UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, pre
 
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
-        lineNumbers: true,
+        lineNumbers: _showLineNumbers,
         mode: { name: "" },
         highlightSelectionMatches: {style: "selectedHighlight", wordsOnly: true, delay: 25},
         styleSelectedText: true,

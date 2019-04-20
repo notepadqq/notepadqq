@@ -24,17 +24,18 @@ namespace EditorNS
     {
 
         QString themeName = NqqSettings::getInstance().Appearance.getColorScheme();
+        bool showLineNumbers = NqqSettings::getInstance().Appearance.getShowLineNumbers();
 
-        fullConstructor(themeFromName(themeName));
+        fullConstructor(themeFromName(themeName), showLineNumbers);
     }
 
-    Editor::Editor(const Theme &theme, QWidget *parent) :
+    Editor::Editor(const Theme &theme, bool showLineNumbers, QWidget *parent) :
         QWidget(parent)
     {
-        fullConstructor(theme);
+        fullConstructor(theme, showLineNumbers);
     }
 
-    void Editor::fullConstructor(const Theme &theme)
+    void Editor::fullConstructor(const Theme &theme, bool showLineNumbers)
     {
         m_jsToCppProxy = new JsToCppProxy(this);
         connect(m_jsToCppProxy,
@@ -47,6 +48,12 @@ namespace EditorNS
         QUrlQuery query;
         query.addQueryItem("themePath", theme.path);
         query.addQueryItem("themeName", theme.name);
+        if (showLineNumbers)
+        {
+            query.addQueryItem("showLineNumbers", "true");
+        } else {
+            query.addQueryItem("showLineNumbers", "false");
+        }
 
         QUrl url = QUrl("file://" + Notepadqq::editorPath());
         url.setQuery(query);
@@ -648,6 +655,11 @@ namespace EditorNS
         tmap.insert("size", QString::number(fontSize));
         tmap.insert("lineHeight", QString::number(lineHeight,'f',2));
         asyncSendMessageWithResultP("C_CMD_SET_FONT", tmap);
+    }
+
+    void Editor::setLineNumbersVisible(bool visible)
+    {
+        asyncSendMessageWithResultP("C_CMD_SET_LINE_NUMBERS_VISIBLE", visible);
     }
 
     QTextCodec *Editor::codec() const
