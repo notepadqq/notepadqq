@@ -413,5 +413,8 @@ void SearchInstance::onSearchCompleted()
         }
     }
 
+    if (m_searchResult.results.size() == 1)
+        m_treeWidget->expandAll();
+
     emit searchCompleted();
 }
