@@ -577,7 +577,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-next">
-                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -588,7 +588,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-previous">
-                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -617,7 +617,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-up">
-                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -628,7 +628,7 @@
                 </property>
                 <property name="icon">
                  <iconset theme="go-down">
-                  <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>
@@ -658,7 +658,7 @@
              </property>
              <property name="icon">
               <iconset theme="edit-undo">
-               <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>
@@ -815,7 +815,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../CLionProjects/notepadqq/src/ui/resources.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>

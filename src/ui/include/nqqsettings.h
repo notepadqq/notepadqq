@@ -97,7 +97,7 @@ public:
         NQQ_SETTING(OverrideFontFamily, QString,    "")
         NQQ_SETTING(OverrideFontSize,   int,        0)
         NQQ_SETTING(OverrideLineHeight, double,     0)
-        NQQ_SETTING(ShowLineNumbers, bool, true)
+        NQQ_SETTING(ShowLineNumbers, bool,       true)
     END_CATEGORY(Appearance)
 
     BEGIN_CATEGORY(Search)
