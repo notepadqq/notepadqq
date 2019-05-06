@@ -264,6 +264,13 @@ namespace EditorNS
          */
         void setFont(QString fontFamily, int fontSize, double lineHeight);
 
+        /**
+         * @brief Toggles line numbers on/off in the editor
+         * @param visible when true, the line numbers will be visible,
+         * when false the line numbers will be hidden.
+         */
+        void setLineNumbersVisible(bool visible);
+
         QTextCodec *codec() const;
 
         /**

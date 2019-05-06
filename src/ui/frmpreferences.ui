@@ -91,7 +91,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -347,6 +347,13 @@
              </property>
              <property name="value">
               <double>1.300000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="chkShowLineNumbers">
+             <property name="text">
+              <string>Show line numbers</string>
              </property>
             </widget>
            </item>
@@ -686,8 +693,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>362</width>
-              <height>205</height>
+              <width>565</width>
+              <height>390</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">

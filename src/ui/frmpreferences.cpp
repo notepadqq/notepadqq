@@ -42,6 +42,10 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
                               R"(})" "\n"
                               );
 
+    // Update the preview editor so that the editor's current settings are applied and shown properly
+    // in the editor preview
+    updatePreviewEditorFont();
+
     // Select first item in treeWidget
     ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(s_lastSelectedTab));
 
@@ -106,8 +110,11 @@ void frmPreferences::updatePreviewEditorFont()
     const QString font = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int size = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
     const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
+    const bool lineNumbersVisible = ui->chkShowLineNumbers->isChecked();
 
     m_previewEditor->setFont(font, size, lineHeight);
+
+    m_previewEditor->setLineNumbersVisible(lineNumbersVisible);
 
     // Re-setting language also updates the position of text selection. If not done, selected text
     // would often glitch out when changing the font causes the position of text characters to change.
@@ -213,6 +220,11 @@ void frmPreferences::loadAppearanceTab()
         ui->chkOverrideLineHeight->setChecked(true);
         ui->spnLineHeight->setValue(lineHeight);
     }
+
+    const bool showLineNumbers = m_settings.Appearance.getShowLineNumbers();
+    if (showLineNumbers) {
+        ui->chkShowLineNumbers->setChecked(true);
+    }
 }
 
 void frmPreferences::saveAppearanceTab()
@@ -222,10 +234,12 @@ void frmPreferences::saveAppearanceTab()
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
     const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
+    const bool showLineNumbers = ui->chkShowLineNumbers->isChecked();
 
     m_settings.Appearance.setOverrideFontFamily(fontFamily);
     m_settings.Appearance.setOverrideFontSize(fontSize);
     m_settings.Appearance.setOverrideLineHeight(lineHeight);
+    m_settings.Appearance.setShowLineNumbers(showLineNumbers);
 }
 
 void frmPreferences::loadTranslations()
@@ -404,6 +418,7 @@ bool frmPreferences::applySettings()
     const QString fontFamily = ui->cmbFontFamilies->isEnabled() ? ui->cmbFontFamilies->currentFont().family() : "";
     const int fontSize = ui->spnFontSize->isEnabled() ? ui->spnFontSize->value() : 0;
     const double lineHeight = ui->spnLineHeight->isEnabled() ? ui->spnLineHeight->value() : 0;
+    const bool lineNumbersVisible = ui->chkShowLineNumbers->isChecked();
 
     // Apply changes to currently opened editors
     for (MainWindow *w : MainWindow::instances()) {
@@ -416,6 +431,9 @@ bool frmPreferences::applySettings()
 
             // Set font override
             editor->setFont(fontFamily, fontSize, lineHeight);
+
+            // Set line numbers visibility
+            editor->setLineNumbersVisible(lineNumbersVisible);
 
             // Reset language-dependent settings (e.g. tab settings)
             editor->setLanguage(editor->getLanguage());
@@ -568,6 +586,11 @@ void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
 }
 
 void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
+{
+    updatePreviewEditorFont();
+}
+
+void frmPreferences::on_chkShowLineNumbers_toggled(bool checked)
 {
     updatePreviewEditorFont();
 }

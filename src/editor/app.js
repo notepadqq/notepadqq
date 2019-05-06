@@ -412,6 +412,11 @@ UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn)
     }
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_LINE_NUMBERS_VISIBLE", function (msg, data, prevReturn) {
+    editor.setOption("lineNumbers", data);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
     editor.toggleOverwrite(data);
 });

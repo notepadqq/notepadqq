@@ -650,6 +650,11 @@ namespace EditorNS
         asyncSendMessageWithResultP("C_CMD_SET_FONT", tmap);
     }
 
+    void Editor::setLineNumbersVisible(bool visible)
+    {
+        asyncSendMessageWithResultP("C_CMD_SET_LINE_NUMBERS_VISIBLE", visible);
+    }
+
     QTextCodec *Editor::codec() const
     {
         return m_codec;
