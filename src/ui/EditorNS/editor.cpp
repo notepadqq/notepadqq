@@ -402,7 +402,7 @@ namespace EditorNS
                 .replace("\b", "\\b");
     }
 
-    void Editor::sendMessage(const QString &msg, const QVariant &data)
+    void Editor::sendMessage(const QString msg, const QVariant data)
     {
 #ifdef QT_DEBUG
         qDebug() << "Legacy message " << msg << " sent.";
@@ -412,7 +412,7 @@ namespace EditorNS
         emit m_jsToCppProxy->messageReceivedByJs(msg, data);
     }
 
-    void Editor::sendMessage(const QString &msg)
+    void Editor::sendMessage(const QString msg)
     {
         sendMessage(msg, 0);
     }

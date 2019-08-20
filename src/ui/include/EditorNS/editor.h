@@ -381,8 +381,8 @@ namespace EditorNS
         void currentLanguageChanged(QString id, QString name);
 
     public slots:
-        void sendMessage(const QString &msg, const QVariant &data);
-        void sendMessage(const QString &msg);
+        void sendMessage(const QString msg, const QVariant data);
+        void sendMessage(const QString msg);
 
         /**
          * @brief asyncSendMessageWithResult
