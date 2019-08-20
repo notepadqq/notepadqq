@@ -419,7 +419,7 @@ namespace EditorNS
 
     unsigned int messageIdentifier = 0;
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg, const QVariant data)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
@@ -463,12 +463,12 @@ namespace EditorNS
         return resultPromise;
     }
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg)
     {
         return this->asyncSendMessageWithResultP(msg, 0);
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString msg, const QVariant data, std::function<void(QVariant)> callback)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
@@ -495,7 +495,7 @@ namespace EditorNS
         return fut;
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString msg, std::function<void(QVariant)> callback)
     {
         return this->asyncSendMessageWithResult(msg, 0, callback);
     }

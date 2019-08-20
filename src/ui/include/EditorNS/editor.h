@@ -392,11 +392,11 @@ namespace EditorNS
          *                 If set, you should NOT use the return value of this method.
          * @return
          */
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data);
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg, const QVariant data);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg);
 
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString msg, const QVariant data, std::function<void(QVariant)> callback = 0);
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString msg, std::function<void(QVariant)> callback = 0);
 
         /**
          * @brief Print the editor. As of Qt 5.11, it produces low-quality, non-vector graphics with big dimension.
