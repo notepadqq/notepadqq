@@ -109,7 +109,7 @@ void frmSearchReplace::setCurrentTab(Tabs tab)
     }
 }
 
-Editor *frmSearchReplace::currentEditor()
+QSharedPointer<Editor> frmSearchReplace::currentEditor()
 {
     return this->m_topEditorContainer->currentTabWidget()->currentEditor();
 }
@@ -127,7 +127,7 @@ void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMo
     if (!string.isEmpty()) {
         QString rawSearch = SearchString::format(string, searchMode, searchOptions);
 
-        Editor *editor = currentEditor();
+        auto editor = currentEditor();
 
         if (searchOptions.SearchFromStart) {
             editor->setCursorPosition(0, 0);
@@ -148,7 +148,7 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchHelper
             replacement = SearchString::unescape(replacement);
         }
 
-        Editor *editor = currentEditor();
+        auto editor = currentEditor();
 
         if (searchOptions.SearchFromStart) {
             editor->setCursorPosition(0, 0);
@@ -371,7 +371,7 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 
     if (s.Search.getSearchAsIType()) {
         if (ui->actionFind->isChecked()) {
-            Editor *editor = currentEditor();
+            auto editor = currentEditor();
 
             QList<Editor::Selection> selections = editor->selections();
             if (selections.length() > 0) {

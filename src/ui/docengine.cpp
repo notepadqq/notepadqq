@@ -68,12 +68,12 @@ DocEngine::DecodedText DocEngine::readToString(QFile *file, QTextCodec *codec, b
     return decoded;
 }
 
-QPromise<void> DocEngine::read(QFile *file, Editor *editor)
+QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor)
 {
     return read(file, editor, nullptr, false);
 }
 
-QPromise<void> DocEngine::read(QFile *file, Editor* editor, QTextCodec *codec, bool bom)
+QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom)
 {
     if(!editor)
         return QPromise<void>::reject(0);
@@ -222,7 +222,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
             tabIndex = tabWidget->addEditorTab(false, fi.fileName());
         }
 
-        Editor* editor = tabWidget->editor(tabIndex);
+        auto editor = tabWidget->editor(tabIndex);
 
         // In case of a reload, save cursor, scroll position, language
         QPair<int, int> scrollPosition;
@@ -288,7 +288,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
 
         // If there was only a new empty tab opened, remove it
         if (tabWidget->count() == 2) {
-            Editor *victim = tabWidget->editor(0);
+            auto victim = tabWidget->editor(0);
             if (victim->filePath().isEmpty() && victim->isClean()) {
                 tabWidget->removeTab(0);
                 tabIndex--;
@@ -568,7 +568,7 @@ bool DocEngine::writeFromString(QIODevice *io, const DecodedText &write)
     return true;
 }
 
-bool DocEngine::write(QIODevice *io, Editor *editor)
+bool DocEngine::write(QIODevice *io, QSharedPointer<Editor> editor)
 {
     DecodedText info;
     info.text = editor->value()
@@ -580,7 +580,7 @@ bool DocEngine::write(QIODevice *io, Editor *editor)
     return writeFromString(io, info);
 }
 
-bool DocEngine::write(QUrl outFileName, Editor *editor)
+bool DocEngine::write(QUrl outFileName, QSharedPointer<Editor> editor)
 {
     QFile file(outFileName.toLocalFile());
     bool result = write(&file, editor);
@@ -589,7 +589,7 @@ bool DocEngine::write(QUrl outFileName, Editor *editor)
     return result;
 }
 
-void DocEngine::reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom)
+void DocEngine::reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom)
 {
     QPair<int, int> scrollPosition = editor->scrollPosition();
     QPair<int, int> cursorPosition = editor->cursorPosition();
@@ -648,7 +648,7 @@ QString DocEngine::getAvailableSudoProgram() const
     return sudoProgram;
 }
 
-bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor)
+bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointer<Editor> editor)
 {
     if(sudoProgram.isEmpty())
         return false;
@@ -684,7 +684,7 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* edito
 
 int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName, bool copy)
 {
-    QSharedPointer<Editor> editor = tabWidget->editorSharedPtr(tabWidget->editor(tab));
+    QSharedPointer<Editor> editor = tabWidget->editor(tab);
 
     if (!copy)
         unmonitorDocument(editor);
@@ -697,7 +697,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         do
         {
-            if (write(&file, editor.data())) {
+            if (write(&file, editor)) {
                 break;
             } else {
                 QString sudoProgram = getAvailableSudoProgram();
@@ -721,7 +721,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
                 } else if (clicked == retry) {
                     continue;
                 } else if (clicked == retryRoot) {
-                    if (trySudoSave(sudoProgram, outFileName, editor.data()))
+                    if (trySudoSave(sudoProgram, outFileName, editor))
                         break;
                     else {
                         continue;
@@ -777,7 +777,7 @@ void DocEngine::documentChanged(QString fileName)
         QFile file(fileName);
         EditorTabWidget *tabWidget = m_topEditorContainer->tabWidget(pos.first);
 
-        Editor *editor = tabWidget->editor(pos.second);
+        auto editor = tabWidget->editor(pos.second);
         editor->markDirty();
         editor->setFileOnDiskChanged(true);
         emit fileOnDiskChanged(tabWidget, pos.second, !file.exists());
@@ -786,8 +786,12 @@ void DocEngine::documentChanged(QString fileName)
 
 void DocEngine::closeDocument(EditorTabWidget *tabWidget, int tab)
 {
-    Editor *editor = tabWidget->editor(tab);
+    auto editor = tabWidget->editor(tab);
     unmonitorDocument(editor);
+
+    // Disconnect ALL slots ever connected to this editor's signals, also outside of this class
+    editor->disconnect();
+
     tabWidget->removeTab(tab);
 }
 

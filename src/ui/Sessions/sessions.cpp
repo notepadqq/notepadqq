@@ -285,7 +285,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         ViewData& currentViewData = viewData.back();
 
         for (int j = 0; j < tabCount; j++) {
-            Editor* editor = tabWidget->editor(j);
+            auto editor = tabWidget->editor(j);
             bool isClean = editor->isClean();
             bool isOrphan = editor->filePath().isEmpty();
             Editor::IndentationMode indentInfo = editor->indentationMode();
@@ -417,7 +417,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
             // DocEngine sets the editor's fileName to loadUrl since this is where the file
             // was loaded from. Since loadUrl could point to a cached file we reset it here.
-            Editor* editor = tabW->editor(idx);
+            auto editor = tabW->editor(idx);
 
             if (cacheFileExists) {
                 editor->markDirty();
@@ -482,7 +482,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
     // Give focus to the first tab widget
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
-    Editor* currEd = firstTabW->currentEditor();
+    auto currEd = firstTabW->currentEditor();
     currEd->setFocus();
 
     // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info

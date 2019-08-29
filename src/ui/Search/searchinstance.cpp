@@ -194,7 +194,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
         // This is a mess because Nqq's Editor management is a mess.
         // We'll grab all Editors that want to be searched, then search them one-by-one and add the results
         // to our SearchResult instance.
-        std::vector<Editor*> editorsToSearch;
+        std::vector<QSharedPointer<Editor>> editorsToSearch;
 
         MainWindow* mw = config.targetWindow;
         TopEditorContainer* tec = mw->topEditorContainer();
@@ -206,7 +206,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
 
         if (config.searchMode == SearchConfig::ModePlainText ||
             config.searchMode == SearchConfig::ModePlainTextSpecialChars) {
-            for(Editor* ed : editorsToSearch) {
+            for (auto ed : editorsToSearch) {
                 DocResult dr = FileSearcher::searchPlainText(config, ed->value());
                 dr.docType = DocResult::TypeDocument;
                 dr.fileName = tec->tabWidgetFromEditor(ed)->tabTextFromEditor(ed);
@@ -216,7 +216,7 @@ SearchInstance::SearchInstance(const SearchConfig& config)
             }
         } else if (config.searchMode == SearchConfig::ModeRegex) {
             QRegularExpression regex = FileSearcher::createRegexFromConfig(config);
-            for(Editor* ed : editorsToSearch) {
+            for (auto ed : editorsToSearch) {
                 DocResult dr = FileSearcher::searchRegExp(regex, ed->value());
                 dr.docType = DocResult::TypeDocument;
                 dr.fileName = tec->tabWidgetFromEditor(ed)->tabTextFromEditor(ed);

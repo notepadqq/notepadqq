@@ -131,7 +131,7 @@ public:
     bool isMonitored(Editor *editor);
 
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
-    void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
+    void reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     static DocEngine::DecodedText readToString(QFile *file);
     static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
     static bool writeFromString(QIODevice *io, const DecodedText &write);
@@ -143,8 +143,8 @@ public:
      * @param editor
      * @return true if successful, false otherwise
      */
-    bool write(QIODevice *io, Editor *editor);
-    bool write(QUrl outFileName, Editor *editor);
+    bool write(QIODevice *io, QSharedPointer<Editor> editor);
+    bool write(QUrl outFileName, QSharedPointer<Editor> editor);
 
     /**
      * @brief getNewDocumentName
@@ -164,8 +164,8 @@ private:
      * @param editor
      * @return fulfilled if successful, rejected otherwise
      */
-    QPromise<void> read(QFile *file, Editor *editor);
-    QPromise<void> read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
+    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor);
+    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
 
     /**
@@ -208,7 +208,7 @@ private:
      * @param editor Editor to be saved
      * @return True if successful.
      */
-    bool trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor);
+    bool trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointer<Editor> editor);
 
 signals:
     /**

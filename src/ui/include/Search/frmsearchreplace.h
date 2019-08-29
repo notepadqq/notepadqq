@@ -73,7 +73,7 @@ private:
    /**
     * @brief Get the current editor.
     */
-    Editor*                currentEditor();
+    QSharedPointer<Editor> currentEditor();
 
    /**
     * @brief Perform a search within the current document.

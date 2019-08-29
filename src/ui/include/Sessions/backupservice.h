@@ -4,6 +4,8 @@
 #include <QString>
 #include <QTimer>
 
+#include <QSharedPointer>
+
 #include <set>
 #include <tuple>
 
@@ -69,7 +71,7 @@ private:
      */
     struct WindowData {
         MainWindow* ptr;
-        std::vector<std::pair<EditorNS::Editor*, int>> editors;
+        std::vector<std::pair<QSharedPointer<EditorNS::Editor>, int>> editors;
 
         // Note this is only a shallow comparison. Do deep compares using isFullyEqual().
         bool operator==(const WindowData& other) const { return ptr == other.ptr; }

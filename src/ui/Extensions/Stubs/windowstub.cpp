@@ -22,7 +22,7 @@ namespace Extensions {
             RuntimeSupport *rts = runtimeSupport();
             MainWindow *window = static_cast<MainWindow*>(objectUnmanagedPtr());
             QSharedPointer<Stub> stub = QSharedPointer<Stub>(
-                        new EditorStub(window->currentEditorSharedPtr().toWeakRef(), rts));
+                        new EditorStub(window->currentEditor().toWeakRef(), rts));
             qint32 stubId = rts->presentObject(stub);
 
             return StubReturnValue(rts->getJSONStub(stubId, stub->stubName_()));
