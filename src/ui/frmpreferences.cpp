@@ -28,7 +28,7 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
     //setFixedSize(this->width(), this->height());
     //setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    m_previewEditor = Editor::getNewEditorUnmanagedPtr(this);
+    m_previewEditor = Editor::getNewEditor(this);
     m_previewEditor->setLanguageFromFilePath("test.js");
     m_previewEditor->setValue(R"(var enabled = false;)" "\n"
                               R"()" "\n"
@@ -201,7 +201,7 @@ void frmPreferences::loadAppearanceTab()
         }
     }
 
-    ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
+    ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor.data());
 
     const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {

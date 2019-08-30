@@ -17,7 +17,7 @@
 namespace EditorNS
 {
 
-    QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
+    QQueue<QSharedPointer<Editor>> Editor::m_editorBuffer = QQueue<QSharedPointer<Editor>>();
 
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
@@ -90,18 +90,13 @@ namespace EditorNS
 
     QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
     {
-        return QSharedPointer<Editor>(getNewEditorUnmanagedPtr(parent), &Editor::deleteLater);
-    }
-
-    Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
-    {
-        Editor *out;
+        QSharedPointer<Editor> out;
 
         if (m_editorBuffer.length() == 0) {
-            m_editorBuffer.enqueue(new Editor());
-            out = new Editor();
+            addEditorToBuffer(1);
+            out = QSharedPointer<Editor>::create();
         } else if (m_editorBuffer.length() == 1) {
-            m_editorBuffer.enqueue(new Editor());
+            addEditorToBuffer(1);
             out = m_editorBuffer.dequeue();
         } else {
             out = m_editorBuffer.dequeue();
@@ -114,7 +109,7 @@ namespace EditorNS
     void Editor::addEditorToBuffer(const int howMany)
     {
         for (int i = 0; i < howMany; i++)
-            m_editorBuffer.enqueue(new Editor());
+            m_editorBuffer.enqueue(QSharedPointer<Editor>::create());
     }
 
     void Editor::invalidateEditorBuffer()

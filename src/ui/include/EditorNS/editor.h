@@ -90,7 +90,6 @@ namespace EditorNS
              * @return
              */
         static QSharedPointer<Editor> getNewEditor(QWidget *parent = 0);
-        static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
 
         static void invalidateEditorBuffer();
 
@@ -333,7 +332,7 @@ namespace EditorNS
         QString tabName() const;
         void setTabName(const QString& name);
 
-        static QQueue<Editor*> m_editorBuffer;
+        static QQueue<QSharedPointer<Editor>> m_editorBuffer;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;

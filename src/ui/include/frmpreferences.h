@@ -81,7 +81,7 @@ private:
     NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
-    Editor *m_previewEditor;
+    QSharedPointer<Editor> m_previewEditor;
 
     void loadLanguages();
     void saveLanguages();
