@@ -178,6 +178,9 @@ int main(int argc, char *argv[])
 
     auto retVal = a.exec();
 
+    // Properly cleanup cached editors
+    Editor::invalidateEditorBuffer();
+
     BackupService::clearBackupData(); // Clear autosave cache on proper shutdown
     return retVal;
 }
