@@ -77,6 +77,11 @@ public:
             return docEngine.loadDocuments(*this);
         }
 
+        QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> executeInBackground() {
+            Q_ASSERT(tabWidget != nullptr);
+            return docEngine.loadDocumentsInBackground(*this);
+        }
+
         // See here for the arguments' default values
         QList<QUrl> urls;
         EditorTabWidget* tabWidget      = nullptr;
@@ -173,6 +178,14 @@ private:
      * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
     QPromise<void> loadDocuments(const DocumentLoader& docLoader);
+
+    /**
+     * @brief Loads documents in background. Experimental API that needs to be integrated
+     * into DocumentLoader.
+     * @param docLoader
+     * @return
+     */
+    QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
 
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);

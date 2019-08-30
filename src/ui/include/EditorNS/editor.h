@@ -129,6 +129,13 @@ namespace EditorNS
         };
 
         /**
+         * @brief Just a flag that is used for marking editors that are still loading,
+         * meaning for example that the Editor has been created but we still need
+         * to load the file contents or setup the syntax highlighting.
+         */
+        bool isLoading = false;
+
+        /**
              * @brief Adds a new Editor to the internal buffer used by getNewEditor().
              *        You might want to call this method e.g. as soon as the application
              *        starts (so that an Editor is ready as soon as it gets required),
