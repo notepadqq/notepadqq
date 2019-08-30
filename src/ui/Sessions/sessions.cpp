@@ -38,6 +38,9 @@
  *
  * */
 
+// Some shorthand names
+constexpr int ALL_MAXIMUM_PRIORITY = DocEngine::DocumentLoader::ALL_MAXIMUM_PRIORITY;
+constexpr int ALL_MINIMUM_PRIORITY = DocEngine::DocumentLoader::ALL_MINIMUM_PRIORITY;
 
 struct TabData {
     QString filePath;
@@ -407,6 +410,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 .setTabWidget(tabW)
                 .setRememberLastDir(false)
                 .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
+                .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
                 .executeInBackground();
 
             if (loadedDocs.length() == 0) {
@@ -429,10 +433,6 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (tab.active) {
                 activeEditor = loadingEditor;
             }
-
-            // FIXME The active editor should have priority when loading!!
-            // FIXME Test with no session
-            // FIXME Test with command line parameters
 
             loadedDocs.first().second.then([=](QSharedPointer<Editor> editor){
 

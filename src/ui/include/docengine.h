@@ -69,6 +69,12 @@ public:
         // Determines how already opened documents should be treated.
         DocumentLoader& setReloadAction(ReloadAction reload) { reloadAction = reload; return *this; }
 
+        // Index of the URL that must be loaded with highest priority, for example because
+        // it will be the one with user focus. With constants ALL_MINIMUM_PRIORITY and
+        // ALL_MAXIMUM_PRIORITY, all URLs will be loaded with the same low or high priority.
+        // This parameter has effect only for background executions (i.e. executeInBackground()).
+        DocumentLoader& setPriorityIdx(int idx) { priorityIdx = idx; return *this; }
+
         /**
          * @brief execute Runs the load operation.
          */
@@ -82,6 +88,9 @@ public:
             return docEngine.loadDocumentsInBackground(*this);
         }
 
+        static constexpr int ALL_MINIMUM_PRIORITY = -1;
+        static constexpr int ALL_MAXIMUM_PRIORITY = -2;
+
         // See here for the arguments' default values
         QList<QUrl> urls;
         EditorTabWidget* tabWidget      = nullptr;
@@ -90,6 +99,7 @@ public:
         bool rememberLastDir            = true;
         bool bom                        = false;
         FileSizeAction fileSizeAction   = FileSizeActionAsk;
+        int priorityIdx                 = ALL_MAXIMUM_PRIORITY;
 
     private:
         friend class DocEngine;
