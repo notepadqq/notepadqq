@@ -153,7 +153,7 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
 
     QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> loadedEditors;
 
-    //bool isFirstDocument = true;
+    bool isFirstDocument = true;
 
     for (int i = 0; i < fileNames.count(); i++) {
         const QUrl& url = fileNames[i];
@@ -179,10 +179,10 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
             EditorTabWidget *tabW = static_cast<EditorTabWidget *>
                                     (m_topEditorContainer->widget(openPos.first));
 
-            /*if (isFirstDocument) {
+            if (isFirstDocument) {
                 isFirstDocument = false;
                 tabW->setCurrentIndex(openPos.second);
-            }*/
+            }
 
             emit this->documentLoaded(tabW, openPos.second, true, rememberLastSelectedDir);
             continue;
@@ -234,6 +234,12 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
                 tabWidget->removeTab(0);
                 tabIndex--;
             }
+        }
+
+        if (isFirstDocument) {
+            isFirstDocument = false;
+            tabWidget->setCurrentIndex(tabIndex);
+            tabWidget->editor(tabIndex)->setFocus();
         }
 
         auto continuationP = QPromise<QSharedPointer<Editor>>([=](auto resolve, auto reject)
@@ -332,12 +338,6 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
                 }
 
                 this->monitorDocument(editor);
-
-                /*if (isFirstDocument) {
-                    isFirstDocument = false;
-                    tabWidget->setCurrentIndex(tabIndex);
-                    tabWidget->editor(tabIndex)->setFocus();
-                }*/
 
                 if (isAlreadyOpen) {
                     emit this->documentReloaded(tabWidget, tabIndex);
