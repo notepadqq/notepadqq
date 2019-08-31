@@ -174,7 +174,11 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    Stats::init();
+    // Initialize stats, but delay so that we are sure that
+    // any dialog will open on top of MainWindow without blocking it.
+    QTimer::singleShot(0, [](){
+        Stats::init();
+    });
 
     auto retVal = a.exec();
 
