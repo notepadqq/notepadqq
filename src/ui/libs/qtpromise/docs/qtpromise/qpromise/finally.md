@@ -1,6 +1,12 @@
-## `QPromise<T>::finally`
+---
+title: .finally
+---
 
-```
+# QPromise::finally
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::finally(Function handler) -> QPromise<T>
 ```
 

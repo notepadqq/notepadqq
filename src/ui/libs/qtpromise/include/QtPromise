@@ -1,15 +1,9 @@
 #ifndef QTPROMISE_MODULE_H
 #define QTPROMISE_MODULE_H
 
-#pragma GCC diagnostic push
-
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-
 #include "../src/qtpromise/qpromise.h"
+#include "../src/qtpromise/qpromiseconnections.h"
 #include "../src/qtpromise/qpromisefuture.h"
 #include "../src/qtpromise/qpromisehelpers.h"
 
-#pragma GCC diagnostic pop
-
-#endif // ifndef QTPROMISE_MODULE_H
+#endif // QTPROMISE_MODULE_H

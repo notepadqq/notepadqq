@@ -1,4 +1,3 @@
-// Tests
 #include "../../shared/utils.h"
 
 // QtPromise
@@ -39,7 +38,7 @@ void tst_qpromise_finally::fulfilledSync()
         return 16; // ignored!
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int>>::value));
     QCOMPARE(waitForValue(p, -1), 42);
     QCOMPARE(p.isFulfilled(), true);
     QCOMPARE(value, 8);
@@ -53,7 +52,7 @@ void tst_qpromise_finally::fulfilledSync_void()
         return 16; // ignored!
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void>>::value));
     QCOMPARE(waitForValue(p, -1, 42), 42);
     QCOMPARE(p.isFulfilled(), true);
     QCOMPARE(value, 8);
@@ -65,7 +64,7 @@ void tst_qpromise_finally::fulfilledThrows()
         throw QString("bar");
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int>>::value));
     QCOMPARE(waitForError(p, QString()), QString("bar"));
     QCOMPARE(p.isRejected(), true);
 }
@@ -76,7 +75,7 @@ void tst_qpromise_finally::fulfilledThrows_void()
         throw QString("bar");
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void>>::value));
     QCOMPARE(waitForError(p, QString()), QString("bar"));
     QCOMPARE(p.isRejected(), true);
 }
@@ -123,7 +122,7 @@ void tst_qpromise_finally::rejectedSync()
         return 16; // ignored!
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int>>::value));
     QCOMPARE(waitForError(p, QString()), QString("foo"));
     QCOMPARE(p.isRejected(), true);
     QCOMPARE(value, 8);
@@ -137,7 +136,7 @@ void tst_qpromise_finally::rejectedSync_void()
         return 16; // ignored!
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void>>::value));
     QCOMPARE(waitForError(p, QString()), QString("foo"));
     QCOMPARE(p.isRejected(), true);
     QCOMPARE(value, 8);
@@ -149,7 +148,7 @@ void tst_qpromise_finally::rejectedThrows()
         throw QString("bar");
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int>>::value));
     QCOMPARE(waitForError(p, QString()), QString("bar"));
     QCOMPARE(p.isRejected(), true);
 }
@@ -160,7 +159,7 @@ void tst_qpromise_finally::rejectedThrows_void()
         throw QString("bar");
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void>>::value));
     QCOMPARE(waitForError(p, QString()), QString("bar"));
     QCOMPARE(p.isRejected(), true);
 }

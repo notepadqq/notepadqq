@@ -1,33 +1,21 @@
 #ifndef QTPROMISE_QPROMISEFUTURE_P_H
 #define QTPROMISE_QPROMISEFUTURE_P_H
 
+#include "qpromiseexceptions.h"
+
 // Qt
-#include <QFuture>
 #include <QFutureWatcher>
-
-namespace QtPromise {
-
-class QPromiseCanceledException : public QException
-{
-public:
-    void raise() const Q_DECL_OVERRIDE { throw *this; }
-    QPromiseCanceledException* clone() const Q_DECL_OVERRIDE
-    {
-        return new QPromiseCanceledException(*this);
-    }
-};
-
-} // namespace QtPromise
+#include <QFuture>
 
 namespace QtPromisePrivate {
 
 template <typename T>
-struct PromiseDeduce<QFuture<T> >
+struct PromiseDeduce<QFuture<T>>
     : public PromiseDeduce<T>
 { };
 
 template <typename T>
-struct PromiseFulfill<QFuture<T> >
+struct PromiseFulfill<QFuture<T>>
 {
     static void call(
         const QFuture<T>& future,
@@ -62,7 +50,7 @@ struct PromiseFulfill<QFuture<T> >
 };
 
 template <>
-struct PromiseFulfill<QFuture<void> >
+struct PromiseFulfill<QFuture<void>>
 {
     static void call(
         const QFuture<void>& future,

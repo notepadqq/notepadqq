@@ -1,6 +1,12 @@
-## `QPromise<T>::wait`
+---
+title: .wait
+---
 
-```
+# QPromise::wait
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::wait() -> QPromise<T>
 ```
 
@@ -9,7 +15,7 @@ This method holds the execution of the remaining code until the `input` promise 
 ```cpp
 int result = -1;
 
-QPromise<int> input = qPromise(QtConcurrent::run([]() {
+QPromise<int> input = QtPromise::resolve(QtConcurrent::run([]() {
     return 42;
 })).tap([&](int res) {
     result = res;

@@ -1,4 +1,11 @@
-TARGET = tst_helpers
-SOURCES += $$PWD/tst_helpers.cpp
-
-include(../qtpromise.pri)
+TEMPLATE = subdirs
+SUBDIRS += \
+    all \
+    attempt \
+    connect \
+    each \
+    filter \
+    map \
+    reduce \
+    reject \
+    resolve

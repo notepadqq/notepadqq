@@ -1,6 +1,12 @@
-## `QPromise<T>::delay`
+---
+title: .delay
+---
 
-```
+# QPromise::delay
+
+*Since: 0.2.0*
+
+```cpp
 QPromise<T>::delay(int msec) -> QPromise<T>
 ```
 

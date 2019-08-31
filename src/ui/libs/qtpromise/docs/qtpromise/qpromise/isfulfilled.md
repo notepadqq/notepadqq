@@ -1,6 +1,12 @@
-# `QPromise<T>::isFulfilled`
+---
+title: .isFulfilled
+---
 
-```
+# QPromise::isFulfilled
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::isFulfilled() -> bool
 ```
 

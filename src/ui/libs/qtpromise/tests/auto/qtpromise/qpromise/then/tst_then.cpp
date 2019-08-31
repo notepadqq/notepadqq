@@ -1,4 +1,3 @@
-// Tests
 #include "../../shared/utils.h"
 
 // QtPromise
@@ -56,7 +55,7 @@ void tst_qpromise_then::resolveAsync()
         });
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<QString> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<QString>>::value));
     QCOMPARE(waitForValue(p, QString()), QString("foo42"));
     QCOMPARE(p.isFulfilled(), true);
 }
@@ -91,7 +90,7 @@ void tst_qpromise_then::rejectAsync()
         });
     });
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<void>>::value));
     QCOMPARE(waitForError(p, QString()), QString("foo42"));
     QCOMPARE(p.isRejected(), true);
 }
@@ -105,7 +104,7 @@ void tst_qpromise_then::skipResult()
         value = 43;
     }).wait();
 
-    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int> >::value));
+    Q_STATIC_ASSERT((std::is_same<decltype(p), QPromise<int>>::value));
     QCOMPARE(value, 43);
 }
 
