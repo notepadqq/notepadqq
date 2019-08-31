@@ -222,7 +222,7 @@ void EditorTabWidget::tabRemoved(int)
     for (QSharedPointer<Editor> editor : m_editorPointers) {
         if (!tabs.contains(editor.data())) {
             // Editor is the one that has been removed!
-            if (editor.data() != nullptr && editor->parent() == this) {
+            if (editor.data() != nullptr) {
                 // Set no parent, so that QObject won't delete
                 // the editor: that's what QSharedPointer should do.
                 editor->setParent(nullptr);
