@@ -78,6 +78,15 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
                this, &EditorTabWidget::on_fileNameChanged);
 }
 
+int EditorTabWidget::indexOf(QSharedPointer<Editor> editor) const
+{
+    return indexOf(editor.data());
+}
+
+int EditorTabWidget::indexOf(QWidget *widget) const
+{
+    return QTabWidget::indexOf(widget);
+}
 
 QString EditorTabWidget::tabText(Editor* editor) const
 {
@@ -329,15 +338,9 @@ void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
     QTabWidget::mouseReleaseEvent(ev);
 }
 
-void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
+QString EditorTabWidget::generateTabTitleForUrl(const QUrl &filename) const
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-
-    int index = indexOf(editor);
-
-    QString fileName = QFileInfo(newFileName.toDisplayString(QUrl::RemoveScheme |
+    QString fileName = QFileInfo(filename.toDisplayString(QUrl::RemoveScheme |
                                                    QUrl::RemovePassword |
                                                    QUrl::RemoveUserInfo |
                                                    QUrl::RemovePort |
@@ -346,11 +349,21 @@ void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUr
                                                    QUrl::RemoveFragment |
                                                    QUrl::PreferLocalFile
                                                    )).fileName();
+    return fileName;
+}
+
+void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
+{
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
+
+    int index = indexOf(editor);
 
     QString fullFileName = newFileName.toDisplayString(QUrl::PreferLocalFile |
                                                        QUrl::RemovePassword);
 
-    setTabText(index, fileName);
+    setTabText(index, generateTabTitleForUrl(newFileName));
     setTabToolTip(index, fullFileName);
 }
 

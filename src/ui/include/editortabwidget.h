@@ -19,6 +19,9 @@ public:
     explicit EditorTabWidget(QWidget *parent = 0);
     ~EditorTabWidget();
 
+    int indexOf(QSharedPointer<Editor> editor) const;
+    int indexOf(QWidget *widget) const;
+
     int addEditorTab(bool setFocus, const QString &title);
     /**
      * @brief Add a new document, moving it from another EditorTabWidget
@@ -67,6 +70,8 @@ public:
     void setTabText(int index, const QString& text);
 
     int formerTabIndex();
+
+    QString generateTabTitleForUrl(const QUrl &filename) const;
 
 private:
 
