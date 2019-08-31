@@ -312,36 +312,39 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
                     }
                 }
 
-                // In case of reload, restore cursor, scroll position, language
                 if (isAlreadyOpen) {
+                    // In case of reload, restore cursor, scroll position, language
                     editor->setScrollPosition(scrollPosition);
                     editor->setCursorPosition(cursorPosition);
                     editor->setLanguage(language);
-                }
 
-                if (!file.exists()) {
-                    // If it's a file that doesn't exists,
-                    // set it as if it has changed. This way, if someone
-                    // creates that file from outside of notepadqq,
-                    // when the user tries to save over it he gets a warning.
-                    editor->setFileOnDiskChanged(true);
-                    editor->markDirty();
-                }
-
-                file.close();
-                if (isAlreadyOpen) {
                     editor->setFileOnDiskChanged(false);
-                } else {
-                    editor->setFilePath(url);
-                    tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
-                    editor->setLanguageFromFilePath();
-                }
 
-                this->monitorDocument(editor);
+                    if (!file.exists()) {
+                        // If it's a file that doesn't exists,
+                        // set it as if it has changed. This way, if someone
+                        // creates that file from outside of notepadqq,
+                        // when the user tries to save over it he gets a warning.
+                        editor->setFileOnDiskChanged(true);
+                        editor->markDirty();
+                    }
 
-                if (isAlreadyOpen) {
+                    this->monitorDocument(editor);
+
                     emit this->documentReloaded(tabWidget, tabIndex);
+
                 } else {
+
+                    if (docLoader.manualEditorInitialization == nullptr) {
+                        editor->setFilePath(url);
+                        tabWidget->setTabToolTip(tabIndex, fi.absoluteFilePath());
+                        editor->setLanguageFromFilePath();
+
+                        this->monitorDocument(editor);
+                    } else {
+                        docLoader.manualEditorInitialization(editor, fileNames[i]);
+                    }
+
                     emit this->documentLoaded(tabWidget, tabIndex, false, rememberLastSelectedDir);
                 }
 

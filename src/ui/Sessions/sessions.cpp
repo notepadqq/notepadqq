@@ -411,6 +411,63 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 .setRememberLastDir(false)
                 .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
                 .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
+                .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& url) {
+
+                    int idx = tabW->indexOf(editor);
+
+                    editor->setCursorPosition(tab.cursorX, tab.cursorY);
+                    editor->setScrollPosition(tab.scrollX, tab.scrollY);
+
+                    if (tab.customIndent) {
+                        editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
+                    }
+
+                    // DocEngine sets the editor's fileName to loadUrl since this is where the file
+                    // was loaded from. Since loadUrl could point to a cached file we reset it here.
+                    if (cacheFileExists) {
+                        editor->markDirty();
+                        editor->setLanguageFromFilePath();
+                    }
+
+                    if (tab.filePath.isEmpty()) {
+                        QString tabText = tabW->tabText(idx);
+                        editor->setFilePath(QUrl());
+                        tabW->setTabText(idx, tabText);
+                    } else {
+                        editor->setFilePath(fileUrl);
+                        if (fileExists)
+                            docEngine->monitorDocument(editor);
+                    }
+
+                    // If we're loading an existing file from cache we want to inform the user whether
+                    // the file has changed since Nqq was last closed. For this we can compare the
+                    // file's last modification date.
+                    if (fileExists && cacheFileExists && tab.lastModified != 0) {
+                        auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
+
+                        if (lastModified > tab.lastModified) {
+                            editor->setFileOnDiskChanged(true);
+                        }
+                    }
+
+                    // If the orig. file does not exist but *should* exist, we inform the user of its removal.
+                    if (!fileExists && !fileUrl.isEmpty()) {
+                        editor->setFileOnDiskChanged(true);
+                        emit docEngine->fileOnDiskChanged(tabW, idx, true);
+                    }
+
+                    if (!tab.language.isEmpty()) editor->setLanguage(tab.language);
+
+                    // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
+                    editor->clearFocus();
+
+                    if (tab.active) {
+                        // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
+                        // on start-up. The easiest way is to emit a cleanChanged() event.
+                        editor->isCleanP().then([=](bool isClean){ emit editor->cleanChanged(isClean); });
+                    }
+
+                })
                 .executeInBackground();
 
             if (loadedDocs.length() == 0) {
@@ -434,65 +491,6 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 activeEditor = loadingEditor;
             }
 
-            loadedDocs.first().second.then([=](QSharedPointer<Editor> editor){
-
-                int idx = tabW->indexOf(editor);
-
-                // DocEngine sets the editor's fileName to loadUrl since this is where the file
-                // was loaded from. Since loadUrl could point to a cached file we reset it here.
-                if (cacheFileExists) {
-                    editor->markDirty();
-                    editor->setLanguageFromFilePath();
-                    // Since we loaded from cache we want to unmonitor the cache file.
-                    docEngine->unmonitorDocument(editor);
-                }
-
-                if (tab.filePath.isEmpty()) {
-                    editor->setFilePath(QUrl());
-                    //tabW->setTabText(editor.data(), docEngine->getNewDocumentName()); // FIXME
-                    tabW->setTabText(idx, tabText);
-                } else {
-                    editor->setFilePath(fileUrl);
-                    if(fileExists)
-                        docEngine->monitorDocument(editor);
-                }
-
-                // If we're loading an existing file from cache we want to inform the user whether
-                // the file has changed since Nqq was last closed. For this we can compare the
-                // file's last modification date.
-                if (fileExists && cacheFileExists && tab.lastModified != 0) {
-                    auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
-
-                    if (lastModified > tab.lastModified) {
-                        editor->setFileOnDiskChanged(true);
-                    }
-                }
-
-                // If the orig. file does not exist but *should* exist, we inform the user of its removal.
-                if (!fileExists && !fileUrl.isEmpty()) {
-                    editor->setFileOnDiskChanged(true);
-                    emit docEngine->fileOnDiskChanged(tabW, idx, true);
-                }
-
-                if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
-
-                editor->setCursorPosition(tab.cursorX, tab.cursorY);
-                editor->setScrollPosition(tab.scrollX, tab.scrollY);
-
-                if (tab.customIndent) {
-                    editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
-                }
-
-                // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
-                editor->clearFocus();
-
-                if (tab.active) {
-                    // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
-                    // on start-up. The easiest way is to emit a cleanChanged() event.
-                    editor->isCleanP().then([=](bool isClean){ emit editor->cleanChanged(isClean); });
-                }
-
-            });
         } // end for
 
         // In case a new tabwidget was created but no tabs were actually added to it,
