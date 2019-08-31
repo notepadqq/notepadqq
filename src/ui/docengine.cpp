@@ -359,6 +359,9 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
 
 QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 {
+    // FIXME Unify with loadDocumentsInBackground by calling
+    // loadDocumentsInBackground() and waiting on the result promises.
+
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
     const auto& reloadAction = docLoader.reloadAction;
@@ -479,11 +482,12 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
                 msgBox.setDefaultButton(QMessageBox::Retry);
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
-                if(ret == QMessageBox::Abort) {
+                if (ret == QMessageBox::Abort) {
                     tabWidget->removeTab(tabIndex);
                     return _break;
                 } else if(ret == QMessageBox::Retry) {
                     // Retry
+                    readResult = this->read(&file, editor, codec, bom).wait(); // FIXME To async!
                 } else if(ret == QMessageBox::Ignore) {
                     tabWidget->removeTab(tabIndex);
                     return _continue;
