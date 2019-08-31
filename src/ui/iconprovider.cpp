@@ -23,7 +23,6 @@ QIcon IconProvider::fromTheme(const QString &name)
     } else {
         // QIcon::setThemeName("notepadqq");
         QIcon icon;
-        return icon;
 
         QList<QPair<int, QString>> sizes {
                     QPair<int, QString>(16, "16x16"),
