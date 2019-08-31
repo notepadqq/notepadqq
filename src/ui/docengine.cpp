@@ -225,7 +225,7 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
         auto editor = tabWidget->editor(tabIndex);
         editor->isLoading = true;
 
-        // Once we are here, we can NOT remove the tab
+        // Once we are here, we can NOT remove the tab we've just added
 
         // If there was only a new empty tab opened, remove it
         if (tabWidget->count() == 2) {
@@ -291,15 +291,10 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
                         msgBox.setWindowTitle(QCoreApplication::applicationName());
                         msgBox.setText(tr("Error trying to open \"%1\"").arg(fi.fileName()));
                         msgBox.setDetailedText(file.errorString());
-                        //msgBox.setStandardButtons(QMessageBox::Abort | QMessageBox::Retry | QMessageBox::Ignore);
                         msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Ignore);
                         msgBox.setDefaultButton(QMessageBox::Retry);
                         msgBox.setIcon(QMessageBox::Critical);
                         int ret = msgBox.exec();
-                        /*if(ret == QMessageBox::Abort) {
-                            tabWidget->removeTab(tabIndex);
-                            return _break; // stop whole loading process
-                        } else*/
                         if(ret == QMessageBox::Retry) {
                             // Retry
                             readResult = this->read(&file, editor, codec, bom).wait();
