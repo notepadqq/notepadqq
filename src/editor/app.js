@@ -412,6 +412,11 @@ UiDriver.registerEventHandler("C_CMD_SET_FONT", function (msg, data, prevReturn)
     }
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_LINE_NUMBERS_VISIBLE", function (msg, data, prevReturn) {
+    editor.setOption("lineNumbers", data);
+    editor.refresh();
+});
+
 UiDriver.registerEventHandler("C_CMD_SET_OVERWRITE", function(msg, data, prevReturn) {
     editor.toggleOverwrite(data);
 });
@@ -737,6 +742,8 @@ $(document).ready(function () {
     editor.on("focus", function() {
         UiDriver.sendMessage("J_EVT_GOT_FOCUS");
     });
+
+    editor.focus();
 
     UiDriver.sendMessage("J_EVT_READY", null);
 });

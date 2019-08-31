@@ -567,7 +567,8 @@
       "jsx",
       "js.erb",
       "jsm",
-      "_js"
+      "_js",
+      "mjs"
     ]
   },
   "json":{

@@ -34,9 +34,9 @@
 #include <QString>
 #include <QUrl>
 
-#define POINTVERSION "1.4.8" // major.minor.revision
+#define POINTVERSION "1.9.99" // major.minor.revision
 
-#define COPYRIGHT_YEAR "2018"
+#define COPYRIGHT_YEAR "2019"
 
 #define MIB_UTF_8 106
 

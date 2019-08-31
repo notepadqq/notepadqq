@@ -37,7 +37,7 @@ EditorTabWidget::~EditorTabWidget()
 {
     // Manually remove each tab to keep m_editorPointers consistent
     for (int i = this->count() - 1; i >= 0; i--) {
-        QSharedPointer<Editor> edt = editorSharedPtr(i);
+        QSharedPointer<Editor> edt = editor(i);
         m_editorPointers.remove(edt.data());
         // Remove the parent so that QObject cannot destroy the
         // object (QSharedPointer will take care of it).
@@ -78,6 +78,15 @@ void EditorTabWidget::disconnectEditorSignals(Editor *editor)
                this, &EditorTabWidget::on_fileNameChanged);
 }
 
+int EditorTabWidget::indexOf(QSharedPointer<Editor> editor) const
+{
+    return indexOf(editor.data());
+}
+
+int EditorTabWidget::indexOf(QWidget *widget) const
+{
+    return QTabWidget::indexOf(widget);
+}
 
 QString EditorTabWidget::tabText(Editor* editor) const
 {
@@ -137,7 +146,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     if (create) {
         editor = Editor::getNewEditor(this);
     } else {
-        editor = source->editorSharedPtr(sourceTabIndex);
+        editor = source->editor(sourceTabIndex);
 
         oldText = source->tabText(sourceTabIndex);
         oldIcon = source->tabIcon(sourceTabIndex);
@@ -191,7 +200,7 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
         absFileName = QUrl::fromLocalFile(QFileInfo(filename.toLocalFile()).absoluteFilePath());
 
     for (int i = 0; i < count(); i++) {
-        Editor *editor = this->editor(i);
+        auto editor = this->editor(i);
         if (editor->filePath() == filename)
             return i;
     }
@@ -199,17 +208,13 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
     return -1;
 }
 
-Editor *EditorTabWidget::editor(int index) const
+QSharedPointer<Editor> EditorTabWidget::editor(int index) const
 {
-    return dynamic_cast<Editor *>(this->widget(index));
+    Editor *ed = dynamic_cast<Editor *>(this->widget(index));
+    return m_editorPointers.value(ed);
 }
 
-QSharedPointer<Editor> EditorTabWidget::editorSharedPtr(int index)
-{
-    return m_editorPointers.value(editor(index));
-}
-
-QSharedPointer<Editor> EditorTabWidget::editorSharedPtr(Editor *editor)
+QSharedPointer<Editor> EditorTabWidget::editor(Editor *editor) const
 {
     return m_editorPointers.value(editor);
 }
@@ -226,7 +231,7 @@ void EditorTabWidget::tabRemoved(int)
     for (QSharedPointer<Editor> editor : m_editorPointers) {
         if (!tabs.contains(editor.data())) {
             // Editor is the one that has been removed!
-            if (editor.data() != nullptr && editor->parent() == this) {
+            if (editor.data() != nullptr) {
                 // Set no parent, so that QObject won't delete
                 // the editor: that's what QSharedPointer should do.
                 editor->setParent(nullptr);
@@ -239,12 +244,12 @@ void EditorTabWidget::tabRemoved(int)
     }
 }
 
-Editor *EditorTabWidget::currentEditor()
+QSharedPointer<Editor> EditorTabWidget::currentEditor()
 {
     return editor(currentIndex());
 }
 
-QString EditorTabWidget::tabTextFromEditor(Editor* ed)
+QString EditorTabWidget::tabTextFromEditor(QSharedPointer<EditorNS::Editor> ed)
 {
     for(int i=0; i<count(); ++i)
         if (editor(i) == ed) return tabText(i);
@@ -333,15 +338,9 @@ void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
     QTabWidget::mouseReleaseEvent(ev);
 }
 
-void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
+QString EditorTabWidget::generateTabTitleForUrl(const QUrl &filename) const
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
-    if (!editor)
-        return;
-
-    int index = indexOf(editor);
-
-    QString fileName = QFileInfo(newFileName.toDisplayString(QUrl::RemoveScheme |
+    QString fileName = QFileInfo(filename.toDisplayString(QUrl::RemoveScheme |
                                                    QUrl::RemovePassword |
                                                    QUrl::RemoveUserInfo |
                                                    QUrl::RemovePort |
@@ -350,11 +349,21 @@ void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUr
                                                    QUrl::RemoveFragment |
                                                    QUrl::PreferLocalFile
                                                    )).fileName();
+    return fileName;
+}
+
+void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
+{
+    Editor *editor = dynamic_cast<Editor *>(sender());
+    if (!editor)
+        return;
+
+    int index = indexOf(editor);
 
     QString fullFileName = newFileName.toDisplayString(QUrl::PreferLocalFile |
                                                        QUrl::RemovePassword);
 
-    setTabText(index, fileName);
+    setTabText(index, generateTabTitleForUrl(newFileName));
     setTabToolTip(index, fullFileName);
 }
 

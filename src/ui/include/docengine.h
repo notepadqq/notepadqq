@@ -69,6 +69,31 @@ public:
         // Determines how already opened documents should be treated.
         DocumentLoader& setReloadAction(ReloadAction reload) { reloadAction = reload; return *this; }
 
+        // Index of the URL that must be loaded with highest priority, for example because
+        // it will be the one with user focus. With constants ALL_MINIMUM_PRIORITY and
+        // ALL_MAXIMUM_PRIORITY, all URLs will be loaded with the same low or high priority.
+        // This parameter has effect only for background executions (i.e. executeInBackground()).
+        DocumentLoader& setPriorityIdx(int idx) { priorityIdx = idx; return *this; }
+
+        // Set whether, after an Editor has been created and his content has been loaded,
+        // the document loader should take care of things like assigning a file path to the
+        // editor, setting the syntax highlighting, enabling monitoring and so on.
+        // If not nullptr, runs the specified function to allow manual initialization instead
+        // of the internal one. Note that, in case of a document reload, the internal
+        // initialization is used regardless of this parameter. Similarly, this parameter
+        // is ignored for non-background executions (i.e. execute()).
+        // This is useful for example in case of loading tabs from a session, where in some
+        // cases a fake file path (different from the data source) must be assigned to the
+        // Editor during its loading.
+        //
+        // If this function is called, it will be called asynchronously. However, the function
+        // itself must be synchronous so that the DocumentLoader knows when to emit the
+        // DocumentLoaded event.
+        DocumentLoader& setManualEditorInitialization(
+                std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> f) {
+            manualEditorInitialization = f; return *this;
+        }
+
         /**
          * @brief execute Runs the load operation.
          */
@@ -76,6 +101,14 @@ public:
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocuments(*this);
         }
+
+        QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> executeInBackground() {
+            Q_ASSERT(tabWidget != nullptr);
+            return docEngine.loadDocumentsInBackground(*this);
+        }
+
+        static constexpr int ALL_MINIMUM_PRIORITY = -1;
+        static constexpr int ALL_MAXIMUM_PRIORITY = -2;
 
         // See here for the arguments' default values
         QList<QUrl> urls;
@@ -85,6 +118,8 @@ public:
         bool rememberLastDir            = true;
         bool bom                        = false;
         FileSizeAction fileSizeAction   = FileSizeActionAsk;
+        int priorityIdx                 = ALL_MAXIMUM_PRIORITY;
+        std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> manualEditorInitialization = nullptr;
 
     private:
         friend class DocEngine;
@@ -131,7 +166,7 @@ public:
     bool isMonitored(Editor *editor);
 
     int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
-    void reinterpretEncoding(Editor *editor, QTextCodec *codec, bool bom);
+    void reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     static DocEngine::DecodedText readToString(QFile *file);
     static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
     static bool writeFromString(QIODevice *io, const DecodedText &write);
@@ -143,8 +178,8 @@ public:
      * @param editor
      * @return true if successful, false otherwise
      */
-    bool write(QIODevice *io, Editor *editor);
-    bool write(QUrl outFileName, Editor *editor);
+    bool write(QIODevice *io, QSharedPointer<Editor> editor);
+    bool write(QUrl outFileName, QSharedPointer<Editor> editor);
 
     /**
      * @brief getNewDocumentName
@@ -164,8 +199,8 @@ private:
      * @param editor
      * @return fulfilled if successful, rejected otherwise
      */
-    QPromise<void> read(QFile *file, Editor *editor);
-    QPromise<void> read(QFile *file, Editor *editor, QTextCodec *codec, bool bom);
+    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor);
+    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
 
     /**
@@ -173,6 +208,14 @@ private:
      * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
     QPromise<void> loadDocuments(const DocumentLoader& docLoader);
+
+    /**
+     * @brief Loads documents in background. Experimental API that needs to be integrated
+     * into DocumentLoader.
+     * @param docLoader
+     * @return
+     */
+    QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
 
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
@@ -208,7 +251,7 @@ private:
      * @param editor Editor to be saved
      * @return True if successful.
      */
-    bool trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor);
+    bool trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointer<Editor> editor);
 
 signals:
     /**

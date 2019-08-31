@@ -1,4 +1,4 @@
-# <img src="https://user-images.githubusercontent.com/4319621/36906314-e3f99680-1e35-11e8-90fd-f959c9641f36.png" alt="Notepadqq" width="32" height="32" /> Notepadqq [![Build Status](https://travis-ci.com/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.com/notepadqq/notepadqq) [![Snap Status](https://build.snapcraft.io/badge/notepadqq/notepadqq.svg)](https://build.snapcraft.io/user/notepadqq/notepadqq)
+# <img src="https://user-images.githubusercontent.com/4319621/36906314-e3f99680-1e35-11e8-90fd-f959c9641f36.png" alt="Notepadqq" width="32" height="32" /> Notepadqq [![Build Status](https://travis-ci.com/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.com/notepadqq/notepadqq)
 
 ### Links
 
@@ -8,7 +8,7 @@
 
 #### What is it?
 
-Notepadqq is a text editor designed from developers, for developers. 
+Notepadqq is a text editor designed by developers, for developers. 
 
 ![screenshot_20180302_163505](https://notepadqq.com/s/images/snapshot1.png)
 
@@ -42,12 +42,12 @@ If you encounter errors make sure to have the necessary libraries installed. For
 
 For CentOS:
 
-    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet
+    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel
     
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
-by following the above steps, then run
+by following the above steps, then run:
 
     notepadqq$ sudo make install
 

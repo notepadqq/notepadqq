@@ -1,6 +1,12 @@
-## `QPromise<T>::tap`
+---
+title: .tap
+---
 
-```
+# QPromise::tap
+
+*Since: 0.2.0*
+
+```cpp
 QPromise<T>::tap(Function handler) -> QPromise<T>
 ```
 

@@ -44,4 +44,14 @@ static inline E waitForError(const QtPromise::QPromise<void>& promise, const E& 
     return error;
 }
 
+template <typename E, typename T>
+static inline bool waitForRejected(const T& promise)
+{
+    bool result = false;
+    promise.tapFail([&](const E&) {
+        result = true;
+    }).wait();
+    return result;
+}
+
 #endif // QTPROMISE_TESTS_AUTO_SHARED_UTILS_H

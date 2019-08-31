@@ -22,7 +22,5 @@
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>NSRequiresAquaSystemAppearance</key>
-	<true/>
 </dict>
 </plist>

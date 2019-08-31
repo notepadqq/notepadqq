@@ -58,6 +58,9 @@ public:
     void selectPrevResult();
     void selectNextResult();
 
+    bool isVisible() const;
+    void show(bool show, bool setFocus=true);
+
 signals:
     /**
      * @brief itemInteracted Emitted when an item in the current tree widget is interacted with.

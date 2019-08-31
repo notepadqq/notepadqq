@@ -1,3 +1,5 @@
+#include "../shared/data.h"
+
 // QtPromise
 #include <QtPromise>
 
@@ -20,7 +22,6 @@ class tst_benchmark : public QObject
 
 private Q_SLOTS:
     void valueResolve();
-    void valueResolveStatic();
     void valueReject();
     void valueThen();
     void valueFinally();
@@ -33,72 +34,6 @@ private Q_SLOTS:
 
 QTEST_MAIN(tst_benchmark)
 #include "tst_benchmark.moc"
-
-struct Logs {
-    int ctor = 0;
-    int copy = 0;
-    int move = 0;
-    int refs = 0;
-
-    void reset() {
-        ctor = 0;
-        copy = 0;
-        move = 0;
-        refs = 0;
-    }
-};
-
-struct Logger
-{
-    Logger() { logs().ctor++; logs().refs++; }
-    Logger(const Logger&) { logs().copy++; logs().refs++; }
-    Logger(Logger&&) { logs().move++; logs().refs++; }
-    ~Logger() { logs().refs--; }
-
-    Logger& operator=(const Logger&) { logs().copy++; return *this; }
-    Logger& operator=(Logger&&) { logs().move++; return *this; }
-
-public: // STATICS
-    static Logs& logs() { static Logs logs; return logs; }
-};
-
-struct Data : public Logger
-{
-    Data(int v): Logger(), m_value(v) {}
-    int value() const { return m_value; }
-
-    // MSVC 2013 doesn't support implicit generation of the move constructor and
-    // operator, so we need to explicitly define these methods and thus the copy
-    // constructor and operator also need to be explicitly defined (error C2280).
-    // https://stackoverflow.com/a/26581337
-
-    Data(const Data& other)
-        : Logger(other)
-        , m_value(other.m_value)
-    { }
-
-    Data(Data&& other) : Logger(std::forward<Data>(other))
-    {
-        qSwap(m_value, other.m_value);
-    }
-
-    Data& operator=(const Data& other)
-    {
-        Logger::operator=(other);
-        m_value = other.m_value;
-        return *this;
-    }
-
-    Data& operator=(Data&& other)
-    {
-        Logger::operator=(std::forward<Data>(other));
-        qSwap(m_value, other.m_value);
-        return *this;
-    }
-
-private:
-    int m_value;
-};
 
 void tst_benchmark::valueResolve()
 {
@@ -119,31 +54,6 @@ void tst_benchmark::valueResolve()
             Data value(42);
             resolve(value);
         }).wait();
-
-        QCOMPARE(Data::logs().ctor, 1);
-        QCOMPARE(Data::logs().copy, 1);     // copy value to the promise data
-        QCOMPARE(Data::logs().move, 0);
-        QCOMPARE(Data::logs().refs, 0);
-    }
-}
-
-void tst_benchmark::valueResolveStatic()
-{
-    {   // should move the value when resolved by rvalue
-        Data::logs().reset();
-        QPromise<Data>::resolve(Data(42)).wait();
-
-        QCOMPARE(Data::logs().ctor, 1);
-        QCOMPARE(Data::logs().copy, 0);
-        QCOMPARE(Data::logs().move, 1);     // move value to the promise data
-        QCOMPARE(Data::logs().refs, 0);
-    }
-    {   // should create one copy of the value when resolved by lvalue
-        {
-            Data::logs().reset();
-            Data value(42);
-            QPromise<Data>::resolve(value).wait();
-        }
 
         QCOMPARE(Data::logs().ctor, 1);
         QCOMPARE(Data::logs().copy, 1);     // copy value to the promise data

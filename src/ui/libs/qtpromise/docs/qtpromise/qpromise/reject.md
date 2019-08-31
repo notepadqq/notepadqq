@@ -1,6 +1,12 @@
-## `[static] QPromise<T>::reject`
+---
+title: ::reject [static]
+---
 
-```
+# QPromise::reject [static]
+
+*Since: 0.1.0*
+
+```cpp
 [static] QPromise<T>::reject(any reason) -> QPromise<T>
 ```
 

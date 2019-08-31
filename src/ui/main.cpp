@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
         if (parser->isSet("new-window")) {
             // Open a new window
-            MainWindow *win = new MainWindow(workingDirectory, arguments, 0);
+            MainWindow *win = new MainWindow(workingDirectory, arguments, nullptr);
             win->show();
         } else {
             // Send the args to the last focused window
@@ -174,9 +174,16 @@ int main(int argc, char *argv[])
     qDebug() << QString("Started in " + QString::number(__aet_elapsed / 1000 / 1000) + "msec").toStdString().c_str();
 #endif
 
-    Stats::init();
+    // Initialize stats, but delay so that we are sure that
+    // any dialog will open on top of MainWindow without blocking it.
+    QTimer::singleShot(0, [](){
+        Stats::init();
+    });
 
     auto retVal = a.exec();
+
+    // Properly cleanup cached editors
+    Editor::invalidateEditorBuffer();
 
     BackupService::clearBackupData(); // Clear autosave cache on proper shutdown
     return retVal;

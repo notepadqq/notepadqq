@@ -44,6 +44,7 @@ private slots:
     void on_cmbFontFamilies_currentFontChanged(const QFont &f);
     void on_chkOverrideLineHeight_toggled(bool checked);
     void on_spnLineHeight_valueChanged(double arg1);
+    void on_chkShowLineNumbers_toggled(bool checked);
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
@@ -80,7 +81,7 @@ private:
     NqqSettings& m_settings;
     Ui::frmPreferences *ui;
     TopEditorContainer *m_topEditorContainer;
-    Editor *m_previewEditor;
+    QSharedPointer<Editor> m_previewEditor;
 
     void loadLanguages();
     void saveLanguages();

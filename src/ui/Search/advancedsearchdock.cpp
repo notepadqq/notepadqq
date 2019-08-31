@@ -249,6 +249,7 @@ QLayout* AdvancedSearchDock::buildReplaceOptionsLayout() {
     m_cmbReplaceText = new QComboBox;
     m_cmbReplaceText->setEditable(true);
     m_cmbReplaceText->completer()->setCompletionMode(QCompleter::PopupCompletion);
+    m_cmbReplaceText->completer()->setCaseSensitivity(Qt::CaseSensitive);
     m_cmbReplaceText->lineEdit()->setPlaceholderText(tr("Replace Text"));
     m_cmbReplaceText->setMaximumWidth(300);
     m_cmbReplaceText->setMinimumWidth(300);
@@ -297,6 +298,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchTerm = new QComboBox;
     m_cmbSearchTerm->setEditable(true);
     m_cmbSearchTerm->completer()->setCompletionMode(QCompleter::PopupCompletion);
+    m_cmbSearchTerm->completer()->setCaseSensitivity(Qt::CaseSensitive);
     m_cmbSearchTerm->lineEdit()->setPlaceholderText(tr("Search String"));
     m_cmbSearchTerm->setMaximumWidth(300);
     m_cmbSearchTerm->lineEdit()->setClearButtonEnabled(true);
@@ -312,6 +314,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchPattern = new QComboBox;
     m_cmbSearchPattern->setEditable(true);
     m_cmbSearchPattern->completer()->setCompletionMode(QCompleter::PopupCompletion);
+    m_cmbSearchPattern->completer()->setCaseSensitivity(Qt::CaseSensitive);
     m_cmbSearchPattern->lineEdit()->setPlaceholderText("*ext1, *ext2");
     m_cmbSearchPattern->setMaximumWidth(300);
     m_cmbSearchPattern->lineEdit()->setClearButtonEnabled(true);
@@ -321,6 +324,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
     m_cmbSearchDirectory = new QComboBox;
     m_cmbSearchDirectory->setEditable(true);
     m_cmbSearchDirectory->completer()->setCompletionMode(QCompleter::PopupCompletion);
+    m_cmbSearchDirectory->completer()->setCaseSensitivity(Qt::CaseSensitive);
     m_cmbSearchDirectory->lineEdit()->setPlaceholderText(tr("Directory"));
     m_cmbSearchDirectory->setMaximumWidth(260);
     m_cmbSearchDirectory->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -574,7 +578,7 @@ void AdvancedSearchDock::startReplace()
         TopEditorContainer* tec = config.targetWindow->topEditorContainer();
 
         for (const DocResult& res : filteredResults.results) {
-            Editor* ed = res.editor;
+            QSharedPointer<Editor> ed = res.editor;
 
             // The editor might not be open anymore. Try to find it first
             if(!tec->tabWidgetFromEditor(ed)) continue;
@@ -642,6 +646,18 @@ void AdvancedSearchDock::selectNextResult()
     if (m_currentSearchInstance) m_currentSearchInstance->selectNextResult();
 }
 
+bool AdvancedSearchDock::isVisible() const
+{
+    return getDockWidget()->isVisible();
+}
+
+void AdvancedSearchDock::show(bool show, bool setFocus)
+{
+    getDockWidget()->setVisible(show);
+    if (show && setFocus)
+        m_cmbSearchTerm->setFocus();
+}
+
 AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
     : QObject(mainWindow),
       m_mainWindow(mainWindow),
@@ -687,8 +703,8 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
         startSearch(getConfigFromInputs());
     });
     connect(m_btnSelectCurrentDirectory, &QToolButton::clicked, [this, mainWindow](){
-        auto* tabW = mainWindow->topEditorContainer()->currentTabWidget();
-        auto* editor = tabW->currentEditor();
+        auto tabW = mainWindow->topEditorContainer()->currentTabWidget();
+        auto editor = tabW->currentEditor();
 
         QString dir;
         if (editor && !editor->filePath().isEmpty()) {

@@ -1,6 +1,12 @@
-# `QPromise<T>::isPending`
+---
+title: .isPending
+---
 
-```
+# QPromise::isPending
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::isPending() -> bool
 ```
 

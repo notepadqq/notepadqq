@@ -1,4 +1,3 @@
-// Tests
 #include "../../shared/utils.h"
 
 // QtPromise
@@ -87,6 +86,10 @@ void tst_qpromise_timeout::timeout()
     QCOMPARE(waitForValue(p, -1), -1);
     QCOMPARE(p.isRejected(), true);
     QCOMPARE(failed, true);
-    QVERIFY(elapsed >= 2000 * 0.95);    // Qt::CoarseTimer (default) Coarse timers try to
-    QVERIFY(elapsed <= 2000 * 1.05);    // keep accuracy within 5% of the desired interval.
+
+    // Qt::CoarseTimer (default) Coarse timers try to
+    // keep accuracy within 5% of the desired interval.
+    // Require accuracy within 6% for passing the test.
+    QVERIFY(elapsed >= 2000 * 0.94);
+    QVERIFY(elapsed <= 2000 * 1.06);
 }

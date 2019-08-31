@@ -1,19 +1,17 @@
 #ifndef QTPROMISE_QPROMISE_P_H
 #define QTPROMISE_QPROMISE_P_H
 
-// QtPromise
-#include "qpromiseerror.h"
 #include "qpromiseglobal.h"
 
 // Qt
-#include <QAbstractEventDispatcher>
 #include <QCoreApplication>
-#include <QPointer>
-#include <QReadWriteLock>
-#include <QSharedData>
-#include <QSharedPointer>
+#include <QAbstractEventDispatcher>
 #include <QThread>
 #include <QVector>
+#include <QReadWriteLock>
+#include <QSharedPointer>
+#include <QSharedData>
+#include <QPointer>
 
 namespace QtPromise {
 
@@ -34,9 +32,10 @@ namespace QtPromisePrivate {
 template <typename F>
 static void qtpromise_defer(F&& f, const QPointer<QThread>& thread)
 {
+    using FType = typename std::decay<F>::type;
+
     struct Event : public QEvent
     {
-        using FType = typename std::decay<F>::type;
         Event(FType&& f) : QEvent(QEvent::None), m_f(std::move(f)) { }
         Event(const FType& f) : QEvent(QEvent::None), m_f(f) { }
         ~Event() { m_f(); }
@@ -72,35 +71,93 @@ static void qtpromise_defer(F&& f)
 }
 
 template <typename T>
-struct PromiseDeduce
+class PromiseValue
 {
-    using Type = QtPromise::QPromise<Unqualified<T> >;
+public:
+    PromiseValue() { }
+    PromiseValue(const T& data) : m_data(new T(data)) { }
+    PromiseValue(T&& data) : m_data(new T(std::move(data))) { }
+    bool isNull() const { return m_data.isNull(); }
+    const T& data() const { return *m_data; }
+
+private:
+    QSharedPointer<T> m_data;
+};
+
+class PromiseError
+{
+public:
+    template <typename T>
+    PromiseError(const T& value)
+    {
+        try {
+            throw value;
+        } catch (...) {
+            m_data = std::current_exception();
+        }
+    }
+
+    PromiseError() { }
+    PromiseError(const std::exception_ptr& exception) : m_data(exception) { }
+    void rethrow() const { std::rethrow_exception(m_data); }
+    bool isNull() const { return m_data == nullptr; }
+
+private:
+    // NOTE(SB) std::exception_ptr is already a shared pointer
+    std::exception_ptr m_data;
 };
 
 template <typename T>
-struct PromiseDeduce<QtPromise::QPromise<T> >
+struct PromiseDeduce
+{
+    using Type = QtPromise::QPromise<T>;
+};
+
+template <typename T>
+struct PromiseDeduce<T&>
     : public PromiseDeduce<T>
 { };
 
 template <typename T>
+struct PromiseDeduce<const T>
+    : public PromiseDeduce<T>
+{ };
+
+template <typename T>
+struct PromiseDeduce<const volatile T>
+    : public PromiseDeduce<T>
+{ };
+
+template <typename T>
+struct PromiseDeduce<QtPromise::QPromise<T>>
+    : public PromiseDeduce<T>
+{ };
+
+template <typename Functor, typename... Args>
+struct PromiseFunctor
+{
+    using ResultType = typename std::result_of<Functor(Args...)>::type;
+    using PromiseType = typename PromiseDeduce<ResultType>::Type;
+};
+
+template <typename T>
 struct PromiseFulfill
 {
-    static void call(
-        T&& value,
-        const QtPromise::QPromiseResolve<T>& resolve,
-        const QtPromise::QPromiseReject<T>&)
+    template <typename V, typename TResolve, typename TReject>
+    static void call(V&& value, const TResolve& resolve, const TReject&)
     {
-        resolve(std::move(value));
+        resolve(std::forward<V>(value));
     }
 };
 
 template <typename T>
-struct PromiseFulfill<QtPromise::QPromise<T> >
+struct PromiseFulfill<QtPromise::QPromise<T>>
 {
+    template <typename TResolve, typename TReject>
     static void call(
         const QtPromise::QPromise<T>& promise,
-        const QtPromise::QPromiseResolve<T>& resolve,
-        const QtPromise::QPromiseReject<T>& reject)
+        const TResolve& resolve,
+        const TReject& reject)
     {
         if (promise.isFulfilled()) {
             resolve(promise.m_d->value());
@@ -117,7 +174,7 @@ struct PromiseFulfill<QtPromise::QPromise<T> >
 };
 
 template <>
-struct PromiseFulfill<QtPromise::QPromise<void> >
+struct PromiseFulfill<QtPromise::QPromise<void>>
 {
     template <typename TPromise, typename TResolve, typename TReject>
     static void call(
@@ -139,51 +196,17 @@ struct PromiseFulfill<QtPromise::QPromise<void> >
     }
 };
 
-template <typename T, typename TRes>
+template <typename Result>
 struct PromiseDispatch
 {
-    using Promise = typename PromiseDeduce<TRes>::Type;
-    using ResType = Unqualified<TRes>;
-
-    template <typename THandler, typename TResolve, typename TReject>
-    static void call(const T& value, THandler handler, const TResolve& resolve, const TReject& reject)
+    template <typename Resolve, typename Reject, typename Functor, typename... Args>
+    static void call(const Resolve& resolve, const Reject& reject, Functor fn, Args&&... args)
     {
         try {
-            PromiseFulfill<ResType>::call(handler(value), resolve, reject);
-        } catch (...) {
-            reject(std::current_exception());
-        }
-    }
-};
-
-template <typename T>
-struct PromiseDispatch<T, void>
-{
-    using Promise = QtPromise::QPromise<void>;
-
-    template <typename THandler, typename TResolve, typename TReject>
-    static void call(const T& value, THandler handler, const TResolve& resolve, const TReject& reject)
-    {
-        try {
-            handler(value);
-            resolve();
-        } catch (...) {
-            reject(std::current_exception());
-        }
-    }
-};
-
-template <typename TRes>
-struct PromiseDispatch<void, TRes>
-{
-    using Promise = typename PromiseDeduce<TRes>::Type;
-    using ResType = Unqualified<TRes>;
-
-    template <typename THandler, typename TResolve, typename TReject>
-    static void call(THandler handler, const TResolve& resolve, const TReject& reject)
-    {
-        try {
-            PromiseFulfill<ResType>::call(handler(), resolve, reject);
+            PromiseFulfill<Unqualified<Result>>::call(
+                fn(std::forward<Args>(args)...),
+                resolve,
+                reject);
         } catch (...) {
             reject(std::current_exception());
         }
@@ -191,15 +214,13 @@ struct PromiseDispatch<void, TRes>
 };
 
 template <>
-struct PromiseDispatch<void, void>
+struct PromiseDispatch<void>
 {
-    using Promise = QtPromise::QPromise<void>;
-
-    template <typename THandler, typename TResolve, typename TReject>
-    static void call(THandler handler, const TResolve& resolve, const TReject& reject)
+    template <typename Resolve, typename Reject, typename Functor, typename... Args>
+    static void call(const Resolve& resolve, const Reject& reject, Functor fn, Args&&... args)
     {
         try {
-            handler();
+            fn(std::forward<Args>(args)...);
             resolve();
         } catch (...) {
             reject(std::current_exception());
@@ -211,7 +232,7 @@ template <typename T, typename THandler, typename TArg = typename ArgsOf<THandle
 struct PromiseHandler
 {
     using ResType = typename std::result_of<THandler(T)>::type;
-    using Promise = typename PromiseDispatch<T, ResType>::Promise;
+    using Promise = typename PromiseDeduce<ResType>::Type;
 
     template <typename TResolve, typename TReject>
     static std::function<void(const T&)> create(
@@ -220,7 +241,7 @@ struct PromiseHandler
         const TReject& reject)
     {
         return [=](const T& value) {
-            PromiseDispatch<T, ResType>::call(value, std::move(handler), resolve, reject);
+            PromiseDispatch<ResType>::call(resolve, reject, handler, value);
         };
     }
 };
@@ -229,7 +250,7 @@ template <typename T, typename THandler>
 struct PromiseHandler<T, THandler, void>
 {
     using ResType = typename std::result_of<THandler()>::type;
-    using Promise = typename PromiseDispatch<T, ResType>::Promise;
+    using Promise = typename PromiseDeduce<ResType>::Type;
 
     template <typename TResolve, typename TReject>
     static std::function<void(const T&)> create(
@@ -238,7 +259,7 @@ struct PromiseHandler<T, THandler, void>
         const TReject& reject)
     {
         return [=](const T&) {
-            PromiseDispatch<void, ResType>::call(handler, resolve, reject);
+            PromiseDispatch<ResType>::call(resolve, reject, handler);
         };
     }
 };
@@ -247,7 +268,7 @@ template <typename THandler>
 struct PromiseHandler<void, THandler, void>
 {
     using ResType = typename std::result_of<THandler()>::type;
-    using Promise = typename PromiseDispatch<void, ResType>::Promise;
+    using Promise = typename PromiseDeduce<ResType>::Type;
 
     template <typename TResolve, typename TReject>
     static std::function<void()> create(
@@ -256,7 +277,7 @@ struct PromiseHandler<void, THandler, void>
         const TReject& reject)
     {
         return [=]() {
-            PromiseDispatch<void, ResType>::call(handler, resolve, reject);
+            PromiseDispatch<ResType>::call(resolve, reject, handler);
         };
     }
 };
@@ -305,16 +326,16 @@ struct PromiseCatcher
     using ResType = typename std::result_of<THandler(TArg)>::type;
 
     template <typename TResolve, typename TReject>
-    static std::function<void(const QtPromise::QPromiseError&)> create(
+    static std::function<void(const PromiseError&)> create(
         const THandler& handler,
         const TResolve& resolve,
         const TReject& reject)
     {
-        return [=](const QtPromise::QPromiseError& error) {
+        return [=](const PromiseError& error) {
             try {
                 error.rethrow();
             } catch (const TArg& error) {
-                PromiseDispatch<TArg, ResType>::call(error, handler, resolve, reject);
+                PromiseDispatch<ResType>::call(resolve, reject, handler, error);
             } catch (...) {
                 reject(std::current_exception());
             }
@@ -328,16 +349,16 @@ struct PromiseCatcher<T, THandler, void>
     using ResType = typename std::result_of<THandler()>::type;
 
     template <typename TResolve, typename TReject>
-    static std::function<void(const QtPromise::QPromiseError&)> create(
+    static std::function<void(const PromiseError&)> create(
         const THandler& handler,
         const TResolve& resolve,
         const TReject& reject)
     {
-        return [=](const QtPromise::QPromiseError& error) {
+        return [=](const PromiseError& error) {
             try {
                 error.rethrow();
             } catch (...) {
-                PromiseDispatch<void, ResType>::call(handler, resolve, reject);
+                PromiseDispatch<ResType>::call(resolve, reject, handler);
             }
         };
     }
@@ -347,17 +368,29 @@ template <typename T>
 struct PromiseCatcher<T, std::nullptr_t, void>
 {
     template <typename TResolve, typename TReject>
-    static std::function<void(const QtPromise::QPromiseError&)> create(
+    static std::function<void(const PromiseError&)> create(
         std::nullptr_t,
         const TResolve&,
         const TReject& reject)
     {
-        return [=](const QtPromise::QPromiseError& error) {
+        return [=](const PromiseError& error) {
             // 2.2.7.4. If onRejected is not a function and promise1 is rejected,
             // promise2 must be rejected with the same reason as promise1
             reject(error);
         };
     }
+};
+
+template <typename T, typename F>
+struct PromiseMapper
+{ };
+
+template <typename T, typename F, template <typename, typename...> class Sequence, typename ...Args>
+struct PromiseMapper<Sequence<T, Args...>, F>
+{
+    using ReturnType = typename std::result_of<F(T, int)>::type;
+    using ResultType = QVector<typename PromiseDeduce<ReturnType>::Type::Type>;
+    using PromiseType = QtPromise::QPromise<ResultType>;
 };
 
 template <typename T> class PromiseData;
@@ -366,9 +399,8 @@ template <typename T, typename F>
 class PromiseDataBase : public QSharedData
 {
 public:
-    using Error = QtPromise::QPromiseError;
-    using Handler = std::pair<QPointer<QThread>, std::function<F> >;
-    using Catcher = std::pair<QPointer<QThread>, std::function<void(const Error&)> >;
+    using Handler = std::pair<QPointer<QThread>, std::function<F>>;
+    using Catcher = std::pair<QPointer<QThread>, std::function<void(const PromiseError&)>>;
 
     virtual ~PromiseDataBase() {}
 
@@ -394,29 +426,22 @@ public:
         m_handlers.append({QThread::currentThread(), std::move(handler)});
     }
 
-    void addCatcher(std::function<void(const Error&)> catcher)
+    void addCatcher(std::function<void(const PromiseError&)> catcher)
     {
         QWriteLocker lock(&m_lock);
         m_catchers.append({QThread::currentThread(), std::move(catcher)});
     }
 
-    void reject(Error error)
+    template <typename E>
+    void reject(E&& error)
     {
         Q_ASSERT(isPending());
         Q_ASSERT(m_error.isNull());
-        m_error.reset(new Error(std::move(error)));
+        m_error = PromiseError(std::forward<E>(error));
         setSettled();
     }
 
-    void reject(const QSharedPointer<Error>& error)
-    {
-        Q_ASSERT(isPending());
-        Q_ASSERT(m_error.isNull());
-        m_error = error;
-        this->setSettled();
-    }
-
-    const QSharedPointer<Error>& error() const
+    const PromiseError& error() const
     {
         Q_ASSERT(isRejected());
         return m_error;
@@ -445,13 +470,13 @@ public:
             return;
         }
 
-        QSharedPointer<Error> error = m_error;
+        PromiseError error(m_error);
         Q_ASSERT(!error.isNull());
 
         for (const auto& catcher: catchers) {
             const auto& fn = catcher.second;
             qtpromise_defer([=]() {
-                fn(*error);
+                fn(error);
             }, catcher.first);
         }
     }
@@ -472,7 +497,7 @@ private:
     bool m_settled = false;
     QVector<Handler> m_handlers;
     QVector<Catcher> m_catchers;
-    QSharedPointer<Error> m_error;
+    PromiseError m_error;
 };
 
 template <typename T>
@@ -481,31 +506,16 @@ class PromiseData : public PromiseDataBase<T, void(const T&)>
     using Handler = typename PromiseDataBase<T, void(const T&)>::Handler;
 
 public:
-    void resolve(T&& value)
+    template <typename V>
+    void resolve(V&& value)
     {
         Q_ASSERT(this->isPending());
         Q_ASSERT(m_value.isNull());
-        m_value.reset(new T(std::move(value)));
+        m_value = PromiseValue<T>(std::forward<V>(value));
         this->setSettled();
     }
 
-    void resolve(const T& value)
-    {
-        Q_ASSERT(this->isPending());
-        Q_ASSERT(m_value.isNull());
-        m_value.reset(new T(value));
-        this->setSettled();
-    }
-
-    void resolve(const QSharedPointer<T>& value)
-    {
-        Q_ASSERT(this->isPending());
-        Q_ASSERT(m_value.isNull());
-        m_value = value;
-        this->setSettled();
-    }
-
-    const QSharedPointer<T>& value() const
+    const PromiseValue<T>& value() const
     {
         Q_ASSERT(this->isFulfilled());
         return m_value;
@@ -513,19 +523,19 @@ public:
 
     void notify(const QVector<Handler>& handlers) Q_DECL_OVERRIDE
     {
-        QSharedPointer<T> value(m_value);
+        PromiseValue<T> value(m_value);
         Q_ASSERT(!value.isNull());
 
         for (const auto& handler: handlers) {
             const auto& fn = handler.second;
             qtpromise_defer([=]() {
-                fn(*value);
+                fn(value.data());
             }, handler.first);
         }
     }
 
 private:
-    QSharedPointer<T> m_value;
+    PromiseValue<T> m_value;
 };
 
 template <>
@@ -548,6 +558,15 @@ protected:
     }
 };
 
-} // namespace QtPromise
+struct PromiseInspect
+{
+    template <typename T>
+    static inline PromiseData<T>* get(const QtPromise::QPromise<T>& p)
+    {
+        return p.m_d.data();
+    }
+};
 
-#endif // ifndef QTPROMISE_QPROMISE_H
+} // namespace QtPromisePrivate
+
+#endif // QTPROMISE_QPROMISE_H

@@ -5,8 +5,8 @@
 #include <QtGlobal>
 
 // STL
-#include <array>
 #include <functional>
+#include <array>
 
 namespace QtPromisePrivate
 {
@@ -85,7 +85,7 @@ struct ArgsOf<TReturn(T::*)(Args...) const volatile> : public ArgsTraits<Args...
 { };
 
 template <typename T>
-struct ArgsOf<std::function<T> > : public ArgsOf<T>
+struct ArgsOf<std::function<T>> : public ArgsOf<T>
 { };
 
 template <typename T>
@@ -122,4 +122,4 @@ struct ArgsOf<const volatile T&&> : public ArgsOf<T>
 
 } // namespace QtPromisePrivate
 
-#endif // ifndef QTPROMISE_QPROMISEGLOBAL_H
+#endif // QTPROMISE_QPROMISEGLOBAL_H
