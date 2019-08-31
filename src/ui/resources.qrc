@@ -6,12 +6,12 @@
 		<file alias="scalable/document-close-all.svg">icons/notepadqq/scalable/document-close-all.svg</file>
 		<file alias="scalable/document-new.svg">icons/notepadqq/scalable/document-new.svg</file>
 		<file alias="scalable/document-open.svg">icons/notepadqq/scalable/document-open.svg</file>
-		<file alias="16x16/document-print.png">icons/notepadqq/16x16/document-print.png</file>
+		<file alias="scalable/document-print.svg">icons/notepadqq/scalable/document-print.svg</file>
 
 		<file alias="scalable/document-save.svg">icons/notepadqq/scalable/document-save.svg</file>
 
 		<file alias="scalable/document-save-all.svg">icons/notepadqq/scalable/document-save-all.svg</file>
-		<file alias="16x16/document-save-as.png">icons/notepadqq/16x16/document-save-as.png</file>
+		<file alias="scalable/document-save-as.svg">icons/notepadqq/scalable/document-save-as.svg</file>
 		<file alias="scalable/edit-copy.svg">icons/notepadqq/scalable/edit-copy.svg</file>
 		<file alias="scalable/edit-cut.svg">icons/notepadqq/scalable/edit-cut.svg</file>
 		<file alias="scalable/edit-find.svg">icons/notepadqq/scalable/edit-find.svg</file>

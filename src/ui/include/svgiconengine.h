@@ -6,7 +6,8 @@
 
 class SVGIconEngine : public QIconEngine {
 
-  QByteArray data;
+  QByteArray m_lightIcon;
+  QByteArray m_darkIcon;
 
 public:
   explicit SVGIconEngine(const std::string &iconBuffer);
@@ -20,6 +21,17 @@ public:
 signals:
 
 public slots:
+
+private:
+  /**
+   * @brief Tries to set a custom default fill color for the provided SVG.
+   *        The color is applied to all those paths and shapes without a
+   *        specified color, so the icon file must be compatible.
+   * @param svg
+   * @param color
+   * @return
+   */
+  QString replaceSvgMainFillColor(const QString& svg, const QColor& color) const;
 
 };
 
