@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QPainter>
 #include <QGraphicsColorizeEffect>
+#include <QApplication>
+#include <QPalette>
 
 
 SVGIconEngine::SVGIconEngine(const std::string &iconBuffer) {
@@ -17,12 +19,26 @@ SVGIconEngine* SVGIconEngine::fromFile(const QString &fileName) {
 
 void SVGIconEngine::paint(QPainter *painter, const QRect &rect,
                           QIcon::Mode mode, QIcon::State) {
-  QSvgRenderer renderer(data);
-  renderer.render(painter, rect);
 
+    QSvgRenderer renderer(data);
 
+    // First we render the SVG onto a temporary QImage
+    QImage img(rect.size(), QImage::Format_ARGB32);
+    img.fill(qRgba(0, 0, 0, 0));
+    QPainter painter_i(&img);
+    renderer.render(&painter_i, rect);
 
-  // FIXME Handle different modes and states
+    auto bgColor = QApplication::palette().color(QPalette::Window);
+    bool darkUI = bgColor.lightnessF() < 0.5;
+    if (darkUI) {
+        img.invertPixels();
+    }
+
+    // Finally we paint our image onto the correct painter.
+    painter->setOpacity(0.8);
+    painter->drawImage(rect, img);
+
+    // FIXME Handle different modes and states
 }
 
 QIconEngine *SVGIconEngine::clone() const { return new SVGIconEngine(*this); }
