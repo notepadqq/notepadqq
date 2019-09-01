@@ -14,13 +14,13 @@
 		<file alias="scalable/document-save-as.svg">icons/notepadqq/scalable/document-save-as.svg</file>
 		<file alias="scalable/edit-copy.svg">icons/notepadqq/scalable/edit-copy.svg</file>
 		<file alias="scalable/edit-cut.svg">icons/notepadqq/scalable/edit-cut.svg</file>
+		<file alias="scalable/edit-clear.svg">icons/notepadqq/scalable/edit-clear.svg</file>
 		<file alias="scalable/edit-find.svg">icons/notepadqq/scalable/edit-find.svg</file>
 		<file alias="scalable/edit-find-replace.svg">icons/notepadqq/scalable/edit-find-replace.svg</file>
 		<file alias="scalable/edit-paste.svg">icons/notepadqq/scalable/edit-paste.svg</file>
 		<file alias="scalable/edit-redo.svg">icons/notepadqq/scalable/edit-redo.svg</file>
 		<file alias="scalable/edit-undo.svg">icons/notepadqq/scalable/edit-undo.svg</file>
 		<file alias="scalable/math-rendering.svg">icons/notepadqq/scalable/math-rendering.svg</file>
-		<file alias="128x128/math-rendering.png">icons/notepadqq/128x128/math-rendering.png</file>
 		<file alias="16x16/media-playback-start.png">icons/notepadqq/16x16/media-playback-start.png</file>
 		<file alias="16x16/media-playback-stop.png">icons/notepadqq/16x16/media-playback-stop.png</file>
 		<file alias="16x16/media-record.png">icons/notepadqq/16x16/media-record.png</file>
@@ -28,12 +28,15 @@
 		<file alias="scalable/notepadqq.svg">icons/notepadqq/scalable/notepadqq.svg</file>
 		<file alias="16x16/document-saved.png">icons/notepadqq/16x16/document-saved.png</file>
 		<file alias="16x16/document-unsaved.png">icons/notepadqq/16x16/document-unsaved.png</file>
-		<file alias="16x16/preferences-other.png">icons/notepadqq/16x16/preferences-other.png</file>
+		<file alias="scalable/preferences-other.svg">icons/notepadqq/scalable/preferences-other.svg</file>
 		<file alias="scalable/show-special-chars.svg">icons/notepadqq/scalable/show-special-chars.svg</file>
 		<file alias="scalable/word-wrap.svg">icons/notepadqq/scalable/word-wrap.svg</file>
 		<file alias="scalable/zoom-in.svg">icons/notepadqq/scalable/zoom-in.svg</file>
 		<file alias="16x16/zoom-original.png">icons/notepadqq/16x16/zoom-original.png</file>
 		<file alias="scalable/zoom-out.svg">icons/notepadqq/scalable/zoom-out.svg</file>
+		<file alias="scalable/go-bottom.svg">icons/notepadqq/scalable/go-bottom.svg</file>
+		<file alias="scalable/go-next.svg">icons/notepadqq/scalable/go-next.svg</file>
+		<file alias="scalable/go-previous.svg">icons/notepadqq/scalable/go-previous.svg</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="notepadqq_de.qm">../translations/notepadqq_de.qm</file>
