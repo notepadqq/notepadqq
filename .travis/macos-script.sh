@@ -22,9 +22,9 @@ deploy()
     macdeployqt notepadqq.app -executable=notepadqq.app/Contents/MacOS/notepadqq || return 1
     macdeployqt notepadqq.app -executable=notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess || return 1
 
-    git clone --depth=1 https://github.com/aurelien-rainone/macdeployqtfix.git
-    python macdeployqtfix/macdeployqtfix.py notepadqq.app/Contents/MacOS/notepadqq /usr/local/Cellar/qt/5.* || return 1
-    python macdeployqtfix/macdeployqtfix.py notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess /usr/local/Cellar/qt/5.* || return 1
+    MAC_DEPLOY_FIX='../../.travis/tools/macdeployqtfix/macdeployqtfix.py'
+    python2.7 $MAC_DEPLOY_FIX notepadqq.app/Contents/MacOS/notepadqq /usr/local/Cellar/qt/5.* || return 1
+    python2.7 $MAC_DEPLOY_FIX notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess /usr/local/Cellar/qt/5.* || return 1
 
     # Manually create the DMG
     mkdir dmgfolder
