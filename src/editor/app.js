@@ -690,6 +690,29 @@ UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, pre
     UiDriver.sendMessage("J_EVT_DOCUMENT_INFO", getDocumentInfo());
 });
 
+function onCursorActivity(editor) {
+    require(['libs/throttle-debounce/index'], function(thdb) {
+        if (!onCursorActivity._throttled) {
+            onCursorActivity._throttled = thdb.throttle(50, () => {
+                UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getDocumentInfo());
+            });
+        }
+        onCursorActivity._throttled();
+    });
+}
+
+function onChange(editor, changeObj) {
+    require(['libs/throttle-debounce/index'], function(thdb) {
+        if (!onChange._throttled) {
+            onChange._throttled = thdb.throttle(50, () => {
+                UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
+                UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
+            });
+        }
+        onChange._throttled();
+    });
+}
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
@@ -730,14 +753,8 @@ $(document).ready(function () {
 
     changeGeneration = editor.changeGeneration(true);
 
-    editor.on("change", function(instance, changeObj) {
-        UiDriver.sendMessage("J_EVT_CONTENT_CHANGED");
-        UiDriver.sendMessage("J_EVT_CLEAN_CHANGED", isCleanOrForced(changeGeneration));
-    });
-
-    editor.on("cursorActivity", function(instance) {
-        UiDriver.sendMessage("J_EVT_CURSOR_ACTIVITY", getDocumentInfo());
-    });
+    editor.on("change", onChange);
+    editor.on("cursorActivity", onCursorActivity);
 
     editor.on("focus", function() {
         UiDriver.sendMessage("J_EVT_GOT_FOCUS");
