@@ -103,4 +103,4 @@ Use a package for a compatible distribution, or build from [source](https://gith
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
 
 #### Compiling on macOS
-While we do not (yet) officially support it, compiling and running Notepadqq on macOS is not very difficult. Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
+Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
