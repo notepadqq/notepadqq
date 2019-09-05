@@ -1,6 +1,6 @@
 import { buildLineContent, LineView } from "../line/line_data.js"
 import { clipPos, Pos } from "../line/pos.js"
-import { collapsedSpanAtEnd, heightAtLine, lineIsHidden, visualLine } from "../line/spans.js"
+import { collapsedSpanAround, heightAtLine, lineIsHidden, visualLine } from "../line/spans.js"
 import { getLine, lineAtHeight, lineNo, updateLineHeight } from "../line/utils_line.js"
 import { bidiOther, getBidiPartAt, getOrder } from "../util/bidi.js"
 import { chrome, android, ie, ie_version } from "../util/browser.js"
@@ -18,7 +18,7 @@ export function paddingTop(display) {return display.lineSpace.offsetTop}
 export function paddingVert(display) {return display.mover.offsetHeight - display.lineSpace.offsetHeight}
 export function paddingH(display) {
   if (display.cachedPaddingH) return display.cachedPaddingH
-  let e = removeChildrenAndAdd(display.measure, elt("pre", "x"))
+  let e = removeChildrenAndAdd(display.measure, elt("pre", "x", "CodeMirror-line-like"))
   let style = window.getComputedStyle ? window.getComputedStyle(e) : e.currentStyle
   let data = {left: parseInt(style.paddingLeft), right: parseInt(style.paddingRight)}
   if (!isNaN(data.left) && !isNaN(data.right)) display.cachedPaddingH = data
@@ -412,7 +412,7 @@ export function estimateCoords(cm, pos) {
 function PosWithInfo(line, ch, sticky, outside, xRel) {
   let pos = Pos(line, ch, sticky)
   pos.xRel = xRel
-  if (outside) pos.outside = true
+  if (outside) pos.outside = outside
   return pos
 }
 
@@ -421,21 +421,20 @@ function PosWithInfo(line, ch, sticky, outside, xRel) {
 export function coordsChar(cm, x, y) {
   let doc = cm.doc
   y += cm.display.viewOffset
-  if (y < 0) return PosWithInfo(doc.first, 0, null, true, -1)
+  if (y < 0) return PosWithInfo(doc.first, 0, null, -1, -1)
   let lineN = lineAtHeight(doc, y), last = doc.first + doc.size - 1
   if (lineN > last)
-    return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, null, true, 1)
+    return PosWithInfo(doc.first + doc.size - 1, getLine(doc, last).text.length, null, 1, 1)
   if (x < 0) x = 0
 
   let lineObj = getLine(doc, lineN)
   for (;;) {
     let found = coordsCharInner(cm, lineObj, lineN, x, y)
-    let merged = collapsedSpanAtEnd(lineObj)
-    let mergedPos = merged && merged.find(0, true)
-    if (merged && (found.ch > mergedPos.from.ch || found.ch == mergedPos.from.ch && found.xRel > 0))
-      lineN = lineNo(lineObj = mergedPos.to.line)
-    else
-      return found
+    let collapsed = collapsedSpanAround(lineObj, found.ch + (found.xRel > 0 || found.outside > 0 ? 1 : 0))
+    if (!collapsed) return found
+    let rangeEnd = collapsed.find(1)
+    if (rangeEnd.line == lineN) return rangeEnd
+    lineObj = getLine(doc, lineN = rangeEnd.line)
   }
 }
 
@@ -519,7 +518,7 @@ function coordsCharInner(cm, lineObj, lineNo, x, y) {
     // base X position
     let coords = cursorCoords(cm, Pos(lineNo, ch, sticky), "line", lineObj, preparedMeasure)
     baseX = coords.left
-    outside = y < coords.top || y >= coords.bottom
+    outside = y < coords.top ? -1 : y >= coords.bottom ? 1 : 0
   }
 
   ch = skipExtendingChars(lineObj.text, ch, 1)
@@ -586,7 +585,7 @@ let measureText
 export function textHeight(display) {
   if (display.cachedTextHeight != null) return display.cachedTextHeight
   if (measureText == null) {
-    measureText = elt("pre")
+    measureText = elt("pre", null, "CodeMirror-line-like")
     // Measure a bunch of lines, for browsers that compute
     // fractional heights.
     for (let i = 0; i < 49; ++i) {
@@ -606,7 +605,7 @@ export function textHeight(display) {
 export function charWidth(display) {
   if (display.cachedCharWidth != null) return display.cachedCharWidth
   let anchor = elt("span", "xxxxxxxxxx")
-  let pre = elt("pre", [anchor])
+  let pre = elt("pre", [anchor], "CodeMirror-line-like")
   removeChildrenAndAdd(display.measure, pre)
   let rect = anchor.getBoundingClientRect(), width = (rect.right - rect.left) / 10
   if (width > 2) display.cachedCharWidth = width
@@ -619,8 +618,9 @@ export function getDimensions(cm) {
   let d = cm.display, left = {}, width = {}
   let gutterLeft = d.gutters.clientLeft
   for (let n = d.gutters.firstChild, i = 0; n; n = n.nextSibling, ++i) {
-    left[cm.options.gutters[i]] = n.offsetLeft + n.clientLeft + gutterLeft
-    width[cm.options.gutters[i]] = n.clientWidth
+    let id = cm.display.gutterSpecs[i].className
+    left[id] = n.offsetLeft + n.clientLeft + gutterLeft
+    width[id] = n.clientWidth
   }
   return {fixedPos: compensateForHScroll(d),
           gutterTotalWidth: d.gutters.offsetWidth,

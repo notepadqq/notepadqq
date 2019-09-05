@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -369,6 +369,7 @@
 
     "Ctrl-/": repeated("undo"), "Shift-Ctrl--": repeated("undo"),
     "Ctrl-Z": repeated("undo"), "Cmd-Z": repeated("undo"),
+    "Shift-Ctrl-Z": "redo",
     "Shift-Alt-,": "goDocStart", "Shift-Alt-.": "goDocEnd",
     "Ctrl-S": "findPersistentNext", "Ctrl-R": "findPersistentPrev", "Ctrl-G": quit, "Shift-Alt-5": "replace",
     "Alt-/": "autocomplete",

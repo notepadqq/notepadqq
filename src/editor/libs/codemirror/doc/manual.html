@@ -24,7 +24,7 @@
 </style>
 
 <div id=nav>
-  <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="logo.png"></a>
+  <a href="https://codemirror.net"><h1>CodeMirror</h1><img id=logo src="logo.png"></a>
   <ul>
     <li><a href="../index.html">Home</a></li>
     <li><a href="#overview" class=active data-default="true">Manual</a></li>
@@ -69,7 +69,7 @@
 <section class=first id=overview>
     <h2 style="position: relative">
       User manual and reference guide
-      <span style="color: #888; font-size: 1rem; position: absolute; right: 0; bottom: 0">version 5.36.1</span>
+      <span style="color: #888; font-size: 1rem; position: absolute; right: 0; bottom: 0">version 5.48.4</span>
     </h2>
 
     <p>CodeMirror is a code-editor component that can be embedded in
@@ -284,13 +284,24 @@
       should be replaced by a
       special <a href="#option_specialCharPlaceholder">placeholder</a>.
       Mostly useful for non-printing special characters. The default
-      is <code>/[\u0000-\u001f\u007f-\u009f\u00ad\u061c\u200b-\u200f\u2028\u2029\ufeff]/</code>.</dd>
+      is <code>/[\u0000-\u001f\u007f-\u009f\u00ad\u061c\u200b-\u200f\u2028\u2029\ufeff\ufff9-\ufffc]/</code>.</dd>
       <dt id="option_specialCharPlaceholder"><code><strong>specialCharPlaceholder</strong>: function(char) → Element</code></dt>
       <dd>A function that, given a special character identified by
       the <a href="#option_specialChars"><code>specialChars</code></a>
       option, produces a DOM node that is used to represent the
       character. By default, a red dot (<span style="color: red">•</span>)
       is shown, with a title tooltip to indicate the character code.</dd>
+
+      <dt id="option_direction"><code><strong>direction</strong>: "ltr" | "rtl"</code></dt>
+      <dd>Flips overall layout and selects base paragraph direction to
+      be left-to-right or right-to-left.  Default is "ltr".
+      CodeMirror applies the Unicode Bidirectional Algorithm to each
+      line, but does not autodetect base direction — it's set to the
+      editor direction for all lines.  The resulting order is
+      sometimes wrong when base direction doesn't match user intent
+      (for example, leading and trailing punctuation jumps to the
+      wrong side of the line).  Therefore, it's helpful for
+      multilingual input to let users toggle this option.
 
       <dt id="option_rtlMoveVisually"><code><strong>rtlMoveVisually</strong>: boolean</code></dt>
       <dd>Determines whether horizontal cursor movement through
@@ -321,16 +332,27 @@
         <dl>
           <dt><code><strong>unit</strong>: "char" | "word" | "line" | "rectangle" | fn(CodeMirror, Pos) → {from: Pos, to: Pos}</code></dt>
           <dd>The unit by which to select. May be one of the built-in
-          units, or a function that takes a position and returns a
-          range around that, for a custom unit.</dd>
+          units or a function that takes a position and returns a
+          range around that, for a custom unit. The default is to
+          return <code>"word"</code> for double
+          clicks, <code>"line"</code> for triple
+          clicks, <code>"rectangle"</code> for alt-clicks (or, on
+          Chrome OS, meta-shift-clicks), and <code>"single"</code>
+          otherwise.</dd>
           <dt><code><strong>extend</strong>: bool</code></dt>
-          <dd>Whether to extend the existing selection range or start a new one.</dd>
+          <dd>Whether to extend the existing selection range or start
+          a new one. By default, this is enabled when shift
+          clicking.</dd>
           <dt><code><strong>addNew</strong>: bool</code></dt>
-          <dd>When enabled, this adds a new range to the existing selection, rather than replacing it.</dd>
+          <dd>When enabled, this adds a new range to the existing
+          selection, rather than replacing it. The default behavior is
+          to enable this for command-click on Mac OS, and
+          control-click on other platforms.</dd>
           <dt><code><strong>moveOnDrag</strong>: bool</code></dt>
           <dd>When the mouse even drags content around inside the
           editor, this controls whether it is copied (false) or moved
-          (true).</dd>
+          (true). By default, this is enabled by alt-clicking on Mac
+          OS, and ctrl-clicking elsewhere.</dd>
         </dl>
       </dd>
 
@@ -349,16 +371,16 @@
       passed the line number, and should return a string that will be
       shown in the gutter.</dd>
 
-      <dt id="option_gutters"><code><strong>gutters</strong>: array&lt;string&gt;</code></dt>
+      <dt id="option_gutters"><code><strong>gutters</strong>: array&lt;string | {className: string, style: ?string}&gt;</code></dt>
       <dd>Can be used to add extra gutters (beyond or instead of the
-      line number gutter). Should be an array of CSS class names, each
-      of which defines a <code>width</code> (and optionally a
-      background), and which will be used to draw the background of
-      the gutters. <em>May</em> include
-      the <code>CodeMirror-linenumbers</code> class, in order to
-      explicitly set the position of the line number gutter (it will
-      default to be to the right of all other gutters). These class
-      names are the keys passed
+      line number gutter). Should be an array of CSS class names or
+      class name / CSS string pairs, each of which defines
+      a <code>width</code> (and optionally a background), and which
+      will be used to draw the background of the gutters. <em>May</em>
+      include the <code>CodeMirror-linenumbers</code> class, in order
+      to explicitly set the position of the line number gutter (it
+      will default to be to the right of all other gutters). These
+      class names are the keys passed
       to <a href="#setGutterMarker"><code>setGutterMarker</code></a>.</dd>
 
       <dt id="option_fixedGutter"><code><strong>fixedGutter</strong>: boolean</code></dt>
@@ -414,6 +436,10 @@
       selection. You can set this to <code>false</code> to disable
       that behavior.</dd>
 
+      <dt id="option_selectionsMayTouch"><code><strong>selectionsMayTouch</strong>: boolean</code></dt>
+      <dd>Determines whether multiple selections are joined as soon as
+      they touch (the default) or only when they overlap (true).</dd>
+
       <dt id="option_undoDepth"><code><strong>undoDepth</strong>: integer</code></dt>
       <dd>The maximum number of undo levels that the editor stores.
       Note that this includes selection change events. Defaults to
@@ -437,6 +463,15 @@
       set to true when either the source textarea is focused, or it
       has an <code>autofocus</code> attribute and no other element is
       focused.</dd>
+
+      <dt id="option_phrases"><code><strong>phrases</strong>: ?object</code></dt>
+      <dd>Some addons run user-visible strings (such as labels in the
+      interface) through the <a href="#phrase"><code>phrase</code></a>
+      method to allow for translation. This option determines the
+      return value of that method. When it is null or an object that
+      doesn't have a property named by the input string, that string
+      is returned. Otherwise, the value of the property corresponding
+      to that string is returned.</dd>
     </dl>
 
     <p>Below this a few more specialized, low-level options are
@@ -522,6 +557,15 @@
       always rendered, and thus the browser's text search works on it.
       This <em>will</em> have bad effects on performance of big
       documents.</dd>
+      
+      <dt id="option_spellcheck"><code><strong>spellcheck</strong>: boolean</code></dt>
+      <dd>Specifies whether or not spellcheck will be enabled on the input.</dd>
+      
+      <dt id="option_autocorrect"><code><strong>autocorrect</strong>: boolean</code></dt>
+      <dd>Specifies whether or not autocorrect will be enabled on the input.</dd>
+      
+      <dt id="option_autocapitalize"><code><strong>autocapitalize</strong>: boolean</code></dt>
+      <dd>Specifies whether or not autocapitalization will be enabled on the input.</dd>
     </dl>
 </section>
 
@@ -1242,12 +1286,12 @@ editor.setOption("extraKeys", {
       <dt id="lineCount"><code><strong>doc.lineCount</strong>() → integer</code></dt>
       <dd>Get the number of lines in the editor.</dd>
       <dt id="firstLine"><code><strong>doc.firstLine</strong>() → integer</code></dt>
-      <dd>Get the first line of the editor. This will
+      <dd>Get the number of first line in the editor. This will
       usually be zero but for <a href="#linkedDoc_from">linked sub-views</a>,
       or <a href="#api_doc">documents</a> instantiated with a non-zero
       first line, it might return other values.</dd>
       <dt id="lastLine"><code><strong>doc.lastLine</strong>() → integer</code></dt>
-      <dd>Get the last line of the editor. This will
+      <dd>Get the number of last line in the editor. This will
       usually be <code>doc.lineCount() - 1</code>,
       but for <a href="#linkedDoc_from">linked sub-views</a>,
       it might return other values.</dd>
@@ -1630,13 +1674,21 @@ editor.setOption("extraKeys", {
         <dt id="mark_inclusiveRight"><code><strong>inclusiveRight</strong>: boolean</code></dt>
         <dd>Like <code>inclusiveLeft</code>,
         but for the right side.</dd>
+        <dt id="mark_selectLeft"><code><strong>selectLeft</strong>: boolean</code></dt>
+        <dd>For atomic ranges, determines whether the cursor is allowed
+        to be placed directly to the left of the range. Has no effect on
+        non-atomic ranges.</dd>
+        <dt id="mark_selectRight"><code><strong>selectRight</strong>: boolean</code></dt>
+        <dd>Like <code>selectLeft</code>,
+        but for the right side.</dd>
         <dt id="mark_atomic"><code><strong>atomic</strong>: boolean</code></dt>
         <dd>Atomic ranges act as a single unit when cursor movement is
         concerned—i.e. it is impossible to place the cursor inside of
-        them. In atomic ranges, <code>inclusiveLeft</code>
-        and <code>inclusiveRight</code> have a different meaning—they
-        will prevent the cursor from being placed respectively
-        directly before and directly after the range.</dd>
+        them. You can control whether the cursor is allowed to be placed
+        directly before or after them using <code>selectLeft</code>
+        or <code>selectRight</code>. If <code>selectLeft</code>
+        (or right) is not provided, then <code>inclusiveLeft</code> (or
+        right) will control this behavior.</dd>
         <dt id="mark_collapsed"><code><strong>collapsed</strong>: boolean</code></dt>
         <dd>Collapsed ranges do not show up in the display. Setting a
         range to be collapsed will automatically make it atomic.</dd>
@@ -1681,10 +1733,10 @@ editor.setOption("extraKeys", {
         to <code>startStyle</code>, but for the rightmost span.</dd>
         <dt id="mark_css"><code><strong>css</strong>: string</code></dt>
         <dd>A string of CSS to be applied to the covered text. For example <code>"color: #fe3"</code>.</dd>
-        <dt id="mark_title"><code><strong>title</strong>:
-        string</code></dt><dd>When given, will give the nodes created
-        for this span a HTML <code>title</code> attribute with the
-        given value.</dd>
+        <dt id="mark_attributes"><code><strong>attributes</strong>: object</code></dt>
+        <dd>When given, add the attributes in the given object to the
+        elements created for the marked text. Adding <code>class</code> or
+        <code>style</code> attributes this way is not supported.</dd>
         <dt id="mark_shared"><code><strong>shared</strong>: boolean</code></dt><dd>When the
         target document is <a href="#linkedDoc">linked</a> to other
         documents, you can set <code>shared</code> to true to make the
@@ -2109,6 +2161,11 @@ editor.setOption("extraKeys", {
       <dt id="focus"><code><strong>cm.focus</strong>()</code></dt>
       <dd>Give the editor focus.</dd>
 
+      <dt id="phrase"><code><strong>cm.phrase</strong>(text: string) → string</code></dt>
+      <dd>Allow the given string to be translated with
+      the <a href="#option_phrases"><code>phrases</code>
+      option</a>.</dd>
+
       <dt id="getInputField"><code><strong>cm.getInputField</strong>() → Element</code></dt>
       <dd>Returns the input field for the editor. Will be a textarea
       or an editable div, depending on the value of
@@ -2296,7 +2353,7 @@ editor.setOption("extraKeys", {
       a <code>{line, ch}</code> object, or can be left off to default
       to the start of the document. <code>options</code> is an
       optional object, which can contain the property `caseFold:
-      false` to disable case folding when mathing a string, or the
+      false` to disable case folding when matching a string, or the
       property `multiline: disable` to disable multi-line matching for
       regular expressions (which may help performance). A search
       cursor has the following methods:
@@ -2377,6 +2434,8 @@ editor.setOption("extraKeys", {
           <dd>Stop after scanning this amount of lines without a successful match. Defaults to 1000.</dd>
           <dt><strong><code>maxScanLineLength</code></strong></dt>
           <dd>Ignore lines longer than this. Defaults to 10000.</dd>
+          <dt><strong><code>maxHighlightLineLength</code></strong></dt>
+          <dd>Don't highlight a bracket in a line longer than this. Defaults to 1000.</dd>
         </dl></dd>
 
       <dt id="addon_closebrackets"><a href="../addon/edit/closebrackets.js"><code>edit/closebrackets.js</code></a></dt>
@@ -2436,7 +2495,7 @@ editor.setOption("extraKeys", {
       <dd>Addon for commenting and uncommenting code. Adds four
       methods to CodeMirror instances:
       <dl>
-        <dt id="toggleComment"><code><strong>toggleComment</strong>(from: {line, ch}, to: {line, ch}, ?options: object)</code></dt>
+        <dt id="toggleComment"><code><strong>toggleComment</strong>(?options: object)</code></dt>
         <dd>Tries to uncomment the current selection, and if that
         fails, line-comments it.</dd>
         <dt id="lineComment"><code><strong>lineComment</strong>(from: {line, ch}, to: {line, ch}, ?options: object)</code></dt>
@@ -2761,8 +2820,13 @@ editor.setOption("extraKeys", {
       and <code>attrs</code> (an object mapping attribute names
       to <code>null</code> for free-form attributes, and an array of
       valid values for restricted
-      attributes). <a href="../demo/xmlcomplete.html">Demo
-      here.</a></dd>
+      attributes).<br>The hint options accept an additional property:
+      <dl>
+        <dt><code><strong>matchInMiddle</strong>: boolean</code></dt>
+        <dd>Determines whether typed characters are matched anywhere in
+        completions, not just at the beginning. Defaults to false.</dd>
+      </dl>
+      <a href="../demo/xmlcomplete.html">Demo here</a>.</dd>
 
       <dt id="addon_html-hint"><a href="../addon/hint/html-hint.js"><code>hint/html-hint.js</code></a></dt>
       <dd>Provides schema info to

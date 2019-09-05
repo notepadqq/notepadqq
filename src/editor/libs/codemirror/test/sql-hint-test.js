@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function() {
   var Pos = CodeMirror.Pos;
@@ -21,13 +21,44 @@
               {text: "name", displayText: "name | The name"}]
   }];
 
+  var displayTextTablesWithDefault = [
+    {
+      text: "Api__TokenAliases",
+      columns: [
+        {
+          text: "token",
+          displayText: "token | varchar(255) | Primary",
+          columnName: "token",
+          columnHint: "varchar(255) | Primary"
+        },
+        {
+          text: "alias",
+          displayText: "alias | varchar(255) | Primary",
+          columnName: "alias",
+          columnHint: "varchar(255) | Primary"
+        }
+      ]
+    },
+    {
+      text: "mytable",
+      columns: [
+        { text: "id", displayText: "id | Unique ID" },
+        { text: "name", displayText: "name | The name" }
+      ]
+    }
+  ];
+
   namespace = "sql-hint_";
 
   function test(name, spec) {
     testCM(name, function(cm) {
       cm.setValue(spec.value);
       cm.setCursor(spec.cursor);
-      var completion = CodeMirror.hint.sql(cm, {tables: spec.tables});
+      var completion = CodeMirror.hint.sql(cm, {
+        tables: spec.tables,
+        defaultTable: spec.defaultTable,
+        disableKeywords: spec.disableKeywords
+      });
       if (!deepCompare(completion.list, spec.list))
         throw new Failure("Wrong completion results " + JSON.stringify(completion.list) + " vs " + JSON.stringify(spec.list));
       eqCharPos(completion.from, spec.from);
@@ -41,7 +72,16 @@
   test("keywords", {
     value: "SEL",
     cursor: Pos(0, 3),
-    list: ["SELECT"],
+    list: [{"text":"SELECT","className":"CodeMirror-hint-keyword"}],
+    from: Pos(0, 0),
+    to: Pos(0, 3)
+  });
+
+  test("keywords_disabled", {
+    value: "SEL",
+    cursor: Pos(0, 3),
+    disableKeywords: true,
+    list: [],
     from: Pos(0, 0),
     to: Pos(0, 3)
   });
@@ -49,7 +89,7 @@
   test("from", {
     value: "SELECT * fr",
     cursor: Pos(0, 11),
-    list: ["FROM"],
+    list: [{"text":"FROM","className":"CodeMirror-hint-keyword"}],
     from: Pos(0, 9),
     to: Pos(0, 11)
   });
@@ -58,7 +98,7 @@
     value: "SELECT xc",
     cursor: Pos(0, 9),
     tables: simpleTables,
-    list: ["xcountries"],
+    list: [{"text":"xcountries","className":"CodeMirror-hint-table"}],
     from: Pos(0, 7),
     to: Pos(0, 9)
   });
@@ -123,8 +163,11 @@
     value: "SELECT schem",
     cursor: Pos(0, 12),
     tables: schemaTables,
-    list: ["schema.users", "schema.countries",
-           "SCHEMA", "SCHEMA_NAME", "SCHEMAS"],
+    list: [{"text":"schema.users","className":"CodeMirror-hint-table"},
+        {"text":"schema.countries","className":"CodeMirror-hint-table"},
+        {"text":"SCHEMA","className":"CodeMirror-hint-keyword"},
+        {"text":"SCHEMA_NAME","className":"CodeMirror-hint-keyword"},
+        {"text":"SCHEMAS","className":"CodeMirror-hint-keyword"}],
     from: Pos(0, 7),
     to: Pos(0, 12)
   });
@@ -182,11 +225,31 @@
     mode: "text/x-sqlite"
   });
 
+  test("displayText_default_table", {
+    value: "SELECT a",
+    cursor: Pos(0, 8),
+    disableKeywords: true,
+    defaultTable: "Api__TokenAliases",
+    tables: displayTextTablesWithDefault,
+    list: [
+      {
+        text: "alias",
+        displayText: "alias | varchar(255) | Primary",
+        columnName: "alias",
+        columnHint: "varchar(255) | Primary",
+        className: "CodeMirror-hint-table CodeMirror-hint-default-table"
+      },
+      { text: "Api__TokenAliases", className: "CodeMirror-hint-table" }
+    ],
+    from: Pos(0, 7),
+    to: Pos(0, 8)
+  });
+
   test("displayText_table", {
     value: "SELECT myt",
     cursor: Pos(0, 10),
     tables: displayTextTables,
-    list: [{text: "mytable", displayText: "mytable | The main table",}],
+    list: [{text: "mytable", displayText: "mytable | The main table", "className":"CodeMirror-hint-table"}],
     from: Pos(0, 7),
     to: Pos(0, 10)
   });

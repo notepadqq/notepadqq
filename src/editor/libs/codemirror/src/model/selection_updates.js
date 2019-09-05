@@ -47,7 +47,7 @@ export function extendSelections(doc, heads, options) {
   let extend = doc.cm && (doc.cm.display.shift || doc.extend)
   for (let i = 0; i < doc.sel.ranges.length; i++)
     out[i] = extendRange(doc.sel.ranges[i], heads[i], null, extend)
-  let newSel = normalizeSelection(out, doc.sel.primIndex)
+  let newSel = normalizeSelection(doc.cm, out, doc.sel.primIndex)
   setSelection(doc, newSel, options)
 }
 
@@ -55,7 +55,7 @@ export function extendSelections(doc, heads, options) {
 export function replaceOneSelection(doc, i, range, options) {
   let ranges = doc.sel.ranges.slice(0)
   ranges[i] = range
-  setSelection(doc, normalizeSelection(ranges, doc.sel.primIndex), options)
+  setSelection(doc, normalizeSelection(doc.cm, ranges, doc.sel.primIndex), options)
 }
 
 // Reset the selection to a single range.
@@ -78,7 +78,7 @@ function filterSelectionChange(doc, sel, options) {
   }
   signal(doc, "beforeSelectionChange", doc, obj)
   if (doc.cm) signal(doc.cm, "beforeSelectionChange", doc.cm, obj)
-  if (obj.ranges != sel.ranges) return normalizeSelection(obj.ranges, obj.ranges.length - 1)
+  if (obj.ranges != sel.ranges) return normalizeSelection(doc.cm, obj.ranges, obj.ranges.length - 1)
   else return sel
 }
 
@@ -116,7 +116,8 @@ function setSelectionInner(doc, sel) {
   doc.sel = sel
 
   if (doc.cm) {
-    doc.cm.curOp.updateInput = doc.cm.curOp.selectionChanged = true
+    doc.cm.curOp.updateInput = 1
+    doc.cm.curOp.selectionChanged = true
     signalCursorActivity(doc.cm)
   }
   signalLater(doc, "cursorActivity", doc)
@@ -142,15 +143,22 @@ function skipAtomicInSelection(doc, sel, bias, mayClear) {
       out[i] = new Range(newAnchor, newHead)
     }
   }
-  return out ? normalizeSelection(out, sel.primIndex) : sel
+  return out ? normalizeSelection(doc.cm, out, sel.primIndex) : sel
 }
 
 function skipAtomicInner(doc, pos, oldPos, dir, mayClear) {
   let line = getLine(doc, pos.line)
   if (line.markedSpans) for (let i = 0; i < line.markedSpans.length; ++i) {
     let sp = line.markedSpans[i], m = sp.marker
-    if ((sp.from == null || (m.inclusiveLeft ? sp.from <= pos.ch : sp.from < pos.ch)) &&
-        (sp.to == null || (m.inclusiveRight ? sp.to >= pos.ch : sp.to > pos.ch))) {
+
+    // Determine if we should prevent the cursor being placed to the left/right of an atomic marker
+    // Historically this was determined using the inclusiveLeft/Right option, but the new way to control it
+    // is with selectLeft/Right
+    let preventCursorLeft = ("selectLeft" in m) ? !m.selectLeft : m.inclusiveLeft
+    let preventCursorRight = ("selectRight" in m) ? !m.selectRight : m.inclusiveRight
+
+    if ((sp.from == null || (preventCursorLeft ? sp.from <= pos.ch : sp.from < pos.ch)) &&
+        (sp.to == null || (preventCursorRight ? sp.to >= pos.ch : sp.to > pos.ch))) {
       if (mayClear) {
         signal(m, "beforeCursorEnter")
         if (m.explicitlyCleared) {
@@ -162,14 +170,14 @@ function skipAtomicInner(doc, pos, oldPos, dir, mayClear) {
 
       if (oldPos) {
         let near = m.find(dir < 0 ? 1 : -1), diff
-        if (dir < 0 ? m.inclusiveRight : m.inclusiveLeft)
+        if (dir < 0 ? preventCursorRight : preventCursorLeft)
           near = movePos(doc, near, -dir, near && near.line == pos.line ? line : null)
         if (near && near.line == pos.line && (diff = cmp(near, oldPos)) && (dir < 0 ? diff < 0 : diff > 0))
           return skipAtomicInner(doc, near, pos, dir, mayClear)
       }
 
       let far = m.find(dir < 0 ? -1 : 1)
-      if (dir < 0 ? m.inclusiveLeft : m.inclusiveRight)
+      if (dir < 0 ? preventCursorLeft : preventCursorRight)
         far = movePos(doc, far, dir, far.line == pos.line ? line : null)
       return far ? skipAtomicInner(doc, far, pos, dir, mayClear) : null
     }
