@@ -88,7 +88,7 @@ public:
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())
         NQQ_SETTING(SmartIndentation,               bool,       true)
-        NQQ_SETTING(MathRendering,                  bool,       false)
+        NQQ_SETTING(MathRendering,                  bool,       true)
         NQQ_SETTING(UseNativeFilePicker,            bool,       true)
     END_CATEGORY(General)
 
