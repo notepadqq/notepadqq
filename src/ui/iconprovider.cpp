@@ -1,4 +1,5 @@
 #include "include/iconprovider.h"
+#include "include/svgiconengine.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -11,14 +12,18 @@ QIcon IconProvider::fromTheme(const QString &name)
 {
     // FIXME Cache the icons
 
+    QString basePath = ":/icons/notepadqq/%1/%2.%3";
+
     if (QIcon::hasThemeIcon(name)) {
         return QIcon::fromTheme(name);
+
+    } else if (QFileInfo(basePath.arg("scalable").arg(name).arg("svg")).exists()) {
+        return QIcon(SVGIconEngine::fromFile(basePath.arg("scalable").arg(name).arg("svg")));
 
     } else {
         // QIcon::setThemeName("notepadqq");
         QIcon icon;
 
-        QString basePath = ":/icons/notepadqq/%1/%2.%3";
         QList<QPair<int, QString>> sizes {
                     QPair<int, QString>(16, "16x16"),
                     QPair<int, QString>(64, "64x64"),

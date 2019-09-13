@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" viewBox="0 0 1140.7 1140.6" xml:space="preserve">
+<rect x="183.7" y="20" fill="#FFFFFF" width="771.9" height="420.8"/>
+<rect x="117" y="673.5" fill="#FFFFFF" width="936.3" height="452.6"/>
+<path fill="#7EA3E2" stroke="#3F6AB8" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	M20,570.3v490.3c0,33.1,26.9,60,60,60h490.3h490.3c33.1,0,60-26.9,60-60V673.5c0-178.7,0-357.5,0-536.2L1002.9,19.6h-66.3
+	c-0.4,134.4-0.8,268.9-1.2,403.3H205.6c0-134.4,0-268.9,0-403.3c-16,0.1-32.1,0.3-48.1,0.4H80c-33.1,0-60,26.9-60,60
+	C20,243.4,20,406.9,20,570.3z M935.8,1120.6c-243.4,0-486.8,0-730.2,0c0-134.9,0-269.8,0-404.7c243.4,0,486.8,0,730.2,0
+	C935.8,850.8,935.8,985.7,935.8,1120.6z"/>
+<path fill="#8CC663" d="M279.8,857.1v42.2h290.6H861v-42.2v-42.2H570.4H279.8V857.1z"/>
+<path fill="#3F6AB8" d="M349.9,221.2v122.1H396h46.1V221.2V99.1H396h-46.1V221.2z"/>
+<line fill="none" stroke="#3F6AB8" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="205.7" y1="19.6" x2="936.6" y2="19.6"/>
+<path fill="#8CC663" d="M279,993.4v42.2h290.6h290.6v-42.2v-42.2H569.6H279V993.4z"/>
+</svg>
