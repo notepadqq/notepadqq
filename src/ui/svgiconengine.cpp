@@ -9,7 +9,7 @@
 SVGIconEngine::SVGIconEngine(const std::string &iconBuffer) {
     auto data = QByteArray::fromStdString(iconBuffer);
 
-    m_darkIcon = replaceSvgMainFillColor(QString(data), QColor(50,50,50)).toUtf8();
+    m_darkIcon = replaceSvgMainFillColor(QString(data), QColor(65,65,65)).toUtf8();
     m_lightIcon = replaceSvgMainFillColor(QString(data), QColor(205,205,205)).toUtf8();
 }
 
