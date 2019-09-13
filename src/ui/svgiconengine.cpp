@@ -29,27 +29,6 @@ void SVGIconEngine::paint(QPainter *painter, const QRect &rect,
 
     QSvgRenderer renderer(darkUI ? m_lightIcon : m_darkIcon);
     renderer.render(painter, rect);
-
-    /*
-    // First we render the SVG onto a temporary QImage
-    QImage img(rect.size(), QImage::Format_ARGB32);
-    img.fill(qRgba(0, 0, 0, 0));
-    QPainter painter_i(&img);
-    painter->setPen(Qt::red);
-    painter->setBrush(Qt::red);
-    renderer.render(&painter_i, rect);
-
-
-    if (darkUI) {
-        img.invertPixels();
-    }
-
-    // Finally we paint our image onto the correct painter.
-    painter->setOpacity(0.8);
-    painter->drawImage(rect, img);
-    */
-
-    // FIXME Handle different modes and states
 }
 
 QIconEngine *SVGIconEngine::clone() const {
