@@ -6,28 +6,22 @@
   <name>Notepadqq</name>
   <summary>An advanced text editor</summary>
   <description>
-    <p>
-    Notepadqq is an advanced text editor designed to make life easier for developers.
-    </p>
-    <p>
-    It includes real-time syntax highlighting for over one hundred languages, regular expression searches, 
-    and text manipulation with multiple cursors.
-    </p>
+    <p>Notepadqq is an advanced text editor designed to make life easier for developers.</p>
+    <p>It includes real-time syntax highlighting for over one hundred languages, regular expression searches, and text manipulation with multiple cursors.</p>
   </description>
-  <categories>
-    <category>Development</category>
-    <category>Utility</category>
-  </categories>
-  
+  <launchable type="desktop-id">notepadqq.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://camo.githubusercontent.com/7ad45b50ed7f7075ad4ba93ce23d3fa40e56fba2/68747470733a2f2f6e6f746570616471712e636f6d2f732f696d616765732f736e617073686f74312e706e67</image>
+      <image>https://notepadqq.com/s/images/snapshot1.png</image>
     </screenshot>
   </screenshots>
   <developer_name>The Notepadqq Team</developer_name>
-  <url type="homepage">https://github.com/notepadqq/notepadqq</url>
+  <url type="homepage">https://notepadqq.com</url>
   <url type="bugtracker">https://github.com/notepadqq/notepadqq/issues</url>
+  <url type="faq">https://notepadqq.com/wp/faq</url>
   <url type="help">https://github.com/notepadqq/notepadqq/wiki</url>
+  <url type="donation">https://notepadqq.com/wp/donations</url>
+  <url type="translate">https://github.com/notepadqq/notepadqq/wiki/Translate-Notepadqq</url>
   <content_rating type="oars-1.0">
     <content_attribute id="social-info">moderate</content_attribute>
   </content_rating>
