@@ -66,7 +66,7 @@ public:
     static QString fileNameFromUrl(const QUrl &url);
     static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList &arguments);
 
-    static void showQtVersionWarning(bool showCheckBox, QWidget *parent = 0);
+    static void showQtVersionWarning(bool showCheckBox, QWidget *parent = nullptr);
 
     static QString extensionsPath();
 

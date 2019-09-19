@@ -20,7 +20,7 @@ private:
     NqqSettings &m_settings;
     QTableWidget *m_commands;
 public:
-    RunPreferences(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    RunPreferences(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
     ~RunPreferences();
 
 private slots:
@@ -33,7 +33,7 @@ class RunDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    RunDelegate(QObject *parent = 0);
+    RunDelegate(QObject *parent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
             const QModelIndex &index) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model,
@@ -56,7 +56,7 @@ private:
     bool m_saved;
 
 public:
-    RunDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    RunDialog(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
     ~RunDialog();
     QString getCommandInput();
     bool saved();

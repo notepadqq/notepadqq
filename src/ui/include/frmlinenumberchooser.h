@@ -12,7 +12,7 @@ class frmLineNumberChooser : public QDialog
     Q_OBJECT
 
 public:
-    explicit frmLineNumberChooser(int min, int max, int defaultValue, QWidget *parent = 0);
+    explicit frmLineNumberChooser(int min, int max, int defaultValue, QWidget *parent = nullptr);
     ~frmLineNumberChooser();
 
     int value();

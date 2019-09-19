@@ -21,7 +21,7 @@ struct Language {
     QStringList fileNames;
     QStringList fileExtensions;
     QStringList firstNonBlankLine;
-    Language() {};
+    Language() {}
     Language(const Language& o) = default;
     Language(Language&& o) = default;
     Language& operator=(const Language& o) = default;
@@ -73,7 +73,7 @@ class LanguageService
          *        cache.
          * @return const QVector<Language>
          */
-        const LanguageList& languages() {return m_languages;};
+        const LanguageList& languages() {return m_languages;}
         
     private:
         LanguageService();

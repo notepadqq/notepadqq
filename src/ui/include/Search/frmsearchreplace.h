@@ -20,7 +20,7 @@ class frmSearchReplace : public QMainWindow
 
 public:
     enum Tabs { TabSearch, TabReplace };
-    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
+    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = nullptr);
     ~frmSearchReplace();
 
    /**

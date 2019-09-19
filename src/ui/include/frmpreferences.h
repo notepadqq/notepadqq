@@ -19,7 +19,7 @@ class frmPreferences : public QDialog
     Q_OBJECT
 
 public:
-    explicit frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
+    explicit frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent = nullptr);
     ~frmPreferences();
 
 private slots:

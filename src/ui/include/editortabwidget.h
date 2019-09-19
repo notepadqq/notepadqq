@@ -16,7 +16,7 @@ class EditorTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    explicit EditorTabWidget(QWidget *parent = 0);
+    explicit EditorTabWidget(QWidget *parent = nullptr);
     ~EditorTabWidget();
 
     int indexOf(QSharedPointer<Editor> editor) const;

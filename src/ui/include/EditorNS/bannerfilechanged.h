@@ -10,7 +10,7 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
-        explicit BannerFileChanged(QWidget *parent = 0);
+        explicit BannerFileChanged(QWidget *parent = nullptr);
 
     signals:
         void reload();

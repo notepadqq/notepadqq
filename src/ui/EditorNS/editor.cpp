@@ -153,7 +153,7 @@ namespace EditorNS
                         }
                         this->asyncReplies.erase(it);
 
-                        if (r.callback != 0) {
+                        if (r.callback != nullptr) {
                             QTimer::singleShot(0, [r,data]{ r.callback(data); });
                         }
 
@@ -385,16 +385,6 @@ namespace EditorNS
     void Editor::setFileOnDiskChanged(bool fileOnDiskChanged)
     {
         m_fileOnDiskChanged = fileOnDiskChanged;
-    }
-
-    QString Editor::jsStringEscape(QString str) const {
-        return str.replace("\\", "\\\\")
-                .replace("'", "\\'")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t")
-                .replace("\b", "\\b");
     }
 
     void Editor::sendMessage(const QString msg, const QVariant data)

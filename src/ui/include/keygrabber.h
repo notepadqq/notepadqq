@@ -1,5 +1,5 @@
-#ifndef __KEYGRABBER_H__
-#define __KEYGRABBER_H__
+#ifndef KEYGRABBER_H
+#define KEYGRABBER_H
 
 #include <QKeyEvent>
 #include <QTreeWidget>
@@ -7,7 +7,7 @@
 class KeyGrabber : public QTreeWidget {
 Q_OBJECT
 public:
-    KeyGrabber(QWidget* parent = 0);
+    KeyGrabber(QWidget* parent = nullptr);
 
     /**
      * @brief findConflicts Checks the entire tree for conflicting shortcuts.

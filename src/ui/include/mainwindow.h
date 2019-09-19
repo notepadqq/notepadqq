@@ -27,8 +27,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = 0);
-    explicit MainWindow(const QStringList &arguments, QWidget *parent = 0);
+    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = nullptr);
+    explicit MainWindow(const QStringList &arguments, QWidget *parent = nullptr);
     ~MainWindow();
 
     static QList<MainWindow *> instances();
@@ -213,7 +213,7 @@ private:
     QPushButton* m_sbTextFormatBtn;
     QPushButton* m_sbOvertypeBtn;
     NqqSettings&          m_settings;
-    frmSearchReplace*     m_frmSearchReplace = 0;
+    frmSearchReplace*     m_frmSearchReplace = nullptr;
     bool                  m_overwrite = false; // Overwrite mode vs Insert mode
     QString               m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;

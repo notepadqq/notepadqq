@@ -12,7 +12,7 @@ class frmEncodingChooser : public QDialog
     Q_OBJECT
 
 public:
-    explicit frmEncodingChooser(QWidget *parent = 0);
+    explicit frmEncodingChooser(QWidget *parent = nullptr);
     ~frmEncodingChooser();
 
     QTextCodec *selectedCodec() const;

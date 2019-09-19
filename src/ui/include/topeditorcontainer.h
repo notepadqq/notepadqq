@@ -22,7 +22,7 @@ class TopEditorContainer : public QSplitter
 {
     Q_OBJECT
 public:
-    explicit TopEditorContainer(QWidget *parent = 0);
+    explicit TopEditorContainer(QWidget *parent = nullptr);
     EditorTabWidget *addTabWidget();
     EditorTabWidget *tabWidget(int index);
     EditorTabWidget *currentTabWidget();
