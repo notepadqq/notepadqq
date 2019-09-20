@@ -4,6 +4,7 @@ sudo: false
 jobs:
   include:
     - stage: build
+      if: type = pull_request
       os: linux
       env: NQQ_BUILD_TYPE=FORMAT
       script: .travis/script.sh
