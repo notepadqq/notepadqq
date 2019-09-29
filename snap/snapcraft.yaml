@@ -11,10 +11,10 @@ base: core18
 
 apps:
   notepadqq: 
-    command: bin/desktop-launch $SNAP/usr/lib/notepadqq/notepadqq-bin
+    command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     environment:
         DISABLE_WAYLAND: 1
-    desktop: usr/share/applications/notepadqq.desktop
+    desktop: usr/local/share/applications/notepadqq.desktop
 #   plugs:  # Plugs are not needed for classic confinement
 #     - browser-support
 #     - desktop
@@ -61,13 +61,13 @@ parts:
     plugin: nil
     after: [my-part]
     override-build: |
-      sed -i 's|Icon=notepadqq|Icon=/usr/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/share/applications/notepadqq.desktop
+      sed -i 's|Icon=notepadqq|Icon=/usr/local/share/icons/hicolor/scalable/apps/notepadqq\.svg|' $SNAPCRAFT_STAGE/usr/local/share/applications/notepadqq.desktop
 
   qtconf:
     plugin: dump
     source: .snap-data/
     organize:
-      qt.conf: usr/lib/notepadqq/qt.conf
+      qt.conf: usr/local/lib/notepadqq/qt.conf
       qt.WebEngineProcess.conf: usr/lib/x86_64-linux-gnu/qt5/libexec/qt.conf
     after: [my-part]
 
