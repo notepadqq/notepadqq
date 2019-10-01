@@ -1067,17 +1067,17 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
         uchardet_delete(encodingDetector);
     }
 
+    // Fallback to UTF-8 if for some reason uchardet fails
+    if (!codec) {
+        codec = QTextCodec::codecForName("UTF-8");
+    }
+
     auto codecName = QString::fromUtf8(codec->name()).toUpper();
     if (codecName == "US-ASCII" || codecName == "ASCII") {
         // Since these are subsets of UTF-8, we prefer returning
         // UTF-8 so that in case of ambiguity we have the
         // expected outcome. See issue #904.
         // Note that Qt handles destruction of the previous codec.
-        codec = QTextCodec::codecForName("UTF-8");
-    }
-
-    // Fallback to UTF-8 if for some reason uchardet fails
-    if (!codec) {
         codec = QTextCodec::codecForName("UTF-8");
     }
 
