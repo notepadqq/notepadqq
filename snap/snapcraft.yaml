@@ -65,10 +65,13 @@ parts:
 
   qtconf:
     plugin: dump
-    source: .snap-data/
+    source: snap/local
     organize:
       qt.conf: usr/local/lib/notepadqq/qt.conf
-      qt.WebEngineProcess.conf: usr/lib/x86_64-linux-gnu/qt5/libexec/qt.conf
+      qt.WebEngineProcess.conf: usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/libexec/qt.conf
+    override-build: |
+      sed -i "s|__ARCH_TRIPLET__|$SNAPCRAFT_ARCH_TRIPLET|" qt.conf qt.WebEngineProcess.conf
+      snapcraftctl build
     after: [my-part]
 
   my-part:
