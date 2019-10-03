@@ -13,7 +13,8 @@ apps:
   notepadqq: 
     command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     environment:
-        DISABLE_WAYLAND: 1
+      DISABLE_WAYLAND: 1  # See https://github.com/notepadqq/notepadqq/issues/806
+      QT_XCB_FORCE_SOFTWARE_OPENGL: 1  # For bug in Qt 5.9 + Nouveau. See https://bugreports.qt.io/browse/QTBUG-41242
     desktop: usr/local/share/applications/notepadqq.desktop
 #   plugs:  # Plugs are not needed for classic confinement
 #     - browser-support
