@@ -2196,6 +2196,7 @@ void MainWindow::generateRunMenu()
 
     QAction *a = ui->menu_Run->addAction(tr("Run..."));
     connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+    a->setIcon(IconProvider::fromTheme("system-run"));
     ui->menu_Run->addSeparator();
 
     while (i.hasNext()) {
@@ -2204,6 +2205,7 @@ void MainWindow::generateRunMenu()
         a->setData(i.value());
         a->setObjectName("RunCmd"+a->text());
         connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+        a->setIcon(IconProvider::fromTheme("system-run"));
     }
     ui->menu_Run->addSeparator();
     a = ui->menu_Run->addAction(tr("Modify Run Commands"));
