@@ -25,6 +25,7 @@ Build it yourself
 | libqt5svg5-dev        | libqt5svg5        |
 | qttools5-dev-tools    | coreutils         |
 | libuchardet-dev       | libuchardet       |
+| pkg-config            |                   |
 
 #### Get the source
 
@@ -38,11 +39,11 @@ Build it yourself
     
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
-    notepadqq$ sudo apt-get install qt5-default qttools5-dev-tools qtwebengine5-dev libqt5websockets5-dev libqt5svg5 libqt5svg5-dev libuchardet-dev
+    notepadqq$ sudo apt-get install qt5-default qttools5-dev-tools qtwebengine5-dev libqt5websockets5-dev libqt5svg5 libqt5svg5-dev libuchardet-dev pkg-config
 
 For CentOS:
 
-    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel
+    notepadqq$ sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel pkgconfig
     
 #### Install
 
