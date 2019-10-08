@@ -15,7 +15,7 @@ void NqqSettings::ensureBackwardsCompatibility()
     const QStringList versionList = nqqVersion.split(".");
 
     // Only proceed with checking version if the key seems valid
-    if (versionList.size() != 3)
+    if (versionList.size() < 3)
         return;
 
     const int major = versionList[0].toInt();
