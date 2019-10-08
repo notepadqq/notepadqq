@@ -24,6 +24,7 @@ jobs:
         - docker
     - stage: deploy
       os: osx
+      osx_image: xcode11
       env:
         - NQQ_BUILD_TYPE=DEPLOY
         - NQQ_VERSION=${TRAVIS_TAG:-${TRAVIS_COMMIT}}
