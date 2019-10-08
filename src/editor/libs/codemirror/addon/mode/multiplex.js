@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -54,7 +54,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
             // Get the outer indent, making sure to handle CodeMirror.Pass
             var outerIndent = 0;
             if (outer.indent) {
-              var possibleOuterIndent = outer.indent(state.outer, "");
+              var possibleOuterIndent = outer.indent(state.outer, "", "");
               if (possibleOuterIndent !== CodeMirror.Pass) outerIndent = possibleOuterIndent;
             }
 
@@ -96,10 +96,10 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
       }
     },
 
-    indent: function(state, textAfter) {
+    indent: function(state, textAfter, line) {
       var mode = state.innerActive ? state.innerActive.mode : outer;
       if (!mode.indent) return CodeMirror.Pass;
-      return mode.indent(state.innerActive ? state.inner : state.outer, textAfter);
+      return mode.indent(state.innerActive ? state.inner : state.outer, textAfter, line);
     },
 
     blankLine: function(state) {
@@ -112,7 +112,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
           var other = others[i];
           if (other.open === "\n") {
             state.innerActive = other;
-            state.inner = CodeMirror.startState(other.mode, mode.indent ? mode.indent(state.outer, "") : 0);
+            state.inner = CodeMirror.startState(other.mode, mode.indent ? mode.indent(state.outer, "", "") : 0);
           }
         }
       } else if (state.innerActive.close === "\n") {

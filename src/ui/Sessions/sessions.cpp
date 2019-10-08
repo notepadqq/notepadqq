@@ -38,6 +38,9 @@
  *
  * */
 
+// Some shorthand names
+constexpr int ALL_MAXIMUM_PRIORITY = DocEngine::DocumentLoader::ALL_MAXIMUM_PRIORITY;
+constexpr int ALL_MINIMUM_PRIORITY = DocEngine::DocumentLoader::ALL_MINIMUM_PRIORITY;
 
 struct TabData {
     QString filePath;
@@ -285,7 +288,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         ViewData& currentViewData = viewData.back();
 
         for (int j = 0; j < tabCount; j++) {
-            Editor* editor = tabWidget->editor(j);
+            auto editor = tabWidget->editor(j);
             bool isClean = editor->isClean();
             bool isOrphan = editor->filePath().isEmpty();
             Editor::IndentationMode indentInfo = editor->indentationMode();
@@ -381,7 +384,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
         EditorTabWidget* tabW = editorContainer->tabWidget(viewCounter);
-        int activeIndex = 0;
+        QSharedPointer<Editor> activeEditor;
 
         if (!tabW)
             tabW = editorContainer->addTabWidget();
@@ -402,77 +405,101 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (!fileExists && !cacheFileExists)
                 continue;
 
-            docEngine->getDocumentLoader()
+            auto loadedDocs = docEngine->getDocumentLoader()
                 .setUrl(loadUrl)
                 .setTabWidget(tabW)
                 .setRememberLastDir(false)
                 .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
-                .execute()
-                .wait(); // FIXME Transform to async
+                .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
+                .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& url) {
 
-            int idx = tabW->findOpenEditorByUrl(loadUrl);
+                    int idx = tabW->indexOf(editor);
 
-            if (idx == -1)
+                    editor->setCursorPosition(tab.cursorX, tab.cursorY);
+                    editor->setScrollPosition(tab.scrollX, tab.scrollY);
+
+                    if (tab.customIndent) {
+                        editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
+                    }
+
+                    // DocEngine sets the editor's fileName to loadUrl since this is where the file
+                    // was loaded from. Since loadUrl could point to a cached file we reset it here.
+                    if (cacheFileExists) {
+                        editor->markDirty();
+                        editor->setLanguageFromFilePath();
+                    }
+
+                    if (tab.filePath.isEmpty()) {
+                        QString tabText = tabW->tabText(idx);
+                        editor->setFilePath(QUrl());
+                        tabW->setTabText(idx, tabText);
+                    } else {
+                        editor->setFilePath(fileUrl);
+                        if (fileExists)
+                            docEngine->monitorDocument(editor);
+                    }
+
+                    // If we're loading an existing file from cache we want to inform the user whether
+                    // the file has changed since Nqq was last closed. For this we can compare the
+                    // file's last modification date.
+                    if (fileExists && cacheFileExists && tab.lastModified != 0) {
+                        auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
+
+                        if (lastModified > tab.lastModified) {
+                            editor->setFileOnDiskChanged(true);
+                        }
+                    }
+
+                    // If the orig. file does not exist but *should* exist, we inform the user of its removal.
+                    if (!fileExists && !fileUrl.isEmpty()) {
+                        editor->setFileOnDiskChanged(true);
+                        emit docEngine->fileOnDiskChanged(tabW, idx, true);
+                    }
+
+                    if (!tab.language.isEmpty()) editor->setLanguage(tab.language);
+
+                    // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
+                    editor->clearFocus();
+
+                    if (tab.active) {
+                        // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
+                        // on start-up. The easiest way is to emit a cleanChanged() event.
+                        editor->isCleanP().then([=](bool isClean){ emit editor->cleanChanged(isClean); });
+                    }
+
+                })
+                .executeInBackground();
+
+            if (loadedDocs.length() == 0) {
+                // For some reason it hasn't been loaded
                 continue;
-
-            // DocEngine sets the editor's fileName to loadUrl since this is where the file
-            // was loaded from. Since loadUrl could point to a cached file we reset it here.
-            Editor* editor = tabW->editor(idx);
-
-            if (cacheFileExists) {
-                editor->markDirty();
-                editor->setLanguageFromFilePath();
-                // Since we loaded from cache we want to unmonitor the cache file.
-                docEngine->unmonitorDocument(editor);
             }
 
+            // We need to set the correct title as soon as possible, otherwise
+            // the UI will jump around changing the width of the tabs while they
+            // are loading.
+            auto loadingEditor = loadedDocs.first().first;
+            QString tabText;
             if (tab.filePath.isEmpty()) {
-                editor->setFilePath(QUrl());
-                tabW->setTabText(idx, docEngine->getNewDocumentName());
+                tabText = docEngine->getNewDocumentName();
             } else {
-                editor->setFilePath(fileUrl);
-                if(fileExists)
-                    docEngine->monitorDocument(editor);
+                tabText = tabW->generateTabTitleForUrl(QUrl(tab.filePath));
+            }
+            tabW->setTabText(loadingEditor.data(), tabText);
+
+            if (tab.active) {
+                activeEditor = loadingEditor;
             }
 
-            // If we're loading an existing file from cache we want to inform the user whether
-            // the file has changed since Nqq was last closed. For this we can compare the
-            // file's last modification date.
-            if (fileExists && cacheFileExists && tab.lastModified != 0) {
-                auto lastModified = fileInfo.lastModified().toMSecsSinceEpoch();
-
-                if (lastModified > tab.lastModified) {
-                    editor->setFileOnDiskChanged(true);
-                }
-            }
-
-            // If the orig. file does not exist but *should* exist, we inform the user of its removal.
-            if (!fileExists && !fileUrl.isEmpty()) {
-                editor->setFileOnDiskChanged(true);
-                emit docEngine->fileOnDiskChanged(tabW, idx, true);
-            }
-
-            if(tab.active) activeIndex = idx;
-
-            if(!tab.language.isEmpty()) editor->setLanguage(tab.language);
-
-            editor->setCursorPosition(tab.cursorX, tab.cursorY);
-            editor->setScrollPosition(tab.scrollX, tab.scrollY);
-
-            if (tab.customIndent) {
-                editor->setCustomIndentationMode(tab.useTabs, tab.tabSize);
-            }
-
-            // loadDocuments() explicitly calls setFocus() so we'll have to undo that.
-            editor->clearFocus();
         } // end for
 
         // In case a new tabwidget was created but no tabs were actually added to it,
         // we'll attempt to re-use the widget for the next view.
-        if (tabW->count() == 0)
+        if (tabW->count() == 0) {
             viewCounter--;
-        else // Otherwise we finish by making the right tab the currently open one.
-            tabW->setCurrentIndex(activeIndex);
+        } else { // Otherwise we finish by making the right tab the currently open one.
+            tabW->setCurrentIndex(tabW->indexOf(activeEditor));
+        }
 
     } // end for
 
@@ -482,12 +509,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
     // Give focus to the first tab widget
     EditorTabWidget* firstTabW = editorContainer->tabWidget(0);
-    Editor* currEd = firstTabW->currentEditor();
+    auto currEd = firstTabW->currentEditor();
     currEd->setFocus();
-
-    // We need to trigger a final call to MainWindow::refreshEditorUiInfo to display the correct info
-    // on start-up. The easiest way is to emit a cleanChanged() event.
-    currEd->isCleanP().then([=](bool isClean){ emit currEd->cleanChanged(isClean); });
 
     // If the last tabwidget still has no tabs in it at this point, we'll have to delete it.
     EditorTabWidget* lastTabW = editorContainer->tabWidget( editorContainer->count() -1);

@@ -82,15 +82,14 @@ namespace EditorNS
             }
         };
 
-        explicit Editor(const Theme &theme, QWidget *parent = 0);
-        explicit Editor(QWidget *parent = 0);
+        explicit Editor(const Theme &theme, QWidget *parent = nullptr);
+        explicit Editor(QWidget *parent = nullptr);
 
         /**
              * @brief Efficiently returns a new Editor object from an internal buffer.
              * @return
              */
-        static QSharedPointer<Editor> getNewEditor(QWidget *parent = 0);
-        static Editor *getNewEditorUnmanagedPtr(QWidget *parent);
+        static QSharedPointer<Editor> getNewEditor(QWidget *parent = nullptr);
 
         static void invalidateEditorBuffer();
 
@@ -128,6 +127,13 @@ namespace EditorNS
             bool useTabs;
             int size;
         };
+
+        /**
+         * @brief Just a flag that is used for marking editors that are still loading,
+         * meaning for example that the Editor has been created but we still need
+         * to load the file contents or setup the syntax highlighting.
+         */
+        bool isLoading = false;
 
         /**
              * @brief Adds a new Editor to the internal buffer used by getNewEditor().
@@ -264,6 +270,13 @@ namespace EditorNS
          */
         void setFont(QString fontFamily, int fontSize, double lineHeight);
 
+        /**
+         * @brief Toggles line numbers on/off in the editor
+         * @param visible when true, the line numbers will be visible,
+         * when false the line numbers will be hidden.
+         */
+        void setLineNumbersVisible(bool visible);
+
         QTextCodec *codec() const;
 
         /**
@@ -326,7 +339,7 @@ namespace EditorNS
         QString tabName() const;
         void setTabName(const QString& name);
 
-        static QQueue<Editor*> m_editorBuffer;
+        static QQueue<QSharedPointer<Editor>> m_editorBuffer;
         QVBoxLayout *m_layout;
         CustomQWebView *m_webView;
         JsToCppProxy *m_jsToCppProxy;
@@ -340,7 +353,6 @@ namespace EditorNS
         bool m_customIndentationMode = false;
         const Language* m_currentLanguage = nullptr;
         inline void waitAsyncLoad();
-        QString jsStringEscape(QString str) const;
 
         void fullConstructor(const Theme &theme);
 
@@ -374,8 +386,15 @@ namespace EditorNS
         void currentLanguageChanged(QString id, QString name);
 
     public slots:
-        void sendMessage(const QString &msg, const QVariant &data);
-        void sendMessage(const QString &msg);
+
+        // [[deprecated]]
+        void sendMessage(const QString msg, const QVariant data);
+        // [[deprecated]]
+        void sendMessage(const QString msg);
+
+
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg, const QVariant data);
+        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg);
 
         /**
          * @brief asyncSendMessageWithResult
@@ -385,11 +404,10 @@ namespace EditorNS
          *                 If set, you should NOT use the return value of this method.
          * @return
          */
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg, const QVariant &data);
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString &msg);
-
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback = 0);
-        std::shared_future<QVariant> asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback = 0);
+        // [[deprecated]]
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString msg, const QVariant data, std::function<void(QVariant)> callback = nullptr);
+        // [[deprecated]]
+        std::shared_future<QVariant> asyncSendMessageWithResult(const QString msg, std::function<void(QVariant)> callback = nullptr);
 
         /**
          * @brief Print the editor. As of Qt 5.11, it produces low-quality, non-vector graphics with big dimension.

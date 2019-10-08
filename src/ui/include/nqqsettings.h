@@ -88,7 +88,7 @@ public:
 
         NQQ_SETTING(NotepadqqVersion,               QString,    QString())
         NQQ_SETTING(SmartIndentation,               bool,       true)
-        NQQ_SETTING(MathRendering,                  bool,       false)
+        NQQ_SETTING(MathRendering,                  bool,       true)
         NQQ_SETTING(UseNativeFilePicker,            bool,       true)
     END_CATEGORY(General)
 
@@ -97,6 +97,7 @@ public:
         NQQ_SETTING(OverrideFontFamily, QString,    "")
         NQQ_SETTING(OverrideFontSize,   int,        0)
         NQQ_SETTING(OverrideLineHeight, double,     0)
+        NQQ_SETTING(ShowLineNumbers, bool,       true)
     END_CATEGORY(Appearance)
 
     BEGIN_CATEGORY(Search)

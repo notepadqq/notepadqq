@@ -20,7 +20,7 @@ class frmSearchReplace : public QMainWindow
 
 public:
     enum Tabs { TabSearch, TabReplace };
-    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = 0);
+    explicit frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent = nullptr);
     ~frmSearchReplace();
 
    /**
@@ -73,7 +73,7 @@ private:
    /**
     * @brief Get the current editor.
     */
-    Editor*                currentEditor();
+    QSharedPointer<Editor> currentEditor();
 
    /**
     * @brief Perform a search within the current document.

@@ -16,8 +16,11 @@ class EditorTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    explicit EditorTabWidget(QWidget *parent = 0);
+    explicit EditorTabWidget(QWidget *parent = nullptr);
     ~EditorTabWidget();
+
+    int indexOf(QSharedPointer<Editor> editor) const;
+    int indexOf(QWidget *widget) const;
 
     int addEditorTab(bool setFocus, const QString &title);
     /**
@@ -29,16 +32,16 @@ public:
      */
     int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
     int findOpenEditorByUrl(const QUrl &filename);
-    Editor *editor(int index) const;
-    QSharedPointer<Editor> editorSharedPtr(int index);
-    QSharedPointer<Editor> editorSharedPtr(Editor *editor);
-    Editor *currentEditor();
+
+    QSharedPointer<Editor> editor(int index) const;
+    QSharedPointer<Editor> editor(Editor *editor) const;
+    QSharedPointer<Editor> currentEditor();
 
     /**
      * @brief tabTextFromEditor Returns the tab text of a given Editor, or an empty string if
      *                          the Editor is not part of this tab widget.
      */
-    QString tabTextFromEditor(Editor* editor);
+    QString tabTextFromEditor(QSharedPointer<Editor> editor);
 
     qreal zoomFactor() const;
     void setZoomFactor(const qreal &zoomFactor);
@@ -68,6 +71,8 @@ public:
 
     int formerTabIndex();
 
+    QString generateTabTitleForUrl(const QUrl &filename) const;
+
 private:
 
     // Smart pointers to the editors within this TabWidget
@@ -92,6 +97,7 @@ private:
      * @return Index of the tab
      */
     int rawAddEditorTab(const bool setFocus, const QString &title, EditorTabWidget *source, const int sourceTabIndex);
+
 private slots:
     void on_cleanChanged(bool isClean); 
     void on_editorMouseWheel(QWheelEvent *ev);

@@ -7,6 +7,7 @@
 #include <QRegularExpressionMatch>
 #include <QString>
 #include <QVector>
+#include <QSharedPointer>
 
 class MainWindow;
 
@@ -87,7 +88,7 @@ struct DocResult {
     DocType docType = TypeNone;
 
     // TODO: Only a workaround- we need some easy way to address Editors in the future.
-    EditorNS::Editor* editor = nullptr; // Only used when docType==TypeDocument
+    QSharedPointer<EditorNS::Editor> editor; // Only used when docType==TypeDocument
     QString fileName;                   // Is a file path when docType==TypeFile and a file name when TypeDocument
     QVector<MatchResult> results;
     int regexCaptureGroupCount = 0;     // Only used when DocResult was created by a regex search

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="pt_BR">
+<TS version="2.1" language="pt_BR">
 <context>
     <name>AdvancedSearchDock</name>
     <message>
@@ -42,7 +42,7 @@
     <message>
         <location line="+1"/>
         <source>Show Full Lines</source>
-        <translation>Mostrar linhas completas</translation>
+        <translation>Exibir linhas completas</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -82,7 +82,7 @@
     <message>
         <location line="+2"/>
         <source>Use Special Characters (&apos;\n&apos;, &apos;\t&apos;, ...)</source>
-        <translation>Use caracteres especiais (&apos;\ n&apos;, &apos;\ t&apos;, ...)</translation>
+        <translation>Usar caracteres especiais (&apos;\ n&apos;, &apos;\ t&apos;, ...)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -127,7 +127,7 @@
     <message>
         <location line="+7"/>
         <source>Search</source>
-        <translation>Procurar</translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -137,7 +137,7 @@
     <message>
         <location line="+2"/>
         <source>Search:</source>
-        <translation>Procurar:</translation>
+        <translation>Pesquisar:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -152,22 +152,22 @@
     <message>
         <location line="+3"/>
         <source>Match Case</source>
-        <translation>Corresponder Maiúsculas/Minúsculas</translation>
+        <translation>Diferenciar Maiúsculas/Minúsculas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Match Whole Words Only</source>
-        <translation>Corresponder apenas palavras inteiras</translation>
+        <translation>Somente palavras inteiras</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use Regular Expressions</source>
-        <translation>Use expressões regulares</translation>
+        <translation>Usar expressões regulares</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use Special Characters (&apos;\t&apos;, &apos;\n&apos;, ...)</source>
-        <translation>Use caracteres especiais (&apos;\ t&apos;, &apos;\ n&apos;, ...)</translation>
+        <translation>Usar caracteres especiais (&apos;\ t&apos;, &apos;\ n&apos;, ...)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -306,17 +306,17 @@
         <location line="-5"/>
         <location line="+5"/>
         <source>tabs</source>
-        <translation>guias</translation>
+        <translation>TABs</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Use spaces</source>
-        <translation>Use espaços</translation>
+        <translation>Usar espaços</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Use tabs</source>
-        <translation>Use abas</translation>
+        <translation>Usar TABs</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -326,7 +326,7 @@
     <message>
         <location line="+3"/>
         <source>Use %1 spaces</source>
-        <translation>Use %1 espaços</translation>
+        <translation>Usar %1 espaços</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -521,7 +521,7 @@
     <message>
         <location line="+8"/>
         <source>C&amp;opy to Clipboard</source>
-        <translation>C&amp;opiar para área de transferência</translation>
+        <translation>&amp;Área de transferência</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -541,22 +541,22 @@
     <message>
         <location line="+9"/>
         <source>&amp;Blank Operations</source>
-        <translation>Operações em &amp;branco</translation>
+        <translation>Caracteres em &amp;branco</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>&amp;Search</source>
-        <translation>&amp;Procurar</translation>
+        <translation>&amp;Pesquisar</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&amp;View</source>
-        <translation>&amp;Visão</translation>
+        <translation>&amp;Visualizar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Show Symbol</source>
-        <translation>Mo&amp;strar símbolo</translation>
+        <translation>Exibir &amp;símbolo</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -576,12 +576,12 @@
     <message>
         <location line="+18"/>
         <source>&amp;Language</source>
-        <translation>&amp;Língua</translation>
+        <translation>&amp;Linguagem</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Settin&amp;gs</source>
-        <translation>Def&amp;inições</translation>
+        <translation>Con&amp;figurações</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -661,7 +661,7 @@
     <message>
         <location line="+5"/>
         <source>Sav&amp;e All</source>
-        <translation>Salva&amp;r tudo</translation>
+        <translation>Salva&amp;r todos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -686,12 +686,12 @@
     <message>
         <location line="+5"/>
         <source>C&amp;lose All</source>
-        <translation>Feche &amp;tudo</translation>
+        <translation>Fechar &amp;todos</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close All &amp;BUT Current Document</source>
-        <translation>Fechar tudo e EX&amp;CETO o documento atual</translation>
+        <translation>Fechar todos EX&amp;CETO a Aba atual</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -706,7 +706,7 @@
     <message>
         <location line="+8"/>
         <source>&amp;Print...</source>
-        <translation>&amp;Impressão...</translation>
+        <translation>&amp;Imprimir...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -841,37 +841,37 @@
     <message>
         <location line="+8"/>
         <source>Show &amp;End of Line</source>
-        <translation>Mostrar Fi&amp;m da Linha</translation>
+        <translation>Exibir Fi&amp;m da Linha</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Show Tabs</source>
-        <translation>Mo&amp;strar abas</translation>
+        <translation>Exibir &amp;TAB</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Show All &amp;Characters</source>
-        <translation>Mostrar todos &amp;caracteres</translation>
+        <translation>Exibir todos &amp;caracteres</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Show &amp;Indent Guide</source>
-        <translation>Mostrar guia de &amp;identação</translation>
+        <translation>Exibir guia de &amp;identação</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Show &amp;Wrap Symbol</source>
-        <translation>Mostrar e em&amp;brulhar símbolo</translation>
+        <translation>Exibir símbolo de &amp;quebra de linha</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Word wrap</source>
-        <translation>&amp;Quebra de linha</translation>
+        <translation>&amp;Quebrar linhas automaticamente</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Math Rendering</source>
-        <translation>Redenrização de Fórmulas &amp;Matemática</translation>
+        <translation>Renderização de Fórmulas &amp;Matemática</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -921,7 +921,7 @@
     <message>
         <location line="+5"/>
         <source>&amp;Move to Other View</source>
-        <translation>&amp;Mover para outra vista</translation>
+        <translation>&amp;Mover para vista lado a lado</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1066,7 +1066,7 @@
     <message>
         <location line="+5"/>
         <source>&amp;Find...</source>
-        <translation>&amp;Encontrar...</translation>
+        <translation>&amp;Localizar...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1076,7 +1076,7 @@
     <message>
         <location line="+5"/>
         <source>Find &amp;Next</source>
-        <translation>E&amp;ncontre o próximo</translation>
+        <translation>Localizar &amp;próximo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1086,7 +1086,7 @@
     <message>
         <location line="+5"/>
         <source>Find &amp;Previous</source>
-        <translation>Encontrar e An&amp;terior</translation>
+        <translation>Localizar An&amp;terior</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1096,7 +1096,7 @@
     <message>
         <location line="+5"/>
         <source>&amp;Plain text</source>
-        <translation>&amp;Texto simples</translation>
+        <translation>&amp;Texto simples (Plain Text)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1176,12 +1176,12 @@
     <message>
         <location line="+5"/>
         <source>Delete &amp;Current Line</source>
-        <translation>Excluir e lin&amp;ha atual</translation>
+        <translation>Excluir lin&amp;ha atual</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete the current line</source>
-        <translation>Excluir a linha atual</translation>
+        <translation>Excluir linha atual</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1191,7 +1191,7 @@
     <message>
         <location line="+5"/>
         <source>&amp;Duplicate Current Line</source>
-        <translation>Linha &amp;Duplicada Atual</translation>
+        <translation>&amp;Duplicar Linha Atual</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1236,47 +1236,47 @@
     <message>
         <location line="+5"/>
         <source>&amp;Trim Trailing Space</source>
-        <translation>Aparar espaço no &amp;fim</translation>
+        <translation>Remover espaço no &amp;fim</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trim Trailing Space</source>
-        <translation>Aparar espaço no fim</translation>
+        <translation>Remover espaço no fim</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Trim &amp;Leading Space</source>
-        <translation>Aparar espaço no &amp;início</translation>
+        <translation>Remover espaço no &amp;início</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trim Leading Space</source>
-        <translation>Aparar espaço no início</translation>
+        <translation>Remover espaço no início</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>T&amp;rim Leading and Trailing Space</source>
-        <translation>Apa&amp;rar espaços no começo e no fim</translation>
+        <translation>&amp;Remover espaços no início e no fim</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;EOL to Space</source>
-        <translation>&amp;Fim de linha para espaço</translation>
+        <translation>Converter &amp;Fim de linha para espaço</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>TA&amp;B to Space</source>
-        <translation>TA&amp;B para espaços</translation>
+        <translation>Converter TA&amp;B para espaços</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Space to TAB (All)</source>
-        <translation>&amp;Espaços para TAB (todos)</translation>
+        <translation>Converter &amp;Espaços para TAB (todos)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>S&amp;pace to TAB (Leading)</source>
-        <translation>Es&amp;paços para TAB (Antecedentes)</translation>
+        <translation>Converter Es&amp;paços para TAB (anteriores)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1311,22 +1311,22 @@
     <message>
         <location line="+8"/>
         <source>S&amp;how Spaces</source>
-        <translation>Mostrar &amp;Espaços</translation>
+        <translation>Exibir &amp;Espaços</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Spaces</source>
-        <translation>Mostrar espaços</translation>
+        <translation>Exibir espaços</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Enable Smart Indent</source>
-        <translation>Ativar r&amp;ecuo inteligente</translation>
+        <translation>Ativar &amp;indentação inteligente</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Show Menubar</source>
-        <translation>Mo&amp;strar barra de menus</translation>
+        <translation>Exibir barra de &amp;Menus</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1336,7 +1336,7 @@
     <message>
         <location line="+8"/>
         <source>S&amp;how Toolbar</source>
-        <translation>Barra de Ferrame&amp;ntas</translation>
+        <translation>Exibir barra de &amp;Ferramentas</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1346,12 +1346,12 @@
     <message>
         <location line="+5"/>
         <source>Toggle To Former Tab</source>
-        <translation>Alternar para o separador anterior</translation>
+        <translation>Alternar para a Aba anterior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle Back to Former Tab</source>
-        <translation>Voltar ao antigo separador</translation>
+        <translation>Voltar para Aba anterior</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1578,7 +1578,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+32"/>
         <source>OK</source>
-        <translation>Está bem</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1593,7 +1593,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+3"/>
         <source>Special placeholders</source>
-        <translation>Placeholders especiais</translation>
+        <translation>Caminhos reservados especiais</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1641,7 +1641,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="-298"/>
         <source>OK</source>
-        <translation>Está bem</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1651,7 +1651,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+5"/>
         <source>Special placeholders</source>
-        <translation>Placeholders especiais</translation>
+        <translation>Caminhos reservados especiais</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1749,7 +1749,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+1"/>
         <source>Use in a replace operation to refer to the n&apos;th capture group</source>
-        <translation>Use em uma operação de substituição para se referir ao n&apos;th grupo de captura</translation>
+        <translation>Usar em uma operação de substituição para se referir ao n&apos;th grupo de captura</translation>
     </message>
     <message>
         <location line="+553"/>
@@ -1989,12 +1989,12 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location filename="../ui/frmindentationmode.ui" line="+14"/>
         <source>Indentation</source>
-        <translation>Recuo</translation>
+        <translation>Indentação</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Tabs</source>
-        <translation>Guias</translation>
+        <translation>TABs</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2046,12 +2046,12 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+5"/>
         <source>Languages</source>
-        <translation>línguas</translation>
+        <translation>Linguagem</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Search</source>
-        <translation>Procurar</translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2061,7 +2061,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+5"/>
         <source>Toolbar</source>
-        <translation>Toolbar</translation>
+        <translation>Barra de ferramentas</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2071,17 +2071,17 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+24"/>
         <source>Collect and transmit anonymous statistics to improve Notepadqq</source>
-        <translation>Colete e transmita estatísticas anônimas para melhorar o Notepadqq</translation>
+        <translation>Coletar e transmitir estatísticas anônimas para melhorar o Notepadqq</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Warn when the indentation doesn&apos;t match the settings</source>
-        <translation>Avisar quando o recuo não corresponder às configurações</translation>
+        <translation>Avisar quando a indentação não corresponder às configurações</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remember open tabs when closing Notepadqq</source>
-        <translation>Lembre-se de abas abertas ao fechar o Notepadqq</translation>
+        <translation>Relembrar as abas abertas ao fechar o Notepadqq</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2101,12 +2101,12 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+28"/>
         <source>Exit Notepadqq when closing the last Tab</source>
-        <translation>Saia do Notepadqq ao fechar a última guia</translation>
+        <translation>Sair do Notepadqq ao fechar a última aba</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Localization:</source>
-        <translation>Localização:</translation>
+        <translation>Idioma:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2126,7 +2126,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+29"/>
         <source>Override Line Height</source>
-        <translation>Anular a altura da linha</translation>
+        <translation>Sobrepor altura da linha</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2141,17 +2141,17 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+83"/>
         <source>Tab size:</source>
-        <translation>Tamanho da guia:</translation>
+        <translation>Larg. da indentação:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Use spaces instead of tabs</source>
-        <translation>Use espaços em vez de abas</translation>
+        <translation>Usar espaços em vez de TABs</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Use default settings</source>
-        <translation>Use as configurações padrão</translation>
+        <translation>Usar as configurações padrão</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -2196,7 +2196,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+6"/>
         <source>Supported Node versions: 0.10, 0.11, 0.12</source>
-        <translation>Versões suportadas do nó: 0.10, 0.11, 0.12</translation>
+        <translation>Versões suportadas do Node: 0.10, 0.11, 0.12</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2207,7 +2207,7 @@ Você deseja salvá-lo mesmo assim?</translation>
         <location line="+12"/>
         <location line="+21"/>
         <source>Browse...</source>
-        <translation>Squeaky toy...</translation>
+        <translation>Procurar...</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -2242,7 +2242,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+128"/>
         <source>Browse</source>
-        <translation>Squeaky toy</translation>
+        <translation>Procurar</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -2255,22 +2255,22 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location filename="../ui/Search/frmsearchreplace.ui" line="+14"/>
         <source>Search</source>
-        <translation>Procurar</translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Find</source>
-        <translation>Encontrar</translation>
+        <translation>Localizar</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace with</source>
-        <translation>Substituir com</translation>
+        <translation>Substituir por</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Show advanced options</source>
-        <translation>Mostrar opções avançadas</translation>
+        <translation>Exibir opções avançadas</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2280,17 +2280,17 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+6"/>
         <source>Search &amp;plain text</source>
-        <translation>Pesquisa e texto sim&amp;ples</translation>
+        <translation>Pesquisar texto sim&amp;ples (Plain Text)</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Match whole word only</source>
-        <translation>Corresponder apenas palavra inteira</translation>
+        <translation>Somente palavra inteira</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Match case</source>
-        <translation>Corresponder Maiúscula/Minúscula</translation>
+        <translation>Diferenciar Maiúscula/Minúscula</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2305,7 +2305,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+28"/>
         <source>Find ⇩</source>
-        <translation>Encontrar ⇩</translation>
+        <translation>Localizar ⇩</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2316,28 +2316,28 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+10"/>
         <source>Replace ⇧</source>
-        <translation>Substitua ⇧</translation>
+        <translation>Substituir ⇧</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Replace ⇩</source>
-        <translation>Substitua ⇩</translation>
+        <translation>Substituir ⇩</translation>
     </message>
     <message>
         <location line="+10"/>
         <location filename="../ui/Search/frmsearchreplace.cpp" line="-12"/>
         <source>Replace all</source>
-        <translation>Substitua tudo</translation>
+        <translation>Substituir tudo</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Find ⇧</source>
-        <translation>Encontrar ⇧</translation>
+        <translation>Localizar ⇧</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Toolbar</source>
-        <translation>Toolbar</translation>
+        <translation>Barra de ferramentas</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2347,7 +2347,7 @@ Você deseja salvá-lo mesmo assim?</translation>
     <message>
         <location line="+8"/>
         <source>&amp;Find</source>
-        <translation>&amp;Encontrar</translation>
+        <translation>&amp;Localizar</translation>
     </message>
     <message>
         <location line="+8"/>

@@ -1,6 +1,12 @@
-## `QPromise<T>::then`
+---
+title: .then
+---
 
-```
+# QPromise::then
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::then(Function onFulfilled, Function onRejected) -> QPromise<R>
 QPromise<T>::then(Function onFulfilled) -> QPromise<R>
 ```
@@ -17,9 +23,9 @@ auto output = input.then([](int res) {
 });
 ```
 
-> **Note**: `onRejected` handler is optional, `output` will be rejected with the same reason as `input`.
-
-> **Note**: it's recommended to use the [`fail`](fail.md) shorthand to handle errors.
+::: tip NOTE
+`onRejected` handler is optional, in which case `output` will be rejected with the same reason as `input`. Also note that it's recommended to use the [`fail`](fail.md) shorthand to handle errors.
+:::
 
 The type `<R>` of the `output` promise depends on the return type of the `onFulfilled` handler:
 
@@ -35,7 +41,9 @@ output.then([](const QString& res) {
 });
 ```
 
-> **Note**: only `onFulfilled` can change the promise type, `onRejected` **must** return the same type as `onFulfilled`. That also means if `onFulfilled` is `nullptr`, `onRejected` must return the same type as the `input` promise.
+::: tip NOTE
+Only `onFulfilled` can change the promise type, `onRejected` **must** return the same type as `onFulfilled`. That also means if `onFulfilled` is `nullptr`, `onRejected` must return the same type as the `input` promise.
+:::
 
 ```cpp
 QPromise<int> input = ...

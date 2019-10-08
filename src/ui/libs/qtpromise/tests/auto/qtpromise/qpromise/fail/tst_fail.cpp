@@ -1,4 +1,3 @@
-// Tests
 #include "../../shared/utils.h"
 
 // QtPromise

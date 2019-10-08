@@ -22,7 +22,7 @@ class TopEditorContainer : public QSplitter
 {
     Q_OBJECT
 public:
-    explicit TopEditorContainer(QWidget *parent = 0);
+    explicit TopEditorContainer(QWidget *parent = nullptr);
     EditorTabWidget *addTabWidget();
     EditorTabWidget *tabWidget(int index);
     EditorTabWidget *currentTabWidget();
@@ -39,6 +39,7 @@ public:
      * @param editor
      * @return EditorTabWidget. Returns 0 if not found.
      */
+    EditorTabWidget *tabWidgetFromEditor(QSharedPointer<Editor> editor);
     EditorTabWidget *tabWidgetFromEditor(Editor *editor);
 
     /**
@@ -49,8 +50,8 @@ public:
      * @param callback Callback function. It should return true to continue,
      *                 false to break the loop.
      */
-    void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
-    void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, Editor *)> callback);
+    void forEachEditor(bool backwardIndexes, std::function<bool (const int, const int, EditorTabWidget *, QSharedPointer<Editor>)> callback);
+    void forEachEditor(std::function<bool (const int, const int, EditorTabWidget *, QSharedPointer<Editor>)> callback);
 
     /**
      * @brief Executes the specified asynchronous function for each editor in this container, in order.
@@ -63,7 +64,7 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have finished.
      */
-    QPromise<void> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> goOn, std::function<void()> stop)> callback);
+    QPromise<void> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> goOn, std::function<void()> stop)> callback);
 
     /**
      * @brief Executes the specified asynchronous function for each editor in this container, concurrently.
@@ -71,9 +72,9 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have called done().
      */
-    QPromise<void> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, Editor *editor, std::function<void()> done)> callback);
+    QPromise<void> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> done)> callback);
 
-    std::vector<Editor*> getOpenEditors();
+    std::vector<QSharedPointer<Editor>> getOpenEditors();
 
     /**
      * @brief Returns the number of editors in all of the TopEditorWidget's children.

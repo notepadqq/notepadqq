@@ -17,7 +17,7 @@
 namespace EditorNS
 {
 
-    QQueue<Editor*> Editor::m_editorBuffer = QQueue<Editor*>();
+    QQueue<QSharedPointer<Editor>> Editor::m_editorBuffer = QQueue<QSharedPointer<Editor>>();
 
     Editor::Editor(QWidget *parent) :
         QWidget(parent)
@@ -90,18 +90,13 @@ namespace EditorNS
 
     QSharedPointer<Editor> Editor::getNewEditor(QWidget *parent)
     {
-        return QSharedPointer<Editor>(getNewEditorUnmanagedPtr(parent), &Editor::deleteLater);
-    }
-
-    Editor *Editor::getNewEditorUnmanagedPtr(QWidget *parent)
-    {
-        Editor *out;
+        QSharedPointer<Editor> out;
 
         if (m_editorBuffer.length() == 0) {
-            m_editorBuffer.enqueue(new Editor());
-            out = new Editor();
+            addEditorToBuffer(1);
+            out = QSharedPointer<Editor>::create();
         } else if (m_editorBuffer.length() == 1) {
-            m_editorBuffer.enqueue(new Editor());
+            addEditorToBuffer(1);
             out = m_editorBuffer.dequeue();
         } else {
             out = m_editorBuffer.dequeue();
@@ -114,7 +109,7 @@ namespace EditorNS
     void Editor::addEditorToBuffer(const int howMany)
     {
         for (int i = 0; i < howMany; i++)
-            m_editorBuffer.enqueue(new Editor());
+            m_editorBuffer.enqueue(QSharedPointer<Editor>::create());
     }
 
     void Editor::invalidateEditorBuffer()
@@ -158,7 +153,7 @@ namespace EditorNS
                         }
                         this->asyncReplies.erase(it);
 
-                        if (r.callback != 0) {
+                        if (r.callback != nullptr) {
                             QTimer::singleShot(0, [r,data]{ r.callback(data); });
                         }
 
@@ -392,17 +387,7 @@ namespace EditorNS
         m_fileOnDiskChanged = fileOnDiskChanged;
     }
 
-    QString Editor::jsStringEscape(QString str) const {
-        return str.replace("\\", "\\\\")
-                .replace("'", "\\'")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t")
-                .replace("\b", "\\b");
-    }
-
-    void Editor::sendMessage(const QString &msg, const QVariant &data)
+    void Editor::sendMessage(const QString msg, const QVariant data)
     {
 #ifdef QT_DEBUG
         qDebug() << "Legacy message " << msg << " sent.";
@@ -412,14 +397,14 @@ namespace EditorNS
         emit m_jsToCppProxy->messageReceivedByJs(msg, data);
     }
 
-    void Editor::sendMessage(const QString &msg)
+    void Editor::sendMessage(const QString msg)
     {
         sendMessage(msg, 0);
     }
 
     unsigned int messageIdentifier = 0;
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg, const QVariant &data)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg, const QVariant data)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
@@ -463,12 +448,12 @@ namespace EditorNS
         return resultPromise;
     }
 
-    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString &msg)
+    QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg)
     {
         return this->asyncSendMessageWithResultP(msg, 0);
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, const QVariant &data, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString msg, const QVariant data, std::function<void(QVariant)> callback)
     {
         unsigned int currentMsgIdentifier = ++messageIdentifier;
 
@@ -495,7 +480,7 @@ namespace EditorNS
         return fut;
     }
 
-    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString &msg, std::function<void(QVariant)> callback)
+    std::shared_future<QVariant> Editor::asyncSendMessageWithResult(const QString msg, std::function<void(QVariant)> callback)
     {
         return this->asyncSendMessageWithResult(msg, 0, callback);
     }
@@ -648,6 +633,11 @@ namespace EditorNS
         tmap.insert("size", QString::number(fontSize));
         tmap.insert("lineHeight", QString::number(lineHeight,'f',2));
         asyncSendMessageWithResultP("C_CMD_SET_FONT", tmap);
+    }
+
+    void Editor::setLineNumbersVisible(bool visible)
+    {
+        asyncSendMessageWithResultP("C_CMD_SET_LINE_NUMBERS_VISIBLE", visible);
     }
 
     QTextCodec *Editor::codec() const

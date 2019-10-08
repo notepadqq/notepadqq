@@ -361,6 +361,16 @@
     <string>Close All &amp;BUT Current Document</string>
    </property>
   </action>
+  <action name="actionCloseLeft">
+   <property name="text">
+    <string>Close Documents to the Left</string>
+   </property>
+  </action>
+  <action name="actionCloseRight">
+   <property name="text">
+    <string>Close Documents to the Right</string>
+   </property>
+  </action>
   <action name="actionLoad_Session">
    <property name="text">
     <string>Load Session...</string>

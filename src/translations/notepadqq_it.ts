@@ -1851,7 +1851,7 @@ Vuoi salvare comunque?</translation>
     <message>
         <location filename="../ui/stats.cpp" line="128"/>
         <source>You can help to improve Notepadqq by allowing us to collect &lt;b&gt;anonymous statistics&lt;/b&gt;.</source>
-        <translation>Puoi aiutarci a migliorare Notepadqq autorizzandoci di raccogliere &lt;b&gt; statistiche anonime/b&gt;. </translation>
+        <translation>Puoi aiutarci a migliorare Notepadqq autorizzandoci di raccogliere &lt;b&gt; statistiche anonime&lt;/b&gt;. </translation>
     </message>
     <message>
         <location filename="../ui/stats.cpp" line="129"/>

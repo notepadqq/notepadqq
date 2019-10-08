@@ -14,5 +14,6 @@ all:
 	cp -r libs/jquery "$(DESTDIR)"/libs/jquery/
 	cp -r libs/MathJax "$(DESTDIR)"/libs/MathJax/
 	cp -r libs/require.js "$(DESTDIR)"/libs/require.js/
+	cp -r libs/throttle-debounce "$(DESTDIR)"/libs/throttle-debounce/
 	# Call CodeMirror makefile passing DESTDIR as absolute path, so we have no problems with cd-ing to libs
 	$(MAKE) -C libs -f Makefile-codemirror DESTDIR="$(ABSOLUTE_DESTDIR)"/libs/codemirror

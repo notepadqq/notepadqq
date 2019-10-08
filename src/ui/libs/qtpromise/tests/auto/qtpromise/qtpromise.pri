@@ -1,9 +1,14 @@
 TEMPLATE = app
-CONFIG += testcase
+CONFIG += testcase warn_on
 QT += testlib
 QT -= gui
 
 DEFINES += QT_DEPRECATED_WARNINGS
+
+# Additional warnings and make all warnings into errors
+# https://github.com/simonbrunel/qtpromise/issues/10
+gcc:QMAKE_CXXFLAGS += -Werror -Wold-style-cast
+msvc:QMAKE_CXXFLAGS += -WX
 
 coverage {
     gcc {
@@ -16,6 +21,8 @@ coverage {
 }
 
 HEADERS += \
+    $$PWD/shared/data.h \
+    $$PWD/shared/object.h \
     $$PWD/shared/utils.h
 
 include(../../../qtpromise.pri)

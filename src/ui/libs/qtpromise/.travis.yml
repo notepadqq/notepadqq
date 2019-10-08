@@ -4,12 +4,17 @@ language: cpp
 compiler: gcc
 
 before_install:
-  - sudo add-apt-repository -y ppa:beineri/opt-qt542-trusty
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo add-apt-repository -y ppa:beineri/opt-qt563-trusty
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install -qq qt54base
-  - source /opt/qt54/bin/qt54-env.sh
+  - sudo apt-get install -qq gcc-4.9 g++-4.9
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 90
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.9 90
+  - sudo apt-get install -qq qt56base
+  - source /opt/qt56/bin/qt56-env.sh
   - wget http://archive.ubuntu.com/ubuntu/pool/universe/l/lcov/lcov_1.13.orig.tar.gz
   - tar xf lcov_1.13.orig.tar.gz
   - cd lcov-1.13/
@@ -18,8 +23,8 @@ install:
 
 before_script:
   - qmake --version
-  - lcov --version
-  - gcc --version
+  - lcov --version && gcov --version
+  - gcc --version && g++ --version
 
 script:
   - qmake qtpromise.pro CONFIG+=coverage
@@ -30,7 +35,3 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.info
-
-
-# gitbook install .
-# gitbook build . dist/docs

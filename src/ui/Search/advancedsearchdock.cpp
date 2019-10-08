@@ -578,7 +578,7 @@ void AdvancedSearchDock::startReplace()
         TopEditorContainer* tec = config.targetWindow->topEditorContainer();
 
         for (const DocResult& res : filteredResults.results) {
-            Editor* ed = res.editor;
+            QSharedPointer<Editor> ed = res.editor;
 
             // The editor might not be open anymore. Try to find it first
             if(!tec->tabWidgetFromEditor(ed)) continue;
@@ -703,8 +703,8 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
         startSearch(getConfigFromInputs());
     });
     connect(m_btnSelectCurrentDirectory, &QToolButton::clicked, [this, mainWindow](){
-        auto* tabW = mainWindow->topEditorContainer()->currentTabWidget();
-        auto* editor = tabW->currentEditor();
+        auto tabW = mainWindow->topEditorContainer()->currentTabWidget();
+        auto editor = tabW->currentEditor();
 
         QString dir;
         if (editor && !editor->filePath().isEmpty()) {

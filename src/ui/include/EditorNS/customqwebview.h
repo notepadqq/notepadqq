@@ -11,7 +11,7 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
-        explicit CustomQWebView(QWidget *parent = 0);
+        explicit CustomQWebView(QWidget *parent = nullptr);
 
     signals:
         void mouseWheel(QWheelEvent *ev);

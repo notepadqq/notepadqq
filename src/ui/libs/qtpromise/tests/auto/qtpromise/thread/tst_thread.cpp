@@ -28,159 +28,159 @@ QTEST_MAIN(tst_thread)
 void tst_thread::resolve()
 {
     int value = -1;
-    size_t target = 0;
-    size_t source = 0;
+    QThread* target = nullptr;
+    QThread* source = nullptr;
 
     QPromise<int>([&](const QPromiseResolve<int>& resolve) {
         QtConcurrent::run([=, &source]() {
-            source = (size_t)QThread::currentThread();
+            source = QThread::currentThread();
             resolve(42);
         });
     }).then([&](int res) {
-        target = (size_t)QThread::currentThread();
+        target = QThread::currentThread();
         value = res;
     }).wait();
 
-    QVERIFY(source != 0);
+    QVERIFY(source != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(target, (size_t)QThread::currentThread());
+    QCOMPARE(target, QThread::currentThread());
     QCOMPARE(value, 42);
 }
 
 void tst_thread::resolve_void()
 {
     int value = -1;
-    size_t target = 0;
-    size_t source = 0;
+    QThread* target = nullptr;
+    QThread* source = nullptr;
 
     QPromise<void>([&](const QPromiseResolve<void>& resolve) {
         QtConcurrent::run([=, &source]() {
-            source = (size_t)QThread::currentThread();
+            source = QThread::currentThread();
             resolve();
         });
     }).then([&]() {
-        target = (size_t)QThread::currentThread();
+        target = QThread::currentThread();
         value = 43;
     }).wait();
 
-    QVERIFY(source != 0);
+    QVERIFY(source != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(target, (size_t)QThread::currentThread());
+    QCOMPARE(target, QThread::currentThread());
     QCOMPARE(value, 43);
 }
 
 void tst_thread::reject()
 {
     QString error;
-    size_t target = 0;
-    size_t source = 0;
+    QThread* target = nullptr;
+    QThread* source = nullptr;
 
     QPromise<int>([&](const QPromiseResolve<int>&, const QPromiseReject<int>& reject) {
         QtConcurrent::run([=, &source]() {
-            source = (size_t)QThread::currentThread();
+            source = QThread::currentThread();
             reject(QString("foo"));
         });
     }).fail([&](const QString& err) {
-        target = (size_t)QThread::currentThread();
+        target = QThread::currentThread();
         error = err;
         return -1;
     }).wait();
 
-    QVERIFY(source != 0);
+    QVERIFY(source != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(target, (size_t)QThread::currentThread());
+    QCOMPARE(target, QThread::currentThread());
     QCOMPARE(error, QString("foo"));
 }
 
 void tst_thread::then()
 {
-    size_t source;
+    QThread* source = nullptr;
     QPromise<int> p([&](const QPromiseResolve<int>& resolve) {
-        source = (size_t)QThread::currentThread();
+        source = QThread::currentThread();
         resolve(42);
     });
 
-    size_t target;
     int value = -1;
-    qPromise(QtConcurrent::run([&](const QPromise<int>& p) {
+    QThread* target = nullptr;
+    QtPromise::resolve(QtConcurrent::run([&](const QPromise<int>& p) {
         p.then([&](int res) {
-            target = (size_t)QThread::currentThread();
+            target = QThread::currentThread();
             value = res;
         }).wait();
     }, p)).wait();
 
-    QVERIFY(target != 0);
+    QVERIFY(target != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(source, (size_t)QThread::currentThread());
+    QCOMPARE(source, QThread::currentThread());
     QCOMPARE(value, 42);
 }
 
 void tst_thread::then_void()
 {
-    size_t source;
+    QThread* source = nullptr;
     QPromise<void> p([&](const QPromiseResolve<void>& resolve) {
-        source = (size_t)QThread::currentThread();
+        source = QThread::currentThread();
         resolve();
     });
 
-    size_t target;
     int value = -1;
-    qPromise(QtConcurrent::run([&](const QPromise<void>& p) {
+    QThread* target = nullptr;
+    QtPromise::resolve(QtConcurrent::run([&](const QPromise<void>& p) {
         p.then([&]() {
-            target = (size_t)QThread::currentThread();
+            target = QThread::currentThread();
             value = 43;
         }).wait();
     }, p)).wait();
 
-    QVERIFY(target != 0);
+    QVERIFY(target != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(source, (size_t)QThread::currentThread());
+    QCOMPARE(source, QThread::currentThread());
     QCOMPARE(value, 43);
 }
 
 void tst_thread::fail()
 {
-    size_t source;
+    QThread* source = nullptr;
     QPromise<int> p([&](const QPromiseResolve<int>&, const QPromiseReject<int>& reject) {
-        source = (size_t)QThread::currentThread();
+        source = QThread::currentThread();
         reject(QString("foo"));
     });
 
-    size_t target;
     QString error;
-    qPromise(QtConcurrent::run([&](const QPromise<int>& p) {
+    QThread* target = nullptr;
+    QtPromise::resolve(QtConcurrent::run([&](const QPromise<int>& p) {
         p.fail([&](const QString& err) {
-            target = (size_t)QThread::currentThread();
+            target = QThread::currentThread();
             error = err;
             return -1;
         }).wait();
     }, p)).wait();
 
-    QVERIFY(target != 0);
+    QVERIFY(target != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(source, (size_t)QThread::currentThread());
+    QCOMPARE(source, QThread::currentThread());
     QCOMPARE(error, QString("foo"));
 }
 
 void tst_thread::finally()
 {
-    size_t source;
+    QThread* source = nullptr;
     QPromise<int> p([&](const QPromiseResolve<int>& resolve) {
-        source = (size_t)QThread::currentThread();
+        source = QThread::currentThread();
         resolve(42);
     });
 
-    size_t target;
     int value = -1;
-    qPromise(QtConcurrent::run([&](const QPromise<int>& p) {
+    QThread* target = nullptr;
+    QtPromise::resolve(QtConcurrent::run([&](const QPromise<int>& p) {
         p.finally([&]() {
-            target = (size_t)QThread::currentThread();
+            target = QThread::currentThread();
             value = 43;
         }).wait();
     }, p)).wait();
 
-    QVERIFY(target != 0);
+    QVERIFY(target != nullptr);
     QVERIFY(source != target);
-    QCOMPARE(source, (size_t)QThread::currentThread());
+    QCOMPARE(source, QThread::currentThread());
     QCOMPARE(value, 43);
 }

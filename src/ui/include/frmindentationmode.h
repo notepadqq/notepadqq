@@ -14,7 +14,7 @@ class frmIndentationMode : public QDialog
     Q_OBJECT
 
 public:
-    explicit frmIndentationMode(QWidget *parent = 0);
+    explicit frmIndentationMode(QWidget *parent = nullptr);
     ~frmIndentationMode();
 
     void populateWidgets(EditorNS::Editor::IndentationMode indentationMode);

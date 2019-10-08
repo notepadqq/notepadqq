@@ -108,7 +108,8 @@ SOURCES += main.cpp\
     Search/searchobjects.cpp \
     Search/searchinstance.cpp \
     stats.cpp \
-    Sessions/backupservice.cpp
+    Sessions/backupservice.cpp \
+    svgiconengine.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -156,7 +157,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/filereplacer.h \
     include/Search/searchinstance.h \
     include/stats.h \
-    include/Sessions/backupservice.h
+    include/Sessions/backupservice.h \
+    include/svgiconengine.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
@@ -240,8 +242,6 @@ unix:!macx {
     QMAKE_EXTRA_TARGETS += launchTarget
     PRE_TARGETDEPS += make_launch
 }
-
-macx: QMAKE_INFO_PLIST = ../../support_files/launch/Info.plist.app
 
 ### INSTALL ###
 unix:!macx {

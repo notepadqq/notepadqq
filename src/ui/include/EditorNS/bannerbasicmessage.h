@@ -13,7 +13,7 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
-        explicit BannerBasicMessage(QWidget *parent = 0);
+        explicit BannerBasicMessage(QWidget *parent = nullptr);
 
         enum class Importance {
             Warning,

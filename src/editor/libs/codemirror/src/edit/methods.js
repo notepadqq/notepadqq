@@ -414,7 +414,7 @@ export default function(CodeMirror) {
       this.curOp.forceUpdate = true
       clearCaches(this)
       scrollToCoords(this, this.doc.scrollLeft, this.doc.scrollTop)
-      updateGutterSpace(this)
+      updateGutterSpace(this.display)
       if (oldHeight == null || Math.abs(oldHeight - textHeight(this.display)) > .5)
         estimateLineHeights(this)
       signal(this, "refresh", this)
@@ -423,6 +423,8 @@ export default function(CodeMirror) {
     swapDoc: methodOp(function(doc) {
       let old = this.doc
       old.cm = null
+      // Cancel the current text selection if any (#5821)
+      if (this.state.selectingText) this.state.selectingText()
       attachDoc(this, doc)
       clearCaches(this)
       this.display.input.reset()
@@ -431,6 +433,11 @@ export default function(CodeMirror) {
       signalLater(this, "swapDoc", this, old)
       return old
     }),
+
+    phrase: function(phraseText) {
+      let phrases = this.options.phrases
+      return phrases && Object.prototype.hasOwnProperty.call(phrases, phraseText) ? phrases[phraseText] : phraseText
+    },
 
     getInputField: function(){return this.display.input.getField()},
     getWrapperElement: function(){return this.display.wrapper},

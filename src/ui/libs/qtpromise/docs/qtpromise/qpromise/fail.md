@@ -1,6 +1,12 @@
-## `QPromise<T>::fail`
+---
+title: .fail
+---
 
-```
+# QPromise::fail
+
+*Since: 0.1.0*
+
+```cpp
 QPromise<T>::fail(Function onRejected) -> QPromise<T>
 ```
 

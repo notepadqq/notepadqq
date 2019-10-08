@@ -11,7 +11,7 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
-        BannerIndentationDetected(bool mode, Editor::IndentationMode detected, Editor::IndentationMode current, QWidget *parent = 0);
+        BannerIndentationDetected(bool mode, Editor::IndentationMode detected, Editor::IndentationMode current, QWidget *parent = nullptr);
 
     signals:
         void useDocumentSettings();

@@ -1,4 +1,10 @@
-## `[static] QPromise<T>::resolve`
+---
+title: ::resolve [static]
+---
+
+# QPromise::resolve [static]
+
+*Since: 0.1.0*
 
 ```
 [static] QPromise<T>::resolve(T value) -> QPromise<T>
@@ -19,4 +25,4 @@ QPromise<int> compute(const QString& type)
 }
 ```
 
-See also: [`qPromise`](../helpers/qpromise.md)
+See also: [`QtPromise::resolve`](../helpers/resolve.md)

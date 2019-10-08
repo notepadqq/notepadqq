@@ -25,6 +25,9 @@ frmAbout::frmAbout(QWidget *parent) :
     ui->lblContributors->setText(tr("Contributors:") + " <a href=\"" + Notepadqq::contributorsUrl + "\"><span style=\"" + linkStyle + "\">" + tr("GitHub Contributors") + "</span></a>");
     ui->lblWebsite->setText("<a href=\"" + Notepadqq::website + "\"><span style=\"" + linkStyle + "\">" + Notepadqq::website + "</span></a>");
 
+    ui->btnLicense->setStyleSheet("QPushButton {color: black;}");
+    ui->pushButton->setStyleSheet("QPushButton {color: black;}");
+
     setFixedSize(this->width(), this->height());
     setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 }

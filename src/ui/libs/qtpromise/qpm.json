@@ -10,9 +10,9 @@
         "url": "https://github.com/simonbrunel/qtpromise.git"
     },
     "version": {
-        "label": "0.3.0"
+        "label": "0.5.0"
     },
     "license": "MIT",
     "pri_filename": "qtpromise.pri",
-    "webpage": "https://github.com/simonbrunel/qtpromise"
+    "webpage": "https://qtpromise.netlify.com"
 }

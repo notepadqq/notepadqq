@@ -1,5 +1,5 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/LICENSE
 
 // A rough approximation of Sublime Text's keybindings
 // Depends on addon/search/searchcursor.js and optionally addon/dialog/dialogs.js
@@ -589,8 +589,8 @@
     "Cmd-/": "toggleCommentIndented",
     "Cmd-J": "joinLines",
     "Shift-Cmd-D": "duplicateLine",
-    "F9": "sortLines",
-    "Cmd-F9": "sortLinesInsensitive",
+    "F5": "sortLines",
+    "Cmd-F5": "sortLinesInsensitive",
     "F2": "nextBookmark",
     "Shift-F2": "prevBookmark",
     "Cmd-F2": "toggleBookmark",

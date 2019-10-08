@@ -279,7 +279,7 @@ void tst_requirements::thenMultipleCalls()
             });
         });
 
-        qPromiseAll(QVector<QPromise<void> >{
+        QtPromise::all(QVector<QPromise<void>>{
             p.then([&](int r) { values << r + 1; }),
             p.then([&](int r) { values << r + 2; }),
             p.then([&](int r) { values << r + 3; })
@@ -298,7 +298,7 @@ void tst_requirements::thenMultipleCalls()
             });
         });
 
-        qPromiseAll(QVector<QPromise<int> >{
+        QtPromise::all(QVector<QPromise<int>>{
             p.then(nullptr, [&](int r) { values << r + 1; return r + 1; }),
             p.then(nullptr, [&](int r) { values << r + 2; return r + 2; }),
             p.then(nullptr, [&](int r) { values << r + 3; return r + 3; })
@@ -314,9 +314,9 @@ void tst_requirements::thenHandlers()
     {
         auto handler = [](){ return 42; };
         auto p1 = QPromise<int>::resolve(42);
-        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(handler, nullptr)), QPromise<int> >::value));
-        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(nullptr, handler)), QPromise<int> >::value));
-        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(handler, handler)), QPromise<int> >::value));
+        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(handler, nullptr)), QPromise<int>>::value));
+        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(nullptr, handler)), QPromise<int>>::value));
+        Q_STATIC_ASSERT((std::is_same<decltype(p1.then(handler, handler)), QPromise<int>>::value));
     }
 
     // 2.2.7.1. If either onFulfilled or onRejected returns a value x, run the
@@ -351,7 +351,7 @@ void tst_requirements::thenHandlers()
         QString value;
         auto p1 = QPromise<QString>::resolve("42");
         auto p2 = p1.then(nullptr, [](){ return QString(); });
-        Q_STATIC_ASSERT((std::is_same<decltype(p2), QPromise<QString> >::value));
+        Q_STATIC_ASSERT((std::is_same<decltype(p2), QPromise<QString>>::value));
         p2.then([&](const QString& e) { value = e; }).wait();
 
         QVERIFY(p1.isFulfilled());

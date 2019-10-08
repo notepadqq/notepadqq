@@ -1,4 +1,3 @@
-// Tests
 #include "../../shared/utils.h"
 
 // QtPromise
@@ -6,6 +5,9 @@
 
 // Qt
 #include <QtTest>
+
+// STL
+#include <memory>
 
 using namespace QtPromise;
 
@@ -30,6 +32,10 @@ private Q_SLOTS:
     void rejectSync_void();
     void rejectAsync();
     void rejectAsync_void();
+    void rejectUndefined();
+    void rejectUndefined_void();
+    void connectAndResolve();
+    void connectAndReject();
 };
 
 QTEST_MAIN(tst_qpromise_construct)
@@ -227,4 +233,102 @@ void tst_qpromise_construct::rejectThrowTwoArgs_void()
     QCOMPARE(p.isRejected(), true);
     QCOMPARE(waitForValue(p, -1, 42), -1);
     QCOMPARE(waitForError(p, QString()), QString("foo"));
+}
+
+void tst_qpromise_construct::rejectUndefined()
+{
+    QPromise<int> p([](const QPromiseResolve<int>&, const QPromiseReject<int>& reject) {
+        QtPromisePrivate::qtpromise_defer([=]() {
+            reject();
+        });
+    });
+
+    QCOMPARE(p.isPending(), true);
+    QCOMPARE(waitForRejected<QPromiseUndefinedException>(p), true);
+}
+
+void tst_qpromise_construct::rejectUndefined_void()
+{
+    QPromise<void> p([](const QPromiseResolve<void>&, const QPromiseReject<void>& reject) {
+        QtPromisePrivate::qtpromise_defer([=]() {
+            reject();
+        });
+    });
+
+    QCOMPARE(p.isPending(), true);
+    QCOMPARE(waitForRejected<QPromiseUndefinedException>(p), true);
+}
+
+// https://github.com/simonbrunel/qtpromise/issues/6
+void tst_qpromise_construct::connectAndResolve()
+{
+    QScopedPointer<QObject> object(new QObject());
+
+    std::weak_ptr<int> wptr;
+
+    {
+        auto p = QPromise<std::shared_ptr<int>>([&](
+            const QPromiseResolve<std::shared_ptr<int>>& resolve,
+            const QPromiseReject<std::shared_ptr<int>>& reject) {
+
+            connect(object.data(), &QObject::objectNameChanged,
+                [=, &wptr](const QString& name) {
+                    std::shared_ptr<int> sptr(new int(42));
+
+                    wptr = sptr;
+
+                    if (name == "foobar") {
+                        resolve(sptr);
+                    } else {
+                        reject(42);
+                    }
+                });
+        });
+
+        QCOMPARE(p.isPending(), true);
+
+        object->setObjectName("foobar");
+
+        QCOMPARE(waitForValue(p, std::shared_ptr<int>()), wptr.lock());
+        QCOMPARE(wptr.use_count(), 1l); // "p" still holds a reference
+    }
+
+    QCOMPARE(wptr.use_count(), 0l);
+}
+
+// https://github.com/simonbrunel/qtpromise/issues/6
+void tst_qpromise_construct::connectAndReject()
+{
+    QScopedPointer<QObject> object(new QObject());
+
+    std::weak_ptr<int> wptr;
+
+    {
+        auto p = QPromise<int>([&](
+            const QPromiseResolve<int>& resolve,
+            const QPromiseReject<int>& reject) {
+
+            connect(object.data(), &QObject::objectNameChanged,
+                [=, &wptr](const QString& name) {
+                    std::shared_ptr<int> sptr(new int(42));
+
+                    wptr = sptr;
+
+                    if (name == "foobar") {
+                        reject(sptr);
+                    } else {
+                        resolve(42);
+                    }
+                });
+        });
+
+        QCOMPARE(p.isPending(), true);
+
+        object->setObjectName("foobar");
+
+        QCOMPARE(waitForError(p, std::shared_ptr<int>()), wptr.lock());
+        QCOMPARE(wptr.use_count(), 1l); // "p" still holds a reference
+    }
+
+    QCOMPARE(wptr.use_count(), 0l);
 }

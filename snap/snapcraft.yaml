@@ -13,7 +13,8 @@ apps:
   notepadqq: 
     command: bin/desktop-launch $SNAP/usr/local/lib/notepadqq/notepadqq-bin
     environment:
-        DISABLE_WAYLAND: 1
+      DISABLE_WAYLAND: 1  # See https://github.com/notepadqq/notepadqq/issues/806
+      QT_XCB_FORCE_SOFTWARE_OPENGL: 1  # For bug in Qt 5.9 + Nouveau. See https://bugreports.qt.io/browse/QTBUG-41242
     desktop: usr/local/share/applications/notepadqq.desktop
 #   plugs:  # Plugs are not needed for classic confinement
 #     - browser-support
@@ -31,6 +32,32 @@ apps:
 #     - x11
 
 parts:
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-depth: 1
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+
   fixicon:
     plugin: nil
     after: [my-part]
@@ -39,10 +66,13 @@ parts:
 
   qtconf:
     plugin: dump
-    source: .snap-data/
+    source: snap/local
     organize:
       qt.conf: usr/local/lib/notepadqq/qt.conf
-      qt.WebEngineProcess.conf: usr/lib/x86_64-linux-gnu/qt5/libexec/qt.conf
+      qt.WebEngineProcess.conf: usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/libexec/qt.conf
+    override-build: |
+      sed -i "s|__ARCH_TRIPLET__|$SNAPCRAFT_ARCH_TRIPLET|" qt.conf qt.WebEngineProcess.conf
+      snapcraftctl build
     after: [my-part]
 
   my-part:
@@ -78,7 +108,8 @@ parts:
       - libnss3
       - libcanberra-gtk3-module
       - libqt5webengine5
-      - libc6 # For Ubuntu 16.06
+      - libqt5quickwidgets5
+      - libqt5webenginewidgets5
       - libuchardet0
       - qtwayland5
       

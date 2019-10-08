@@ -10,7 +10,7 @@ namespace EditorNS
     {
         Q_OBJECT
     public:
-        explicit BannerFileRemoved(QWidget *parent = 0);
+        explicit BannerFileRemoved(QWidget *parent = nullptr);
 
     signals:
         void save();
