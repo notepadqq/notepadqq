@@ -105,6 +105,12 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
+    #if !defined(Q_OS_WIN) && !defined(Q_OS_MACX)
+    QStringList iconsBundledPaths = QStringList(Notepadqq::iconsPath());
+    // On some systems it prefers the first entry, while on others it prefers the last entry
+    QIcon::setThemeSearchPaths(iconsBundledPaths + QIcon::themeSearchPaths() + iconsBundledPaths);
+    #endif
+
     // Arguments received from another instance
     QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QString &workingDirectory, const QStringList &arguments) {
         QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);

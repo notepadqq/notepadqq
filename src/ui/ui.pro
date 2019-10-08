@@ -275,6 +275,9 @@ unix:!macx {
     icon_hscalable.path = "$$INSTALL_ROOT$$PREFIX/share/icons/hicolor/scalable/apps/"
     icon_hscalable.files += "$$INSTALLFILESDIR/icons/hicolor/scalable/apps/notepadqq.svg"
 
+    icons.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/icons/"
+    icons.files += "$$INSTALLFILESDIR/icons-bundled/*"
+
     # Make sure that the folders exists, otherwise qmake won't create the misc_data install rule
     system($${QMAKE_MKDIR} \"$$APPDATADIR/editor\")
     system($${QMAKE_MKDIR} \"$$APPDATADIR/extension_tools\")
@@ -299,10 +302,14 @@ unix:!macx {
     # We want to keep $$INSTALL_ROOT as a variable in the makefile, so we use $(INSTALL_ROOT)
     unix:set_permissions.extra = chmod 755 $(INSTALL_ROOT)\"$$PREFIX/bin/notepadqq\"
 
+    # https://doc.qt.io/qt-5/qicon.html#fromTheme
+    icons_cache.path = "$$INSTALL_ROOT$$PREFIX/share/notepadqq/icons/"
+    unix:icons_cache.extra = find -L $(INSTALL_ROOT)\"$$PREFIX/share/icons/hicolor/\" $(INSTALL_ROOT)\"$$PREFIX/share/notepadqq/icons/\"*/ -mindepth 0 -maxdepth 0 -xtype d -exec touch --no-create {} \\; -exec gtk-update-icon-cache --force --ignore-theme-index {} \\; ||:
+
     # MAKE INSTALL
     INSTALLS += target \
          icon_h16 icon_h22 icon_h24 icon_h32 icon_h48 icon_h64 icon_h96 icon_h128 icon_h256 icon_h512 icon_hscalable \
-         misc_data launch shortcuts appstream \
-         set_permissions
+         icons misc_data launch shortcuts appstream \
+         set_permissions icons_cache
 
 }
