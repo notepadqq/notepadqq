@@ -109,7 +109,8 @@ SOURCES += main.cpp\
     Search/searchinstance.cpp \
     stats.cpp \
     Sessions/backupservice.cpp \
-    svgiconengine.cpp
+    svgiconengine.cpp \
+    qextendediconengine.cpp
 
 HEADERS  += include/mainwindow.h \
     include/topeditorcontainer.h \
@@ -158,7 +159,8 @@ HEADERS  += include/mainwindow.h \
     include/Search/searchinstance.h \
     include/stats.h \
     include/Sessions/backupservice.h \
-    include/svgiconengine.h
+    include/svgiconengine.h \
+    include/qextendediconengine.h
 
 FORMS    += mainwindow.ui \
     frmabout.ui \
