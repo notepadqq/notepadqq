@@ -29,6 +29,7 @@
     <binary>notepadqq</binary>
   </provides>
   <releases>
+    <release version="2.0.0~beta" date="2019-10-08" type="development"/>
     <release version="1.9.99" date="2019-08-30" type="development"/>
     <release version="1.4.8" date="2018-05-10"/>
   </releases>
