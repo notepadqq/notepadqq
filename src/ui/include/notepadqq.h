@@ -61,9 +61,9 @@ public:
     static QString appDataPath(QString fileName = QString());
     static QString editorPath();
     static QString extensionToolsPath();
-    #if !defined(Q_OS_WIN) && !defined(Q_OS_MACX)
+#if !defined(Q_OS_WIN) && !defined(Q_OS_MACX)
     static QString iconsPath();
-    #endif
+#endif
     static QString nodejsPath();
     static QString npmPath();
     static QString fileNameFromUrl(const QUrl &url);
