@@ -31,11 +31,11 @@ jobs:
       script: .travis/macos-script.sh
       deploy:
         provider: releases
-        api_key:
-          secure: C8hJM/xaT4+pm8/X84C+bZjXS64C8H+43IpfLp5nzGMQzzTfaxq5uHS2ufi6qaS/1EIPyiw/j3ng12UDfcICduNT4h9hUgUMTCMqKhP4Td2FSgk99LnXWwa2w7+JTzDNVm0cnqXYUTSA/tg0KN8hMa1Q44RSl6KwYyCvy8rtWQpxSQi2dCVIs6vYcQXts/x26+MDuD/RpOuZseh3+hN5hSx6Ta1SjUz/mCtoSlRjCQz+5GO4mawGQW9PGSHFBF4+/krYqOKZ12ADNT/5W3UqWZmu0JB55VP+w0Q2UdfWM/4qioz3hUS13FrAqzKOhbteWrNGtIahosCUZbg+UwJQU8GctuwjBrY7dElyxks2uFUMc4KuwEKjudhMY4Y7Ui0cAvy46Avs9iOhnCjR+0mZNwz5umYqU1bb7aYu0fXOG1VmRUbVTsXTlaW4WDGrBmgW4Ac8tosL6f2DoSbImTX+vxYc/9BSTegPKZSe4jHlMkbCR0DS8mCuTf/e+67sjAnxv0fMHFMY20cporrThEDPwYxB3zS3AHJ/oOQjH5fXieqJkQIW0BxSAKDZ99dKeu1hE+CQhezfIxX2I5V7bK0Tq+MV4LA/q56GPuPqyuENQH3W3iCIwOjb1az8DoxSguACPp4AaP75VdEW6weosPn/C/vaI1XVGZG5V0qvirc/Zy4=
+        edge: true  # https://docs.travis-ci.com/user/deployment-v2
         file:
           - "out/release/notepadqq-${NQQ_VERSION}.dmg"
         skip_cleanup: true
+        draft: true
         on:
           repo: notepadqq/notepadqq
           tags: true
