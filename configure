@@ -12,8 +12,8 @@ if test -n "$QTCHOOSER"; then
     test -n "$QMAKE"    || QMAKE="$QTCHOOSER -run-tool=qmake -qt=5"
     test -n "$LRELEASE" || LRELEASE="$QTCHOOSER -run-tool=lrelease -qt=5"
 else
-    test -n "$QMAKE"    || QMAKE="$(command -v qmake-qt5 2>/dev/null || which qmake 2>/dev/null)"
-    test -n "$LRELEASE" || LRELEASE="$(command -v lrelease-qt5 2>/dev/null || which lrelease 2>/dev/null)"
+    test -n "$QMAKE"    || QMAKE="$(command -v qmake-qt5 2>/dev/null || command -v qmake 2>/dev/null)"
+    test -n "$LRELEASE" || LRELEASE="$(command -v lrelease-qt5 2>/dev/null || command -v lrelease 2>/dev/null)"
 fi
 
 
