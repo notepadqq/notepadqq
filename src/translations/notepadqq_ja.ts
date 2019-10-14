@@ -2074,7 +2074,7 @@ Do you want to save it anyway?</source>
     </message>
     <message>
         <location filename="../ui/frmpreferences.ui" line="133"/>
-        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitely saved.</source>
+        <source>This option allows Notepadqq to recover your documents after a crash even if they were not explicitly saved.</source>
         <translation>このオプションは、Notepadqq がクラッシュした際にドキュメントを保存していなかった場合でも、ドキュメントの復元を可能にします。</translation>
     </message>
     <message>
