@@ -4,15 +4,16 @@
 # Basic environment variables
 test -n "$MAKE"      || MAKE="make"
 test -n "$CXX"       || CXX="c++"
-test -n "$QTCHOOSER" || QTCHOOSER="$(which qtchooser 2> /dev/null)"
+test -n "$QTCHOOSER" || QTCHOOSER="$(command -v qtchooser 2> /dev/null)"
+test -n "$TMPDIR"    || TMPDIR="$PWD"
 
-# Use qtchooser if we have it, otherwise use which
+# Use qtchooser if we have it, otherwise use Posix command -v
 if test -n "$QTCHOOSER"; then
     test -n "$QMAKE"    || QMAKE="$QTCHOOSER -run-tool=qmake -qt=5"
     test -n "$LRELEASE" || LRELEASE="$QTCHOOSER -run-tool=lrelease -qt=5"
 else
-    test -n "$QMAKE"    || QMAKE="$(which qmake-qt5 2>/dev/null || which qmake 2>/dev/null)"
-    test -n "$LRELEASE" || LRELEASE="$(which lrelease-qt5 2>/dev/null || which lrelease 2>/dev/null)"
+    test -n "$QMAKE"    || QMAKE="$(command -v qmake-qt5 2>/dev/null || command -v qmake 2>/dev/null)"
+    test -n "$LRELEASE" || LRELEASE="$(command -v lrelease-qt5 2>/dev/null || command -v lrelease 2>/dev/null)"
 fi
 
 
@@ -68,8 +69,8 @@ EOF
 check() {
     printf "checking for $1... "
     t=$(basename $2)
-    which $t 2>/dev/null 1>/dev/null
-    test $(echo $?) -eq 0 && echo "$(which $t)" || errorExit "not found!" $3
+    command -v $t 2>/dev/null 1>/dev/null
+    test $(echo $?) -eq 0 && echo "$(command -v $t)" || errorExit "not found!" $3
 }
 
 
@@ -148,13 +149,13 @@ int main()
 }
 EOF
 printf "checking whether c++ compiler builds test program... "
-$CXX -o test test.cpp && echo "ok" || errorExit "error!" 1
+$CXX -o "$TMPDIR/test" test.cpp && echo "ok" || errorExit "error!" 1
 printf "checking whether c++ compiler supports -std=c++0x... "
 rm -f test
-$CXX -std=c++0x -o test test.cpp && echo "ok" || errorExit "error!" 1
+$CXX -std=c++0x -o "$TMPDIR/test" test.cpp && echo "ok" || errorExit "error!" 1
 printf "checking whether compiled test program works... "
-./test 2>/dev/null 1>/dev/null && echo "ok" || errorExit "error!" 1
-rm -f test test.cpp
+"$TMPDIR/test" 2>/dev/null 1>/dev/null && echo "ok" || errorExit "error!" 1
+rm -f "$TMPDIR/test" test.cpp
 
 check make "$MAKE" 1
 check pkg-config pkg-config 1
