@@ -3,6 +3,7 @@
 #include "include/iconprovider.h"
 
 #include <QPainter>
+#include <QtGlobal>
 
 #include <iterator>
 
@@ -130,10 +131,12 @@ bool QExtendedIconEngine::isNull() const;
 void QExtendedIconEngine::virtual_hook(int id, void* data)
 {
     switch (id) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
     case QIconEngine::IsNullHook: {
         *reinterpret_cast<bool*>(data) = getIcon().isNull();
         break;
     }
+#endif
     default: {
         QIconEngine::virtual_hook(id, data);
         break;
