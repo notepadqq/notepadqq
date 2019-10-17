@@ -13,9 +13,9 @@ IS_APT=$(command -v apt-get 2>/dev/null | grep -v "^no " | wc -l)
 if [[ "$IS_APT" -ne 0 ]];
 then
 
-    apt-get install -y gcc make libtool pkg-config qt5-default qttools5-dev-tools libqt5network5 \
-      libqt5webengine5 libqt5webenginewidgets5 libqt5webenginecore5 libqt5widgets5 libqt5svg5-dev \
-      libqt5websockets5-dev libqt5webchannel5-dev qtwebengine5-dev libuchardet-dev 
+    apt-get install -y gcc make libtool pkg-config lsb_release qt5-default qttools5-dev-tools \
+      libqt5network5 libqt5webengine5 libqt5webenginewidgets5 libqt5webenginecore5 libqt5widgets5 \
+      libqt5svg5-dev libqt5websockets5-dev libqt5webchannel5-dev qtwebengine5-dev libuchardet-dev 
 
 else
 
@@ -39,6 +39,8 @@ packages=(qt5-default qttools5-dev-tools libqt5network5 libqt5webengine5 libqt5w
           libqt5webenginecore5 libqt5widgets5 libqt5svg5-dev libqt5websockets5-dev
           libqt5webchannel5-dev qtwebengine5-dev libuchardet-dev)
 
+echo "========================================"
+lsb_release -a 2>&1 | grep -v '^No'
 echo "========================================"
 for package in "${packages[@]}";
 do
