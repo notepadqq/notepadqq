@@ -22,6 +22,10 @@ namespace Ui {
 class MainWindow;
 }
 
+#ifndef  NOTEPADQQ_UNUSED
+# define NOTEPADQQ_UNUSED(x) ((void)(x))
+#endif
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -33,6 +37,13 @@ public:
 
     static QList<MainWindow *> instances();
     static MainWindow * lastActiveInstance();
+
+    // GH #792: Need to press TAB twice to register one TAB in editor
+    // Also see https://stackoverflow.com/a/21351638
+    virtual bool focusNextPrevChild(bool next) {
+        NOTEPADQQ_UNUSED(next);
+        return false;
+    }
 
     /**
      * Describes the result of a tab closing process.
