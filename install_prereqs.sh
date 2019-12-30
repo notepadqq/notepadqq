@@ -17,6 +17,14 @@ then
       libqt5network5 libqt5webengine5 libqt5webenginewidgets5 libqt5webenginecore5 libqt5widgets5 \
       libqt5svg5-dev libqt5websockets5-dev libqt5webchannel5-dev qtwebengine5-dev libuchardet-dev 
 
+elif [[ "$IS_DNF" -ne 0 ]];
+then
+
+    dnf install -y gcc make libtool pkg-config qt5-devel qt5-qttools-devel \
+      qt5-qtwebengine qt5-qtwebengine-devel qt5-qtsvg qt5-qtsvg-devel \
+      qt5-qtwebsockets qt5-qtwebsockets-devel qt5-qtwebchannel qt5-qtwebchannel-devel \
+      uchardet uchardet-devel
+
 else
 
     echo "Package manager is currently not supported. Please submit patches for this script."
