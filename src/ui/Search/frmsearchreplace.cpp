@@ -54,7 +54,30 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->actionFind->setChecked(true);
     ui->actionReplace->setChecked(true);
 
+    // Initialize advanced search options
+    ui->chkShowAdvanced->setChecked(s.Search.getShowAdvanced());
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
+    int mode = s.Search.getSearchMode();
+    if (mode == 1)
+    {
+        ui->radSearchPlainText->setChecked(true);
+        ui->radSearchPlainText->toggled(true);
+    }
+    else if (mode == 2)
+    {
+        ui->radSearchWithSpecialChars->setChecked(true);
+        ui->radSearchWithSpecialChars->toggled(true);
+    }
+    else if (mode == 3)
+    {
+        ui->radSearchWithRegex->setChecked(true);
+        ui->radSearchWithRegex->toggled(true);
+    }
+    else
+    {
+        ui->radSearchPlainText->setChecked(true);
+        ui->radSearchPlainText->toggled(true);
+    }
 
     setCurrentTab(TabSearch);
 }
@@ -333,6 +356,8 @@ void frmSearchReplace::on_chkShowAdvanced_toggled(bool checked)
     else
         ui->groupAdvanced->hide();
 
+    NqqSettings::getInstance().Search.setShowAdvanced(checked);
+
     manualSizeAdjust();
 }
 
@@ -341,6 +366,8 @@ void frmSearchReplace::on_radSearchWithRegex_toggled(bool checked)
     if (checked) {
         ui->chkMatchWholeWord->setChecked(false);
         ui->chkMatchWholeWord->setEnabled(false);
+
+        NqqSettings::getInstance().Search.setSearchMode(3);
 
         manualSizeAdjust();
     }
@@ -351,6 +378,8 @@ void frmSearchReplace::on_radSearchPlainText_toggled(bool checked)
     if (checked) {
         ui->chkMatchWholeWord->setEnabled(true);
 
+        NqqSettings::getInstance().Search.setSearchMode(1);
+
         manualSizeAdjust();
     }
 }
@@ -360,6 +389,8 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
     if (checked) {
         ui->chkMatchWholeWord->setChecked(false);
         ui->chkMatchWholeWord->setEnabled(false);
+
+        NqqSettings::getInstance().Search.setSearchMode(2);
 
         manualSizeAdjust();
     }

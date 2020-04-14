@@ -103,6 +103,8 @@ public:
     BEGIN_CATEGORY(Search)
         NQQ_SETTING(SearchAsIType,  bool,           true)
         NQQ_SETTING(SaveHistory,    bool,           true)
+        NQQ_SETTING(ShowAdvanced,   bool,           false)
+        NQQ_SETTING(SearchMode,     int,            1)  // SearchHelpers::SearchMode::PlainText
         NQQ_SETTING(SearchHistory,  QStringList,    QStringList())
         NQQ_SETTING(ReplaceHistory, QStringList,    QStringList())
         NQQ_SETTING(FileHistory,    QStringList,    QStringList())
