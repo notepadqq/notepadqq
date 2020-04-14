@@ -58,23 +58,16 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->chkShowAdvanced->setChecked(s.Search.getShowAdvanced());
     ui->chkShowAdvanced->toggled(ui->chkShowAdvanced->isChecked());
     int mode = s.Search.getSearchMode();
-    if (mode == 1)
-    {
+    if (mode == 1) {
         ui->radSearchPlainText->setChecked(true);
         ui->radSearchPlainText->toggled(true);
-    }
-    else if (mode == 2)
-    {
+    } else if (mode == 2) {
         ui->radSearchWithSpecialChars->setChecked(true);
         ui->radSearchWithSpecialChars->toggled(true);
-    }
-    else if (mode == 3)
-    {
+    } else if (mode == 3) {
         ui->radSearchWithRegex->setChecked(true);
         ui->radSearchWithRegex->toggled(true);
-    }
-    else
-    {
+    } else {
         ui->radSearchPlainText->setChecked(true);
         ui->radSearchPlainText->toggled(true);
     }
