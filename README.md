@@ -63,21 +63,11 @@ Distribution Packages
 
 To install the latest stable version:
 
-    sudo snap install --classic notepadqq
+    sudo snap install notepadqq
 
 You don't have the `snap` command? Follow the instructions at https://docs.snapcraft.io/core/install and then install Notepadqq as shown above.
 
 You can follow the unstable development releases from the "edge" channel.
-
-#### Launchpad PPA
-You should prefer using Snap packages, which are natively supported on Ubuntu (see above). Anyway, Notepadqq is also available from an [official PPA](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq):
-
-    sudo add-apt-repository ppa:notepadqq-team/notepadqq
-    sudo apt-get update
-    sudo apt-get install notepadqq
-
-#### Debian
-Download a deb package from the Ubuntu PPA: [download](https://launchpad.net/~notepadqq-team/+archive/ubuntu/notepadqq/+packages)
 
 #### Arch Linux (community-maintained)
 Notepadqq is available from Arch's [community repositories](https://www.archlinux.org/packages/community/x86_64/notepadqq/). To install using pacman:
@@ -86,7 +76,6 @@ Notepadqq is available from Arch's [community repositories](https://www.archlinu
 
 Alternatively it can be found in the AUR:
 
- * Stable (pre-built Debian package): [notepadqq-bin](https://aur.archlinux.org/packages/notepadqq-bin/)
  * Development (git version): [notepadqq-git](https://aur.archlinux.org/packages/notepadqq-git/)
 
 #### OpenSUSE (community-maintained)
