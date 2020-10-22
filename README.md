@@ -59,7 +59,11 @@ If the newest version of Qt isn't available on your distribution, you can use th
 Distribution Packages
 ---------------------
 
-#### Most distributions: Snap (recommended)
+#### Ubuntu, Debian, and others:
+
+    sudo apt install notepadqq
+
+#### Snap
 
 To install the latest stable version:
 
