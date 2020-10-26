@@ -1,0 +1,591 @@
+[Icon Theme]
+Name=GNOME
+Name[af]=GNOME
+Name[an]=GNOME
+Name[ar]=جنوم
+Name[as]=GNOME
+Name[ast]=GNOME
+Name[az]=GNOME
+Name[be]=GNOME
+Name[be@latin]=GNOME
+Name[bg]=GNOME
+Name[bn]=GNOME
+Name[bn_IN]=GNOME
+Name[br]=GNOME
+Name[bs]=GNOME
+Name[ca]=GNOME
+Name[ca@valencia]=GNOME
+Name[crh]=GNOME
+Name[cs]=GNOME
+Name[csb]=GNOME
+Name[cy]=GNOME
+Name[da]=Gnome
+Name[de]=GNOME
+Name[dz]=ཇི་ནོམ།
+Name[el]=GNOME
+Name[en@shaw]=·𐑜𐑯𐑴𐑥
+Name[en_CA]=GNOME
+Name[en_GB]=GNOME
+Name[eo]=GNOME
+Name[es]=GNOME
+Name[et]=GNOME
+Name[eu]=GNOME
+Name[fa]=گنوم
+Name[fi]=GNOME
+Name[fr]=GNOME
+Name[fur]=GNOME
+Name[fy]=GNOME
+Name[ga]=GNOME
+Name[gd]=GNOME
+Name[gl]=GNOME
+Name[gu]=જીનોમ
+Name[he]=GNOME
+Name[hi]=गनोम
+Name[hr]=GNOME
+Name[hu]=GNOME
+Name[id]=GNOME
+Name[is]=GNOME
+Name[it]=GNOME
+Name[ja]=GNOME
+Name[ka]=გნომი
+Name[kk]=GNOME ортасы
+Name[km]=GNOME
+Name[kn]=GNOME
+Name[ko]=그놈
+Name[ku]=GNOME
+Name[lt]=GNOME
+Name[lv]=GNOME
+Name[mai]=गनोम
+Name[mg]=GNOME
+Name[mk]=GNOME
+Name[ml]=ഗ്നോം
+Name[mn]=ГНОМЕ
+Name[mr]=GNOME
+Name[ms]=GNOME
+Name[nb]=GNOME
+Name[nds]=GNOME
+Name[ne]=जिनोम
+Name[nhn]=GNOME
+Name[nl]=GNOME
+Name[nn]=GNOME
+Name[oc]=GNOME
+Name[or]=ନୋମ
+Name[pa]=ਗਨੋਮ
+Name[pl]=GNOME
+Name[ps]=جنومي
+Name[pt]=GNOME
+Name[pt_BR]=GNOME
+Name[ro]=GNOME
+Name[ru]=Среда GNOME
+Name[si]=GNOME
+Name[sk]=GNOME
+Name[sl]=GNOME
+Name[sq]=GNOME
+Name[sr]=Гном
+Name[sr@latin]=Gnom
+Name[sv]=GNOME
+Name[ta]=GNOME
+Name[te]=గ్నోమ్
+Name[tg]=GNOME
+Name[th]=GNOME
+Name[tk]=GNOME
+Name[tr]=GNOME
+Name[ug]=GNOME
+Name[uk]=GNOME
+Name[uz]=GNOME
+Name[uz@cyrillic]=GNOME
+Name[vi]=GNOME
+Name[xh]=i-GNOME
+Name[zh_CN]=GNOME
+Name[zh_HK]=GNOME
+Name[zh_TW]=GNOME
+Comment=Default GNOME Theme
+Comment[af]=Verstek-GNOME-tema
+Comment[an]=Tema predeterminau de GNOME
+Comment[ar]=سِمة جنوم الإفتراضية
+Comment[as]=অবিকল্পিত GNOME থীম
+Comment[ast]=Tema predetermináu de Gnome
+Comment[az]=Ön Qurğulu Gnome Örtüyü
+Comment[be]=Прадвызначаны матыў GNOME
+Comment[be@latin]=Zmoŭčany matyŭ GNOME
+Comment[bg]=Стандартна тема на GNOME
+Comment[bn]=পূর্বনির্ধারিত GNOME থীম
+Comment[bn_IN]=ডিফল্ট GNOME থিম
+Comment[br]=Neuz GNOME dre-ziouer
+Comment[bs]=Uobičajena GNOME Tema
+Comment[ca]=Tema del GNOME per defecte
+Comment[ca@valencia]=Tema del GNOME per defecte
+Comment[crh]=Ög-belgilengen GNOME Teması
+Comment[cs]=Výchozí motiv GNOME
+Comment[csb]=Domëslny mòtiw GNOME
+Comment[cy]=Thema diofyn GNOME
+Comment[da]=Standardtema til Gnome
+Comment[de]=GNOME-Vorgabethema
+Comment[dz]=སྔོན་སྒྲིག་ཇི་ནོམ་བརྗོད་དོན།
+Comment[el]=Προεπιλεμένο θέμα του Gnome
+Comment[en@shaw]=𐑛𐑦𐑓𐑷𐑤𐑑 ·𐑜𐑯𐑴𐑥 𐑔𐑰𐑥
+Comment[en_CA]=Default GNOME Theme
+Comment[en_GB]=Default GNOME Theme
+Comment[eo]=Defaŭlta GNOME-etoso
+Comment[es]=Tema predeterminado de GNOME
+Comment[et]=Gnome'i vaiketeema
+Comment[eu]=Lehenetsitako GNOMEren gaia
+Comment[fa]=تم پیش‌فرض گنوم
+Comment[fi]=Gnomen oletusteema
+Comment[fr]=Thème GNOME par défaut
+Comment[fur]=Teme predefinît di GNOME
+Comment[fy]=Standert GNOME Tema
+Comment[ga]=Téama GNOME Réamhshocraithe
+Comment[gd]=Ùrlar GNOME bunaiteach
+Comment[gl]=Tema predeterminado do GNOME
+Comment[gu]=મૂળભૂત જીનોમ થીમ
+Comment[he]=ערכת הנושא ברירת המחדל של Gnome
+Comment[hi]=डिफ़ॉल्ट गनोम प्रसंग
+Comment[hr]=Uobičajena tema GNOME sustava
+Comment[hu]=Alapértelmezett GNOME-téma
+Comment[id]=Tema GNOME Standar
+Comment[is]=Sjálfgefið GNOME Þema
+Comment[it]=Tema predefinito di GNOME
+Comment[ja]=デフォルトの GNOME テーマ
+Comment[ka]=ნაგულისხმევი გნომის გაფორმება
+Comment[kk]=GNOME ортасының стандартты тақырыбы 
+Comment[km]=ស្បែក GNOME លំនាំដើម
+Comment[kn]=ಪೂರ್ವನಿಯೋಜಿತ GNOME ಥೀಮ್
+Comment[ko]=기본 그놈 테마
+Comment[ku]=Dirba GNOME ya standard
+Comment[lt]=Standartinė GNOME tema
+Comment[lv]=Noklusējuma GNOME motīvs
+Comment[mai]=मूलभूत गनोम प्रसंग
+Comment[mg]=Endrika GNOME lasitra
+Comment[mk]=Основна тема на GNOME
+Comment[ml]=ഗ്നോമിലെ സഹജമായ രംഗവിധാനം
+Comment[mn]=ГНОМЕ-стандарт загварууд
+Comment[mr]=मुलभूत GNOME थीम
+Comment[ms]=Tema GNOME Default
+Comment[nb]=Forvalgt GNOME tema
+Comment[nds]=Standard GNOME Utsehn
+Comment[ne]=पूर्वनिर्धारित जिनोम विषयवस्तु
+Comment[nhn]=pehualiztlacelmiluilli cemaxcayotl GNOME
+Comment[nl]=Standaard GNOME-thema
+Comment[nn]=Vanleg GNOME-drakt
+Comment[oc]=Tèma per defaut de GNOME
+Comment[or]=ପୂର୍ବ ନିର୍ଦ୍ଧାରିତ ନୋମ ପ୍ରସଙ୍ଗ
+Comment[pa]=ਡਿਫਾਲਟ ਗਨੋਮ ਥੀਮ
+Comment[pl]=Domyślny motyw GNOME
+Comment[ps]=د جنومي تلواله ويينه
+Comment[pt]=Tema GNOME por Omissão
+Comment[pt_BR]=Tema Padrão do GNOME
+Comment[ro]=Temă implicită GNOME
+Comment[ru]=Стандартная тема среды GNOME
+Comment[si]=සාමාන්‍ය GNOME තේමාව
+Comment[sk]=Štandardná téma GNOME
+Comment[sl]=Privzeta tema GNOME
+Comment[sq]=Tema e prezgjedhur e GNOME
+Comment[sr]=Подразумевана тема Гнома
+Comment[sr@latin]=Podrazumevana tema Gnoma
+Comment[sv]=Standardtema för GNOME
+Comment[ta]=முன்னிருப்பு GNOME பொருள்
+Comment[te]=అప్రమెయ గ్నొమ్ వైవిద్యాంశం
+Comment[tg]=Мавзӯи пешфарзи GNOME
+Comment[th]=ชุดตกแต่งปริยายของ Gnome
+Comment[tk]=GNOMEniň oň bellenen temi
+Comment[tr]=Öntanımlı GNOME Teması
+Comment[ug]=كۆڭۈلدىكى GNOME باش تېمىسى
+Comment[uk]=Типова тема середовища GNOME
+Comment[uz]=Andoza GNOME mavzusi
+Comment[uz@cyrillic]=Андоза GNOME мавзуси
+Comment[vi]=Sắc thái GNOME Mặc Định
+Comment[xh]=Misela Umxholo we GNOME
+Comment[zh_CN]=GNOME 默认主题
+Comment[zh_HK]=預設 GNOME 佈景主題
+Comment[zh_TW]=預設 GNOME 佈景主題
+Example=folder
+
+# KDE Specific Stuff
+DisplayDepth=32
+LinkOverlay=link_overlay
+LockOverlay=lock_overlay
+ZipOverlay=zip_overlay
+DesktopDefault=48
+DesktopSizes=16,22,32,48,64,72,96,128
+ToolbarDefault=22
+ToolbarSizes=16,22,32,48
+MainToolbarDefault=22
+MainToolbarSizes=16,22,32,48
+SmallDefault=16
+SmallSizes=16
+PanelDefault=32
+PanelSizes=16,22,32,48,64,72,96,128
+
+# Directory list
+Directories=8x8/emblems,16x16/actions,16x16/animations,16x16/apps,16x16/categories,16x16/devices,16x16/emblems,16x16/emotes,16x16/mimetypes,16x16/places,16x16/status,22x22/actions,22x22/animations,22x22/apps,22x22/categories,22x22/devices,22x22/emblems,22x22/emotes,22x22/mimetypes,22x22/places,22x22/status,24x24/actions,24x24/apps,24x24/categories,24x24/devices,24x24/emblems,24x24/emotes,24x24/mimetypes,24x24/places,24x24/status,32x32/actions,32x32/animations,32x32/apps,32x32/categories,32x32/devices,32x32/emblems,32x32/emotes,32x32/mimetypes,32x32/places,32x32/status,48x48/actions,48x48/animations,48x48/apps,48x48/categories,48x48/devices,48x48/emblems,48x48/emotes,48x48/mimetypes,48x48/places,48x48/status,256x256/actions,256x256/apps,256x256/categories,256x256/devices,256x256/emblems,256x256/emotes,256x256/mimetypes,256x256/places,256x256/status,scalable/actions,scalable/apps,scalable/devices,scalable/emblems,scalable/mimetypes,scalable/places,scalable/status,scalable/categories
+
+[8x8/emblems]
+Context=Emblems
+Size=8
+Type=Fixed
+
+[16x16/actions]
+Context=Actions
+Size=16
+Type=Fixed
+
+[16x16/animations]
+Context=Animations
+Size=16
+Type=Fixed
+
+[16x16/apps]
+Context=Applications
+Size=16
+Type=Fixed
+
+[16x16/categories]
+Context=Categories
+Size=16
+Type=Fixed
+
+[16x16/devices]
+Context=Devices
+Size=16
+Type=Fixed
+
+[16x16/emblems]
+Context=Emblems
+Size=16
+Type=Fixed
+
+[16x16/emotes]
+Context=Emotes
+Size=16
+Type=Fixed
+
+[16x16/mimetypes]
+Context=MimeTypes
+Size=16
+Type=Fixed
+
+[16x16/places]
+Context=Places
+Size=16
+Type=Fixed
+
+[16x16/status]
+Context=Status
+Size=16
+Type=Fixed
+
+[22x22/actions]
+Context=Actions
+Size=22
+Type=Fixed
+
+[22x22/animations]
+Context=Animations
+Size=22
+Type=Fixed
+
+[22x22/apps]
+Context=Applications
+Size=22
+Type=Fixed
+
+[22x22/categories]
+Context=Categories
+Size=22
+Type=Fixed
+
+[22x22/devices]
+Context=Devices
+Size=22
+Type=Fixed
+
+[22x22/emblems]
+Context=Emblems
+Size=22
+Type=Fixed
+
+[22x22/emotes]
+Context=Emotes
+Size=22
+Type=Fixed
+
+[22x22/mimetypes]
+Context=MimeTypes
+Size=22
+Type=Fixed
+
+[22x22/places]
+Context=Places
+Size=22
+Type=Fixed
+
+[22x22/status]
+Context=Status
+Size=22
+Type=Fixed
+
+[24x24/actions]
+Context=Actions
+Size=24
+Type=Fixed
+
+[24x24/apps]
+Context=Applications
+Size=24
+Type=Fixed
+
+[24x24/categories]
+Context=Categories
+Size=24
+Type=Fixed
+
+[24x24/devices]
+Context=Devices
+Size=24
+Type=Fixed
+
+[24x24/emblems]
+Context=Emblems
+Size=24
+Type=Fixed
+
+[24x24/emotes]
+Context=Emotes
+Size=24
+Type=Fixed
+
+[24x24/mimetypes]
+Context=MimeTypes
+Size=24
+Type=Fixed
+
+[24x24/places]
+Context=Places
+Size=24
+Type=Fixed
+
+[24x24/status]
+Context=Status
+Size=24
+Type=Fixed
+
+[32x32/actions]
+Context=Actions
+Size=32
+Type=Fixed
+
+[32x32/animations]
+Context=Animations
+Size=32
+Type=Fixed
+
+[32x32/apps]
+Context=Applications
+Size=32
+Type=Fixed
+
+[32x32/categories]
+Context=Categories
+Size=32
+Type=Fixed
+
+[32x32/devices]
+Context=Devices
+Size=32
+Type=Fixed
+
+[32x32/emblems]
+Context=Emblems
+Size=32
+Type=Fixed
+
+[32x32/emotes]
+Context=Emotes
+Size=32
+Type=Fixed
+
+[32x32/mimetypes]
+Context=MimeTypes
+Size=32
+Type=Fixed
+
+[32x32/places]
+Context=Places
+Size=32
+Type=Fixed
+
+[32x32/status]
+Context=Status
+Size=32
+Type=Fixed
+
+[48x48/actions]
+Context=Actions
+Size=48
+Type=Fixed
+
+[48x48/animations]
+Context=Animations
+Size=48
+Type=Fixed
+
+[48x48/apps]
+Context=Applications
+Size=48
+Type=Fixed
+
+[48x48/categories]
+Context=Categories
+Size=48
+Type=Fixed
+
+[48x48/devices]
+Context=Devices
+Size=48
+Type=Fixed
+
+[48x48/emblems]
+Context=Emblems
+Size=48
+Type=Fixed
+
+[48x48/emotes]
+Context=Emotes
+Size=48
+Type=Fixed
+
+[48x48/mimetypes]
+Context=MimeTypes
+Size=48
+Type=Fixed
+
+[48x48/places]
+Context=Places
+Size=48
+Type=Fixed
+
+[48x48/status]
+Context=Status
+Size=48
+Type=Fixed
+
+[256x256/actions]
+Context=Actions
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/apps]
+Context=Applications
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/categories]
+Context=Categories
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/devices]
+Context=Devices
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/emblems]
+Context=Emblems
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/emotes]
+Context=Emotes
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/mimetypes]
+Context=MimeTypes
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/places]
+Context=Places
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[256x256/status]
+Context=Status
+Size=256
+MinSize=56
+MaxSize=512
+Type=Scalable
+
+[scalable/actions]
+Context=Actions
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/apps]
+Context=Applications
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/devices]
+Context=Devices
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/emblems]
+Context=Emblems
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/mimetypes]
+Context=MimeTypes
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/places]
+Context=Places
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/status]
+Context=Status
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[scalable/categories]
+Context=Categories
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
+
