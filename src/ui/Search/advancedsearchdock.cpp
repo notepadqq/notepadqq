@@ -403,7 +403,7 @@ QWidget* AdvancedSearchDock::buildSearchPanelWidget() {
 
     gl->setSizeConstraint(QGridLayout::SetNoConstraint);
 
-    // Put the gridview into a vbox with a strecher so the gridview doesn't strech when the panelwidget is resized.
+    // Put the gridview into a vbox with a stretcher so the gridview doesn't stretch when the panelwidget is resized.
     QVBoxLayout* top = new QVBoxLayout();
     top->addWidget( makeDivider(QFrame::HLine) );
     top->addLayout(gl);
@@ -451,7 +451,7 @@ void AdvancedSearchDock::selectSearchFromHistory(int index)
     if (index==-1)
         return;
 
-    // These signals were connected farther down this function in a previous invokation.
+    // These signals were connected farther down this function in a previous invocation.
     if (m_currentSearchInstance && m_currentSearchInstance->isSearchInProgress()) {
         disconnect(m_currentSearchInstance, &SearchInstance::searchCompleted,
                    this, &AdvancedSearchDock::onCurrentSearchInstanceCompleted);

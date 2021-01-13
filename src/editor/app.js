@@ -569,7 +569,7 @@ UiDriver.registerEventHandler("C_FUN_IS_MATH_ENABLED", function(msg, data, prevR
 var tabToSpaceCounter = 0;
 function tabToSpaceHelper(match, offset, tabSize) {
     /*
-        string.replace() does not update the string inbetween invokations of this update function.
+        string.replace() does not update the string inbetween invocations of this update function.
         Since we replace a single tab with multiple spaces we've got to keep track of the extra
         string length outselves. tabToSpaceCounter holds the number of extra spaces we've added.
      */

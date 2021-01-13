@@ -23,7 +23,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 /**
  * @brief Loads a session XML file and restores all its tabs in the specified window.
  * @param docEngine The DocEngine used to load all files.
- * @param editorContainer The TopEditorContainer which will receive all newly crated Tabs.
+ * @param editorContainer The TopEditorContainer which will receive all newly created Tabs.
  * @param sessionPath Path to where the XML file is located.
  */
 void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath);

@@ -66,7 +66,7 @@ struct MatchResult {
      */
     QString getPostMatchString(bool fullText=false) const;
 
-    QString matchLineString; // The full text line where the match occured
+    QString matchLineString; // The full text line where the match occurred
     int lineNumber;          // The line number, starting at 1
     int positionInFile;      // The match's offset from the beginning of the file
     int positionInLine;      // The match's offset from the beginning of the line

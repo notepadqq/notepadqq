@@ -11,7 +11,7 @@
 
 /**
  * @brief matchesWholeWord Returns true if the substring at data.mid(index,matchLength) is a whole word.
- *                         This means it's preceeded and followed by either a whitespace, symbol or punctuation.
+ *                         This means it's preceded and followed by either a whitespace, symbol or punctuation.
  */
 bool matchesWholeWord(int index, int matchLength, const QString &data)
 {
@@ -124,7 +124,7 @@ DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QStrin
         }
 
         // std::upper_bound returns an iterator to the first item greater than 'offset'. This is the line after the match.
-        // Substract 1 to get the line the match is on.
+        // Subtract 1 to get the line the match is on.
         const auto it = std::upper_bound(linePosition.begin(), linePosition.end(), offset);
         const int line = std::distance(linePosition.begin(), it);
         const int lineStart = linePosition[line-1];
