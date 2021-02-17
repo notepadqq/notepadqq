@@ -2247,8 +2247,8 @@ void MainWindow::runCommand()
         QString cmd = command;
         if (!url.isEmpty()) {
             cmd.replace("\%url\%", url.toString(QUrl::None));
-            cmd.replace("\%path\%", url.path(QUrl::FullyEncoded));
-            cmd.replace("\%filename\%", url.fileName(QUrl::FullyEncoded));
+            cmd.replace("\%path\%", url.path(QUrl::FullyDecoded));
+            cmd.replace("\%filename\%", url.fileName(QUrl::FullyDecoded));
             cmd.replace("\%directory\%", QFileInfo(url.toLocalFile()).absolutePath());
         }
         if (!selection.first().isEmpty()) {
