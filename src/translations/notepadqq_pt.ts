@@ -357,7 +357,7 @@
         <source>Notepadqq asks permission to overwrite the following file:
 
 %1</source>
-        <translation>Notepadqq pide permiso para sobrescribir el siguiente archivo: 
+        <translation>Notepadqq pede permissão para sobreescrever o seguinte arquivo: 
 
 %1</translation>
     </message>
