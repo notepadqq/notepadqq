@@ -2210,6 +2210,18 @@ void MainWindow::generateRunMenu()
     connect(a, &QAction::triggered, this, &MainWindow::modifyRunCommands);
 }
 
+/**
+ * @brief Configure any user interface after loading session
+ */
+void MainWindow::configurePostSessionUserInterface()
+{
+    // Restore zoom after load session
+    const qreal zoom = m_settings.General.getZoom();
+    for (int i = 0; i < m_topEditorContainer->count(); i++) {
+        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
+    }
+}
+
 void MainWindow::modifyRunCommands()
 {
     NqqRun::RunPreferences p;
