@@ -311,7 +311,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 // Since we didn't cache the file and it is an orphan, we won't save it in the session.
                 continue;
             }
-            // Else tab is an openened unmodified file, we don't have to do anything special.
+            // Else tab is an opened unmodified file, we don't have to do anything special.
 
             td.filePath = !isOrphan ? editor->filePath().toLocalFile() : "";
 

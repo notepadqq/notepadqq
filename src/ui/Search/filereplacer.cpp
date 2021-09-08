@@ -23,7 +23,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
 
     QVector<BackReference> backReferences;
 
-    // Search the replacement string for occurences of back references.
+    // Search the replacement string for occurrences of back references.
     // Leave any references to non-existing capture groups alone.
     // Only supports numbered references of up to 9. No named or relative references.
     if (doc.regexCaptureGroupCount > 0) {
