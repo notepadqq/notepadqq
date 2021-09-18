@@ -44,6 +44,10 @@ If you encounter errors make sure to have the necessary libraries installed. For
 For CentOS:
 
     sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel pkgconfig
+
+For Fedora 34:
+
+    sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet uchardet-devel qt5-qtwebchannel-devel pkgconfig
     
 #### Install
 
