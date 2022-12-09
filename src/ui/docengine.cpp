@@ -68,20 +68,20 @@ DocEngine::DecodedText DocEngine::readToString(QFile *file, QTextCodec *codec, b
     return decoded;
 }
 
-QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor)
+QtPromise::QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor)
 {
     return read(file, editor, nullptr, false);
 }
 
-QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom)
+QtPromise::QPromise<void> DocEngine::read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom)
 {
     if(!editor)
-        return QPromise<void>::reject(0);
+        return QtPromise::QPromise<void>::reject(0);
 
     DecodedText decoded = readToString(file, codec, bom);
 
     if (decoded.error)
-        return QPromise<void>::reject(0);
+        return QtPromise::QPromise<void>::reject(0);
 
     editor->setCodec(decoded.codec);
     editor->setBom(decoded.bom);
@@ -136,7 +136,7 @@ int showReloadDialog(const QString docName) {
     return msgBox.exec();
 }
 
-QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
+QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
 {
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
@@ -146,12 +146,12 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
     auto fileSizeAction = std::make_shared<FileSizeAction>(docLoader.fileSizeAction);
 
     if (fileNames.empty())
-        return QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>>();
+        return QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>>();
 
     if (rememberLastSelectedDir)
         NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
 
-    QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> loadedEditors;
+    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadedEditors;
 
     bool isFirstDocument = true;
 
@@ -242,7 +242,7 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
             tabWidget->editor(tabIndex)->setFocus();
         }
 
-        auto continuationP = QPromise<QSharedPointer<Editor>>([=](auto resolve, auto reject)
+        auto continuationP = QtPromise::QPromise<QSharedPointer<Editor>>([=](auto resolve, auto reject)
         {
             // Compute the ms of delay based on the priority for this URL.
             constexpr int min_priority_delay = 100;
@@ -283,7 +283,7 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
 
                 QFile file(localFileName);
                 if (file.exists()) {
-                    QPromise<void> readResult = this->read(&file, editor, codec, bom).wait();
+                    QtPromise::QPromise<void> readResult = this->read(&file, editor, codec, bom).wait();
 
                     while (readResult.isRejected()) {
                         // Handle error
@@ -357,7 +357,7 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
     return loadedEditors;
 }
 
-QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
+QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoader)
 {
     // FIXME Unify with loadDocumentsInBackground by calling
     // loadDocumentsInBackground() and waiting on the result promises.
@@ -370,7 +370,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
     auto fileSizeAction = std::make_shared<FileSizeAction>(docLoader.fileSizeAction);
 
     if (fileNames.empty())
-        return QPromise<void>::resolve();
+        return QtPromise::QPromise<void>::resolve();
 
     if (rememberLastSelectedDir)
         NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
@@ -470,7 +470,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
 
         QFile file(localFileName);
         if (file.exists()) {
-            QPromise<void> readResult = this->read(&file, editor, codec, bom).wait(); // FIXME To async!
+            QtPromise::QPromise<void> readResult = this->read(&file, editor, codec, bom).wait(); // FIXME To async!
 
             while (readResult.isRejected()) {
                 // Handle error
@@ -732,7 +732,8 @@ QByteArray DocEngine::getBomForCodec(QTextCodec *codec)
     int aSize; // Size of the "a" character
 
     QTextStream stream(&bom);
-    stream.setCodec(codec);
+    // TODO Needs to be fixed. https://stackoverflow.com/questions/69652985/qsimplescada-is-not-compiling-class-qtextstream-has-no-member-named-setcodec
+    // stream.setCodec(codec);
     stream.setGenerateByteOrderMark(true);
 
     // Write an 'a' so that the BOM gets written.
@@ -1057,7 +1058,7 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray &contents)
     QTextCodec* codec = nullptr;
 
     // Limit decoding to the first 64 kilobytes
-    size_t detectionSize = static_cast<size_t>(std::min(contents.size(), 65536));
+    size_t detectionSize = std::min<size_t>(contents.size(), 65536);
 
     // Use uchardet to try and detect file encoding if no BOM was found
     uchardet_t encodingDetector = uchardet_new();

@@ -4,6 +4,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QStringRef>
 
 FileReplacer::FileReplacer(const SearchResult& results, const QString &replacement)
     : m_searchResult(results),
@@ -52,14 +53,14 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
 
     int newLength = 0; // length of the new string, with all the replacements
     int lastEnd = 0;
-    QVector<QStringRef> chunks;
+    QVector<QString> chunks;  // PERF: instead of QString, these could be QStringRef
     const QString copy = content;
 
     for (const auto& result : doc.results) {
 
         int len = result.positionInFile - lastEnd;
         if (len > 0) {
-            chunks << copy.midRef(lastEnd, len);
+            chunks << copy.mid(lastEnd, len);  // PERF: using .sliced() could be faster (see also below)
             newLength += len;
         }
 
@@ -70,14 +71,14 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
             // part of "after" before the backreference
             len = backReference.pos - lastEnd;
             if (len > 0) {
-                chunks << replacement.midRef(lastEnd, len);
+                chunks << replacement.mid(lastEnd, len);
                 newLength += len;
             }
 
             // backreference itself
             len = result.regexMatch.capturedLength(backReference.num);
             if (len > 0) {
-                chunks << copy.midRef(result.regexMatch.capturedStart(backReference.num),
+                chunks << copy.mid(result.regexMatch.capturedStart(backReference.num),
                                       len);
                 newLength += len;
             }
@@ -88,7 +89,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
         // add the last part of the after string
         len = replacement.length() - lastEnd;
         if (len > 0) {
-            chunks << replacement.midRef(lastEnd, len);
+            chunks << replacement.mid(lastEnd, len);
             newLength += len;
         }
 
@@ -97,7 +98,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
 
     // 3. trailing string after the last match
     if (copy.length() > lastEnd) {
-        chunks << copy.midRef(lastEnd);
+        chunks << copy.mid(lastEnd);
         newLength += copy.length() - lastEnd;
     }
 
@@ -105,7 +106,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     content.resize(newLength);
     int i = 0;
     QChar *uc = content.data();
-    for (const QStringRef &chunk : chunks) {
+    for (const QString &chunk : chunks) {
         int len = chunk.length();
         memcpy(uc + i, chunk.unicode(), static_cast<ulong>(len) * sizeof(QChar));
         i += len;

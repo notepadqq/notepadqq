@@ -77,7 +77,7 @@ namespace Extensions {
         QObject *Stub::objectUnmanagedPtr()
         {
             if (m_pointerType == PointerType::WEAK_POINTER)
-                return m_weakPointer.data();
+                return m_weakPointer.toStrongRef().data(); // fixme leak?
             else if (m_pointerType == PointerType::SHARED_POINTER)
                 return m_sharedPointer.data();
             else if (m_pointerType == PointerType::UNMANAGED_POINTER)
@@ -211,7 +211,7 @@ namespace Extensions {
 
             QVariant returnValue;
             if (QString(metaMethod.typeName()) != "void") {
-                returnValue = QVariant(QMetaType::type(metaMethod.typeName()),
+                returnValue = QVariant(QMetaType::fromName(metaMethod.typeName()),
                     static_cast<void*>(NULL));
             }
 
