@@ -18,7 +18,7 @@ namespace EditorNS
 
         m_layout = new QHBoxLayout(m_topWidget);
         m_layout->setContentsMargins(0, 0, 0, 0);
-        m_layout->setMargin(12);
+        // m_layout->setMargin(12); // FIXME Is it ok to remove this?
 
         m_topWidget->setObjectName("BannerBasicMessage_base");
         setImportance(Importance::Warning);
@@ -42,7 +42,7 @@ namespace EditorNS
     void BannerBasicMessage::setMessage(QString text)
     {
         m_message->setText(text);
-        m_message->setMaximumWidth( fontMetrics().width(text)+30 );
+        m_message->setMaximumWidth( fontMetrics().size(Qt::TextSingleLine, text).width()+30 );
     }
 
     void BannerBasicMessage::setImportance(Importance importance)
