@@ -17,8 +17,7 @@ namespace EditorNS
         topLayout->addWidget(m_topWidget);
 
         m_layout = new QHBoxLayout(m_topWidget);
-        m_layout->setContentsMargins(0, 0, 0, 0);
-        // m_layout->setMargin(12); // FIXME Is it ok to remove this?
+        m_layout->setContentsMargins(12, 12, 12, 12);
 
         m_topWidget->setObjectName("BannerBasicMessage_base");
         setImportance(Importance::Warning);
