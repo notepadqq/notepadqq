@@ -21,7 +21,8 @@ jobs:
     runs-on: macos-latest
     steps:   
     - uses: actions/checkout@v3
-      submodules: true
+      with:
+        submodules: true
     - name: Install dependencies
       run: brew install qt@6 uchardet
     - name: Build
