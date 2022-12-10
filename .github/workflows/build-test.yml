@@ -27,3 +27,5 @@ jobs:
       run: brew install qt@6 uchardet
     - name: Build
       run: ./configure && make
+    - name: Test
+      run: ./src/ui-tests/ui-tests.app/Contents/MacOS/ui-tests
