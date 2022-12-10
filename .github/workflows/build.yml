@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  notepadqq:
+  notepadqq-linux:
     runs-on: ubuntu-latest
     steps:   
     - name: Build and push
@@ -16,3 +16,13 @@ jobs:
       with:
         push: false
         file: build.Dockerfile
+
+  notepadqq-macos:
+    runs-on: macos-latest
+    steps:   
+    - uses: actions/checkout@v3
+      submodules: true
+    - name: Install dependencies
+      run: brew install qt@6 uchardet
+    - name: Build
+      run: ./configure && make
