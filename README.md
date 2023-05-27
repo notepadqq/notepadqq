@@ -1,5 +1,9 @@
 # <img src="https://user-images.githubusercontent.com/4319621/36906314-e3f99680-1e35-11e8-90fd-f959c9641f36.png" alt="Notepadqq" width="32" height="32" /> Notepadqq [![Build Status](https://travis-ci.com/notepadqq/notepadqq.svg?branch=master)](https://travis-ci.com/notepadqq/notepadqq) [![notepadqq](https://snapcraft.io/notepadqq/badge.svg)](https://snapcraft.io/notepadqq)
 
+> This project is not actively maintained anymore. New maintainers are welcome.
+> 
+>  -- Daniele
+
 ### Links
 
 * [What is it?](#what-is-it)
