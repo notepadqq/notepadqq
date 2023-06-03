@@ -207,10 +207,10 @@ void TopEditorContainer::forEachEditor(bool backwardIndexes,
     }
 }
 
-QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
+QtPromise::QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
                                                     std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> goOn, std::function<void()> stop)> callback)
 {
-    return QPromise<void>([=](const auto& resolve, const auto&) {
+    return QtPromise::QPromise<void>([=](const auto& resolve, const auto&) {
 
         if (backwardIndices) {
             std::function<std::function<void()>(int,int)> iteration = [=](int i, int j) {
@@ -255,9 +255,9 @@ QPromise<void> TopEditorContainer::forEachEditorAsync(bool backwardIndices,
     });
 }
 
-QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> done)> callback)
+QtPromise::QPromise<void> TopEditorContainer::forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> done)> callback)
 {
-    return QPromise<void>([=](const auto& resolve, const auto&) {
+    return QtPromise::QPromise<void>([=](const auto& resolve, const auto&) {
 
         // Collect all the indices we're going to use
         std::vector<std::pair<int,int>> indices;

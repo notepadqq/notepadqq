@@ -11,8 +11,6 @@
 #include <functional>
 #include <vector>
 
-using namespace QtPromise;
-
 /**
  * @brief Contains one or more EditorTabWidgets. This class
  *        allows the user to have multiple tabs displayed at the
@@ -64,7 +62,7 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have finished.
      */
-    QPromise<void> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> goOn, std::function<void()> stop)> callback);
+    QtPromise::QPromise<void> forEachEditorAsync(bool backwardIndices, std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> goOn, std::function<void()> stop)> callback);
 
     /**
      * @brief Executes the specified asynchronous function for each editor in this container, concurrently.
@@ -72,7 +70,7 @@ public:
      * @param callback
      * @return Returns a promise which is resolved when all the callbacks have called done().
      */
-    QPromise<void> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> done)> callback);
+    QtPromise::QPromise<void> forEachEditorConcurrent(std::function<void (const int tabWidgetId, const int editorId, EditorTabWidget *tabWidget, QSharedPointer<Editor> editor, std::function<void()> done)> callback);
 
     std::vector<QSharedPointer<Editor>> getOpenEditors();
 

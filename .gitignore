@@ -5,6 +5,7 @@
 *.swp
 .DS_Store
 Thumbs.db
+.qtc_clangd
 
 # Backup files
 *.bak

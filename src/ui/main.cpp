@@ -38,7 +38,8 @@ int main(int argc, char *argv[])
 #endif
 
     // Initialize random number generator
-    qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
+    // TODO: Fix https://doc.qt.io/archives/qt-5.11/qtglobal-obsolete.html#qsrand
+    // qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
     SingleApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

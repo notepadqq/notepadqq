@@ -195,7 +195,7 @@ void FileSearcher::run() {
                 QDirIterator::NoIteratorFlags;
 
     // Split contents of the file pattern string and sanitize it for use
-    QStringList filters = m_searchConfig.filePattern.split(',', QString::SkipEmptyParts);
+    QStringList filters = m_searchConfig.filePattern.split(',', Qt::SkipEmptyParts);
     for (QString& item : filters)
         item = item.trimmed();
 

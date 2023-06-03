@@ -680,7 +680,7 @@ void frmPreferences::on_btnToolbarReset_clicked()
 
     QString toolbarItems = MainWindow::lastActiveInstance()->getDefaultToolBarString();
     auto actions = MainWindow::lastActiveInstance()->getActions();
-    auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
+    auto parts = toolbarItems.split('|', Qt::SkipEmptyParts);
 
     for (const auto& part : parts) {
         if (part == "Separator") {

@@ -97,12 +97,12 @@ public:
         /**
          * @brief execute Runs the load operation.
          */
-        QPromise<void> execute() {
+        QtPromise::QPromise<void> execute() {
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocuments(*this);
         }
 
-        QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> executeInBackground() {
+        QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> executeInBackground() {
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocumentsInBackground(*this);
         }
@@ -199,15 +199,15 @@ private:
      * @param editor
      * @return fulfilled if successful, rejected otherwise
      */
-    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor);
-    QPromise<void> read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
+    QtPromise::QPromise<void> read(QFile *file, QSharedPointer<Editor> editor);
+    QtPromise::QPromise<void> read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     // FIXME Separate from reload
 
     /**
      * @brief loadDocuments Responsible for loading or reloading a number of text files.
      * @param docLoader Contains parameters for document loading. See DocumentLoader class for info.
      */
-    QPromise<void> loadDocuments(const DocumentLoader& docLoader);
+    QtPromise::QPromise<void> loadDocuments(const DocumentLoader& docLoader);
 
     /**
      * @brief Loads documents in background. Experimental API that needs to be integrated
@@ -215,7 +215,7 @@ private:
      * @param docLoader
      * @return
      */
-    QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
+    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
 
     void monitorDocument(const QString &fileName);
     void unmonitorDocument(const QString &fileName);
