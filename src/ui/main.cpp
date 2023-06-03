@@ -28,6 +28,11 @@ void loadExtensions();
 
 int main(int argc, char *argv[])
 {
+#ifdef APPIMAGE_BUILD
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --no-sandbox");
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#endif
+
     QTranslator translator;
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
