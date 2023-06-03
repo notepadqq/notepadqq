@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-	 x="0px" y="0px" viewBox="0 0 16 16" xml:space="preserve">
-<path d="M5,4.2V14h4.1v-0.8H5.9V5h6.5v4.1h0.8V4.2H5.9H5z M10.5,10l-0.6,0.6l1.5,1.5l-1.5,1.5l0.6,0.6l1.5-1.5l1.5,1.5l0.6-0.6
-	L12.5,12l1.5-1.5L13.4,10L12,11.4L10.5,10z"/>
-<path d="M2.6,2v9.8c0.8,0,1.6,0,2.4,0c0-0.3,0-0.5,0-0.8c-0.5,0-1.1,0-1.6,0V2.8h6.5c0,0.7,0,1.5,0,2.2c0.3,0,0.5,0,0.8,0
-	c0-1,0-2,0-3H3.4H2.6z"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   viewBox="0 0 16 16">
+  <path
+     d="m 1,1 v 12 h 3 v 2 H 9 V 14 H 5 V 4 h 8 v 5 h 1 V 3 H 11 V 1 H 2 Z m 1,1 h 8 V 3 H 5 4 v 9 H 2 Z M 10.707031,10.029297 10,10.736328 11.792969,12.529297 10,14.322266 10.707031,15.029297 12.5,13.236328 14.292969,15.029297 15,14.322266 13.207031,12.529297 15,10.736328 14.292969,10.029297 12.5,11.822266 Z"/>
 </svg>

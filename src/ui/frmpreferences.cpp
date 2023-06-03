@@ -3,6 +3,7 @@
 #include "include/EditorNS/editor.h"
 #include "include/Extensions/extensionsloader.h"
 #include "include/Sessions/backupservice.h"
+#include "include/iconprovider.h"
 #include "include/keygrabber.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
@@ -68,6 +69,8 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 
     ui->txtNodejs->setText(m_settings.Extensions.getRuntimeNodeJS());
     ui->txtNpm->setText(m_settings.Extensions.getRuntimeNpm());
+
+    loadIcons();
 }
 
 frmPreferences::~frmPreferences()
@@ -707,4 +710,20 @@ void frmPreferences::on_btnToolbarReset_clicked()
 void frmPreferences::on_chkAutosave_toggled(bool checked)
 {
     ui->sbAutosaveInterval->setEnabled(checked);
+}
+
+void frmPreferences::loadIcons()
+{
+    // To test fallback icons:
+    // QIcon::setThemeSearchPaths(QStringList(""));
+
+    // Assign (where possible) system theme icons to our actions.
+    // If a system icon doesn't exist, fallback on the already assigned icon.
+
+    // Toolbar menu
+    ui->btnToolbarAdd->setIcon(IconProvider::fromTheme("go-next"));
+    ui->btnToolbarRemove->setIcon(IconProvider::fromTheme("go-previous"));
+    ui->btnToolbarUp->setIcon(IconProvider::fromTheme("go-up"));
+    ui->btnToolbarDown->setIcon(IconProvider::fromTheme("go-down"));
+    ui->btnToolbarReset->setIcon(IconProvider::fromTheme("edit-undo"));
 }
