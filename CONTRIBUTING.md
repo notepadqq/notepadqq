@@ -10,7 +10,7 @@ Thanks for helping to make Notepadqq better! As a contributor, here are the guid
 
 ## <a name="question"></a> Got a Question or Problem?
 
-Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on [Google+](https://plus.google.com/communities/118430810002505082315).
+Please, do not open issues for the general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on our [Facebook group](https://www.facebook.com/groups/notepadqq/).
 
 ## <a name="issue"></a> Found a Bug?
 If you find a bug in the source code, you can help us by
