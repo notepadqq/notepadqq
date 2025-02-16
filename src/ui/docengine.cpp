@@ -262,7 +262,8 @@ QList<std::pair<QSharedPointer<Editor>, QPromise<QSharedPointer<Editor>>>> DocEn
                 // In case of a reload, save cursor, scroll position, language
                 QPair<int, int> scrollPosition;
                 QPair<int, int> cursorPosition;
-                const EditorNS::Language* language;
+                //const EditorNS::Language* language;
+                const EditorNS::Language* language = nullptr;
                 if (isAlreadyOpen) {
                     scrollPosition = editor->scrollPosition();
                     cursorPosition = editor->cursorPosition();
@@ -451,7 +452,7 @@ QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoader& docLoad
         // In case of a reload, save cursor, scroll position, language
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
-        const EditorNS::Language* language;
+        const EditorNS::Language* language = nullptr;
         if (isAlreadyOpen) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
@@ -859,7 +860,7 @@ QString DocEngine::getAvailableSudoProgram() const
         const QStringList sudoPrograms{"gksu", "kdesu", "pkexec"};
         QString envPath = QString::fromLocal8Bit(qgetenv("PATH"));
         if (!envPath.isEmpty()) {
-            QStringList pathList = envPath.split(':', QString::SkipEmptyParts);
+            QStringList pathList = envPath.split(':', Qt::SkipEmptyParts);
             for (const auto& path : pathList) {
                 QDir dir(path);
                 for (const auto& executable : sudoPrograms) {

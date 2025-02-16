@@ -9,11 +9,19 @@
 #include <QTextStream>
 #include <QTime>
 
+#include <QRandomGenerator>
+#include <QString>
+
 namespace Extensions {
 
     Extension::Extension(QString path, QString serverSocketPath) : QObject(0)
     {
-        m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(qrand());
+        //m_extensionId = path + "-" + QTime::currentTime().msec() + "-" + QString::number(qrand());
+
+        m_extensionId = path + "-" + QString::number(QTime::currentTime().msec()) + "-" + 
+                                     QString::number(QRandomGenerator::global()->generate());
+
+
 
         QJsonObject manifest = getManifest(path);
 

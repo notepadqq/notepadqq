@@ -1,6 +1,7 @@
 #include "include/keygrabber.h"
 
 #include <QMenu>
+#include <algorithm>
 
 KeyGrabber::KeyGrabber(QWidget* parent) : QTreeWidget(parent)
 {
@@ -44,7 +45,7 @@ void KeyGrabber::checkForConflicts()
     // Find conflicts among shortcuts. We take a list of all shortcuts, sort them, then
     // walk through them and compare them for equality.
     QList<NodeItem> allNodes = m_allActions;
-    qSort(allNodes.begin(), allNodes.end(), [](const NodeItem& a, const NodeItem&b ) {
+    std::sort(allNodes.begin(), allNodes.end(), [](const NodeItem& a, const NodeItem&b ) {
         return a.treeItem->text(1) < b.treeItem->text(1);
     });
 
