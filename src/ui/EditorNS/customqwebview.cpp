@@ -2,6 +2,7 @@
 
 #include <QMenu>
 #include <QMimeData>
+#include <QCoreApplication>
 
 namespace EditorNS
 {
@@ -13,15 +14,42 @@ namespace EditorNS
 
     void CustomQWebView::wheelEvent(QWheelEvent *ev)
     {
+
         emit mouseWheel(ev);
 
         if (ev->modifiers() & Qt::ShiftModifier) {
-            QWheelEvent hScroll (ev->pos(), ev->delta(), ev->buttons(), ev->modifiers(), Qt::Horizontal);
-            QWebEngineView::wheelEvent(&hScroll);
+        // Criando evento de rolagem horizontal corretamente no Qt 5.15.13
+            QWheelEvent hScroll(
+                ev->position(),                   // Posição local (QPointF)
+                ev->globalPosition(),             // Posição global (QPointF)
+                ev->pixelDelta(),                 // Delta em pixels (QPoint)
+                ev->angleDelta(),                 // Delta em ângulos (QPoint)
+                ev->buttons(),                    // Botões do mouse pressionados
+                ev->modifiers(),                  // Modificadores do teclado
+                ev->phase(),                      // Fase do evento de rolagem
+                ev->source()                      // Fonte do evento de mouse
+          );
+
+        // Propaga o evento corretamente para o Qt
+            QCoreApplication::sendEvent(this, &hScroll);
         } else {
             QWebEngineView::wheelEvent(ev);
         }
     }
+
+
+    /*
+    void CustomQWebView::wheelEvent(QWheelEvent *ev)
+    {
+        emit mouseWheel(ev);
+
+        if (ev->modifiers() & Qt::ShiftModifier) {
+            QWheelEvent hScroll (ev->position(), ev->angleDelta(), ev->buttons(), ev->modifiers(), Qt::Horizontal);
+            QWebEngineView::wheelEvent(&hScroll);
+        } else {
+            QWebEngineView::wheelEvent(ev);
+        }
+    }*/
 
     void CustomQWebView::keyPressEvent(QKeyEvent *ev)
     {
