@@ -275,12 +275,14 @@ void MainWindow::loadIcons()
     ui->actionOpen->setIcon(IconProvider::fromTheme("document-open"));
     ui->actionReload_from_Disk->setIcon(IconProvider::fromTheme("view-refresh"));
     ui->actionSave->setIcon(IconProvider::fromTheme("document-save"));
-    ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as"));
-    ui->actionSave_a_Copy_As->setIcon(IconProvider::fromTheme("document-save-as"));
-    ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all"));
-    ui->actionClose->setIcon(IconProvider::fromTheme("document-close"));
-    ui->actionClose_All->setIcon(IconProvider::fromTheme("document-close-all"));
-    ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent"));
+    ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as", QStringList() << "document-save"));
+    ui->actionSave_a_Copy_As->setIcon(IconProvider::fromTheme("document-save-as", QStringList() << "document-save"));
+    ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all", QStringList() << "document-save"));
+    ui->actionClose->setIcon(IconProvider::fromTheme("document-close", QStringList() << "window-close"));
+    ui->actionClose_All->setIcon(IconProvider::fromTheme("document-close-all",
+        QStringList() << "document-close"
+                      << "window-close"));
+    ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent", QStringList() << "document-open"));
     ui->actionExit->setIcon(IconProvider::fromTheme("application-exit"));
     ui->actionPrint->setIcon(IconProvider::fromTheme("document-print"));
     ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print")); // currently invisible
@@ -328,7 +330,8 @@ void MainWindow::loadIcons()
     ui->action_Stop_Recording->setIcon(IconProvider::fromTheme("media-playback-stop"));
     ui->action_Playback->setIcon(IconProvider::fromTheme("media-playback-start"));
     ui->actionRun_a_Macro_Multiple_Times->setIcon(IconProvider::fromTheme("media-seek-forward"));
-    ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
+    ui->actionSave_Currently_Recorded_Macro->setIcon(
+        IconProvider::fromTheme("document-save-as", QStringList() << "document-save"));
 }
 
 void MainWindow::configureStatusBar()
@@ -2196,6 +2199,7 @@ void MainWindow::generateRunMenu()
 
     QAction *a = ui->menu_Run->addAction(tr("Run..."));
     connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+    a->setIcon(IconProvider::fromTheme("system-run"));
     ui->menu_Run->addSeparator();
 
     while (i.hasNext()) {
@@ -2204,6 +2208,7 @@ void MainWindow::generateRunMenu()
         a->setData(i.value());
         a->setObjectName("RunCmd"+a->text());
         connect(a, &QAction::triggered, this, &MainWindow::runCommand);
+        a->setIcon(IconProvider::fromTheme("system-run"));
     }
     ui->menu_Run->addSeparator();
     a = ui->menu_Run->addAction(tr("Modify Run Commands"));

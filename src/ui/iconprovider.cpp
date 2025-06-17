@@ -1,4 +1,6 @@
 #include "include/iconprovider.h"
+
+#include "include/qextendediconengine.h"
 #include "include/svgiconengine.h"
 
 #include <QDebug>
@@ -8,16 +10,13 @@ IconProvider::IconProvider()
 {
 }
 
-QIcon IconProvider::fromTheme(const QString &name)
+QIcon IconProvider::getFallbackIcon(const QString& name)
 {
     // FIXME Cache the icons
 
     QString basePath = ":/icons/notepadqq/%1/%2.%3";
 
-    if (QIcon::hasThemeIcon(name)) {
-        return QIcon::fromTheme(name);
-
-    } else if (QFileInfo(basePath.arg("scalable").arg(name).arg("svg")).exists()) {
+    if (QFileInfo(basePath.arg("scalable").arg(name).arg("svg")).exists()) {
         return QIcon(SVGIconEngine::fromFile(basePath.arg("scalable").arg(name).arg("svg")));
 
     } else {
@@ -36,8 +35,9 @@ QIcon IconProvider::fromTheme(const QString &name)
         }
 
         for (const QPair<int, QString> & size : sizes) {
-            icon.addFile(basePath.arg(size.second).arg(name).arg("png"),
-                         QSize(size.first, size.first));
+            if (QFileInfo(basePath.arg(size.second).arg(name).arg("png")).exists()) {
+                icon.addFile(basePath.arg(size.second).arg(name).arg("png"), QSize(size.first, size.first));
+            }
         }
 
         // Warn about missing icons.
@@ -49,4 +49,35 @@ QIcon IconProvider::fromTheme(const QString &name)
 
         return icon;
     }
+}
+
+QIcon IconProvider::fromTheme(const QString& iconName, const QString& fallbackName)
+{
+    return QIcon(new QExtendedIconEngine(iconName, fallbackName));
+}
+
+QIcon IconProvider::fromTheme(const QString& iconName, const bool& fallbackBuiltin)
+{
+    return IconProvider::fromTheme(iconName, fallbackBuiltin ? iconName : QString());
+}
+
+QIcon IconProvider::fromTheme(const QStringList& iconNames, const QString& fallbackName)
+{
+    return QIcon(new QExtendedIconEngine(iconNames, fallbackName));
+}
+
+QIcon IconProvider::fromTheme(const QStringList& iconNames, const bool& fallbackBuiltin)
+{
+    return IconProvider::fromTheme(
+        iconNames, fallbackBuiltin ? (!iconNames.isEmpty() ? iconNames.constFirst() : QString()) : QString());
+}
+
+QIcon IconProvider::fromTheme(const QString& iconName, const QStringList& iconNames, const QString& fallbackName)
+{
+    return IconProvider::fromTheme(QStringList(iconName) + iconNames, fallbackName);
+}
+
+QIcon IconProvider::fromTheme(const QString& iconName, const QStringList& iconNames, const bool& fallbackBuiltin)
+{
+    return IconProvider::fromTheme(iconName, iconNames, fallbackBuiltin ? iconName : QString());
 }

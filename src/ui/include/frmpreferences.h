@@ -103,6 +103,8 @@ private:
     bool extensionBrowseRuntime(QLineEdit *lineEdit);
     void checkExecutableExists(QLineEdit *path);
     void updatePreviewEditorFont();
+
+    void loadIcons();
 };
 
 #endif // FRMPREFERENCES_H
