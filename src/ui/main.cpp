@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QObject>
+#include <QRandomGenerator>
 #include <QTranslator>
 #include <QtGlobal>
 
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
 #endif
 
     // Initialize random number generator
-    qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
+    QRandomGenerator::global()->seed(QDateTime::currentDateTimeUtc().time().msec() + QRandomGenerator::global()->generate());
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
     SingleApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
