@@ -20,7 +20,7 @@ AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: false
 BinPackArguments: false
 BinPackParameters: false
-BraceWrapping:   
+BraceWrapping:
   AfterClass:      false
   AfterControlStatement: false
   AfterEnum:       false
@@ -55,12 +55,12 @@ DerivePointerAlignment: false
 DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
-ForEachMacros:   
+ForEachMacros:
   - foreach
   - Q_FOREACH
   - BOOST_FOREACH
-IncludeBlocks: Regroup  
-IncludeCategories: 
+IncludeBlocks: Regroup
+IncludeCategories:
   # All (Q)t libraries
   - Regex: '^[<"]Q.*[">]$'
     Priority: 2
@@ -98,7 +98,7 @@ PenaltyBreakString: 1000
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Left
-RawStringFormats: 
+RawStringFormats:
   - Delimiter:       pb
     Language:        TextProto
     BasedOnStyle:    google
