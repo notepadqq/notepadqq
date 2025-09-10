@@ -85,6 +85,12 @@ jobs:
           ./configure
           make
 
+      - name: Setup Python 2
+        if: github.event_name == 'release'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '2.7'
+
       - name: Create DMG (Release only)
         if: github.event_name == 'release'
         run: |
@@ -95,9 +101,9 @@ jobs:
           macdeployqt notepadqq.app -executable=notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
 
           # Fix deployment issues
-          MAC_DEPLOY_FIX='../../.travis/tools/macdeployqtfix/macdeployqtfix.py'
-          python2.7 $MAC_DEPLOY_FIX notepadqq.app/Contents/MacOS/notepadqq /usr/local/Cellar/qt/5.*
-          python2.7 $MAC_DEPLOY_FIX notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess /usr/local/Cellar/qt/5.*
+          MAC_DEPLOY_FIX='../../build-tools/macos/macdeployqtfix/macdeployqtfix.py'
+          python $MAC_DEPLOY_FIX notepadqq.app/Contents/MacOS/notepadqq /usr/local/Cellar/qt/5.*
+          python $MAC_DEPLOY_FIX notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess /usr/local/Cellar/qt/5.*
 
           # Create DMG
           mkdir dmgfolder
