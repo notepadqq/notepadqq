@@ -40,15 +40,15 @@ Build it yourself
 
     notepadqq$ ./configure --prefix /usr
     notepadqq$ make
-    
+
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
-    sudo apt-get install qt5-default qttools5-dev-tools qtwebengine5-dev libqt5websockets5-dev libqt5svg5 libqt5svg5-dev libuchardet-dev pkg-config
+    sudo apt-get install qttools5-dev-tools qtwebengine5-dev libqt5websockets5-dev libqt5svg5 libqt5svg5-dev libuchardet-dev pkg-config
 
 For CentOS:
 
     sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel pkgconfig
-    
+
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
@@ -90,7 +90,7 @@ Alternatively it can be found in the AUR:
 Notepadqq is avilable in OpenSUSE's main repository:
 
      sudo zypper in notepadqq
-     
+
 #### Solus (community-maintained)
 Notepadqq is available in the `shannon` (stable) repository:
 
