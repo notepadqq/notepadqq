@@ -2,6 +2,7 @@
 #define FRMENCODINGCHOOSER_H
 
 #include <QDialog>
+#include <QTextCodec>
 
 namespace Ui {
 class frmEncodingChooser;
