@@ -289,7 +289,8 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
 
         for (int j = 0; j < tabCount; j++) {
             auto editor = tabWidget->editor(j);
-            bool isClean = editor->isClean();
+            bool isClean = true;
+            editor->isCleanP().wait().tap([&](bool _isClean){ isClean = _isClean; });
             bool isOrphan = editor->filePath().isEmpty();
             Editor::IndentationMode indentInfo = editor->indentationMode();
 
