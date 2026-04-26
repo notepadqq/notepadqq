@@ -94,7 +94,8 @@ void QSearchDockTitleButton::paintEvent(QPaintEvent* /*evt*/)
     QPainter p(this);
 
     QStyleOptionToolButton opt;
-    // opt.init(this);
+    opt.initFrom(this);
+    opt.rect = rect();
     opt.state |= QStyle::State_AutoRaise;
 
     if (style()->styleHint(QStyle::SH_DockWidget_ButtonsHaveFrame, 0, this))
