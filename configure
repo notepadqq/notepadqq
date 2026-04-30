@@ -6,7 +6,7 @@ test -n "$MAKE"      || MAKE="make"
 test -n "$CXX"       || CXX="c++"
 test -n "$TMPDIR"    || TMPDIR="$PWD"
 
-test -n "$QMAKE"    || QMAKE="$(command -v qmake-qt6 2>/dev/null || command -v qmake 2>/dev/null)"
+test -n "$QMAKE"    || QMAKE="$(command -v qmake-qt6 2>/dev/null || command -v qmake6 2>/dev/null)"
 test -n "$LRELEASE" || LRELEASE="$(command -v lrelease-qt6 2>/dev/null || command -v lrelease 2>/dev/null)"
 
 
