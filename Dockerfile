@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="Notepadqq"
 
 RUN apt-get -qq update && apt-get --no-install-recommends -y install \
