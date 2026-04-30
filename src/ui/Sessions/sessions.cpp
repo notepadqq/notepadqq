@@ -292,7 +292,7 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             bool isClean = true;
             editor->isCleanP().wait().tap([&](bool _isClean){ isClean = _isClean; });
             bool isOrphan = editor->filePath().isEmpty();
-            Editor::IndentationMode indentInfo = editor->indentationMode();
+            IndentationMode indentInfo = editor->indentationMode();
 
             if (isOrphan && !cacheModifiedFiles)
                 continue; // Don't save temporary files if we're not caching tabs

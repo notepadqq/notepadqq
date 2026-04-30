@@ -4,6 +4,7 @@
 #include "include/iconprovider.h"
 #include "include/nqqsettings.h"
 #include "ui_frmsearchreplace.h"
+#include "include/EditorNS/editor_properties.h"
 
 #include <QCompleter>
 #include <QFileDialog>
@@ -373,7 +374,7 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
         if (ui->actionFind->isChecked()) {
             auto editor = currentEditor();
 
-            QList<Editor::Selection> selections = editor->selections();
+            QList<Selection> selections = editor->selections();
             if (selections.length() > 0) {
                 editor->setCursorPosition(
                             std::min(selections[0].from, selections[0].to));

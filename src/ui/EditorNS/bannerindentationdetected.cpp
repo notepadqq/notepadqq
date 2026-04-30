@@ -8,7 +8,7 @@
 namespace EditorNS
 {
 
-    BannerIndentationDetected::BannerIndentationDetected(bool mode, Editor::IndentationMode detected, Editor::IndentationMode current, QWidget *parent) :
+    BannerIndentationDetected::BannerIndentationDetected(bool mode, IndentationMode detected, IndentationMode current, QWidget *parent) :
         BannerBasicMessage(parent)
     {
         setImportance(BannerIndentationDetected::Importance::Question);
