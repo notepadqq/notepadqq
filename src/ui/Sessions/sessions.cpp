@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
+#include <QLatin1StringView>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
