@@ -257,6 +257,10 @@ namespace Sessions {
 
 bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath)
 {
+    if (editorContainer == nullptr) {
+        return false;
+    }
+
     const bool cacheModifiedFiles = !cacheDirPath.isEmpty();
 
     QDir cacheDir;
@@ -282,6 +286,11 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     const int tabWidgetsCount = editorContainer->count();
     for (int i = 0; i < tabWidgetsCount; i++) {
         EditorTabWidget *tabWidget = editorContainer->tabWidget(i);
+
+        if (tabWidget == nullptr) {
+            continue;
+        }
+
         const int tabCount = tabWidget->count();
 
         viewData.push_back( ViewData() );
