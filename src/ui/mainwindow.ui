@@ -123,6 +123,7 @@
      <addaction name="actionDelete_Line"/>
      <addaction name="actionMove_Line_Up"/>
      <addaction name="actionMove_Line_Down"/>
+     <addaction name="actionTranspose_Line"/>
     </widget>
     <widget class="QMenu" name="menuBlank_Operations">
      <property name="title">
@@ -937,6 +938,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Down</string>
+   </property>
+  </action>
+  <action name="actionTranspose_Line">
+   <property name="text">
+    <string>&amp;Transpose Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Transpose the current line with the line above</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
    </property>
   </action>
   <action name="actionTrim_Trailing_Space">

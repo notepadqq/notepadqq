@@ -178,6 +178,7 @@ private slots:
     void on_actionDuplicate_Line_triggered();
     void on_actionMove_Line_Up_triggered();
     void on_actionMove_Line_Down_triggered();
+    void on_actionTranspose_Line_triggered();
     void on_actionTrim_Trailing_Space_triggered();
     void on_actionTrim_Leading_Space_triggered();
     void on_actionTrim_Leading_and_Trailing_Space_triggered();
