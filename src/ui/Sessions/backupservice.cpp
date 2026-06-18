@@ -79,12 +79,21 @@ void BackupService::executeBackup() {
 
 bool BackupService::writeBackup(MainWindow* wnd)
 {
+    if (wnd == nullptr) {
+        return false;
+    }
+
     // Save this MainWindow as a session inside the autosave path.
     // MainWindow's address is used to have a unique path name.
     const auto& backupPath = PersistentCache::backupDirPath();
     const auto ptrToInt = reinterpret_cast<uintptr_t>(wnd);
     const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
     const QString sessPath = backupPath + QString("/window_%1/window.xml").arg(ptrToInt);
+
+    TopEditorContainer *topEdCon = wnd->topEditorContainer();
+    if (topEdCon == nullptr) {
+        return false;
+    }
 
     return Sessions::saveSession(wnd->getDocEngine(), wnd->topEditorContainer(), sessPath, cachePath);
 }
