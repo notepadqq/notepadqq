@@ -2468,6 +2468,11 @@ void MainWindow::on_actionMove_Line_Down_triggered()
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
 }
 
+void MainWindow::on_actionTranspose_Line_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRANSPOSE_LINE");
+}
+
 void MainWindow::on_actionTrim_Trailing_Space_triggered()
 {
     currentEditor()->sendMessage("C_CMD_TRIM_TRAILING_SPACE");

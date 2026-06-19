@@ -529,6 +529,22 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevRe
     
 });
 
+UiDriver.registerEventHandler("C_CMD_TRANSPOSE_LINE", function(msg, data, prevReturn) {
+
+    var cur = editor.getCursor();
+
+    if (cur.line > 0) {
+        var line = editor.getLine(cur.line) + '\n' + editor.getLine(cur.line - 1);
+        var from = { line: cur.line - 1, ch: 0          };
+        var to   = { line: cur.line,     ch: line.length};
+
+        editor.replaceRange(line, from, to);
+        editor.setCursor(cur.line, cur.ch );
+    }
+    else {
+        return false;
+    }
+});
 
 UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevReturn) {
     editor.execCommand("deleteLine");
