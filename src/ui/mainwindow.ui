@@ -1085,7 +1085,7 @@
   </action>
   <action name="actionSet_RTL">
     <property name="text">
-      <string>Set &amp;RTL</string>
+      <string>Text Direction &amp;RTL</string>
     </property>
     <property name="toolTip">
       <string>Change Layout Direction to Right-to-Left</string>
@@ -1096,7 +1096,7 @@
   </action>
   <action name="actionSet_LTR">
     <property name="text">
-      <string>Set &amp;LTR</string>
+      <string>Text Direction &amp;LTR</string>
     </property>
     <property name="toolTip">
       <string>Change Layout Direction to Left-to-Right</string>
