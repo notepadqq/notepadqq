@@ -146,6 +146,14 @@ UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn
     editor.setCursor(line, ch);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_RTL", function(msg, data, prevReturn) {
+    editor.setOption("direction", "rtl");
+});
+
+UiDriver.registerEventHandler("C_CMD_SET_LTR", function(msg, data, prevReturn) {
+    editor.setOption("direction", "ltr");
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
     var scroll = editor.getScrollInfo();
     return [scroll.left, scroll.top];

@@ -1413,6 +1413,16 @@ void MainWindow::on_actionSelect_All_triggered()
     currentEditor()->sendMessage("C_CMD_SELECT_ALL");
 }
 
+void MainWindow::on_actionSet_RTL_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_RTL");
+}
+
+void MainWindow::on_actionSet_LTR_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_LTR");
+}
+
 void MainWindow::on_actionAbout_Notepadqq_triggered()
 {
     frmAbout *_about;
