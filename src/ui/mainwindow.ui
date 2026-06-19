@@ -1102,7 +1102,7 @@
       <string>Change Layout Direction to Left-to-Right</string>
     </property>
     <property name="shortcut">
-      <string>Ctrl+Alt+Shift+R</string>
+      <string>Ctrl+Alt+Shift+L</string>
     </property>
   </action>
  </widget>
