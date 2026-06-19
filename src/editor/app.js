@@ -488,10 +488,7 @@ UiDriver.registerEventHandler("C_FUN_GET_CURRENT_WORD", function(msg, data, prev
 });
 
 UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevReturn) {
-    var cur = editor.getCursor();
-    var line = editor.getLine(cur.line);
-    var pos = {line: cur.line, ch: line.length};
-    editor.replaceRange('\n' + line, pos);
+    duplicateCurrentLine(editor);
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevReturn) {
@@ -729,6 +726,13 @@ function onChange(editor, changeObj) {
     });
 }
 
+function duplicateCurrentLine(cm) {
+    var cur = cm.getCursor();
+    var line = cm.getLine(cur.line);
+    var pos = {line: cur.line, ch: line.length};
+    cm.replaceRange('\n' + line, pos);
+}
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
@@ -764,6 +768,9 @@ $(document).ready(function () {
         },
         "Shift-Tab": function (cm) {
             cm.indentSelection("subtract");
+        },
+        "Ctrl-D": function(cm) {
+            duplicateCurrentLine(cm);
         }
     });
 
