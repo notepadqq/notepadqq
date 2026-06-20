@@ -20,7 +20,7 @@ private:
     NqqSettings &m_settings;
     QTableWidget *m_commands;
 public:
-    RunPreferences(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
+    RunPreferences(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
     ~RunPreferences();
 
 private slots:
@@ -56,7 +56,7 @@ private:
     bool m_saved;
 
 public:
-    RunDialog(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
+    RunDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
     ~RunDialog();
     QString getCommandInput();
     bool saved();

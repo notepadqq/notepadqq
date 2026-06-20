@@ -76,14 +76,20 @@ namespace Extensions {
 
         QObject *Stub::objectUnmanagedPtr()
         {
-            if (m_pointerType == PointerType::WEAK_POINTER)
-                return m_weakPointer.data();
-            else if (m_pointerType == PointerType::SHARED_POINTER)
+            if (m_pointerType == PointerType::WEAK_POINTER) {
+                // Promoting a weak pointer to a strong reference will increase the ref counter,
+                // therby the deletion of the strong pointer will not delete the object itself.
+                // See https://doc.qt.io/qt-6/qweakpointer.html#toStrongRef.
+                const auto strong = m_weakPointer.toStrongRef();
+                if (strong) {
+                    return strong.data();
+                }
+            } else if (m_pointerType == PointerType::SHARED_POINTER) {
                 return m_sharedPointer.data();
-            else if (m_pointerType == PointerType::UNMANAGED_POINTER)
+            } else if (m_pointerType == PointerType::UNMANAGED_POINTER) {
                 return m_unmanagedPointer;
-            else
-                return nullptr;
+            }
+            return nullptr;
         }
 
         bool Stub::invoke(const QString &method, Stub::StubReturnValue &ret, const QJsonArray &args)
@@ -211,7 +217,7 @@ namespace Extensions {
 
             QVariant returnValue;
             if (QString(metaMethod.typeName()) != "void") {
-                returnValue = QVariant(QMetaType::type(metaMethod.typeName()),
+                returnValue = QVariant(QMetaType::fromName(metaMethod.typeName()),
                     static_cast<void*>(NULL));
             }
 
