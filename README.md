@@ -26,13 +26,14 @@ Build it yourself
 
 | Build dependencies    | Dependencies      |
 |-----------------------|-------------------|
-| Qt 5.6 or higher      | Qt 5.6 or higher  |
-| qtwebengine5-dev      | qtwebengine5      |
-| libqt5websockets5-dev | libqt5websockets5 |
-| libqt5svg5-dev        | libqt5svg5        |
-| qttools5-dev-tools    | coreutils         |
+| Qt 6.8 or higher      | Qt 6.8 or higher  |
+| qt6-webengine5-dev    | qt6-webengine5    |
+| qt6-websockets-dev    | qt6-websockets    |
+| qt6-svg-dev           | qt6-svg           |
+| qt6-tools-dev-tools   | coreutils         |
 | libuchardet-dev       | libuchardet       |
 | pkg-config            |                   |
+
 
 #### Get the source
 
@@ -46,11 +47,11 @@ Build it yourself
 
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
-    sudo apt-get install qttools5-dev-tools qtwebengine5-dev libqt5websockets5-dev libqt5svg5 libqt5svg5-dev libuchardet-dev pkg-config
+    sudo apt-get install qt6-tools-dev qt6-tools-dev-tools qt6-webengine-dev qt6-websockets-dev libqt6svg6 libqt6svg6-dev libuchardet-dev pkg-config
 
 For CentOS:
 
-    sudo yum install -y qt5-qtbase-devel qt5-qttools-devel qt5-qtwebengine-devel qt5-qtwebsockets-devel qt5-qtsvg-devel uchardet qt5-qtwebchannel-devel pkgconfig
+    sudo dnf install -y qt6-qtbase-devel qt6-qttools-devel qt6-qtwebengine-devel qt6-qtwebsockets-devel qt6-qtsvg-devel qt6-qtwebchannel-devel uchardet pkgconfig
 
 #### Install
 

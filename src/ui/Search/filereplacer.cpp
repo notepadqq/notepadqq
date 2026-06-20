@@ -53,8 +53,8 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
 
     int newLength = 0; // length of the new string, with all the replacements
     int lastEnd = 0;
-    QVector<QString> chunks;  // PERF: instead of QString, these could be QStringRef
-    const QString copy = content;
+    QVector<QStringView> chunks;
+    const QStringView copy = (content);
 
     for (const auto& result : doc.results) {
 
@@ -106,9 +106,9 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     content.resize(newLength);
     int i = 0;
     QChar *uc = content.data();
-    for (const QString &chunk : chunks) {
+    for (const auto &chunk : chunks) {
         int len = chunk.length();
-        memcpy(uc + i, chunk.unicode(), static_cast<ulong>(len) * sizeof(QChar));
+        memcpy(uc + i, chunk.toUtf8(), static_cast<ulong>(len) * sizeof(QChar));
         i += len;
     }
 }
