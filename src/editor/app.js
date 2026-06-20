@@ -146,6 +146,14 @@ UiDriver.registerEventHandler("C_CMD_SET_CURSOR", function(msg, data, prevReturn
     editor.setCursor(line, ch);
 });
 
+UiDriver.registerEventHandler("C_CMD_SET_RTL", function(msg, data, prevReturn) {
+    editor.setOption("direction", "rtl");
+});
+
+UiDriver.registerEventHandler("C_CMD_SET_LTR", function(msg, data, prevReturn) {
+    editor.setOption("direction", "ltr");
+});
+
 UiDriver.registerEventHandler("C_FUN_GET_SCROLL_POS", function(msg, data, prevReturn) {
     var scroll = editor.getScrollInfo();
     return [scroll.left, scroll.top];
@@ -488,10 +496,7 @@ UiDriver.registerEventHandler("C_FUN_GET_CURRENT_WORD", function(msg, data, prev
 });
 
 UiDriver.registerEventHandler("C_CMD_DUPLICATE_LINE", function(msg, data, prevReturn) {
-    var cur = editor.getCursor();
-    var line = editor.getLine(cur.line);
-    var pos = {line: cur.line, ch: line.length};
-    editor.replaceRange('\n' + line, pos);
+    duplicateCurrentLine(editor);
 });
 
 UiDriver.registerEventHandler("C_CMD_MOVE_LINE_UP", function(msg, data, prevReturn) {
@@ -529,6 +534,22 @@ UiDriver.registerEventHandler("C_CMD_MOVE_LINE_DOWN", function(msg, data, prevRe
     
 });
 
+UiDriver.registerEventHandler("C_CMD_TRANSPOSE_LINE", function(msg, data, prevReturn) {
+
+    var cur = editor.getCursor();
+
+    if (cur.line > 0) {
+        var line = editor.getLine(cur.line) + '\n' + editor.getLine(cur.line - 1);
+        var from = { line: cur.line - 1, ch: 0          };
+        var to   = { line: cur.line,     ch: line.length};
+
+        editor.replaceRange(line, from, to);
+        editor.setCursor(cur.line, cur.ch );
+    }
+    else {
+        return false;
+    }
+});
 
 UiDriver.registerEventHandler("C_CMD_DELETE_LINE", function(msg, data, prevReturn) {
     editor.execCommand("deleteLine");
@@ -713,6 +734,13 @@ function onChange(editor, changeObj) {
     });
 }
 
+function duplicateCurrentLine(cm) {
+    var cur = cm.getCursor();
+    var line = cm.getLine(cur.line);
+    var pos = {line: cur.line, ch: line.length};
+    cm.replaceRange('\n' + line, pos);
+}
+
 $(document).ready(function () {
     editor = CodeMirror($(".editor")[0], {
         lineNumbers: true,
@@ -748,6 +776,9 @@ $(document).ready(function () {
         },
         "Shift-Tab": function (cm) {
             cm.indentSelection("subtract");
+        },
+        "Ctrl-D": function(cm) {
+            duplicateCurrentLine(cm);
         }
     });
 

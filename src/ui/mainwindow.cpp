@@ -1413,6 +1413,16 @@ void MainWindow::on_actionSelect_All_triggered()
     currentEditor()->sendMessage("C_CMD_SELECT_ALL");
 }
 
+void MainWindow::on_actionSet_RTL_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_RTL");
+}
+
+void MainWindow::on_actionSet_LTR_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_LTR");
+}
+
 void MainWindow::on_actionAbout_Notepadqq_triggered()
 {
     frmAbout *_about;
@@ -2466,6 +2476,11 @@ void MainWindow::on_actionMove_Line_Up_triggered()
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
+}
+
+void MainWindow::on_actionTranspose_Line_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRANSPOSE_LINE");
 }
 
 void MainWindow::on_actionTrim_Trailing_Space_triggered()

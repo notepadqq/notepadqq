@@ -108,6 +108,8 @@ private slots:
     void on_cursorActivity(QMap<QString, QVariant> data);
     void on_actionDelete_triggered();
     void on_actionSelect_All_triggered();
+    void on_actionSet_RTL_triggered();
+    void on_actionSet_LTR_triggered();
     void on_actionAbout_Notepadqq_triggered();
     void on_actionAbout_Qt_triggered();
     void on_actionUndo_triggered();
@@ -176,6 +178,7 @@ private slots:
     void on_actionDuplicate_Line_triggered();
     void on_actionMove_Line_Up_triggered();
     void on_actionMove_Line_Down_triggered();
+    void on_actionTranspose_Line_triggered();
     void on_actionTrim_Trailing_Space_triggered();
     void on_actionTrim_Leading_Space_triggered();
     void on_actionTrim_Leading_and_Trailing_Space_triggered();
