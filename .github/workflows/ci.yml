@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  release:
+    types: [ created ]
+
+jobs:
+  format-check:
+    name: Code Format Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format-6.0 git
+
+      - name: Check code formatting
+        run: |
+          gcf_cmd="$(which git-clang-format-6.0) --binary $(which clang-format-6.0)"
+          base_commit="${{ github.event.pull_request.base.sha }}"
+          echo "Running clang-format against base commit $base_commit"
+          output="$($gcf_cmd --commit $base_commit --diff --extensions 'cpp')"
+          if [ "$output" == "no modified files to format" ] || [ "$output" == "clang-format did not modify any files" ]; then
+            echo "clang-format passed."
+            exit 0
+          else
+            echo "clang-format failed:"
+            echo "$output"
+            exit 1
+          fi
+
+  build-linux:
+    name: Linux Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 500
+
+      - name: Build with Docker
+        run: |
+          docker build -t nqq .
+          docker run -e GITHUB_EVENT_NAME="${{ github.event_name }}" -e GITHUB_REF="${{ github.ref }}" --name nqq -v $(pwd):/build -d -it nqq
+
+      - name: Configure and build
+        run: |
+          docker exec nqq ./configure
+          docker exec nqq make
+
+      - name: Run tests
+        run: |
+          docker exec nqq src/ui-tests/ui-tests
+
+  build-macos:
+    name: macOS Build and Deploy
+    runs-on: macos-latest
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install qt
+          brew install uchardet
+
+      - name: Configure environment
+        run: |
+          echo "/usr/local/opt/qt/bin" >> $GITHUB_PATH
+          echo "PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          ./configure
+          make
+
+      - name: Setup Python 2
+        if: github.event_name == 'release'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '2.7'
+
+      - name: Create DMG (Release only)
+        if: github.event_name == 'release'
+        run: |
+          cd out/release
+          
+          # Deploy Qt frameworks
+          macdeployqt notepadqq.app -executable=notepadqq.app/Contents/MacOS/notepadqq
+          macdeployqt notepadqq.app -executable=notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess
+
+          # Fix deployment issues
+          MAC_DEPLOY_FIX='../../build-tools/macos/macdeployqtfix/macdeployqtfix.py'
+          python $MAC_DEPLOY_FIX notepadqq.app/Contents/MacOS/notepadqq /usr/local/Cellar/qt/5.*
+          python $MAC_DEPLOY_FIX notepadqq.app/Contents/Frameworks/QtWebEngineCore.framework/Versions/5/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess /usr/local/Cellar/qt/5.*
+
+          # Create DMG
+          mkdir dmgfolder
+          mv notepadqq.app dmgfolder
+          ln -s /Applications ./dmgfolder/Applications
+          
+          # Extract version from tag or commit
+          if [ "${{ github.event_name }}" == "release" ]; then
+            NQQ_VERSION="${{ github.event.release.tag_name }}"
+          else
+            NQQ_VERSION="${{ github.sha }}"
+          fi
+          
+          hdiutil create -fs HFS+ -format UDBZ -srcfolder ./dmgfolder -volname Notepadqq notepadqq-${NQQ_VERSION}.dmg
+
+      - name: Upload DMG artifact
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: notepadqq-dmg
+          path: out/release/notepadqq-*.dmg
+
+      - name: Upload release asset
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: out/release/notepadqq-${{ github.event.release.tag_name }}.dmg
+          asset_name: notepadqq-${{ github.event.release.tag_name }}.dmg
+          asset_content_type: application/octet-stream
