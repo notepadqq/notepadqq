@@ -15,6 +15,7 @@
 #include "include/frmabout.h"
 #include "include/frmencodingchooser.h"
 #include "include/frmindentationmode.h"
+#include "include/frmcolumneditor.h"
 #include "include/frmlinenumberchooser.h"
 #include "include/frmpreferences.h"
 #include "include/iconprovider.h"
@@ -2169,6 +2170,30 @@ void MainWindow::on_actionIndentation_Custom_triggered()
         ui->actionIndentation_Custom->setChecked(true);
     } else {
         ui->actionIndentation_Default_Settings->setChecked(true);
+    }
+
+    dialog->deleteLater();
+}
+
+void MainWindow::on_actionColumn_Editor_triggered()
+{
+    auto editor = currentEditor();
+    int pos = editor->cursorPosition().second;
+
+    frmColumnEditor *dialog = new frmColumnEditor(this);
+    if (dialog->exec() == QDialog::Accepted) {
+        if (dialog->insTxt().isEmpty()) {
+            QMessageBox::warning(this, "Error", "Insert text cannot be empty.");
+            return;
+        } else {
+            QString insText = dialog->insTxt();
+
+            QVariantMap data;
+            data["pos"] = pos;
+            data["txt"] = insText;
+
+            editor->sendMessage("C_CMD_INS_TXT_COL", data);
+        }
     }
 
     dialog->deleteLater();

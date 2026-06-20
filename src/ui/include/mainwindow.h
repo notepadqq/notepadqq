@@ -163,6 +163,7 @@ private slots:
     void on_actionConvert_to_triggered();
     void on_actionIndentation_Default_Settings_triggered();
     void on_actionIndentation_Custom_triggered();
+    void on_actionColumn_Editor_triggered();
     void on_actionReload_File_Interpreted_As_triggered();
     void on_actionInterpret_As_triggered();
     void on_actionPrint_triggered();

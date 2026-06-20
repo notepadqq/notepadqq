@@ -154,6 +154,8 @@
     <addaction name="menuEOL_Conversion"/>
     <addaction name="menuBlank_Operations"/>
     <addaction name="menuIndentation"/>
+    <addaction name="separator"/>
+    <addaction name="actionColumn_Editor"/>
    </widget>
    <widget class="QMenu" name="menu_Search">
     <property name="title">
@@ -214,7 +216,7 @@
    </widget>
    <widget class="QMenu" name="menu_Encoding">
     <property name="title">
-     <string>En&amp;coding</string>
+     <string>E&amp;ncoding</string>
     </property>
     <addaction name="actionInterpret_as_UTF_8"/>
     <addaction name="actionInterpret_as_UTF_8_without_BOM"/>
@@ -1068,6 +1070,14 @@
    </property>
    <property name="text">
     <string>Begin/End Select</string>
+   </property>
+  </action>
+  <action name="actionColumn_Editor">
+   <property name="text">
+    <string>&amp;Column Editor</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
    </property>
   </action>
   <action name="actionToggle_To_Former_Tab">

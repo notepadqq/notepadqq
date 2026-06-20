@@ -81,6 +81,7 @@ SOURCES += main.cpp\
     frmencodingchooser.cpp \
     EditorNS/bannerindentationdetected.cpp \
     frmindentationmode.cpp \
+    frmcolumneditor.cpp \
     singleapplication.cpp \
     localcommunication.cpp \
     Search/frmsearchreplace.cpp \
@@ -129,6 +130,7 @@ HEADERS  += include/mainwindow.h \
     include/EditorNS/bannerindentationdetected.h \
     include/EditorNS/languageservice.h \
     include/frmindentationmode.h \
+    include/frmcolumneditor.h \
     include/singleapplication.h \
     include/localcommunication.h \
     include/Search/frmsearchreplace.h \
@@ -165,6 +167,7 @@ FORMS    += mainwindow.ui \
     frmpreferences.ui \
     frmencodingchooser.ui \
     frmindentationmode.ui \
+    frmcolumneditor.ui \
     Search/dlgsearching.ui \
     Search/frmsearchreplace.ui \
     frmlinenumberchooser.ui \

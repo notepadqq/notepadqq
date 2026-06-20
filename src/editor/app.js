@@ -10,6 +10,27 @@ UiDriver.registerEventHandler("C_FUN_GET_VALUE", function(msg, data, prevReturn)
     return editor.getValue("\n");
 });
 
+UiDriver.registerEventHandler("C_CMD_INS_TXT_COL", function(msg, data, prevReturn) {
+
+    var doc = editor.getValue();
+    var lines = doc.split("\n");
+
+    var pos = data.pos;
+    var txt = data.txt;
+
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        if (line.length < pos) {
+            line += " ".repeat(pos - line.length);
+        }
+
+        lines[i] = line.slice(0, pos) + txt + line.slice(pos);
+    }
+
+    editor.setValue(lines.join("\n"));
+});
+
 /* Returns true if the editor is clean, false if
    it's dirty or it's clean but forceDirty = true.
    You'll generally want to use this function instead of
