@@ -50,6 +50,13 @@ QString Notepadqq::extensionToolsPath()
     return appDataPath("extension_tools");
 }
 
+#if !defined(Q_OS_WIN) && !defined(Q_OS_MACX)
+QString Notepadqq::iconsPath()
+{
+    return appDataPath("icons");
+}
+#endif
+
 QString Notepadqq::nodejsPath() {
     NqqSettings& s = NqqSettings::getInstance();
     return s.Extensions.getRuntimeNodeJS();

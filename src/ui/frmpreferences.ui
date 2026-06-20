@@ -572,6 +572,9 @@
               </property>
               <item>
                <widget class="QPushButton" name="btnToolbarAdd">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton { text-align:left; padding: 3px; }</string>
+                </property>
                 <property name="text">
                  <string>Add</string>
                 </property>
@@ -583,6 +586,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="btnToolbarRemove">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton { text-align:left; padding: 3px; }</string>
+                </property>
                 <property name="text">
                  <string>Remove</string>
                 </property>
@@ -612,6 +618,9 @@
               </property>
               <item>
                <widget class="QPushButton" name="btnToolbarUp">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton { text-align:left; padding: 3px; }</string>
+                </property>
                 <property name="text">
                  <string>Move Up</string>
                 </property>
@@ -623,6 +632,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="btnToolbarDown">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton { text-align:left; padding: 3px; }</string>
+                </property>
                 <property name="text">
                  <string>Move Down</string>
                 </property>

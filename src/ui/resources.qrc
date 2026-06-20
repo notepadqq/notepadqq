@@ -47,6 +47,8 @@
 		<file alias="scalable/system-run.svg">icons/notepadqq/scalable/system-run.svg</file>
 		<file alias="scalable/view-fullscreen.svg">icons/notepadqq/scalable/view-fullscreen.svg</file>
 		<file alias="scalable/view-refresh.svg">icons/notepadqq/scalable/view-refresh.svg</file>
+		<file alias="scalable/go-down.svg">icons/notepadqq/scalable/go-down.svg</file>
+		<file alias="scalable/go-up.svg">icons/notepadqq/scalable/go-up.svg</file>
     </qresource>
     <qresource prefix="/translations">
         <file alias="notepadqq_de.qm">../translations/notepadqq_de.qm</file>
