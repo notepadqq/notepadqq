@@ -209,6 +209,8 @@
     <addaction name="actionMath_Rendering"/>
     <addaction name="actionToggle_To_Former_Tab"/>
     <addaction name="separator"/>
+    <addaction name="actionSet_RTL"/>
+    <addaction name="actionSet_LTR"/>
     <addaction name="separator"/>
     <addaction name="actionFull_Screen"/>
    </widget>
@@ -1080,6 +1082,28 @@
    <property name="shortcut">
     <string>Ctrl+T</string>
    </property>
+  </action>
+  <action name="actionSet_RTL">
+    <property name="text">
+      <string>Text Direction &amp;RTL</string>
+    </property>
+    <property name="toolTip">
+      <string>Change Layout Direction to Right-to-Left</string>
+    </property>
+    <property name="shortcut">
+      <string>Ctrl+Alt+Shift+R</string>
+    </property>
+  </action>
+  <action name="actionSet_LTR">
+    <property name="text">
+      <string>Text Direction &amp;LTR</string>
+    </property>
+    <property name="toolTip">
+      <string>Change Layout Direction to Left-to-Right</string>
+    </property>
+    <property name="shortcut">
+      <string>Ctrl+Alt+Shift+L</string>
+    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
