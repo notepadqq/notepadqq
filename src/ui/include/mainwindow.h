@@ -16,8 +16,6 @@
 
 #include <functional>
 
-using namespace QtPromise;
-
 namespace Ui {
 class MainWindow;
 }
@@ -281,8 +279,8 @@ private:
     void                convertEditorEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
     void                toggleOverwrite();
     void                checkIndentationMode(QSharedPointer<Editor> editor);
-    QPromise<QStringList> currentWordOrSelections();
-    QPromise<QString>     currentWordOrSelection();
+    QtPromise::QPromise<QStringList> currentWordOrSelections();
+    QtPromise::QPromise<QString>     currentWordOrSelection();
     void                currentWordOnlineSearch(const QString &searchUrl);
 
     /**
