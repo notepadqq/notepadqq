@@ -1678,7 +1678,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 {
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         qreal curZoom = tabWidget->editor(tab)->zoomFactor();
-        qreal diff = ev->pixelDelta().y() / 120;
+        qreal diff = ev->angleDelta().y() / 120;
         diff /= 10;
 
         // Increment/Decrement zoom factor by 0.1 at each step.
