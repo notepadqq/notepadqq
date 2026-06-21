@@ -167,6 +167,7 @@ int main(int argc, char *argv[])
 
         if (settings.General.getRememberTabsOnExit()) {
             Sessions::loadSession(wnd->getDocEngine(), wnd->topEditorContainer(), PersistentCache::cacheSessionPath());
+            wnd->configurePostSessionUserInterface();
         }
 
         wnd->openCommandLineProvidedUrls(QDir::currentPath(), QApplication::arguments());
