@@ -1,7 +1,7 @@
 #ifndef FRMINDENTATIONMODE_H
 #define FRMINDENTATIONMODE_H
 
-#include "include/EditorNS/editor.h"
+#include "include/EditorNS/editor_properties.h"
 
 #include <QDialog>
 
@@ -17,8 +17,8 @@ public:
     explicit frmIndentationMode(QWidget *parent = nullptr);
     ~frmIndentationMode();
 
-    void populateWidgets(EditorNS::Editor::IndentationMode indentationMode);
-    EditorNS::Editor::IndentationMode indentationMode();
+    void populateWidgets(EditorNS::IndentationMode indentationMode);
+    EditorNS::IndentationMode indentationMode();
 
 private slots:
     void on_buttonBox_accepted();

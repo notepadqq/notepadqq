@@ -1855,12 +1855,12 @@ void MainWindow::on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool was
 
 void MainWindow::checkIndentationMode(QSharedPointer<Editor> editor)
 {
-    editor->detectDocumentIndentation().then([=](const std::pair<Editor::IndentationMode, bool> result){
-        Editor::IndentationMode detected = result.first;
+    editor->detectDocumentIndentation().then([=](const std::pair<IndentationMode, bool> result){
+        IndentationMode detected = result.first;
         bool found = result.second;
 
         if (found) {
-            editor->indentationModeP().then([=](Editor::IndentationMode curr) {
+            editor->indentationModeP().then([=](IndentationMode curr) {
                 bool differentTabSpaces = detected.useTabs != curr.useTabs;
                 bool differentSpaceSize = detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
 
@@ -2170,7 +2170,7 @@ void MainWindow::on_actionIndentation_Custom_triggered()
     dialog->populateWidgets(editor->indentationMode());
 
     if (dialog->exec() == QDialog::Accepted) {
-        Editor::IndentationMode indent = dialog->indentationMode();
+        IndentationMode indent = dialog->indentationMode();
         editor->setCustomIndentationMode(indent.useTabs, indent.size);
     }
 

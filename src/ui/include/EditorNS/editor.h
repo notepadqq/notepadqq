@@ -3,6 +3,7 @@
 
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/languageservice.h"
+#include "include/EditorNS/editor_properties.h"
 
 #include <QObject>
 #include <QQueue>
@@ -91,40 +92,7 @@ namespace EditorNS
 
         static void invalidateEditorBuffer();
 
-        struct Cursor {
-            int line;
-            int column;
-
-            bool operator == (const Cursor &x) const {
-                return line == x.line && column == x.column;
-            }
-
-            bool operator < (const Cursor &x) const {
-                return std::tie(line, column) < std::tie(x.line, x.column);
-            }
-
-            bool operator <= (const Cursor &x) const {
-                return *this == x || *this < x;
-            }
-
-            bool operator > (const Cursor &x) const {
-                return !(*this <= x);
-            }
-
-            bool operator >= (const Cursor &x) const {
-                return !(*this < x);
-            }
-        };
-
-        struct Selection {
-            Cursor from;
-            Cursor to;
-        };
-
-        struct IndentationMode {
-            bool useTabs;
-            int size;
-        };
+        
 
         /**
          * @brief Just a flag that is used for marking editors that are still loading,
@@ -311,7 +279,7 @@ namespace EditorNS
          *         significative only if the second element ("found") is true.
          */
         QtPromise::QPromise<std::pair<IndentationMode, bool>> detectDocumentIndentation();
-        Editor::IndentationMode indentationMode();
+        IndentationMode indentationMode();
         QtPromise::QPromise<IndentationMode> indentationModeP();
 
         QtPromise::QPromise<QString> getCurrentWord();

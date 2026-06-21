@@ -1,6 +1,6 @@
 #include "include/frmindentationmode.h"
 
-#include "include/EditorNS/editor.h"
+#include "include/EditorNS/editor_properties.h"
 #include "ui_frmindentationmode.h"
 
 frmIndentationMode::frmIndentationMode(QWidget *parent) :
@@ -15,16 +15,16 @@ frmIndentationMode::~frmIndentationMode()
     delete ui;
 }
 
-void frmIndentationMode::populateWidgets(EditorNS::Editor::IndentationMode indentationMode)
+void frmIndentationMode::populateWidgets(EditorNS::IndentationMode indentationMode)
 {
     ui->radTabs->setChecked(indentationMode.useTabs);
     ui->radSpaces->setChecked(!indentationMode.useTabs);
     ui->txtLanguages_TabSize->setValue(indentationMode.size);
 }
 
-EditorNS::Editor::IndentationMode frmIndentationMode::indentationMode()
+EditorNS::IndentationMode frmIndentationMode::indentationMode()
 {
-    EditorNS::Editor::IndentationMode indent;
+    EditorNS::IndentationMode indent;
     indent.useTabs = ui->radTabs->isChecked();
     indent.size = ui->txtLanguages_TabSize->value();
     return indent;
