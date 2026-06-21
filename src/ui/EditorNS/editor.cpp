@@ -770,6 +770,8 @@ namespace EditorNS
             setTheme(themeFromName(NqqSettings::getInstance().Appearance.getColorScheme()));
             this->setLineWrap(NqqSettings::getInstance().General.getWordWrap());
         });
+#else
+        Q_UNUSED(printer);
 #endif
     }
 

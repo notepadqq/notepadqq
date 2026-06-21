@@ -590,7 +590,7 @@ void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
     updatePreviewEditorFont();
 }
 
-void frmPreferences::on_chkShowLineNumbers_toggled(bool checked)
+void frmPreferences::on_chkShowLineNumbers_toggled(bool /*checked*/)
 {
     updatePreviewEditorFont();
 }

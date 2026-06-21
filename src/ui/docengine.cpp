@@ -242,7 +242,7 @@ QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Edito
             tabWidget->editor(tabIndex)->setFocus();
         }
 
-        auto continuationP = QtPromise::QPromise<QSharedPointer<Editor>>([=](auto resolve, auto reject)
+        auto continuationP = QtPromise::QPromise<QSharedPointer<Editor>>([=](auto resolve, auto /*reject*/)
         {
             // Compute the ms of delay based on the priority for this URL.
             constexpr int min_priority_delay = 100;
@@ -262,7 +262,7 @@ QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Edito
                 // In case of a reload, save cursor, scroll position, language
                 QPair<int, int> scrollPosition;
                 QPair<int, int> cursorPosition;
-                const EditorNS::Language* language;
+                const EditorNS::Language* language = nullptr;
                 if (isAlreadyOpen) {
                     scrollPosition = editor->scrollPosition();
                     cursorPosition = editor->cursorPosition();
@@ -451,7 +451,7 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
         // In case of a reload, save cursor, scroll position, language
         QPair<int, int> scrollPosition;
         QPair<int, int> cursorPosition;
-        const EditorNS::Language* language;
+        const EditorNS::Language* language = nullptr;
         if (isAlreadyOpen) {
             scrollPosition = editor->scrollPosition();
             cursorPosition = editor->cursorPosition();
@@ -725,7 +725,7 @@ QPair<int, int> DocEngine::findOpenEditorByUrl(const QUrl &filename) const
     return QPair<int, int>(-1, -1);
 }
 
-QByteArray DocEngine::getBomForCodec(QTextCodec *codec)
+QByteArray DocEngine::getBomForCodec(QTextCodec */*codec*/)
 {
     QByteArray bom;
     int tmpSize;

@@ -172,7 +172,8 @@ namespace Extensions {
                 QByteArray methodTypeName = methodTypes.at(i);
                 //QByteArray argTypeName = arg.typeName();
 
-                QVariant::Type methodType = QVariant::nameToType(methodTypeName);
+                int methodType = QMetaType::UnknownType;
+                methodType = QMetaType::fromName(methodTypeName.constData()).id();
                 //QVariant::Type argType = arg.type();
 
                 QVariant copy = QVariant(arg);

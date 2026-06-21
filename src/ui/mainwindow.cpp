@@ -911,7 +911,9 @@ int MainWindow::askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason)
     {
     case askToSaveChangesReason_generic:
         msgBox.setText("<h3>" + tr("Do you want to save changes to «%1»?").arg(name) + "</h3>");
-        msgBox.setButtonText(QMessageBox::Discard, tr("Don't Save"));
+        if (QAbstractButton *discardButton = msgBox.button(QMessageBox::Discard)) {
+            discardButton->setText(tr("Don't Save"));
+        }
         break;
     case askToSaveChangesReason_tabClosing:
         msgBox.setText("<h3>" + tr("Do you want to save changes to «%1» before closing?").arg(name) + "</h3>");

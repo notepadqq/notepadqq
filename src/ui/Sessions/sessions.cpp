@@ -422,7 +422,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                 .setRememberLastDir(false)
                 .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
                 .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
-                .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& url) {
+                .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& /*url*/) {
 
                     int idx = tabW->indexOf(editor);
 

@@ -22,7 +22,7 @@ SVGIconEngine* SVGIconEngine::fromFile(const QString &fileName) {
 }
 
 void SVGIconEngine::paint(QPainter *painter, const QRect &rect,
-                          QIcon::Mode mode, QIcon::State) {
+                          QIcon::Mode, QIcon::State) {
 
     auto bgColor = QApplication::palette().color(QPalette::Window);
     bool darkUI = bgColor.lightnessF() < 0.5;
