@@ -53,6 +53,8 @@ For CentOS:
 
     sudo dnf install -y qt6-qtbase-devel qt6-qttools-devel qt6-qtwebengine-devel qt6-qtwebsockets-devel qt6-qtsvg-devel qt6-qtwebchannel-devel uchardet pkgconfig
 
+Building for **macOS**? Check [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
+
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
@@ -104,5 +106,3 @@ Notepadqq is available in the `shannon` (stable) repository:
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
 
-#### Compiling on macOS
-Instructions can be found [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
