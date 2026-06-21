@@ -62,5 +62,7 @@
         <file alias="notepadqq_sv.qm">../translations/notepadqq_sv.qm</file>
         <file alias="notepadqq_uk.qm">../translations/notepadqq_uk.qm</file>
         <file alias="notepadqq_zh.qm">../translations/notepadqq_zh.qm</file>
+        <file alias="notepadqq_cs.qm">../translations/notepadqq_cs.qm</file>
     </qresource>
 </RCC>
+
