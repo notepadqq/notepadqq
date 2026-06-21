@@ -48,9 +48,6 @@ int main(int argc, char *argv[])
     //
     // QRandomGenerator::global()->seed(QDateTime::currentDateTimeUtc().time().msec() + QRandomGenerator::global()->generate());
 
-#if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
-    SingleApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
     SingleApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("Notepadqq");
