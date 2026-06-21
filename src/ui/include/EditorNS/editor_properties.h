@@ -1,5 +1,5 @@
-#ifndef JS_BINDINGS_H
-#define JS_BINDINGS_H
+#ifndef EDITOR_PROPERTIES_H
+#define EDITOR_PROPERTIES_H
 
 #include <tuple>
 
@@ -42,4 +42,4 @@ struct IndentationMode {
 };
 }
 
-#endif // JS_BINDINGS_H
+#endif // EDITOR_PROPERTIES_H
