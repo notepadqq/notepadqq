@@ -323,7 +323,7 @@ namespace EditorNS
         return out;
     }
 
-    QtPromise::QPromise<Editor::IndentationMode> Editor::indentationModeP()
+    QtPromise::QPromise<IndentationMode> Editor::indentationModeP()
     {
         return asyncSendMessageWithResultP("C_FUN_GET_INDENTATION_MODE").then([](QVariant result){
             QVariantMap indent = result.toMap();
@@ -729,7 +729,7 @@ namespace EditorNS
         asyncSendMessageWithResultP("C_CMD_SET_TABS_VISIBLE", visible);
     }
 
-    QtPromise::QPromise<std::pair<Editor::IndentationMode, bool>> Editor::detectDocumentIndentation()
+    QtPromise::QPromise<std::pair<IndentationMode, bool>> Editor::detectDocumentIndentation()
     {
         return asyncSendMessageWithResultP("C_FUN_DETECT_INDENTATION_MODE").then([](QVariant result){
             QVariantMap indent = result.toMap();

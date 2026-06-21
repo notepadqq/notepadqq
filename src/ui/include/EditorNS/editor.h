@@ -279,7 +279,7 @@ namespace EditorNS
          *         significative only if the second element ("found") is true.
          */
         QtPromise::QPromise<std::pair<IndentationMode, bool>> detectDocumentIndentation();
-        Editor::IndentationMode indentationMode();
+        IndentationMode indentationMode();
         QtPromise::QPromise<IndentationMode> indentationModeP();
 
         QtPromise::QPromise<QString> getCurrentWord();
