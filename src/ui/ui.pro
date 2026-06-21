@@ -182,6 +182,7 @@ TRANSLATIONS = \
     ../translations/notepadqq_hu.ts \
     ../translations/notepadqq_it.ts \
     ../translations/notepadqq_ja.ts \
+    ../translations/notepadqq_nl.ts
     ../translations/notepadqq_pl.ts \
     ../translations/notepadqq_pt.ts \
     ../translations/notepadqq_ru.ts \
@@ -197,6 +198,7 @@ QMAKE_CLEAN += \
     ../translations/notepadqq_hu.qm \
     ../translations/notepadqq_it.qm \
     ../translations/notepadqq_ja.qm \
+    ../translations/notepadqq_nl.qm
     ../translations/notepadqq_pl.qm \
     ../translations/notepadqq_pt.qm \
     ../translations/notepadqq_ru.qm \
