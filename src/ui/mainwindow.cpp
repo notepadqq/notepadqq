@@ -40,8 +40,8 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QtPromise>
+#include <QActionGroup>
 
-using namespace QtPromise;
 
 QList<MainWindow*> MainWindow::m_instances = QList<MainWindow*>();
 
@@ -366,7 +366,7 @@ void MainWindow::loadToolBar()
         toolbarItems = getDefaultToolBarString();
 
     auto actions = getActions();
-    auto parts = toolbarItems.split('|', QString::SkipEmptyParts);
+    auto parts = toolbarItems.split('|', Qt::SkipEmptyParts);
 
     for (const auto& part : parts) {
         if(part == "Separator") {
@@ -1413,6 +1413,16 @@ void MainWindow::on_actionSelect_All_triggered()
     currentEditor()->sendMessage("C_CMD_SELECT_ALL");
 }
 
+void MainWindow::on_actionSet_RTL_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_RTL");
+}
+
+void MainWindow::on_actionSet_LTR_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_SET_LTR");
+}
+
 void MainWindow::on_actionAbout_Notepadqq_triggered()
 {
     frmAbout *_about;
@@ -1668,7 +1678,7 @@ void MainWindow::on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheel
 {
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         qreal curZoom = tabWidget->editor(tab)->zoomFactor();
-        qreal diff = ev->delta() / 120;
+        qreal diff = ev->angleDelta().y() / 120;
         diff /= 10;
 
         // Increment/Decrement zoom factor by 0.1 at each step.
@@ -2311,7 +2321,7 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
     }
 }
 */
-QPromise<QStringList> MainWindow::currentWordOrSelections()
+QtPromise::QPromise<QStringList> MainWindow::currentWordOrSelections()
 {
     auto editor = currentEditor();
     return editor->selectedTexts().then([=](QStringList selection){
@@ -2320,12 +2330,12 @@ QPromise<QStringList> MainWindow::currentWordOrSelections()
                 return QStringList(word);
             });
         } else {
-            return QPromise<QStringList>::resolve(selection);
+            return QtPromise::QPromise<QStringList>::resolve(selection);
         }
     });
 }
 
-QPromise<QString> MainWindow::currentWordOrSelection()
+QtPromise::QPromise<QString> MainWindow::currentWordOrSelection()
 {
     return currentWordOrSelections().then([=](QStringList terms){
         if (terms.isEmpty()) {
@@ -2466,6 +2476,11 @@ void MainWindow::on_actionMove_Line_Up_triggered()
 void MainWindow::on_actionMove_Line_Down_triggered()
 {
     currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN");
+}
+
+void MainWindow::on_actionTranspose_Line_triggered()
+{
+    currentEditor()->sendMessage("C_CMD_TRANSPOSE_LINE");
 }
 
 void MainWindow::on_actionTrim_Trailing_Space_triggered()

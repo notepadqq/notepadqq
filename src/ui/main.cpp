@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QObject>
+#include <QRandomGenerator>
 #include <QTranslator>
 #include <QtGlobal>
 
@@ -37,8 +38,15 @@ int main(int argc, char *argv[])
     printerrln("WARNING: Notepadqq is running in DEBUG mode.");
 #endif
 
-    // Initialize random number generator
-    qsrand(QDateTime::currentDateTimeUtc().time().msec() + qrand());
+    // according to https://doc.qt.io/qt-6/qrandomgenerator.html:
+    // "The global generator is securely seeded by the operating
+    // system's cryptographic random number generator... It is not
+    // necessary to seed the global generator manually."
+    //
+    // "Note: It is not permitted to seed the global or system
+    // generators. Attempting to do so will result in a fatal error."
+    //
+    // QRandomGenerator::global()->seed(QDateTime::currentDateTimeUtc().time().msec() + QRandomGenerator::global()->generate());
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 6, 0)
     SingleApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

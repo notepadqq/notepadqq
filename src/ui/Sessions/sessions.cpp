@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
+#include <QLatin1StringView>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
@@ -128,7 +129,7 @@ std::vector<ViewData> SessionReader::readData(bool* outSuccess) {
     std::vector<ViewData> result;
 
     if (m_reader.readNextStartElement()) {
-        if (m_reader.name() == "Notepadqq") {
+        if (m_reader.name() == QLatin1StringView("Notepadqq")) {
             result = readViewData();
         }
         else
@@ -149,7 +150,7 @@ std::vector<ViewData> SessionReader::readViewData() {
     std::vector<ViewData> result;
 
     while (m_reader.readNextStartElement()) {
-        if (m_reader.name() == "View") {
+        if (m_reader.name() == QLatin1StringView("View")) {
             ViewData vd;
             vd.tabs = readTabData();
             result.push_back(vd);
@@ -166,7 +167,7 @@ std::vector<TabData> SessionReader::readTabData() {
     std::vector<TabData> result;
 
     while (m_reader.readNextStartElement()) {
-        if (m_reader.name() == "Tab") {
+        if (m_reader.name() == QLatin1StringView("Tab")) {
             const QXmlStreamAttributes& attrs = m_reader.attributes();
 
             TabData td;
@@ -257,6 +258,10 @@ namespace Sessions {
 
 bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath)
 {
+    if (editorContainer == nullptr) {
+        return false;
+    }
+
     const bool cacheModifiedFiles = !cacheDirPath.isEmpty();
 
     QDir cacheDir;
@@ -282,6 +287,11 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     const int tabWidgetsCount = editorContainer->count();
     for (int i = 0; i < tabWidgetsCount; i++) {
         EditorTabWidget *tabWidget = editorContainer->tabWidget(i);
+
+        if (tabWidget == nullptr) {
+            continue;
+        }
+
         const int tabCount = tabWidget->count();
 
         viewData.push_back( ViewData() );

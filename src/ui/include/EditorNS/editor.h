@@ -7,7 +7,7 @@
 
 #include <QObject>
 #include <QQueue>
-#include <QTextCodec>
+#include <QtCore5Compat/QTextCodec>
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QWheelEvent>
@@ -18,8 +18,6 @@
 #include <future>
 
 class EditorTabWidget;
-
-using namespace QtPromise;
 
 namespace EditorNS
 {
@@ -154,16 +152,16 @@ namespace EditorNS
         void removeBanner(QString objectName);
 
         // Lower-level message wrappers:
-        QPromise<bool> isCleanP();
+        QtPromise::QPromise<bool> isCleanP();
         Q_INVOKABLE bool isClean();
-        Q_INVOKABLE QPromise<void> markClean();
-        Q_INVOKABLE QPromise<void> markDirty();
+        Q_INVOKABLE QtPromise::QPromise<void> markClean();
+        Q_INVOKABLE QtPromise::QPromise<void> markDirty();
 
         /**
          * @brief Returns an integer that denotes the editor's history state. Making changes to
          *        the contents increments the integer while reverting changes decrements it again.
          */
-        Q_INVOKABLE QPromise<int> getHistoryGeneration();
+        Q_INVOKABLE QtPromise::QPromise<int> getHistoryGeneration();
 
         /**
          * @brief Set the language to use for the editor.
@@ -175,7 +173,7 @@ namespace EditorNS
         Q_INVOKABLE void setLanguage(const QString &language);
         Q_INVOKABLE void setLanguageFromFilePath(const QString& filePath);
         Q_INVOKABLE void setLanguageFromFilePath();
-        Q_INVOKABLE QPromise<void> setValue(const QString &value);
+        Q_INVOKABLE QtPromise::QPromise<void> setValue(const QString &value);
         Q_INVOKABLE QString value();
 
         /**
@@ -209,7 +207,7 @@ namespace EditorNS
          * @return a <line, column> pair.
          */
         QPair<int, int> cursorPosition();
-        QPromise<QPair<int, int>> cursorPositionP();
+        QtPromise::QPromise<QPair<int, int>> cursorPositionP();
         void setCursorPosition(const int line, const int column);
         void setCursorPosition(const QPair<int, int> &position);
         void setCursorPosition(const Cursor &cursor);
@@ -270,7 +268,7 @@ namespace EditorNS
          * @brief Returns the currently selected texts.
          * @return
          */
-        Q_INVOKABLE QPromise<QStringList> selectedTexts();
+        Q_INVOKABLE QtPromise::QPromise<QStringList> selectedTexts();
 
         void setOverwrite(bool overwrite);
         void setTabsVisible(bool visible);
@@ -281,15 +279,14 @@ namespace EditorNS
          *         significative only if the second element ("found") is true.
          */
         QtPromise::QPromise<std::pair<IndentationMode, bool>> detectDocumentIndentation();
-        IndentationMode indentationMode();
+        Editor::IndentationMode indentationMode();
         QtPromise::QPromise<IndentationMode> indentationModeP();
 
-
-        QPromise<QString> getCurrentWord();
+        QtPromise::QPromise<QString> getCurrentWord();
 
         void setSelection(int fromLine, int fromCol, int toLine, int toCol);
 
-        QPromise<int> lineCount();
+        QtPromise::QPromise<int> lineCount();
 
     private:
         friend class ::EditorTabWidget;
@@ -325,8 +322,8 @@ namespace EditorNS
 
         void fullConstructor(const Theme &theme);
 
-        QPromise<void> setIndentationMode(const bool useTabs, const int size);
-        QPromise<void> setIndentationMode(const Language*);
+        QtPromise::QPromise<void> setIndentationMode(const bool useTabs, const int size);
+        QtPromise::QPromise<void> setIndentationMode(const Language*);
 
     private slots:
         void on_proxyMessageReceived(QString msg, QVariant data);
@@ -362,8 +359,8 @@ namespace EditorNS
         void sendMessage(const QString msg);
 
 
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg, const QVariant data);
-        QPromise<QVariant> asyncSendMessageWithResultP(const QString msg);
+        QtPromise::QPromise<QVariant> asyncSendMessageWithResultP(const QString msg, const QVariant data);
+        QtPromise::QPromise<QVariant> asyncSendMessageWithResultP(const QString msg);
 
         /**
          * @brief asyncSendMessageWithResult
@@ -390,7 +387,7 @@ namespace EditorNS
          * @param pageLayout
          * @return
          */
-        QPromise<QByteArray> printToPdf(const QPageLayout &pageLayout = QPageLayout(QPageSize(QPageSize::A4), QPageLayout::Portrait, QMarginsF()));
+        QtPromise::QPromise<QByteArray> printToPdf(const QPageLayout &pageLayout = QPageLayout(QPageSize(QPageSize::A4), QPageLayout::Portrait, QMarginsF()));
     };
 
 }

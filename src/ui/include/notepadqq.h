@@ -36,7 +36,7 @@
 
 #define POINTVERSION "2.0.0-beta+git" // major.minor.revision
 
-#define COPYRIGHT_YEAR "2019"
+#define COPYRIGHT_YEAR "2026"
 
 #define MIB_UTF_8 106
 
