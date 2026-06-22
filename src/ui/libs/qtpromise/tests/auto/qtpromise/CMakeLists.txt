@@ -1,0 +1,13 @@
+add_subdirectory(shared)
+
+add_subdirectory(benchmark)
+add_subdirectory(cpp14)
+add_subdirectory(deprecations)
+add_subdirectory(exceptions)
+add_subdirectory(future)
+add_subdirectory(helpers)
+add_subdirectory(internals)
+add_subdirectory(qpromise)
+add_subdirectory(qpromiseconnections)
+add_subdirectory(requirements)
+add_subdirectory(thread)

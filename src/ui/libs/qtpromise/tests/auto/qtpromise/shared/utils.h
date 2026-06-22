@@ -1,56 +1,74 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_TESTS_AUTO_SHARED_UTILS_H
 #define QTPROMISE_TESTS_AUTO_SHARED_UTILS_H
 
 #include <QtPromise>
 
-template <typename T>
+template<typename T>
 static inline T waitForValue(const QtPromise::QPromise<T>& promise, const T& initial)
 {
     T value(initial);
-    promise.then([&](const T& res) {
-        value = res;
-    }).wait();
+    promise
+        .then([&](const T& res) {
+            value = res;
+        })
+        .wait();
     return value;
 }
 
-template <typename T>
-static inline T waitForValue(const QtPromise::QPromise<void>& promise, const T& initial, const T& expected)
+template<typename T>
+static inline T
+waitForValue(const QtPromise::QPromise<void>& promise, const T& initial, const T& expected)
 {
     T value(initial);
-    promise.then([&]() {
-        value = expected;
-    }).wait();
+    promise
+        .then([&]() {
+            value = expected;
+        })
+        .wait();
     return value;
 }
 
-template <typename T, typename E>
+template<typename T, typename E>
 static inline E waitForError(const QtPromise::QPromise<T>& promise, const E& initial)
 {
     E error(initial);
-    promise.fail([&](const E& err) {
-        error = err;
-        return T();
-    }).wait();
+    promise
+        .fail([&](const E& err) {
+            error = err;
+            return T();
+        })
+        .wait();
     return error;
 }
 
-template <typename E>
+template<typename E>
 static inline E waitForError(const QtPromise::QPromise<void>& promise, const E& initial)
 {
     E error(initial);
-    promise.fail([&](const E& err) {
-        error = err;
-    }).wait();
+    promise
+        .fail([&](const E& err) {
+            error = err;
+        })
+        .wait();
     return error;
 }
 
-template <typename E, typename T>
+template<typename E, typename T>
 static inline bool waitForRejected(const T& promise)
 {
     bool result = false;
-    promise.tapFail([&](const E&) {
-        result = true;
-    }).wait();
+    promise
+        .tapFail([&](const E&) {
+            result = true;
+        })
+        .wait();
     return result;
 }
 

@@ -1,0 +1,12 @@
+qtpromise_add_tests(helpers
+    SOURCES
+        tst_all.cpp
+        tst_attempt.cpp
+        tst_connect.cpp
+        tst_each.cpp
+        tst_filter.cpp
+        tst_map.cpp
+        tst_reduce.cpp
+        tst_reject.cpp
+        tst_resolve.cpp
+)

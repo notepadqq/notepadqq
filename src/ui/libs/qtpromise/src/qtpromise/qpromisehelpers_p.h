@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_QPROMISEHELPERS_P_H
 #define QTPROMISE_QPROMISEHELPERS_P_H
 
@@ -9,17 +16,16 @@ namespace QtPromisePrivate {
 // TODO: Suppress QPrivateSignal trailing private signal args
 // TODO: Support deducing tuple from args (might require MSVC2017)
 
-template <typename Signal>
+template<typename Signal>
 using PromiseFromSignal = typename QtPromise::QPromise<Unqualified<typename ArgsOf<Signal>::first>>;
 
 // Connect signal() to QPromiseResolve
-template <typename Sender, typename Signal>
+template<typename Sender, typename Signal>
 typename std::enable_if<(ArgsOf<Signal>::count == 0)>::type
-connectSignalToResolver(
-    const QtPromise::QPromiseConnections& connections,
-    const QtPromise::QPromiseResolve<void>& resolve,
-    const Sender* sender,
-    Signal signal)
+connectSignalToResolver(const QtPromise::QPromiseConnections& connections,
+                        const QtPromise::QPromiseResolve<void>& resolve,
+                        const Sender* sender,
+                        Signal signal)
 {
     connections << QObject::connect(sender, signal, [=]() {
         connections.disconnect();
@@ -28,28 +34,26 @@ connectSignalToResolver(
 }
 
 // Connect signal() to QPromiseReject
-template <typename T, typename Sender, typename Signal>
+template<typename T, typename Sender, typename Signal>
 typename std::enable_if<(ArgsOf<Signal>::count == 0)>::type
-connectSignalToResolver(
-    const QtPromise::QPromiseConnections& connections,
-    const QtPromise::QPromiseReject<T>& reject,
-    const Sender* sender,
-    Signal signal)
+connectSignalToResolver(const QtPromise::QPromiseConnections& connections,
+                        const QtPromise::QPromiseReject<T>& reject,
+                        const Sender* sender,
+                        Signal signal)
 {
     connections << QObject::connect(sender, signal, [=]() {
         connections.disconnect();
-        reject(QtPromise::QPromiseUndefinedException());
+        reject(QtPromise::QPromiseUndefinedException{});
     });
 }
 
 // Connect signal(args...) to QPromiseResolve
-template <typename T, typename Sender, typename Signal>
+template<typename T, typename Sender, typename Signal>
 typename std::enable_if<(ArgsOf<Signal>::count >= 1)>::type
-connectSignalToResolver(
-    const QtPromise::QPromiseConnections& connections,
-    const QtPromise::QPromiseResolve<T>& resolve,
-    const Sender* sender,
-    Signal signal)
+connectSignalToResolver(const QtPromise::QPromiseConnections& connections,
+                        const QtPromise::QPromiseResolve<T>& resolve,
+                        const Sender* sender,
+                        Signal signal)
 {
     connections << QObject::connect(sender, signal, [=](const T& value) {
         connections.disconnect();
@@ -58,13 +62,12 @@ connectSignalToResolver(
 }
 
 // Connect signal(args...) to QPromiseReject
-template <typename T, typename Sender, typename Signal>
+template<typename T, typename Sender, typename Signal>
 typename std::enable_if<(ArgsOf<Signal>::count >= 1)>::type
-connectSignalToResolver(
-    const QtPromise::QPromiseConnections& connections,
-    const QtPromise::QPromiseReject<T>& reject,
-    const Sender* sender,
-    Signal signal)
+connectSignalToResolver(const QtPromise::QPromiseConnections& connections,
+                        const QtPromise::QPromiseReject<T>& reject,
+                        const Sender* sender,
+                        Signal signal)
 {
     using V = Unqualified<typename ArgsOf<Signal>::first>;
     connections << QObject::connect(sender, signal, [=](const V& value) {
@@ -74,15 +77,14 @@ connectSignalToResolver(
 }
 
 // Connect QObject::destroyed signal to QPromiseReject
-template <typename T, typename Sender>
-void connectDestroyedToReject(
-    const QtPromise::QPromiseConnections& connections,
-    const QtPromise::QPromiseReject<T>& reject,
-    const Sender* sender)
+template<typename T, typename Sender>
+void connectDestroyedToReject(const QtPromise::QPromiseConnections& connections,
+                              const QtPromise::QPromiseReject<T>& reject,
+                              const Sender* sender)
 {
     connections << QObject::connect(sender, &QObject::destroyed, [=]() {
         connections.disconnect();
-        reject(QtPromise::QPromiseContextException());
+        reject(QtPromise::QPromiseContextException{});
     });
 }
 

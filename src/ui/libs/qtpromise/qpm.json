@@ -10,7 +10,7 @@
         "url": "https://github.com/simonbrunel/qtpromise.git"
     },
     "version": {
-        "label": "0.5.0"
+        "label": "0.7.0"
     },
     "license": "MIT",
     "pri_filename": "qtpromise.pri",

@@ -1,30 +1,36 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_QPROMISERESOLVER_H
 #define QTPROMISE_QPROMISERESOLVER_H
 
 #include "qpromiseexceptions.h"
 
-// Qt
-#include <QExplicitlySharedDataPointer>
+#include <QtCore/QExplicitlySharedDataPointer>
 
 namespace QtPromise {
 
-template <typename T> class QPromise;
+template<typename T>
+class QPromise;
 
 } // namespace QtPromise
 
 namespace QtPromisePrivate {
 
-template <typename T>
+template<typename T>
 class PromiseResolver
 {
 public:
-    PromiseResolver(QtPromise::QPromise<T> promise)
-        : m_d(new Data())
+    PromiseResolver(QtPromise::QPromise<T> promise) : m_d{new Data{}}
     {
-        m_d->promise = new QtPromise::QPromise<T>(std::move(promise));
+        m_d->promise = new QtPromise::QPromise<T>{std::move(promise)};
     }
 
-    template <typename E>
+    template<typename E>
     void reject(E&& error)
     {
         auto promise = m_d->promise;
@@ -41,13 +47,13 @@ public:
         auto promise = m_d->promise;
         if (promise) {
             Q_ASSERT(promise->isPending());
-            promise->m_d->reject(QtPromise::QPromiseUndefinedException());
+            promise->m_d->reject(QtPromise::QPromiseUndefinedException{});
             promise->m_d->dispatch();
             release();
         }
     }
 
-    template <typename V>
+    template<typename V>
     void resolve(V&& value)
     {
         auto promise = m_d->promise;
@@ -87,51 +93,43 @@ private:
     }
 };
 
-} // QtPromisePrivate
+} // namespace QtPromisePrivate
 
 namespace QtPromise {
 
-template <class T>
+template<class T>
 class QPromiseResolve
 {
 public:
-    QPromiseResolve(QtPromisePrivate::PromiseResolver<T> resolver)
-        : m_resolver(std::move(resolver))
+    QPromiseResolve(QtPromisePrivate::PromiseResolver<T> resolver) : m_resolver{std::move(resolver)}
     { }
 
-    template <typename V>
+    template<typename V>
     void operator()(V&& value) const
     {
         m_resolver.resolve(std::forward<V>(value));
     }
 
-    void operator()() const
-    {
-        m_resolver.resolve();
-    }
+    void operator()() const { m_resolver.resolve(); }
 
 private:
     mutable QtPromisePrivate::PromiseResolver<T> m_resolver;
 };
 
-template <class T>
+template<class T>
 class QPromiseReject
 {
 public:
-    QPromiseReject(QtPromisePrivate::PromiseResolver<T> resolver)
-        : m_resolver(std::move(resolver))
+    QPromiseReject(QtPromisePrivate::PromiseResolver<T> resolver) : m_resolver{std::move(resolver)}
     { }
 
-    template <typename E>
+    template<typename E>
     void operator()(E&& error) const
     {
         m_resolver.reject(std::forward<E>(error));
     }
 
-    void operator()() const
-    {
-        m_resolver.reject();
-    }
+    void operator()() const { m_resolver.reject(); }
 
 private:
     mutable QtPromisePrivate::PromiseResolver<T> m_resolver;

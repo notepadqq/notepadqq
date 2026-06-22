@@ -1,0 +1,18 @@
+qtpromise_add_tests(qpromise
+    SOURCES
+        tst_construct.cpp
+        tst_convert.cpp
+        tst_delay.cpp
+        tst_each.cpp
+        tst_fail.cpp
+        tst_filter.cpp
+        tst_finally.cpp
+        tst_map.cpp
+        tst_operators.cpp
+        tst_reduce.cpp
+        tst_resolve.cpp
+        tst_tap.cpp
+        tst_tapfail.cpp
+        tst_then.cpp
+        tst_timeout.cpp
+)

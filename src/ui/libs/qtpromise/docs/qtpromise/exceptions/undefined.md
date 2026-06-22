@@ -1,7 +1,3 @@
----
-title: QPromiseUndefinedException
----
-
 # QPromiseUndefinedException
 
 *Since: 0.5.0*

@@ -1,13 +1,15 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #include "../shared/object.h"
 #include "../shared/utils.h"
 
-// QtPromise
 #include <QtPromise>
-
-// Qt
 #include <QtTest>
-
-using namespace QtPromise;
 
 class tst_qpromiseconnections : public QObject
 {
@@ -27,7 +29,7 @@ void tst_qpromiseconnections::connections()
 {
     Object sender;
 
-    QPromiseConnections connections;
+    QtPromise::QPromiseConnections connections;
     QCOMPARE(sender.hasConnections(), false);
     QCOMPARE(connections.count(), 0);
 
@@ -49,7 +51,7 @@ void tst_qpromiseconnections::destruction()
     Object sender;
 
     {
-        QPromiseConnections connections;
+        QtPromise::QPromiseConnections connections;
         QCOMPARE(sender.hasConnections(), false);
         QCOMPARE(connections.count(), 0);
 
@@ -63,7 +65,7 @@ void tst_qpromiseconnections::destruction()
 
 void tst_qpromiseconnections::senderDestroyed()
 {
-    QPromiseConnections connections;
+    QtPromise::QPromiseConnections connections;
     QCOMPARE(connections.count(), 0);
 
     {

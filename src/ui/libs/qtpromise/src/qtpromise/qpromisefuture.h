@@ -1,30 +1,34 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_QPROMISEFUTURE_P_H
 #define QTPROMISE_QPROMISEFUTURE_P_H
 
 #include "qpromiseexceptions.h"
 
-// Qt
-#include <QFutureWatcher>
-#include <QFuture>
+#include <QtCore/QFuture>
+#include <QtCore/QFutureWatcher>
 
 namespace QtPromisePrivate {
 
-template <typename T>
-struct PromiseDeduce<QFuture<T>>
-    : public PromiseDeduce<T>
+template<typename T>
+struct PromiseDeduce<QFuture<T>> : public PromiseDeduce<T>
 { };
 
-template <typename T>
+template<typename T>
 struct PromiseFulfill<QFuture<T>>
 {
-    static void call(
-        const QFuture<T>& future,
-        const QtPromise::QPromiseResolve<T>& resolve,
-        const QtPromise::QPromiseReject<T>& reject)
+    static void call(const QFuture<T>& future,
+                     const QtPromise::QPromiseResolve<T>& resolve,
+                     const QtPromise::QPromiseReject<T>& reject)
     {
         using Watcher = QFutureWatcher<T>;
 
-        Watcher* watcher = new Watcher();
+        Watcher* watcher = new Watcher{};
         QObject::connect(watcher, &Watcher::finished, [=]() mutable {
             try {
                 if (watcher->isCanceled()) {
@@ -34,7 +38,7 @@ struct PromiseFulfill<QFuture<T>>
                     // rethrown potential exceptions using waitForFinished() and thus detect
                     // if the future has been canceled by the user or an exception.
                     watcher->waitForFinished();
-                    reject(QtPromise::QPromiseCanceledException());
+                    reject(QtPromise::QPromiseCanceledException{});
                 } else {
                     PromiseFulfill<T>::call(watcher->result(), resolve, reject);
                 }
@@ -49,23 +53,22 @@ struct PromiseFulfill<QFuture<T>>
     }
 };
 
-template <>
+template<>
 struct PromiseFulfill<QFuture<void>>
 {
-    static void call(
-        const QFuture<void>& future,
-        const QtPromise::QPromiseResolve<void>& resolve,
-        const QtPromise::QPromiseReject<void>& reject)
+    static void call(const QFuture<void>& future,
+                     const QtPromise::QPromiseResolve<void>& resolve,
+                     const QtPromise::QPromiseReject<void>& reject)
     {
         using Watcher = QFutureWatcher<void>;
 
-        Watcher* watcher = new Watcher();
+        Watcher* watcher = new Watcher{};
         QObject::connect(watcher, &Watcher::finished, [=]() mutable {
             try {
                 if (watcher->isCanceled()) {
                     // let's rethrown potential exception
                     watcher->waitForFinished();
-                    reject(QtPromise::QPromiseCanceledException());
+                    reject(QtPromise::QPromiseCanceledException{});
                 } else {
                     resolve();
                 }

@@ -1,16 +1,24 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_TESTS_AUTO_SHARED_DATA_H
 #define QTPROMISE_TESTS_AUTO_SHARED_DATA_H
 
-// STL
 #include <utility>
 
-struct Logs {
+struct Logs
+{
     int ctor = 0;
     int copy = 0;
     int move = 0;
     int refs = 0;
 
-    void reset() {
+    void reset()
+    {
         ctor = 0;
         copy = 0;
         move = 0;
@@ -20,21 +28,45 @@ struct Logs {
 
 struct Logger
 {
-    Logger() { logs().ctor++; logs().refs++; }
-    Logger(const Logger&) { logs().copy++; logs().refs++; }
-    Logger(Logger&&) { logs().move++; logs().refs++; }
+    Logger()
+    {
+        logs().ctor++;
+        logs().refs++;
+    }
+    Logger(const Logger&)
+    {
+        logs().copy++;
+        logs().refs++;
+    }
+    Logger(Logger&&)
+    {
+        logs().move++;
+        logs().refs++;
+    }
     ~Logger() { logs().refs--; }
 
-    Logger& operator=(const Logger&) { logs().copy++; return *this; }
-    Logger& operator=(Logger&&) { logs().move++; return *this; }
+    Logger& operator=(const Logger&)
+    {
+        logs().copy++;
+        return *this;
+    }
+    Logger& operator=(Logger&&)
+    {
+        logs().move++;
+        return *this;
+    }
 
 public: // STATICS
-    static Logs& logs() { static Logs logs; return logs; }
+    static Logs& logs()
+    {
+        static Logs logs;
+        return logs;
+    }
 };
 
 struct Data : public Logger
 {
-    Data(int v) : Logger(), m_value(v) {}
+    Data(int v) : Logger{}, m_value{v} { }
     int value() const { return m_value; }
 
     // MSVC 2013 doesn't support implicit generation of the move constructor and
@@ -42,15 +74,9 @@ struct Data : public Logger
     // constructor and operator also need to be explicitly defined (error C2280).
     // https://stackoverflow.com/a/26581337
 
-    Data(const Data& other)
-        : Logger(other)
-        , m_value(other.m_value)
-    { }
+    Data(const Data& other) : Logger{other}, m_value{other.m_value} { }
 
-    Data(Data&& other) : Logger(std::forward<Data>(other))
-    {
-        std::swap(m_value, other.m_value);
-    }
+    Data(Data&& other) : Logger{std::forward<Data>(other)} { std::swap(m_value, other.m_value); }
 
     Data& operator=(const Data& other)
     {

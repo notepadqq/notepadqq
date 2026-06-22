@@ -24,7 +24,8 @@ auto output = input.then([](int res) {
 ```
 
 ::: tip NOTE
-`onRejected` handler is optional, in which case `output` will be rejected with the same reason as `input`. Also note that it's recommended to use the [`fail`](fail.md) shorthand to handle errors.
+`onRejected` handler is optional, in which case `output` will be rejected with the same reason as
+`input`. Also note that it's recommended to use the [`fail`](fail.md) shorthand to handle errors.
 :::
 
 The type `<R>` of the `output` promise depends on the return type of the `onFulfilled` handler:
@@ -42,7 +43,9 @@ output.then([](const QString& res) {
 ```
 
 ::: tip NOTE
-Only `onFulfilled` can change the promise type, `onRejected` **must** return the same type as `onFulfilled`. That also means if `onFulfilled` is `nullptr`, `onRejected` must return the same type as the `input` promise.
+Only `onFulfilled` can change the promise type, `onRejected` **must** return the same type as
+`onFulfilled`. That also means if `onFulfilled` is `nullptr`, `onRejected` must return the same
+type as the `input` promise.
 :::
 
 ```cpp
@@ -92,4 +95,5 @@ auto output = input.then([](int res) {
 // output.isRejected() is true
 ```
 
-If an handler returns a promise (or QFuture), the `output` promise is delayed and will be resolved by the returned promise.
+If a handler returns a promise (or QFuture), the `output` promise is delayed and will be resolved
+by the returned promise.

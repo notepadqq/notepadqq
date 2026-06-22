@@ -10,7 +10,8 @@ title: .wait
 QPromise<T>::wait() -> QPromise<T>
 ```
 
-This method holds the execution of the remaining code until the `input` promise is resolved (either fulfilled or rejected), **without** blocking the event loop of the current thread:
+This method holds the execution of the remaining code until the `input` promise is resolved (either
+fulfilled or rejected), **without** blocking the event loop of the current thread:
 
 ```cpp
 int result = -1;

@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_TESTS_AUTO_SHARED_SENDER_H
 #define QTPROMISE_TESTS_AUTO_SHARED_SENDER_H
 
-// Qt
-#include <QObject>
+#include <QtCore/QObject>
 
 class Object : public QObject
 {

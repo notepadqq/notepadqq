@@ -18,32 +18,35 @@ QPromise<int> promise([](const QPromiseResolve<int>& resolve, const QPromiseReje
         if (success) {
             resolve(result);
         } else {
-            reject(customException());
+            reject(customException{});
         }
     });
 });
 ```
 
 ::: tip NOTE
-`QPromise<void>` is specialized to not contain any value, meaning that the `resolve` callback takes no argument.
+`QPromise<void>` is specialized to not contain any value, meaning that the `resolve` callback takes
+no argument.
 :::
 
-**C++14**
+C++14 alternative:
 
 ```cpp
-QPromise<int> promise([](const auto& resolve, const auto& reject) {
+QPromise<int> promise{[](const auto& resolve, const auto& reject) {
     // {...}
-});
+}};
 ```
 
-**Undefined rejection reason**
+## Undefined rejection reason
 
 *Since: 0.5.0*
 
-While not recommended because it makes tracking errors more difficult, it's also possible to reject a promise without explicit reason, in which case, a built-in [`QPromiseUndefinedException`](../exceptions/undefined.md) is thrown:
+While not recommended because it makes tracking errors more difficult, it's also possible to reject
+a promise without explicit reason, in which case, a built-in [`QPromiseUndefinedException`](../exceptions/undefined.md)
+is thrown:
 
 ```cpp
-QPromise<int> promise([](const QPromiseResolve<int>& resolve, const QPromiseReject<int>& reject) {
+QPromise<int> promise{[](const QPromiseResolve<int>& resolve, const QPromiseReject<int>& reject) {
     async_method([=](bool success, int result) {
         if (success) {
             resolve(result);
@@ -51,7 +54,7 @@ QPromise<int> promise([](const QPromiseResolve<int>& resolve, const QPromiseReje
             reject();
         }
     });
-});
+}};
 ```
 
 ```cpp

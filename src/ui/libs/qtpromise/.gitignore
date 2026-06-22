@@ -1,8 +1,10 @@
-_book
-dist
-node_modules
+/build
+/dist
+/node_modules
+*.autosave
 *.gcno
 *.gcda
+*.info
 *.moc
 *.o
 *.obj
@@ -11,6 +13,3 @@ node_modules
 Makefile*
 moc_*.cpp
 moc_*.h
-coverage.info
-package-lock.json
-target_wrapper.bat

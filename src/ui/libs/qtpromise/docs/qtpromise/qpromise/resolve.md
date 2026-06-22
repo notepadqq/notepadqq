@@ -1,13 +1,13 @@
 ---
-title: ::resolve [static]
+title: ::resolve (static)
 ---
 
-# QPromise::resolve [static]
+# QPromise::resolve (static)
 
 *Since: 0.1.0*
 
-```
-[static] QPromise<T>::resolve(T value) -> QPromise<T>
+```cpp
+(static) QPromise<T>::resolve(T value) -> QPromise<T>
 ```
 
 Creates a `QPromise<T>` that is fulfilled with the given `value` of type `T`:
@@ -19,9 +19,9 @@ QPromise<int> compute(const QString& type)
         return QPromise<int>::resolve(42);
     }
 
-    return QPromise<int>([](const QPromiseResolve<int>& resolve) {
+    return QPromise<int>{[](const QPromiseResolve<int>& resolve) {
         // {...}
-    });
+    }};
 }
 ```
 

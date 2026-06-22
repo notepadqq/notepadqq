@@ -1,27 +1,34 @@
-image: Visual Studio 2015
-
-init:
-  - cmd: call "C:\Program Files (x86)\Microsoft Visual Studio "%VSVER%".0\VC\vcvarsall.bat" %ARCH%
-  - cmd: qmake --version
-
+# https://www.appveyor.com/docs/build-configuration/
+# https://www.appveyor.com/docs/lang/cpp/#visual-studio
 # https://www.appveyor.com/docs/windows-images-software/#qt
+
 environment:
   PATH: '%PATH%;%QTDIR%\bin'
   matrix:
-    - QTDIR: C:\Qt\5.6\msvc2013
-      VSVER: 12
-      ARCH: x86
-    - QTDIR: C:\Qt\5.9\msvc2013_64
-      VSVER: 12
-      ARCH: x64
-    - QTDIR: C:\Qt\latest\msvc2015_64
-      VSVER: 14
-      ARCH: x64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      QTDIR: C:\Qt\5.6\msvc2013
+      SETUP_CMD: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat
+      SETUP_ARG: x86
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      QTDIR: C:\Qt\5.15\msvc2019_64
+      SETUP_CMD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      QTDIR: C:\Qt\6.2\msvc2019_64
+      SETUP_CMD: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+
+before_build:
+  - call "%SETUP_CMD%" %SETUP_ARG%
+  - cmake --version
+  - qmake --version
 
 build_script:
-  - cmd: qmake qtpromise.pro
-  - cmd: nmake
+  - cmake -G "NMake Makefiles"
+  - cmake --build .
 
 test_script:
-  - cmd: nmake check
+  - cmake --build . --target test
 
+matrix:
+  fast_finish: true

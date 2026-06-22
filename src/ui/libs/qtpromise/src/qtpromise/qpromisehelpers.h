@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Simon Brunel, https://github.com/simonbrunel
+ *
+ * This source code is licensed under the MIT license found in
+ * the LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef QTPROMISE_QPROMISEHELPERS_H
 #define QTPROMISE_QPROMISEHELPERS_H
 
@@ -6,9 +13,8 @@
 
 namespace QtPromise {
 
-template <typename T>
-static inline typename QtPromisePrivate::PromiseDeduce<T>::Type
-resolve(T&& value)
+template<typename T>
+static inline typename QtPromisePrivate::PromiseDeduce<T>::Type resolve(T&& value)
 {
     using namespace QtPromisePrivate;
     using PromiseType = typename PromiseDeduce<T>::Type;
@@ -16,95 +22,90 @@ resolve(T&& value)
     using ResolveType = QPromiseResolve<ValueType>;
     using RejectType = QPromiseReject<ValueType>;
 
-    return PromiseType([&](ResolveType&& resolve, RejectType&& reject) {
-        PromiseFulfill<Unqualified<T>>::call(
-            std::forward<T>(value),
-            std::forward<ResolveType>(resolve),
-            std::forward<RejectType>(reject));
-    });
+    return PromiseType{[&](ResolveType&& resolve, RejectType&& reject) {
+        PromiseFulfill<Unqualified<T>>::call(std::forward<T>(value),
+                                             std::forward<ResolveType>(resolve),
+                                             std::forward<RejectType>(reject));
+    }};
 }
 
-template <typename T>
-static inline QPromise<T>
-resolve(QPromise<T> value)
+template<typename T>
+static inline QPromise<T> resolve(QPromise<T> value)
 {
-    return std::move(value);
+    return value;
 }
 
-static inline QPromise<void>
-resolve()
+static inline QPromise<void> resolve()
 {
-    return QPromise<void>([](const QPromiseResolve<void>& resolve) {
+    return QPromise<void>{[](const QPromiseResolve<void>& resolve) {
         resolve();
-    });
+    }};
 }
 
-template <typename T, template <typename, typename...> class Sequence = QVector, typename ...Args>
-static inline QPromise<QVector<T>>
-all(const Sequence<QPromise<T>, Args...>& promises)
+template<typename T, template<typename, typename...> class Sequence = QVector, typename... Args>
+static inline QPromise<QVector<T>> all(const Sequence<QPromise<T>, Args...>& promises)
 {
     const int count = static_cast<int>(promises.size());
     if (count == 0) {
         return QtPromise::resolve(QVector<T>{});
     }
 
-    return QPromise<QVector<T>>([=](
-        const QPromiseResolve<QVector<T>>& resolve,
-        const QPromiseReject<QVector<T>>& reject) {
+    return QPromise<QVector<T>>{
+        [=](const QPromiseResolve<QVector<T>>& resolve, const QPromiseReject<QVector<T>>& reject) {
+            auto remaining = QSharedPointer<int>::create(count);
+            auto results = QSharedPointer<QVector<T>>::create(count);
 
-        QSharedPointer<int> remaining(new int(count));
-        QSharedPointer<QVector<T>> results(new QVector<T>(count));
+            int i = 0;
+            for (const auto& promise : promises) {
+                promise.then(
+                    [=](const T& res) mutable {
+                        (*results)[i] = res;
+                        if (--(*remaining) == 0) {
+                            resolve(*results);
+                        }
+                    },
+                    [=]() mutable {
+                        if (*remaining != -1) {
+                            *remaining = -1;
+                            reject(std::current_exception());
+                        }
+                    });
 
-        int i = 0;
-        for (const auto& promise: promises) {
-            promise.then([=](const T& res) mutable {
-                (*results)[i] = res;
-                if (--(*remaining) == 0) {
-                    resolve(*results);
-                }
-            }, [=]() mutable {
-                if (*remaining != -1) {
-                    *remaining = -1;
-                    reject(std::current_exception());
-                }
-            });
-
-            i++;
-        }
-    });
+                i++;
+            }
+        }};
 }
 
-template <template <typename, typename...> class Sequence = QVector, typename ...Args>
-static inline QPromise<void>
-all(const Sequence<QPromise<void>, Args...>& promises)
+template<template<typename, typename...> class Sequence = QVector, typename... Args>
+static inline QPromise<void> all(const Sequence<QPromise<void>, Args...>& promises)
 {
     const int count = static_cast<int>(promises.size());
     if (count == 0) {
         return QtPromise::resolve();
     }
 
-    return QPromise<void>([=](
-        const QPromiseResolve<void>& resolve,
-        const QPromiseReject<void>& reject) {
+    return QPromise<void>{
+        [=](const QPromiseResolve<void>& resolve, const QPromiseReject<void>& reject) {
+            auto remaining = QSharedPointer<int>::create(count);
 
-        QSharedPointer<int> remaining(new int(count));
-
-        for (const auto& promise: promises) {
-            promise.then([=]() {
-                if (--(*remaining) == 0) {
-                    resolve();
-                }
-            }, [=]() {
-                if (*remaining != -1) {
-                    *remaining = -1;
-                    reject(std::current_exception());
-                }
-            });
-        }
-    });
+            for (const auto& promise : promises) {
+                promise.then(
+                    [=]() {
+                        if (--(*remaining) == 0) {
+                            resolve();
+                        }
+                    },
+                    [=]() {
+                        if (*remaining != -1) {
+                            *remaining = -1;
+                            reject(std::current_exception());
+                        }
+                    });
+            }
+        }};
 }
 
-template <typename Functor, typename... Args>
+template<typename Functor, typename... Args>
 static inline typename QtPromisePrivate::PromiseFunctor<Functor, Args...>::PromiseType
 attempt(Functor&& fn, Args&&... args)
 {
@@ -120,62 +121,57 @@ attempt(Functor&& fn, Args&&... args)
     using ResolveType = QPromiseResolve<ValueType>;
     using RejectType = QPromiseReject<ValueType>;
 
-    return PromiseType(
-        [&](ResolveType&& resolve, RejectType&& reject) {
-            PromiseDispatch<typename FunctorType::ResultType>::call(
-                std::forward<ResolveType>(resolve),
-                std::forward<RejectType>(reject),
-                std::forward<Functor>(fn),
-                std::forward<Args>(args)...);
-        });
+    return PromiseType{[&](ResolveType&& resolve, RejectType&& reject) {
+        PromiseDispatch<typename FunctorType::ResultType>::call(std::forward<ResolveType>(resolve),
+                                                                std::forward<RejectType>(reject),
+                                                                std::forward<Functor>(fn),
+                                                                std::forward<Args>(args)...);
+    }};
 }
 
-template <typename Sender, typename Signal>
+template<typename Sender, typename Signal>
 static inline typename QtPromisePrivate::PromiseFromSignal<Signal>
 connect(const Sender* sender, Signal signal)
 {
     using namespace QtPromisePrivate;
     using T = typename PromiseFromSignal<Signal>::Type;
 
-    return QPromise<T>(
-        [&](const QPromiseResolve<T>& resolve, const QPromiseReject<T>& reject) {
-            QPromiseConnections connections;
-            connectSignalToResolver(connections, resolve, sender, signal);
-            connectDestroyedToReject(connections, reject, sender);
-        });
+    return QPromise<T>{[&](const QPromiseResolve<T>& resolve, const QPromiseReject<T>& reject) {
+        QPromiseConnections connections;
+        connectSignalToResolver(connections, resolve, sender, signal);
+        connectDestroyedToReject(connections, reject, sender);
+    }};
 }
 
-template <typename FSender, typename FSignal, typename RSender, typename RSignal>
+template<typename FSender, typename FSignal, typename RSender, typename RSignal>
 static inline typename QtPromisePrivate::PromiseFromSignal<FSignal>
 connect(const FSender* fsender, FSignal fsignal, const RSender* rsender, RSignal rsignal)
 {
     using namespace QtPromisePrivate;
     using T = typename PromiseFromSignal<FSignal>::Type;
 
-    return QPromise<T>(
-        [&](const QPromiseResolve<T>& resolve, const QPromiseReject<T>& reject) {
-            QPromiseConnections connections;
-            connectSignalToResolver(connections, resolve, fsender, fsignal);
-            connectSignalToResolver(connections, reject, rsender, rsignal);
-            connectDestroyedToReject(connections, reject, fsender);
-        });
+    return QPromise<T>{[&](const QPromiseResolve<T>& resolve, const QPromiseReject<T>& reject) {
+        QPromiseConnections connections;
+        connectSignalToResolver(connections, resolve, fsender, fsignal);
+        connectSignalToResolver(connections, reject, rsender, rsignal);
+        connectDestroyedToReject(connections, reject, fsender);
+    }};
 }
 
-template <typename Sender, typename FSignal, typename RSignal>
+template<typename Sender, typename FSignal, typename RSignal>
 static inline typename QtPromisePrivate::PromiseFromSignal<FSignal>
 connect(const Sender* sender, FSignal fsignal, RSignal rsignal)
 {
     return connect(sender, fsignal, sender, rsignal);
 }
 
-template <typename Sequence, typename Functor>
-static inline QPromise<Sequence>
-each(const Sequence& values, Functor&& fn)
+template<typename Sequence, typename Functor>
+static inline QPromise<Sequence> each(const Sequence& values, Functor&& fn)
 {
     return QPromise<Sequence>::resolve(values).each(std::forward<Functor>(fn));
 }
 
-template <typename Sequence, typename Functor>
+template<typename Sequence, typename Functor>
 static inline typename QtPromisePrivate::PromiseMapper<Sequence, Functor>::PromiseType
 map(const Sequence& values, Functor fn)
 {
@@ -188,11 +184,10 @@ map(const Sequence& values, Functor fn)
 
     std::vector<QPromise<ResType>> promises;
     for (const auto& v : values) {
-        promises.push_back(QPromise<ResType>([&](
-            const QPromiseResolve<ResType>& resolve,
-            const QPromiseReject<ResType>& reject) {
+        promises.push_back(QPromise<ResType>{
+            [&](const QPromiseResolve<ResType>& resolve, const QPromiseReject<ResType>& reject) {
                 PromiseFulfill<RetType>::call(fn(v, i), resolve, reject);
-            }));
+            }});
 
         i++;
     }
@@ -200,28 +195,30 @@ map(const Sequence& values, Functor fn)
     return QtPromise::all(promises);
 }
 
-template <typename Sequence, typename Functor>
-static inline QPromise<Sequence>
-filter(const Sequence& values, Functor fn)
+template<typename Sequence, typename Functor>
+static inline QPromise<Sequence> filter(const Sequence& values, Functor fn)
 {
-    return QtPromise::map(values, fn)
-        .then([=](const QVector<bool>& filters) {
-            Sequence filtered;
+    return QtPromise::map(values, fn).then([=](const QVector<bool>& filters) {
+        Sequence filtered;
 
-            auto filter = filters.begin();
-            for (auto& value : values) {
-                if (*filter) {
-                    filtered.push_back(std::move(value));
-                }
-
-                filter++;
+        auto filter = filters.begin();
+        for (auto& value : values) {
+            if (*filter) {
+                filtered.push_back(std::move(value));
             }
 
-            return filtered;
-        });
+            filter++;
+        }
+
+        return filtered;
+    });
 }
 
-template <typename T, template <typename...> class Sequence = QVector, typename Reducer, typename Input, typename ...Args>
+template<typename T,
+         template<typename...> class Sequence = QVector,
+         typename Reducer,
+         typename Input,
+         typename... Args>
 static inline typename QtPromisePrivate::PromiseDeduce<Input>::Type
 reduce(const Sequence<T, Args...>& values, Reducer fn, Input initial)
 {
@@ -246,7 +243,10 @@ reduce(const Sequence<T, Args...>& values, Reducer fn, Input initial)
     return promise;
 }
 
-template <typename T, template <typename...> class Sequence = QVector, typename Reducer, typename ...Args>
+template<typename T,
+         template<typename...> class Sequence = QVector,
+         typename Reducer,
+         typename... Args>
 static inline typename QtPromisePrivate::PromiseDeduce<T>::Type
 reduce(const Sequence<T, Args...>& values, Reducer fn)
 {
@@ -276,19 +276,17 @@ reduce(const Sequence<T, Args...>& values, Reducer fn)
 
 // DEPRECATIONS (remove at version 1)
 
-template <typename... Args>
+template<typename... Args>
 Q_DECL_DEPRECATED_X("Use QtPromise::resolve instead")
-static inline auto
-qPromise(Args&&... args)
+static inline auto qPromise(Args&&... args)
     -> decltype(QtPromise::resolve(std::forward<Args>(args)...))
 {
     return QtPromise::resolve(std::forward<Args>(args)...);
 }
 
-template <typename... Args>
+template<typename... Args>
 Q_DECL_DEPRECATED_X("Use QtPromise::all instead")
-static inline auto
-qPromiseAll(Args&&... args)
+static inline auto qPromiseAll(Args&&... args)
     -> decltype(QtPromise::all(std::forward<Args>(args)...))
 {
     return QtPromise::all(std::forward<Args>(args)...);

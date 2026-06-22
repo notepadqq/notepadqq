@@ -1,0 +1,6 @@
+plugins:
+  - frontmatter
+  - validate-links
+  - preset-lint-recommended
+  - preset-lint-markdown-style-guide
+  - [lint-maximum-line-length, 100]

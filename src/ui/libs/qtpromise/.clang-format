@@ -1,0 +1,66 @@
+---
+Language: Cpp
+Standard: Cpp11
+BasedOnStyle: WebKit
+AlignAfterOpenBracket: true
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: false
+    AfterEnum: false
+    AfterFunction: true
+    AfterNamespace: false
+    AfterStruct: true
+    AfterUnion: false
+    AfterExternBlock: false
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
+    SplitEmptyFunction: false
+    SplitEmptyRecord: false
+    SplitEmptyNamespace: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+BreakInheritanceList: BeforeComma
+BreakConstructorInitializers: BeforeColon
+ColumnLimit: 100
+CommentPragmas: "^!|^:"
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: true
+FixNamespaceComments: true
+ForEachMacros:
+    - BOOST_FOREACH
+    - foreach
+    - forever
+    - Q_FOREACH
+    - Q_FOREVER
+    - QBENCHMARK
+    - QBENCHMARK_ONCE
+IncludeBlocks: Regroup
+IncludeCategories:
+    - Regex:         '^<Q.*>'
+      Priority:      2
+      SortPriority:  0
+    - Regex:         '^<.*\.h>'
+      Priority:      3
+      SortPriority:  0
+    - Regex:         '^<.*>'
+      Priority:      4
+      SortPriority:  0
+    - Regex:         '.*'
+      Priority:      1
+      SortPriority:  0
+IndentPPDirectives: AfterHash
+NamespaceIndentation: None
+PenaltyReturnTypeOnItsOwnLine: 10
+SpaceAfterTemplateKeyword: false
+SpaceBeforeCpp11BracedList: false
+...
