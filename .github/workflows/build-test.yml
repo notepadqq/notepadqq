@@ -28,4 +28,4 @@ jobs:
     - name: Build
       run: ./configure && make
     - name: Test
-      run: ./src/ui-tests/ui-tests.app/Contents/MacOS/ui-tests
+      run: make test
