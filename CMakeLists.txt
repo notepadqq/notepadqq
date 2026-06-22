@@ -7,6 +7,7 @@ include(GNUInstallDirs)
 option(NQQ_BUILD_TESTS "Build Notepadqq tests" ON)
 option(NQQ_ENABLE_ASAN "Enable AddressSanitizer" OFF)
 option(NQQ_ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
+option(NQQ_BUILD_SNAP "Build Notepadqq for Snap packaging" OFF)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -214,6 +215,10 @@ target_include_directories(${NQQ_TARGET_NAME} PRIVATE
     src/ui/libs/qtpromise/include
     src/ui/libs/qtpromise/src
 )
+
+if(NQQ_BUILD_SNAP)
+    target_compile_definitions(${NQQ_TARGET_NAME} PRIVATE BUILD_SNAP)
+endif()
 
 set_target_properties(${NQQ_TARGET_NAME} PROPERTIES
     AUTOUIC_SEARCH_PATHS "${NQQ_UI_DIR};${NQQ_UI_DIR}/Search;${NQQ_UI_DIR}/Extensions"
