@@ -26,7 +26,7 @@ Build it yourself
 
 | Build dependencies    | Dependencies      |
 |-----------------------|-------------------|
-| Qt 6.8 or higher      | Qt 6.8 or higher  |
+| Qt 6.4 or higher      | Qt 6.4 or higher  |
 | qt6-webengine5-dev    | qt6-webengine5    |
 | qt6-websockets-dev    | qt6-websockets    |
 | qt6-svg-dev           | qt6-svg           |

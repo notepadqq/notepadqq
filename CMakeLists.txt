@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS
+find_package(Qt6 6.4 REQUIRED COMPONENTS
     Core
     Core5Compat
     DBus
@@ -33,7 +33,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(UCHARDET REQUIRED IMPORTED_TARGET uchardet)
 
-qt_standard_project_setup(REQUIRES 6.8)
+qt_standard_project_setup(REQUIRES 6.4)
 
 set(NQQ_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(NQQ_UI_DIR "${NQQ_ROOT_DIR}/src/ui")
