@@ -11,6 +11,7 @@ LABEL maintainer="Notepadqq"
 RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     build-essential \
     clang-format \
+    cmake \
     coreutils \
     gcc \
     git \
@@ -29,8 +30,7 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
 COPY . /app/
 WORKDIR /app/
 
-RUN make clean; exit 0
-RUN ./configure --qmake /usr/bin/qmake6 --lrelease /usr/lib/qt6/bin/lrelease && make
-RUN src/ui-tests/ui-tests
+RUN ./configure && make
+RUN make test
 
 CMD bash
