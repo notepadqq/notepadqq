@@ -23,7 +23,7 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
 
     connect(this, &EditorTabWidget::currentChanged, this, &EditorTabWidget::on_currentTabChanged);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
     this->tabBar()->setExpanding(true);
     this->setUsesScrollButtons(true);
 #else

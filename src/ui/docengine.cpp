@@ -970,7 +970,7 @@ int DocEngine::saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileNam
 
         file.close();
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
         // On macOS we need to give it a little bit of time, otherwise we get the
         // "document changed" banner as soon as the document is saved.
         QTimer::singleShot(100, [=](){ monitorDocument(editor); });

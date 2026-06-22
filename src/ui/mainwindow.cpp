@@ -342,7 +342,7 @@ void MainWindow::configureStatusBar()
         btn->setMenu(mnu);
         btn->setFocusPolicy(Qt::NoFocus);
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
         // MacOS style issues workaround (see #708)
         btn->setStyleSheet(QString("QPushButton { background: %1; }").arg(QPalette().shadow().color().name()));
 #endif

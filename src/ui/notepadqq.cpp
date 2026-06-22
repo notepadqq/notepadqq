@@ -20,7 +20,7 @@ QString Notepadqq::copyright()
 
 QString Notepadqq::appDataPath(QString fileName)
 {
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
     QString def = QString("%1/../Resources/").
             arg(qApp->applicationDirPath());
 #else
