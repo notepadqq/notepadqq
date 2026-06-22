@@ -22,6 +22,7 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     libqt6opengl6-dev \
     pkg-config \
     qt6-base-dev \
+    qt6-tools-dev \
     qt6-tools-dev-tools \
     qt6-webengine-dev \
     qt6-l10n-tools \
@@ -33,4 +34,4 @@ WORKDIR /app/
 RUN ./configure && make
 RUN make test
 
-CMD bash
+CMD ["bash"]
