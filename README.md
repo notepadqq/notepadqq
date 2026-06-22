@@ -105,4 +105,3 @@ Notepadqq is available in the `shannon` (stable) repository:
 #### Others
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
-
