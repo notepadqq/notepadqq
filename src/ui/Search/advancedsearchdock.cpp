@@ -687,7 +687,11 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
 
     // Connect right-hand side buttons
     connect(m_btnClose, &QAbstractButton::clicked, dockWidget, &QDockWidget::close);
-    connect(m_btnDockUndock, SIGNAL(clicked()), dockWidget, SLOT(_q_toggleTopLevel()));
+    connect(m_btnDockUndock, &QPushButton::clicked, this, [this]() {
+        if (QDockWidget* dockWidget = m_dockWidget.data()) {
+            dockWidget->setFloating(!dockWidget->isFloating());
+        }
+    });
 
     // Search panel connections
     connect(m_cmbSearchTerm->lineEdit(), &QLineEdit::textChanged, this, &AdvancedSearchDock::onUserInput);
