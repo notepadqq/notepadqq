@@ -31,7 +31,7 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
 COPY . /app/
 WORKDIR /app/
 
-RUN ./configure && make
-RUN make test
+RUN cmake --preset release && cmake --build --preset release
+RUN ctest --preset release
 
 CMD ["bash"]

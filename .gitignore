@@ -11,8 +11,6 @@ Thumbs.db
 *.bak
 *.old
 
-/Makefile
-/src/ui/Makefile
 build-notepadqq-Desktop*
 
 /out

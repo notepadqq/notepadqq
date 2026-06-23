@@ -42,8 +42,13 @@ Build it yourself
 
 #### Build
 
-    notepadqq$ ./configure --prefix /usr
-    notepadqq$ make
+    notepadqq$ cmake --preset release
+    notepadqq$ cmake --build --preset release
+
+To build with debug symbols, use the `dev` preset instead:
+
+    notepadqq$ cmake --preset dev
+    notepadqq$ cmake --build --preset dev
 
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
@@ -55,12 +60,16 @@ For CentOS:
 
 Building for **macOS**? Check [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
 
+#### Run tests
+
+    notepadqq$ ctest --preset release
+
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run:
 
-    notepadqq$ sudo make install
+    notepadqq$ sudo cmake --install out/release
 
 #### Qt
 
