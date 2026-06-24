@@ -1,9 +1,14 @@
 name: notepadqq 
+title: Notepadqq
 version: '2.0.0-beta+git'
-summary: A Notepad++-like editor for Linux.
+summary: A lightweight text editor for scientists and engineers.
 description: |
   It helps developers by providing all you can expect from a general purpose text editor, such as syntax highlighting for more than 100 different languages, code folding, color schemes, file monitoring, multiple selection and much more.
   You can search text using the power of regular expressions. You can organize documents side by side. You can use real-time highlighting to find near identifiers in no time.
+website: https://notepadqq.com
+source-code: https://github.com/notepadqq/notepadqq
+issues: https://github.com/notepadqq/notepadqq/issues
+license: GPL-3.0+
 grade: stable
 confinement: classic
 icon: support_files/icons/hicolor/scalable/apps/notepadqq.svg
@@ -12,16 +17,19 @@ base: core24
 apps:
   notepadqq:
     command: usr/bin/notepadqq
+    command-chain:
+      - bin/notepadqq-launch.sh
     environment:
+      # LD_LIBRARY_PATH: $SNAP/usr/lib/aarch64-linux-gnu:$SNAP/usr/lib/aarch64-linux-gnu/qt6:${LD_LIBRARY_PATH}
       DISABLE_WAYLAND: "1"
       QTWEBENGINEPROCESS_PATH: $SNAP/usr/lib/qt6/libexec/QtWebEngineProcess
       QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox
       QTWEBENGINE_RESOURCES_PATH: $SNAP/usr/share/qt6/resources
     desktop: usr/share/applications/notepadqq.desktop
 
-layout:
-  /usr/lib/aarch64-linux-gnu/qt6/plugins:
-    bind: $SNAP/usr/lib/aarch64-linux-gnu/qt6/plugins
+# layout:
+#   /usr/lib/aarch64-linux-gnu/qt6/plugins:
+#     bind: $SNAP/usr/lib/aarch64-linux-gnu/qt6/plugins
 
 parts:
   notepadqq:
@@ -77,28 +85,30 @@ parts:
       - qt6-gtk-platformtheme
       - qt6-qpa-plugins
       - qt6-translations-l10n
+      - qt6-wayland
       - libuchardet0
-    prime:
-      - -usr/lib/aarch64-linux-gnu/libEGL*
-      - -usr/lib/aarch64-linux-gnu/libGL*
-      - -usr/lib/aarch64-linux-gnu/libOpenGL*
-      - -usr/lib/aarch64-linux-gnu/libX11*
-      - -usr/lib/aarch64-linux-gnu/libXau*
-      - -usr/lib/aarch64-linux-gnu/libXcomposite*
-      - -usr/lib/aarch64-linux-gnu/libXcursor*
-      - -usr/lib/aarch64-linux-gnu/libXdamage*
-      - -usr/lib/aarch64-linux-gnu/libXdmcp*
-      - -usr/lib/aarch64-linux-gnu/libXext*
-      - -usr/lib/aarch64-linux-gnu/libXfixes*
-      - -usr/lib/aarch64-linux-gnu/libXi*
-      - -usr/lib/aarch64-linux-gnu/libXinerama*
-      - -usr/lib/aarch64-linux-gnu/libXrandr*
-      - -usr/lib/aarch64-linux-gnu/libXrender*
-      - -usr/lib/aarch64-linux-gnu/libXtst*
-      - -usr/lib/aarch64-linux-gnu/libXxf86vm*
-      - -usr/lib/aarch64-linux-gnu/libxcb*
-      - -usr/lib/aarch64-linux-gnu/libdrm*
-      - -usr/lib/aarch64-linux-gnu/libgallium*
+      - libxcb-cursor0
+    # prime:
+    #   - -usr/lib/aarch64-linux-gnu/libEGL*
+    #   - -usr/lib/aarch64-linux-gnu/libGL*
+    #   - -usr/lib/aarch64-linux-gnu/libOpenGL*
+    #   - -usr/lib/aarch64-linux-gnu/libX11*
+    #   - -usr/lib/aarch64-linux-gnu/libXau*
+    #   - -usr/lib/aarch64-linux-gnu/libXcomposite*
+    #   - -usr/lib/aarch64-linux-gnu/libXcursor*
+    #   - -usr/lib/aarch64-linux-gnu/libXdamage*
+    #   - -usr/lib/aarch64-linux-gnu/libXdmcp*
+    #   - -usr/lib/aarch64-linux-gnu/libXext*
+    #   - -usr/lib/aarch64-linux-gnu/libXfixes*
+    #   - -usr/lib/aarch64-linux-gnu/libXi*
+    #   - -usr/lib/aarch64-linux-gnu/libXinerama*
+    #   - -usr/lib/aarch64-linux-gnu/libXrandr*
+    #   - -usr/lib/aarch64-linux-gnu/libXrender*
+    #   - -usr/lib/aarch64-linux-gnu/libXtst*
+    #   - -usr/lib/aarch64-linux-gnu/libXxf86vm*
+    #   - -usr/lib/aarch64-linux-gnu/libxcb*
+    #   - -usr/lib/aarch64-linux-gnu/libdrm*
+    #   - -usr/lib/aarch64-linux-gnu/libgallium*
 
   qtconf:
     plugin: dump
@@ -110,3 +120,9 @@ parts:
       sed -i "s|__ARCH_TRIPLET__|$CRAFT_ARCH_TRIPLET_BUILD_FOR|" qt.conf qt.WebEngineProcess.conf
       snapcraftctl build
     after: [notepadqq]
+
+  launcher:
+    plugin: dump
+    source: snap/local
+    organize:
+      notepadqq-launch.sh: bin/notepadqq-launch.sh
