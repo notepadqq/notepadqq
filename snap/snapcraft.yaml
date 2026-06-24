@@ -12,24 +12,16 @@ base: core24
 apps:
   notepadqq:
     command: usr/bin/notepadqq
-    extensions: [kde-neon-6]
     environment:
-      DISABLE_WAYLAND: "1"  # See https://github.com/notepadqq/notepadqq/issues/806
+      DISABLE_WAYLAND: "1"
+      QTWEBENGINEPROCESS_PATH: $SNAP/usr/lib/qt6/libexec/QtWebEngineProcess
+      QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox
+      QTWEBENGINE_RESOURCES_PATH: $SNAP/usr/share/qt6/resources
     desktop: usr/share/applications/notepadqq.desktop
-#   plugs:  # Plugs are not needed for classic confinement
-#     - browser-support
-#     - desktop
-#     - desktop-legacy
-#     - gsettings
-#     - home
-#     - media-hub
-#     - network-bind
-#     - network-manager
-#     - opengl
-#     - optical-drive
-#     - removable-media
-#     - unity7
-#     - x11
+
+layout:
+  /usr/lib/aarch64-linux-gnu/qt6/plugins:
+    bind: $SNAP/usr/lib/aarch64-linux-gnu/qt6/plugins
 
 parts:
   notepadqq:
@@ -37,11 +29,84 @@ parts:
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_INSTALL_LIBDIR=lib
       - -DNQQ_BUILD_SNAP=ON
       - -DNQQ_BUILD_TESTS=OFF
     build-packages:
+      - build-essential
+      - cmake
       - pkg-config
+      - qt6-base-dev
+      - qt6-tools-dev
+      - qt6-tools-dev-tools
+      - qt6-webengine-dev
+      - qt6-l10n-tools
+      - libqt6svg6-dev
+      - libqt6websockets6-dev
+      - libqt6core5compat6-dev
+      - libqt6opengl6-dev
       - libuchardet-dev
     stage-packages:
+      - libevent-2.1-7t64
+      - libfontconfig1
+      - libfreetype6
+      - libice6
+      - libsm6
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+      - libqt6core5compat6
+      - libqt6core6t64
+      - libqt6dbus6t64
       - libnss3
+      - libqt6gui6t64
+      - libqt6network6t64
+      - libqt6opengl6t64
+      - libqt6printsupport6t64
+      - libqt6qml6
+      - libqt6qmlmodels6
+      - libqt6quick6
+      - libqt6quickwidgets6
+      - libqt6svg6
+      - libqt6webchannel6
+      - libqt6webengine6-data
+      - libqt6webenginecore6
+      - libqt6webenginecore6-bin
+      - libqt6webenginewidgets6
+      - libqt6websockets6
+      - libqt6widgets6t64
+      - qt6-gtk-platformtheme
+      - qt6-qpa-plugins
+      - qt6-translations-l10n
       - libuchardet0
+    prime:
+      - -usr/lib/aarch64-linux-gnu/libEGL*
+      - -usr/lib/aarch64-linux-gnu/libGL*
+      - -usr/lib/aarch64-linux-gnu/libOpenGL*
+      - -usr/lib/aarch64-linux-gnu/libX11*
+      - -usr/lib/aarch64-linux-gnu/libXau*
+      - -usr/lib/aarch64-linux-gnu/libXcomposite*
+      - -usr/lib/aarch64-linux-gnu/libXcursor*
+      - -usr/lib/aarch64-linux-gnu/libXdamage*
+      - -usr/lib/aarch64-linux-gnu/libXdmcp*
+      - -usr/lib/aarch64-linux-gnu/libXext*
+      - -usr/lib/aarch64-linux-gnu/libXfixes*
+      - -usr/lib/aarch64-linux-gnu/libXi*
+      - -usr/lib/aarch64-linux-gnu/libXinerama*
+      - -usr/lib/aarch64-linux-gnu/libXrandr*
+      - -usr/lib/aarch64-linux-gnu/libXrender*
+      - -usr/lib/aarch64-linux-gnu/libXtst*
+      - -usr/lib/aarch64-linux-gnu/libXxf86vm*
+      - -usr/lib/aarch64-linux-gnu/libxcb*
+      - -usr/lib/aarch64-linux-gnu/libdrm*
+      - -usr/lib/aarch64-linux-gnu/libgallium*
+
+  qtconf:
+    plugin: dump
+    source: snap/local
+    organize:
+      qt.conf: usr/lib/notepadqq/qt.conf
+      qt.WebEngineProcess.conf: usr/lib/qt6/libexec/qt.conf
+    override-build: |
+      sed -i "s|__ARCH_TRIPLET__|$CRAFT_ARCH_TRIPLET_BUILD_FOR|" qt.conf qt.WebEngineProcess.conf
+      snapcraftctl build
+    after: [notepadqq]
