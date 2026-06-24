@@ -4,92 +4,19 @@ if(NOT EXISTS "${MANIFEST_FILE}")
     message(FATAL_ERROR "Cannot find install manifest: ${MANIFEST_FILE}")
 endif()
 
-message(STATUS "Reading install manifest from: ${MANIFEST_FILE}")
+file(STRINGS "${MANIFEST_FILE}" MANIFEST_ENTRIES)
 
-file(STRINGS "${MANIFEST_FILE}" FILES)
-
-# Remove files listed in manifest
-foreach(FILE ${FILES})
-    if(EXISTS "${FILE}" OR IS_SYMLINK "${FILE}")
-        message(STATUS "Removing: ${FILE}")
-        file(REMOVE "${FILE}")
-    else()
-        message(STATUS "File does not exist (skipping): ${FILE}")
+foreach(ENTRY ${MANIFEST_ENTRIES})
+    if(EXISTS "${ENTRY}" OR IS_SYMLINK "${ENTRY}")
+        message(STATUS "Removing: ${ENTRY}")
+        file(REMOVE "${ENTRY}")
     endif()
 endforeach()
 
-# Additional cleanup for files that might not be in manifest
-message(STATUS "Performing additional cleanup...")
-
-# Remove the launcher script if it exists
-set(LAUNCHER_SCRIPT "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/notepadqq")
-if(EXISTS "${LAUNCHER_SCRIPT}")
-    message(STATUS "Removing launcher script: ${LAUNCHER_SCRIPT}")
-    file(REMOVE "${LAUNCHER_SCRIPT}")
-endif()
-
-# Remove desktop entry
-set(DESKTOP_FILE "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/applications/notepadqq.desktop")
-if(EXISTS "${DESKTOP_FILE}")
-    message(STATUS "Removing desktop entry: ${DESKTOP_FILE}")
-    file(REMOVE "${DESKTOP_FILE}")
-endif()
-
-# Remove appdata
-set(APPDATA_FILE "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/metainfo/notepadqq.appdata.xml")
-if(EXISTS "${APPDATA_FILE}")
-    message(STATUS "Removing appdata: ${APPDATA_FILE}")
-    file(REMOVE "${APPDATA_FILE}")
-endif()
-
-# Remove man page
-set(MANPAGE_FILE "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_MANDIR@/man1/notepadqq.1")
-if(EXISTS "${MANPAGE_FILE}")
-    message(STATUS "Removing man page: ${MANPAGE_FILE}")
-    file(REMOVE "${MANPAGE_FILE}")
-endif()
-
-# Remove icons
-message(STATUS "Removing icons...")
-foreach(NQQ_ICON_SIZE 16 22 24 32 48 64 96 128 256 512)
-    set(ICON_FILE "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/icons/hicolor/${NQQ_ICON_SIZE}x${NQQ_ICON_SIZE}/apps/notepadqq.png")
-    if(EXISTS "${ICON_FILE}")
-        message(STATUS "Removing: ${ICON_FILE}")
-        file(REMOVE "${ICON_FILE}")
-    endif()
-endforeach()
-set(SVG_ICON "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/icons/hicolor/scalable/apps/notepadqq.svg")
-if(EXISTS "${SVG_ICON}")
-    message(STATUS "Removing: ${SVG_ICON}")
-    file(REMOVE "${SVG_ICON}")
-endif()
-
-# Remove empty directories
-message(STATUS "Cleaning up empty directories...")
-set(NQQ_DIRS_TO_CLEAN
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/notepadqq/editor"
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/notepadqq/extension_tools"
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/notepadqq"
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/applications"
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/metainfo"
-    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_MANDIR@/man1"
-)
-
-foreach(DIR ${NQQ_DIRS_TO_CLEAN})
-    if(EXISTS "${DIR}" AND IS_DIRECTORY "${DIR}")
-        file(GLOB DIR_CONTENTS "${DIR}/*")
-        list(LENGTH DIR_CONTENTS DIR_CONTENT_COUNT)
-        if(DIR_CONTENT_COUNT EQUAL 0)
-            message(STATUS "Removing empty directory: ${DIR}")
-            file(REMOVE_RECURSE "${DIR}")
-        endif()
-    endif()
-endforeach()
-
-# Update icon cache if running on Linux
 if(EXISTS "/usr/bin/gtk-update-icon-cache")
     execute_process(
-        COMMAND gtk-update-icon-cache -q -t "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/icons/hicolor"
+        COMMAND gtk-update-icon-cache -q -t
+                "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/icons/hicolor"
         RESULT_VARIABLE GTK_CACHE_RESULT
         ERROR_QUIET
     )
@@ -98,4 +25,4 @@ if(EXISTS "/usr/bin/gtk-update-icon-cache")
     endif()
 endif()
 
-message(STATUS "Uninstall completed successfully!")
+message(STATUS "Uninstall finished")
