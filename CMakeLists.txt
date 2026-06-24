@@ -193,10 +193,7 @@ foreach(NQQ_QM_FILE IN LISTS NQQ_QM_FILES)
 endforeach()
 file(APPEND "${NQQ_TRANSLATIONS_QRC}" "    </qresource>\n</RCC>\n")
 
-set(NQQ_TARGET_NAME notepadqq-bin)
-if(APPLE)
-    set(NQQ_TARGET_NAME notepadqq)
-endif()
+set(NQQ_TARGET_NAME notepadqq)
 
 qt_add_executable(${NQQ_TARGET_NAME} MACOSX_BUNDLE
     ${NQQ_APP_SOURCES}
@@ -329,13 +326,17 @@ if(NQQ_BUILD_TESTS)
     add_test(NAME ui-tests COMMAND ui-tests)
 endif()
 
-install(TARGETS ${NQQ_TARGET_NAME}
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION "${CMAKE_INSTALL_LIBDIR}/notepadqq"
-)
+if(APPLE)
+    install(TARGETS ${NQQ_TARGET_NAME}
+        BUNDLE DESTINATION .
+    )
+else()
+    install(TARGETS ${NQQ_TARGET_NAME}
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
+endif()
 
 if(UNIX AND NOT APPLE)
-    install(PROGRAMS "${NQQ_SUPPORT_DIR}/launch/notepadqq" DESTINATION "${CMAKE_INSTALL_BINDIR}")
     install(DIRECTORY "${NQQ_STAGED_APPDATA_DIR}/editor" "${NQQ_STAGED_APPDATA_DIR}/extension_tools"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/notepadqq"
     )

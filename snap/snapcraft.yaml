@@ -114,7 +114,7 @@ parts:
     plugin: dump
     source: snap/local
     organize:
-      qt.conf: usr/lib/notepadqq/qt.conf
+      qt.conf: usr/bin/qt.conf
       qt.WebEngineProcess.conf: usr/lib/qt6/libexec/qt.conf
     override-build: |
       sed -i "s|__ARCH_TRIPLET__|$CRAFT_ARCH_TRIPLET_BUILD_FOR|" qt.conf qt.WebEngineProcess.conf

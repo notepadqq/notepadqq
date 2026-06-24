@@ -24,14 +24,26 @@ QString Notepadqq::appDataPath(QString fileName)
     QString def = QString("%1/../Resources/").
             arg(qApp->applicationDirPath());
 #else
-    QString def = QString("%1/../appdata/").
-            arg(qApp->applicationDirPath());
-#endif
+    const QString applicationDir = qApp->applicationDirPath();
+    const QStringList candidatePaths = {
+        QString("%1/appdata/").arg(applicationDir),
+        QString("%1/../appdata/").arg(applicationDir),
+        QString("%1/../share/%2/").arg(applicationDir, qApp->applicationName().toLower()),
+        QString("%1/../../share/%2/").arg(applicationDir, qApp->applicationName().toLower())
+    };
 
-    if(!QDir(def).exists())
-        def = QString("%1/../../share/%2/").
-                arg(qApp->applicationDirPath()).
-                arg(qApp->applicationName().toLower());
+    QString def;
+    for (const QString &candidatePath : candidatePaths) {
+        if (QDir(candidatePath).exists()) {
+            def = candidatePath;
+            break;
+        }
+    }
+
+    if (def.isEmpty()) {
+        def = candidatePaths[0];
+    }
+#endif
 
     if (!fileName.isNull()) {
         def.append(fileName);
