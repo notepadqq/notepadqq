@@ -11,6 +11,7 @@ LABEL maintainer="Notepadqq"
 RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     build-essential \
     clang-format \
+    cmake \
     coreutils \
     gcc \
     git \
@@ -21,6 +22,7 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
     libqt6opengl6-dev \
     pkg-config \
     qt6-base-dev \
+    qt6-tools-dev \
     qt6-tools-dev-tools \
     qt6-webengine-dev \
     qt6-l10n-tools \
@@ -29,8 +31,7 @@ RUN apt-get -qq update && apt-get --no-install-recommends -y install \
 COPY . /app/
 WORKDIR /app/
 
-RUN make clean; exit 0
-RUN ./configure --qmake /usr/bin/qmake6 --lrelease /usr/lib/qt6/bin/lrelease && make
-RUN src/ui-tests/ui-tests
+RUN cmake --preset release && cmake --build --preset release
+RUN ctest --preset release
 
-CMD bash
+CMD ["bash"]

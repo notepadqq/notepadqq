@@ -1,0 +1,28 @@
+set(MANIFEST_FILE "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+
+if(NOT EXISTS "${MANIFEST_FILE}")
+    message(FATAL_ERROR "Cannot find install manifest: ${MANIFEST_FILE}")
+endif()
+
+file(STRINGS "${MANIFEST_FILE}" MANIFEST_ENTRIES)
+
+foreach(ENTRY ${MANIFEST_ENTRIES})
+    if(EXISTS "${ENTRY}" OR IS_SYMLINK "${ENTRY}")
+        message(STATUS "Removing: ${ENTRY}")
+        file(REMOVE "${ENTRY}")
+    endif()
+endforeach()
+
+if(EXISTS "/usr/bin/gtk-update-icon-cache")
+    execute_process(
+        COMMAND gtk-update-icon-cache -q -t
+                "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/icons/hicolor"
+        RESULT_VARIABLE GTK_CACHE_RESULT
+        ERROR_QUIET
+    )
+    if(GTK_CACHE_RESULT EQUAL 0)
+        message(STATUS "Updated icon cache")
+    endif()
+endif()
+
+message(STATUS "Uninstall finished")

@@ -25,7 +25,9 @@ jobs:
         submodules: true
     - name: Install dependencies
       run: brew install qt@6 uchardet
+    - name: Configure
+      run: cmake --preset release
     - name: Build
-      run: ./configure && make
+      run: cmake --build --preset release
     - name: Test
-      run: ./src/ui-tests/ui-tests.app/Contents/MacOS/ui-tests
+      run: ctest --preset release

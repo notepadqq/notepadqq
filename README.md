@@ -26,7 +26,7 @@ Build it yourself
 
 | Build dependencies    | Dependencies      |
 |-----------------------|-------------------|
-| Qt 6.8 or higher      | Qt 6.8 or higher  |
+| Qt 6.4 or higher      | Qt 6.4 or higher  |
 | qt6-webengine5-dev    | qt6-webengine5    |
 | qt6-websockets-dev    | qt6-websockets    |
 | qt6-svg-dev           | qt6-svg           |
@@ -42,8 +42,13 @@ Build it yourself
 
 #### Build
 
-    notepadqq$ ./configure --prefix /usr
-    notepadqq$ make
+    notepadqq$ cmake --preset release
+    notepadqq$ cmake --build --preset release
+
+To build with debug symbols, use the `dev` preset instead:
+
+    notepadqq$ cmake --preset dev
+    notepadqq$ cmake --build --preset dev
 
 If you encounter errors make sure to have the necessary libraries installed. For Ubuntu you can do that using apt-get:
 
@@ -55,12 +60,16 @@ For CentOS:
 
 Building for **macOS**? Check [here](https://github.com/notepadqq/notepadqq/wiki/Compiling-Notepadqq-on-macOS).
 
+#### Run tests
+
+    notepadqq$ ctest --preset release
+
 #### Install
 
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run:
 
-    notepadqq$ sudo make install
+    notepadqq$ sudo cmake --install out/release
 
 #### Qt
 
@@ -105,4 +114,3 @@ Notepadqq is available in the `shannon` (stable) repository:
 #### Others
 Use a package for a compatible distribution, or build from [source](https://github.com/notepadqq/notepadqq.git).
 If you want to submit a package: https://github.com/notepadqq/notepadqq-packaging
-
