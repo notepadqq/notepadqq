@@ -132,13 +132,13 @@ jobs:
           xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
 
       - name: Configure
-        run: cmake -S . -B out/clang-tidy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DNQQ_BUILD_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_CXX_CLANG_TIDY=clang-tidy;-warnings-as-errors=*"
+        run: cmake --preset clang-tidy
 
       - name: Build with clang-tidy
-        run: cmake --build out/clang-tidy --parallel
+        run: cmake --build --preset clang-tidy --parallel
 
       - name: Test
-        run: ctest --test-dir out/clang-tidy --output-on-failure
+        run: ctest --preset clang-tidy --output-on-failure
 
   clazy:
     name: clazy
@@ -158,13 +158,13 @@ jobs:
         run: echo "CLAZY_CHECKS=level0,level1,level2" >> "$GITHUB_ENV"
 
       - name: Configure
-        run: cmake -S . -B out/clazy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DNQQ_BUILD_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake --preset clazy
 
       - name: Build
-        run: cmake --build out/clazy --parallel
+        run: cmake --build --preset clazy --parallel
 
       - name: Run clazy
-        run: git ls-files '*.cpp' '*.cc' '*.cxx' | xargs -r -n 1 clazy-standalone -checks=$CLAZY_CHECKS -p out/clazy --header-filter='^src/'
+        run: git ls-files '*.cpp' '*.cc' '*.cxx' | xargs -r -n 1 clazy-standalone -checks=$CLAZY_CHECKS -p build/clazy --header-filter='^src/'
 
       - name: Test
-        run: ctest --test-dir out/clazy --output-on-failure
+        run: ctest --preset clazy --output-on-failure

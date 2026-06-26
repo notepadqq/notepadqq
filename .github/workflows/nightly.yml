@@ -94,12 +94,12 @@ jobs:
       - name: Package Linux AppImage
         if: startsWith(matrix.os, 'ubuntu')
         shell: bash
-        run: build-tools/package-nightly-linux.sh out/release dist AppDir "${{ matrix.artifact_name }}"
+        run: build-tools/package-nightly-linux.sh build/release dist AppDir "${{ matrix.artifact_name }}"
 
       - name: Package macOS bundle
         if: startsWith(matrix.os, 'macos')
         shell: bash
-        run: build-tools/package-nightly-macos.sh out/release dist nightly-root "${{ matrix.artifact_name }}"
+        run: build-tools/package-nightly-macos.sh build/release dist nightly-root "${{ matrix.artifact_name }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
