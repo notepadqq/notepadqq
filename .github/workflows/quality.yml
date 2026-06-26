@@ -17,7 +17,7 @@ concurrency:
 jobs:
   format-check:
     name: Format Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,11 +27,11 @@ jobs:
       - name: Install clang-format
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clang-format
+          sudo apt-get install -y --no-install-recommends clang-format-22
 
       - name: Check formatting
         run: |
-          git ls-files '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' | xargs -r clang-format --dry-run --Werror
+          git ls-files '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' | xargs -r clang-format-22 --dry-run --Werror
 
   build-and-test:
     name: ${{ matrix.os }} / ${{ matrix.preset }}
