@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-build_dir="${1:-out/release}"
+build_dir="${1:-build/release}"
 dist_dir="${2:-dist}"
 appdir="${3:-AppDir}"
 artifact_name="${4:-notepadqq-nightly-linux-x86_64}"

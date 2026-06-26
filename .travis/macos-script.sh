@@ -16,7 +16,7 @@ deploy()
 {
     compile || return 1
 
-    cd out/release
+    cd build/release
     #macdeployqt notepadqq.app  # <-- this would be easy, but it is broken with QtWebEngine
 
     macdeployqt notepadqq.app -executable=notepadqq.app/Contents/MacOS/notepadqq || return 1
