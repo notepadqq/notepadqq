@@ -14,16 +14,15 @@ class frmPreferences;
 
 class QAbstractButton;
 
-class frmPreferences : public QDialog
-{
+class frmPreferences : public QDialog {
     Q_OBJECT
 
 public:
-    explicit frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent = nullptr);
+    explicit frmPreferences(TopEditorContainer* topEditorContainer, QWidget* parent = nullptr);
     ~frmPreferences();
 
 private slots:
-    void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_treeWidget_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
     void on_cmbLanguages_currentIndexChanged(int index);
@@ -34,19 +33,19 @@ private slots:
     void on_localizationComboBox_activated(int index);
     void on_btnNodejsBrowse_clicked();
     void on_btnNpmBrowse_clicked();
-    void on_txtNodejs_textChanged(const QString &);
-    void on_txtNpm_textChanged(const QString &);
+    void on_txtNodejs_textChanged(const QString&);
+    void on_txtNpm_textChanged(const QString&);
     void resetSelectedShortcut();
     void resetAllShortcuts();
     void on_chkOverrideFontFamily_toggled(bool checked);
     void on_chkOverrideFontSize_toggled(bool checked);
     void on_spnFontSize_valueChanged(int arg1);
-    void on_cmbFontFamilies_currentFontChanged(const QFont &f);
+    void on_cmbFontFamilies_currentFontChanged(const QFont& f);
     void on_chkOverrideLineHeight_toggled(bool checked);
     void on_spnLineHeight_valueChanged(double arg1);
     void on_chkShowLineNumbers_toggled(bool checked);
 
-    void on_buttonBox_clicked(QAbstractButton *button);
+    void on_buttonBox_clicked(QAbstractButton* button);
 
     void on_chkSearch_SaveHistory_toggled(bool checked);
 
@@ -76,11 +75,11 @@ private:
     };
     QList<LanguageSettings> m_tempLangSettings;
 
-    KeyGrabber *m_keyGrabber;
+    KeyGrabber* m_keyGrabber;
 
     NqqSettings& m_settings;
-    Ui::frmPreferences *ui;
-    TopEditorContainer *m_topEditorContainer;
+    Ui::frmPreferences* ui;
+    TopEditorContainer* m_topEditorContainer;
     QSharedPointer<Editor> m_previewEditor;
 
     void loadLanguages();
@@ -100,8 +99,8 @@ private:
      */
     bool applySettings();
 
-    bool extensionBrowseRuntime(QLineEdit *lineEdit);
-    void checkExecutableExists(QLineEdit *path);
+    bool extensionBrowseRuntime(QLineEdit* lineEdit);
+    void checkExecutableExists(QLineEdit* path);
     void updatePreviewEditorFont();
 };
 

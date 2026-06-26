@@ -3,23 +3,20 @@
 
 #include "include/EditorNS/bannerbasicmessage.h"
 
-namespace EditorNS
-{
+namespace EditorNS {
 
-    class BannerFileChanged : public BannerBasicMessage
-    {
-        Q_OBJECT
-    public:
-        explicit BannerFileChanged(QWidget *parent = nullptr);
+class BannerFileChanged : public BannerBasicMessage {
+    Q_OBJECT
+public:
+    explicit BannerFileChanged(QWidget* parent = nullptr);
 
-    signals:
-        void reload();
-        void ignore();
+signals:
+    void reload();
+    void ignore();
 
-    public slots:
+public slots:
+};
 
-    };
-
-}
+} // namespace EditorNS
 
 #endif // BANNERFILECHANGED_H

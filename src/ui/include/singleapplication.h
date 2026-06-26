@@ -9,11 +9,10 @@
  * @brief QApplication subclass which, using local sockets, makes sure only
  *        one instance of the application is running at the same time.
  */
-class SingleApplication : public QApplication
-{
+class SingleApplication : public QApplication {
     Q_OBJECT
 public:
-    explicit SingleApplication(int &argc, char **argv);
+    explicit SingleApplication(int& argc, char** argv);
 
     void startServer();
 
@@ -25,17 +24,17 @@ public:
      */
     bool attachToOtherInstance();
 signals:
-    void receivedArguments(const QString &workingDirectory, const QStringList &arguments);
+    void receivedArguments(const QString& workingDirectory, const QStringList& arguments);
 
 #ifdef USE_DBUS
 public slots:
     Q_SCRIPTABLE void receive(const QString& workingDirectory, const QStringList& arguments);
 #else
 private:
-    QLocalServer *m_localServer = nullptr;
+    QLocalServer* m_localServer = nullptr;
 
-    bool sendCommandLineArguments(QLocalSocket *socket);
-    QLocalSocket *alreadyRunningInstance();
+    bool sendCommandLineArguments(QLocalSocket* socket);
+    QLocalSocket* alreadyRunningInstance();
     void newConnection();
     QString socketNameForUser();
 #endif

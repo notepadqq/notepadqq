@@ -1,15 +1,14 @@
 #ifndef AUTOSAVE_H
 #define AUTOSAVE_H
 
+#include <QSharedPointer>
 #include <QString>
 #include <QTimer>
-
-#include <QSharedPointer>
 
 #include <set>
 #include <tuple>
 
-namespace EditorNS{
+namespace EditorNS {
 class Editor;
 }
 class MainWindow;
@@ -21,7 +20,6 @@ class MainWindow;
  */
 class BackupService {
 public:
-
     /**
      * @brief restoreFromAutosave Reads the autosave sessions and recreates
      *        all windows and their tabs.

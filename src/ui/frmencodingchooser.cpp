@@ -5,23 +5,23 @@
 
 #include <QTextCodec>
 
-frmEncodingChooser::frmEncodingChooser(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::frmEncodingChooser)
+frmEncodingChooser::frmEncodingChooser(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::frmEncodingChooser)
 {
     ui->setupUi(this);
 
     layout()->setSizeConstraint(QLayout::SetFixedSize);
 
     for (int mib : QTextCodec::availableMibs()) {
-        QTextCodec *codec = QTextCodec::codecForMib(mib);
+        QTextCodec* codec = QTextCodec::codecForMib(mib);
         ui->cmbEncodings->addItem(QString::fromUtf8(codec->name()), codec->mibEnum());
     }
 
     ui->cmbEncodings->model()->sort(0);
 }
 
-void frmEncodingChooser::setEncoding(QTextCodec *codec)
+void frmEncodingChooser::setEncoding(QTextCodec* codec)
 {
     int mib = codec->mibEnum();
     for (int i = 0; i < ui->cmbEncodings->count(); i++) {
@@ -32,12 +32,10 @@ void frmEncodingChooser::setEncoding(QTextCodec *codec)
     }
 }
 
-void frmEncodingChooser::setInfoText(const QString &text)
-{
-    ui->label->setText(text);
-}
+void frmEncodingChooser::setInfoText(const QString& text)
+{ ui->label->setText(text); }
 
-QTextCodec *frmEncodingChooser::selectedCodec() const
+QTextCodec* frmEncodingChooser::selectedCodec() const
 {
     if (ui->cmbEncodings->currentIndex() >= 0) {
         return QTextCodec::codecForMib(ui->cmbEncodings->currentData().toInt());
@@ -47,16 +45,10 @@ QTextCodec *frmEncodingChooser::selectedCodec() const
 }
 
 frmEncodingChooser::~frmEncodingChooser()
-{
-    delete ui;
-}
+{ delete ui; }
 
 void frmEncodingChooser::on_buttonBox_accepted()
-{
-    accept();
-}
+{ accept(); }
 
 void frmEncodingChooser::on_buttonBox_rejected()
-{
-    reject();
-}
+{ reject(); }

@@ -3,8 +3,7 @@
 
 #include <QJsonObject>
 
-class Stats
-{
+class Stats {
 public:
     /**
      * @brief Update/start timers. You can safely call this method multiple times.
@@ -12,12 +11,11 @@ public:
     static void init();
 
 private:
-
     /**
      * @brief Send the specified JSON object to the remote server.
      * @param data
      */
-    static void remoteApiSend(const QJsonObject &data);
+    static void remoteApiSend(const QJsonObject& data);
 
     /**
      * @brief Check if it's time to send the stats. If it is, send them.

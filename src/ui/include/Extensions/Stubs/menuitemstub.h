@@ -7,25 +7,23 @@
 #include <QObject>
 
 namespace Extensions {
-    namespace Stubs {
+namespace Stubs {
 
-        class MenuItemStub  : public Stub
-        {
-            Q_OBJECT
-            void on_triggered(bool checked = false);
+class MenuItemStub : public Stub {
+    Q_OBJECT
+    void on_triggered(bool checked = false);
 
-        public:
-            MenuItemStub(QAction *object, RuntimeSupport *rts);
-            ~MenuItemStub();
+public:
+    MenuItemStub(QAction* object, RuntimeSupport* rts);
+    ~MenuItemStub();
 
-            NQQ_STUB_NAME("MenuItem")
+    NQQ_STUB_NAME("MenuItem")
 
-        private:
-            NQQ_DECLARE_EXTENSION_METHOD(setShortcut)
+private:
+    NQQ_DECLARE_EXTENSION_METHOD(setShortcut)
+};
 
-        };
-
-    }
-}
+} // namespace Stubs
+} // namespace Extensions
 
 #endif // MENUITEMSTUB_H

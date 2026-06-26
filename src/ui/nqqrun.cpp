@@ -17,41 +17,53 @@
 
 using namespace NqqRun;
 
-RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
-    QDialog(parent, f),
-    m_settings(NqqSettings::getInstance())
-{ 
-    QVBoxLayout *v1 = new QVBoxLayout;
-    QHBoxLayout *h1 = new QHBoxLayout;
-    QHBoxLayout *h2 = new QHBoxLayout;
-    QHBoxLayout *h3 = new QHBoxLayout;
-    QPushButton *btnOk   = new QPushButton(tr("OK"));
-    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
-    RunDelegate *delegate = new RunDelegate(this);
-    QShortcut *keyDelete = new QShortcut(QKeySequence("Delete"), this);
+RunPreferences::RunPreferences(QWidget* parent, Qt::WindowFlags f)
+    : QDialog(parent, f)
+    , m_settings(NqqSettings::getInstance())
+{
+    QVBoxLayout* v1 = new QVBoxLayout;
+    QHBoxLayout* h1 = new QHBoxLayout;
+    QHBoxLayout* h2 = new QHBoxLayout;
+    QHBoxLayout* h3 = new QHBoxLayout;
+    QPushButton* btnOk = new QPushButton(tr("OK"));
+    QPushButton* btnCancel = new QPushButton(tr("Cancel"));
+    RunDelegate* delegate = new RunDelegate(this);
+    QShortcut* keyDelete = new QShortcut(QKeySequence("Delete"), this);
 
-    QLabel *info = new QLabel("\
-    <h3>" + tr("Special placeholders") + "</h3><ul>\
-    <li><em>\%url\%</em> - " + tr("Full URL of the currently active file.") + "</li>\
-    <li><em>\%path\%</em> - " + tr("Full path of the currently active file.") + "</li>\
-    <li><em>\%directory\%</em> - " + tr("Directory of the currently active file.") + "</li>\
-    <li><em>\%filename\%</em> - " + tr("Name of the currently active file.") + "</li>\
-    <li><em>\%selection\%</em> - " + tr("Currently selected text.") + "</li>\
+    QLabel* info =
+        new QLabel(
+            "\
+    <h3>" + tr("Special placeholders") +
+            "</h3><ul>\
+    <li><em>\%url\%</em> - " +
+            tr("Full URL of the currently active file.") +
+            "</li>\
+    <li><em>\%path\%</em> - " +
+            tr("Full path of the currently active file.") +
+            "</li>\
+    <li><em>\%directory\%</em> - " +
+            tr("Directory of the currently active file.") +
+            "</li>\
+    <li><em>\%filename\%</em> - " +
+            tr("Name of the currently active file.") +
+            "</li>\
+    <li><em>\%selection\%</em> - " +
+            tr("Currently selected text.") +
+            "</li>\
     </ul>");
 
     m_commands = new QTableWidget(1, 2);
 
-    QHeaderView *vh = m_commands->verticalHeader();
-    QHeaderView *hh = m_commands->horizontalHeader();
+    QHeaderView* vh = m_commands->verticalHeader();
+    QHeaderView* hh = m_commands->horizontalHeader();
     vh->sectionResizeMode(QHeaderView::QHeaderView::Fixed);
     vh->setDefaultSectionSize(20);
     hh->setStretchLastSection(true);
 
-
     v1->addWidget(info);
     v1->addWidget(m_commands);
     v1->addItem(h3);
-    
+
     h2->addWidget(btnOk);
     h2->addWidget(btnCancel);
     h2->setAlignment(Qt::AlignRight);
@@ -60,9 +72,9 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
 
     setLayout(v1);
     setMinimumSize(500, 200);
-    
-    QMap <QString, QString> cmdData = m_settings.Run.getCommands();
-    QSortFilterProxyModel *pModel = new QSortFilterProxyModel(this);
+
+    QMap<QString, QString> cmdData = m_settings.Run.getCommands();
+    QSortFilterProxyModel* pModel = new QSortFilterProxyModel(this);
     pModel->setSourceModel(m_commands->model());
 
     m_commands->setAlternatingRowColors(true);
@@ -74,10 +86,9 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
 
     int workRow = 0;
     QMapIterator<QString, QString> it(cmdData);
-    while(it.hasNext())
-    {
+    while (it.hasNext()) {
         it.next();
-        QTableWidgetItem *item = new QTableWidgetItem(it.key());
+        QTableWidgetItem* item = new QTableWidgetItem(it.key());
         m_commands->setItem(workRow, 0, item);
         item = new QTableWidgetItem(it.value());
         m_commands->setItem(workRow, 1, item);
@@ -91,9 +102,7 @@ RunPreferences::RunPreferences(QWidget *parent, Qt::WindowFlags f) :
     connect(m_commands, &QTableWidget::cellChanged, this, &RunPreferences::slotInitCell);
 }
 
-RunPreferences::~RunPreferences()
-{
-}
+RunPreferences::~RunPreferences() {}
 
 void RunPreferences::slotOk()
 {
@@ -104,8 +113,8 @@ void RunPreferences::slotOk()
         if (!m_commands->item(i, 0) || !m_commands->item(i, 1)) {
             continue;
         }
-        const QString &cmdName = m_commands->item(i, 0)->text();
-        const QString &cmdData = m_commands->item(i, 1)->text();
+        const QString& cmdName = m_commands->item(i, 0)->text();
+        const QString& cmdData = m_commands->item(i, 1)->text();
         if (cmdName.size() && cmdData.size()) {
             m_settings.Run.setCommand(cmdName, cmdData);
         }
@@ -115,8 +124,8 @@ void RunPreferences::slotOk()
 
 void RunPreferences::slotInitCell(int row, int)
 {
-    QTableWidgetItem *iText = m_commands->item(row, 0);
-    QTableWidgetItem *iCmd = m_commands->item(row, 1);
+    QTableWidgetItem* iText = m_commands->item(row, 0);
+    QTableWidgetItem* iCmd = m_commands->item(row, 1);
     if (!iText || !iCmd) {
         return;
     }
@@ -131,8 +140,8 @@ void RunPreferences::slotInitCell(int row, int)
         // Check to see if we can remove the last row safely.
         if (!iText->text().length() || !iCmd->text().length()) {
             int rmLast = 0;
-            QTableWidgetItem *iLastText = m_commands->item(row + 1, 0);
-            QTableWidgetItem *iLastCmd = m_commands->item(row + 1, 1);
+            QTableWidgetItem* iLastText = m_commands->item(row + 1, 0);
+            QTableWidgetItem* iLastCmd = m_commands->item(row + 1, 1);
             if (!iLastText || !iLastText->text().length()) {
                 rmLast++;
             }
@@ -161,18 +170,15 @@ void RunPreferences::slotRemove()
     }
 }
 
-RunDelegate::RunDelegate(QObject *parent)
-    : QStyledItemDelegate(parent),
-      openIcon(IconProvider::fromTheme("document-open")),
-      rmIcon(IconProvider::fromTheme("edit-delete"))
+RunDelegate::RunDelegate(QObject* parent)
+    : QStyledItemDelegate(parent)
+    , openIcon(IconProvider::fromTheme("document-open"))
+    , rmIcon(IconProvider::fromTheme("edit-delete"))
 {
 }
 
-void RunDelegate::paint(QPainter *painter, 
-        const QStyleOptionViewItem &option,
-        const QModelIndex &index) const
-{   
-        
+void RunDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
     if (index.column() == 1) {
         painter->save();
         QStyleOptionButton btnOpen;
@@ -185,12 +191,10 @@ void RunDelegate::paint(QPainter *painter,
         btnOpen.iconSize = QSize(14, 14);
         btnOpen.state = QStyle::State_Enabled;
         r.setWidth(r.width() - 32);
-        
+
         // Elide Text
         QFontMetrics fm(option.font);
-        QString editText = fm.elidedText(index.data(Qt::EditRole).toString(),
-                Qt::ElideRight,
-                r.width());
+        QString editText = fm.elidedText(index.data(Qt::EditRole).toString(), Qt::ElideRight, r.width());
 
         QPen oldPen = painter->pen();
         if (option.state & QStyle::State_Selected) {
@@ -198,7 +202,7 @@ void RunDelegate::paint(QPainter *painter,
         }
         painter->drawText(r, Qt::AlignLeft | Qt::AlignVCenter, editText);
         painter->setPen(oldPen);
-        option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnOpen, painter);
+        option.widget->style()->drawControl(QStyle::CE_PushButtonLabel, &btnOpen, painter);
 
         QStyleOptionButton btnRm;
         x += 16;
@@ -206,7 +210,7 @@ void RunDelegate::paint(QPainter *painter,
         btnRm.icon = rmIcon;
         btnRm.iconSize = QSize(14, 14);
         btnRm.state = QStyle::State_Enabled;
-        option.widget->style()->drawControl (QStyle::CE_PushButtonLabel, &btnRm, painter);
+        option.widget->style()->drawControl(QStyle::CE_PushButtonLabel, &btnRm, painter);
 
         painter->restore();
     } else {
@@ -214,14 +218,12 @@ void RunDelegate::paint(QPainter *painter,
     }
 }
 
-bool RunDelegate::editorEvent(QEvent *event,
-        QAbstractItemModel *model,
-        const QStyleOptionViewItem &option,
-        const QModelIndex &index)
+bool RunDelegate::editorEvent(
+    QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index)
 {
     if (index.column() == 1) {
         if (event->type() == QEvent::MouseButtonRelease) {
-            QMouseEvent *e = static_cast<QMouseEvent*>(event);
+            QMouseEvent* e = static_cast<QMouseEvent*>(event);
             const QPoint clickPos = e->position().toPoint();
             int clickX = clickPos.x();
             int clickY = clickPos.y();
@@ -231,8 +233,7 @@ bool RunDelegate::editorEvent(QEvent *event,
             y = r.top();
             if (clickX > x && clickX < x + 16) {
                 if (clickY > y && clickY < y + 16) {
-                    QString f = QFileDialog::getOpenFileName(qobject_cast<QWidget*>(parent()),
-                            tr("Open File"));
+                    QString f = QFileDialog::getOpenFileName(qobject_cast<QWidget*>(parent()), tr("Open File"));
                     QString oldData = model->data(index, Qt::EditRole).toString();
                     oldData.prepend(f);
                     model->setData(index, oldData, Qt::EditRole);
@@ -248,33 +249,44 @@ bool RunDelegate::editorEvent(QEvent *event,
                     return true;
                 }
             }
- 
-
         }
     }
     return false;
 }
 
-RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
-    QDialog(parent, f),
-    m_settings(NqqSettings::getInstance()),
-    m_saved(false)
-{    
-    QVBoxLayout *v1 = new QVBoxLayout;
-    QHBoxLayout *h1 = new QHBoxLayout;
-    QHBoxLayout *h2 = new QHBoxLayout;
-    QHBoxLayout *h3 = new QHBoxLayout;
-    QPushButton *btnOK = new QPushButton(tr("OK"));
-    QPushButton *btnCancel = new QPushButton(tr("Cancel"));
-    QPushButton *btnSave = new QPushButton(tr("Save..."));
+RunDialog::RunDialog(QWidget* parent, Qt::WindowFlags f)
+    : QDialog(parent, f)
+    , m_settings(NqqSettings::getInstance())
+    , m_saved(false)
+{
+    QVBoxLayout* v1 = new QVBoxLayout;
+    QHBoxLayout* h1 = new QHBoxLayout;
+    QHBoxLayout* h2 = new QHBoxLayout;
+    QHBoxLayout* h3 = new QHBoxLayout;
+    QPushButton* btnOK = new QPushButton(tr("OK"));
+    QPushButton* btnCancel = new QPushButton(tr("Cancel"));
+    QPushButton* btnSave = new QPushButton(tr("Save..."));
 
-    QLabel *info = new QLabel("\
-    <h3>" + tr("Special placeholders") + "</h3><ul>\
-    <li><em>\%url\%</em> - " + tr("Full URL of the currently active file.") + "</li>\
-    <li><em>\%path\%</em> - " + tr("Full path of the currently active file.") + "</li>\
-    <li><em>\%directory\%</em> - " + tr("Directory of the currently active file.") + "</li>\
-    <li><em>\%filename\%</em> - " + tr("Name of the currently active file.") + "</li>\
-    <li><em>\%selection\%</em> - " + tr("Currently selected text.") + "</li>\
+    QLabel* info =
+        new QLabel(
+            "\
+    <h3>" + tr("Special placeholders") +
+            "</h3><ul>\
+    <li><em>\%url\%</em> - " +
+            tr("Full URL of the currently active file.") +
+            "</li>\
+    <li><em>\%path\%</em> - " +
+            tr("Full path of the currently active file.") +
+            "</li>\
+    <li><em>\%directory\%</em> - " +
+            tr("Directory of the currently active file.") +
+            "</li>\
+    <li><em>\%filename\%</em> - " +
+            tr("Name of the currently active file.") +
+            "</li>\
+    <li><em>\%selection\%</em> - " +
+            tr("Currently selected text.") +
+            "</li>\
     </ul>");
 
     m_command = new QLineEdit(this);
@@ -306,28 +318,26 @@ RunDialog::RunDialog(QWidget *parent, Qt::WindowFlags f) :
     connect(m_command, &QLineEdit::returnPressed, this, &RunDialog::accept);
 }
 
-RunDialog::~RunDialog()
-{
-}
+RunDialog::~RunDialog() {}
 
 void RunDialog::slotSave()
 {
     bool ok;
-    QString name = QInputDialog::getText(this, 
-            tr("Choose the name to be displayed in the run menu."),
-            tr("Command Name:"),
-            QLineEdit::Normal,
-            m_command->text(), 
-            &ok);
+    QString name = QInputDialog::getText(this,
+        tr("Choose the name to be displayed in the run menu."),
+        tr("Command Name:"),
+        QLineEdit::Normal,
+        m_command->text(),
+        &ok);
     if (ok && !name.isEmpty() && !m_command->text().isEmpty()) {
         m_settings.Run.setCommand(name, m_command->text());
         m_saved = 1;
 
-        //Graphical fade for save state
+        // Graphical fade for save state
         m_status->setText(tr("Command saved..."));
-        QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(m_status);
+        QGraphicsOpacityEffect* eff = new QGraphicsOpacityEffect(m_status);
         m_status->setGraphicsEffect(eff);
-        QPropertyAnimation *a = new QPropertyAnimation(eff, "opacity");
+        QPropertyAnimation* a = new QPropertyAnimation(eff, "opacity");
         a->setDuration(10000);
         a->setStartValue(5);
         a->setEndValue(0);
@@ -338,21 +348,16 @@ void RunDialog::slotSave()
 }
 
 void RunDialog::slotHideStatus()
-{
-    m_status->setText("");
-}
+{ m_status->setText(""); }
 
 bool RunDialog::saved()
-{
-    return m_saved;
-}
+{ return m_saved; }
 
 QString RunDialog::getCommandInput()
-{
-    return m_command->text();
-}
+{ return m_command->text(); }
 
-QStringList RunDialog::parseCommandString(QString cmd) {
+QStringList RunDialog::parseCommandString(QString cmd)
+{
     QStringList parts;
     const char OUT = '\0';
     char quote = OUT;
@@ -381,8 +386,7 @@ QStringList RunDialog::parseCommandString(QString cmd) {
             }
 
         } else if (cmd[i] == '\\') {
-
-            if (i+1 < cmd.length()) {
+            if (i + 1 < cmd.length()) {
                 i++;
                 if (quote == '\'') {
                     if (cmd[i] == '\'') {

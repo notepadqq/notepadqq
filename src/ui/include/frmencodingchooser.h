@@ -8,24 +8,23 @@ namespace Ui {
 class frmEncodingChooser;
 }
 
-class frmEncodingChooser : public QDialog
-{
+class frmEncodingChooser : public QDialog {
     Q_OBJECT
 
 public:
-    explicit frmEncodingChooser(QWidget *parent = nullptr);
+    explicit frmEncodingChooser(QWidget* parent = nullptr);
     ~frmEncodingChooser();
 
-    QTextCodec *selectedCodec() const;
-    void setEncoding(QTextCodec *codec);
-    void setInfoText(const QString &text);
+    QTextCodec* selectedCodec() const;
+    void setEncoding(QTextCodec* codec);
+    void setInfoText(const QString& text);
 
 private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
 
 private:
-    Ui::frmEncodingChooser *ui;
+    Ui::frmEncodingChooser* ui;
 };
 
 #endif // FRMENCODINGCHOOSER_H

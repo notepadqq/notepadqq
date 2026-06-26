@@ -17,30 +17,39 @@
 
 int frmPreferences::s_lastSelectedTab = 0;
 
-frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *parent) :
-    QDialog(parent),
-    m_settings(NqqSettings::getInstance()),
-    ui(new Ui::frmPreferences),
-    m_topEditorContainer(topEditorContainer)
+frmPreferences::frmPreferences(TopEditorContainer* topEditorContainer, QWidget* parent)
+    : QDialog(parent)
+    , m_settings(NqqSettings::getInstance())
+    , ui(new Ui::frmPreferences)
+    , m_topEditorContainer(topEditorContainer)
 {
     ui->setupUi(this);
 
-    //setFixedSize(this->width(), this->height());
-    //setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
+    // setFixedSize(this->width(), this->height());
+    // setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     m_previewEditor = Editor::getNewEditor(this);
     m_previewEditor->setLanguageFromFilePath("test.js");
-    m_previewEditor->setValue(R"(var enabled = false;)" "\n"
-                              R"()" "\n"
-                              R"(function example(a, b) {)" "\n"
-                              R"(    if (b == 0 && enabled) {)" "\n"
-                              R"(        var ret = a > 3 ? "ok" : null;)" "\n"
-                              R"(        return !ret;)" "\n"
-                              R"(    })" "\n"
-                              R"()" "\n"
-                              R"(    return example(a + 1, 0);)" "\n"
-                              R"(})" "\n"
-                              );
+    m_previewEditor->setValue(R"(var enabled = false;)"
+                              "\n"
+                              R"()"
+                              "\n"
+                              R"(function example(a, b) {)"
+                              "\n"
+                              R"(    if (b == 0 && enabled) {)"
+                              "\n"
+                              R"(        var ret = a > 3 ? "ok" : null;)"
+                              "\n"
+                              R"(        return !ret;)"
+                              "\n"
+                              R"(    })"
+                              "\n"
+                              R"()"
+                              "\n"
+                              R"(    return example(a + 1, 0);)"
+                              "\n"
+                              R"(})"
+                              "\n");
 
     // Update the preview editor so that the editor's current settings are applied and shown properly
     // in the editor preview
@@ -71,11 +80,10 @@ frmPreferences::frmPreferences(TopEditorContainer *topEditorContainer, QWidget *
 }
 
 frmPreferences::~frmPreferences()
-{
-    delete ui;
-}
+{ delete ui; }
 
-void frmPreferences::resetAllShortcuts() {
+void frmPreferences::resetAllShortcuts()
+{
     auto& bindings = m_keyGrabber->getAllBindings();
 
     for (auto& item : bindings) {
@@ -94,7 +102,8 @@ void frmPreferences::resetSelectedShortcut()
 
     // Search for the selected item and set its key sequence to the default one.
     for (auto& item : bindings) {
-        if (currItem != item.getTreeItem()) continue;
+        if (currItem != item.getTreeItem())
+            continue;
 
         const QString& objName = item.getAction()->objectName();
         const QKeySequence seq = m_settings.Shortcuts.getDefaultShortcut(objName);
@@ -121,7 +130,7 @@ void frmPreferences::updatePreviewEditorFont()
     m_previewEditor->setLanguage(m_previewEditor->getLanguage());
 }
 
-void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem * /*previous*/)
+void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/)
 {
     int index = ui->treeWidget->indexOfTopLevelItem(current);
 
@@ -131,8 +140,7 @@ void frmPreferences::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, 
     }
 }
 
-
-void frmPreferences::on_buttonBox_clicked(QAbstractButton *button)
+void frmPreferences::on_buttonBox_clicked(QAbstractButton* button)
 {
     // Accept and Reject buttons are handled separately. Other buttons need to use this generic clicked() event.
 
@@ -148,25 +156,17 @@ void frmPreferences::on_buttonBox_accepted()
 
 void frmPreferences::loadLanguages()
 {
-    auto &ls = m_settings.Languages;
+    auto& ls = m_settings.Languages;
     //"Default" language
     ui->cmbLanguages->addItem("Default", "default");
     LanguageSettings lang = {
-        "default",
-        ls.getTabSize("default"),
-        ls.getIndentWithSpaces("default"),
-        ls.getUseDefaultSettings("default")
-    };
+        "default", ls.getTabSize("default"), ls.getIndentWithSpaces("default"), ls.getUseDefaultSettings("default")};
     m_tempLangSettings.push_back(lang);
 
     for (const auto& l : LanguageService::getInstance().languages()) {
         ui->cmbLanguages->addItem(l.name.isEmpty() ? "?" : l.name, l.id);
         LanguageSettings lang = {
-            l.id,
-            ls.getTabSize(l.id),
-            ls.getIndentWithSpaces(l.id),
-            ls.getUseDefaultSettings(l.id)
-        };
+            l.id, ls.getTabSize(l.id), ls.getIndentWithSpaces(l.id), ls.getUseDefaultSettings(l.id)};
 
         m_tempLangSettings.push_back(lang);
     }
@@ -259,9 +259,8 @@ void frmPreferences::loadTranslations()
     ui->localizationComboBox->setModel(proxy);
     ui->localizationComboBox->model()->sort(0);
 
-    ui->localizationComboBox->setCurrentIndex(
-                ui->localizationComboBox->findData(
-                    QLocale::languageToString(QLocale(localizationSetting).language()), Qt::DisplayRole));
+    ui->localizationComboBox->setCurrentIndex(ui->localizationComboBox->findData(
+        QLocale::languageToString(QLocale(localizationSetting).language()), Qt::DisplayRole));
 }
 
 void frmPreferences::saveTranslation()
@@ -278,18 +277,18 @@ void frmPreferences::loadShortcuts()
 
     const auto& menus = mw->getMenus();
 
-    //addMenus() intentionally skips the Language menu since it would just clutter up everything.
+    // addMenus() intentionally skips the Language menu since it would just clutter up everything.
     m_keyGrabber->addMenus(menus);
     m_keyGrabber->expandAll();
     m_keyGrabber->checkForConflicts();
 
     // Build the interface
-    QWidget *container = ui->pageShortcuts;
-    QVBoxLayout *layout = new QVBoxLayout();
-    QHBoxLayout *btnLayout = new QHBoxLayout();
+    QWidget* container = ui->pageShortcuts;
+    QVBoxLayout* layout = new QVBoxLayout();
+    QHBoxLayout* btnLayout = new QHBoxLayout();
 
-    QPushButton *resetSelected = new QPushButton(tr("Reset Selected"));
-    QPushButton *resetAll = new QPushButton(tr("Reset All"));
+    QPushButton* resetSelected = new QPushButton(tr("Reset Selected"));
+    QPushButton* resetAll = new QPushButton(tr("Reset All"));
 
     QObject::connect(resetSelected, &QPushButton::clicked, this, &frmPreferences::resetSelectedShortcut);
     QObject::connect(resetAll, &QPushButton::clicked, this, &frmPreferences::resetAllShortcuts);
@@ -346,8 +345,7 @@ void frmPreferences::loadToolbar()
             auto* widgetItem = new QListWidgetItem("-- Separator --");
             widgetItem->setData(Qt::UserRole, "Separator");
             ui->listToolbarCurrent->addItem(widgetItem);
-        }
-        else {
+        } else {
             QString text = item->text().replace("&", "");
             auto* widgetItem = new QListWidgetItem(item->icon(), text);
             widgetItem->setData(Qt::UserRole, item->objectName());
@@ -359,7 +357,7 @@ void frmPreferences::loadToolbar()
 void frmPreferences::saveToolbar()
 {
     QStringList list;
-    for (int i=0; i<ui->listToolbarCurrent->count(); ++i) {
+    for (int i = 0; i < ui->listToolbarCurrent->count(); ++i) {
         auto* item = ui->listToolbarCurrent->item(i);
         list << item->data(Qt::UserRole).toString();
     }
@@ -379,7 +377,7 @@ void frmPreferences::saveToolbar()
 bool frmPreferences::applySettings()
 {
     if (m_keyGrabber->hasConflicts()) {
-        //Try our best to show the error to the user immediately.
+        // Try our best to show the error to the user immediately.
         ui->treeWidget->setCurrentItem(ui->treeWidget->topLevelItem(ui->stackedWidget->indexOf(ui->pageShortcuts)));
         m_keyGrabber->scrollToConflict();
 
@@ -387,19 +385,19 @@ bool frmPreferences::applySettings()
         msgBox.setWindowTitle(QCoreApplication::applicationName());
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("<h3>" + tr("Keyboard shortcut conflict") + "</h3>");
-        msgBox.setInformativeText(tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can be saved."));
+        msgBox.setInformativeText(
+            tr("Two or more actions share the same shortcut. These conflicts must be resolved before your changes can "
+               "be saved."));
         msgBox.exec();
         return false;
     }
-
 
     m_settings.General.setCollectStatistics(ui->chkCollectStatistics->isChecked());
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
     m_settings.General.setExitOnLastTabClose(ui->chkExitOnLastTabClose->isChecked());
 
-    const int autosaveInSeconds = ui->chkAutosave->isChecked() ?
-                                     ui->sbAutosaveInterval->value() : 0;
+    const int autosaveInSeconds = ui->chkAutosave->isChecked() ? ui->sbAutosaveInterval->value() : 0;
     m_settings.General.setAutosaveInterval(autosaveInSeconds);
 
     saveLanguages();
@@ -421,25 +419,25 @@ bool frmPreferences::applySettings()
     const bool lineNumbersVisible = ui->chkShowLineNumbers->isChecked();
 
     // Apply changes to currently opened editors
-    for (MainWindow *w : MainWindow::instances()) {
+    for (MainWindow* w : MainWindow::instances()) {
         w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
-        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget *, QSharedPointer<Editor> editor) {
+        w->topEditorContainer()->forEachEditor(
+            [&](const int, const int, EditorTabWidget*, QSharedPointer<Editor> editor) {
+                // Set new theme
+                editor->setTheme(newTheme);
 
-            // Set new theme
-            editor->setTheme(newTheme);
+                // Set font override
+                editor->setFont(fontFamily, fontSize, lineHeight);
 
-            // Set font override
-            editor->setFont(fontFamily, fontSize, lineHeight);
+                // Set line numbers visibility
+                editor->setLineNumbersVisible(lineNumbersVisible);
 
-            // Set line numbers visibility
-            editor->setLineNumbersVisible(lineNumbersVisible);
+                // Reset language-dependent settings (e.g. tab settings)
+                editor->setLanguage(editor->getLanguage());
 
-            // Reset language-dependent settings (e.g. tab settings)
-            editor->setLanguage(editor->getLanguage());
-
-            return true;
-        });
+                return true;
+            });
     }
 
     // Invalidate already initialized editors in the buffer and add a single new
@@ -450,7 +448,6 @@ bool frmPreferences::applySettings()
     // Check if we need to send stats
     Stats::init();
 
-
     if (autosaveInSeconds > 0)
         BackupService::enableAutosave(autosaveInSeconds);
     else
@@ -460,9 +457,7 @@ bool frmPreferences::applySettings()
 }
 
 void frmPreferences::on_buttonBox_rejected()
-{
-    reject();
-}
+{ reject(); }
 
 void frmPreferences::on_cmbLanguages_currentIndexChanged(int index)
 {
@@ -493,19 +488,13 @@ void frmPreferences::on_chkLanguages_useDefaultSettings_toggled(bool checked)
 }
 
 void frmPreferences::on_txtLanguages_TabSize_valueChanged(int value)
-{
-    m_tempLangSettings[ui->cmbLanguages->currentIndex()].tabSize = value;
-}
+{ m_tempLangSettings[ui->cmbLanguages->currentIndex()].tabSize = value; }
 
 void frmPreferences::on_chkLanguages_IndentWithSpaces_toggled(bool checked)
-{
-    m_tempLangSettings[ui->cmbLanguages->currentIndex()].indentWithSpaces = checked;
-}
+{ m_tempLangSettings[ui->cmbLanguages->currentIndex()].indentWithSpaces = checked; }
 
 void frmPreferences::on_cmbColorScheme_currentIndexChanged(int /*index*/)
-{
-    m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString()));
-}
+{ m_previewEditor->setTheme(Editor::themeFromName(ui->cmbColorScheme->currentData().toString())); }
 
 void frmPreferences::on_localizationComboBox_activated(int /*index*/)
 {
@@ -513,11 +502,12 @@ void frmPreferences::on_localizationComboBox_activated(int /*index*/)
     msgBox.setWindowTitle(QCoreApplication::applicationName());
     msgBox.setIcon(QMessageBox::Information);
     msgBox.setText("<h3>" + QObject::tr("Restart required") + "</h3>");
-    msgBox.setInformativeText(QObject::tr("You need to restart Notepadqq for the localization changes to take effect."));
+    msgBox.setInformativeText(
+        QObject::tr("You need to restart Notepadqq for the localization changes to take effect."));
     msgBox.exec();
 }
 
-bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
+bool frmPreferences::extensionBrowseRuntime(QLineEdit* lineEdit)
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
     if (fn.isNull())
@@ -526,7 +516,7 @@ bool frmPreferences::extensionBrowseRuntime(QLineEdit *lineEdit)
     return true;
 }
 
-void frmPreferences::checkExecutableExists(QLineEdit *path)
+void frmPreferences::checkExecutableExists(QLineEdit* path)
 {
     QPalette palette;
     QFileInfo fi(path->text());
@@ -538,24 +528,16 @@ void frmPreferences::checkExecutableExists(QLineEdit *path)
 }
 
 void frmPreferences::on_btnNodejsBrowse_clicked()
-{
-    extensionBrowseRuntime(ui->txtNodejs);
-}
+{ extensionBrowseRuntime(ui->txtNodejs); }
 
 void frmPreferences::on_btnNpmBrowse_clicked()
-{
-    extensionBrowseRuntime(ui->txtNpm);
-}
+{ extensionBrowseRuntime(ui->txtNpm); }
 
-void frmPreferences::on_txtNodejs_textChanged(const QString &)
-{
-    checkExecutableExists(ui->txtNodejs);
-}
+void frmPreferences::on_txtNodejs_textChanged(const QString&)
+{ checkExecutableExists(ui->txtNodejs); }
 
-void frmPreferences::on_txtNpm_textChanged(const QString &)
-{
-    checkExecutableExists(ui->txtNpm);
-}
+void frmPreferences::on_txtNpm_textChanged(const QString&)
+{ checkExecutableExists(ui->txtNpm); }
 
 void frmPreferences::on_chkOverrideFontFamily_toggled(bool checked)
 {
@@ -570,14 +552,10 @@ void frmPreferences::on_chkOverrideFontSize_toggled(bool checked)
 }
 
 void frmPreferences::on_spnFontSize_valueChanged(int /*arg1*/)
-{
-    updatePreviewEditorFont();
-}
+{ updatePreviewEditorFont(); }
 
 void frmPreferences::on_cmbFontFamilies_currentFontChanged(const QFont& /*f*/)
-{
-    updatePreviewEditorFont();
-}
+{ updatePreviewEditorFont(); }
 
 void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
 {
@@ -586,26 +564,19 @@ void frmPreferences::on_chkOverrideLineHeight_toggled(bool checked)
 }
 
 void frmPreferences::on_spnLineHeight_valueChanged(double /*arg1*/)
-{
-    updatePreviewEditorFont();
-}
+{ updatePreviewEditorFont(); }
 
 void frmPreferences::on_chkShowLineNumbers_toggled(bool /*checked*/)
-{
-    updatePreviewEditorFont();
-}
+{ updatePreviewEditorFont(); }
 
 void frmPreferences::on_chkSearch_SaveHistory_toggled(bool checked)
 {
     if (checked)
         return;
 
-    if (m_settings.Search.getSearchHistory().isEmpty() &&
-        m_settings.Search.getReplaceHistory().isEmpty() &&
-        m_settings.Search.getFileHistory().isEmpty() &&
-        m_settings.Search.getFilterHistory().isEmpty())
+    if (m_settings.Search.getSearchHistory().isEmpty() && m_settings.Search.getReplaceHistory().isEmpty() &&
+        m_settings.Search.getFileHistory().isEmpty() && m_settings.Search.getFilterHistory().isEmpty())
         return;
-
 
     QMessageBox msgBox(qApp->activeWindow());
     msgBox.setWindowTitle(QCoreApplication::applicationName());
@@ -616,7 +587,7 @@ void frmPreferences::on_chkSearch_SaveHistory_toggled(bool checked)
 
     auto result = msgBox.exec();
 
-    if(result == QMessageBox::Cancel) {
+    if (result == QMessageBox::Cancel) {
         ui->chkSearch_SaveHistory->setChecked(true);
         return;
     }
@@ -633,16 +604,17 @@ void frmPreferences::on_btnToolbarAdd_clicked()
 {
     auto* item = ui->listToolbarAll->currentItem();
 
-    if (!item) return;
+    if (!item)
+        return;
 
     auto idx = ui->listToolbarCurrent->currentRow();
 
     QListWidgetItem* newItem = new QListWidgetItem(item->icon(), item->text());
     newItem->setData(Qt::UserRole, item->data(Qt::UserRole));
 
-    ui->listToolbarCurrent->insertItem(idx+1, newItem);
-    ui->listToolbarCurrent->setCurrentRow(idx+1);
-    //ui->listToolbarCurrent->scrollToItem(ui->listToolbarCurrent->currentItem());
+    ui->listToolbarCurrent->insertItem(idx + 1, newItem);
+    ui->listToolbarCurrent->setCurrentRow(idx + 1);
+    // ui->listToolbarCurrent->scrollToItem(ui->listToolbarCurrent->currentItem());
 }
 
 void frmPreferences::on_btnToolbarRemove_clicked()
@@ -658,19 +630,19 @@ void frmPreferences::on_btnToolbarUp_clicked()
     auto idx = ui->listToolbarCurrent->currentRow();
 
     if (idx > 0) {
-        ui->listToolbarCurrent->insertItem(idx-1, ui->listToolbarCurrent->takeItem(idx));
-        ui->listToolbarCurrent->setCurrentRow(idx-1);
+        ui->listToolbarCurrent->insertItem(idx - 1, ui->listToolbarCurrent->takeItem(idx));
+        ui->listToolbarCurrent->setCurrentRow(idx - 1);
     }
 }
 
 void frmPreferences::on_btnToolbarDown_clicked()
 {
     auto idx = ui->listToolbarCurrent->currentRow();
-    auto max =ui->listToolbarCurrent->count();
+    auto max = ui->listToolbarCurrent->count();
 
-    if (idx < max-1) {
-        ui->listToolbarCurrent->insertItem(idx+1, ui->listToolbarCurrent->takeItem(idx));
-        ui->listToolbarCurrent->setCurrentRow(idx+1);
+    if (idx < max - 1) {
+        ui->listToolbarCurrent->insertItem(idx + 1, ui->listToolbarCurrent->takeItem(idx));
+        ui->listToolbarCurrent->setCurrentRow(idx + 1);
     }
 }
 
@@ -690,9 +662,8 @@ void frmPreferences::on_btnToolbarReset_clicked()
             continue;
         }
 
-        auto it = std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) {
-            return ac->objectName() == part;
-        });
+        auto it =
+            std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) { return ac->objectName() == part; });
 
         if (it != actions.end()) {
             auto* item = *it;
@@ -705,6 +676,4 @@ void frmPreferences::on_btnToolbarReset_clicked()
 }
 
 void frmPreferences::on_chkAutosave_toggled(bool checked)
-{
-    ui->sbAutosaveInterval->setEnabled(checked);
-}
+{ ui->sbAutosaveInterval->setEnabled(checked); }

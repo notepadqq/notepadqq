@@ -15,30 +15,25 @@
  * This class is responsible for reading files, monitoring
  * file changes, text encoding, etc.
  */
-class DocEngine : public QObject
-{
+class DocEngine : public QObject {
     Q_OBJECT
 public:
-    explicit DocEngine(TopEditorContainer *topEditorContainer, QObject *parent = nullptr);
+    explicit DocEngine(TopEditorContainer* topEditorContainer, QObject* parent = nullptr);
     ~DocEngine();
 
     struct DecodedText {
         QString text;
-        QTextCodec *codec = nullptr;
+        QTextCodec* codec = nullptr;
         bool bom = false;
         bool error = false;
     };
 
-    enum FileSizeAction {
-        FileSizeActionAsk,
-        FileSizeActionYesToAll,
-        FileSizeActionNoToAll
-    };
+    enum FileSizeAction { FileSizeActionAsk, FileSizeActionYesToAll, FileSizeActionNoToAll };
 
     enum ReloadAction {
-        ReloadActionDont,   // Don't reload documents, instead just focus them
-        ReloadActionAsk,    // Ask user to reload if it would cause unsaved changes to be discarded
-        ReloadActionDo      // Always reload documents
+        ReloadActionDont, // Don't reload documents, instead just focus them
+        ReloadActionAsk,  // Ask user to reload if it would cause unsaved changes to be discarded
+        ReloadActionDo    // Always reload documents
     };
 
     /**
@@ -48,32 +43,68 @@ public:
      */
     struct DocumentLoader {
         // Set the URL(s) of files to be loaded
-        DocumentLoader& setUrl(const QUrl& url) { this->urls << url; return *this; }
-        DocumentLoader& setUrls(const QList<QUrl>& urls) { this->urls = urls; return *this; }
+        DocumentLoader& setUrl(const QUrl& url)
+        {
+            this->urls << url;
+            return *this;
+        }
+        DocumentLoader& setUrls(const QList<QUrl>& urls)
+        {
+            this->urls = urls;
+            return *this;
+        }
 
         // Set how files should be handled that trigger a file-size warning.
-        DocumentLoader& setFileSizeWarning(FileSizeAction fsa) { fileSizeAction = fsa; return *this; }
+        DocumentLoader& setFileSizeWarning(FileSizeAction fsa)
+        {
+            fileSizeAction = fsa;
+            return *this;
+        }
 
         // If true, the documents' parent directory will be remembered as the last opened dir.
-        DocumentLoader& setRememberLastDir(bool rld) { rememberLastDir = rld; return *this; }
+        DocumentLoader& setRememberLastDir(bool rld)
+        {
+            rememberLastDir = rld;
+            return *this;
+        }
 
         // Set if document has Byte Order Marks set
-        DocumentLoader& setBOM(bool setBom) { bom = setBom; return *this; }
+        DocumentLoader& setBOM(bool setBom)
+        {
+            bom = setBom;
+            return *this;
+        }
 
         // Sets the TextCodec to decode the file as.
-        DocumentLoader& setTextCodec(QTextCodec* codec) { textCodec = codec; return *this; }
+        DocumentLoader& setTextCodec(QTextCodec* codec)
+        {
+            textCodec = codec;
+            return *this;
+        }
 
         // Set the TabWidget the documents should be loaded into
-        DocumentLoader& setTabWidget(EditorTabWidget* tw) { tabWidget = tw; return *this; }
+        DocumentLoader& setTabWidget(EditorTabWidget* tw)
+        {
+            tabWidget = tw;
+            return *this;
+        }
 
         // Determines how already opened documents should be treated.
-        DocumentLoader& setReloadAction(ReloadAction reload) { reloadAction = reload; return *this; }
+        DocumentLoader& setReloadAction(ReloadAction reload)
+        {
+            reloadAction = reload;
+            return *this;
+        }
 
         // Index of the URL that must be loaded with highest priority, for example because
         // it will be the one with user focus. With constants ALL_MINIMUM_PRIORITY and
         // ALL_MAXIMUM_PRIORITY, all URLs will be loaded with the same low or high priority.
         // This parameter has effect only for background executions (i.e. executeInBackground()).
-        DocumentLoader& setPriorityIdx(int idx) { priorityIdx = idx; return *this; }
+        DocumentLoader& setPriorityIdx(int idx)
+        {
+            priorityIdx = idx;
+            return *this;
+        }
 
         // Set whether, after an Editor has been created and his content has been loaded,
         // the document loader should take care of things like assigning a file path to the
@@ -90,19 +121,23 @@ public:
         // itself must be synchronous so that the DocumentLoader knows when to emit the
         // DocumentLoaded event.
         DocumentLoader& setManualEditorInitialization(
-                std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> f) {
-            manualEditorInitialization = f; return *this;
+            std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> f)
+        {
+            manualEditorInitialization = f;
+            return *this;
         }
 
         /**
          * @brief execute Runs the load operation.
          */
-        QtPromise::QPromise<void> execute() {
+        QtPromise::QPromise<void> execute()
+        {
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocuments(*this);
         }
 
-        QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> executeInBackground() {
+        QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> executeInBackground()
+        {
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocumentsInBackground(*this);
         }
@@ -112,18 +147,21 @@ public:
 
         // See here for the arguments' default values
         QList<QUrl> urls;
-        EditorTabWidget* tabWidget      = nullptr;
-        QTextCodec* textCodec           = nullptr;
-        ReloadAction reloadAction       = ReloadActionAsk;
-        bool rememberLastDir            = true;
-        bool bom                        = false;
-        FileSizeAction fileSizeAction   = FileSizeActionAsk;
-        int priorityIdx                 = ALL_MAXIMUM_PRIORITY;
+        EditorTabWidget* tabWidget = nullptr;
+        QTextCodec* textCodec = nullptr;
+        ReloadAction reloadAction = ReloadActionAsk;
+        bool rememberLastDir = true;
+        bool bom = false;
+        FileSizeAction fileSizeAction = FileSizeActionAsk;
+        int priorityIdx = ALL_MAXIMUM_PRIORITY;
         std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> manualEditorInitialization = nullptr;
 
     private:
         friend class DocEngine;
-        DocumentLoader(DocEngine& eng) : docEngine(eng) {}
+        DocumentLoader(DocEngine& eng)
+            : docEngine(eng)
+        {
+        }
         DocEngine& docEngine;
     };
 
@@ -138,8 +176,8 @@ public:
      * For example, if the user cancels the save dialog, \p saveFileResult_Canceled is returned.
      */
     enum saveFileResult {
-         saveFileResult_Saved,      /** The file was saved  */
-        saveFileResult_Canceled     /** The save process was canceled */
+        saveFileResult_Saved,   /** The file was saved  */
+        saveFileResult_Canceled /** The save process was canceled */
     };
 
     /**
@@ -153,23 +191,23 @@ public:
      *             new path. Just save a copy.
      * @return A MainWindow::saveFileResult.
      */
-    int saveDocument(EditorTabWidget *tabWidget, int tab, QUrl outFileName = QUrl(), bool copy = false);
+    int saveDocument(EditorTabWidget* tabWidget, int tab, QUrl outFileName = QUrl(), bool copy = false);
 
-    void closeDocument(EditorTabWidget *tabWidget, int tab);
+    void closeDocument(EditorTabWidget* tabWidget, int tab);
 
-    QPair<int, int> findOpenEditorByUrl(const QUrl &filename) const;
+    QPair<int, int> findOpenEditorByUrl(const QUrl& filename) const;
 
-    void monitorDocument(Editor *editor);
+    void monitorDocument(Editor* editor);
     void monitorDocument(QSharedPointer<Editor> editor);
-    void unmonitorDocument(Editor *editor);
+    void unmonitorDocument(Editor* editor);
     void unmonitorDocument(QSharedPointer<Editor> editor);
-    bool isMonitored(Editor *editor);
+    bool isMonitored(Editor* editor);
 
-    int addNewDocument(QString name, bool setFocus, EditorTabWidget *tabWidget);
-    void reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
-    static DocEngine::DecodedText readToString(QFile *file);
-    static DocEngine::DecodedText readToString(QFile *file, QTextCodec *codec, bool bom);
-    static bool writeFromString(QIODevice *io, const DecodedText &write);
+    int addNewDocument(QString name, bool setFocus, EditorTabWidget* tabWidget);
+    void reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
+    static DocEngine::DecodedText readToString(QFile* file);
+    static DocEngine::DecodedText readToString(QFile* file, QTextCodec* codec, bool bom);
+    static bool writeFromString(QIODevice* io, const DecodedText& write);
 
     /**
      * @brief Write the provided Editor content to the specified IO device, using
@@ -178,7 +216,7 @@ public:
      * @param editor
      * @return true if successful, false otherwise
      */
-    bool write(QIODevice *io, QSharedPointer<Editor> editor);
+    bool write(QIODevice* io, QSharedPointer<Editor> editor);
     bool write(QUrl outFileName, QSharedPointer<Editor> editor);
 
     /**
@@ -188,8 +226,8 @@ public:
     QString getNewDocumentName() const;
 
 private:
-    TopEditorContainer *m_topEditorContainer;
-    QFileSystemWatcher *m_fsWatcher;
+    TopEditorContainer* m_topEditorContainer;
+    QFileSystemWatcher* m_fsWatcher;
 
     /**
      * @brief Read a file and puts the content into the provided Editor, clearing
@@ -199,8 +237,8 @@ private:
      * @param editor
      * @return fulfilled if successful, rejected otherwise
      */
-    QtPromise::QPromise<void> read(QFile *file, QSharedPointer<Editor> editor);
-    QtPromise::QPromise<void> read(QFile *file, QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
+    QtPromise::QPromise<void> read(QFile* file, QSharedPointer<Editor> editor);
+    QtPromise::QPromise<void> read(QFile* file, QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
     // FIXME Separate from reload
 
     /**
@@ -215,10 +253,11 @@ private:
      * @param docLoader
      * @return
      */
-    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
+    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(
+        const DocumentLoader& docLoader);
 
-    void monitorDocument(const QString &fileName);
-    void unmonitorDocument(const QString &fileName);
+    void monitorDocument(const QString& fileName);
+    void unmonitorDocument(const QString& fileName);
 
     /**
      * @brief Decodes a byte array into a string, trying to guess the best
@@ -226,7 +265,7 @@ private:
      * @param contents
      * @return
      */
-    static DecodedText decodeText(const QByteArray &contents);
+    static DecodedText decodeText(const QByteArray& contents);
     /**
      * @brief Decodes a byte array into a string, using the specified codec.
      * @param contents
@@ -234,9 +273,9 @@ private:
      * @param contentHasBOM Simply copied to the result struct.
      * @return
      */
-    static DecodedText decodeText(const QByteArray &contents, QTextCodec *codec, bool contentHasBOM);
+    static DecodedText decodeText(const QByteArray& contents, QTextCodec* codec, bool contentHasBOM);
 
-    static QByteArray getBomForCodec(QTextCodec *codec);
+    static QByteArray getBomForCodec(QTextCodec* codec);
 
     /**
      * @brief getAvailableSudoProgram Queries the system to find a supported graphical sudo tool.
@@ -261,7 +300,7 @@ signals:
      * @param tab
      * @param removed true if the file has been removed from the disk
      */
-    void fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+    void fileOnDiskChanged(EditorTabWidget* tabWidget, int tab, bool removed);
 
     /**
      * @brief The document has been successfully saved. This event is
@@ -270,9 +309,9 @@ signals:
      * @param tabWidget
      * @param tab
      */
-    void documentSaved(EditorTabWidget *tabWidget, int tab);
+    void documentSaved(EditorTabWidget* tabWidget, int tab);
 
-    void documentReloaded(EditorTabWidget *tabWidget, int tab);
+    void documentReloaded(EditorTabWidget* tabWidget, int tab);
 
     /**
      * @brief The document has been successfully loaded.
@@ -282,7 +321,7 @@ signals:
      * @param updateRecentDocuments True if the document should be remembered
      *        as a recently opened file.
      */
-    void documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
+    void documentLoaded(EditorTabWidget* tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocuments);
 
 private slots:
     void documentChanged(QString fileName);

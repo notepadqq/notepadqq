@@ -12,7 +12,8 @@ QTimer BackupService::s_autosaveTimer;
 bool BackupService::s_autosaveEnabled = false;
 std::set<BackupService::WindowData> BackupService::s_backupWindowData;
 
-void BackupService::executeBackup() {
+void BackupService::executeBackup()
+{
     const auto& backupPath = PersistentCache::backupDirPath();
 
     std::set<WindowData> newData, savedData, temp;
@@ -21,19 +22,21 @@ void BackupService::executeBackup() {
     for (const auto& wnd : MainWindow::instances()) {
         WindowData wd;
         wd.ptr = wnd;
-        wnd->topEditorContainer()->forEachEditor([&wd](int,int,EditorTabWidget*,QSharedPointer<Editor> ed) {
+        wnd->topEditorContainer()->forEachEditor([&wd](int, int, EditorTabWidget*, QSharedPointer<Editor> ed) {
             int gen = -1;
-            ed->getHistoryGeneration().tap([&](int value){gen = value;}).wait();
-            wd.editors.push_back( std::make_pair(ed, gen) );
+            ed->getHistoryGeneration().tap([&](int value) { gen = value; }).wait();
+            wd.editors.push_back(std::make_pair(ed, gen));
             return true;
         });
         newData.insert(std::move(wd));
     }
 
     // Find all closed windows and remove their backups
-    std::set_difference(s_backupWindowData.begin(), s_backupWindowData.end(),
-                        newData.begin(), newData.end(),
-                        std::inserter(temp, temp.end()));
+    std::set_difference(s_backupWindowData.begin(),
+        s_backupWindowData.end(),
+        newData.begin(),
+        newData.end(),
+        std::inserter(temp, temp.end()));
 
     for (const auto& item : temp) {
         const auto ptrToInt = reinterpret_cast<uintptr_t>(item.ptr);
@@ -43,9 +46,11 @@ void BackupService::executeBackup() {
 
     // Find all newly created windows and create their backups
     temp.clear();
-    std::set_difference(newData.begin(), newData.end(),
-                        s_backupWindowData.begin(), s_backupWindowData.end(),
-                        std::inserter(temp, temp.end()));
+    std::set_difference(newData.begin(),
+        newData.end(),
+        s_backupWindowData.begin(),
+        s_backupWindowData.end(),
+        std::inserter(temp, temp.end()));
 
     for (const auto& item : temp) {
         // If writeBackup() fails we don't mark this window as saved. Another attempt at saving will be made
@@ -56,9 +61,11 @@ void BackupService::executeBackup() {
 
     // Find all persisting windows and re-check whether to save them
     temp.clear();
-    std::set_intersection(s_backupWindowData.begin(), s_backupWindowData.end(),
-                          newData.begin(), newData.end(),
-                          std::inserter(temp, temp.end()));
+    std::set_intersection(s_backupWindowData.begin(),
+        s_backupWindowData.end(),
+        newData.begin(),
+        newData.end(),
+        std::inserter(temp, temp.end()));
 
     for (const auto& oldItem : temp) { // oldItem is always from the first set (s_backupWindowData)
         const auto& newItem = *newData.find(oldItem);
@@ -90,7 +97,7 @@ bool BackupService::writeBackup(MainWindow* wnd)
     const QString cachePath = backupPath + QString("/window_%1").arg(ptrToInt);
     const QString sessPath = backupPath + QString("/window_%1/window.xml").arg(ptrToInt);
 
-    TopEditorContainer *topEdCon = wnd->topEditorContainer();
+    TopEditorContainer* topEdCon = wnd->topEditorContainer();
     if (topEdCon == nullptr) {
         return false;
     }
@@ -112,10 +119,10 @@ bool BackupService::restoreFromBackup()
         return false;
 
     auto ret = QMessageBox::question(nullptr,
-                          "",
-                          QObject::tr("Notepadqq was not closed properly. Do you want to recover unsaved changes?"),
-                          QMessageBox::Yes | QMessageBox::No,
-                          QMessageBox::Yes);
+        "",
+        QObject::tr("Notepadqq was not closed properly. Do you want to recover unsaved changes?"),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::Yes);
 
     if (ret == QMessageBox::No)
         return false;
@@ -132,9 +139,7 @@ bool BackupService::restoreFromBackup()
 }
 
 bool BackupService::detectImproperShutdown()
-{
-    return QDir(PersistentCache::backupDirPath()).exists();
-}
+{ return QDir(PersistentCache::backupDirPath()).exists(); }
 
 void BackupService::enableAutosave(int intervalInSeconds)
 {
@@ -150,12 +155,18 @@ void BackupService::enableAutosave(int intervalInSeconds)
 
         // Disable the autosave timer when the application goes out of focus.
         QObject::connect(qApp, &QGuiApplication::applicationStateChanged, [](Qt::ApplicationState state) {
-            if (!s_autosaveEnabled) return;
+            if (!s_autosaveEnabled)
+                return;
 
             switch (state) {
-            case Qt::ApplicationInactive: s_autosaveTimer.stop(); break;
-            case Qt::ApplicationActive: s_autosaveTimer.start(); break;
-            default: break;
+            case Qt::ApplicationInactive:
+                s_autosaveTimer.stop();
+                break;
+            case Qt::ApplicationActive:
+                s_autosaveTimer.start();
+                break;
+            default:
+                break;
             }
         });
     }
@@ -188,9 +199,7 @@ void BackupService::clearBackupData()
 }
 
 void BackupService::pause()
-{
-    s_autosaveTimer.stop();
-}
+{ s_autosaveTimer.stop(); }
 
 void BackupService::resume()
 {

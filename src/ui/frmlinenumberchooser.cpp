@@ -2,9 +2,9 @@
 
 #include "ui_frmlinenumberchooser.h"
 
-frmLineNumberChooser::frmLineNumberChooser(int min, int max, int defaultValue, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::frmLineNumberChooser)
+frmLineNumberChooser::frmLineNumberChooser(int min, int max, int defaultValue, QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::frmLineNumberChooser)
 {
     ui->setupUi(this);
 
@@ -22,11 +22,7 @@ frmLineNumberChooser::frmLineNumberChooser(int min, int max, int defaultValue, Q
 }
 
 frmLineNumberChooser::~frmLineNumberChooser()
-{
-    delete ui;
-}
+{ delete ui; }
 
 int frmLineNumberChooser::value()
-{
-    return ui->spinLine->value();
-}
+{ return ui->spinLine->value(); }

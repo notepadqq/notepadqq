@@ -27,7 +27,7 @@
 void forceDefaultSettings();
 void loadExtensions();
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QTranslator translator;
 #ifdef QT_DEBUG
@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
     // "Note: It is not permitted to seed the global or system
     // generators. Attempting to do so will result in a fatal error."
     //
-    // QRandomGenerator::global()->seed(QDateTime::currentDateTimeUtc().time().msec() + QRandomGenerator::global()->generate());
+    // QRandomGenerator::global()->seed(QDateTime::currentDateTimeUtc().time().msec() +
+    // QRandomGenerator::global()->generate());
 
     SingleApplication a(argc, argv);
 
@@ -59,7 +60,6 @@ int main(int argc, char *argv[])
 #endif
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
-
 
     NqqSettings::ensureBackwardsCompatibility();
     NqqSettings& settings = NqqSettings::getInstance();
@@ -81,9 +81,9 @@ int main(int argc, char *argv[])
 
     QString langCode = settings.General.getLocalization();
     if (translator.load(QLocale(langCode),
-                        QString("%1").arg(qApp->applicationName().toLower()),
-                        QString("_"),
-                        QString(":/translations"))) {
+            QString("%1").arg(qApp->applicationName().toLower()),
+            QString("_"),
+            QString(":/translations"))) {
         a.installTranslator(&translator);
     } else {
         settings.General.setLocalization("en");
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     }
 
     // Check if we're running as root
-    if( getuid() == 0 && !parser->isSet("allow-root") ) {
+    if (getuid() == 0 && !parser->isSet("allow-root")) {
         qWarning() << QObject::tr(
             "Notepadqq will ask for root privileges whenever they are needed if either 'kdesu' or 'gksu' are installed."
             " Running Notepadqq as root is not recommended. Use --allow-root if you really want to.");
@@ -110,27 +110,30 @@ int main(int argc, char *argv[])
     }
 
     // Arguments received from another instance
-    QObject::connect(&a, &SingleApplication::receivedArguments, &a, [=](const QString &workingDirectory, const QStringList &arguments) {
-        QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
-        if (parser->isSet("new-window")) {
-            // Open a new window
-            MainWindow *win = new MainWindow(workingDirectory, arguments, nullptr);
-            win->show();
-        } else {
-            // Send the args to the last focused window
-            MainWindow *win = MainWindow::lastActiveInstance();
-            if (win != nullptr) {
-                win->openCommandLineProvidedUrls(workingDirectory, arguments);
-
-                // Activate the window
-                win->hide();
+    QObject::connect(&a,
+        &SingleApplication::receivedArguments,
+        &a,
+        [=](const QString& workingDirectory, const QStringList& arguments) {
+            QSharedPointer<QCommandLineParser> parser = Notepadqq::getCommandLineArgumentsParser(arguments);
+            if (parser->isSet("new-window")) {
+                // Open a new window
+                MainWindow* win = new MainWindow(workingDirectory, arguments, nullptr);
                 win->show();
-                win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-                win->raise();
-                win->activateWindow();
+            } else {
+                // Send the args to the last focused window
+                MainWindow* win = MainWindow::lastActiveInstance();
+                if (win != nullptr) {
+                    win->openCommandLineProvidedUrls(workingDirectory, arguments);
+
+                    // Activate the window
+                    win->hide();
+                    win->show();
+                    win->setWindowState((win->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+                    win->raise();
+                    win->activateWindow();
+                }
             }
-        }
-    });
+        });
 
     // There are no other instances: start a new server.
     a.startServer();
@@ -181,9 +184,7 @@ int main(int argc, char *argv[])
 
     // Initialize stats, but delay so that we are sure that
     // any dialog will open on top of MainWindow without blocking it.
-    QTimer::singleShot(0, [](){
-        Stats::init();
-    });
+    QTimer::singleShot(0, []() { Stats::init(); });
 
     auto retVal = a.exec();
 
@@ -199,17 +200,15 @@ void forceDefaultSettings()
     NqqSettings& s = NqqSettings::getInstance();
 
     // Use tabs to indent makefile by default
-    if(!s.Languages.hasUseDefaultSettings("makefile")) {
+    if (!s.Languages.hasUseDefaultSettings("makefile")) {
         s.Languages.setUseDefaultSettings("makefile", false);
         s.Languages.setIndentWithSpaces("makefile", false);
     }
 
     // Use two spaces to indent ruby by default
-    if(!s.Languages.hasUseDefaultSettings("ruby")) {
+    if (!s.Languages.hasUseDefaultSettings("ruby")) {
         s.Languages.setUseDefaultSettings("ruby", false);
         s.Languages.setTabSize("ruby", 2);
-        s.Languages.setIndentWithSpaces("ruby",true);
+        s.Languages.setIndentWithSpaces("ruby", true);
     }
-
-
 }

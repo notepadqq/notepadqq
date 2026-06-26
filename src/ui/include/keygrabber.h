@@ -5,7 +5,7 @@
 #include <QTreeWidget>
 
 class KeyGrabber : public QTreeWidget {
-Q_OBJECT
+    Q_OBJECT
 public:
     KeyGrabber(QWidget* parent = nullptr);
 
@@ -48,10 +48,14 @@ public:
         QAction* getAction() { return action; }
         QTreeWidgetItem* getTreeItem() { return treeItem; }
 
-        void setText(const QString& seq) { treeItem->setText(1,seq); }
+        void setText(const QString& seq) { treeItem->setText(1, seq); }
         QString text() const { return treeItem->text(1); }
 
-        NodeItem(QAction* a, QTreeWidgetItem* item) : treeItem(item), action(a) {}
+        NodeItem(QAction* a, QTreeWidgetItem* item)
+            : treeItem(item)
+            , action(a)
+        {
+        }
     };
 
     /**

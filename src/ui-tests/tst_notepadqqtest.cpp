@@ -1,11 +1,11 @@
+#include "include/notepadqq.h"
+#include "notepadqq.cpp"
+#include "nqqsettings.cpp"
+
 #include <QString>
 #include <QtTest>
-#include "include/notepadqq.h"
-#include "nqqsettings.cpp"
-#include "notepadqq.cpp"
 
-class NotepadqqTest : public QObject
-{
+class NotepadqqTest : public QObject {
     Q_OBJECT
 
 public:
@@ -17,13 +17,11 @@ private Q_SLOTS:
 
 NotepadqqTest::NotepadqqTest()
 {
-    //QApplication a();
+    // QApplication a();
 }
 
 void NotepadqqTest::editorPathIsHtml()
-{
-    QVERIFY(Notepadqq::editorPath().endsWith(".html"));
-}
+{ QVERIFY(Notepadqq::editorPath().endsWith(".html")); }
 
 QTEST_GUILESS_MAIN(NotepadqqTest)
 

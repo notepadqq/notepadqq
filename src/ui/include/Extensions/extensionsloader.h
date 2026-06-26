@@ -8,33 +8,32 @@
 
 namespace Extensions {
 
-    class ExtensionsLoader : public QObject
-    {
-        Q_OBJECT
-    public:
-        /**
-         * @brief Starts an extensions server with a new unique name.
-         * @return
-         */
-        static QSharedPointer<Extensions::ExtensionsServer> startExtensionsServer();
-        static QSharedPointer<ExtensionsServer> startExtensionsServer(QString name);
-        static void loadExtensions(QString path);
-        static QMap<QString, QSharedPointer<Extension>> loadedExtensions();
-        static QSharedPointer<ExtensionsServer> extensionsServer();
-        static bool extensionRuntimePresent();
+class ExtensionsLoader : public QObject {
+    Q_OBJECT
+public:
+    /**
+     * @brief Starts an extensions server with a new unique name.
+     * @return
+     */
+    static QSharedPointer<Extensions::ExtensionsServer> startExtensionsServer();
+    static QSharedPointer<ExtensionsServer> startExtensionsServer(QString name);
+    static void loadExtensions(QString path);
+    static QMap<QString, QSharedPointer<Extension>> loadedExtensions();
+    static QSharedPointer<ExtensionsServer> extensionsServer();
+    static bool extensionRuntimePresent();
 
-    signals:
+signals:
 
-    public slots:
+public slots:
 
-    private:
-        explicit ExtensionsLoader(QObject *parent = 0);
-        ~ExtensionsLoader();
+private:
+    explicit ExtensionsLoader(QObject* parent = 0);
+    ~ExtensionsLoader();
 
-        static QSharedPointer<ExtensionsServer> m_extensionsServer;
-        static QMap<QString, QSharedPointer<Extension>> m_extensions;
-    };
+    static QSharedPointer<ExtensionsServer> m_extensionsServer;
+    static QMap<QString, QSharedPointer<Extension>> m_extensions;
+};
 
-}
+} // namespace Extensions
 
 #endif // EXTENSIONLOADER_H

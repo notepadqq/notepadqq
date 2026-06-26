@@ -20,44 +20,47 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString &workingDirectory, const QStringList &arguments, QWidget *parent = nullptr);
-    explicit MainWindow(const QStringList &arguments, QWidget *parent = nullptr);
+    explicit MainWindow(const QString& workingDirectory, const QStringList& arguments, QWidget* parent = nullptr);
+    explicit MainWindow(const QStringList& arguments, QWidget* parent = nullptr);
     ~MainWindow();
 
-    static QList<MainWindow *> instances();
-    static MainWindow * lastActiveInstance();
+    static QList<MainWindow*> instances();
+    static MainWindow* lastActiveInstance();
 
     /**
      * Describes the result of a tab closing process.
      */
     enum tabCloseResult {
-         tabCloseResult_Saved        /** The tab was closed and the file was saved */
-        ,tabCloseResult_NotSaved     /** The tab was closed and the file wasn't saved */
-        ,tabCloseResult_AlreadySaved /** The tab was closed and the file was already saved */
-        ,tabCloseResult_Canceled     /** The close process was canceled */
+        tabCloseResult_Saved /** The tab was closed and the file was saved */
+        ,
+        tabCloseResult_NotSaved /** The tab was closed and the file wasn't saved */
+        ,
+        tabCloseResult_AlreadySaved /** The tab was closed and the file was already saved */
+        ,
+        tabCloseResult_Canceled /** The close process was canceled */
     };
 
     /**
      * Reasons for asking to save changes
      */
     enum askToSaveChangesReason {
-         askToSaveChangesReason_tabClosing  /** The tab is closing */
-        ,askToSaveChangesReason_generic     /** Generic reason */
+        askToSaveChangesReason_tabClosing /** The tab is closing */
+        ,
+        askToSaveChangesReason_generic /** Generic reason */
     };
 
-    TopEditorContainer *topEditorContainer();
+    TopEditorContainer* topEditorContainer();
 
-    void removeTabWidgetIfEmpty(EditorTabWidget *tabWidget);
+    void removeTabWidgetIfEmpty(EditorTabWidget* tabWidget);
 
-    void openCommandLineProvidedUrls(const QString &workingDirectory, const QStringList &arguments);
+    void openCommandLineProvidedUrls(const QString& workingDirectory, const QStringList& arguments);
 
     QSharedPointer<Editor> currentEditor();
-    QAction*  addExtensionMenuItem(QString extensionId, QString text);
+    QAction* addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
 
     /**
@@ -73,7 +76,7 @@ public:
     // Creates or re-creates the window's main tool bar.
     void loadToolBar();
 
-    DocEngine*  getDocEngine() const;
+    DocEngine* getDocEngine() const;
     void generateRunMenu();
     void configurePostSessionUserInterface();
 public slots:
@@ -81,18 +84,18 @@ public slots:
     void refreshEditorUiCursorInfo(QMap<QString, QVariant> data);
 
 protected:
-    void closeEvent(QCloseEvent *event);
-    void dragEnterEvent(QDragEnterEvent *e);
-    void dropEvent(QDropEvent *e);
-    void keyPressEvent(QKeyEvent *ev);
-    void changeEvent(QEvent *e);
+    void closeEvent(QCloseEvent* event);
+    void dragEnterEvent(QDragEnterEvent* e);
+    void dropEvent(QDropEvent* e);
+    void keyPressEvent(QKeyEvent* ev);
+    void changeEvent(QEvent* e);
 
 private slots:
     void runCommand();
     void modifyRunCommands();
     void searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type);
     void on_actionNew_triggered();
-    void on_customTabContextMenuRequested(QPoint point, EditorTabWidget *tabWidget, int tabIndex);
+    void on_customTabContextMenuRequested(QPoint point, EditorTabWidget* tabWidget, int tabIndex);
     void on_actionMove_to_Other_View_triggered();
     void on_actionOpen_triggered();
     void on_actionOpen_Folder_triggered();
@@ -124,24 +127,24 @@ private slots:
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
     void on_actionClose_All_triggered();
-    void on_fileOnDiskChanged(EditorTabWidget *tabWidget, int tab, bool removed);
+    void on_fileOnDiskChanged(EditorTabWidget* tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
     void on_currentLanguageChanged(QSharedPointer<Editor> sender, QString, QString);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();
-    void on_editorMouseWheel(EditorTabWidget *tabWidget, int tab, QWheelEvent *ev);
+    void on_editorMouseWheel(EditorTabWidget* tabWidget, int tab, QWheelEvent* ev);
     void on_actionUPPERCASE_triggered();
     void on_actionLowercase_triggered();
     void on_actionClose_All_BUT_Current_Document_triggered();
     void on_actionCloseLeft_triggered();
     void on_actionCloseRight_triggered();
     void on_actionSave_All_triggered();
-    void on_bannerRemoved(QWidget *banner);
-    void on_documentSaved(EditorTabWidget *tabWidget, int tab);
-    void on_documentReloaded(EditorTabWidget *tabWidget, int tab);
-    void on_documentLoaded(EditorTabWidget *tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);
+    void on_bannerRemoved(QWidget* banner);
+    void on_documentSaved(EditorTabWidget* tabWidget, int tab);
+    void on_documentReloaded(EditorTabWidget* tabWidget, int tab);
+    void on_documentLoaded(EditorTabWidget* tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
@@ -173,7 +176,7 @@ private slots:
     void on_actionMove_to_New_Window_triggered();
     void on_actionOpen_file_triggered();
     void on_actionOpen_in_another_window_triggered();
-    void on_tabBarDoubleClicked(EditorTabWidget *tabWidget, int tab);
+    void on_tabBarDoubleClicked(EditorTabWidget* tabWidget, int tab);
     void on_actionFind_in_Files_triggered();
     void on_actionDelete_Line_triggered();
     void on_actionDuplicate_Line_triggered();
@@ -205,32 +208,32 @@ private slots:
 private:
     static QList<MainWindow*> m_instances;
 
-    Ui::MainWindow*       ui;
-    QToolBar*             m_mainToolBar = nullptr;
-    TopEditorContainer*   m_topEditorContainer;
-    DocEngine*            m_docEngine;
-    QMenu*                m_tabContextMenu;
-    QList<QAction *>      m_tabContextMenuActions;
+    Ui::MainWindow* ui;
+    QToolBar* m_mainToolBar = nullptr;
+    TopEditorContainer* m_topEditorContainer;
+    DocEngine* m_docEngine;
+    QMenu* m_tabContextMenu;
+    QList<QAction*> m_tabContextMenuActions;
     QLabel* m_sbDocumentInfoLabel;
     QPushButton* m_sbFileFormatBtn;
     QPushButton* m_sbEOLFormatBtn;
     QPushButton* m_sbTextFormatBtn;
     QPushButton* m_sbOvertypeBtn;
-    NqqSettings&          m_settings;
-    frmSearchReplace*     m_frmSearchReplace = nullptr;
-    bool                  m_overwrite = false; // Overwrite mode vs Insert mode
-    QString               m_workingDirectory;
+    NqqSettings& m_settings;
+    frmSearchReplace* m_frmSearchReplace = nullptr;
+    bool m_overwrite = false; // Overwrite mode vs Insert mode
+    QString m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
-    QPair<int, int>       beginSelectPosition;
-    bool                  beginSelectPositionSet = false;
+    QPair<int, int> beginSelectPosition;
+    bool beginSelectPositionSet = false;
 
-    AdvancedSearchDock*  m_advSearchDock;
+    AdvancedSearchDock* m_advSearchDock;
 
     /**
      * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and
      *        saves all unsaved progress in the cache.
      */
-    bool                saveTabsToCache();
+    bool saveTabsToCache();
 
     /**
      * @brief Acts like closing all tabs, asking to the user for input before discarding
@@ -239,9 +242,9 @@ private:
      *        is unnecessary.
      * @return Whether all files would have been properly closed.
      */
-    bool                finalizeAllTabs();
+    bool finalizeAllTabs();
 
-    int                 askIfWantToSave(EditorTabWidget *tabWidget, int tab, int reason);
+    int askIfWantToSave(EditorTabWidget* tabWidget, int tab, int reason);
 
     /**
      * @brief Removes the specified tab. Doesn't remove the tab if it's the
@@ -259,8 +262,8 @@ private:
      *              to save changes.
      * @return tabCloseResult
      */
-    int                 closeTab(EditorTabWidget *tabWidget, int tab, bool remove, bool force);
-    int                 closeTab(EditorTabWidget *tabWidget, int tab);
+    int closeTab(EditorTabWidget* tabWidget, int tab, bool remove, bool force);
+    int closeTab(EditorTabWidget* tabWidget, int tab);
 
     /**
      * @brief Save a document. If the document has not an associated path,
@@ -269,34 +272,34 @@ private:
      * @param tab
      * @return a saveFileResult
      */
-    int                 save(EditorTabWidget *tabWidget, int tab);
-    int                 saveAs(EditorTabWidget *tabWidget, int tab, bool copy);
-    QUrl                getSaveDialogDefaultFileName(EditorTabWidget *tabWidget, int tab);
-    void                setupLanguagesMenu();
-    void                transformSelectedText(std::function<QString (const QString &)> func);
-    void                restoreWindowSettings();
-    void                loadIcons();
-    void                updateRecentDocsInMenu();
-    void                convertEditorEncoding(QSharedPointer<Editor> editor, QTextCodec *codec, bool bom);
-    void                toggleOverwrite();
-    void                checkIndentationMode(QSharedPointer<Editor> editor);
+    int save(EditorTabWidget* tabWidget, int tab);
+    int saveAs(EditorTabWidget* tabWidget, int tab, bool copy);
+    QUrl getSaveDialogDefaultFileName(EditorTabWidget* tabWidget, int tab);
+    void setupLanguagesMenu();
+    void transformSelectedText(std::function<QString(const QString&)> func);
+    void restoreWindowSettings();
+    void loadIcons();
+    void updateRecentDocsInMenu();
+    void convertEditorEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
+    void toggleOverwrite();
+    void checkIndentationMode(QSharedPointer<Editor> editor);
     QtPromise::QPromise<QStringList> currentWordOrSelections();
-    QtPromise::QPromise<QString>     currentWordOrSelection();
-    void                currentWordOnlineSearch(const QString &searchUrl);
+    QtPromise::QPromise<QString> currentWordOrSelection();
+    void currentWordOnlineSearch(const QString& searchUrl);
 
     /**
      * @brief Attempts to open a file from the recent history. Prompts the user if the file does not exist and
      *        removes it from the recent history if applicable.
      * @param url Url of file to open.
      */
-    void                openRecentFileEntry(QUrl url);
+    void openRecentFileEntry(QUrl url);
 
     /**
      * @brief Workaround for this bug: https://bugs.launchpad.net/ubuntu/+source/appmenu-qt5/+bug/1313248
      */
-    void                fixKeyboardShortcuts();
-    void                instantiateFrmSearchReplace();
-    QUrl                stringToUrl(QString fileName, QString workingDirectory = QString());
+    void fixKeyboardShortcuts();
+    void instantiateFrmSearchReplace();
+    QUrl stringToUrl(QString fileName, QString workingDirectory = QString());
 
     /**
      * @brief Initialize UI from settings

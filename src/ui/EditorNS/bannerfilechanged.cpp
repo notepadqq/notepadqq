@@ -5,19 +5,18 @@
 #include <QPushButton>
 #include <QStyleOption>
 
-namespace EditorNS
+namespace EditorNS {
+
+BannerFileChanged::BannerFileChanged(QWidget* parent)
+    : BannerBasicMessage(parent)
 {
+    setMessage(tr("This file has been changed outside of Notepadqq."));
 
-    BannerFileChanged::BannerFileChanged(QWidget *parent) :
-        BannerBasicMessage(parent)
-    {
-        setMessage(tr("This file has been changed outside of Notepadqq."));
+    QPushButton* btnReload = addButton(tr("Reload"));
+    connect(btnReload, &QPushButton::clicked, this, &BannerFileChanged::reload);
 
-        QPushButton *btnReload = addButton(tr("Reload"));
-        connect(btnReload, &QPushButton::clicked, this, &BannerFileChanged::reload);
-
-        QPushButton *btnIgnore = addButton(tr("Ignore"));
-        connect(btnIgnore, &QPushButton::clicked, this, &BannerFileChanged::ignore);
-    }
-
+    QPushButton* btnIgnore = addButton(tr("Ignore"));
+    connect(btnIgnore, &QPushButton::clicked, this, &BannerFileChanged::ignore);
 }
+
+} // namespace EditorNS

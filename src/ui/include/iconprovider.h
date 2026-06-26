@@ -3,11 +3,10 @@
 
 #include <QIcon>
 
-class IconProvider
-{
+class IconProvider {
 public:
     IconProvider();
-    static QIcon fromTheme(const QString &name);
+    static QIcon fromTheme(const QString& name);
 };
 
 #endif // ICONPROVIDER_H

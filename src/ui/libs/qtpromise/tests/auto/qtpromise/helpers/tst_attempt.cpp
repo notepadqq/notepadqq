@@ -31,7 +31,7 @@ QTEST_MAIN(tst_helpers_attempt)
 
 void tst_helpers_attempt::voidResult()
 {
-    auto p = QtPromise::attempt([]() {});
+    auto p = QtPromise::attempt([]() { });
 
     Q_STATIC_ASSERT((std::is_same<decltype(p), QtPromise::QPromise<void>>::value));
     QCOMPARE(p.isFulfilled(), true);

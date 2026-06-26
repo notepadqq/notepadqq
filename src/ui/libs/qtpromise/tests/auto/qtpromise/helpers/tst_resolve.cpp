@@ -254,7 +254,7 @@ void tst_helpers_resolve::typedFuture()
 
 void tst_helpers_resolve::voidFuture()
 {
-    auto fn = []() {};
+    auto fn = []() { };
     QFuture<void> v0 = QtConcurrent::run(fn);
     const QFuture<void> v1 = v0;
 

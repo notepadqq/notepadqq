@@ -12,17 +12,16 @@ using namespace EditorNS;
  * @brief A TabWidget used to allow the user to switch between
  *        multiple Editor instances.
  */
-class EditorTabWidget : public QTabWidget
-{
+class EditorTabWidget : public QTabWidget {
     Q_OBJECT
 public:
-    explicit EditorTabWidget(QWidget *parent = nullptr);
+    explicit EditorTabWidget(QWidget* parent = nullptr);
     ~EditorTabWidget();
 
     int indexOf(QSharedPointer<Editor> editor) const;
-    int indexOf(QWidget *widget) const;
+    int indexOf(QWidget* widget) const;
 
-    int addEditorTab(bool setFocus, const QString &title);
+    int addEditorTab(bool setFocus, const QString& title);
     /**
      * @brief Add a new document, moving it from another EditorTabWidget
      * @param setFocus True to give focus to the new document
@@ -30,11 +29,11 @@ public:
      * @param tabIndex Tab index, inside \p source, of the document
      * @return Tab index of the new document inside this EditorTabWidget.
      */
-    int transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex);
-    int findOpenEditorByUrl(const QUrl &filename);
+    int transferEditorTab(bool setFocus, EditorTabWidget* source, int tabIndex);
+    int findOpenEditorByUrl(const QUrl& filename);
 
     QSharedPointer<Editor> editor(int index) const;
-    QSharedPointer<Editor> editor(Editor *editor) const;
+    QSharedPointer<Editor> editor(Editor* editor) const;
     QSharedPointer<Editor> currentEditor();
 
     /**
@@ -44,7 +43,7 @@ public:
     QString tabTextFromEditor(QSharedPointer<Editor> editor);
 
     qreal zoomFactor() const;
-    void setZoomFactor(const qreal &zoomFactor);
+    void setZoomFactor(const qreal& zoomFactor);
 
     /**
      * @brief deleteIfEmpty Deletes the TabWidget if it has no tabs.
@@ -55,7 +54,7 @@ public:
      * @brief deleteIfEmpty Deletes the given TabWidget if it has no tabs.
      * @param tabWidget
      */
-    static void deleteIfEmpty(EditorTabWidget *tabWidget);
+    static void deleteIfEmpty(EditorTabWidget* tabWidget);
 
     /**
      * @brief tabText Returns the title of the given Editor or tab index
@@ -71,10 +70,9 @@ public:
 
     int formerTabIndex();
 
-    QString generateTabTitleForUrl(const QUrl &filename) const;
+    QString generateTabTitleForUrl(const QUrl& filename) const;
 
 private:
-
     // Smart pointers to the editors within this TabWidget
     QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;
 
@@ -85,8 +83,8 @@ private:
 
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
-    void connectEditorSignals(Editor *editor);
-    void disconnectEditorSignals(Editor *editor);
+    void connectEditorSignals(Editor* editor);
+    void disconnectEditorSignals(Editor* editor);
 
     /**
      * @brief Add a new Editor tab (or transfer it from another EditorTabWidget)
@@ -96,23 +94,23 @@ private:
      * @param sourceTabIndex Tab index, within @param source, of the tab to transfer
      * @return Index of the tab
      */
-    int rawAddEditorTab(const bool setFocus, const QString &title, EditorTabWidget *source, const int sourceTabIndex);
+    int rawAddEditorTab(const bool setFocus, const QString& title, EditorTabWidget* source, const int sourceTabIndex);
 
 private slots:
-    void on_cleanChanged(bool isClean); 
-    void on_editorMouseWheel(QWheelEvent *ev);
-    void on_fileNameChanged(const QUrl &, const QUrl &newFileName);
+    void on_cleanChanged(bool isClean);
+    void on_editorMouseWheel(QWheelEvent* ev);
+    void on_fileNameChanged(const QUrl&, const QUrl& newFileName);
     void on_currentTabChanged(int index);
 signals:
     void gotFocus();
     void editorAdded(int index);
-    void editorMouseWheel(int tab, QWheelEvent *ev);
+    void editorMouseWheel(int tab, QWheelEvent* ev);
 
 public slots:
     void setSavedIcon(int index, bool saved);
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *ev);
+    void mouseReleaseEvent(QMouseEvent* ev);
     void tabRemoved(int);
 };
 
