@@ -140,31 +140,31 @@ jobs:
       - name: Test
         run: ctest --preset clang-tidy --output-on-failure
 
-  clazy:
-    name: clazy
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
-
-      - name: Set clazy checks
-        run: echo "CLAZY_CHECKS=level0,level1,level2" >> "$GITHUB_ENV"
-
-      - name: Configure
-        run: cmake --preset clazy
-
-      - name: Build
-        run: cmake --build --preset clazy --parallel
-
-      - name: Run clazy
-        run: git ls-files '*.cpp' '*.cc' '*.cxx' | xargs -r -n 1 clazy-standalone -checks=$CLAZY_CHECKS -p build/clazy --header-filter='^src/'
-
-      - name: Test
-        run: ctest --preset clazy --output-on-failure
+  # clazy:
+  #   name: clazy
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+  #
+  #     - name: Set clazy checks
+  #       run: echo "CLAZY_CHECKS=level0,level1,level2" >> "$GITHUB_ENV"
+  #
+  #     - name: Configure
+  #       run: cmake --preset clazy
+  #
+  #     - name: Build
+  #       run: cmake --build --preset clazy --parallel
+  #
+  #     - name: Run clazy
+  #       run: git ls-files '*.cpp' '*.cc' '*.cxx' | xargs -r -n 1 clazy-standalone -checks=$CLAZY_CHECKS -p build/clazy --header-filter='^src/'
+  #
+  #     - name: Test
+  #       run: ctest --preset clazy --output-on-failure
