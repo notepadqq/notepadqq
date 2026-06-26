@@ -5,7 +5,7 @@
 # main "Dockerfile", which doesn't include a build step (you can enter the shell
 # in the container and build it yourself)
 
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="Notepadqq"
 
 RUN apt-get -qq update && apt-get --no-install-recommends -y install \
