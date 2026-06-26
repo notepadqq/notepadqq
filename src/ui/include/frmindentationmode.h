@@ -9,12 +9,11 @@ namespace Ui {
 class frmIndentationMode;
 }
 
-class frmIndentationMode : public QDialog
-{
+class frmIndentationMode : public QDialog {
     Q_OBJECT
 
 public:
-    explicit frmIndentationMode(QWidget *parent = nullptr);
+    explicit frmIndentationMode(QWidget* parent = nullptr);
     ~frmIndentationMode();
 
     void populateWidgets(EditorNS::IndentationMode indentationMode);
@@ -26,7 +25,7 @@ private slots:
     void on_buttonBox_rejected();
 
 private:
-    Ui::frmIndentationMode *ui;
+    Ui::frmIndentationMode* ui;
 };
 
 #endif // FRMINDENTATIONMODE_H

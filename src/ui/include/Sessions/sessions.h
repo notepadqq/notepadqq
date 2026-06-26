@@ -18,7 +18,8 @@ namespace Sessions {
  *        will be deleted.
  * @return Whether the save has been successful.
  */
-bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath=QString());
+bool saveSession(
+    DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath, QString cacheDirPath = QString());
 
 /**
  * @brief Loads a session XML file and restores all its tabs in the specified window.
@@ -28,6 +29,6 @@ bool saveSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
  */
 void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QString sessionPath);
 
-} // namespace Autosave
+} // namespace Sessions
 
 #endif // SESSIONS_H

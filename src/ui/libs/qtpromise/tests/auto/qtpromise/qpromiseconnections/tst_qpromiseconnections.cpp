@@ -33,11 +33,11 @@ void tst_qpromiseconnections::connections()
     QCOMPARE(sender.hasConnections(), false);
     QCOMPARE(connections.count(), 0);
 
-    connections << connect(&sender, &Object::noArgSignal, [=]() {});
+    connections << connect(&sender, &Object::noArgSignal, [=]() { });
     QCOMPARE(sender.hasConnections(), true);
     QCOMPARE(connections.count(), 1);
 
-    connections << connect(&sender, &Object::twoArgsSignal, [=]() {});
+    connections << connect(&sender, &Object::twoArgsSignal, [=]() { });
     QCOMPARE(sender.hasConnections(), true);
     QCOMPARE(connections.count(), 2);
 
@@ -55,7 +55,7 @@ void tst_qpromiseconnections::destruction()
         QCOMPARE(sender.hasConnections(), false);
         QCOMPARE(connections.count(), 0);
 
-        connections << connect(&sender, &Object::noArgSignal, [=]() {});
+        connections << connect(&sender, &Object::noArgSignal, [=]() { });
         QCOMPARE(sender.hasConnections(), true);
         QCOMPARE(connections.count(), 1);
     }
@@ -72,7 +72,7 @@ void tst_qpromiseconnections::senderDestroyed()
         Object sender;
         QCOMPARE(sender.hasConnections(), false);
 
-        connections << connect(&sender, &Object::noArgSignal, [=]() {});
+        connections << connect(&sender, &Object::noArgSignal, [=]() { });
         QCOMPARE(sender.hasConnections(), true);
         QCOMPARE(connections.count(), 1);
     }

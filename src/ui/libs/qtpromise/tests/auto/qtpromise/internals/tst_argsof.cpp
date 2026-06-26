@@ -169,10 +169,10 @@ void tst_internals_argsof::stdFunction()
 
 void tst_internals_argsof::lambda()
 {
-    auto lNoArg = []() {};
-    auto lOneArg = [](float) {};
-    auto lManyArgs = [](const float&, int, char**) {};
-    auto lMutable = [](const float&, int, char**) mutable {};
+    auto lNoArg = []() { };
+    auto lOneArg = [](float) { };
+    auto lManyArgs = [](const float&, int, char**) { };
+    auto lMutable = [](const float&, int, char**) mutable { };
 
     TEST_ARGS_FOR_TYPE(decltype(lNoArg), void);
     TEST_ARGS_FOR_TYPE(decltype(lOneArg), float);

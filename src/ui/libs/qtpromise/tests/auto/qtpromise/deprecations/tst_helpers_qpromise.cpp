@@ -254,7 +254,7 @@ void tst_deprecations_helpers_qpromise::typedFuture()
 
 void tst_deprecations_helpers_qpromise::voidFuture()
 {
-    auto fn = []() {};
+    auto fn = []() { };
     QFuture<void> v0 = QtConcurrent::run(fn);
     const QFuture<void> v1 = v0;
 

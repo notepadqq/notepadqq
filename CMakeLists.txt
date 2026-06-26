@@ -225,6 +225,10 @@ target_compile_definitions(${NQQ_TARGET_NAME} PRIVATE QT_NO_URL_CAST_FROM_STRING
 
 target_compile_options(${NQQ_TARGET_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wold-style-cast>
+    # Workaround for upstream qtpromise bug (v0.7.0): qpromise_p.h forward-declares
+    # QPromiseConversionException but never includes qpromiseexceptions.h where it's
+    # defined. This causes "invalid use of incomplete type" when thrown at line 593.
+    -include qtpromise/qpromiseexceptions.h
 )
 
 target_link_libraries(${NQQ_TARGET_NAME} PRIVATE
@@ -322,6 +326,13 @@ if(NQQ_BUILD_TESTS)
         Qt6::WebSockets
         Qt6::Widgets
         PkgConfig::UCHARDET
+    )
+
+    # Workaround for upstream qtpromise bug (v0.7.0): qpromise_p.h forward-declares
+    # QPromiseConversionException but never includes qpromiseexceptions.h where it's
+    # defined. This causes "invalid use of incomplete type" when thrown at line 593.
+    target_compile_options(ui-tests PRIVATE
+        -include qtpromise/qpromiseexceptions.h
     )
     add_test(NAME ui-tests COMMAND ui-tests)
 endif()

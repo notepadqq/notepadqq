@@ -8,8 +8,8 @@
 #ifndef QTPROMISE_QPROMISE_H
 #define QTPROMISE_QPROMISE_H
 
-#include "qpromiseexceptions.h"
 #include "qpromise_p.h"
+#include "qpromiseexceptions.h"
 #include "qpromiseglobal.h"
 #include "qpromiseresolver.h"
 

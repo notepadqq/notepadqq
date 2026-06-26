@@ -46,7 +46,7 @@ public:
      */
     bool isSearchInProgress() const { return m_isSearchInProgress; }
 
-    QTreeWidget*        getResultTreeWidget() const { return m_treeWidget.data(); }
+    QTreeWidget* getResultTreeWidget() const { return m_treeWidget.data(); }
     const SearchConfig& getSearchConfig() const { return m_searchConfig; }
     const SearchResult& getSearchResult() const { return m_searchResult; }
 
@@ -85,21 +85,20 @@ private:
     bool m_resultsAreExpanded = false;
     bool m_showFullLines = false;
 
-    SearchConfig                m_searchConfig;
+    SearchConfig m_searchConfig;
     QScopedPointer<QTreeWidget> m_treeWidget;
-    SearchResult                m_searchResult;
-    FileSearcher*               m_fileSearcher = nullptr;
+    SearchResult m_searchResult;
+    FileSearcher* m_fileSearcher = nullptr;
 
     // Context menu
-    QMenu*                      m_contextMenu;
-    QAction*                    m_actionCopyLine;
-    QAction*                    m_actionOpenDocument;
-    QAction*                    m_actionOpenFolder;
+    QMenu* m_contextMenu;
+    QAction* m_actionCopyLine;
+    QAction* m_actionOpenDocument;
+    QAction* m_actionOpenFolder;
 
     // These map each QTreeWidget item to their respective MatchResult or DocResult
-    std::map<QTreeWidgetItem*, const MatchResult*>  m_resultMap;
-    std::map<QTreeWidgetItem*, const DocResult*>    m_docMap;
+    std::map<QTreeWidgetItem*, const MatchResult*> m_resultMap;
+    std::map<QTreeWidgetItem*, const DocResult*> m_docMap;
 };
-
 
 #endif // SEARCHINSTANCE_H

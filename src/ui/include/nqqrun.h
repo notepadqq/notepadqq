@@ -12,15 +12,15 @@
 #include <QTableWidget>
 
 namespace NqqRun {
-class RunPreferences : public QDialog
-{
+class RunPreferences : public QDialog {
     Q_OBJECT
 
 private:
-    NqqSettings &m_settings;
-    QTableWidget *m_commands;
+    NqqSettings& m_settings;
+    QTableWidget* m_commands;
+
 public:
-    RunPreferences(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+    RunPreferences(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::Widget);
     ~RunPreferences();
 
 private slots:
@@ -29,15 +29,16 @@ private slots:
     void slotInitCell(int row, int column);
 };
 
-class RunDelegate : public QStyledItemDelegate
-{
+class RunDelegate : public QStyledItemDelegate {
     Q_OBJECT
 public:
-    RunDelegate(QObject *parent = nullptr);
-    void paint(QPainter *painter, const QStyleOptionViewItem &option,
-            const QModelIndex &index) const override;
-    bool editorEvent(QEvent *event, QAbstractItemModel *model,
-            const QStyleOptionViewItem &option, const QModelIndex &index) override;
+    RunDelegate(QObject* parent = nullptr);
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    bool editorEvent(QEvent* event,
+        QAbstractItemModel* model,
+        const QStyleOptionViewItem& option,
+        const QModelIndex& index) override;
+
 private:
     QIcon openIcon;
     QIcon rmIcon;
@@ -46,17 +47,16 @@ signals:
     void needsRemoval();
 };
 
-class RunDialog : public QDialog
-{
+class RunDialog : public QDialog {
     Q_OBJECT
 private:
-    NqqSettings &m_settings;
-    QLabel *m_status;
-    QLineEdit *m_command;
+    NqqSettings& m_settings;
+    QLabel* m_status;
+    QLineEdit* m_command;
     bool m_saved;
 
 public:
-    RunDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::Widget);
+    RunDialog(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::Widget);
     ~RunDialog();
     QString getCommandInput();
     bool saved();
@@ -67,5 +67,5 @@ private slots:
     void slotHideStatus();
 };
 
-};
+}; // namespace NqqRun
 #endif

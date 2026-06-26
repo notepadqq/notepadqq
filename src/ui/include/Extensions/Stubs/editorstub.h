@@ -7,25 +7,24 @@
 #include <QObject>
 
 namespace Extensions {
-    namespace Stubs {
+namespace Stubs {
 
-        class EditorStub : public Stub
-        {
-        public:
-            EditorStub(const QWeakPointer<QObject> &object, RuntimeSupport *rts);
-            ~EditorStub();
+class EditorStub : public Stub {
+public:
+    EditorStub(const QWeakPointer<QObject>& object, RuntimeSupport* rts);
+    ~EditorStub();
 
-            NQQ_STUB_NAME("Editor")
+    NQQ_STUB_NAME("Editor")
 
-        private:
-            NQQ_DECLARE_EXTENSION_METHOD(setValue)
-            NQQ_DECLARE_EXTENSION_METHOD(value)
-            NQQ_DECLARE_EXTENSION_METHOD(setSelectionsText)
+private:
+    NQQ_DECLARE_EXTENSION_METHOD(setValue)
+    NQQ_DECLARE_EXTENSION_METHOD(value)
+    NQQ_DECLARE_EXTENSION_METHOD(setSelectionsText)
 
-            EditorNS::Editor *editor();
-        };
+    EditorNS::Editor* editor();
+};
 
-    }
-}
+} // namespace Stubs
+} // namespace Extensions
 
 #endif // EDITORSTUB_H

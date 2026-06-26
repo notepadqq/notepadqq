@@ -5,7 +5,6 @@
 
 class PersistentCache {
 public:
-
     /**
      * @brief Returns the path to where the session file is/should be located
      *        that contains all tabs when the main Notepadqq instance is closed.
@@ -18,8 +17,8 @@ public:
     static QString cacheDirPath();
 
     /**
-    * @brief Returns the path to the directory that contains the backup cache.
-    */
+     * @brief Returns the path to the directory that contains the backup cache.
+     */
     static QString backupDirPath();
 
     /**

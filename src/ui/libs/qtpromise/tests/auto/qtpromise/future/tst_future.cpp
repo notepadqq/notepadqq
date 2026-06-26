@@ -70,7 +70,7 @@ void tst_future::fulfilled()
 void tst_future::fulfilled_void()
 {
     int result = -1;
-    auto p = QtPromise::resolve(QtConcurrent::run([]() {}));
+    auto p = QtPromise::resolve(QtConcurrent::run([]() { }));
 
     Q_STATIC_ASSERT((std::is_same<decltype(p), QtPromise::QPromise<void>>::value));
     QCOMPARE(p.isPending(), true);

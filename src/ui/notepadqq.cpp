@@ -14,26 +14,21 @@ const QString Notepadqq::contributorsUrl = "https://github.com/notepadqq/notepad
 const QString Notepadqq::website = "https://notepadqq.com";
 
 QString Notepadqq::copyright()
-{
-    return QString("Copyright © 2010-%1, Daniele Di Sarli").arg(COPYRIGHT_YEAR);
-}
+{ return QString("Copyright © 2010-%1, Daniele Di Sarli").arg(COPYRIGHT_YEAR); }
 
 QString Notepadqq::appDataPath(QString fileName)
 {
 #ifdef Q_OS_MACOS
-    QString def = QString("%1/../Resources/").
-            arg(qApp->applicationDirPath());
+    QString def = QString("%1/../Resources/").arg(qApp->applicationDirPath());
 #else
     const QString applicationDir = qApp->applicationDirPath();
-    const QStringList candidatePaths = {
-        QString("%1/appdata/").arg(applicationDir),
+    const QStringList candidatePaths = {QString("%1/appdata/").arg(applicationDir),
         QString("%1/../appdata/").arg(applicationDir),
         QString("%1/../share/%2/").arg(applicationDir, qApp->applicationName().toLower()),
-        QString("%1/../../share/%2/").arg(applicationDir, qApp->applicationName().toLower())
-    };
+        QString("%1/../../share/%2/").arg(applicationDir, qApp->applicationName().toLower())};
 
     QString def;
-    for (const QString &candidatePath : candidatePaths) {
+    for (const QString& candidatePath : candidatePaths) {
         if (QDir(candidatePath).exists()) {
             def = candidatePath;
             break;
@@ -53,63 +48,47 @@ QString Notepadqq::appDataPath(QString fileName)
 }
 
 QString Notepadqq::editorPath()
-{
-    return appDataPath("editor/index.html");
-}
+{ return appDataPath("editor/index.html"); }
 
 QString Notepadqq::extensionToolsPath()
-{
-    return appDataPath("extension_tools");
-}
+{ return appDataPath("extension_tools"); }
 
-QString Notepadqq::nodejsPath() {
+QString Notepadqq::nodejsPath()
+{
     NqqSettings& s = NqqSettings::getInstance();
     return s.Extensions.getRuntimeNodeJS();
 }
 
-QString Notepadqq::npmPath() {
+QString Notepadqq::npmPath()
+{
     NqqSettings& s = NqqSettings::getInstance();
     return s.Extensions.getRuntimeNpm();
 }
 
-QString Notepadqq::fileNameFromUrl(const QUrl &url)
+QString Notepadqq::fileNameFromUrl(const QUrl& url)
 {
-    return QFileInfo(url.toDisplayString(
-                         QUrl::RemoveScheme |
-                         QUrl::RemovePassword |
-                         QUrl::RemoveUserInfo |
-                         QUrl::RemovePort |
-                         QUrl::RemoveAuthority |
-                         QUrl::RemoveQuery |
-                         QUrl::RemoveFragment |
-                         QUrl::PreferLocalFile )
-                     ).fileName();
+    return QFileInfo(
+        url.toDisplayString(QUrl::RemoveScheme | QUrl::RemovePassword | QUrl::RemoveUserInfo | QUrl::RemovePort |
+                            QUrl::RemoveAuthority | QUrl::RemoveQuery | QUrl::RemoveFragment | QUrl::PreferLocalFile))
+        .fileName();
 }
 
-QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(const QStringList &arguments)
+QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(const QStringList& arguments)
 {
-    QSharedPointer<QCommandLineParser> parser =
-            QSharedPointer<QCommandLineParser>(new QCommandLineParser());
+    QSharedPointer<QCommandLineParser> parser = QSharedPointer<QCommandLineParser>(new QCommandLineParser());
 
     parser->setApplicationDescription("Text editor for developers");
     parser->addHelpOption();
     parser->addVersionOption();
 
     QCommandLineOption newWindowOption("new-window",
-                                         QObject::tr("Open a new window in an existing instance of %1.")
-                                         .arg(QCoreApplication::applicationName()));
+        QObject::tr("Open a new window in an existing instance of %1.").arg(QCoreApplication::applicationName()));
     parser->addOption(newWindowOption);
 
-    QCommandLineOption setLine({"l", "line"},
-                               QObject::tr("Open file at specified line."),
-                               "line",
-                               "0");
+    QCommandLineOption setLine({"l", "line"}, QObject::tr("Open file at specified line."), "line", "0");
     parser->addOption(setLine);
 
-    QCommandLineOption setCol({"c", "column"},
-                              QObject::tr("Open file at specified column."),
-                              "column",
-                              "0");
+    QCommandLineOption setCol({"c", "column"}, QObject::tr("Open file at specified column."), "column", "0");
     parser->addOption(setCol);
 
     QCommandLineOption allowRootOption("allow-root", QObject::tr("Allows Notepadqq to be run as root."));
@@ -118,9 +97,7 @@ QSharedPointer<QCommandLineParser> Notepadqq::getCommandLineArgumentsParser(cons
     QCommandLineOption printDebugOption("print-debug-info", QObject::tr("Print system information for debugging."));
     parser->addOption(printDebugOption);
 
-    parser->addPositionalArgument("urls",
-                                 QObject::tr("Files to open."),
-                                 "[urls...]");
+    parser->addPositionalArgument("urls", QObject::tr("Files to open."), "[urls...]");
 
     parser->process(arguments);
 
@@ -148,8 +125,8 @@ QList<QString> Notepadqq::translations()
     for (int i = 0; i < fileNames.size(); ++i) {
         // get locale extracted by filename
         QString langCode;
-        langCode = fileNames[i]; // "notepadqq_de.qm"
-        langCode.truncate(langCode.lastIndexOf('.')); // "notepadqq_de"
+        langCode = fileNames[i];                       // "notepadqq_de.qm"
+        langCode.truncate(langCode.lastIndexOf('.'));  // "notepadqq_de"
         langCode.remove(0, langCode.indexOf('_') + 1); // "de"
 
         out.append(langCode);

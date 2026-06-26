@@ -7,18 +7,17 @@ namespace Ui {
 class frmLineNumberChooser;
 }
 
-class frmLineNumberChooser : public QDialog
-{
+class frmLineNumberChooser : public QDialog {
     Q_OBJECT
 
 public:
-    explicit frmLineNumberChooser(int min, int max, int defaultValue, QWidget *parent = nullptr);
+    explicit frmLineNumberChooser(int min, int max, int defaultValue, QWidget* parent = nullptr);
     ~frmLineNumberChooser();
 
     int value();
 
 private:
-    Ui::frmLineNumberChooser *ui;
+    Ui::frmLineNumberChooser* ui;
 };
 
 #endif // FRMLINENUMBERCHOOSER_H

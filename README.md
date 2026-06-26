@@ -69,7 +69,7 @@ Building for **macOS**? Check [here](https://github.com/notepadqq/notepadqq/wiki
 You can run notepadqq from its build output folder. If however you want to install it, first build it
 by following the above steps, then run:
 
-    notepadqq$ sudo cmake --install out/release
+    notepadqq$ sudo cmake --install build/release
 
 #### Qt
 

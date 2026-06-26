@@ -23,9 +23,9 @@ QTEST_MAIN(tst_cpp14_argsof_lambda_auto)
 
 void tst_cpp14_argsof_lambda_auto::lambdaAutoArgs()
 {
-    auto lOneArg = [](auto) {};
-    auto lManyArgs = [](const auto&, auto, auto) {};
-    auto lMutable = [](const auto&, auto) mutable {};
+    auto lOneArg = [](auto) { };
+    auto lManyArgs = [](const auto&, auto, auto) { };
+    auto lMutable = [](const auto&, auto) mutable { };
 
     Q_STATIC_ASSERT((ArgsOf<decltype(lOneArg)>::count == 0));
     Q_STATIC_ASSERT((ArgsOf<decltype(lManyArgs)>::count == 0));

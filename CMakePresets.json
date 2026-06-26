@@ -9,10 +9,11 @@
     {
       "name": "base",
       "hidden": true,
-      "binaryDir": "${sourceDir}/out/${presetName}",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
         "NQQ_BUILD_TESTS": "ON"
       }
     },
@@ -57,6 +58,23 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "NQQ_ENABLE_UBSAN": "ON"
       }
+    },
+    {
+      "name": "clang-tidy",
+      "displayName": "Clang-Tidy",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
+      }
+    },
+    {
+      "name": "clazy",
+      "displayName": "Clazy",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
     }
   ],
   "buildPresets": [
@@ -79,6 +97,14 @@
     {
       "name": "ubsan",
       "configurePreset": "ubsan"
+    },
+    {
+      "name": "clang-tidy",
+      "configurePreset": "clang-tidy"
+    },
+    {
+      "name": "clazy",
+      "configurePreset": "clazy"
     }
   ],
   "testPresets": [
@@ -113,6 +139,20 @@
     {
       "name": "ubsan",
       "configurePreset": "ubsan",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "clang-tidy",
+      "configurePreset": "clang-tidy",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "clazy",
+      "configurePreset": "clazy",
       "output": {
         "outputOnFailure": true
       }

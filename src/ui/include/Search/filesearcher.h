@@ -17,7 +17,6 @@ class FileSearcher : public QThread {
     Q_OBJECT
 
 public:
-
     /**
      * @brief prepareAsynchSearch Returns a FileSearcher* object to be used in async file search. Only use this for
      *                            ScopeFileSystem searches. Use the static functions for searching documents or strings.

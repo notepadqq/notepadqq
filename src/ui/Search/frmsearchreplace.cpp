@@ -1,31 +1,29 @@
 #include "include/Search/frmsearchreplace.h"
 
+#include "include/EditorNS/editor_properties.h"
 #include "include/Search/searchstring.h"
 #include "include/iconprovider.h"
 #include "include/nqqsettings.h"
 #include "ui_frmsearchreplace.h"
-#include "include/EditorNS/editor_properties.h"
 
+#include <QActionGroup>
 #include <QCompleter>
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QThread>
-#include <QActionGroup>
 
-frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::frmSearchReplace),
-    m_topEditorContainer(topEditorContainer)
+frmSearchReplace::frmSearchReplace(TopEditorContainer* topEditorContainer, QWidget* parent)
+    : QMainWindow(parent)
+    , ui(new Ui::frmSearchReplace)
+    , m_topEditorContainer(topEditorContainer)
 {
     ui->setupUi(this);
 
-    setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
+    setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    move(
-        parentWidget()->window()->frameGeometry().topLeft() +
-        parentWidget()->window()->rect().center() -
-        rect().center());
+    move(parentWidget()->window()->frameGeometry().topLeft() + parentWidget()->window()->rect().center() -
+         rect().center());
 
     ui->cmbSearch->completer()->setCaseSensitivity(Qt::CaseSensitive);
     ui->cmbReplace->completer()->setCaseSensitivity(Qt::CaseSensitive);
@@ -46,7 +44,7 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
     ui->actionFind->setIcon(IconProvider::fromTheme("edit-find"));
     ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
 
-    QActionGroup *tabGroup = new QActionGroup(this);
+    QActionGroup* tabGroup = new QActionGroup(this);
     tabGroup->addAction(ui->actionFind);
     tabGroup->addAction(ui->actionReplace);
     tabGroup->addAction(ui->actionAdvancedSearch);
@@ -62,14 +60,11 @@ frmSearchReplace::frmSearchReplace(TopEditorContainer *topEditorContainer, QWidg
 }
 
 frmSearchReplace::~frmSearchReplace()
-{
-    delete ui;
-}
+{ delete ui; }
 
-void frmSearchReplace::keyPressEvent(QKeyEvent *evt)
+void frmSearchReplace::keyPressEvent(QKeyEvent* evt)
 {
-    switch (evt->key())
-    {
+    switch (evt->key()) {
     case Qt::Key_Escape:
         close();
         break;
@@ -112,9 +107,7 @@ void frmSearchReplace::setCurrentTab(Tabs tab)
 }
 
 QSharedPointer<Editor> frmSearchReplace::currentEditor()
-{
-    return this->m_topEditorContainer->currentTabWidget()->currentEditor();
-}
+{ return this->m_topEditorContainer->currentTabWidget()->currentEditor(); }
 
 QString frmSearchReplace::regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions)
 {
@@ -125,7 +118,9 @@ QString frmSearchReplace::regexModifiersFromSearchOptions(SearchHelpers::SearchO
     return modifiers;
 }
 
-void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
+void frmSearchReplace::search(
+    QString string, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions)
+{
     if (!string.isEmpty()) {
         QString rawSearch = SearchString::format(string, searchMode, searchOptions);
 
@@ -143,7 +138,12 @@ void frmSearchReplace::search(QString string, SearchHelpers::SearchMode searchMo
     }
 }
 
-void frmSearchReplace::replace(QString string, QString replacement, SearchHelpers::SearchMode searchMode, bool forward, SearchHelpers::SearchOptions searchOptions) {
+void frmSearchReplace::replace(QString string,
+    QString replacement,
+    SearchHelpers::SearchMode searchMode,
+    bool forward,
+    SearchHelpers::SearchOptions searchOptions)
+{
     if (!string.isEmpty()) {
         QString rawSearch = SearchString::format(string, searchMode, searchOptions);
         if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
@@ -161,33 +161,40 @@ void frmSearchReplace::replace(QString string, QString replacement, SearchHelper
         data.append(regexModifiersFromSearchOptions(searchOptions));
         data.append(forward);
         data.append(replacement);
-				data.append(QString::number(static_cast<int>(searchMode)));
+        data.append(QString::number(static_cast<int>(searchMode)));
         editor->sendMessage("C_FUN_REPLACE", QVariant::fromValue(data));
     }
 }
 
-int frmSearchReplace::replaceAll(QString string, QString replacement, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
+int frmSearchReplace::replaceAll(QString string,
+    QString replacement,
+    SearchHelpers::SearchMode searchMode,
+    SearchHelpers::SearchOptions searchOptions)
+{
     QString rawSearch = SearchString::format(string, searchMode, searchOptions);
     if (searchMode == SearchHelpers::SearchMode::SpecialChars) {
-            replacement = SearchString::unescape(replacement);
+        replacement = SearchString::unescape(replacement);
     }
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
     data.append(regexModifiersFromSearchOptions(searchOptions));
     data.append(replacement);
-		data.append(QString::number(static_cast<int>(searchMode)));
+    data.append(QString::number(static_cast<int>(searchMode)));
     QVariant count = currentEditor()->asyncSendMessageWithResult("C_FUN_REPLACE_ALL", QVariant::fromValue(data)).get();
     return count.toInt();
 }
 
-int frmSearchReplace::selectAll(QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions) {
+int frmSearchReplace::selectAll(
+    QString string, SearchHelpers::SearchMode searchMode, SearchHelpers::SearchOptions searchOptions)
+{
     QString rawSearch = SearchString::format(string, searchMode, searchOptions);
 
     QList<QVariant> data = QList<QVariant>();
     data.append(rawSearch);
     data.append(regexModifiersFromSearchOptions(searchOptions));
-    QVariant count = currentEditor()->asyncSendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data)).get();
+    QVariant count =
+        currentEditor()->asyncSendMessageWithResult("C_FUN_SEARCH_SELECT_ALL", QVariant::fromValue(data)).get();
     return count.toInt();
 }
 
@@ -223,10 +230,7 @@ void frmSearchReplace::findFromUI(bool forward, bool searchFromStart)
     SearchHelpers::SearchOptions sOpts = searchOptionsFromUI();
     sOpts.SearchFromStart = searchFromStart;
 
-    this->search(ui->cmbSearch->currentText(),
-                 searchModeFromUI(),
-                 forward,
-                 sOpts);
+    this->search(ui->cmbSearch->currentText(), searchModeFromUI(), forward, sOpts);
 }
 
 void frmSearchReplace::replaceFromUI(bool forward, bool searchFromStart)
@@ -234,11 +238,7 @@ void frmSearchReplace::replaceFromUI(bool forward, bool searchFromStart)
     SearchHelpers::SearchOptions sOpts = searchOptionsFromUI();
     sOpts.SearchFromStart = searchFromStart;
 
-    this->replace(ui->cmbSearch->currentText(),
-                  ui->cmbReplace->currentText(),
-                  searchModeFromUI(),
-                  forward,
-                  sOpts);
+    this->replace(ui->cmbSearch->currentText(), ui->cmbReplace->currentText(), searchModeFromUI(), forward, sOpts);
 }
 
 void frmSearchReplace::on_btnFindNext_clicked()
@@ -269,10 +269,8 @@ void frmSearchReplace::on_btnReplacePrev_clicked()
 
 void frmSearchReplace::on_btnReplaceAll_clicked()
 {
-    int n = this->replaceAll(ui->cmbSearch->currentText(),
-                             ui->cmbReplace->currentText(),
-                             searchModeFromUI(),
-                             searchOptionsFromUI());
+    int n = this->replaceAll(
+        ui->cmbSearch->currentText(), ui->cmbReplace->currentText(), searchModeFromUI(), searchOptionsFromUI());
 
     addToSearchHistory(ui->cmbSearch->currentText());
     addToReplaceHistory(ui->cmbReplace->currentText());
@@ -282,9 +280,7 @@ void frmSearchReplace::on_btnReplaceAll_clicked()
 
 void frmSearchReplace::on_btnSelectAll_clicked()
 {
-    int count = this->selectAll(ui->cmbSearch->currentText(),
-                                searchModeFromUI(),
-                                searchOptionsFromUI());
+    int count = this->selectAll(ui->cmbSearch->currentText(), searchModeFromUI(), searchOptionsFromUI());
 
     addToSearchHistory(ui->cmbSearch->currentText());
 
@@ -367,7 +363,7 @@ void frmSearchReplace::on_radSearchWithSpecialChars_toggled(bool checked)
     }
 }
 
-void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
+void frmSearchReplace::on_searchStringEdited(const QString& /*text*/)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
@@ -377,8 +373,7 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
 
             QList<Selection> selections = editor->selections();
             if (selections.length() > 0) {
-                editor->setCursorPosition(
-                            std::min(selections[0].from, selections[0].to));
+                editor->setCursorPosition(std::min(selections[0].from, selections[0].to));
             }
 
             findFromUI(true);
@@ -401,7 +396,8 @@ void frmSearchReplace::on_searchStringEdited(const QString &/*text*/)
  * @param string The string to add to the history.
  * @param comboBox The QComboBox to receive the history as suggestions list.
  */
-void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
+void addToHistory(QStringList& history, QString string, QComboBox* comboBox)
+{
     if (string.isEmpty())
         return;
 
@@ -413,7 +409,8 @@ void addToHistory(QStringList& history, QString string, QComboBox *comboBox) {
 }
 
 // Returns a QStringList of all items in the combo box.
-static QStringList getComboBoxContents(const QComboBox* cb) {
+static QStringList getComboBoxContents(const QComboBox* cb)
+{
     QStringList list;
     const int size = cb->count();
     for (int index = 0; index < size; index++) {
@@ -426,9 +423,7 @@ void frmSearchReplace::addToSearchHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getSaveHistory() ?
-                s.Search.getSearchHistory() :
-                getComboBoxContents(ui->cmbSearch);
+    auto history = s.Search.getSaveHistory() ? s.Search.getSearchHistory() : getComboBoxContents(ui->cmbSearch);
 
     addToHistory(history, string, ui->cmbSearch);
 
@@ -441,9 +436,7 @@ void frmSearchReplace::addToReplaceHistory(QString string)
 {
     NqqSettings& s = NqqSettings::getInstance();
 
-    auto history = s.Search.getSaveHistory() ?
-                s.Search.getReplaceHistory() :
-                getComboBoxContents(ui->cmbReplace);
+    auto history = s.Search.getSaveHistory() ? s.Search.getReplaceHistory() : getComboBoxContents(ui->cmbReplace);
 
     addToHistory(history, string, ui->cmbReplace);
 

@@ -7,22 +7,21 @@
 #include <QObject>
 
 namespace Extensions {
-    namespace Stubs {
+namespace Stubs {
 
-        class WindowStub : public Stub
-        {
-            Q_OBJECT
-        public:
-            WindowStub(MainWindow *object, RuntimeSupport *rts);
-            ~WindowStub();
+class WindowStub : public Stub {
+    Q_OBJECT
+public:
+    WindowStub(MainWindow* object, RuntimeSupport* rts);
+    ~WindowStub();
 
-            NQQ_STUB_NAME("Window")
-        private:
-            NQQ_DECLARE_EXTENSION_METHOD(currentEditor)
-            NQQ_DECLARE_EXTENSION_METHOD(addExtensionMenuItem)
-        };
+    NQQ_STUB_NAME("Window")
+private:
+    NQQ_DECLARE_EXTENSION_METHOD(currentEditor)
+    NQQ_DECLARE_EXTENSION_METHOD(addExtensionMenuItem)
+};
 
-    }
-}
+} // namespace Stubs
+} // namespace Extensions
 
 #endif // WINDOWSTUB_H

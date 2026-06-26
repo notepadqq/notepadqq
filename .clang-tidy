@@ -1,0 +1,54 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  qt-*,
+  -readability-magic-numbers,
+  -modernize-use-trailing-return-type,
+  -modernize-pass-by-value,
+  -performance-unnecessary-value-param,
+  -bugprone-easily-swappable-parameters,
+  -clang-analyzer-optin.performance.Padding,
+  -clang-analyzer-cplusplus.NewDeleteLeaks,
+  -clang-analyzer-cplusplus.InnerPointer,
+  -clang-analyzer-security.insecureAPI.rand,
+  -clang-analyzer-security.insecureAPI.strcpy,
+  -clang-analyzer-security.insecureAPI.mktemp,
+  -clang-analyzer-security.insecureAPI.vfork,
+  -clang-analyzer-unix.Malloc,
+  -clang-analyzer-unix.cstring.BadSizeArg,
+  -clang-analyzer-unix.cstring.NullArg,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-type-vararg,
+  -hicpp-avoid-c-arrays,
+  -hicpp-no-array-decay,
+  -misc-non-private-member-variables-in-classes
+# WarningsAsErrors: '*'
+# HeaderFilterRegex: '^src/'
+# FormatStyle: file
+# CheckOptions:
+#   - key: readability-identifier-naming.ClassCase
+#     value: CamelCase
+#   - key: readability-identifier-naming.StructCase
+#     value: CamelCase
+#   - key: readability-identifier-naming.EnumCase
+#     value: CamelCase
+#   - key: readability-identifier-naming.FunctionCase
+#     value: camelBack
+#   - key: readability-identifier-naming.VariableCase
+#     value: camelBack
+#   - key: readability-identifier-naming.PrivateMemberSuffix
+#     value: _
+#   - key: readability-identifier-naming.MemberPrefix
+#     value: m_
+#   - key: modernize-loop-convert.MinConfidence
+#     value: reasonable
+#   - key: modernize-use-nullptr.NullMacros
+#     value: 'NULL'
+#   - key: cppcoreguidelines-pro-bounds-array-to-pointer-decay.WarnOnTemplateParameters
+#     value: 'false'
+# ...

@@ -2,22 +2,25 @@
 
 #include "include/notepadqq.h"
 
-QString PersistentCache::cacheSessionPath() {
+QString PersistentCache::cacheSessionPath()
+{
     static QString cachePath = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/session.xml");
     return cachePath;
 }
 
-QString PersistentCache::cacheDirPath() {
+QString PersistentCache::cacheDirPath()
+{
     static QString tabpath = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/tabCache");
     return tabpath;
 }
 
-QString PersistentCache::backupDirPath() {
+QString PersistentCache::backupDirPath()
+{
     static QString path = QFileInfo(QSettings().fileName()).dir().absolutePath().append("/backupCache");
     return path;
 }
 
-QUrl PersistentCache::createValidCacheName(const QDir& parent, const QString &fileName)
+QUrl PersistentCache::createValidCacheName(const QDir& parent, const QString& fileName)
 {
     QUrl cacheFile;
     QString partialPath = parent.absolutePath() + "/" + fileName;

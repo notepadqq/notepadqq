@@ -1,0 +1,16 @@
+name: Dependency Review
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  review:
+    name: Dependency Review
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4

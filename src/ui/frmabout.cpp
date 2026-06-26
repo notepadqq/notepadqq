@@ -8,49 +8,44 @@
 #include <QMessageBox>
 #include <QUrl>
 
-frmAbout::frmAbout(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::frmAbout)
+frmAbout::frmAbout(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::frmAbout)
 {
     ui->setupUi(this);
 
-    ui->lblIcon->setPixmap(IconProvider::fromTheme("notepadqq")
-                           .pixmap(ui->lblIcon->width(),
-                                   ui->lblIcon->height()));
+    ui->lblIcon->setPixmap(IconProvider::fromTheme("notepadqq").pixmap(ui->lblIcon->width(), ui->lblIcon->height()));
 
     ui->lblVersion->setText("v" + QApplication::applicationVersion());
     ui->lblCopyright->setText(Notepadqq::copyright());
 
     QString linkStyle = "text-decoration: none; color:#606060;";
-    ui->lblContributors->setText(tr("Contributors:") + " <a href=\"" + Notepadqq::contributorsUrl + "\"><span style=\"" + linkStyle + "\">" + tr("GitHub Contributors") + "</span></a>");
-    ui->lblWebsite->setText("<a href=\"" + Notepadqq::website + "\"><span style=\"" + linkStyle + "\">" + Notepadqq::website + "</span></a>");
+    ui->lblContributors->setText(tr("Contributors:") + " <a href=\"" + Notepadqq::contributorsUrl +
+                                 "\"><span style=\"" + linkStyle + "\">" + tr("GitHub Contributors") + "</span></a>");
+    ui->lblWebsite->setText("<a href=\"" + Notepadqq::website + "\"><span style=\"" + linkStyle + "\">" +
+                            Notepadqq::website + "</span></a>");
 
     ui->btnLicense->setStyleSheet("QPushButton {color: black;}");
     ui->pushButton->setStyleSheet("QPushButton {color: black;}");
 
     setFixedSize(this->width(), this->height());
-    setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
+    setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 }
 
 frmAbout::~frmAbout()
-{
-    delete ui;
-}
+{ delete ui; }
 
-void frmAbout::on_lblContributors_linkActivated(const QString &link)
-{
-    QDesktopServices::openUrl(QUrl(link, QUrl::TolerantMode));
-}
+void frmAbout::on_lblContributors_linkActivated(const QString& link)
+{ QDesktopServices::openUrl(QUrl(link, QUrl::TolerantMode)); }
 
 void frmAbout::on_pushButton_clicked()
-{
-    this->close();
-}
+{ this->close(); }
 
 void frmAbout::on_btnLicense_clicked()
 {
     QMessageBox license;
-    license.setText(R"DELIM(<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+    license.setText(
+        R"DELIM(<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
                     <html><head><style type="text/css">
                     p, li { white-space: pre-wrap; }
                     </style></head><body>

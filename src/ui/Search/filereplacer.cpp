@@ -3,18 +3,18 @@
 #include "include/docengine.h"
 
 #include <QFile>
-#include <QTextStream>
 #include <QStringRef>
+#include <QTextStream>
 
-FileReplacer::FileReplacer(const SearchResult& results, const QString &replacement)
-    : m_searchResult(results),
-      m_replacement(replacement)
-{ }
+FileReplacer::FileReplacer(const SearchResult& results, const QString& replacement)
+    : m_searchResult(results)
+    , m_replacement(replacement)
+{
+}
 
 void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QString& replacement)
 {
-    struct BackReference
-    {
+    struct BackReference {
         int pos;
         int num;
     };
@@ -30,10 +30,11 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     if (doc.regexCaptureGroupCount > 0) {
         const int alen = replacement.length();
         int idx = 0;
-        while ((idx = replacement.indexOf('\\', idx)) != -1){
-            if (idx==alen-1) break;
+        while ((idx = replacement.indexOf('\\', idx)) != -1) {
+            if (idx == alen - 1)
+                break;
 
-            const auto val = replacement.at(idx+1).digitValue();
+            const auto val = replacement.at(idx + 1).digitValue();
 
             if (val > 0 && val <= doc.regexCaptureGroupCount) {
                 BackReference ref;
@@ -57,10 +58,9 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     const QStringView copy = (content);
 
     for (const auto& result : doc.results) {
-
         int len = result.positionInFile - lastEnd;
         if (len > 0) {
-            chunks << copy.mid(lastEnd, len);  // PERF: using .sliced() could be faster (see also below)
+            chunks << copy.mid(lastEnd, len); // PERF: using .sliced() could be faster (see also below)
             newLength += len;
         }
 
@@ -78,8 +78,7 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
             // backreference itself
             len = result.regexMatch.capturedLength(backReference.num);
             if (len > 0) {
-                chunks << copy.mid(result.regexMatch.capturedStart(backReference.num),
-                                      len);
+                chunks << copy.mid(result.regexMatch.capturedStart(backReference.num), len);
                 newLength += len;
             }
 
@@ -105,8 +104,8 @@ void FileReplacer::replaceAll(const DocResult& doc, QString& content, const QStr
     // 4. assemble the chunks together
     content.resize(newLength);
     int i = 0;
-    QChar *uc = content.data();
-    for (const auto &chunk : chunks) {
+    QChar* uc = content.data();
+    for (const auto& chunk : chunks) {
         int len = chunk.length();
         memcpy(uc + i, chunk.toUtf8(), static_cast<ulong>(len) * sizeof(QChar));
         i += len;
@@ -118,7 +117,7 @@ void FileReplacer::run()
     int count = 0;
 
     for (const DocResult& docResult : m_searchResult.results) {
-        if(m_wantToStop)
+        if (m_wantToStop)
             return;
 
         if (++count % 10 == 0)

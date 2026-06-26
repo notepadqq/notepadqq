@@ -43,11 +43,9 @@
 /**
  * @brief Global information and utility functions.
  */
-class Notepadqq : public QObject
-{
+class Notepadqq : public QObject {
     Q_OBJECT
 public:
-
     static Notepadqq& getInstance()
     {
         static Notepadqq instance;
@@ -63,10 +61,10 @@ public:
     static QString extensionToolsPath();
     static QString nodejsPath();
     static QString npmPath();
-    static QString fileNameFromUrl(const QUrl &url);
-    static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList &arguments);
+    static QString fileNameFromUrl(const QUrl& url);
+    static QSharedPointer<QCommandLineParser> getCommandLineArgumentsParser(const QStringList& arguments);
 
-    static void showQtVersionWarning(bool showCheckBox, QWidget *parent = nullptr);
+    static void showQtVersionWarning(bool showCheckBox, QWidget* parent = nullptr);
 
     static QString extensionsPath();
 
@@ -78,7 +76,7 @@ public:
     static void printEnvironmentInfo();
 
 signals:
-    void newWindow(MainWindow *window);
+    void newWindow(MainWindow* window);
 
 private:
     Notepadqq() {}

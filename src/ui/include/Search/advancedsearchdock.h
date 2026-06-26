@@ -25,25 +25,23 @@ class QCheckBox;
  *        This class is copied almost 1-to-1 from Qt's source code and will
  *        display a button exactly like the dock's default titlebar.
  */
-class QSearchDockTitleButton : public QAbstractButton
-{
+class QSearchDockTitleButton : public QAbstractButton {
     Q_OBJECT
 
 public:
-    QSearchDockTitleButton(QDockWidget *dockWidget);
+    QSearchDockTitleButton(QDockWidget* dockWidget);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override { return sizeHint(); }
 
-    void enterEvent(QEnterEvent *event) override;
-    void leaveEvent(QEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
+    void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 };
 
 class MainWindow;
 
-class AdvancedSearchDock : public QObject
-{
+class AdvancedSearchDock : public QObject {
     Q_OBJECT
 public:
     AdvancedSearchDock(MainWindow* mainWindow);
@@ -59,7 +57,7 @@ public:
     void selectNextResult();
 
     bool isVisible() const;
-    void show(bool show, bool setFocus=true);
+    void show(bool show, bool setFocus = true);
 
 signals:
     /**
@@ -92,8 +90,8 @@ private:
     void selectSearchFromHistory(int index);
     void updateSearchInProgressUi();
     /**
-     * @brief startReplace Takes the current SearchInstance and replaces all of its selected matches with the replacement
-     *                     string found in m_cmbReplaceText
+     * @brief startReplace Takes the current SearchInstance and replaces all of its selected matches with the
+     * replacement string found in m_cmbReplaceText
      */
     void startReplace();
 
@@ -133,7 +131,7 @@ private:
 
     // Left-hand titlebar items
     QToolButton* m_btnClearHistory;
-    QComboBox*   m_cmbSearchHistory;
+    QComboBox* m_cmbSearchHistory;
     QToolButton* m_btnMoreOptions;
     QToolButton* m_btnPrevResult;
     QToolButton* m_btnNextResult;
@@ -144,23 +142,23 @@ private:
     QAbstractButton* m_btnDockUndock;
 
     // Search panel items
-    QComboBox*   m_cmbSearchScope;
-    QComboBox*   m_cmbSearchTerm;
-    QComboBox*   m_cmbSearchPattern;
-    QComboBox*   m_cmbSearchDirectory;
+    QComboBox* m_cmbSearchScope;
+    QComboBox* m_cmbSearchTerm;
+    QComboBox* m_cmbSearchPattern;
+    QComboBox* m_cmbSearchDirectory;
     QToolButton* m_btnSelectSearchDirectory;
     QToolButton* m_btnSelectCurrentDirectory;
     QToolButton* m_btnSearch;
-    QCheckBox*   m_chkMatchCase;
-    QCheckBox*   m_chkMatchWords;
-    QCheckBox*   m_chkUseRegex;
-    QCheckBox*   m_chkUseSpecialChars;
-    QCheckBox*   m_chkIncludeSubdirs;
+    QCheckBox* m_chkMatchCase;
+    QCheckBox* m_chkMatchWords;
+    QCheckBox* m_chkUseRegex;
+    QCheckBox* m_chkUseSpecialChars;
+    QCheckBox* m_chkIncludeSubdirs;
 
     // Replace panel items
-    QComboBox*   m_cmbReplaceText;
+    QComboBox* m_cmbReplaceText;
     QToolButton* m_btnReplaceSelected;
-    QCheckBox*   m_chkReplaceWithSpecialChars;
+    QCheckBox* m_chkReplaceWithSpecialChars;
 
     // "More Options" menu items
     QAction* m_actExpandAll;

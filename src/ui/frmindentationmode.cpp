@@ -3,17 +3,13 @@
 #include "include/EditorNS/editor_properties.h"
 #include "ui_frmindentationmode.h"
 
-frmIndentationMode::frmIndentationMode(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::frmIndentationMode)
-{
-    ui->setupUi(this);
-}
+frmIndentationMode::frmIndentationMode(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::frmIndentationMode)
+{ ui->setupUi(this); }
 
 frmIndentationMode::~frmIndentationMode()
-{
-    delete ui;
-}
+{ delete ui; }
 
 void frmIndentationMode::populateWidgets(EditorNS::IndentationMode indentationMode)
 {
@@ -31,11 +27,7 @@ EditorNS::IndentationMode frmIndentationMode::indentationMode()
 }
 
 void frmIndentationMode::on_buttonBox_accepted()
-{
-    accept();
-}
+{ accept(); }
 
 void frmIndentationMode::on_buttonBox_rejected()
-{
-    reject();
-}
+{ reject(); }

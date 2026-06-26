@@ -10,8 +10,8 @@
 #include <QElapsedTimer>
 #endif
 
-EditorTabWidget::EditorTabWidget(QWidget *parent) :
-    QTabWidget(parent)
+EditorTabWidget::EditorTabWidget(QWidget* parent)
+    : QTabWidget(parent)
 {
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setDocumentMode(true);
@@ -30,7 +30,6 @@ EditorTabWidget::EditorTabWidget(QWidget *parent) :
     QString style = QString("QTabBar::tab{min-width:100px; height:24px;}");
     setStyleSheet(style);
 #endif
-
 }
 
 EditorTabWidget::~EditorTabWidget()
@@ -45,58 +44,42 @@ EditorTabWidget::~EditorTabWidget()
     }
 }
 
-int EditorTabWidget::addEditorTab(bool setFocus, const QString &title)
-{
-    return this->rawAddEditorTab(setFocus, title, 0, 0);
-}
+int EditorTabWidget::addEditorTab(bool setFocus, const QString& title)
+{ return this->rawAddEditorTab(setFocus, title, 0, 0); }
 
-void EditorTabWidget::connectEditorSignals(Editor *editor)
+void EditorTabWidget::connectEditorSignals(Editor* editor)
 {
-    connect(editor, &Editor::cleanChanged,
-            this, &EditorTabWidget::on_cleanChanged);
+    connect(editor, &Editor::cleanChanged, this, &EditorTabWidget::on_cleanChanged);
 
     connect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
 
-    connect(editor, &Editor::mouseWheel,
-            this, &EditorTabWidget::on_editorMouseWheel);
+    connect(editor, &Editor::mouseWheel, this, &EditorTabWidget::on_editorMouseWheel);
 
-    connect(editor, &Editor::fileNameChanged,
-            this, &EditorTabWidget::on_fileNameChanged);
+    connect(editor, &Editor::fileNameChanged, this, &EditorTabWidget::on_fileNameChanged);
 }
 
-void EditorTabWidget::disconnectEditorSignals(Editor *editor)
+void EditorTabWidget::disconnectEditorSignals(Editor* editor)
 {
-    disconnect(editor, &Editor::cleanChanged,
-               this, &EditorTabWidget::on_cleanChanged);
+    disconnect(editor, &Editor::cleanChanged, this, &EditorTabWidget::on_cleanChanged);
 
     disconnect(editor, &Editor::gotFocus, this, &EditorTabWidget::gotFocus);
 
-    disconnect(editor, &Editor::mouseWheel,
-               this, &EditorTabWidget::on_editorMouseWheel);
+    disconnect(editor, &Editor::mouseWheel, this, &EditorTabWidget::on_editorMouseWheel);
 
-    disconnect(editor, &Editor::fileNameChanged,
-               this, &EditorTabWidget::on_fileNameChanged);
+    disconnect(editor, &Editor::fileNameChanged, this, &EditorTabWidget::on_fileNameChanged);
 }
 
 int EditorTabWidget::indexOf(QSharedPointer<Editor> editor) const
-{
-    return indexOf(editor.data());
-}
+{ return indexOf(editor.data()); }
 
-int EditorTabWidget::indexOf(QWidget *widget) const
-{
-    return QTabWidget::indexOf(widget);
-}
+int EditorTabWidget::indexOf(QWidget* widget) const
+{ return QTabWidget::indexOf(widget); }
 
 QString EditorTabWidget::tabText(Editor* editor) const
-{
-    return editor->tabName();
-}
+{ return editor->tabName(); }
 
 QString EditorTabWidget::tabText(int index) const
-{
-    return editor(index)->tabName();
-}
+{ return editor(index)->tabName(); }
 
 void EditorTabWidget::setTabText(int index, const QString& text)
 {
@@ -104,21 +87,18 @@ void EditorTabWidget::setTabText(int index, const QString& text)
     editor(index)->setTabName(text);
 }
 
-
 void EditorTabWidget::setTabText(Editor* editor, const QString& text)
 {
     int idx = indexOf(editor);
 
-    if(idx >= 0) {
+    if (idx >= 0) {
         QTabWidget::setTabText(idx, text);
         editor->setTabName(text);
     }
 }
 
-int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, int tabIndex)
-{
-    return this->rawAddEditorTab(setFocus, QString(), source, tabIndex);
-}
+int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget* source, int tabIndex)
+{ return this->rawAddEditorTab(setFocus, QString(), source, tabIndex); }
 
 /**
  * @brief Do NOT directly connect to Editor signals within this method,
@@ -126,7 +106,8 @@ int EditorTabWidget::transferEditorTab(bool setFocus, EditorTabWidget *source, i
  *        tab gets moved to another container. Use connectEditorSignals()
  *        and disconnectEditorSignals() methods instead.
  */
-int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, EditorTabWidget *source, const int sourceTabIndex)
+int EditorTabWidget::rawAddEditorTab(
+    const bool setFocus, const QString& title, EditorTabWidget* source, const int sourceTabIndex)
 {
 #ifdef QT_DEBUG
     QElapsedTimer __aet_timer;
@@ -166,7 +147,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     }
     this->connectEditorSignals(editor.data());
 
-    if(setFocus) {
+    if (setFocus) {
         this->setCurrentIndex(index);
         editor->setFocus();
     }
@@ -193,7 +174,7 @@ int EditorTabWidget::rawAddEditorTab(const bool setFocus, const QString &title, 
     return index;
 }
 
-int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
+int EditorTabWidget::findOpenEditorByUrl(const QUrl& filename)
 {
     QUrl absFileName = filename;
     if (absFileName.isLocalFile())
@@ -210,14 +191,12 @@ int EditorTabWidget::findOpenEditorByUrl(const QUrl &filename)
 
 QSharedPointer<Editor> EditorTabWidget::editor(int index) const
 {
-    Editor *ed = dynamic_cast<Editor *>(this->widget(index));
+    Editor* ed = dynamic_cast<Editor*>(this->widget(index));
     return m_editorPointers.value(ed);
 }
 
-QSharedPointer<Editor> EditorTabWidget::editor(Editor *editor) const
-{
-    return m_editorPointers.value(editor);
-}
+QSharedPointer<Editor> EditorTabWidget::editor(Editor* editor) const
+{ return m_editorPointers.value(editor); }
 
 void EditorTabWidget::tabRemoved(int)
 {
@@ -245,24 +224,21 @@ void EditorTabWidget::tabRemoved(int)
 }
 
 QSharedPointer<Editor> EditorTabWidget::currentEditor()
-{
-    return editor(currentIndex());
-}
+{ return editor(currentIndex()); }
 
 QString EditorTabWidget::tabTextFromEditor(QSharedPointer<EditorNS::Editor> ed)
 {
-    for(int i=0; i<count(); ++i)
-        if (editor(i) == ed) return tabText(i);
+    for (int i = 0; i < count(); ++i)
+        if (editor(i) == ed)
+            return tabText(i);
 
     return QString();
 }
 
 qreal EditorTabWidget::zoomFactor() const
-{
-    return m_zoomFactor;
-}
+{ return m_zoomFactor; }
 
-void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
+void EditorTabWidget::setZoomFactor(const qreal& zoomFactor)
 {
     m_zoomFactor = zoomFactor;
 
@@ -272,12 +248,11 @@ void EditorTabWidget::setZoomFactor(const qreal &zoomFactor)
 }
 
 void EditorTabWidget::deleteIfEmpty()
-{
-    EditorTabWidget::deleteIfEmpty(this);
-}
+{ EditorTabWidget::deleteIfEmpty(this); }
 
-void EditorTabWidget::deleteIfEmpty(EditorTabWidget *tabWidget) {
-    if(tabWidget->count() == 0) {
+void EditorTabWidget::deleteIfEmpty(EditorTabWidget* tabWidget)
+{
+    if (tabWidget->count() == 0) {
         delete tabWidget;
     }
 }
@@ -291,39 +266,38 @@ void EditorTabWidget::setSavedIcon(int index, bool saved)
 }
 
 void EditorTabWidget::setTabBarHidden(bool yes)
-{
-    tabBar()->setHidden(yes);
-}
+{ tabBar()->setHidden(yes); }
 
 void EditorTabWidget::setTabBarHighlight(bool yes)
 {
     // Get colors from palette so it doesn't look fugly.
     QPalette palette = tabBar()->palette();
-    palette.setColor(QPalette::Highlight, yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
+    palette.setColor(QPalette::Highlight,
+        yes ? QApplication::palette().highlight().color() : QApplication::palette().light().color());
     tabBar()->setPalette(palette);
 }
 
 void EditorTabWidget::on_cleanChanged(bool isClean)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
+    Editor* editor = dynamic_cast<Editor*>(sender());
     if (!editor)
         return;
 
     int index = indexOf(editor);
-    if(index >= 0)
+    if (index >= 0)
         setSavedIcon(index, isClean);
 }
 
-void EditorTabWidget::on_editorMouseWheel(QWheelEvent *ev)
+void EditorTabWidget::on_editorMouseWheel(QWheelEvent* ev)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
+    Editor* editor = dynamic_cast<Editor*>(sender());
     if (!editor)
         return;
 
     emit editorMouseWheel(indexOf(editor), ev);
 }
 
-void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
+void EditorTabWidget::mouseReleaseEvent(QMouseEvent* ev)
 {
     if (ev->button() == Qt::MiddleButton) {
         int index = tabBar()->tabAt(ev->pos());
@@ -338,39 +312,32 @@ void EditorTabWidget::mouseReleaseEvent(QMouseEvent *ev)
     QTabWidget::mouseReleaseEvent(ev);
 }
 
-QString EditorTabWidget::generateTabTitleForUrl(const QUrl &filename) const
+QString EditorTabWidget::generateTabTitleForUrl(const QUrl& filename) const
 {
-    QString fileName = QFileInfo(filename.toDisplayString(QUrl::RemoveScheme |
-                                                   QUrl::RemovePassword |
-                                                   QUrl::RemoveUserInfo |
-                                                   QUrl::RemovePort |
-                                                   QUrl::RemoveAuthority |
-                                                   QUrl::RemoveQuery |
-                                                   QUrl::RemoveFragment |
-                                                   QUrl::PreferLocalFile
-                                                   )).fileName();
+    QString fileName =
+        QFileInfo(filename.toDisplayString(QUrl::RemoveScheme | QUrl::RemovePassword | QUrl::RemoveUserInfo |
+                                           QUrl::RemovePort | QUrl::RemoveAuthority | QUrl::RemoveQuery |
+                                           QUrl::RemoveFragment | QUrl::PreferLocalFile))
+            .fileName();
     return fileName;
 }
 
-void EditorTabWidget::on_fileNameChanged(const QUrl & /*oldFileName*/, const QUrl &newFileName)
+void EditorTabWidget::on_fileNameChanged(const QUrl& /*oldFileName*/, const QUrl& newFileName)
 {
-    Editor *editor = dynamic_cast<Editor *>(sender());
+    Editor* editor = dynamic_cast<Editor*>(sender());
     if (!editor)
         return;
 
     int index = indexOf(editor);
 
-    QString fullFileName = newFileName.toDisplayString(QUrl::PreferLocalFile |
-                                                       QUrl::RemovePassword);
+    QString fullFileName = newFileName.toDisplayString(QUrl::PreferLocalFile | QUrl::RemovePassword);
 
     setTabText(index, generateTabTitleForUrl(newFileName));
     setTabToolTip(index, fullFileName);
 }
 
 int EditorTabWidget::formerTabIndex()
-{
-    return m_formerTabIndex;
-}
+{ return m_formerTabIndex; }
 
 void EditorTabWidget::on_currentTabChanged(int index)
 {
