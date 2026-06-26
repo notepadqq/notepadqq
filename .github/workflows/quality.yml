@@ -27,7 +27,7 @@ jobs:
       - name: Install clang-format
         run: |
           sudo apt-get update
-          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+          sudo apt-get install -y --no-install-recommends clang-format
 
       - name: Check formatting
         run: |
