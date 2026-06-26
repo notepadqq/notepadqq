@@ -1,0 +1,133 @@
+name: Nightly Builds
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+      release_tag: ${{ steps.check.outputs.release_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Check nightly tag
+        id: check
+        shell: bash
+        run: |
+          tag="nightly-${GITHUB_SHA}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "release_tag=${tag}" >> "$GITHUB_OUTPUT"
+
+  package:
+    name: ${{ matrix.os }} / ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    needs: preflight
+    if: needs.preflight.outputs.should_run == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: x86_64
+            artifact_name: notepadqq-nightly-linux-x86_64
+            packages_file: .github/ci/ubuntu-24.04-packages.txt
+          - os: macos-13
+            arch: x86_64
+            artifact_name: notepadqq-nightly-macos-x86_64
+          - os: macos-14
+            arch: arm64
+            artifact_name: notepadqq-nightly-macos-arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Linux dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
+        run: |
+          sudo apt-get update
+          xargs -a "${{ matrix.packages_file }}" sudo apt-get install -y --no-install-recommends
+
+      - name: Install macOS dependencies
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: |
+          brew update
+          brew install cmake ninja qt@6 uchardet
+
+      - name: Configure macOS Qt environment
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          echo "PATH=$(brew --prefix qt@6)/bin:${PATH}" >> "$GITHUB_ENV"
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix qt@6)" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=$(brew --prefix uchardet)/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: cmake --preset release
+
+      - name: Build
+        run: cmake --build --preset release --parallel
+
+      - name: Test
+        run: ctest --preset release --output-on-failure
+
+      - name: Package Linux AppImage
+        if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
+        run: build-tools/package-nightly-linux.sh out/release dist AppDir "${{ matrix.artifact_name }}"
+
+      - name: Package macOS bundle
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: build-tools/package-nightly-macos.sh out/release dist nightly-root "${{ matrix.artifact_name }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish nightly release
+    needs: [preflight, package]
+    runs-on: ubuntu-24.04
+    if: needs.preflight.outputs.should_run == 'true'
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Create prerelease tag
+        id: meta
+        shell: bash
+        run: echo "tag=${{ needs.preflight.outputs.release_tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: Nightly ${{ steps.meta.outputs.tag }}
+          prerelease: true
+          files: dist/**

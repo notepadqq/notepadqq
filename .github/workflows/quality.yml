@@ -1,0 +1,170 @@
+name: Quality Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+
+      - name: Check formatting
+        run: |
+          git ls-files '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' | xargs -r clang-format --dry-run --Werror
+
+  build-and-test:
+    name: ${{ matrix.os }} / ${{ matrix.preset }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            preset: ci
+            packages_file: .github/ci/ubuntu-24.04-packages.txt
+          - os: ubuntu-24.04
+            preset: release
+            packages_file: .github/ci/ubuntu-24.04-packages.txt
+          - os: macos-14
+            preset: ci
+          - os: macos-14
+            preset: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Linux dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        shell: bash
+        run: |
+          sudo apt-get update
+          xargs -a "${{ matrix.packages_file }}" sudo apt-get install -y --no-install-recommends
+
+      - name: Install macOS dependencies
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: |
+          brew update
+          brew install cmake ninja qt@6 uchardet
+
+      - name: Configure macOS Qt environment
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix qt@6)" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=$(brew --prefix uchardet)/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --parallel
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  sanitizer-builds:
+    name: Sanitizer / ${{ matrix.preset }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [asan, ubsan]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --parallel
+
+      - name: Test
+        env:
+          ASAN_OPTIONS: detect_leaks=1
+          UBSAN_OPTIONS: print_stacktrace=1
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  clang-tidy:
+    name: clang-tidy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+
+      - name: Configure
+        run: cmake -S . -B out/clang-tidy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DNQQ_BUILD_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_CXX_CLANG_TIDY=clang-tidy;-warnings-as-errors=*"
+
+      - name: Build with clang-tidy
+        run: cmake --build out/clang-tidy --parallel
+
+      - name: Test
+        run: ctest --test-dir out/clang-tidy --output-on-failure
+
+  clazy:
+    name: clazy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
+
+      - name: Set clazy checks
+        run: echo "CLAZY_CHECKS=level0,level1,level2" >> "$GITHUB_ENV"
+
+      - name: Configure
+        run: cmake -S . -B out/clazy -G Ninja -DCMAKE_BUILD_TYPE=Debug -DNQQ_BUILD_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build
+        run: cmake --build out/clazy --parallel
+
+      - name: Run clazy
+        run: git ls-files '*.cpp' '*.cc' '*.cxx' | xargs -r -n 1 clazy-standalone -checks=$CLAZY_CHECKS -p out/clazy --header-filter='^src/'
+
+      - name: Test
+        run: ctest --test-dir out/clazy --output-on-failure
