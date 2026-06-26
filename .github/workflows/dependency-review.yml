@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Dependency review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
