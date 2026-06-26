@@ -125,7 +125,7 @@ jobs:
         run: echo "tag=${{ needs.preflight.outputs.release_tag }}" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.meta.outputs.tag }}
           name: Nightly ${{ steps.meta.outputs.tag }}
