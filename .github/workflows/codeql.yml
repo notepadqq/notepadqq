@@ -30,7 +30,7 @@ jobs:
           xargs -a .github/ci/ubuntu-24.04-packages.txt sudo apt-get install -y --no-install-recommends
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: cpp
 
@@ -38,4 +38,4 @@ jobs:
         run: cmake --preset ci && cmake --build --preset ci --parallel
 
       - name: Analyze
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
