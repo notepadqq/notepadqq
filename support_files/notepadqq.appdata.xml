@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>notepadqq.desktop</id>
+  <id>com.notepadqq.Notepadqq</id>
   <metadata_license>MIT</metadata_license>
   <project_license>GPL-3.0</project_license>
   <name>Notepadqq</name>
@@ -15,12 +15,13 @@
       <image>https://notepadqq.com/s/images/snapshot1.png</image>
     </screenshot>
   </screenshots>
-  <developer_name>The Notepadqq Team</developer_name>
+  <developer id="com.notepadqq">
+    <name>The Notepadqq Team</name>
+  </developer>
   <url type="homepage">https://notepadqq.com</url>
   <url type="bugtracker">https://github.com/notepadqq/notepadqq/issues</url>
   <url type="faq">https://notepadqq.com/wp/faq</url>
   <url type="help">https://github.com/notepadqq/notepadqq/wiki</url>
-  <url type="donation">https://notepadqq.com/wp/donations</url>
   <url type="translate">https://github.com/notepadqq/notepadqq/wiki/Translate-Notepadqq</url>
   <content_rating type="oars-1.0">
     <content_attribute id="social-info">moderate</content_attribute>
