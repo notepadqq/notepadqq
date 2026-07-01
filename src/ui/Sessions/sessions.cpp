@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QLatin1StringView>
+#include <QTextCodec>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
@@ -413,14 +414,13 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (!fileExists && !cacheFileExists)
                 continue;
 
-            auto loadedDocs =
-                docEngine->getDocumentLoader()
-                    .setUrl(loadUrl)
-                    .setTabWidget(tabW)
-                    .setRememberLastDir(false)
-                    .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
-                    .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
-                    .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& /*url*/) {
+            auto loader = docEngine->getDocumentLoader()
+                              .setUrl(loadUrl)
+                              .setTabWidget(tabW)
+                              .setRememberLastDir(false)
+                              .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
+                              .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
+                              .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& /*url*/) {
                         int idx = tabW->indexOf(editor);
 
                         editor->setCursorPosition(tab.cursorX, tab.cursorY);
@@ -475,8 +475,13 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                             // info on start-up. The easiest way is to emit a cleanChanged() event.
                             editor->isCleanP().then([=](bool isClean) { emit editor->cleanChanged(isClean); });
                         }
-                    })
-                    .executeInBackground();
+                    });
+
+            if (tab.filePath.isEmpty()) {
+                loader.setTextCodec(QTextCodec::codecForName("UTF-8")).setBOM(false);
+            }
+
+            auto loadedDocs = loader.executeInBackground();
 
             if (loadedDocs.length() == 0) {
                 // For some reason it hasn't been loaded
