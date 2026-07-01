@@ -354,7 +354,7 @@ if(UNIX AND NOT APPLE)
     install(FILES "${NQQ_SUPPORT_DIR}/shortcuts/notepadqq.desktop"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
     )
-    install(FILES "${NQQ_SUPPORT_DIR}/notepadqq.appdata.xml"
+    install(FILES "${NQQ_SUPPORT_DIR}/com.notepadqq.Notepadqq.metainfo.xml"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo"
     )
     install(FILES "${NQQ_SUPPORT_DIR}/manpage/notepadqq.1"

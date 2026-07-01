@@ -5,7 +5,7 @@
 - executable: `/usr/bin/notepadqq`
 - application data: `/usr/share/notepadqq`
 - desktop file: `/usr/share/applications/notepadqq.desktop`
-- metainfo: `/usr/share/metainfo/notepadqq.appdata.xml`
+- metainfo: `/usr/share/metainfo/com.notepadqq.Notepadqq.metainfo.xml`
 
 Upstream CMake installs the real executable directly as `notepadqq` and does not install a generic launcher wrapper.
 

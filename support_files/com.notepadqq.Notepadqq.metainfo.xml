@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop">
+<component type="desktop-application">
   <id>com.notepadqq.Notepadqq</id>
   <metadata_license>MIT</metadata_license>
   <project_license>GPL-3.0</project_license>
