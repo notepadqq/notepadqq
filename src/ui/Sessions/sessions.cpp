@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QLatin1StringView>
+#include <QTextCodec>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
@@ -413,7 +414,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             if (!fileExists && !cacheFileExists)
                 continue;
 
-            auto loadedDocs =
+            auto loader =
                 docEngine->getDocumentLoader()
                     .setUrl(loadUrl)
                     .setTabWidget(tabW)
@@ -475,8 +476,13 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                             // info on start-up. The easiest way is to emit a cleanChanged() event.
                             editor->isCleanP().then([=](bool isClean) { emit editor->cleanChanged(isClean); });
                         }
-                    })
-                    .executeInBackground();
+                    });
+
+            if (tab.filePath.isEmpty()) {
+                loader.setTextCodec(QTextCodec::codecForName("UTF-8")).setBOM(false);
+            }
+
+            auto loadedDocs = loader.executeInBackground();
 
             if (loadedDocs.length() == 0) {
                 // For some reason it hasn't been loaded
