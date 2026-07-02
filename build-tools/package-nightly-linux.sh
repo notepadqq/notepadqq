@@ -5,9 +5,6 @@ build_dir="${1:-build/release}"
 dist_dir="${2:-dist}"
 appdir="${3:-AppDir}"
 artifact_name="${4:-notepadqq-nightly-linux-x86_64}"
-metainfo_dir="$appdir/usr/share/metainfo"
-canonical_metainfo="com.notepadqq.Notepadqq.metainfo.xml"
-legacy_metainfo="notepadqq.appdata.xml"
 
 mkdir -p "$appdir/usr" "$dist_dir"
 
@@ -23,13 +20,9 @@ fi
 
 cmake --install "$build_dir" --prefix "$PWD/$appdir/usr"
 
-# Also create a legacy AppData file for compatibility with AppImage,
-# see https://github.com/AppImage/AppImageKit/pull/1341
-if [[ -f "$metainfo_dir/$canonical_metainfo" ]]; then
-    cp "$metainfo_dir/$canonical_metainfo" "$metainfo_dir/$legacy_metainfo"
-fi
-
-./linuxdeploy.AppImage --appdir "$appdir" --plugin qt --output appimage
+# appimagetool currently checks legacy *.appdata.xml naming for AppStream and
+# rejects our canonical CID-based metainfo filename as a mismatch.
+LDAI_NO_APPSTREAM=1 ./linuxdeploy.AppImage --appdir "$appdir" --plugin qt --output appimage
 
 # linuxdeploy and its Qt plugin are themselves AppImages in the repo root, so
 # collect only the generated package instead of moving every ./*.AppImage match.
