@@ -47,7 +47,7 @@ jobs:
             arch: x86_64
             artifact_name: notepadqq-nightly-linux-x86_64
             packages_file: .github/ci/ubuntu-24.04-packages.txt
-          - os: macos-13
+          - os: macos-15-intel
             arch: x86_64
             artifact_name: notepadqq-nightly-macos-x86_64
           - os: macos-14
