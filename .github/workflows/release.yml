@@ -1,0 +1,126 @@
+name: Release Builds
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing git tag to publish assets for (example: v3.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package-macos:
+    name: macOS / ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-13
+            arch: x86_64
+          - os: macos-14
+            arch: arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Resolve release tag
+        id: meta
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            tag="${{ github.event.release.tag_name }}"
+          else
+            tag="${{ inputs.tag }}"
+          fi
+
+          if [[ -z "$tag" ]]; then
+            echo "Release tag is required" >&2
+            exit 1
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Install macOS dependencies
+        shell: bash
+        run: |
+          brew update
+          brew install cmake ninja qt@6 uchardet
+
+      - name: Configure macOS Qt environment
+        shell: bash
+        run: |
+          echo "PATH=$(brew --prefix qt@6)/bin:${PATH}" >> "$GITHUB_ENV"
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix qt@6)" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=$(brew --prefix uchardet)/lib/pkgconfig:${PKG_CONFIG_PATH:-}" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: cmake --preset release
+
+      - name: Build
+        run: cmake --build --preset release --parallel
+
+      - name: Test
+        run: ctest --preset release --output-on-failure
+
+      - name: Package macOS artifacts
+        shell: bash
+        run: |
+          build-tools/package-nightly-macos.sh \
+            build/release \
+            dist \
+            release-root \
+            "notepadqq-${{ steps.meta.outputs.tag }}-macos-${{ matrix.arch }}"
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: notepadqq-release-macos-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish DMG assets
+    needs: package-macos
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Resolve release tag
+        id: meta
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            tag="${{ github.event.release.tag_name }}"
+          else
+            tag="${{ inputs.tag }}"
+          fi
+
+          if [[ -z "$tag" ]]; then
+            echo "Release tag is required" >&2
+            exit 1
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+
+      - name: Publish DMG assets
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          files: dist/**/*.dmg
+          fail_on_unmatched_files: true
