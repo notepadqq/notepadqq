@@ -22,3 +22,18 @@ if [[ -n "${helpers[0]:-}" ]]; then
 fi
 
 ditto -c -k --sequesterRsrc --keepParent "$bundle" "$dist_dir/${artifact_name}.zip"
+
+dmg_root="$PWD/$staging_dir/dmg-root"
+rm -rf "$dmg_root"
+mkdir -p "$dmg_root"
+
+# Keep Finder drag-and-drop install UX in the generated DMG.
+ln -s /Applications "$dmg_root/Applications"
+cp -R "$bundle" "$dmg_root/notepadqq.app"
+
+hdiutil create \
+    -fs HFS+ \
+    -format UDBZ \
+    -srcfolder "$dmg_root" \
+    -volname Notepadqq \
+    "$dist_dir/${artifact_name}.dmg"
