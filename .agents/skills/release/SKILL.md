@@ -29,6 +29,8 @@ This file is written to be provider-neutral so the same workflow can be used by 
 - AppStream release history is tracked in `support_files/com.notepadqq.Notepadqq.metainfo.xml`, not the old `support_files/notepadqq.appdata.xml` path.
 - The manpage header in `support_files/manpage/notepadqq.1` includes a version string and release month/year that should be kept current for real releases.
 - The Snap package declares its own version in `snap/snapcraft.yaml`.
+- Git tags for stable releases should follow the `v<version>` pattern, for example `v2.1.0`.
+- GitHub release titles should follow the `Notepadqq <version>` pattern, for example `Notepadqq 2.1.0`.
 - The release workflow in `.github/workflows/release.yml` currently publishes macOS DMG assets only.
 - Linux AppImages are produced by the nightly workflow in `.github/workflows/nightly.yml`, not by the stable release workflow.
 
@@ -101,9 +103,10 @@ If the environment cannot run one of these, explain the limitation and run the n
 
 8. Tag and publish.
 
-- Create an annotated tag like `v2.1.0` if the repo convention is confirmed or already in use.
+- Create an annotated tag using the `v<version>` pattern, for example `v2.1.0`, unless the repo already documents a different convention.
 - Push the branch and tag only with explicit user approval.
 - Creating or publishing a GitHub release with that tag triggers `.github/workflows/release.yml` when the release is published.
+- Name the GitHub release using the `Notepadqq <version>` pattern, for example `Notepadqq 2.1.0`, unless the user explicitly asks for a different title.
 - Prefer drafting the GitHub release first when the user explicitly wants a draft release page.
 - If the tag already exists, prefer using the workflow-dispatch path in `.github/workflows/release.yml` with the existing tag.
 - If the Snap release should reach end users on the stable channel, remind the user to open the Snapcraft dashboard and promote the newly built revision to `stable` after the release is published.
