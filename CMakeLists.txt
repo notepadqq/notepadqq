@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(notepadqq VERSION 2.0.0 LANGUAGES CXX)
+project(notepadqq VERSION 2.1.0 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 
