@@ -106,6 +106,7 @@ If the environment cannot run one of these, explain the limitation and run the n
 - Creating or publishing a GitHub release with that tag triggers `.github/workflows/release.yml` when the release is published.
 - Prefer drafting the GitHub release first when the user explicitly wants a draft release page.
 - If the tag already exists, prefer using the workflow-dispatch path in `.github/workflows/release.yml` with the existing tag.
+- If the Snap release should reach end users on the stable channel, remind the user to open the Snapcraft dashboard and promote the newly built revision to `stable` after the release is published.
 
 9. Optionally start the next development cycle.
 
@@ -131,3 +132,4 @@ When using this skill, the agent should finish by reporting:
 - Validation commands run and their outcome
 - Whether the repo is ready for tagging
 - Any release automation gaps, especially around Linux stable assets
+- Any manual follow-up steps, including Snapcraft dashboard promotion to the `stable` channel when relevant
