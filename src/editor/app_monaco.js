@@ -399,8 +399,26 @@ UiDriver.registerEventHandler("C_FUN_GET_LANGUAGES", function(msg, data, prevRet
     return Languages.languages;
 });
 
+var _loadedThemes = {};
+
+function loadTheme(name, callback) {
+    if (_loadedThemes[name]) { callback(); return; }
+    var s = document.createElement("script");
+    s.src = "libs/monaco-addons/themes/" + name + ".js";
+    s.onload = function() { _loadedThemes[name] = true; callback(); };
+    s.onerror = callback;
+    document.body.appendChild(s);
+}
+
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
-    monaco.editor.setTheme(data.name || "vs");
+    var name = data.name || "vs";
+    if (_builtinThemes.indexOf(name) >= 0) {
+        monaco.editor.setTheme(name);
+    } else {
+        loadTheme(name, function() {
+            monaco.editor.setTheme(name);
+        });
+    }
 });
 
 UiDriver.registerEventHandler("C_CMD_SET_FONT", function(msg, data, prevReturn) {
@@ -606,7 +624,21 @@ UiDriver.registerEventHandler("C_CMD_GET_DOCUMENT_INFO", function(msg, data, pre
 
 // ── Initialization ──
 
+var _builtinThemes = ["vs", "vs-dark", "hc-black", "hc-light"];
+
 $(document).ready(function () {
+    // Apply any themes that were queued before monaco was fully loaded
+    if (window.__pendingThemes) {
+        for (var name in window.__pendingThemes) {
+            if (window.__pendingThemes.hasOwnProperty(name)) {
+                monaco.editor.defineTheme(name, window.__pendingThemes[name]);
+            }
+        }
+        delete window.__pendingThemes;
+    }
+
+    var initialTheme = _defaultTheme === "default" ? "vs" : (_defaultTheme || "vs");
+
     editor = monaco.editor.create(document.querySelector(".editor"), {
         value: "",
         language: "plaintext",
@@ -617,7 +649,7 @@ $(document).ready(function () {
         minimap: { enabled: false },
         scrollBeyondLastLine: false,
         automaticLayout: true,
-        theme: _defaultTheme === "default" ? "vs" : (_defaultTheme || "vs"),
+        theme: initialTheme,
         wordWrap: "off",
         fixedOverflowWidgets: true
     });

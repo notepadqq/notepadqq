@@ -622,16 +622,25 @@ Editor::Theme Editor::themeFromName(QString name)
 
 QList<Editor::Theme> Editor::themes()
 {
+    auto editorPath = QFileInfo(Notepadqq::editorPath());
+
     if (useMonaco()) {
-        return {
-            Theme("vs", ""),
-            Theme("vs-dark", ""),
-            Theme("hc-black", ""),
-            Theme("hc-light", "")
-        };
+        QList<Theme> out;
+        out.append(Theme("vs", ""));
+        out.append(Theme("vs-dark", ""));
+        out.append(Theme("hc-black", ""));
+        out.append(Theme("hc-light", ""));
+
+        QDir addonThemesDir(editorPath.absolutePath() + "/libs/monaco-addons/themes/", "*.js");
+        for (auto&& theme : addonThemesDir.entryInfoList()) {
+            const QString name = theme.completeBaseName();
+            if (name != "_all") {
+                out.append(Theme(name, ""));
+            }
+        }
+        return out;
     }
 
-    auto editorPath = QFileInfo(Notepadqq::editorPath());
     QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/", "*.css");
 
     QList<Theme> out;

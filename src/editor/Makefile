@@ -21,4 +21,6 @@ ifdef USE_MONACO
 	# Also copy Monaco editor files
 	cp -r index_monaco.html app_monaco.js "$(DESTDIR)"/
 	$(MAKE) -C libs -f Makefile-monaco DESTDIR="$(ABSOLUTE_DESTDIR)"/libs/monaco
+	# Copy Monaco addons (themes, extra languages, etc.)
+	cp -r libs/monaco-addons "$(DESTDIR)"/libs/monaco-addons
 endif
