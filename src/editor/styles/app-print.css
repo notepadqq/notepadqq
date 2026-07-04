@@ -6,7 +6,8 @@
     left: 0;
 }
 
-.editor.print .CodeMirror-activeline-background {
+.editor.print .CodeMirror-activeline-background,
+.editor.print .monaco-editor .view-overlays .current-line {
     background: none;
 }
 
@@ -25,4 +26,9 @@
 
 .editor.print .CodeMirror-guttermarker-subtle {
     visibility: hidden;
+}
+
+.editor.print .monaco-editor .margin {
+    visibility: hidden;
+    width: 0px !important;
 }

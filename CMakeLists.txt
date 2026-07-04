@@ -8,6 +8,7 @@ option(NQQ_BUILD_TESTS "Build Notepadqq tests" ON)
 option(NQQ_ENABLE_ASAN "Enable AddressSanitizer" OFF)
 option(NQQ_ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
 option(NQQ_BUILD_SNAP "Build Notepadqq for Snap packaging" OFF)
+option(NQQ_USE_MONACO "Use Monaco Editor instead of CodeMirror" OFF)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -217,6 +218,15 @@ if(NQQ_BUILD_SNAP)
     target_compile_definitions(${NQQ_TARGET_NAME} PRIVATE BUILD_SNAP)
 endif()
 
+if(NQQ_USE_MONACO)
+    target_compile_definitions(${NQQ_TARGET_NAME} PRIVATE NQQ_USE_MONACO)
+endif()
+
+set(NQQ_MAKE_MONACO_ARGS "")
+if(NQQ_USE_MONACO)
+    set(NQQ_MAKE_MONACO_ARGS "USE_MONACO=1")
+endif()
+
 set_target_properties(${NQQ_TARGET_NAME} PROPERTIES
     AUTOUIC_SEARCH_PATHS "${NQQ_UI_DIR};${NQQ_UI_DIR}/Search;${NQQ_UI_DIR}/Extensions"
 )
@@ -269,7 +279,7 @@ if(NQQ_MAKE_EXECUTABLE)
     if(APPLE)
         add_custom_command(TARGET ${NQQ_TARGET_NAME} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:${NQQ_TARGET_NAME}>/Resources/editor"
-            COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="$<TARGET_BUNDLE_CONTENT_DIR:${NQQ_TARGET_NAME}>/Resources/editor"
+            COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="$<TARGET_BUNDLE_CONTENT_DIR:${NQQ_TARGET_NAME}>/Resources/editor" ${NQQ_MAKE_MONACO_ARGS}
             WORKING_DIRECTORY "${NQQ_ROOT_DIR}/src/editor"
             COMMENT "Staging editor assets in app bundle"
             VERBATIM
@@ -284,7 +294,7 @@ if(NQQ_MAKE_EXECUTABLE)
     else()
         add_custom_target(notepadqq_editor_assets ALL
             COMMAND "${CMAKE_COMMAND}" -E rm -rf "${NQQ_STAGED_APPDATA_DIR}/editor"
-            COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="${NQQ_STAGED_APPDATA_DIR}/editor"
+            COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="${NQQ_STAGED_APPDATA_DIR}/editor" ${NQQ_MAKE_MONACO_ARGS}
             WORKING_DIRECTORY "${NQQ_ROOT_DIR}/src/editor"
             COMMENT "Staging editor assets"
             VERBATIM

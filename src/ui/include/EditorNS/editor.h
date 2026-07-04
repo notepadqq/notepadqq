@@ -313,6 +313,8 @@ private:
     const Language* m_currentLanguage = nullptr;
     inline void waitAsyncLoad();
 
+    static bool useMonaco();
+
     void fullConstructor(const Theme& theme);
 
     QtPromise::QPromise<void> setIndentationMode(const bool useTabs, const int size);

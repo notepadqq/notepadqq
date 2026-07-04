@@ -34,7 +34,8 @@ body {
     left: 0;
 }
 
-.editor > .CodeMirror {
+.editor > .CodeMirror,
+.editor > .monaco-editor {
     height: 100%;
     /*cursor: text;*/
     line-height: 1.3em;

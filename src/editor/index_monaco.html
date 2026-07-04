@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Notepadqq</title>
+
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+
+    <!-- Monaco Editor -->
+    <script src="libs/monaco/vs/loader.js"></script>
+
+    <script src="init.js"></script>
+    <script src="classes/UiDriver.js"></script>
+    <script src="classes/Printer.js"></script>
+
+    <link rel="stylesheet" href="styles/app.css">
+    <link rel="stylesheet" href="styles/app-print.css" />
+  </head>
+  <body>
+    <div class="editor"></div>
+
+    <script>
+      // Use absolute path for Monaco so workers resolve correctly from file://
+      var monacoBasePath = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/libs/monaco/vs";
+      self.MonacoEnvironment = {
+        getWorker: function(moduleId, label) {
+          return new Worker(monacoBasePath + "/base/worker/workerMain.js");
+        }
+      };
+
+      require.config({
+        paths: { vs: monacoBasePath }
+      });
+
+      require(["vs/editor/editor.main"], function () {
+        var script = document.createElement("script");
+        script.src = "app_monaco.js";
+        document.body.appendChild(script);
+      });
+    </script>
+  </body>
+</html>

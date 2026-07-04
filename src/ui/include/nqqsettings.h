@@ -112,6 +112,7 @@ public:
     NQQ_SETTING(SmartIndentation, bool, true)
     NQQ_SETTING(MathRendering, bool, true)
     NQQ_SETTING(UseNativeFilePicker, bool, true)
+    NQQ_SETTING(EditorEngine, QString, "auto")
     END_CATEGORY(General)
 
     BEGIN_CATEGORY(Appearance)

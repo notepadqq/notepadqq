@@ -30,6 +30,18 @@ Editor::Editor(const Theme& theme, QWidget* parent)
     : QWidget(parent)
 { fullConstructor(theme); }
 
+bool Editor::useMonaco()
+{
+    QString engine = NqqSettings::getInstance().General.getEditorEngine();
+    if (engine == "monaco") return true;
+    if (engine == "codemirror") return false;
+#ifdef NQQ_USE_MONACO
+    return true;
+#else
+    return false;
+#endif
+}
+
 void Editor::fullConstructor(const Theme& theme)
 {
     m_jsToCppProxy = new JsToCppProxy(this);
@@ -41,7 +53,16 @@ void Editor::fullConstructor(const Theme& theme)
     query.addQueryItem("themePath", theme.path);
     query.addQueryItem("themeName", theme.name);
 
-    QUrl url = QUrl("file://" + Notepadqq::editorPath());
+    const bool monaco = useMonaco();
+    if (monaco) {
+        query.addQueryItem("engine", "monaco");
+    }
+
+    QString htmlFile = monaco ?
+        QFileInfo(Notepadqq::editorPath()).absolutePath() + "/index_monaco.html" :
+        Notepadqq::editorPath();
+
+    QUrl url = QUrl("file://" + htmlFile);
     url.setQuery(query);
 
     QWebChannel* channel = new QWebChannel(this);
@@ -586,6 +607,10 @@ Editor::Theme Editor::themeFromName(QString name)
     if (name == "default" || name.isEmpty())
         return Theme();
 
+    if (useMonaco()) {
+        return Theme(name, "");
+    }
+
     QFileInfo editorPath(Notepadqq::editorPath());
     QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/");
 
@@ -597,6 +622,15 @@ Editor::Theme Editor::themeFromName(QString name)
 
 QList<Editor::Theme> Editor::themes()
 {
+    if (useMonaco()) {
+        return {
+            Theme("vs", ""),
+            Theme("vs-dark", ""),
+            Theme("hc-black", ""),
+            Theme("hc-light", "")
+        };
+    }
+
     auto editorPath = QFileInfo(Notepadqq::editorPath());
     QDir bundledThemesDir(editorPath.absolutePath() + "/libs/codemirror/theme/", "*.css");
 

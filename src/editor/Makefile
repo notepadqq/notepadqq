@@ -15,5 +15,10 @@ all:
 	cp -r libs/MathJax "$(DESTDIR)"/libs/MathJax/
 	cp -r libs/require.js "$(DESTDIR)"/libs/require.js/
 	cp -r libs/throttle-debounce "$(DESTDIR)"/libs/throttle-debounce/
-	# Call CodeMirror makefile passing DESTDIR as absolute path, so we have no problems with cd-ing to libs
+	# Call CodeMirror makefile passing DESTDIR as absolute path
 	$(MAKE) -C libs -f Makefile-codemirror DESTDIR="$(ABSOLUTE_DESTDIR)"/libs/codemirror
+ifdef USE_MONACO
+	# Also copy Monaco editor files
+	cp -r index_monaco.html app_monaco.js "$(DESTDIR)"/
+	$(MAKE) -C libs -f Makefile-monaco DESTDIR="$(ABSOLUTE_DESTDIR)"/libs/monaco
+endif
