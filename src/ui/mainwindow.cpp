@@ -1,5 +1,6 @@
 #include "include/mainwindow.h"
 
+#include "include/EditorNS/defer.h"
 #include "include/EditorNS/bannerfilechanged.h"
 #include "include/EditorNS/bannerfileremoved.h"
 #include "include/EditorNS/bannerindentationdetected.h"
@@ -34,7 +35,6 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTemporaryFile>
-#include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 #include <QUrl>
@@ -556,15 +556,16 @@ void MainWindow::openCommandLineProvidedUrls(const QString& workingDirectory, co
             qWarning() << tr("Invalid value for '--column' argument: %1").arg(parser->value("column"));
     }
 
-    // This needs to sit inside a timer because CodeMirror apparently chokes on receiving a setCursorPosition()
+    // This must be queued because CodeMirror chokes on receiving setCursorPosition()
     // right after construction of the Editor.
-    auto ed = m_topEditorContainer->currentTabWidget()->currentEditor();
-    QTimer* t = new QTimer();
-    connect(t, &QTimer::timeout, [t, l, c, ed]() {
-        ed->setCursorPosition(l - 1, c - 1);
-        t->deleteLater();
+    const auto ed = m_topEditorContainer->currentTabWidget()->currentEditor().toWeakRef();
+    EditorNS::deferToObject(this, [ed, l, c] {
+        const auto editor = ed.toStrongRef();
+        if (!editor) {
+            return;
+        }
+        editor->setCursorPosition(l - 1, c - 1);
     });
-    t->start(0);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent* e)
