@@ -2,6 +2,7 @@
 
 #ifndef USE_DBUS
 #include "include/localcommunication.h"
+#include "include/localsockethelpers.h"
 
 #include <QDataStream>
 #include <QDir>
@@ -94,18 +95,11 @@ void SingleApplication::receive(const QString& workingDirectory, const QStringLi
 
 QLocalSocket* SingleApplication::alreadyRunningInstance()
 {
-    QLocalSocket* socket = new QLocalSocket(this);
-    socket->connectToServer(socketNameForUser());
-    if (socket->waitForConnected(2000)) {
+    return LocalSocketHelpers::probe(this, socketNameForUser(), [](QLocalSocket* socket) {
         LocalCommunication::send("NEW_CLIENT", socket);
         QString reply = LocalCommunication::receive(socket);
-
-        if (reply == "HELLO") {
-            return socket;
-        }
-    }
-
-    return nullptr;
+        return reply == "HELLO";
+    });
 }
 
 void SingleApplication::startServer()
@@ -123,6 +117,7 @@ void SingleApplication::newConnection()
 {
     while (m_localServer->hasPendingConnections()) {
         QLocalSocket* conn = m_localServer->nextPendingConnection();
+        LocalSocketHelpers::deleteOnDisconnect(conn);
         connect(conn, &QLocalSocket::readyRead, this, [=, this]() {
             QString message = LocalCommunication::receive(conn);
 

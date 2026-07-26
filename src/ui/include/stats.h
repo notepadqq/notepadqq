@@ -2,6 +2,7 @@
 #define STATS_H
 
 #include <QJsonObject>
+#include <chrono>
 
 class Stats {
 public:

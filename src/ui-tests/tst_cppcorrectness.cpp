@@ -4,9 +4,17 @@
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
 #include "include/docengine.h"
+#include "include/statsruntime.h"
+#include "include/localsockethelpers.h"
 
 #include <QElapsedTimer>
 #include <QFile>
+#include <QIODevice>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include <QPointer>
 #include <QTemporaryDir>
 #include <QTimer>
@@ -65,6 +73,61 @@ public:
     { return EditorNS::Editor::resolveAsyncReply(tracker, wireMessage, data).has_value(); }
 };
 
+// In-process reply used to deterministically exercise the telemetry cleanup helper.
+class FakeReply : public QNetworkReply {
+    Q_OBJECT
+public:
+    explicit FakeReply(QObject* parent, bool finishImmediately)
+        : QNetworkReply(parent)
+        , m_finishImmediately(finishImmediately)
+    {
+        open(ReadOnly | Unbuffered);
+        setUrl(QUrl(QStringLiteral("http://127.0.0.1/fake")));
+        if (m_finishImmediately) {
+            QTimer::singleShot(0, this, [this] {
+                setFinished(true);
+                emit finished();
+            });
+        }
+    }
+
+    void abort() override
+    {
+        if (isFinished()) {
+            return;
+        }
+        setError(OperationCanceledError, QStringLiteral("aborted"));
+        setFinished(true);
+        emit finished();
+    }
+
+protected:
+    qint64 readData(char*, qint64) override { return -1; }
+
+private:
+    bool m_finishImmediately = false;
+};
+
+// In-process manager that returns either a stalled or an immediately finishing reply.
+class FakeManager : public QNetworkAccessManager {
+    Q_OBJECT
+public:
+    explicit FakeManager(bool finishImmediately, QObject* parent = nullptr)
+        : QNetworkAccessManager(parent)
+        , m_finishImmediately(finishImmediately)
+    {
+    }
+
+protected:
+    QNetworkReply* createRequest(Operation, const QNetworkRequest&, QIODevice*) override
+    {
+        return new FakeReply(this, m_finishImmediately);
+    }
+
+private:
+    bool m_finishImmediately = false;
+};
+
 DocEngine::DecodedText DocEngine::readToString(QFile* file)
 {
     DecodedText decoded;
@@ -94,6 +157,11 @@ private Q_SLOTS:
     void deferredCallbackIsDiscardedWhenContextIsDestroyed();
     void cancellationRequestsInterruptionAndStopsFilesystemSearch();
     void searchPlainText_handlesContentEndingInLf();
+    void statsTransmissionDueUsesSeconds();
+    void statsPostDeletesFinishedReplies();
+    void statsPostAbortsStalledReplies();
+    void localSocketProbeDoesNotLeakFailedConnection();
+    void localSocketDeletesAcceptedPeerAfterDisconnect();
     void linePositions_data();
     void linePositions();
 };
@@ -109,6 +177,26 @@ void CppCorrectnessTest::deferredCallbackIsDiscardedWhenContextIsDestroyed()
 
     QCoreApplication::processEvents();
     QVERIFY(!called);
+}
+
+// Ensures a failed single-instance probe does not leave a socket child behind.
+void CppCorrectnessTest::localSocketProbeDoesNotLeakFailedConnection()
+{
+    QObject owner;
+    const int before = owner.findChildren<QLocalSocket*>().size();
+    QVERIFY(LocalSocketHelpers::probe(&owner, QStringLiteral("nqq-nonexistent-socket"),
+        [](QLocalSocket*) { return false; }) == nullptr);
+    QCOMPARE(owner.findChildren<QLocalSocket*>().size(), before);
+}
+
+// Ensures accepted server sockets are released automatically when their peer disconnects.
+void CppCorrectnessTest::localSocketDeletesAcceptedPeerAfterDisconnect()
+{
+    auto* accepted = new QLocalSocket;
+    QPointer<QLocalSocket> observed = accepted;
+    LocalSocketHelpers::deleteOnDisconnect(accepted);
+    QVERIFY(QMetaObject::invokeMethod(accepted, "disconnected", Qt::DirectConnection));
+    QTRY_VERIFY(observed.isNull());
 }
 
 // Guards against emitting a bridge request before its completion is registered.
@@ -348,6 +436,33 @@ void CppCorrectnessTest::searchPlainText_handlesContentEndingInLf()
 
     QCOMPARE(result.results.size(), 1);
     QCOMPARE(result.results.constFirst().lineNumber, 1);
+}
+
+// Guards the weekly statistics interval against the old milliseconds-vs-seconds mismatch.
+void CppCorrectnessTest::statsTransmissionDueUsesSeconds()
+{
+    QVERIFY(!StatsRuntime::isTransmissionDue(100, 100 + (7 * 24 * 60 * 60) - 1));
+    QVERIFY(StatsRuntime::isTransmissionDue(100, 100 + (7 * 24 * 60 * 60)));
+}
+
+// Guards the telemetry helper against leaking a normal reply after completion.
+void CppCorrectnessTest::statsPostDeletesFinishedReplies()
+{
+    FakeManager manager(true);
+    QNetworkRequest request(QUrl(QStringLiteral("http://127.0.0.1/fake")));
+    QPointer<QNetworkReply> reply = StatsRuntime::post(&manager, request, QByteArrayLiteral("{}"), 200ms);
+    QVERIFY(reply);
+    QTRY_VERIFY_WITH_TIMEOUT(reply.isNull(), 2000);
+}
+
+// Guards the telemetry helper against leaving a stalled reply alive indefinitely.
+void CppCorrectnessTest::statsPostAbortsStalledReplies()
+{
+    FakeManager manager(false);
+    QNetworkRequest request(QUrl(QStringLiteral("http://127.0.0.1/fake")));
+    QPointer<QNetworkReply> reply = StatsRuntime::post(&manager, request, QByteArrayLiteral("{}"), 20ms);
+    QVERIFY(reply);
+    QTRY_VERIFY_WITH_TIMEOUT(reply.isNull(), 2000);
 }
 
 void CppCorrectnessTest::linePositions_data()

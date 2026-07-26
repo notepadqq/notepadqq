@@ -1,4 +1,5 @@
 #include "include/stats.h"
+#include "include/statsruntime.h"
 
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
@@ -30,27 +31,10 @@ void Stats::init()
         return;
     }
 
-    // Start a timer that will check very soon if we need to send stats.
-    QTimer* t = new QTimer();
-    t->setTimerType(Qt::VeryCoarseTimer);
-    QObject::connect(t, &QTimer::timeout, [t]() {
-        Stats::check();
-        t->deleteLater();
-    });
-
-    // Start after 10 seconds: we don't want to take time to the startup sequence,
-    // and we want the extensions to be fully loaded.
-    t->start(10000);
-
-    // Also start another timer that will periodically check if a week has passed and
-    // it's time to transmit new information.
+    // Start the startup and periodic checks with QObject ownership so Qt cleans them up automatically.
     if (!m_longTimerRunning) {
-        QTimer* tlong = new QTimer();
-        tlong->setTimerType(Qt::VeryCoarseTimer);
-        QObject::connect(tlong, &QTimer::timeout, [t]() { Stats::check(); });
-
-        tlong->start(12 * 60 * 60 * 1000); // Check every ~12 hours.
-
+        StatsRuntime::startTimers(qApp, [] { Stats::check(); }, std::chrono::seconds(10),
+            std::chrono::hours(12));
         m_longTimerRunning = true;
     }
 }
@@ -102,14 +86,10 @@ void Stats::remoteApiSend(const QJsonObject& data)
 
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/javascript");
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager();
-
-    QObject::connect(manager, &QNetworkAccessManager::finished, [=](QNetworkReply*) { manager->deleteLater(); });
-
     QJsonDocument doc;
     doc.setObject(data);
 
-    manager->post(request, doc.toJson(QJsonDocument::Compact));
+    StatsRuntime::post(request, doc.toJson(QJsonDocument::Compact));
 }
 
 void Stats::askUserPermission()
@@ -159,7 +139,8 @@ void Stats::askUserPermission()
 bool Stats::isTimeToSendStats()
 {
     NqqSettings& settings = NqqSettings::getInstance();
-    return (currentUnixTimestamp() - settings.General.getLastStatisticTransmissionTime()) >= 7 * 24 * 60 * 60 * 1000;
+    return StatsRuntime::isTransmissionDue(settings.General.getLastStatisticTransmissionTime(),
+        currentUnixTimestamp());
 }
 
 qint64 Stats::currentUnixTimestamp()
