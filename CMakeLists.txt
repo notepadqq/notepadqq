@@ -67,6 +67,7 @@ set(NQQ_APP_SOURCES
     src/ui/localcommunication.cpp
     src/ui/Search/frmsearchreplace.cpp
     src/ui/Search/searchstring.cpp
+    src/ui/Search/searchhelpers.cpp
     src/ui/Search/advancedsearchdock.cpp
     src/ui/Extensions/extension.cpp
     src/ui/frmlinenumberchooser.cpp
@@ -345,6 +346,40 @@ if(NQQ_BUILD_TESTS)
         -include qtpromise/qpromiseexceptions.h
     )
     add_test(NAME ui-tests COMMAND ui-tests)
+
+    qt_add_executable(cpp-correctness-tests
+        src/ui-tests/tst_cppcorrectness.cpp
+        src/ui/Search/filesearcher.cpp
+        src/ui/include/Search/filesearcher.h
+        src/ui/Search/searchhelpers.cpp
+        src/ui/Search/searchobjects.cpp
+        src/ui/Search/searchstring.cpp
+    )
+    target_include_directories(cpp-correctness-tests PRIVATE
+        src/ui
+        src/ui/include
+        src/ui/libs/qtpromise/include
+        src/ui/libs/qtpromise/src
+    )
+    target_link_libraries(cpp-correctness-tests PRIVATE
+        Qt6::Core
+        Qt6::Core5Compat
+        Qt6::DBus
+        Qt6::Gui
+        Qt6::Network
+        Qt6::PrintSupport
+        Qt6::Svg
+        Qt6::Test
+        Qt6::WebChannel
+        Qt6::WebEngineWidgets
+        Qt6::WebSockets
+        Qt6::Widgets
+        PkgConfig::UCHARDET
+    )
+    target_compile_options(cpp-correctness-tests PRIVATE
+        -include qtpromise/qpromiseexceptions.h
+    )
+    add_test(NAME cpp-correctness-tests COMMAND cpp-correctness-tests)
 endif()
 
 if(APPLE)

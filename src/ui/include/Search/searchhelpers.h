@@ -1,8 +1,14 @@
 #ifndef SEARCHHELPERS_H
 #define SEARCHHELPERS_H
 
+#include <QString>
+
+#include <vector>
+
 class SearchHelpers {
 public:
+    static std::vector<int> linePositions(const QString& data);
+
     enum class SearchMode { PlainText = 1, SpecialChars = 2, Regex = 3 };
 
     struct SearchOptions {

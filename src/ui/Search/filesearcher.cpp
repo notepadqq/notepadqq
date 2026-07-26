@@ -1,12 +1,12 @@
 #include "include/Search/filesearcher.h"
 
+#include "include/Search/searchhelpers.h"
 #include "include/Search/searchstring.h"
 #include "include/docengine.h"
 
 #include <QDirIterator>
 
 #include <algorithm>
-#include <vector>
 
 /**
  * @brief matchesWholeWord Returns true if the substring at data.mid(index,matchLength) is a whole word.
@@ -29,35 +29,6 @@ bool matchesWholeWord(int index, int matchLength, const QString& data)
         }
     }
     return true;
-}
-
-/**
- * @brief getLinePositions Returns a vector with the positions of all line beginnings of the given string.
- */
-std::vector<int> getLinePositions(const QString& data)
-{
-    const int dataSize = data.size();
-    std::vector<int> linePosition;
-
-    linePosition.push_back(0);
-
-    // Finds line-breaks in the string. Doesn't check the last char so the loop
-    // can be optimized.
-    for (int i = 0; i < dataSize - 1; i++) {
-        if (data[i] == '\r' && data[i + 1] == '\n') {
-            linePosition.push_back(i + 2);
-            i++;
-        } else if (data[i] == '\r' || data[i] == '\n') {
-            linePosition.push_back(i + 1);
-        }
-    }
-
-    // Check the last char manually
-    if (dataSize > 0 && (*data.end() == '\r' || *data.end() == '\n'))
-        linePosition.push_back(dataSize);
-
-    linePosition.push_back(dataSize);
-    return linePosition;
 }
 
 /**
@@ -107,7 +78,7 @@ DocResult FileSearcher::searchPlainText(const SearchConfig& config, const QStrin
     DocResult results;
 
     const Qt::CaseSensitivity caseSense = config.matchCase ? Qt::CaseSensitive : Qt::CaseInsensitive;
-    const std::vector<int> linePosition = getLinePositions(content);
+    const std::vector<int> linePosition = SearchHelpers::linePositions(content);
     const QString searchString = (config.searchMode == SearchConfig::ModePlainTextSpecialChars)
                                      ? SearchString::unescape(config.searchString)
                                      : config.searchString;
@@ -147,7 +118,7 @@ DocResult FileSearcher::searchRegExp(const QRegularExpression& regex, const QStr
     DocResult results;
 
     int offset = 0;
-    std::vector<int> linePosition = getLinePositions(content);
+    std::vector<int> linePosition = SearchHelpers::linePositions(content);
 
     QRegularExpressionMatch match;
     for (;;) {
