@@ -48,7 +48,7 @@ public:
     /**
      * @brief cancel Orders the FileSearcher to stop searching at the earliest convenience. Won't immediately stop.
      */
-    void cancel() { m_wantToStop = true; }
+    void cancel() { requestInterruption(); }
 
     /**
      * @brief getResult Returns a SearchResult item with all found results. Will be empty until the FileSearcher
@@ -72,7 +72,6 @@ private:
 
     SearchConfig m_searchConfig;
     QRegularExpression m_regex;
-    bool m_wantToStop = false;
     SearchResult m_searchResult;
 };
 

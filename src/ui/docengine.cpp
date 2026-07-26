@@ -251,7 +251,7 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
                 Q_ASSERT(false); // Should never get here
             }
 
-            QTimer::singleShot(delay_ms, [=, this]() {
+            QTimer::singleShot(delay_ms, this, [=, this]() {
                 // In case of a reload, save cursor, scroll position, language
                 QPair<int, int> scrollPosition;
                 QPair<int, int> cursorPosition;
@@ -949,7 +949,7 @@ int DocEngine::saveDocument(EditorTabWidget* tabWidget, int tab, QUrl outFileNam
 #ifdef Q_OS_MACOS
         // On macOS we need to give it a little bit of time, otherwise we get the
         // "document changed" banner as soon as the document is saved.
-        QTimer::singleShot(100, [=, this]() { monitorDocument(editor); });
+        QTimer::singleShot(100, this, [=, this]() { monitorDocument(editor); });
 #else
         monitorDocument(editor);
 #endif

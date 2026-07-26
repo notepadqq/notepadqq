@@ -1,10 +1,13 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "include/EditorNS/asyncrequesttracker.h"
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/editor_properties.h"
 #include "include/EditorNS/languageservice.h"
 
+#include <QCoreApplication>
+#include <QEventLoop>
 #include <QObject>
 #include <QPrinter>
 #include <QQueue>
@@ -16,6 +19,12 @@
 
 #include <functional>
 #include <future>
+#include <optional>
+#include <utility>
+
+#ifdef NQQ_CPP_CORRECTNESS_TESTS
+class EditorCorrectnessAccess;
+#endif
 
 class EditorTabWidget;
 
@@ -283,15 +292,108 @@ public:
 
 private:
     friend class ::EditorTabWidget;
+#ifdef NQQ_CPP_CORRECTNESS_TESTS
+    friend class ::EditorCorrectnessAccess;
+#endif
 
-    struct AsyncReply {
+    /** Identifies a parsed reply that successfully settled a tracked request. */
+    struct ResolvedAsyncReply {
         unsigned int id;
         QString message;
-        std::shared_ptr<std::promise<QVariant>> value;
-        std::function<void(QVariant)> callback;
     };
 
-    std::list<AsyncReply> asyncReplies;
+    /** Registers the QtPromise with the tracker before the caller emits its bridge request. */
+    static QtPromise::QPromise<QVariant> registerAsyncPromise(
+        AsyncRequestTracker& tracker, unsigned int id, const QString& message)
+    {
+        return QtPromise::QPromise<QVariant>(
+            [&tracker, id, message](const QtPromise::QPromiseResolve<QVariant>& resolve,
+                const QtPromise::QPromiseReject<QVariant>& reject) {
+                tracker.trackPromise(id, message, resolve, reject);
+            });
+    }
+
+    /** Callable that emits one fully formatted bridge request. */
+    using EmitAsyncRequest = std::function<void()>;
+
+    /** Callable that connects a bridge request to editor readiness and returns that connection. */
+    using DeferAsyncRequest = std::function<QMetaObject::Connection(EmitAsyncRequest)>;
+
+    /** Registers before emitting, and cancels deferred emission if the promise times out first. */
+    static QtPromise::QPromise<QVariant> registerPromiseAndSend(AsyncRequestTracker& tracker, unsigned int id,
+        const QString& message, bool ready, EmitAsyncRequest emitRequest, DeferAsyncRequest deferRequest)
+    {
+        auto promise = registerAsyncPromise(tracker, id, message);
+        if (ready) {
+            emitRequest();
+            return promise;
+        }
+
+        auto connection = std::make_shared<QMetaObject::Connection>();
+        *connection = deferRequest([connection, &tracker, id, emitRequest = std::move(emitRequest)]() mutable {
+            QObject::disconnect(*connection);
+            if (tracker.isPending(id))
+                emitRequest();
+        });
+        promise.fail([connection](const std::runtime_error&) {
+            QObject::disconnect(*connection);
+            return QVariant();
+        });
+        return promise;
+    }
+
+    /** Tracks a legacy request, processes events until settlement, and cancels any stale deferred send. */
+    static std::shared_future<QVariant> trackLegacyAndWait(AsyncRequestTracker& tracker, unsigned int id,
+        const QString& message, std::function<void(QVariant)> callback, bool ready, EmitAsyncRequest emitRequest,
+        DeferAsyncRequest deferRequest)
+    {
+        auto resultPromise = std::make_shared<std::promise<QVariant>>();
+        std::shared_future<QVariant> future = resultPromise->get_future().share();
+        tracker.trackLegacy(id, message, resultPromise, std::move(callback));
+
+        std::shared_ptr<QMetaObject::Connection> connection;
+        if (ready) {
+            emitRequest();
+        } else {
+            connection = std::make_shared<QMetaObject::Connection>();
+            *connection = deferRequest([connection, &tracker, id, emitRequest = std::move(emitRequest)]() mutable {
+                QObject::disconnect(*connection);
+                if (tracker.isPending(id))
+                    emitRequest();
+            });
+        }
+
+        while (future.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+            QCoreApplication::processEvents(QEventLoop::AllEvents);
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+        }
+        if (connection)
+            QObject::disconnect(*connection);
+        return future;
+    }
+
+    /** Parses a wire reply and settles it, ignoring malformed, unknown, or late IDs. */
+    static std::optional<ResolvedAsyncReply> resolveAsyncReply(
+        AsyncRequestTracker& tracker, const QString& wireMessage, const QVariant& data)
+    {
+        const QString prefix = QStringLiteral("[ASYNC_REPLY]");
+        const QString idPrefix = QStringLiteral("[ID=");
+        if (!wireMessage.startsWith(prefix) || !wireMessage.endsWith(QLatin1Char(']')))
+            return std::nullopt;
+
+        const qsizetype idStart = wireMessage.lastIndexOf(idPrefix);
+        if (idStart < prefix.size())
+            return std::nullopt;
+
+        bool validId = false;
+        const unsigned int id = wireMessage.mid(idStart + idPrefix.size(),
+                                               wireMessage.size() - idStart - idPrefix.size() - 1)
+                                    .toUInt(&validId);
+        if (!validId || !tracker.resolve(id, data))
+            return std::nullopt;
+
+        return ResolvedAsyncReply{id, wireMessage.mid(prefix.size(), idStart - prefix.size())};
+    }
 
     // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
     // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
@@ -302,6 +404,8 @@ private:
     QVBoxLayout* m_layout;
     CustomQWebView* m_webView;
     JsToCppProxy* m_jsToCppProxy;
+    /** Child-owned tracker that bounds every promise- and future-based bridge request. */
+    AsyncRequestTracker* m_asyncRequestTracker = nullptr;
     QUrl m_filePath = QUrl();
     QString m_tabName;
     bool m_fileOnDiskChanged = false;

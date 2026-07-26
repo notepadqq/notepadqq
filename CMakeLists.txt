@@ -54,6 +54,7 @@ set(NQQ_APP_SOURCES
     src/ui/frmpreferences.cpp
     src/ui/iconprovider.cpp
     src/ui/EditorNS/editor.cpp
+    src/ui/EditorNS/asyncrequesttracker.cpp
     src/ui/EditorNS/bannerfilechanged.cpp
     src/ui/EditorNS/bannerbasicmessage.cpp
     src/ui/EditorNS/bannerfileremoved.cpp
@@ -67,6 +68,7 @@ set(NQQ_APP_SOURCES
     src/ui/localcommunication.cpp
     src/ui/Search/frmsearchreplace.cpp
     src/ui/Search/searchstring.cpp
+    src/ui/Search/searchhelpers.cpp
     src/ui/Search/advancedsearchdock.cpp
     src/ui/Extensions/extension.cpp
     src/ui/frmlinenumberchooser.cpp
@@ -90,6 +92,8 @@ set(NQQ_APP_SOURCES
     src/ui/Search/searchobjects.cpp
     src/ui/Search/searchinstance.cpp
     src/ui/stats.cpp
+    src/ui/statsruntime.cpp
+    src/ui/localsockethelpers.cpp
     src/ui/Sessions/backupservice.cpp
     src/ui/svgiconengine.cpp
 )
@@ -104,6 +108,7 @@ set(NQQ_APP_HEADERS
     src/ui/include/frmpreferences.h
     src/ui/include/iconprovider.h
     src/ui/include/EditorNS/editor.h
+    src/ui/include/EditorNS/asyncrequesttracker.h
     src/ui/include/EditorNS/bannerfilechanged.h
     src/ui/include/EditorNS/bannerbasicmessage.h
     src/ui/include/EditorNS/bannerfileremoved.h
@@ -141,6 +146,8 @@ set(NQQ_APP_HEADERS
     src/ui/include/Search/filereplacer.h
     src/ui/include/Search/searchinstance.h
     src/ui/include/stats.h
+    src/ui/include/statsruntime.h
+    src/ui/include/localsockethelpers.h
     src/ui/include/Sessions/backupservice.h
     src/ui/include/svgiconengine.h
 )
@@ -345,6 +352,48 @@ if(NQQ_BUILD_TESTS)
         -include qtpromise/qpromiseexceptions.h
     )
     add_test(NAME ui-tests COMMAND ui-tests)
+
+    qt_add_executable(cpp-correctness-tests
+        src/ui-tests/tst_cppcorrectness.cpp
+        src/ui/EditorNS/asyncrequesttracker.cpp
+        src/ui/include/EditorNS/asyncrequesttracker.h
+        src/ui/Search/filesearcher.cpp
+        src/ui/include/Search/filesearcher.h
+        src/ui/Search/searchhelpers.cpp
+        src/ui/Search/searchobjects.cpp
+        src/ui/Search/searchstring.cpp
+        src/ui/statsruntime.cpp
+        src/ui/localsockethelpers.cpp
+        src/ui/include/localsockethelpers.h
+        src/ui/Extensions/extension.cpp
+        src/ui/include/Extensions/extension.h
+    )
+    target_include_directories(cpp-correctness-tests PRIVATE
+        src/ui
+        src/ui/include
+        src/ui/libs/qtpromise/include
+        src/ui/libs/qtpromise/src
+    )
+    target_link_libraries(cpp-correctness-tests PRIVATE
+        Qt6::Core
+        Qt6::Core5Compat
+        Qt6::DBus
+        Qt6::Gui
+        Qt6::Network
+        Qt6::PrintSupport
+        Qt6::Svg
+        Qt6::Test
+        Qt6::WebChannel
+        Qt6::WebEngineWidgets
+        Qt6::WebSockets
+        Qt6::Widgets
+        PkgConfig::UCHARDET
+    )
+    target_compile_options(cpp-correctness-tests PRIVATE
+        -include qtpromise/qpromiseexceptions.h
+    )
+    target_compile_definitions(cpp-correctness-tests PRIVATE NQQ_CPP_CORRECTNESS_TESTS)
+    add_test(NAME cpp-correctness-tests COMMAND cpp-correctness-tests)
 endif()
 
 if(APPLE)
