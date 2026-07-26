@@ -12,6 +12,7 @@
 #include "include/Sessions/persistentcache.h"
 #include "include/Sessions/sessions.h"
 #include "include/clickablelabel.h"
+#include "include/commandlineopenruntime.h"
 #include "include/editortabwidget.h"
 #include "include/frmabout.h"
 #include "include/frmencodingchooser.h"
@@ -523,20 +524,14 @@ void MainWindow::openCommandLineProvidedUrls(const QString& workingDirectory, co
         files.append(stringToUrl(rawUrls.at(i), workingDirectory));
     }
 
-    m_docEngine->getDocumentLoader()
-        .setUrls(files)
-        .setTabWidget(m_topEditorContainer->currentTabWidget())
-        .execute()
-        .wait(); // FIXME Transform to async
+    const auto loading = m_docEngine->getDocumentLoader()
+                             .setUrls(files)
+                             .setTabWidget(m_topEditorContainer->currentTabWidget())
+                             .execute();
 
     // Handle --line and --column commandline arguments
     if (!parser->isSet("line") && !parser->isSet("column"))
         return;
-
-    if (rawUrls.size() > 1) {
-        qWarning() << tr("The '--line' and '--column' arguments will be ignored since more than one file is opened.");
-        return;
-    }
 
     int l = 0;
     if (parser->isSet("line")) {
@@ -556,15 +551,22 @@ void MainWindow::openCommandLineProvidedUrls(const QString& workingDirectory, co
             qWarning() << tr("Invalid value for '--column' argument: %1").arg(parser->value("column"));
     }
 
-    // This must be queued because CodeMirror chokes on receiving setCursorPosition()
-    // right after construction of the Editor.
-    const auto ed = m_topEditorContainer->currentTabWidget()->currentEditor().toWeakRef();
-    EditorNS::deferToObject(this, [ed, l, c] {
-        const auto editor = ed.toStrongRef();
-        if (!editor) {
+    CommandLineOpenRuntime::continueAfterLoading(loading, this, [this, rawUrls, l, c] {
+        if (rawUrls.size() > 1) {
+            qWarning() << tr(
+                "The '--line' and '--column' arguments will be ignored since more than one file is opened.");
             return;
         }
-        editor->setCursorPosition(l - 1, c - 1);
+
+        // This must be queued because CodeMirror chokes on receiving setCursorPosition()
+        // right after construction of the Editor.
+        const auto editor = m_topEditorContainer->currentTabWidget()->currentEditor().toWeakRef();
+        EditorNS::deferToObject(this, [editor, l, c] {
+            const auto strongEditor = editor.toStrongRef();
+            if (strongEditor) {
+                strongEditor->setCursorPosition(l - 1, c - 1);
+            }
+        });
     });
 }
 

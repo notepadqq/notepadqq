@@ -495,6 +495,11 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             // the UI will jump around changing the width of the tabs while they
             // are loading.
             auto loadingEditor = loadedDocs.first().first;
+            // Reserve the real document URL before the asynchronous load finishes so a
+            // command-line request can reuse this loading tab instead of opening a duplicate.
+            if (!tab.filePath.isEmpty()) {
+                loadingEditor->setFilePath(fileUrl);
+            }
             QString tabText;
             if (tab.filePath.isEmpty()) {
                 tabText = docEngine->getNewDocumentName();

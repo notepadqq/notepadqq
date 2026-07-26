@@ -4,6 +4,7 @@
 #include "include/Extensions/extension.h"
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
+#include "include/commandlineopenruntime.h"
 #include "include/docengine.h"
 #include "include/localsockethelpers.h"
 #include "include/notepadqq.h"
@@ -28,6 +29,8 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+
+#include <optional>
 
 using namespace std::chrono_literals;
 
@@ -172,6 +175,8 @@ private Q_SLOTS:
     void localSocketProbeDoesNotLeakFailedConnection();
     void localSocketDeletesAcceptedPeerAfterDisconnect();
     void extensionOwnsRuntimeProcessForImmediateDestruction();
+    void commandLineOpenContinuesOnlyAfterLoadingCompletes();
+    void commandLineOpenDiscardsContinuationWhenOwnerIsDestroyed();
     void linePositions_data();
     void linePositions();
 };
@@ -226,6 +231,39 @@ void CppCorrectnessTest::extensionOwnsRuntimeProcessForImmediateDestruction()
 
     delete extension;
     QVERIFY(process.isNull());
+}
+
+// Ensures command-line follow-up work is deferred until document loading has completed.
+void CppCorrectnessTest::commandLineOpenContinuesOnlyAfterLoadingCompletes()
+{
+    std::optional<QtPromise::QPromiseResolve<void>> resolve;
+    auto loading =
+        QtPromise::QPromise<void>([&resolve](const QtPromise::QPromiseResolve<void>& resolver) { resolve = resolver; });
+    QObject owner;
+    bool continued = false;
+
+    CommandLineOpenRuntime::continueAfterLoading(loading, &owner, [&] { continued = true; });
+    QVERIFY(!continued);
+
+    (*resolve)();
+    QTRY_VERIFY(continued);
+}
+
+// Ensures a closing window discards command-line follow-up work before document loading completes.
+void CppCorrectnessTest::commandLineOpenDiscardsContinuationWhenOwnerIsDestroyed()
+{
+    std::optional<QtPromise::QPromiseResolve<void>> resolve;
+    auto loading =
+        QtPromise::QPromise<void>([&resolve](const QtPromise::QPromiseResolve<void>& resolver) { resolve = resolver; });
+    auto* owner = new QObject;
+    bool continued = false;
+
+    CommandLineOpenRuntime::continueAfterLoading(loading, owner, [&] { continued = true; });
+    delete owner;
+    (*resolve)();
+
+    QCoreApplication::processEvents();
+    QVERIFY(!continued);
 }
 
 // Guards against emitting a bridge request before its completion is registered.

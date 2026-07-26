@@ -94,6 +94,7 @@ set(NQQ_APP_SOURCES
     src/ui/stats.cpp
     src/ui/statsruntime.cpp
     src/ui/localsockethelpers.cpp
+    src/ui/commandlineopenruntime.cpp
     src/ui/Sessions/backupservice.cpp
     src/ui/svgiconengine.cpp
 )
@@ -148,6 +149,7 @@ set(NQQ_APP_HEADERS
     src/ui/include/stats.h
     src/ui/include/statsruntime.h
     src/ui/include/localsockethelpers.h
+    src/ui/include/commandlineopenruntime.h
     src/ui/include/Sessions/backupservice.h
     src/ui/include/svgiconengine.h
 )
@@ -365,6 +367,8 @@ if(NQQ_BUILD_TESTS)
         src/ui/statsruntime.cpp
         src/ui/localsockethelpers.cpp
         src/ui/include/localsockethelpers.h
+        src/ui/commandlineopenruntime.cpp
+        src/ui/include/commandlineopenruntime.h
         src/ui/Extensions/extension.cpp
         src/ui/include/Extensions/extension.h
     )
