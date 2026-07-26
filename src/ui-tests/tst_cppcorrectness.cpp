@@ -1,4 +1,5 @@
 #include "include/EditorNS/asyncrequesttracker.h"
+#include "include/EditorNS/defer.h"
 #include "include/EditorNS/editor.h"
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
@@ -90,11 +91,25 @@ private Q_SLOTS:
     void editorTrackerDestructionLeavesNoLiveTimeoutTimers();
     void editorDoesNotEmitTimedOutPromiseWhenReadyLate();
     void editorLegacyWaitExitsOnTimeoutBeforeReady();
+    void deferredCallbackIsDiscardedWhenContextIsDestroyed();
     void cancellationRequestsInterruptionAndStopsFilesystemSearch();
     void searchPlainText_handlesContentEndingInLf();
     void linePositions_data();
     void linePositions();
 };
+
+// Guards the bridge dispatch against invoking an Editor callback after the Editor is destroyed.
+void CppCorrectnessTest::deferredCallbackIsDiscardedWhenContextIsDestroyed()
+{
+    bool called = false;
+    auto* context = new QObject;
+
+    EditorNS::deferToObject(context, [&] { called = true; });
+    delete context;
+
+    QCoreApplication::processEvents();
+    QVERIFY(!called);
+}
 
 // Guards against emitting a bridge request before its completion is registered.
 void CppCorrectnessTest::editorRegistersAsyncRequestBeforeEmission()

@@ -1,4 +1,5 @@
 #include "include/EditorNS/editor.h"
+#include "include/EditorNS/defer.h"
 
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
@@ -142,7 +143,7 @@ void Editor::waitAsyncLoad()
 
 void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 {
-    QTimer::singleShot(0, [msg, data, this] {
+    deferToObject(this, [this, msg, data] {
         emit messageReceived(msg, data);
 
         if (msg.startsWith("[ASYNC_REPLY]")) {
@@ -698,7 +699,7 @@ QtPromise::QPromise<QByteArray> Editor::printToPdf(const QPageLayout& pageLayout
 
         m_webView->page()->printToPdf(
             [=, this](const QByteArray& data) {
-                QTimer::singleShot(0, [=, this]() {
+                QTimer::singleShot(0, this, [=, this]() {
                     asyncSendMessageWithResultP("C_CMD_DISPLAY_NORMAL_STYLE").wait();
                     m_webView->setStyleSheet(prevStylesheet);
                     m_webView->page()->setBackgroundColor(prevBackgroundColor);
