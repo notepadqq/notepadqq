@@ -11,13 +11,16 @@ namespace EditorNS {
 AsyncRequestTracker::AsyncRequestTracker(QObject* parent, std::chrono::milliseconds timeout)
     : QObject(parent)
     , m_timeout(timeout)
-{ }
+{
+}
 
 AsyncRequestTracker::~AsyncRequestTracker()
 { rejectAll(); }
 
-void AsyncRequestTracker::trackPromise(unsigned int id, QString message,
-    QtPromise::QPromiseResolve<QVariant> resolve, QtPromise::QPromiseReject<QVariant> reject)
+void AsyncRequestTracker::trackPromise(unsigned int id,
+    QString message,
+    QtPromise::QPromiseResolve<QVariant> resolve,
+    QtPromise::QPromiseReject<QVariant> reject)
 {
     PendingRequest request;
     request.message = std::move(message);
@@ -26,8 +29,10 @@ void AsyncRequestTracker::trackPromise(unsigned int id, QString message,
     startTimer(id, std::move(request));
 }
 
-void AsyncRequestTracker::trackLegacy(unsigned int id, QString message,
-    std::shared_ptr<std::promise<QVariant>> promise, std::function<void(QVariant)> callback)
+void AsyncRequestTracker::trackLegacy(unsigned int id,
+    QString message,
+    std::shared_ptr<std::promise<QVariant>> promise,
+    std::function<void(QVariant)> callback)
 {
     PendingRequest request;
     request.message = std::move(message);
@@ -108,8 +113,8 @@ void AsyncRequestTracker::startTimer(unsigned int id, PendingRequest request)
     m_pendingRequests.insert(id, std::move(request));
 
     connect(timer, &QTimer::timeout, this, [this, id] { reject(id); });
-    timer->start(static_cast<int>(
-        std::min<std::chrono::milliseconds::rep>(m_timeout.count(), std::numeric_limits<int>::max())));
+    timer->start(
+        static_cast<int>(std::min<std::chrono::milliseconds::rep>(m_timeout.count(), std::numeric_limits<int>::max())));
 }
 
 std::runtime_error AsyncRequestTracker::timeoutError(const QString& message)

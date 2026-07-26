@@ -17,14 +17,14 @@ QNetworkAccessManager* manager()
     return networkManager;
 }
 
-}
+} // namespace
 
 bool isTransmissionDue(qint64 lastSeconds, qint64 nowSeconds)
-{
-    return (nowSeconds - lastSeconds) >= 7 * 24 * 60 * 60;
-}
+{ return (nowSeconds - lastSeconds) >= 7 * 24 * 60 * 60; }
 
-void startTimers(QObject* owner, std::function<void()> check, std::chrono::milliseconds startupDelay,
+void startTimers(QObject* owner,
+    std::function<void()> check,
+    std::chrono::milliseconds startupDelay,
     std::chrono::milliseconds periodicInterval)
 {
     auto periodicCheck = check;
@@ -41,11 +41,11 @@ void startTimers(QObject* owner, std::function<void()> check, std::chrono::milli
 }
 
 QNetworkReply* post(const QNetworkRequest& request, const QByteArray& body, std::chrono::milliseconds timeout)
-{
-    return post(manager(), request, body, timeout);
-}
+{ return post(manager(), request, body, timeout); }
 
-QNetworkReply* post(QNetworkAccessManager* networkManager, const QNetworkRequest& request, const QByteArray& body,
+QNetworkReply* post(QNetworkAccessManager* networkManager,
+    const QNetworkRequest& request,
+    const QByteArray& body,
     std::chrono::milliseconds timeout)
 {
     QNetworkReply* reply = networkManager->post(request, body);
@@ -61,4 +61,4 @@ QNetworkReply* post(QNetworkAccessManager* networkManager, const QNetworkRequest
     return reply;
 }
 
-}
+} // namespace StatsRuntime

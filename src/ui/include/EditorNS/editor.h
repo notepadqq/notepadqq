@@ -19,8 +19,9 @@
 
 #include <functional>
 #include <future>
-#include <optional>
 #include <utility>
+
+#include <optional>
 
 #ifdef NQQ_CPP_CORRECTNESS_TESTS
 class EditorCorrectnessAccess;
@@ -320,8 +321,12 @@ private:
     using DeferAsyncRequest = std::function<QMetaObject::Connection(EmitAsyncRequest)>;
 
     /** Registers before emitting, and cancels deferred emission if the promise times out first. */
-    static QtPromise::QPromise<QVariant> registerPromiseAndSend(AsyncRequestTracker& tracker, unsigned int id,
-        const QString& message, bool ready, EmitAsyncRequest emitRequest, DeferAsyncRequest deferRequest)
+    static QtPromise::QPromise<QVariant> registerPromiseAndSend(AsyncRequestTracker& tracker,
+        unsigned int id,
+        const QString& message,
+        bool ready,
+        EmitAsyncRequest emitRequest,
+        DeferAsyncRequest deferRequest)
     {
         auto promise = registerAsyncPromise(tracker, id, message);
         if (ready) {
@@ -343,8 +348,12 @@ private:
     }
 
     /** Tracks a legacy request, processes events until settlement, and cancels any stale deferred send. */
-    static std::shared_future<QVariant> trackLegacyAndWait(AsyncRequestTracker& tracker, unsigned int id,
-        const QString& message, std::function<void(QVariant)> callback, bool ready, EmitAsyncRequest emitRequest,
+    static std::shared_future<QVariant> trackLegacyAndWait(AsyncRequestTracker& tracker,
+        unsigned int id,
+        const QString& message,
+        std::function<void(QVariant)> callback,
+        bool ready,
+        EmitAsyncRequest emitRequest,
         DeferAsyncRequest deferRequest)
     {
         auto resultPromise = std::make_shared<std::promise<QVariant>>();
@@ -386,9 +395,9 @@ private:
             return std::nullopt;
 
         bool validId = false;
-        const unsigned int id = wireMessage.mid(idStart + idPrefix.size(),
-                                               wireMessage.size() - idStart - idPrefix.size() - 1)
-                                    .toUInt(&validId);
+        const unsigned int id =
+            wireMessage.mid(idStart + idPrefix.size(), wireMessage.size() - idStart - idPrefix.size() - 1)
+                .toUInt(&validId);
         if (!validId || !tracker.resolve(id, data))
             return std::nullopt;
 

@@ -1,8 +1,8 @@
 #include "include/stats.h"
-#include "include/statsruntime.h"
 
 #include "include/Extensions/extensionsloader.h"
 #include "include/notepadqq.h"
+#include "include/statsruntime.h"
 
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
@@ -33,8 +33,7 @@ void Stats::init()
 
     // Start the startup and periodic checks with QObject ownership so Qt cleans them up automatically.
     if (!m_longTimerRunning) {
-        StatsRuntime::startTimers(qApp, [] { Stats::check(); }, std::chrono::seconds(10),
-            std::chrono::hours(12));
+        StatsRuntime::startTimers(qApp, [] { Stats::check(); }, std::chrono::seconds(10), std::chrono::hours(12));
         m_longTimerRunning = true;
     }
 }
@@ -139,8 +138,7 @@ void Stats::askUserPermission()
 bool Stats::isTimeToSendStats()
 {
     NqqSettings& settings = NqqSettings::getInstance();
-    return StatsRuntime::isTransmissionDue(settings.General.getLastStatisticTransmissionTime(),
-        currentUnixTimestamp());
+    return StatsRuntime::isTransmissionDue(settings.General.getLastStatisticTransmissionTime(), currentUnixTimestamp());
 }
 
 qint64 Stats::currentUnixTimestamp()

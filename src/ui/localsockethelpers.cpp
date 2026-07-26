@@ -5,8 +5,8 @@
 
 #include <memory>
 
-QLocalSocket* LocalSocketHelpers::probe(QObject* owner, const QString& serverName,
-    const std::function<bool(QLocalSocket*)>& handshake)
+QLocalSocket* LocalSocketHelpers::probe(
+    QObject* owner, const QString& serverName, const std::function<bool(QLocalSocket*)>& handshake)
 {
     auto socket = std::make_unique<QLocalSocket>(owner);
     socket->connectToServer(serverName);

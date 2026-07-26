@@ -11,8 +11,9 @@
 #include <functional>
 #include <future>
 #include <memory>
-#include <optional>
 #include <stdexcept>
+
+#include <optional>
 
 class QTimer;
 
@@ -33,11 +34,15 @@ public:
     ~AsyncRequestTracker() override;
 
     /** Registers a QtPromise request and starts its timeout timer. */
-    void trackPromise(unsigned int id, QString message, QtPromise::QPromiseResolve<QVariant> resolve,
+    void trackPromise(unsigned int id,
+        QString message,
+        QtPromise::QPromiseResolve<QVariant> resolve,
         QtPromise::QPromiseReject<QVariant> reject);
 
     /** Registers a legacy future request; its callback is retained only for successful replies. */
-    void trackLegacy(unsigned int id, QString message, std::shared_ptr<std::promise<QVariant>> promise,
+    void trackLegacy(unsigned int id,
+        QString message,
+        std::shared_ptr<std::promise<QVariant>> promise,
         std::function<void(QVariant)> callback);
 
     /** Settles and removes a matching request, returning false for unknown or late reply IDs. */

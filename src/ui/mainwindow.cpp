@@ -1,9 +1,9 @@
 #include "include/mainwindow.h"
 
-#include "include/EditorNS/defer.h"
 #include "include/EditorNS/bannerfilechanged.h"
 #include "include/EditorNS/bannerfileremoved.h"
 #include "include/EditorNS/bannerindentationdetected.h"
+#include "include/EditorNS/defer.h"
 #include "include/EditorNS/editor.h"
 #include "include/Extensions/Stubs/windowstub.h"
 #include "include/Extensions/extensionsloader.h"

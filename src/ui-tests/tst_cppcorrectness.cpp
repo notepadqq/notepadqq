@@ -5,18 +5,18 @@
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
 #include "include/docengine.h"
+#include "include/localsockethelpers.h"
 #include "include/notepadqq.h"
 #include "include/statsruntime.h"
-#include "include/localsockethelpers.h"
 
 #include <QElapsedTimer>
 #include <QFile>
 #include <QIODevice>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QNetworkAccessManager>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QPointer>
 #include <QProcess>
 #include <QTemporaryDir>
@@ -33,9 +33,7 @@ using namespace std::chrono_literals;
 
 // Supplies a deterministic invalid runtime so Extension can be tested without launching Node.js.
 QString Notepadqq::nodejsPath()
-{
-    return QStringLiteral("/definitely-not-a-node-runtime");
-}
+{ return QStringLiteral("/definitely-not-a-node-runtime"); }
 
 // Emits controllable editor-readiness events for deferred-send seam tests.
 class EditorReadyEmitter : public QObject {
@@ -55,13 +53,14 @@ public:
     // Uses the same registration helper as Editor's QtPromise overload.
     static QtPromise::QPromise<QVariant> registerPromise(
         EditorNS::AsyncRequestTracker& tracker, unsigned int id, const QString& message)
-    {
-        return EditorNS::Editor::registerAsyncPromise(tracker, id, message);
-    }
+    { return EditorNS::Editor::registerAsyncPromise(tracker, id, message); }
 
     // Uses the complete registration/defer/emission seam shared with Editor's QtPromise overload.
-    static QtPromise::QPromise<QVariant> sendPromise(EditorNS::AsyncRequestTracker& tracker, unsigned int id,
-        const QString& message, bool ready, std::function<void()> emitRequest,
+    static QtPromise::QPromise<QVariant> sendPromise(EditorNS::AsyncRequestTracker& tracker,
+        unsigned int id,
+        const QString& message,
+        bool ready,
+        std::function<void()> emitRequest,
         std::function<QMetaObject::Connection(std::function<void()>)> deferRequest)
     {
         return EditorNS::Editor::registerPromiseAndSend(
@@ -69,8 +68,11 @@ public:
     }
 
     // Uses the complete registration/defer/wait seam shared with Editor's legacy future overload.
-    static std::shared_future<QVariant> sendLegacy(EditorNS::AsyncRequestTracker& tracker, unsigned int id,
-        const QString& message, bool ready, std::function<void()> emitRequest,
+    static std::shared_future<QVariant> sendLegacy(EditorNS::AsyncRequestTracker& tracker,
+        unsigned int id,
+        const QString& message,
+        bool ready,
+        std::function<void()> emitRequest,
         std::function<QMetaObject::Connection(std::function<void()>)> deferRequest)
     {
         return EditorNS::Editor::trackLegacyAndWait(
@@ -129,9 +131,7 @@ public:
 
 protected:
     QNetworkReply* createRequest(Operation, const QNetworkRequest&, QIODevice*) override
-    {
-        return new FakeReply(this, m_finishImmediately);
-    }
+    { return new FakeReply(this, m_finishImmediately); }
 
 private:
     bool m_finishImmediately = false;
@@ -194,8 +194,8 @@ void CppCorrectnessTest::localSocketProbeDoesNotLeakFailedConnection()
 {
     QObject owner;
     const int before = owner.findChildren<QLocalSocket*>().size();
-    QVERIFY(LocalSocketHelpers::probe(&owner, QStringLiteral("nqq-nonexistent-socket"),
-        [](QLocalSocket*) { return false; }) == nullptr);
+    QVERIFY(LocalSocketHelpers::probe(
+                &owner, QStringLiteral("nqq-nonexistent-socket"), [](QLocalSocket*) { return false; }) == nullptr);
     QCOMPARE(owner.findChildren<QLocalSocket*>().size(), before);
 }
 
@@ -233,7 +233,10 @@ void CppCorrectnessTest::editorRegistersAsyncRequestBeforeEmission()
 {
     EditorNS::AsyncRequestTracker tracker(this, 100ms);
     bool emitted = false;
-    auto promise = EditorCorrectnessAccess::sendPromise(tracker, 23, QStringLiteral("C_FUN_ORDER"), true,
+    auto promise = EditorCorrectnessAccess::sendPromise(tracker,
+        23,
+        QStringLiteral("C_FUN_ORDER"),
+        true,
         [&] {
             QCOMPARE(tracker.pendingCount(), 1);
             emitted = true;
@@ -284,8 +287,13 @@ void CppCorrectnessTest::editorDoesNotEmitTimedOutPromiseWhenReadyLate()
     EditorReadyEmitter readyEmitter;
     bool emitted = false;
 
-    auto promise = EditorCorrectnessAccess::sendPromise(tracker, 26, QStringLiteral("C_CMD_LATE_PROMISE"), false,
-        [&] { emitted = true; }, [&](std::function<void()> request) {
+    auto promise = EditorCorrectnessAccess::sendPromise(
+        tracker,
+        26,
+        QStringLiteral("C_CMD_LATE_PROMISE"),
+        false,
+        [&] { emitted = true; },
+        [&](std::function<void()> request) {
             return connect(&readyEmitter, &EditorReadyEmitter::ready, this, std::move(request));
         });
     promise.fail([](const std::runtime_error&) { return QVariant(); });
@@ -306,8 +314,13 @@ void CppCorrectnessTest::editorLegacyWaitExitsOnTimeoutBeforeReady()
     QElapsedTimer elapsed;
     elapsed.start();
 
-    auto future = EditorCorrectnessAccess::sendLegacy(tracker, 27, QStringLiteral("C_FUN_LATE_LEGACY"), false,
-        [&] { emitted = true; }, [&](std::function<void()> request) {
+    auto future = EditorCorrectnessAccess::sendLegacy(
+        tracker,
+        27,
+        QStringLiteral("C_FUN_LATE_LEGACY"),
+        false,
+        [&] { emitted = true; },
+        [&](std::function<void()> request) {
             return connect(&readyEmitter, &EditorReadyEmitter::ready, this, std::move(request));
         });
 
@@ -328,8 +341,7 @@ void CppCorrectnessTest::asyncRequestTrackerResolvesMatchingReplyOnce()
     QVariant resolvedValue;
 
     auto promise = QtPromise::QPromise<QVariant>(
-        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
-            const QtPromise::QPromiseReject<QVariant>& reject) {
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve, const QtPromise::QPromiseReject<QVariant>& reject) {
             tracker.trackPromise(17, QStringLiteral("C_FUN_TEST"), resolve, reject);
         });
     promise.then([&](const QVariant& value) {
@@ -353,8 +365,7 @@ void CppCorrectnessTest::asyncRequestTrackerRejectsMissingReplyAfterTimeout()
     bool rejected = false;
 
     auto promise = QtPromise::QPromise<QVariant>(
-        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
-            const QtPromise::QPromiseReject<QVariant>& reject) {
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve, const QtPromise::QPromiseReject<QVariant>& reject) {
             tracker.trackPromise(18, QStringLiteral("C_FUN_TIMEOUT"), resolve, reject);
         });
     promise.fail([&](const std::runtime_error&) {
@@ -373,8 +384,7 @@ void CppCorrectnessTest::asyncRequestTrackerRejectsPendingPromisesOnDestruction(
     auto* tracker = new EditorNS::AsyncRequestTracker(this, 100ms);
 
     auto promise = QtPromise::QPromise<QVariant>(
-        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
-            const QtPromise::QPromiseReject<QVariant>& reject) {
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve, const QtPromise::QPromiseReject<QVariant>& reject) {
             tracker->trackPromise(19, QStringLiteral("C_FUN_DESTROY"), resolve, reject);
         });
     promise.fail([&](const std::runtime_error&) {
@@ -409,17 +419,16 @@ void CppCorrectnessTest::asyncRequestTrackerCallsLegacyCallbackOnlyOnSuccess()
     QVariant callbackValue;
 
     auto timedOutResult = std::make_shared<std::promise<QVariant>>();
-    tracker.trackLegacy(21, QStringLiteral("C_FUN_CALLBACK_TIMEOUT"), timedOutResult,
-        [&](const QVariant&) { ++callbackCount; });
+    tracker.trackLegacy(
+        21, QStringLiteral("C_FUN_CALLBACK_TIMEOUT"), timedOutResult, [&](const QVariant&) { ++callbackCount; });
     QTRY_COMPARE_WITH_TIMEOUT(tracker.pendingCount(), 0, 250);
     QCOMPARE(callbackCount, 0);
 
     auto successfulResult = std::make_shared<std::promise<QVariant>>();
-    tracker.trackLegacy(22, QStringLiteral("C_FUN_CALLBACK_SUCCESS"), successfulResult,
-        [&](const QVariant& value) {
-            ++callbackCount;
-            callbackValue = value;
-        });
+    tracker.trackLegacy(22, QStringLiteral("C_FUN_CALLBACK_SUCCESS"), successfulResult, [&](const QVariant& value) {
+        ++callbackCount;
+        callbackValue = value;
+    });
     QVERIFY(tracker.resolve(22, 42));
 
     QTRY_COMPARE(callbackCount, 1);

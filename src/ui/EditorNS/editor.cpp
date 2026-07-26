@@ -1,6 +1,6 @@
 #include "include/EditorNS/editor.h"
-#include "include/EditorNS/defer.h"
 
+#include "include/EditorNS/defer.h"
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
 
@@ -377,8 +377,8 @@ QtPromise::QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString 
         });
     };
 
-    return registerPromiseAndSend(*m_asyncRequestTracker, currentMsgIdentifier, msg, m_loaded,
-        std::move(emitRequest), std::move(deferRequest));
+    return registerPromiseAndSend(
+        *m_asyncRequestTracker, currentMsgIdentifier, msg, m_loaded, std::move(emitRequest), std::move(deferRequest));
 }
 
 QtPromise::QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg)
@@ -399,8 +399,13 @@ std::shared_future<QVariant> Editor::asyncSendMessageWithResult(
         });
     };
 
-    return trackLegacyAndWait(*m_asyncRequestTracker, currentMsgIdentifier, msg, std::move(callback), m_loaded,
-        std::move(emitRequest), std::move(deferRequest));
+    return trackLegacyAndWait(*m_asyncRequestTracker,
+        currentMsgIdentifier,
+        msg,
+        std::move(callback),
+        m_loaded,
+        std::move(emitRequest),
+        std::move(deferRequest));
 }
 
 std::shared_future<QVariant> Editor::asyncSendMessageWithResult(
