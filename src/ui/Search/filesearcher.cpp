@@ -182,7 +182,7 @@ void FileSearcher::run()
     // Start the actual search
     int count = 0;
     for (const auto& fileName : fileList) {
-        if (m_wantToStop)
+        if (isInterruptionRequested())
             break;
 
         if (++count % 100 == 0)
