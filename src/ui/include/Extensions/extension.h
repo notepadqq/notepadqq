@@ -10,7 +10,6 @@ class Extension : public QObject {
     Q_OBJECT
 public:
     explicit Extension(QString path, QString serverSocketPath);
-    ~Extension();
 
     QString id() const;
     QString name() const;

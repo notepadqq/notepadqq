@@ -365,6 +365,8 @@ if(NQQ_BUILD_TESTS)
         src/ui/statsruntime.cpp
         src/ui/localsockethelpers.cpp
         src/ui/include/localsockethelpers.h
+        src/ui/Extensions/extension.cpp
+        src/ui/include/Extensions/extension.h
     )
     target_include_directories(cpp-correctness-tests PRIVATE
         src/ui

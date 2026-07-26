@@ -1,9 +1,11 @@
 #include "include/EditorNS/asyncrequesttracker.h"
 #include "include/EditorNS/defer.h"
 #include "include/EditorNS/editor.h"
+#include "include/Extensions/extension.h"
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
 #include "include/docengine.h"
+#include "include/notepadqq.h"
 #include "include/statsruntime.h"
 #include "include/localsockethelpers.h"
 
@@ -16,6 +18,7 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QPointer>
+#include <QProcess>
 #include <QTemporaryDir>
 #include <QTimer>
 #include <QtTest>
@@ -27,6 +30,12 @@
 #include <vector>
 
 using namespace std::chrono_literals;
+
+// Supplies a deterministic invalid runtime so Extension can be tested without launching Node.js.
+QString Notepadqq::nodejsPath()
+{
+    return QStringLiteral("/definitely-not-a-node-runtime");
+}
 
 // Emits controllable editor-readiness events for deferred-send seam tests.
 class EditorReadyEmitter : public QObject {
@@ -162,6 +171,7 @@ private Q_SLOTS:
     void statsPostAbortsStalledReplies();
     void localSocketProbeDoesNotLeakFailedConnection();
     void localSocketDeletesAcceptedPeerAfterDisconnect();
+    void extensionOwnsRuntimeProcessForImmediateDestruction();
     void linePositions_data();
     void linePositions();
 };
@@ -197,6 +207,25 @@ void CppCorrectnessTest::localSocketDeletesAcceptedPeerAfterDisconnect()
     LocalSocketHelpers::deleteOnDisconnect(accepted);
     QVERIFY(QMetaObject::invokeMethod(accepted, "disconnected", Qt::DirectConnection));
     QTRY_VERIFY(observed.isNull());
+}
+
+// Ensures an extension owns its runtime process even when shutdown stops the event loop.
+void CppCorrectnessTest::extensionOwnsRuntimeProcessForImmediateDestruction()
+{
+    QTemporaryDir extensionDir;
+    QVERIFY(extensionDir.isValid());
+    QFile manifest(extensionDir.filePath(QStringLiteral("nqq-manifest.json")));
+    QVERIFY(manifest.open(QIODevice::WriteOnly));
+    manifest.write(R"({"name":"test extension","runtime":"nodejs","main":"index.js"})");
+    manifest.close();
+
+    auto* extension = new Extensions::Extension(extensionDir.path(), QStringLiteral("test-socket"));
+    const QList<QProcess*> processes = extension->findChildren<QProcess*>();
+    QCOMPARE(processes.size(), 1);
+    QPointer<QProcess> process = processes.constFirst();
+
+    delete extension;
+    QVERIFY(process.isNull());
 }
 
 // Guards against emitting a bridge request before its completion is registered.

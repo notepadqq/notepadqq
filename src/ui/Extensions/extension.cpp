@@ -32,7 +32,7 @@ Extension::Extension(QString path, QString serverSocketPath)
         QString main = manifest.value("main").toString();
 
         if (m_runtime == "nodejs") {
-            process = new QProcess();
+            process = new QProcess(this);
             process->setProcessChannelMode(QProcess::ForwardedChannels);
             process->setWorkingDirectory(path);
 
@@ -44,8 +44,7 @@ Extension::Extension(QString path, QString serverSocketPath)
 
             QString runtimePath = Notepadqq::nodejsPath();
 
-            connect(
-                process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(on_processError(QProcess::ProcessError)));
+            connect(process, &QProcess::errorOccurred, this, &Extension::on_processError);
 
             process->start(runtimePath, args);
         }
@@ -64,13 +63,6 @@ Extension::Extension(QString path, QString serverSocketPath)
         failedToLoadExtension(path, "ui.js missing");
         return;
     }*/
-}
-
-Extension::~Extension()
-{
-    if (process != nullptr) {
-        process->deleteLater();
-    }
 }
 
 QJsonObject Extension::getManifest(const QString& extensionPath)
