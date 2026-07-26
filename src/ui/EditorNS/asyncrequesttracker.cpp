@@ -115,4 +115,7 @@ void AsyncRequestTracker::startTimer(unsigned int id, PendingRequest request)
 std::runtime_error AsyncRequestTracker::timeoutError(const QString& message)
 { return std::runtime_error(QStringLiteral("Timed out waiting for editor reply to %1").arg(message).toStdString()); }
 
+bool AsyncRequestTracker::isPending(unsigned int id) const
+{ return m_pendingRequests.contains(id); }
+
 } // namespace EditorNS

@@ -364,26 +364,20 @@ unsigned int messageIdentifier = 0;
 QtPromise::QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg, const QVariant data)
 {
     unsigned int currentMsgIdentifier = ++messageIdentifier;
-
-    QtPromise::QPromise<QVariant> resultPromise =
-        registerAsyncPromise(*m_asyncRequestTracker, currentMsgIdentifier, msg);
-
     QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
 
-    if (m_loaded) {
-        // Send it right now
+    EmitAsyncRequest emitRequest = [this, message_id, data] {
         emit m_jsToCppProxy->messageReceivedByJs(message_id, data);
-    } else {
-        // Send it as soon as the editor becomes ready
-        auto conn = std::make_shared<QMetaObject::Connection>();
-        *conn = QObject::connect(this, &Editor::editorReady, this, [=, this]() {
-            QObject::disconnect(*conn);
+    };
+    DeferAsyncRequest deferRequest = [this](EmitAsyncRequest request) {
+        return QObject::connect(this, &Editor::editorReady, this, [this, request = std::move(request)]() mutable {
             m_loaded = true;
-            emit m_jsToCppProxy->messageReceivedByJs(message_id, data);
+            request();
         });
-    }
+    };
 
-    return resultPromise;
+    return registerPromiseAndSend(*m_asyncRequestTracker, currentMsgIdentifier, msg, m_loaded,
+        std::move(emitRequest), std::move(deferRequest));
 }
 
 QtPromise::QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString msg)
@@ -393,22 +387,19 @@ std::shared_future<QVariant> Editor::asyncSendMessageWithResult(
     const QString msg, const QVariant data, std::function<void(QVariant)> callback)
 {
     unsigned int currentMsgIdentifier = ++messageIdentifier;
-
-    std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
-    m_asyncRequestTracker->trackLegacy(currentMsgIdentifier, msg, resultPromise, std::move(callback));
-
     QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
+    EmitAsyncRequest emitRequest = [this, message_id, data] {
+        emit m_jsToCppProxy->messageReceivedByJs(message_id, data);
+    };
+    DeferAsyncRequest deferRequest = [this](EmitAsyncRequest request) {
+        return QObject::connect(this, &Editor::editorReady, this, [this, request = std::move(request)]() mutable {
+            m_loaded = true;
+            request();
+        });
+    };
 
-    this->sendMessage(message_id, data);
-
-    std::shared_future<QVariant> fut = resultPromise->get_future().share();
-
-    while (fut.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
-        QCoreApplication::processEvents(QEventLoop::AllEvents);
-        QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
-    }
-
-    return fut;
+    return trackLegacyAndWait(*m_asyncRequestTracker, currentMsgIdentifier, msg, std::move(callback), m_loaded,
+        std::move(emitRequest), std::move(deferRequest));
 }
 
 std::shared_future<QVariant> Editor::asyncSendMessageWithResult(

@@ -4,6 +4,7 @@
 #include "include/Search/searchhelpers.h"
 #include "include/docengine.h"
 
+#include <QElapsedTimer>
 #include <QFile>
 #include <QPointer>
 #include <QTemporaryDir>
@@ -18,14 +19,47 @@
 
 using namespace std::chrono_literals;
 
+// Emits controllable editor-readiness events for deferred-send seam tests.
+class EditorReadyEmitter : public QObject {
+    Q_OBJECT
+public:
+    // Delivers the synthetic readiness event to any still-connected request.
+    void becomeReady() { emit ready(); }
+
+signals:
+    // Notifies deferred requests that the synthetic editor is ready to receive messages.
+    void ready();
+};
+
+// Test-only friend that exercises the private Editor/tracker seam without expanding Editor's public API.
 class EditorCorrectnessAccess {
 public:
+    // Uses the same registration helper as Editor's QtPromise overload.
     static QtPromise::QPromise<QVariant> registerPromise(
         EditorNS::AsyncRequestTracker& tracker, unsigned int id, const QString& message)
     {
         return EditorNS::Editor::registerAsyncPromise(tracker, id, message);
     }
 
+    // Uses the complete registration/defer/emission seam shared with Editor's QtPromise overload.
+    static QtPromise::QPromise<QVariant> sendPromise(EditorNS::AsyncRequestTracker& tracker, unsigned int id,
+        const QString& message, bool ready, std::function<void()> emitRequest,
+        std::function<QMetaObject::Connection(std::function<void()>)> deferRequest)
+    {
+        return EditorNS::Editor::registerPromiseAndSend(
+            tracker, id, message, ready, std::move(emitRequest), std::move(deferRequest));
+    }
+
+    // Uses the complete registration/defer/wait seam shared with Editor's legacy future overload.
+    static std::shared_future<QVariant> sendLegacy(EditorNS::AsyncRequestTracker& tracker, unsigned int id,
+        const QString& message, bool ready, std::function<void()> emitRequest,
+        std::function<QMetaObject::Connection(std::function<void()>)> deferRequest)
+    {
+        return EditorNS::Editor::trackLegacyAndWait(
+            tracker, id, message, nullptr, ready, std::move(emitRequest), std::move(deferRequest));
+    }
+
+    // Routes a synthetic wire reply through the same parser and tracker resolution helper as Editor.
     static bool receiveReply(EditorNS::AsyncRequestTracker& tracker, const QString& wireMessage, const QVariant& data)
     { return EditorNS::Editor::resolveAsyncReply(tracker, wireMessage, data).has_value(); }
 };
@@ -54,29 +88,32 @@ private Q_SLOTS:
     void editorRegistersAsyncRequestBeforeEmission();
     void editorSyntheticReplyClearsRegisteredRequest();
     void editorTrackerDestructionLeavesNoLiveTimeoutTimers();
+    void editorDoesNotEmitTimedOutPromiseWhenReadyLate();
+    void editorLegacyWaitExitsOnTimeoutBeforeReady();
     void cancellationRequestsInterruptionAndStopsFilesystemSearch();
     void searchPlainText_handlesContentEndingInLf();
     void linePositions_data();
     void linePositions();
 };
 
+// Guards against emitting a bridge request before its completion is registered.
 void CppCorrectnessTest::editorRegistersAsyncRequestBeforeEmission()
 {
     EditorNS::AsyncRequestTracker tracker(this, 100ms);
-    auto promise = EditorCorrectnessAccess::registerPromise(tracker, 23, QStringLiteral("C_FUN_ORDER"));
-    Q_UNUSED(promise);
-
     bool emitted = false;
-    auto emitRequest = [&] {
-        QCOMPARE(tracker.pendingCount(), 1);
-        emitted = true;
-    };
-    emitRequest();
+    auto promise = EditorCorrectnessAccess::sendPromise(tracker, 23, QStringLiteral("C_FUN_ORDER"), true,
+        [&] {
+            QCOMPARE(tracker.pendingCount(), 1);
+            emitted = true;
+        },
+        {});
+    Q_UNUSED(promise);
 
     QVERIFY(emitted);
     QVERIFY(tracker.resolve(23, QVariant()));
 }
 
+// Guards the Editor reply parser-to-tracker resolution seam.
 void CppCorrectnessTest::editorSyntheticReplyClearsRegisteredRequest()
 {
     EditorNS::AsyncRequestTracker tracker(this, 100ms);
@@ -91,6 +128,7 @@ void CppCorrectnessTest::editorSyntheticReplyClearsRegisteredRequest()
     QTRY_COMPARE(resolvedValue, QVariant(QStringLiteral("synthetic")));
 }
 
+// Guards tracker timer ownership when the Editor-equivalent parent is destroyed.
 void CppCorrectnessTest::editorTrackerDestructionLeavesNoLiveTimeoutTimers()
 {
     auto* owner = new QObject;
@@ -107,6 +145,50 @@ void CppCorrectnessTest::editorTrackerDestructionLeavesNoLiveTimeoutTimers()
     QVERIFY(timer.isNull());
 }
 
+// Guards against executing a deferred command after its promise has timed out.
+void CppCorrectnessTest::editorDoesNotEmitTimedOutPromiseWhenReadyLate()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 20ms);
+    EditorReadyEmitter readyEmitter;
+    bool emitted = false;
+
+    auto promise = EditorCorrectnessAccess::sendPromise(tracker, 26, QStringLiteral("C_CMD_LATE_PROMISE"), false,
+        [&] { emitted = true; }, [&](std::function<void()> request) {
+            return connect(&readyEmitter, &EditorReadyEmitter::ready, this, std::move(request));
+        });
+    promise.fail([](const std::runtime_error&) { return QVariant(); });
+
+    QTRY_COMPARE_WITH_TIMEOUT(tracker.pendingCount(), 0, 250);
+    readyEmitter.becomeReady();
+    QCoreApplication::processEvents();
+    QVERIFY(!emitted);
+}
+
+// Guards the legacy compatibility wait when the editor never becomes ready.
+void CppCorrectnessTest::editorLegacyWaitExitsOnTimeoutBeforeReady()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 20ms);
+    EditorReadyEmitter readyEmitter;
+    bool emitted = false;
+    QTimer::singleShot(200, &readyEmitter, &EditorReadyEmitter::becomeReady);
+    QElapsedTimer elapsed;
+    elapsed.start();
+
+    auto future = EditorCorrectnessAccess::sendLegacy(tracker, 27, QStringLiteral("C_FUN_LATE_LEGACY"), false,
+        [&] { emitted = true; }, [&](std::function<void()> request) {
+            return connect(&readyEmitter, &EditorReadyEmitter::ready, this, std::move(request));
+        });
+
+    QVERIFY(elapsed.elapsed() < 150);
+    QCOMPARE(tracker.pendingCount(), 0);
+    QVERIFY(future.wait_for(0ms) == std::future_status::ready);
+    QVERIFY_THROWS_EXCEPTION(std::runtime_error, future.get());
+    readyEmitter.becomeReady();
+    QCoreApplication::processEvents();
+    QVERIFY(!emitted);
+}
+
+// Guards single settlement and late-duplicate rejection.
 void CppCorrectnessTest::asyncRequestTrackerResolvesMatchingReplyOnce()
 {
     EditorNS::AsyncRequestTracker tracker(this, 100ms);
@@ -132,6 +214,7 @@ void CppCorrectnessTest::asyncRequestTrackerResolvesMatchingReplyOnce()
     QCOMPARE(resolutionCount, 1);
 }
 
+// Guards bounded QtPromise rejection and record removal when no reply arrives.
 void CppCorrectnessTest::asyncRequestTrackerRejectsMissingReplyAfterTimeout()
 {
     EditorNS::AsyncRequestTracker tracker(this, 20ms);
@@ -151,6 +234,7 @@ void CppCorrectnessTest::asyncRequestTrackerRejectsMissingReplyAfterTimeout()
     QTRY_VERIFY_WITH_TIMEOUT(rejected, 250);
 }
 
+// Guards teardown rejection of pending QtPromise requests.
 void CppCorrectnessTest::asyncRequestTrackerRejectsPendingPromisesOnDestruction()
 {
     bool rejected = false;
@@ -171,6 +255,7 @@ void CppCorrectnessTest::asyncRequestTrackerRejectsPendingPromisesOnDestruction(
     QTRY_VERIFY_WITH_TIMEOUT(rejected, 250);
 }
 
+// Guards timeout propagation through the compatibility std::future API.
 void CppCorrectnessTest::asyncRequestTrackerSetsLegacyExceptionOnTimeout()
 {
     EditorNS::AsyncRequestTracker tracker(this, 20ms);
@@ -184,6 +269,7 @@ void CppCorrectnessTest::asyncRequestTrackerSetsLegacyExceptionOnTimeout()
     QVERIFY_THROWS_EXCEPTION(std::runtime_error, future.get());
 }
 
+// Guards the legacy callback against timeout invocation while preserving successful delivery.
 void CppCorrectnessTest::asyncRequestTrackerCallsLegacyCallbackOnlyOnSuccess()
 {
     EditorNS::AsyncRequestTracker tracker(this, 20ms);
