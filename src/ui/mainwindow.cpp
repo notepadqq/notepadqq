@@ -1454,7 +1454,7 @@ void MainWindow::instantiateFrmSearchReplace()
     if (!m_frmSearchReplace) {
         m_frmSearchReplace = new frmSearchReplace(m_topEditorContainer, this);
 
-        connect(m_frmSearchReplace, &frmSearchReplace::toggleAdvancedSearch, [this]() {
+        connect(m_frmSearchReplace, &frmSearchReplace::toggleAdvancedSearch, this, [this]() {
             m_advSearchDock->show(!m_advSearchDock->isVisible(), true);
         });
     }
