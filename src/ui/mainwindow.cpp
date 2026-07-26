@@ -560,11 +560,10 @@ void MainWindow::openCommandLineProvidedUrls(const QString& workingDirectory, co
 
         // This must be queued because CodeMirror chokes on receiving setCursorPosition()
         // right after construction of the Editor.
-        const auto editor = m_topEditorContainer->currentTabWidget()->currentEditor().toWeakRef();
+        QPointer<Editor> editor = m_topEditorContainer->currentTabWidget()->currentEditor();
         EditorNS::deferToObject(this, [editor, l, c] {
-            const auto strongEditor = editor.toStrongRef();
-            if (strongEditor) {
-                strongEditor->setCursorPosition(l - 1, c - 1);
+            if (editor) {
+                editor->setCursorPosition(l - 1, c - 1);
             }
         });
     });
@@ -669,13 +668,11 @@ void MainWindow::toggleOverwrite()
 {
     m_overwrite = !m_overwrite;
 
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/,
-                                            const int /*editorId*/,
-                                            EditorTabWidget* /*tabWidget*/,
-                                            QSharedPointer<Editor> editor) {
-        editor->setOverwrite(m_overwrite);
-        return true;
-    });
+    m_topEditorContainer->forEachEditor(
+        [&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget* /*tabWidget*/, Editor* editor) {
+            editor->setOverwrite(m_overwrite);
+            return true;
+        });
 
     if (m_overwrite) {
         m_sbOvertypeBtn->setText(tr("OVR"));
@@ -728,7 +725,7 @@ void MainWindow::on_actionShow_Tabs_triggered(bool on)
     m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
                                                       const int /*editorId*/,
                                                       EditorTabWidget* /*tabWidget*/,
-                                                      QSharedPointer<Editor> editor,
+                                                      Editor* editor,
                                                       std::function<void()> done) {
         editor->setTabsVisible(on);
         done();
@@ -743,7 +740,7 @@ void MainWindow::on_actionShow_Spaces_triggered(bool on)
     m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
                                                       const int /*editorId*/,
                                                       EditorTabWidget* /*tabWidget*/,
-                                                      QSharedPointer<Editor> editor,
+                                                      Editor* editor,
                                                       std::function<void()> done) {
         editor->setWhitespaceVisible(on);
         done();
@@ -758,7 +755,7 @@ void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
     m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
                                                       const int /*editorId*/,
                                                       EditorTabWidget* /*tabWidget*/,
-                                                      QSharedPointer<Editor> editor,
+                                                      Editor* editor,
                                                       std::function<void()> done) {
         editor->setEOLVisible(on);
         done();
@@ -794,7 +791,7 @@ void MainWindow::on_actionShow_All_Characters_toggled(bool on)
     m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
                                                       const int /*editorId*/,
                                                       EditorTabWidget* /*tabWidget*/,
-                                                      QSharedPointer<Editor> editor,
+                                                      Editor* editor,
                                                       std::function<void()> done) {
         editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
         editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
@@ -810,7 +807,7 @@ void MainWindow::on_actionMath_Rendering_toggled(bool on)
     m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
                                                       const int /*editorId*/,
                                                       EditorTabWidget* /*tabWidget*/,
-                                                      QSharedPointer<Editor> editor,
+                                                      Editor* editor,
                                                       std::function<void()> done) {
         editor->setMathEnabled(on);
         done();
@@ -1094,7 +1091,7 @@ QUrl MainWindow::getSaveDialogDefaultFileName(EditorTabWidget* tabWidget, int ta
     }
 }
 
-QSharedPointer<Editor> MainWindow::currentEditor()
+Editor* MainWindow::currentEditor()
 { return m_topEditorContainer->currentTabWidget()->currentEditor(); }
 
 QAction* MainWindow::addExtensionMenuItem(QString extensionId, QString text)
@@ -1193,19 +1190,19 @@ void MainWindow::on_editorAdded(EditorTabWidget* tabWidget, int tab)
     // have a banner attached to it. We need to disconnect previous signals to prevent
     // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
     // created a few lines below).
-    disconnect(editor.data(), &Editor::bannerRemoved, 0, 0);
+    disconnect(editor, &Editor::bannerRemoved, 0, 0);
 
-    connect(editor.data(), &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(editor.data(), &Editor::documentInfoRequested, this, &MainWindow::refreshEditorUiCursorInfo);
-    connect(editor.data(), &Editor::currentLanguageChanged, this, [=, this](QString id, QString name) {
+    connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
+    connect(editor, &Editor::documentInfoRequested, this, &MainWindow::refreshEditorUiCursorInfo);
+    connect(editor, &Editor::currentLanguageChanged, this, [=, this](QString id, QString name) {
         on_currentLanguageChanged(editor, id, name);
     });
-    connect(editor.data(), &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    connect(editor.data(), &Editor::cleanChanged, this, [=, this]() {
+    connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
+    connect(editor, &Editor::cleanChanged, this, [=, this]() {
         if (currentEditor() == editor)
             refreshEditorUiInfo(editor);
     });
-    connect(editor.data(), &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
+    connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
 
     // Initialize editor with UI settings
     editor->setLineWrap(ui->actionWord_wrap->isChecked());
@@ -1243,7 +1240,7 @@ void MainWindow::refreshEditorUiCursorInfo(QMap<QString, QVariant> data)
     m_sbDocumentInfoLabel->setText(msg);
 }
 
-void MainWindow::on_currentLanguageChanged(QSharedPointer<Editor> sender, QString /*id*/, QString /*name*/)
+void MainWindow::on_currentLanguageChanged(Editor* sender, QString /*id*/, QString /*name*/)
 {
     if (currentEditor() == sender) {
         refreshEditorUiInfo(sender);
@@ -1271,13 +1268,15 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 
     // Else: type == OpenDocument
     if (doc.docType == DocResult::TypeDocument) {
+        if (!doc.editor)
+            return;
         // Make sure the editor is still open by searching for it first.
-        QSharedPointer<Editor> found = doc.editor;
+        Editor* found = doc.editor;
         EditorTabWidget* parentWidget = m_topEditorContainer->tabWidgetFromEditor(found);
         if (!parentWidget)
             return;
 
-        parentWidget->setCurrentWidget(found.data());
+        parentWidget->setCurrentWidget(found);
         if (result) {
             found->setSelection(result->lineNumber - 1,
                 result->positionInLine, // selection start
@@ -1317,7 +1316,7 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
     }
 }
 
-void MainWindow::refreshEditorUiInfo(QSharedPointer<Editor> editor)
+void MainWindow::refreshEditorUiInfo(Editor* editor)
 {
     // Update current language in statusbar
     QString name = editor->getLanguage()->name;
@@ -1328,7 +1327,7 @@ void MainWindow::refreshEditorUiInfo(QSharedPointer<Editor> editor)
     if (editor->filePath().isEmpty()) {
         EditorTabWidget* tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
         if (tabWidget != 0) {
-            int tab = tabWidget->indexOf(editor.data());
+            int tab = tabWidget->indexOf(editor);
             if (tab != -1) {
                 newTitle = QString("%1 - %2").arg(tabWidget->tabText(tab)).arg(QApplication::applicationName());
             }
@@ -1354,8 +1353,11 @@ void MainWindow::refreshEditorUiInfo(QSharedPointer<Editor> editor)
     }
 
     // Enable / disable menus
-    editor->isCleanP().then([=, this](bool isClean) {
-        QUrl fileName = editor->filePath();
+    QPointer<Editor> guardedEditor = editor;
+    editor->isCleanP().then([this, guardedEditor](bool isClean) {
+        if (!guardedEditor || currentEditor() != guardedEditor)
+            return;
+        QUrl fileName = guardedEditor->filePath();
         ui->actionRename->setEnabled(!fileName.isEmpty());
         ui->actionMove_to_New_Window->setEnabled(isClean);
         ui->actionOpen_in_New_Window->setEnabled(isClean);
@@ -1483,7 +1485,7 @@ void MainWindow::on_actionCurrent_Full_File_Path_to_Clipboard_triggered()
     auto editor = currentEditor();
     if (editor->filePath().isEmpty()) {
         EditorTabWidget* tabWidget = m_topEditorContainer->currentTabWidget();
-        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor.data())));
+        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     } else {
         QApplication::clipboard()->setText(
             editor->filePath().toDisplayString(QUrl::PreferLocalFile | QUrl::RemovePassword));
@@ -1495,7 +1497,7 @@ void MainWindow::on_actionCurrent_Filename_to_Clipboard_triggered()
     auto editor = currentEditor();
     if (editor->filePath().isEmpty()) {
         EditorTabWidget* tabWidget = m_topEditorContainer->currentTabWidget();
-        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor.data())));
+        QApplication::clipboard()->setText(tabWidget->tabText(tabWidget->indexOf(editor)));
     } else {
         QApplication::clipboard()->setText(Notepadqq::fileNameFromUrl(editor->filePath()));
     }
@@ -1529,25 +1531,20 @@ void MainWindow::on_actionClose_All_triggered()
     bool canceled = false;
 
     // Save what needs to be saved, check if user wants to cancel the closing
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/,
-                                            const int editorId,
-                                            EditorTabWidget* tabWidget,
-                                            QSharedPointer<Editor> /*editor*/) {
-        int closeResult = closeTab(tabWidget, editorId, false, false);
-        if (closeResult == MainWindow::tabCloseResult_Canceled) {
-            canceled = true;
-            return false; // Cancel all
-        } else {
-            return true;
-        }
-    });
+    m_topEditorContainer->forEachEditor(
+        [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, Editor* /*editor*/) {
+            int closeResult = closeTab(tabWidget, editorId, false, false);
+            if (closeResult == MainWindow::tabCloseResult_Canceled) {
+                canceled = true;
+                return false; // Cancel all
+            } else {
+                return true;
+            }
+        });
 
     if (!canceled) {
-        m_topEditorContainer->forEachEditor(true,
-            [&](const int /*tabWidgetId*/,
-                const int editorId,
-                EditorTabWidget* tabWidget,
-                QSharedPointer<Editor> /*editor*/) {
+        m_topEditorContainer->forEachEditor(
+            true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, Editor* /*editor*/) {
                 closeTab(tabWidget, editorId, true, true);
                 return true;
             });
@@ -1678,7 +1675,7 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
 
     // Save what needs to be saved, check if user wants to cancel the closing
     m_topEditorContainer->forEachEditor(
-        [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, QSharedPointer<Editor> editor) {
+        [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, Editor* editor) {
             if (keepOpen == editor)
                 return true;
 
@@ -1692,11 +1689,8 @@ void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
         });
 
     if (!canceled) {
-        m_topEditorContainer->forEachEditor(true,
-            [&](const int /*tabWidgetId*/,
-                const int editorId,
-                EditorTabWidget* tabWidget,
-                QSharedPointer<Editor> editor) {
+        m_topEditorContainer->forEachEditor(
+            true, [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, Editor* editor) {
                 if (keepOpen == editor)
                     return true;
 
@@ -1744,7 +1738,7 @@ void MainWindow::on_actionSave_All_triggered()
 {
     // No tab must get closed (or added) while we're iterating!!
     m_topEditorContainer->forEachEditor(
-        [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, QSharedPointer<Editor> editor) {
+        [&](const int /*tabWidgetId*/, const int editorId, EditorTabWidget* tabWidget, Editor* editor) {
             if (editor->isClean()) {
                 return true;
             } else {
@@ -1813,14 +1807,19 @@ void MainWindow::on_documentLoaded(EditorTabWidget* tabWidget, int tab, bool was
     }
 }
 
-void MainWindow::checkIndentationMode(QSharedPointer<Editor> editor)
+void MainWindow::checkIndentationMode(Editor* editor)
 {
-    editor->detectDocumentIndentation().then([=, this](const std::pair<IndentationMode, bool> result) {
+    QPointer<Editor> guardedEditor = editor;
+    editor->detectDocumentIndentation().then([this, guardedEditor](const std::pair<IndentationMode, bool> result) {
+        if (!guardedEditor)
+            return;
         IndentationMode detected = result.first;
         bool found = result.second;
 
         if (found) {
-            editor->indentationModeP().then([=, this](IndentationMode curr) {
+            guardedEditor->indentationModeP().then([this, guardedEditor, detected](IndentationMode curr) {
+                if (!guardedEditor)
+                    return;
                 bool differentTabSpaces = detected.useTabs != curr.useTabs;
                 bool differentSpaceSize =
                     detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
@@ -1831,23 +1830,33 @@ void MainWindow::checkIndentationMode(QSharedPointer<Editor> editor)
                         new BannerIndentationDetected(differentSpaceSize, detected, curr, this);
                     banner->setObjectName("indentationdetected");
 
-                    editor->insertBanner(banner);
+                    guardedEditor->insertBanner(banner);
 
-                    connect(banner, &BannerIndentationDetected::useApplicationSettings, this, [=, this]() {
-                        editor->removeBanner(banner);
-                        editor->setFocus();
-                    });
+                    connect(banner,
+                        &BannerIndentationDetected::useApplicationSettings,
+                        this,
+                        [this, guardedEditor, banner] {
+                            if (!guardedEditor)
+                                return;
+                            guardedEditor->removeBanner(banner);
+                            guardedEditor->setFocus();
+                        });
 
-                    connect(banner, &BannerIndentationDetected::useDocumentSettings, this, [=, this]() {
-                        editor->removeBanner(banner);
-                        if (detected.useTabs) {
-                            editor->setCustomIndentationMode(true);
-                        } else {
-                            editor->setCustomIndentationMode(detected.useTabs, detected.size);
-                        }
-                        ui->actionIndentation_Custom->setChecked(true);
-                        editor->setFocus();
-                    });
+                    connect(banner,
+                        &BannerIndentationDetected::useDocumentSettings,
+                        this,
+                        [this, guardedEditor, banner, detected] {
+                            if (!guardedEditor)
+                                return;
+                            guardedEditor->removeBanner(banner);
+                            if (detected.useTabs) {
+                                guardedEditor->setCustomIndentationMode(true);
+                            } else {
+                                guardedEditor->setCustomIndentationMode(detected.useTabs, detected.size);
+                            }
+                            ui->actionIndentation_Custom->setChecked(true);
+                            guardedEditor->setFocus();
+                        });
                 }
             });
         }
@@ -1936,13 +1945,11 @@ void MainWindow::on_actionRename_triggered()
 
 void MainWindow::on_actionWord_wrap_toggled(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int /*tabWidgetId*/,
-                                            const int /*editorId*/,
-                                            EditorTabWidget* /*tabWidget*/,
-                                            QSharedPointer<Editor> editor) {
-        editor->setLineWrap(on);
-        return true;
-    });
+    m_topEditorContainer->forEachEditor(
+        [&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget* /*tabWidget*/, Editor* editor) {
+            editor->setLineWrap(on);
+            return true;
+        });
     m_settings.General.setWordWrap(on);
 }
 
@@ -2020,7 +2027,7 @@ void MainWindow::on_actionMac_Format_triggered()
     editor->markDirty();
 }
 
-void MainWindow::convertEditorEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom)
+void MainWindow::convertEditorEncoding(Editor* editor, QTextCodec* codec, bool bom)
 {
     editor->setCodec(codec);
     editor->setBom(bom);
@@ -2276,8 +2283,10 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 */
 QtPromise::QPromise<QStringList> MainWindow::currentWordOrSelections()
 {
-    auto editor = currentEditor();
-    return editor->selectedTexts().then([=, this](QStringList selection) {
+    QPointer<Editor> editor = currentEditor();
+    return editor->selectedTexts().then([editor](QStringList selection) {
+        if (!editor)
+            return QtPromise::QPromise<QStringList>::resolve({});
         if (selection.isEmpty() || selection.first().isEmpty()) {
             return editor->getCurrentWord().then([](QString word) { return QStringList(word); });
         } else {
@@ -2439,9 +2448,11 @@ void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
 
 void MainWindow::on_actionGo_to_Line_triggered()
 {
-    auto editor = currentEditor();
+    QPointer<Editor> editor = currentEditor();
     int currentLine = editor->cursorPosition().first;
-    editor->lineCount().then([=, this](int lines) {
+    editor->lineCount().then([this, editor, currentLine](int lines) {
+        if (!editor)
+            return;
         frmLineNumberChooser* frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
         if (frm->exec() == QDialog::Accepted) {
             int line = frm->value();
@@ -2515,7 +2526,7 @@ void MainWindow::on_actionFull_Screen_toggled(bool on)
 
 void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
 {
-    m_topEditorContainer->forEachEditor([&](const int, const int, EditorTabWidget*, QSharedPointer<Editor> editor) {
+    m_topEditorContainer->forEachEditor([&](const int, const int, EditorTabWidget*, Editor* editor) {
         editor->setSmartIndent(on);
         return true;
     });

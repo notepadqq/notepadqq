@@ -389,7 +389,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
     for (const auto& view : views) {
         // Each new view must be created if it does not yet exist.
         EditorTabWidget* tabW = editorContainer->tabWidget(viewCounter);
-        QSharedPointer<Editor> activeEditor;
+        Editor* activeEditor = nullptr;
 
         if (!tabW)
             tabW = editorContainer->addTabWidget();
@@ -416,7 +416,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
                               .setRememberLastDir(false)
                               .setFileSizeWarning(DocEngine::FileSizeActionYesToAll)
                               .setPriorityIdx(tab.active ? ALL_MAXIMUM_PRIORITY : ALL_MINIMUM_PRIORITY)
-                              .setManualEditorInitialization([=](QSharedPointer<Editor> editor, const QUrl& /*url*/) {
+                              .setManualEditorInitialization([=](Editor* editor, const QUrl& /*url*/) {
                                   int idx = tabW->indexOf(editor);
 
                                   editor->setCursorPosition(tab.cursorX, tab.cursorY);
@@ -506,7 +506,7 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
             } else {
                 tabText = tabW->generateTabTitleForUrl(QUrl(tab.filePath));
             }
-            tabW->setTabText(loadingEditor.data(), tabText);
+            tabW->setTabText(loadingEditor, tabText);
 
             if (tab.active) {
                 activeEditor = loadingEditor;
@@ -519,7 +519,8 @@ void loadSession(DocEngine* docEngine, TopEditorContainer* editorContainer, QStr
         if (tabW->count() == 0) {
             viewCounter--;
         } else { // Otherwise we finish by making the right tab the currently open one.
-            tabW->setCurrentIndex(tabW->indexOf(activeEditor));
+            const int activeIndex = tabW->indexOf(activeEditor);
+            tabW->setCurrentIndex(activeIndex >= 0 ? activeIndex : 0);
         }
 
     } // end for

@@ -11,14 +11,16 @@ using namespace EditorNS;
 /**
  * @brief A TabWidget used to allow the user to switch between
  *        multiple Editor instances.
+ *
+ * Editors added to this widget are Qt-owned page widgets. editor() and currentEditor()
+ * return non-owning pointers that are valid only while the editor remains in a tab.
+ * Use QPointer for any deferred use, and closeEditorTab() when permanently removing a tab.
  */
 class EditorTabWidget : public QTabWidget {
     Q_OBJECT
 public:
     explicit EditorTabWidget(QWidget* parent = nullptr);
-    ~EditorTabWidget();
-
-    int indexOf(QSharedPointer<Editor> editor) const;
+    int indexOf(Editor* editor) const;
     int indexOf(QWidget* widget) const;
 
     int addEditorTab(bool setFocus, const QString& title);
@@ -30,17 +32,18 @@ public:
      * @return Tab index of the new document inside this EditorTabWidget.
      */
     int transferEditorTab(bool setFocus, EditorTabWidget* source, int tabIndex);
+    /** Removes a tab and schedules its Qt-owned editor for destruction. */
+    void closeEditorTab(int index);
     int findOpenEditorByUrl(const QUrl& filename);
 
-    QSharedPointer<Editor> editor(int index) const;
-    QSharedPointer<Editor> editor(Editor* editor) const;
-    QSharedPointer<Editor> currentEditor();
+    Editor* editor(int index) const;
+    Editor* currentEditor();
 
     /**
      * @brief tabTextFromEditor Returns the tab text of a given Editor, or an empty string if
      *                          the Editor is not part of this tab widget.
      */
-    QString tabTextFromEditor(QSharedPointer<Editor> editor);
+    QString tabTextFromEditor(Editor* editor);
 
     qreal zoomFactor() const;
     void setZoomFactor(const qreal& zoomFactor);
@@ -73,9 +76,6 @@ public:
     QString generateTabTitleForUrl(const QUrl& filename) const;
 
 private:
-    // Smart pointers to the editors within this TabWidget
-    QHash<Editor*, QSharedPointer<Editor>> m_editorPointers;
-
     qreal m_zoomFactor = 1;
 
     int m_formerTabIndex = 0;
@@ -84,6 +84,7 @@ private:
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
     void connectEditorSignals(Editor* editor);
+    /** Disconnects this tab widget before an editor moves to another tab widget. */
     void disconnectEditorSignals(Editor* editor);
 
     /**
@@ -111,7 +112,6 @@ public slots:
 
 protected:
     void mouseReleaseEvent(QMouseEvent* ev);
-    void tabRemoved(int);
 };
 
 #endif // EDITORTABWIDGET_H

@@ -28,7 +28,8 @@ frmPreferences::frmPreferences(TopEditorContainer* topEditorContainer, QWidget* 
     // setFixedSize(this->width(), this->height());
     // setWindowFlags((windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    m_previewEditor = Editor::getNewEditor(this);
+    m_previewEditor = Editor::takeNewEditor();
+    m_previewEditor->setParent(this);
     m_previewEditor->setLanguageFromFilePath("test.js");
     m_previewEditor->setValue(R"(var enabled = false;)"
                               "\n"
@@ -201,7 +202,7 @@ void frmPreferences::loadAppearanceTab()
         }
     }
 
-    ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor.data());
+    ui->colorSchemePreviewFrame->layout()->addWidget(m_previewEditor);
 
     const QString fontFamily = m_settings.Appearance.getOverrideFontFamily();
     if (!fontFamily.isEmpty()) {
@@ -422,22 +423,21 @@ bool frmPreferences::applySettings()
     for (MainWindow* w : MainWindow::instances()) {
         w->showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
-        w->topEditorContainer()->forEachEditor(
-            [&](const int, const int, EditorTabWidget*, QSharedPointer<Editor> editor) {
-                // Set new theme
-                editor->setTheme(newTheme);
+        w->topEditorContainer()->forEachEditor([&](const int, const int, EditorTabWidget*, Editor* editor) {
+            // Set new theme
+            editor->setTheme(newTheme);
 
-                // Set font override
-                editor->setFont(fontFamily, fontSize, lineHeight);
+            // Set font override
+            editor->setFont(fontFamily, fontSize, lineHeight);
 
-                // Set line numbers visibility
-                editor->setLineNumbersVisible(lineNumbersVisible);
+            // Set line numbers visibility
+            editor->setLineNumbersVisible(lineNumbersVisible);
 
-                // Reset language-dependent settings (e.g. tab settings)
-                editor->setLanguage(editor->getLanguage());
+            // Reset language-dependent settings (e.g. tab settings)
+            editor->setLanguage(editor->getLanguage());
 
-                return true;
-            });
+            return true;
+        });
     }
 
     // Invalidate already initialized editors in the buffer and add a single new

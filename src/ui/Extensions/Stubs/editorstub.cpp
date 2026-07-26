@@ -8,6 +8,11 @@ EditorStub::EditorStub(const QWeakPointer<QObject>& object, RuntimeSupport* rts)
 {
 }
 
+EditorStub::EditorStub(QObject* object, RuntimeSupport* rts)
+    : Stub(object, rts)
+{
+}
+
 EditorStub::~EditorStub() {}
 
 EditorNS::Editor* EditorStub::editor()

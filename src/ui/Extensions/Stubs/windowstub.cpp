@@ -18,7 +18,7 @@ NQQ_DEFINE_EXTENSION_METHOD(WindowStub, currentEditor, )
 {
     RuntimeSupport* rts = runtimeSupport();
     MainWindow* window = static_cast<MainWindow*>(objectUnmanagedPtr());
-    QSharedPointer<Stub> stub = QSharedPointer<Stub>(new EditorStub(window->currentEditor().toWeakRef(), rts));
+    QSharedPointer<Stub> stub = QSharedPointer<Stub>(new EditorStub(window->currentEditor(), rts));
     qint32 stubId = rts->presentObject(stub);
 
     return StubReturnValue(rts->getJSONStub(stubId, stub->stubName_()));

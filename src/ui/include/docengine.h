@@ -120,8 +120,7 @@ public:
         // If this function is called, it will be called asynchronously. However, the function
         // itself must be synchronous so that the DocumentLoader knows when to emit the
         // DocumentLoaded event.
-        DocumentLoader& setManualEditorInitialization(
-            std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> f)
+        DocumentLoader& setManualEditorInitialization(std::function<void(Editor* editor, const QUrl& url)> f)
         {
             manualEditorInitialization = f;
             return *this;
@@ -136,7 +135,7 @@ public:
             return docEngine.loadDocuments(*this);
         }
 
-        QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> executeInBackground()
+        QList<std::pair<Editor*, QtPromise::QPromise<Editor*>>> executeInBackground()
         {
             Q_ASSERT(tabWidget != nullptr);
             return docEngine.loadDocumentsInBackground(*this);
@@ -154,7 +153,7 @@ public:
         bool bom = false;
         FileSizeAction fileSizeAction = FileSizeActionAsk;
         int priorityIdx = ALL_MAXIMUM_PRIORITY;
-        std::function<void(QSharedPointer<Editor> editor, const QUrl& url)> manualEditorInitialization = nullptr;
+        std::function<void(Editor* editor, const QUrl& url)> manualEditorInitialization = nullptr;
 
     private:
         friend class DocEngine;
@@ -198,13 +197,11 @@ public:
     QPair<int, int> findOpenEditorByUrl(const QUrl& filename) const;
 
     void monitorDocument(Editor* editor);
-    void monitorDocument(QSharedPointer<Editor> editor);
     void unmonitorDocument(Editor* editor);
-    void unmonitorDocument(QSharedPointer<Editor> editor);
     bool isMonitored(Editor* editor);
 
     int addNewDocument(QString name, bool setFocus, EditorTabWidget* tabWidget);
-    void reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
+    void reinterpretEncoding(Editor* editor, QTextCodec* codec, bool bom);
     static DocEngine::DecodedText readToString(QFile* file);
     static DocEngine::DecodedText readToString(QFile* file, QTextCodec* codec, bool bom);
     static bool writeFromString(QIODevice* io, const DecodedText& write);
@@ -216,8 +213,8 @@ public:
      * @param editor
      * @return true if successful, false otherwise
      */
-    bool write(QIODevice* io, QSharedPointer<Editor> editor);
-    bool write(QUrl outFileName, QSharedPointer<Editor> editor);
+    bool write(QIODevice* io, Editor* editor);
+    bool write(QUrl outFileName, Editor* editor);
 
     /**
      * @brief getNewDocumentName
@@ -237,8 +234,8 @@ private:
      * @param editor
      * @return fulfilled if successful, rejected otherwise
      */
-    QtPromise::QPromise<void> read(QFile* file, QSharedPointer<Editor> editor);
-    QtPromise::QPromise<void> read(QFile* file, QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
+    QtPromise::QPromise<void> read(QFile* file, Editor* editor);
+    QtPromise::QPromise<void> read(QFile* file, Editor* editor, QTextCodec* codec, bool bom);
     // FIXME Separate from reload
 
     /**
@@ -253,8 +250,7 @@ private:
      * @param docLoader
      * @return
      */
-    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadDocumentsInBackground(
-        const DocumentLoader& docLoader);
+    QList<std::pair<Editor*, QtPromise::QPromise<Editor*>>> loadDocumentsInBackground(const DocumentLoader& docLoader);
 
     void monitorDocument(const QString& fileName);
     void unmonitorDocument(const QString& fileName);
@@ -290,7 +286,7 @@ private:
      * @param editor Editor to be saved
      * @return True if successful.
      */
-    bool trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointer<Editor> editor);
+    bool trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor);
 
 signals:
     /**

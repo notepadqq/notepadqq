@@ -10,13 +10,13 @@
 #include <QEventLoop>
 #include <QObject>
 #include <QPrinter>
-#include <QQueue>
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QWheelEvent>
 #include <QtCore5Compat/QTextCodec>
 #include <QtPromise>
 
+#include <deque>
 #include <functional>
 #include <future>
 #include <utility>
@@ -67,6 +67,11 @@ signals:
 /**
  * @brief Provides a JavaScript CodeMirror instance.
  *
+ * Ownership: an Editor in a tab or layout is owned and destroyed by Qt's parent-child
+ * hierarchy. Callers receive non-owning Editor pointers and must use QPointer when a
+ * reference crosses an asynchronous boundary. The preload buffer owns only unattached
+ * editors until takeNewEditor() transfers them to a Qt parent.
+ *
  * Communication works by sending messages to the javascript Editor using
  * the sendMessage() method. On the other side, when a javascript event
  * occurs, the messageReceived() signal will be emitted.
@@ -94,10 +99,11 @@ public:
     explicit Editor(QWidget* parent = nullptr);
 
     /**
-     * @brief Efficiently returns a new Editor object from an internal buffer.
-     * @return
+     * @brief Releases a preloaded editor for immediate adoption by a Qt widget parent.
+     *
+     * The caller transfers ownership to Qt by adding the widget to a layout or tab widget.
      */
-    static QSharedPointer<Editor> getNewEditor(QWidget* parent = nullptr);
+    static Editor* takeNewEditor();
 
     static void invalidateEditorBuffer();
 
@@ -109,7 +115,7 @@ public:
     bool isLoading = false;
 
     /**
-     * @brief Adds a new Editor to the internal buffer used by getNewEditor().
+     * @brief Adds a new Editor to the internal buffer used by takeNewEditor().
      *        You might want to call this method e.g. as soon as the application
      *        starts (so that an Editor is ready as soon as it gets required),
      *        or when the application is idle.
@@ -409,7 +415,7 @@ private:
     QString tabName() const;
     void setTabName(const QString& name);
 
-    static QQueue<QSharedPointer<Editor>> m_editorBuffer;
+    static std::deque<std::unique_ptr<Editor>> m_editorBuffer;
     QVBoxLayout* m_layout;
     CustomQWebView* m_webView;
     JsToCppProxy* m_jsToCppProxy;

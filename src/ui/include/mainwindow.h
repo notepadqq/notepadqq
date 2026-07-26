@@ -59,7 +59,7 @@ public:
 
     void openCommandLineProvidedUrls(const QString& workingDirectory, const QStringList& arguments);
 
-    QSharedPointer<Editor> currentEditor();
+    Editor* currentEditor();
     QAction* addExtensionMenuItem(QString extensionId, QString text);
     void showExtensionsMenu(bool show);
 
@@ -80,7 +80,7 @@ public:
     void generateRunMenu();
     void configurePostSessionUserInterface();
 public slots:
-    void refreshEditorUiInfo(QSharedPointer<Editor> editor);
+    void refreshEditorUiInfo(Editor* editor);
     void refreshEditorUiCursorInfo(QMap<QString, QVariant> data);
 
 protected:
@@ -130,7 +130,7 @@ private slots:
     void on_fileOnDiskChanged(EditorTabWidget* tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
-    void on_currentLanguageChanged(QSharedPointer<Editor> sender, QString, QString);
+    void on_currentLanguageChanged(Editor* sender, QString, QString);
     void on_actionRestore_Default_Zoom_triggered();
     void on_actionZoom_In_triggered();
     void on_actionZoom_Out_triggered();
@@ -280,9 +280,9 @@ private:
     void restoreWindowSettings();
     void loadIcons();
     void updateRecentDocsInMenu();
-    void convertEditorEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom);
+    void convertEditorEncoding(Editor* editor, QTextCodec* codec, bool bom);
     void toggleOverwrite();
-    void checkIndentationMode(QSharedPointer<Editor> editor);
+    void checkIndentationMode(Editor* editor);
     QtPromise::QPromise<QStringList> currentWordOrSelections();
     QtPromise::QPromise<QString> currentWordOrSelection();
     void currentWordOnlineSearch(const QString& searchUrl);

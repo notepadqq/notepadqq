@@ -63,12 +63,13 @@ DocEngine::DecodedText DocEngine::readToString(QFile* file, QTextCodec* codec, b
     return decoded;
 }
 
-QtPromise::QPromise<void> DocEngine::read(QFile* file, QSharedPointer<Editor> editor)
+QtPromise::QPromise<void> DocEngine::read(QFile* file, Editor* editor)
 { return read(file, editor, nullptr, false); }
 
-QtPromise::QPromise<void> DocEngine::read(QFile* file, QSharedPointer<Editor> editor, QTextCodec* codec, bool bom)
+QtPromise::QPromise<void> DocEngine::read(QFile* file, Editor* editor, QTextCodec* codec, bool bom)
 {
-    if (!editor)
+    QPointer<Editor> guardedEditor = editor;
+    if (!guardedEditor)
         return QtPromise::QPromise<void>::reject(0);
 
     DecodedText decoded = readToString(file, codec, bom);
@@ -76,20 +77,25 @@ QtPromise::QPromise<void> DocEngine::read(QFile* file, QSharedPointer<Editor> ed
     if (decoded.error)
         return QtPromise::QPromise<void>::reject(0);
 
-    editor->setCodec(decoded.codec);
-    editor->setBom(decoded.bom);
+    guardedEditor->setCodec(decoded.codec);
+    guardedEditor->setBom(decoded.bom);
 
     if (decoded.text.indexOf("\r\n") != -1)
-        editor->setEndOfLineSequence("\r\n");
+        guardedEditor->setEndOfLineSequence("\r\n");
     else if (decoded.text.indexOf("\n") != -1)
-        editor->setEndOfLineSequence("\n");
+        guardedEditor->setEndOfLineSequence("\n");
     else if (decoded.text.indexOf("\r") != -1)
-        editor->setEndOfLineSequence("\r");
+        guardedEditor->setEndOfLineSequence("\r");
 
-    return editor->setValue(decoded.text)
-        .then([=, this]() { return editor->asyncSendMessageWithResultP("C_CMD_CLEAR_HISTORY"); })
-        .then([=, this]() { return editor->markClean(); })
-        .then([=, this]() {});
+    return guardedEditor->setValue(decoded.text)
+        .then([guardedEditor]() {
+            return guardedEditor ? guardedEditor->asyncSendMessageWithResultP("C_CMD_CLEAR_HISTORY")
+                                 : QtPromise::QPromise<QVariant>::reject(0);
+        })
+        .then([guardedEditor]() {
+            return guardedEditor ? guardedEditor->markClean() : QtPromise::QPromise<void>::reject(0);
+        })
+        .then([]() {});
 }
 
 int showFileSizeDialog(const QString docName, long long fileSize, bool multipleFiles)
@@ -131,8 +137,8 @@ int showReloadDialog(const QString docName)
     return msgBox.exec();
 }
 
-QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>>
-DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
+QList<std::pair<Editor*, QtPromise::QPromise<Editor*>>> DocEngine::loadDocumentsInBackground(
+    const DocEngine::DocumentLoader& docLoader)
 {
     const auto& fileNames = docLoader.urls;
     const auto& rememberLastSelectedDir = docLoader.rememberLastDir;
@@ -142,12 +148,12 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
     auto fileSizeAction = std::make_shared<FileSizeAction>(docLoader.fileSizeAction);
 
     if (fileNames.empty())
-        return QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>>();
+        return QList<std::pair<Editor*, QtPromise::QPromise<Editor*>>>();
 
     if (rememberLastSelectedDir)
         NqqSettings::getInstance().General.setLastSelectedDir(QFileInfo(fileNames[0].toLocalFile()).absolutePath());
 
-    QList<std::pair<QSharedPointer<Editor>, QtPromise::QPromise<QSharedPointer<Editor>>>> loadedEditors;
+    QList<std::pair<Editor*, QtPromise::QPromise<Editor*>>> loadedEditors;
 
     bool isFirstDocument = true;
 
@@ -208,7 +214,7 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
             }
         }
 
-        auto* tabWidget = docLoader.tabWidget;
+        QPointer<EditorTabWidget> tabWidget = docLoader.tabWidget;
         int tabIndex;
         if (isAlreadyOpen) {
             tabWidget = m_topEditorContainer->tabWidget(openPos.first);
@@ -217,7 +223,7 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
             tabIndex = tabWidget->addEditorTab(false, fi.fileName());
         }
 
-        auto editor = tabWidget->editor(tabIndex);
+        QPointer<Editor> editor = tabWidget->editor(tabIndex);
         editor->isLoading = true;
 
         // Once we are here, we can NOT remove the tab we've just added
@@ -226,7 +232,7 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
         if (tabWidget->count() == 2) {
             auto victim = tabWidget->editor(0);
             if (!victim->isLoading && victim->filePath().isEmpty() && victim->isClean()) {
-                tabWidget->removeTab(0);
+                tabWidget->closeEditorTab(0);
                 tabIndex--;
             }
         }
@@ -237,7 +243,7 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
             tabWidget->editor(tabIndex)->setFocus();
         }
 
-        auto continuationP = QtPromise::QPromise<QSharedPointer<Editor>>([=, this](auto resolve, auto /*reject*/) {
+        auto continuationP = QtPromise::QPromise<Editor*>([=, this](auto resolve, auto /*reject*/) {
             // Compute the ms of delay based on the priority for this URL.
             constexpr int min_priority_delay = 100;
             int delay_ms = 0;
@@ -252,6 +258,10 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
             }
 
             QTimer::singleShot(delay_ms, this, [=, this]() {
+                if (!editor || !tabWidget) {
+                    resolve(nullptr);
+                    return;
+                }
                 // In case of a reload, save cursor, scroll position, language
                 QPair<int, int> scrollPosition;
                 QPair<int, int> cursorPosition;
@@ -276,6 +286,10 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
                 QFile file(localFileName);
                 if (file.exists()) {
                     QtPromise::QPromise<void> readResult = this->read(&file, editor, codec, bom).wait();
+                    if (!editor || !tabWidget) {
+                        resolve(nullptr);
+                        return;
+                    }
 
                     while (readResult.isRejected()) {
                         // Handle error
@@ -290,9 +304,13 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
                         if (ret == QMessageBox::Retry) {
                             // Retry
                             readResult = this->read(&file, editor, codec, bom).wait();
+                            if (!editor || !tabWidget) {
+                                resolve(nullptr);
+                                return;
+                            }
                         } else if (ret == QMessageBox::Ignore) {
                             // tabWidget->removeTab(tabIndex);
-                            // reject(QSharedPointer<Editor>());
+                            // reject(Editor*());
                             resolve(editor);
                             return;
                         }
@@ -336,12 +354,13 @@ DocEngine::loadDocumentsInBackground(const DocEngine::DocumentLoader& docLoader)
 
                 resolve(editor);
             });
-        }).then([](QSharedPointer<Editor> editor) {
-            editor->isLoading = false;
+        }).then([](Editor* editor) {
+            if (editor)
+                editor->isLoading = false;
             return editor;
         });
 
-        loadedEditors.append(std::make_pair(editor, continuationP));
+        loadedEditors.append(std::make_pair(editor.data(), continuationP));
     }
 
     return loadedEditors;
@@ -471,13 +490,13 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
                 if (ret == QMessageBox::Abort) {
-                    tabWidget->removeTab(tabIndex);
+                    tabWidget->closeEditorTab(tabIndex);
                     return _break;
                 } else if (ret == QMessageBox::Retry) {
                     // Retry
                     readResult = this->read(&file, editor, codec, bom).wait(); // FIXME To async!
                 } else if (ret == QMessageBox::Ignore) {
-                    tabWidget->removeTab(tabIndex);
+                    tabWidget->closeEditorTab(tabIndex);
                     return _continue;
                 }
             }
@@ -503,7 +522,7 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
         if (tabWidget->count() == 2) {
             auto victim = tabWidget->editor(0);
             if (victim->filePath().isEmpty() && victim->isClean()) {
-                tabWidget->removeTab(0);
+                tabWidget->closeEditorTab(0);
                 tabIndex--;
             }
         }
@@ -633,14 +652,14 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
                 msgBox.setIcon(QMessageBox::Critical);
                 int ret = msgBox.exec();
                 if(ret == QMessageBox::Abort) {
-                    tabWidget->removeTab(tabIndex);
+                    tabWidget->closeEditorTab(tabIndex);
                     break;
                 } else if(ret == QMessageBox::Retry) {
-                    tabWidget->removeTab(tabIndex);
+                    tabWidget->closeEditorTab(tabIndex);
                     i--;
                     continue;
                 } else if(ret == QMessageBox::Ignore) {
-                    tabWidget->removeTab(tabIndex);
+                    tabWidget->closeEditorTab(tabIndex);
                     continue;
                 }
             }
@@ -666,7 +685,7 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
         if (tabWidget->count() == 2) {
             Editor *victim = tabWidget->editor(0);
             if (victim->filePath().isEmpty() && victim->isClean()) {
-                tabWidget->removeTab(0);
+                tabWidget->closeEditorTab(0);
                 tabIndex--;
             }
         }
@@ -779,7 +798,7 @@ bool DocEngine::writeFromString(QIODevice* io, const DecodedText& write)
     return true;
 }
 
-bool DocEngine::write(QIODevice* io, QSharedPointer<Editor> editor)
+bool DocEngine::write(QIODevice* io, Editor* editor)
 {
     DecodedText info;
     info.text = editor->value().replace("\n", editor->endOfLineSequence());
@@ -790,7 +809,7 @@ bool DocEngine::write(QIODevice* io, QSharedPointer<Editor> editor)
     return writeFromString(io, info);
 }
 
-bool DocEngine::write(QUrl outFileName, QSharedPointer<Editor> editor)
+bool DocEngine::write(QUrl outFileName, Editor* editor)
 {
     QFile file(outFileName.toLocalFile());
     bool result = write(&file, editor);
@@ -799,7 +818,7 @@ bool DocEngine::write(QUrl outFileName, QSharedPointer<Editor> editor)
     return result;
 }
 
-void DocEngine::reinterpretEncoding(QSharedPointer<Editor> editor, QTextCodec* codec, bool bom)
+void DocEngine::reinterpretEncoding(Editor* editor, QTextCodec* codec, bool bom)
 {
     QPair<int, int> scrollPosition = editor->scrollPosition();
     QPair<int, int> cursorPosition = editor->cursorPosition();
@@ -854,7 +873,7 @@ QString DocEngine::getAvailableSudoProgram() const
     return sudoProgram;
 }
 
-bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointer<Editor> editor)
+bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, Editor* editor)
 {
     if (sudoProgram.isEmpty())
         return false;
@@ -888,7 +907,7 @@ bool DocEngine::trySudoSave(QString sudoProgram, QUrl outFileName, QSharedPointe
 
 int DocEngine::saveDocument(EditorTabWidget* tabWidget, int tab, QUrl outFileName, bool copy)
 {
-    QSharedPointer<Editor> editor = tabWidget->editor(tab);
+    Editor* editor = tabWidget->editor(tab);
 
     if (!copy)
         unmonitorDocument(editor);
@@ -949,7 +968,11 @@ int DocEngine::saveDocument(EditorTabWidget* tabWidget, int tab, QUrl outFileNam
 #ifdef Q_OS_MACOS
         // On macOS we need to give it a little bit of time, otherwise we get the
         // "document changed" banner as soon as the document is saved.
-        QTimer::singleShot(100, this, [=, this]() { monitorDocument(editor); });
+        QPointer<Editor> monitoredEditor = editor;
+        QTimer::singleShot(100, this, [this, monitoredEditor] {
+            if (monitoredEditor)
+                monitorDocument(monitoredEditor);
+        });
 #else
         monitorDocument(editor);
 #endif
@@ -995,19 +1018,13 @@ void DocEngine::closeDocument(EditorTabWidget* tabWidget, int tab)
     // Disconnect ALL slots ever connected to this editor's signals, also outside of this class
     editor->disconnect();
 
-    tabWidget->removeTab(tab);
+    tabWidget->closeEditorTab(tab);
 }
 
 void DocEngine::monitorDocument(Editor* editor)
 { monitorDocument(editor->filePath().toLocalFile()); }
 
 void DocEngine::unmonitorDocument(Editor* editor)
-{ unmonitorDocument(editor->filePath().toLocalFile()); }
-
-void DocEngine::monitorDocument(QSharedPointer<Editor> editor)
-{ monitorDocument(editor->filePath().toLocalFile()); }
-
-void DocEngine::unmonitorDocument(QSharedPointer<Editor> editor)
 { unmonitorDocument(editor->filePath().toLocalFile()); }
 
 bool DocEngine::isMonitored(Editor* editor)

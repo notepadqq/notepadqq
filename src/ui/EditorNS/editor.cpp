@@ -15,7 +15,7 @@
 
 namespace EditorNS {
 
-QQueue<QSharedPointer<Editor>> Editor::m_editorBuffer = QQueue<QSharedPointer<Editor>>();
+std::deque<std::unique_ptr<Editor>> Editor::m_editorBuffer;
 
 Editor::Editor(QWidget* parent)
     : QWidget(parent)
@@ -104,28 +104,22 @@ void Editor::fullConstructor(const Theme& theme)
     // get stuck waiting a J_EVT_READY that will never come.
 }
 
-QSharedPointer<Editor> Editor::getNewEditor(QWidget* parent)
+Editor* Editor::takeNewEditor()
 {
-    QSharedPointer<Editor> out;
+    static_assert(std::is_same_v<decltype(m_editorBuffer), std::deque<std::unique_ptr<Editor>>>,
+        "The preload buffer must exclusively own unattached editors");
+    if (m_editorBuffer.size() < 2)
+        addEditorToBuffer(2 - m_editorBuffer.size());
 
-    if (m_editorBuffer.length() == 0) {
-        addEditorToBuffer(1);
-        out = QSharedPointer<Editor>::create();
-    } else if (m_editorBuffer.length() == 1) {
-        addEditorToBuffer(1);
-        out = m_editorBuffer.dequeue();
-    } else {
-        out = m_editorBuffer.dequeue();
-    }
-
-    out->setParent(parent);
-    return out;
+    std::unique_ptr<Editor> editor = std::move(m_editorBuffer.front());
+    m_editorBuffer.pop_front();
+    return editor.release();
 }
 
 void Editor::addEditorToBuffer(const int howMany)
 {
     for (int i = 0; i < howMany; i++)
-        m_editorBuffer.enqueue(QSharedPointer<Editor>::create());
+        m_editorBuffer.push_back(std::make_unique<Editor>());
 }
 
 void Editor::invalidateEditorBuffer()

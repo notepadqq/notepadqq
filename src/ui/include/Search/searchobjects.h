@@ -4,6 +4,7 @@
 #include "include/Search/searchhelpers.h"
 
 #include <QObject>
+#include <QPointer>
 #include <QRegularExpressionMatch>
 #include <QSharedPointer>
 #include <QString>
@@ -81,8 +82,8 @@ struct DocResult {
     DocType docType = TypeNone;
 
     // TODO: Only a workaround- we need some easy way to address Editors in the future.
-    QSharedPointer<EditorNS::Editor> editor; // Only used when docType==TypeDocument
-    QString fileName;                        // Is a file path when docType==TypeFile and a file name when TypeDocument
+    QPointer<EditorNS::Editor> editor; // Only used when docType==TypeDocument
+    QString fileName;                  // Is a file path when docType==TypeFile and a file name when TypeDocument
     QVector<MatchResult> results;
     int regexCaptureGroupCount = 0; // Only used when DocResult was created by a regex search
 };

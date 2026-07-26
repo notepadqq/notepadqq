@@ -106,7 +106,7 @@ void frmSearchReplace::setCurrentTab(Tabs tab)
     }
 }
 
-QSharedPointer<Editor> frmSearchReplace::currentEditor()
+Editor* frmSearchReplace::currentEditor()
 { return this->m_topEditorContainer->currentTabWidget()->currentEditor(); }
 
 QString frmSearchReplace::regexModifiersFromSearchOptions(SearchHelpers::SearchOptions searchOptions)

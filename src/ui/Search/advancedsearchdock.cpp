@@ -606,10 +606,10 @@ void AdvancedSearchDock::startReplace()
         TopEditorContainer* tec = config.targetWindow->topEditorContainer();
 
         for (const DocResult& res : filteredResults.results) {
-            QSharedPointer<Editor> ed = res.editor;
+            Editor* ed = res.editor;
 
             // The editor might not be open anymore. Try to find it first
-            if (!tec->tabWidgetFromEditor(ed))
+            if (!ed || !tec->tabWidgetFromEditor(ed))
                 continue;
 
             QString content = ed->value();

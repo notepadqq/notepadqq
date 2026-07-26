@@ -12,6 +12,8 @@ namespace Stubs {
 class EditorStub : public Stub {
 public:
     EditorStub(const QWeakPointer<QObject>& object, RuntimeSupport* rts);
+    /** Creates a non-owning editor stub that becomes invalid when Qt destroys the editor. */
+    EditorStub(QObject* object, RuntimeSupport* rts);
     ~EditorStub();
 
     NQQ_STUB_NAME("Editor")
