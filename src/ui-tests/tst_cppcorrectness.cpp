@@ -1,12 +1,34 @@
+#include "include/EditorNS/asyncrequesttracker.h"
+#include "include/EditorNS/editor.h"
 #include "include/Search/filesearcher.h"
 #include "include/Search/searchhelpers.h"
 #include "include/docengine.h"
 
 #include <QFile>
+#include <QPointer>
 #include <QTemporaryDir>
+#include <QTimer>
 #include <QtTest>
 
+#include <chrono>
+#include <future>
+#include <memory>
+#include <stdexcept>
 #include <vector>
+
+using namespace std::chrono_literals;
+
+class EditorCorrectnessAccess {
+public:
+    static QtPromise::QPromise<QVariant> registerPromise(
+        EditorNS::AsyncRequestTracker& tracker, unsigned int id, const QString& message)
+    {
+        return EditorNS::Editor::registerAsyncPromise(tracker, id, message);
+    }
+
+    static bool receiveReply(EditorNS::AsyncRequestTracker& tracker, const QString& wireMessage, const QVariant& data)
+    { return EditorNS::Editor::resolveAsyncReply(tracker, wireMessage, data).has_value(); }
+};
 
 DocEngine::DecodedText DocEngine::readToString(QFile* file)
 {
@@ -24,11 +46,168 @@ class CppCorrectnessTest : public QObject {
     Q_OBJECT
 
 private Q_SLOTS:
+    void asyncRequestTrackerResolvesMatchingReplyOnce();
+    void asyncRequestTrackerRejectsMissingReplyAfterTimeout();
+    void asyncRequestTrackerRejectsPendingPromisesOnDestruction();
+    void asyncRequestTrackerSetsLegacyExceptionOnTimeout();
+    void asyncRequestTrackerCallsLegacyCallbackOnlyOnSuccess();
+    void editorRegistersAsyncRequestBeforeEmission();
+    void editorSyntheticReplyClearsRegisteredRequest();
+    void editorTrackerDestructionLeavesNoLiveTimeoutTimers();
     void cancellationRequestsInterruptionAndStopsFilesystemSearch();
     void searchPlainText_handlesContentEndingInLf();
     void linePositions_data();
     void linePositions();
 };
+
+void CppCorrectnessTest::editorRegistersAsyncRequestBeforeEmission()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 100ms);
+    auto promise = EditorCorrectnessAccess::registerPromise(tracker, 23, QStringLiteral("C_FUN_ORDER"));
+    Q_UNUSED(promise);
+
+    bool emitted = false;
+    auto emitRequest = [&] {
+        QCOMPARE(tracker.pendingCount(), 1);
+        emitted = true;
+    };
+    emitRequest();
+
+    QVERIFY(emitted);
+    QVERIFY(tracker.resolve(23, QVariant()));
+}
+
+void CppCorrectnessTest::editorSyntheticReplyClearsRegisteredRequest()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 100ms);
+    QVariant resolvedValue;
+    auto promise = EditorCorrectnessAccess::registerPromise(tracker, 24, QStringLiteral("C_FUN_REPLY"));
+    promise.then([&](const QVariant& value) { resolvedValue = value; });
+
+    QVERIFY(EditorCorrectnessAccess::receiveReply(
+        tracker, QStringLiteral("[ASYNC_REPLY]C_FUN_REPLY[ID=24]"), QStringLiteral("synthetic")));
+
+    QCOMPARE(tracker.pendingCount(), 0);
+    QTRY_COMPARE(resolvedValue, QVariant(QStringLiteral("synthetic")));
+}
+
+void CppCorrectnessTest::editorTrackerDestructionLeavesNoLiveTimeoutTimers()
+{
+    auto* owner = new QObject;
+    auto* tracker = new EditorNS::AsyncRequestTracker(owner, 100ms);
+    auto promise = EditorCorrectnessAccess::registerPromise(*tracker, 25, QStringLiteral("C_FUN_DESTROY_TIMER"));
+    promise.fail([](const std::runtime_error&) { return QVariant(); });
+
+    const QList<QTimer*> timers = tracker->findChildren<QTimer*>();
+    QCOMPARE(timers.size(), 1);
+    QPointer<QTimer> timer = timers.constFirst();
+
+    delete owner;
+
+    QVERIFY(timer.isNull());
+}
+
+void CppCorrectnessTest::asyncRequestTrackerResolvesMatchingReplyOnce()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 100ms);
+    int resolutionCount = 0;
+    QVariant resolvedValue;
+
+    auto promise = QtPromise::QPromise<QVariant>(
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
+            const QtPromise::QPromiseReject<QVariant>& reject) {
+            tracker.trackPromise(17, QStringLiteral("C_FUN_TEST"), resolve, reject);
+        });
+    promise.then([&](const QVariant& value) {
+        ++resolutionCount;
+        resolvedValue = value;
+    });
+
+    QVERIFY(tracker.resolve(17, QStringLiteral("reply")));
+    QTRY_COMPARE(resolutionCount, 1);
+    QCOMPARE(resolvedValue, QVariant(QStringLiteral("reply")));
+    QCOMPARE(tracker.pendingCount(), 0);
+    QVERIFY(!tracker.resolve(17, QStringLiteral("duplicate")));
+    QCoreApplication::processEvents();
+    QCOMPARE(resolutionCount, 1);
+}
+
+void CppCorrectnessTest::asyncRequestTrackerRejectsMissingReplyAfterTimeout()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 20ms);
+    bool rejected = false;
+
+    auto promise = QtPromise::QPromise<QVariant>(
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
+            const QtPromise::QPromiseReject<QVariant>& reject) {
+            tracker.trackPromise(18, QStringLiteral("C_FUN_TIMEOUT"), resolve, reject);
+        });
+    promise.fail([&](const std::runtime_error&) {
+        rejected = true;
+        return QVariant();
+    });
+
+    QTRY_COMPARE_WITH_TIMEOUT(tracker.pendingCount(), 0, 250);
+    QTRY_VERIFY_WITH_TIMEOUT(rejected, 250);
+}
+
+void CppCorrectnessTest::asyncRequestTrackerRejectsPendingPromisesOnDestruction()
+{
+    bool rejected = false;
+    auto* tracker = new EditorNS::AsyncRequestTracker(this, 100ms);
+
+    auto promise = QtPromise::QPromise<QVariant>(
+        [&](const QtPromise::QPromiseResolve<QVariant>& resolve,
+            const QtPromise::QPromiseReject<QVariant>& reject) {
+            tracker->trackPromise(19, QStringLiteral("C_FUN_DESTROY"), resolve, reject);
+        });
+    promise.fail([&](const std::runtime_error&) {
+        rejected = true;
+        return QVariant();
+    });
+
+    QCOMPARE(tracker->pendingCount(), 1);
+    delete tracker;
+    QTRY_VERIFY_WITH_TIMEOUT(rejected, 250);
+}
+
+void CppCorrectnessTest::asyncRequestTrackerSetsLegacyExceptionOnTimeout()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 20ms);
+    auto result = std::make_shared<std::promise<QVariant>>();
+    auto future = result->get_future();
+
+    tracker.trackLegacy(20, QStringLiteral("C_FUN_LEGACY_TIMEOUT"), result, nullptr);
+
+    QTRY_COMPARE_WITH_TIMEOUT(tracker.pendingCount(), 0, 250);
+    QVERIFY(future.wait_for(0ms) == std::future_status::ready);
+    QVERIFY_THROWS_EXCEPTION(std::runtime_error, future.get());
+}
+
+void CppCorrectnessTest::asyncRequestTrackerCallsLegacyCallbackOnlyOnSuccess()
+{
+    EditorNS::AsyncRequestTracker tracker(this, 20ms);
+    int callbackCount = 0;
+    QVariant callbackValue;
+
+    auto timedOutResult = std::make_shared<std::promise<QVariant>>();
+    tracker.trackLegacy(21, QStringLiteral("C_FUN_CALLBACK_TIMEOUT"), timedOutResult,
+        [&](const QVariant&) { ++callbackCount; });
+    QTRY_COMPARE_WITH_TIMEOUT(tracker.pendingCount(), 0, 250);
+    QCOMPARE(callbackCount, 0);
+
+    auto successfulResult = std::make_shared<std::promise<QVariant>>();
+    tracker.trackLegacy(22, QStringLiteral("C_FUN_CALLBACK_SUCCESS"), successfulResult,
+        [&](const QVariant& value) {
+            ++callbackCount;
+            callbackValue = value;
+        });
+    QVERIFY(tracker.resolve(22, 42));
+
+    QTRY_COMPARE(callbackCount, 1);
+    QCOMPARE(callbackValue, QVariant(42));
+    QCOMPARE(tracker.pendingCount(), 0);
+}
 
 void CppCorrectnessTest::cancellationRequestsInterruptionAndStopsFilesystemSearch()
 {

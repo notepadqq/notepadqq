@@ -54,6 +54,7 @@ set(NQQ_APP_SOURCES
     src/ui/frmpreferences.cpp
     src/ui/iconprovider.cpp
     src/ui/EditorNS/editor.cpp
+    src/ui/EditorNS/asyncrequesttracker.cpp
     src/ui/EditorNS/bannerfilechanged.cpp
     src/ui/EditorNS/bannerbasicmessage.cpp
     src/ui/EditorNS/bannerfileremoved.cpp
@@ -105,6 +106,7 @@ set(NQQ_APP_HEADERS
     src/ui/include/frmpreferences.h
     src/ui/include/iconprovider.h
     src/ui/include/EditorNS/editor.h
+    src/ui/include/EditorNS/asyncrequesttracker.h
     src/ui/include/EditorNS/bannerfilechanged.h
     src/ui/include/EditorNS/bannerbasicmessage.h
     src/ui/include/EditorNS/bannerfileremoved.h
@@ -349,6 +351,8 @@ if(NQQ_BUILD_TESTS)
 
     qt_add_executable(cpp-correctness-tests
         src/ui-tests/tst_cppcorrectness.cpp
+        src/ui/EditorNS/asyncrequesttracker.cpp
+        src/ui/include/EditorNS/asyncrequesttracker.h
         src/ui/Search/filesearcher.cpp
         src/ui/include/Search/filesearcher.h
         src/ui/Search/searchhelpers.cpp
@@ -379,6 +383,7 @@ if(NQQ_BUILD_TESTS)
     target_compile_options(cpp-correctness-tests PRIVATE
         -include qtpromise/qpromiseexceptions.h
     )
+    target_compile_definitions(cpp-correctness-tests PRIVATE NQQ_CPP_CORRECTNESS_TESTS)
     add_test(NAME cpp-correctness-tests COMMAND cpp-correctness-tests)
 endif()
 

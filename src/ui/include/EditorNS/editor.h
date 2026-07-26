@@ -1,6 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "include/EditorNS/asyncrequesttracker.h"
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/editor_properties.h"
 #include "include/EditorNS/languageservice.h"
@@ -16,6 +17,11 @@
 
 #include <functional>
 #include <future>
+#include <optional>
+
+#ifdef NQQ_CPP_CORRECTNESS_TESTS
+class EditorCorrectnessAccess;
+#endif
 
 class EditorTabWidget;
 
@@ -283,15 +289,46 @@ public:
 
 private:
     friend class ::EditorTabWidget;
+#ifdef NQQ_CPP_CORRECTNESS_TESTS
+    friend class ::EditorCorrectnessAccess;
+#endif
 
-    struct AsyncReply {
+    struct ResolvedAsyncReply {
         unsigned int id;
         QString message;
-        std::shared_ptr<std::promise<QVariant>> value;
-        std::function<void(QVariant)> callback;
     };
 
-    std::list<AsyncReply> asyncReplies;
+    static QtPromise::QPromise<QVariant> registerAsyncPromise(
+        AsyncRequestTracker& tracker, unsigned int id, const QString& message)
+    {
+        return QtPromise::QPromise<QVariant>(
+            [&tracker, id, message](const QtPromise::QPromiseResolve<QVariant>& resolve,
+                const QtPromise::QPromiseReject<QVariant>& reject) {
+                tracker.trackPromise(id, message, resolve, reject);
+            });
+    }
+
+    static std::optional<ResolvedAsyncReply> resolveAsyncReply(
+        AsyncRequestTracker& tracker, const QString& wireMessage, const QVariant& data)
+    {
+        const QString prefix = QStringLiteral("[ASYNC_REPLY]");
+        const QString idPrefix = QStringLiteral("[ID=");
+        if (!wireMessage.startsWith(prefix) || !wireMessage.endsWith(QLatin1Char(']')))
+            return std::nullopt;
+
+        const qsizetype idStart = wireMessage.lastIndexOf(idPrefix);
+        if (idStart < prefix.size())
+            return std::nullopt;
+
+        bool validId = false;
+        const unsigned int id = wireMessage.mid(idStart + idPrefix.size(),
+                                               wireMessage.size() - idStart - idPrefix.size() - 1)
+                                    .toUInt(&validId);
+        if (!validId || !tracker.resolve(id, data))
+            return std::nullopt;
+
+        return ResolvedAsyncReply{id, wireMessage.mid(prefix.size(), idStart - prefix.size())};
+    }
 
     // These functions should only be used by EditorTabWidget to manage the tab's title. This works around
     // KDE's habit to automatically modify QTabWidget's tab titles to insert shortcut sequences (like &1).
@@ -302,6 +339,7 @@ private:
     QVBoxLayout* m_layout;
     CustomQWebView* m_webView;
     JsToCppProxy* m_jsToCppProxy;
+    AsyncRequestTracker* m_asyncRequestTracker = nullptr;
     QUrl m_filePath = QUrl();
     QString m_tabName;
     bool m_fileOnDiskChanged = false;

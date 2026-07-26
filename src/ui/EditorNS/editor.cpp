@@ -6,8 +6,6 @@
 #include <QDir>
 #include <QEventLoop>
 #include <QMessageBox>
-#include <QRegExp>
-#include <QRegularExpression>
 #include <QTimer>
 #include <QUrlQuery>
 #include <QVBoxLayout>
@@ -46,6 +44,7 @@ bool Editor::useMonaco()
 
 void Editor::fullConstructor(const Theme& theme)
 {
+    m_asyncRequestTracker = new AsyncRequestTracker(this, std::chrono::seconds(10));
     m_jsToCppProxy = new JsToCppProxy(this);
     connect(m_jsToCppProxy, &JsToCppProxy::messageReceived, this, &Editor::on_proxyMessageReceived);
 
@@ -147,34 +146,9 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
         emit messageReceived(msg, data);
 
         if (msg.startsWith("[ASYNC_REPLY]")) {
-            QRegExp rgx("\\[ID=(\\d+)\\]$");
-
-            if (rgx.indexIn(msg) == -1)
-                return;
-
-            if (rgx.captureCount() != 1)
-                return;
-
-            unsigned int id = rgx.capturedTexts()[1].toInt();
-
-            // Look into the list of callbacks
-            for (auto it = this->asyncReplies.begin(); it != this->asyncReplies.end(); ++it) {
-                if (it->id == id) {
-                    AsyncReply r = *it;
-                    if (r.value) {
-                        r.value->set_value(data);
-                    }
-                    this->asyncReplies.erase(it);
-
-                    if (r.callback != nullptr) {
-                        QTimer::singleShot(0, [r, data] { r.callback(data); });
-                    }
-
-                    emit asyncReplyReceived(r.id, r.message, data);
-
-                    break;
-                }
-            }
+            const auto reply = resolveAsyncReply(*m_asyncRequestTracker, msg, data);
+            if (reply)
+                emit asyncReplyReceived(reply->id, reply->message, data);
 
         } else if (msg == "J_EVT_READY") {
             m_loaded = true;
@@ -392,25 +366,7 @@ QtPromise::QPromise<QVariant> Editor::asyncSendMessageWithResultP(const QString 
     unsigned int currentMsgIdentifier = ++messageIdentifier;
 
     QtPromise::QPromise<QVariant> resultPromise =
-        QtPromise::QPromise<QVariant>([&](const QtPromise::QPromiseResolve<QVariant>& resolve,
-                                          const QtPromise::QPromiseReject<QVariant>& /* reject */) {
-            auto conn = std::make_shared<QMetaObject::Connection>();
-            *conn = QObject::connect(
-                this, &Editor::asyncReplyReceived, this, [=, this](unsigned int id, QString, QVariant data) {
-                    if (id == currentMsgIdentifier) {
-                        QObject::disconnect(*conn);
-                        resolve(data);
-                    }
-                });
-        });
-
-    // FIXME We can probably remove this->asyncReplies after we've converted everything
-    AsyncReply asyncmsg;
-    asyncmsg.id = currentMsgIdentifier;
-    asyncmsg.message = msg;
-    asyncmsg.value = nullptr;
-    asyncmsg.callback = nullptr;
-    this->asyncReplies.push_back((asyncmsg));
+        registerAsyncPromise(*m_asyncRequestTracker, currentMsgIdentifier, msg);
 
     QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
 
@@ -439,13 +395,7 @@ std::shared_future<QVariant> Editor::asyncSendMessageWithResult(
     unsigned int currentMsgIdentifier = ++messageIdentifier;
 
     std::shared_ptr<std::promise<QVariant>> resultPromise = std::make_shared<std::promise<QVariant>>();
-
-    AsyncReply asyncmsg;
-    asyncmsg.id = currentMsgIdentifier;
-    asyncmsg.message = msg;
-    asyncmsg.value = resultPromise;
-    asyncmsg.callback = callback;
-    this->asyncReplies.push_back((asyncmsg));
+    m_asyncRequestTracker->trackLegacy(currentMsgIdentifier, msg, resultPromise, std::move(callback));
 
     QString message_id = "[ASYNC_REQUEST]" + msg + "[ID=" + QString::number(currentMsgIdentifier) + "]";
 
