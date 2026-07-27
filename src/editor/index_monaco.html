@@ -25,9 +25,28 @@
       var monacoBasePath = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/libs/monaco/vs";
       self.MonacoEnvironment = {
         getWorker: function(moduleId, label) {
-          return new Worker(monacoBasePath + "/base/worker/workerMain.js");
+          var workerUrl = monacoBasePath + "/base/worker/workerMain.js";
+          var worker = new Worker(workerUrl);
+          // Logs the worker source when Qt WebEngine otherwise reports only "[object Event]".
+          worker.addEventListener("error", function(event) {
+            console.error("Monaco worker failed", {
+              moduleId: moduleId,
+              label: label,
+              workerUrl: workerUrl,
+              message: event.message,
+              filename: event.filename,
+              line: event.lineno,
+              column: event.colno
+            });
+          });
+          return worker;
         }
       };
+
+      // Preserves the rejection details that Monaco's loader otherwise renders as "[object Event]".
+      window.addEventListener("unhandledrejection", function(event) {
+        console.error("Unhandled Monaco promise rejection", event.reason);
+      });
 
       require.config({
         paths: { vs: monacoBasePath }

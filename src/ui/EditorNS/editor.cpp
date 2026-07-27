@@ -201,7 +201,13 @@ QtPromise::QPromise<bool> Editor::isCleanP()
 bool Editor::isClean()
 {
     QVariant data(0); // avoid crash on Mac OS X, see issue #702
-    return asyncSendMessageWithResult("C_FUN_IS_CLEAN", data).get().toBool();
+    try {
+        return asyncSendMessageWithResult("C_FUN_IS_CLEAN", data).get().toBool();
+    } catch (const std::runtime_error& error) {
+        // A not-yet-ready or failed editor must be retained rather than treated as safely discardable.
+        qWarning() << "Unable to determine whether the editor is clean:" << error.what();
+        return false;
+    }
 }
 
 QtPromise::QPromise<void> Editor::markClean()
