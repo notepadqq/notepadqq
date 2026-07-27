@@ -46,6 +46,7 @@ set(NQQ_STAGED_APPDATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/appdata")
 set(NQQ_APP_SOURCES
     src/ui/main.cpp
     src/ui/mainwindow.cpp
+    src/ui/windowuicontroller.cpp
     src/ui/topeditorcontainer.cpp
     src/ui/editortabwidget.cpp
     src/ui/docengine.cpp
@@ -101,6 +102,7 @@ set(NQQ_APP_SOURCES
 
 set(NQQ_APP_HEADERS
     src/ui/include/mainwindow.h
+    src/ui/include/windowuicontroller.h
     src/ui/include/topeditorcontainer.h
     src/ui/include/editortabwidget.h
     src/ui/include/docengine.h

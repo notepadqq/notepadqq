@@ -20,8 +20,12 @@ namespace Ui {
 class MainWindow;
 }
 
+class WindowUiController;
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
+
+    friend class WindowUiController;
 
 public:
     explicit MainWindow(const QString& workingDirectory, const QStringList& arguments, QWidget* parent = nullptr);
@@ -219,6 +223,7 @@ private:
     QPushButton* m_sbEOLFormatBtn;
     QPushButton* m_sbTextFormatBtn;
     QPushButton* m_sbOvertypeBtn;
+    WindowUiController* m_windowUiController = nullptr;
     NqqSettings& m_settings;
     frmSearchReplace* m_frmSearchReplace = nullptr;
     bool m_overwrite = false; // Overwrite mode vs Insert mode
@@ -277,8 +282,6 @@ private:
     QUrl getSaveDialogDefaultFileName(EditorTabWidget* tabWidget, int tab);
     void setupLanguagesMenu();
     void transformSelectedText(std::function<QString(const QString&)> func);
-    void restoreWindowSettings();
-    void loadIcons();
     void updateRecentDocsInMenu();
     void convertEditorEncoding(Editor* editor, QTextCodec* codec, bool bom);
     void toggleOverwrite();
@@ -301,11 +304,8 @@ private:
     void instantiateFrmSearchReplace();
     QUrl stringToUrl(QString fileName, QString workingDirectory = QString());
 
-    /**
-     * @brief Initialize UI from settings
-     */
+    /** @brief Initializes dynamic UI from settings. */
     void configureUserInterface();
-    void configureStatusBar();
 
     /**
      * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.

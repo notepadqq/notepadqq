@@ -22,9 +22,9 @@
 #include "include/iconprovider.h"
 #include "include/notepadqq.h"
 #include "include/nqqrun.h"
+#include "include/windowuicontroller.h"
 #include "ui_mainwindow.h"
 
-#include <QActionGroup>
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QFileDialog>
@@ -36,8 +36,6 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTemporaryFile>
-#include <QToolBar>
-#include <QToolButton>
 #include <QUrl>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrintPreviewDialog>
@@ -67,7 +65,8 @@ MainWindow::MainWindow(const QString& workingDirectory, const QStringList& argum
     connect(m_docEngine, &DocEngine::documentReloaded, this, &MainWindow::on_documentReloaded);
     connect(m_docEngine, &DocEngine::documentLoaded, this, &MainWindow::on_documentLoaded);
 
-    loadIcons();
+    m_windowUiController = new WindowUiController(*this, *ui, m_settings, *m_advSearchDock);
+    m_windowUiController->configureStaticUi();
 
     // Printing a WebEnginePage not supported prior to 5.8
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
@@ -118,13 +117,9 @@ MainWindow::MainWindow(const QString& workingDirectory, const QStringList& argum
 
     connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked, this, &MainWindow::on_tabBarDoubleClicked);
 
-    configureStatusBar();
-
     updateRecentDocsInMenu();
 
     setAcceptDrops(true);
-
-    generateRunMenu();
 
     // Initialize at least one editor here so things like restoring "zoom"
     // work properly
@@ -133,8 +128,6 @@ MainWindow::MainWindow(const QString& workingDirectory, const QStringList& argum
     loadToolBar();
 
     setupLanguagesMenu();
-
-    showExtensionsMenu(Extensions::ExtensionsLoader::extensionRuntimePresent());
 
     // Registers all actions so that NqqSettings knows their default and current shortcuts.
     const QList<QAction*> allActions = getActions();
@@ -186,36 +179,6 @@ TopEditorContainer* MainWindow::topEditorContainer()
 
 void MainWindow::configureUserInterface()
 {
-    // Group EOL modes
-    QActionGroup* eolActionGroup = new QActionGroup(this);
-    eolActionGroup->addAction(ui->actionWindows_Format);
-    eolActionGroup->addAction(ui->actionUNIX_Format);
-    eolActionGroup->addAction(ui->actionMac_Format);
-
-    // Group indentation modes
-    QActionGroup* indentationActionGroup = new QActionGroup(this);
-    indentationActionGroup->addAction(ui->actionIndentation_Default_Settings);
-    indentationActionGroup->addAction(ui->actionIndentation_Custom);
-
-    // Create the toolbar
-    m_mainToolBar = new QToolBar("Toolbar");
-    m_mainToolBar->setIconSize(QSize(16, 16));
-    m_mainToolBar->setObjectName("toolbar");
-    addToolBar(m_mainToolBar);
-
-    // Wire up toolbar and menubar visibility.
-    connect(m_mainToolBar, &QToolBar::visibilityChanged, ui->actionShow_Toolbar, &QAction::setChecked);
-    ui->actionShow_Toolbar->setChecked(m_mainToolBar->isVisible());
-    ui->menuBar->setVisible(m_settings.MainWindow.getMenuBarVisible());
-    ui->actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
-
-    // Set popup for actionOpen in toolbar
-    QToolButton* btnActionOpen = static_cast<QToolButton*>(m_mainToolBar->widgetForAction(ui->actionOpen));
-    if (btnActionOpen) {
-        btnActionOpen->setMenu(ui->menuRecent_Files);
-        btnActionOpen->setPopupMode(QToolButton::MenuButtonPopup);
-    }
-
     // Restore symbol visibility
     bool showAll = m_settings.General.getShowAllSymbols();
     ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
@@ -228,12 +191,6 @@ void MainWindow::configureUserInterface()
     // Restore full screen
     ui->actionFull_Screen->setChecked(isFullScreen());
 
-    // Initialize the advanced search dock and hook its signals up
-    addDockWidget(Qt::BottomDockWidgetArea, m_advSearchDock->getDockWidget());
-    m_advSearchDock->getDockWidget()
-        ->hide(); // Hidden by default, user preference is applied via restoreWindowSettings()
-    connect(m_advSearchDock, &AdvancedSearchDock::itemInteracted, this, &MainWindow::searchDockItemInteracted);
-
     // Restore smart indent
     ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
     on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
@@ -244,138 +201,11 @@ void MainWindow::configureUserInterface()
         m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
     }
 
-    restoreWindowSettings();
-}
-
-void MainWindow::restoreWindowSettings()
-{
-    restoreGeometry(m_settings.MainWindow.getGeometry());
-    restoreState(m_settings.MainWindow.getWindowState());
-    if (!isMaximized() && m_instances.count() > 1) {
-        QPoint curPos = pos();
-        move(curPos.x() + 50, curPos.y() + 50);
-    }
-}
-
-void MainWindow::loadIcons()
-{
-    // To test fallback icons:
-    // QIcon::setThemeSearchPaths(QStringList(""));
-
-    // Assign (where possible) system theme icons to our actions.
-    // If a system icon doesn't exist, fallback on the already assigned icon.
-
-    // File menu
-    ui->actionNew->setIcon(IconProvider::fromTheme("document-new"));
-    ui->actionOpen->setIcon(IconProvider::fromTheme("document-open"));
-    ui->actionReload_from_Disk->setIcon(IconProvider::fromTheme("view-refresh"));
-    ui->actionSave->setIcon(IconProvider::fromTheme("document-save"));
-    ui->actionSave_as->setIcon(IconProvider::fromTheme("document-save-as"));
-    ui->actionSave_a_Copy_As->setIcon(IconProvider::fromTheme("document-save-as"));
-    ui->actionSave_All->setIcon(IconProvider::fromTheme("document-save-all"));
-    ui->actionClose->setIcon(IconProvider::fromTheme("document-close"));
-    ui->actionClose_All->setIcon(IconProvider::fromTheme("document-close-all"));
-    ui->menuRecent_Files->setIcon(IconProvider::fromTheme("document-open-recent"));
-    ui->actionExit->setIcon(IconProvider::fromTheme("application-exit"));
-    ui->actionPrint->setIcon(IconProvider::fromTheme("document-print"));
-    ui->actionPrint_Now->setIcon(IconProvider::fromTheme("document-print")); // currently invisible
-
-    // Edit menu
-    ui->actionUndo->setIcon(IconProvider::fromTheme("edit-undo"));
-    ui->actionRedo->setIcon(IconProvider::fromTheme("edit-redo"));
-    ui->actionCut->setIcon(IconProvider::fromTheme("edit-cut"));
-    ui->actionCopy->setIcon(IconProvider::fromTheme("edit-copy"));
-    ui->actionPaste->setIcon(IconProvider::fromTheme("edit-paste"));
-    ui->actionDelete->setIcon(IconProvider::fromTheme("edit-delete"));
-    ui->actionSelect_All->setIcon(IconProvider::fromTheme("edit-select-all"));
-
-    // Search menu
-    ui->actionSearch->setIcon(IconProvider::fromTheme("edit-find"));
-    ui->actionFind_Next->setIcon(IconProvider::fromTheme("go-next"));
-    ui->actionFind_Previous->setIcon(IconProvider::fromTheme("go-previous"));
-    ui->actionReplace->setIcon(IconProvider::fromTheme("edit-find-replace"));
-    ui->actionGo_to_Line->setIcon(IconProvider::fromTheme("go-jump"));
-
-    // View menu
-    ui->actionShow_All_Characters->setIcon(IconProvider::fromTheme("show-special-chars"));
-    ui->actionZoom_In->setIcon(IconProvider::fromTheme("zoom-in"));
-    ui->actionZoom_Out->setIcon(IconProvider::fromTheme("zoom-out"));
-    ui->actionRestore_Default_Zoom->setIcon(IconProvider::fromTheme("zoom-original"));
-    ui->actionWord_wrap->setIcon(IconProvider::fromTheme("word-wrap"));
-    ui->actionMath_Rendering->setIcon(IconProvider::fromTheme("math-rendering"));
-    ui->actionFull_Screen->setIcon(IconProvider::fromTheme("view-fullscreen"));
-
-    // Settings menu
-    ui->actionPreferences->setIcon(IconProvider::fromTheme("preferences-other"));
-
-    // Run menu
-    ui->actionRun->setIcon(IconProvider::fromTheme("system-run"));
-
-    // Window menu
-    ui->actionOpen_a_New_Window->setIcon(IconProvider::fromTheme("window-new"));
-
-    // '?' menu
-    ui->actionAbout_Qt->setIcon(IconProvider::fromTheme("help-about"));
-    ui->actionAbout_Notepadqq->setIcon(IconProvider::fromTheme("notepadqq"));
-
-    // Macros in toolbar
-    ui->action_Start_Recording->setIcon(IconProvider::fromTheme("media-record"));
-    ui->action_Stop_Recording->setIcon(IconProvider::fromTheme("media-playback-stop"));
-    ui->action_Playback->setIcon(IconProvider::fromTheme("media-playback-start"));
-    ui->actionRun_a_Macro_Multiple_Times->setIcon(IconProvider::fromTheme("media-seek-forward"));
-    ui->actionSave_Currently_Recorded_Macro->setIcon(IconProvider::fromTheme("document-save-as"));
-}
-
-void MainWindow::configureStatusBar()
-{
-    m_sbDocumentInfoLabel = new QLabel;
-    m_sbDocumentInfoLabel->setMinimumWidth(1);
-    statusBar()->addWidget(m_sbDocumentInfoLabel);
-    auto createStatusButton = [&](const QString& txt, QMenu* mnu = nullptr) {
-        auto* btn = new QPushButton(txt);
-        btn->setFlat(true);
-        btn->setMenu(mnu);
-        btn->setFocusPolicy(Qt::NoFocus);
-
-#ifdef Q_OS_MACOS
-        // MacOS style issues workaround (see #708)
-        btn->setStyleSheet(QString("QPushButton { background: %1; }").arg(QPalette().shadow().color().name()));
-#endif
-
-        statusBar()->addPermanentWidget(btn);
-        return btn;
-    };
-    m_sbFileFormatBtn = createStatusButton("File Format", ui->menu_Language);
-    m_sbEOLFormatBtn = createStatusButton("EOL", ui->menuEOL_Conversion);
-    m_sbTextFormatBtn = createStatusButton("Encoding", ui->menu_Encoding);
-    m_sbOvertypeBtn = createStatusButton("INS");
-    connect(m_sbOvertypeBtn, &QPushButton::clicked, this, &MainWindow::toggleOverwrite);
+    m_windowUiController->restoreWindowState();
 }
 
 void MainWindow::loadToolBar()
-{
-    m_mainToolBar->clear();
-
-    QString toolbarItems = m_settings.MainWindow.getToolBarItems();
-    if (toolbarItems.isEmpty())
-        toolbarItems = getDefaultToolBarString();
-
-    auto actions = getActions();
-    auto parts = toolbarItems.split('|', Qt::SkipEmptyParts);
-
-    for (const auto& part : parts) {
-        if (part == "Separator") {
-            m_mainToolBar->addSeparator();
-            continue;
-        }
-
-        auto it =
-            std::find_if(actions.begin(), actions.end(), [&part](QAction* ac) { return ac->objectName() == part; });
-
-        if (it != actions.end())
-            m_mainToolBar->addAction(*it);
-    }
-}
+{ m_windowUiController->loadToolBar(); }
 
 bool MainWindow::saveTabsToCache()
 {
@@ -2151,26 +1981,7 @@ void MainWindow::on_actionInterpret_As_triggered()
 }
 
 void MainWindow::generateRunMenu()
-{
-    QMap<QString, QString> runners = m_settings.Run.getCommands();
-    QMapIterator<QString, QString> i(runners);
-    ui->menu_Run->clear();
-
-    QAction* a = ui->menu_Run->addAction(tr("Run..."));
-    connect(a, &QAction::triggered, this, &MainWindow::runCommand);
-    ui->menu_Run->addSeparator();
-
-    while (i.hasNext()) {
-        i.next();
-        a = ui->menu_Run->addAction(i.key());
-        a->setData(i.value());
-        a->setObjectName("RunCmd" + a->text());
-        connect(a, &QAction::triggered, this, &MainWindow::runCommand);
-    }
-    ui->menu_Run->addSeparator();
-    a = ui->menu_Run->addAction(tr("Modify Run Commands"));
-    connect(a, &QAction::triggered, this, &MainWindow::modifyRunCommands);
-}
+{ m_windowUiController->generateRunMenu(); }
 
 /**
  * @brief Configure any user interface after loading session
@@ -2476,7 +2287,7 @@ void MainWindow::on_actionInstall_Extension_triggered()
 }
 
 void MainWindow::showExtensionsMenu(bool show)
-{ ui->menu_Extensions->menuAction()->setVisible(show); }
+{ m_windowUiController->setExtensionsMenuVisible(show); }
 
 QString MainWindow::getDefaultToolBarString() const
 {
@@ -2509,20 +2320,7 @@ QToolBar* MainWindow::getToolBar() const
 { return m_mainToolBar; }
 
 void MainWindow::on_actionFull_Screen_toggled(bool on)
-{
-    static bool maximized = isMaximized();
-
-    if (on) {
-        maximized = isMaximized();
-        showFullScreen();
-    } else {
-        if (maximized) {
-            showMaximized();
-        } else {
-            showNormal();
-        }
-    }
-}
+{ m_windowUiController->setFullScreen(on); }
 
 void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
 {
@@ -2595,13 +2393,10 @@ void MainWindow::on_actionSave_Session_triggered()
 }
 
 void MainWindow::on_actionShow_Menubar_toggled(bool arg1)
-{
-    ui->menuBar->setVisible(arg1);
-    m_settings.MainWindow.setMenuBarVisible(arg1);
-}
+{ m_windowUiController->setMenuBarVisible(arg1); }
 
 void MainWindow::on_actionShow_Toolbar_toggled(bool arg1)
-{ m_mainToolBar->setVisible(arg1); }
+{ m_windowUiController->setToolBarVisible(arg1); }
 
 void MainWindow::on_actionToggle_To_Former_Tab_triggered()
 {
