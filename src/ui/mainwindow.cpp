@@ -1,6 +1,5 @@
 #include "include/mainwindow.h"
 
-#include "include/EditorNS/bannerindentationdetected.h"
 #include "include/EditorNS/editor.h"
 #include "include/Extensions/Stubs/windowstub.h"
 #include "include/Extensions/extensionsloader.h"
@@ -9,10 +8,8 @@
 #include "include/clickablelabel.h"
 #include "include/documentcontroller.h"
 #include "include/editortabwidget.h"
+#include "include/editoruicontroller.h"
 #include "include/frmabout.h"
-#include "include/frmencodingchooser.h"
-#include "include/frmindentationmode.h"
-#include "include/frmlinenumberchooser.h"
 #include "include/frmpreferences.h"
 #include "include/notepadqq.h"
 #include "include/nqqrun.h"
@@ -57,6 +54,7 @@ MainWindow::MainWindow(const QString& workingDirectory, const QStringList& argum
 
     m_windowUiController = new WindowUiController(*this, *ui, m_settings, *m_advSearchDock);
     m_windowUiController->configureStaticUi();
+    m_editorUiController = new EditorUiController(*this, *ui, *m_docEngine, *m_topEditorContainer, m_settings);
 
     // Printing a WebEnginePage not supported prior to 5.8
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
@@ -97,13 +95,6 @@ MainWindow::MainWindow(const QString& workingDirectory, const QStringList& argum
         &MainWindow::on_customTabContextMenuRequested);
 
     connect(m_topEditorContainer, &TopEditorContainer::tabCloseRequested, this, &MainWindow::on_tabCloseRequested);
-
-    connect(
-        m_topEditorContainer, &TopEditorContainer::currentEditorChanged, this, &MainWindow::on_currentEditorChanged);
-
-    connect(m_topEditorContainer, &TopEditorContainer::editorAdded, this, &MainWindow::on_editorAdded);
-
-    connect(m_topEditorContainer, &TopEditorContainer::editorMouseWheel, this, &MainWindow::on_editorMouseWheel);
 
     connect(m_topEditorContainer, &TopEditorContainer::tabBarDoubleClicked, this, &MainWindow::on_tabBarDoubleClicked);
 
@@ -169,27 +160,10 @@ TopEditorContainer* MainWindow::topEditorContainer()
 
 void MainWindow::configureUserInterface()
 {
-    // Restore symbol visibility
-    bool showAll = m_settings.General.getShowAllSymbols();
-    ui->actionWord_wrap->setChecked(m_settings.General.getWordWrap());
-    ui->actionShow_All_Characters->setChecked(showAll);
-    emit on_actionShow_All_Characters_toggled(showAll);
-
-    // Restore math rendering
-    ui->actionMath_Rendering->setChecked(m_settings.General.getMathRendering());
+    m_editorUiController->configureUiFromSettings();
 
     // Restore full screen
     ui->actionFull_Screen->setChecked(isFullScreen());
-
-    // Restore smart indent
-    ui->actionToggle_Smart_Indent->setChecked(m_settings.General.getSmartIndentation());
-    on_actionToggle_Smart_Indent_toggled(m_settings.General.getSmartIndentation());
-
-    // Restore zoom
-    const qreal zoom = m_settings.General.getZoom();
-    for (int i = 0; i < m_topEditorContainer->count(); i++) {
-        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
-    }
 
     m_windowUiController->restoreWindowState();
 }
@@ -222,25 +196,7 @@ QList<QAction*> MainWindow::getActions() const
 }
 
 void MainWindow::setupLanguagesMenu()
-{
-    std::map<QChar, QMenu*> menuInitials;
-    for (const auto& l : LanguageService::getInstance().languages()) {
-        QString id = l.id;
-        QChar letter = l.name.isEmpty() ? '?' : l.name.at(0).toUpper();
-        QMenu* letterMenu;
-        if (menuInitials.count(letter) != 0) {
-            letterMenu = menuInitials[letter];
-        } else {
-            letterMenu = new QMenu(letter, this);
-            menuInitials.emplace(std::make_pair(letter, letterMenu));
-            ui->menu_Language->insertMenu(0, letterMenu);
-        }
-
-        QAction* action = new QAction(l.name, this);
-        connect(action, &QAction::triggered, this, [id, this](bool = false) { currentEditor()->setLanguage(id); });
-        letterMenu->insertAction(0, action);
-    }
-}
+{ m_editorUiController->setupLanguagesMenu(); }
 
 void MainWindow::fixKeyboardShortcuts()
 {
@@ -318,21 +274,7 @@ void MainWindow::changeEvent(QEvent* e)
 }
 
 void MainWindow::toggleOverwrite()
-{
-    m_overwrite = !m_overwrite;
-
-    m_topEditorContainer->forEachEditor(
-        [&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget* /*tabWidget*/, Editor* editor) {
-            editor->setOverwrite(m_overwrite);
-            return true;
-        });
-
-    if (m_overwrite) {
-        m_sbOvertypeBtn->setText(tr("OVR"));
-    } else {
-        m_sbOvertypeBtn->setText(tr("INS"));
-    }
-}
+{ m_editorUiController->toggleOverwrite(); }
 
 void MainWindow::on_actionNew_triggered()
 {
@@ -342,132 +284,25 @@ void MainWindow::on_actionNew_triggered()
 }
 
 void MainWindow::setCurrentEditorLanguage(QString language)
-{ currentEditor()->setLanguage(language); }
+{ m_editorUiController->setCurrentEditorLanguage(language); }
 
 void MainWindow::on_customTabContextMenuRequested(QPoint point, EditorTabWidget* /*tabWidget*/, int /*tabIndex*/)
 { m_tabContextMenu->exec(point); }
 
-bool MainWindow::updateSymbols(bool on)
-{
-    // Save the currently toggled symbols when deactivating Show_All_Characters using
-    // one of the other available symbol actions.
-    if (!on && ui->actionShow_All_Characters->isChecked()) {
-        m_settings.General.setTabsVisible(ui->actionShow_Tabs->isChecked());
-        m_settings.General.setSpacesVisisble(ui->actionShow_Spaces->isChecked());
-        m_settings.General.setShowEOL(ui->actionShow_End_of_Line->isChecked());
-        ui->actionShow_All_Characters->blockSignals(true);
-        ui->actionShow_All_Characters->setChecked(false);
-        ui->actionShow_All_Characters->blockSignals(false);
-        m_settings.General.setShowAllSymbols(false);
-        return true;
-
-    } else if (on && !ui->actionShow_All_Characters->isChecked()) {
-        bool showEOL = ui->actionShow_End_of_Line->isChecked();
-        bool showTabs = ui->actionShow_Tabs->isChecked();
-        bool showSpaces = ui->actionShow_Spaces->isChecked();
-        if (showEOL && showTabs && showSpaces) {
-            ui->actionShow_All_Characters->setChecked(true);
-        }
-    }
-
-    return false;
-}
-
 void MainWindow::on_actionShow_Tabs_triggered(bool on)
-{
-    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
-                                                      const int /*editorId*/,
-                                                      EditorTabWidget* /*tabWidget*/,
-                                                      Editor* editor,
-                                                      std::function<void()> done) {
-        editor->setTabsVisible(on);
-        done();
-    });
-    if (!updateSymbols(on)) {
-        m_settings.General.setTabsVisible(on);
-    }
-}
+{ m_editorUiController->setTabsVisible(on); }
 
 void MainWindow::on_actionShow_Spaces_triggered(bool on)
-{
-    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
-                                                      const int /*editorId*/,
-                                                      EditorTabWidget* /*tabWidget*/,
-                                                      Editor* editor,
-                                                      std::function<void()> done) {
-        editor->setWhitespaceVisible(on);
-        done();
-    });
-    if (!updateSymbols(on)) {
-        m_settings.General.setSpacesVisisble(on);
-    }
-}
+{ m_editorUiController->setSpacesVisible(on); }
 
 void MainWindow::on_actionShow_End_of_Line_triggered(bool on)
-{
-    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
-                                                      const int /*editorId*/,
-                                                      EditorTabWidget* /*tabWidget*/,
-                                                      Editor* editor,
-                                                      std::function<void()> done) {
-        editor->setEOLVisible(on);
-        done();
-    });
-    if (!updateSymbols(on)) {
-        m_settings.General.setShowEOL(on);
-    }
-}
+{ m_editorUiController->setEndOfLineVisible(on); }
 
 void MainWindow::on_actionShow_All_Characters_toggled(bool on)
-{
-    if (on) {
-        ui->actionShow_End_of_Line->setChecked(true);
-        ui->actionShow_Tabs->setChecked(true);
-        ui->actionShow_Spaces->setChecked(true);
-
-    } else {
-        bool showEOL = m_settings.General.getShowEOL();
-        bool showTabs = m_settings.General.getTabsVisible();
-        bool showSpaces = m_settings.General.getSpacesVisisble();
-
-        if (showEOL && showTabs && showSpaces) {
-            showEOL = !showEOL;
-            showTabs = !showTabs;
-            showSpaces = !showSpaces;
-        }
-
-        ui->actionShow_End_of_Line->setChecked(showEOL);
-        ui->actionShow_Tabs->setChecked(showTabs);
-        ui->actionShow_Spaces->setChecked(showSpaces);
-    }
-
-    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
-                                                      const int /*editorId*/,
-                                                      EditorTabWidget* /*tabWidget*/,
-                                                      Editor* editor,
-                                                      std::function<void()> done) {
-        editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
-        editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
-        editor->setWhitespaceVisible(on);
-        done();
-    });
-
-    m_settings.General.setShowAllSymbols(on);
-}
+{ m_editorUiController->setSymbols(on); }
 
 void MainWindow::on_actionMath_Rendering_toggled(bool on)
-{
-    m_topEditorContainer->forEachEditorConcurrent([&](const int /*tabWidgetId*/,
-                                                      const int /*editorId*/,
-                                                      EditorTabWidget* /*tabWidget*/,
-                                                      Editor* editor,
-                                                      std::function<void()> done) {
-        editor->setMathEnabled(on);
-        done();
-    });
-
-    m_settings.General.setMathRendering(on);
-}
+{ m_editorUiController->setMathRendering(on); }
 
 void MainWindow::on_actionMove_to_Other_View_triggered()
 {
@@ -505,7 +340,7 @@ int MainWindow::saveAs(EditorTabWidget* tabWidget, int tab, bool copy)
 { return m_documentController->saveAs(tabWidget, tab, copy); }
 
 Editor* MainWindow::currentEditor()
-{ return m_topEditorContainer->currentTabWidget()->currentEditor(); }
+{ return m_editorUiController->currentEditor(); }
 
 QAction* MainWindow::addExtensionMenuItem(QString extensionId, QString text)
 {
@@ -554,111 +389,31 @@ void MainWindow::on_actionSave_a_Copy_As_triggered()
 }
 
 void MainWindow::on_actionCopy_triggered()
-{
-    currentEditor()->selectedTexts().then([](QStringList sel) { QApplication::clipboard()->setText(sel.join("\n")); });
-}
+{ m_editorUiController->copySelections(); }
 
 void MainWindow::on_actionPaste_triggered()
-{
-    // Normalize foreign text format
-    QString text = QApplication::clipboard()->text().replace(QRegularExpression("\n|\r\n|\r"), "\n");
-
-    currentEditor()->setSelectionsText(text.split("\n"));
-}
+{ m_editorUiController->pasteSelections(); }
 
 void MainWindow::on_actionCut_triggered()
-{
-    ui->actionCopy->trigger();
-    currentEditor()->setSelectionsText(QStringList(""));
-}
+{ m_editorUiController->cutSelections(); }
 
 void MainWindow::on_actionBegin_End_Select_triggered()
-{
-    if (!beginSelectPositionSet) {
-        beginSelectPosition = currentEditor()->cursorPosition();
-        beginSelectPositionSet = true;
-    } else {
-        QPair<int, int> endSelectPosition = currentEditor()->cursorPosition();
-        currentEditor()->setSelection(
-            beginSelectPosition.first, beginSelectPosition.second, endSelectPosition.first, endSelectPosition.second);
-        beginSelectPositionSet = false;
-    }
-}
+{ m_editorUiController->beginEndSelect(); }
 
 void MainWindow::on_currentEditorChanged(EditorTabWidget* tabWidget, int tab)
-{
-    if (tab != -1) {
-        auto editor = tabWidget->editor(tab);
-        refreshEditorUiInfo(editor);
-        editor->requestDocumentInfo();
-        editor->setFocus();
-    }
-}
+{ m_editorUiController->currentEditorChanged(tabWidget, tab); }
 
 void MainWindow::on_editorAdded(EditorTabWidget* tabWidget, int tab)
-{
-    auto editor = tabWidget->editor(tab);
-
-    // If the tab is not newly opened but only transferred (e.g. with "Move to other View") it may
-    // have a banner attached to it. We need to disconnect previous signals to prevent
-    // on_bannerRemoved() to be called twice (once for the current connection and once for the connection
-    // created a few lines below).
-    disconnect(editor, &Editor::bannerRemoved, 0, 0);
-
-    connect(editor, &Editor::cursorActivity, this, &MainWindow::on_cursorActivity);
-    connect(editor, &Editor::documentInfoRequested, this, &MainWindow::refreshEditorUiCursorInfo);
-    connect(editor, &Editor::currentLanguageChanged, this, [=, this](QString id, QString name) {
-        on_currentLanguageChanged(editor, id, name);
-    });
-    connect(editor, &Editor::bannerRemoved, this, &MainWindow::on_bannerRemoved);
-    connect(editor, &Editor::cleanChanged, this, [=, this]() {
-        if (currentEditor() == editor)
-            refreshEditorUiInfo(editor);
-    });
-    connect(editor, &Editor::urlsDropped, this, &MainWindow::on_editorUrlsDropped);
-
-    // Initialize editor with UI settings
-    editor->setLineWrap(ui->actionWord_wrap->isChecked());
-    editor->setTabsVisible(ui->actionShow_Tabs->isChecked());
-    editor->setEOLVisible(ui->actionShow_End_of_Line->isChecked());
-    editor->setWhitespaceVisible(ui->actionShow_Spaces->isChecked());
-    editor->setOverwrite(m_overwrite);
-    editor->setFont(m_settings.Appearance.getOverrideFontFamily(),
-        m_settings.Appearance.getOverrideFontSize(),
-        m_settings.Appearance.getOverrideLineHeight());
-    editor->setLineNumbersVisible(m_settings.Appearance.getShowLineNumbers());
-    editor->setSmartIndent(m_settings.General.getSmartIndentation());
-    editor->setMathEnabled(ui->actionMath_Rendering->isChecked());
-}
+{ m_editorUiController->connectEditor(tabWidget, tab); }
 
 void MainWindow::on_cursorActivity(QMap<QString, QVariant> data)
-{
-    Editor* editor = dynamic_cast<Editor*>(sender());
-    if (!editor)
-        return;
-
-    if (currentEditor() == editor) {
-        refreshEditorUiCursorInfo(data);
-    }
-}
+{ m_editorUiController->cursorActivity(qobject_cast<Editor*>(sender()), data); }
 
 void MainWindow::refreshEditorUiCursorInfo(QMap<QString, QVariant> data)
-{
-    auto curData = data["cursor"].toList();
-    auto selData = data["selections"].toList();
-    auto conData = data["content"].toList();
-    QString msg = tr("Ln %1, Col %2").arg(curData[0].toInt() + 1).arg(curData[1].toInt() + 1);
-    msg += tr("    Sel %1 (%2)").arg(selData[1].toInt()).arg(selData[0].toInt());
-    msg += tr("    %1 chars, %2 lines").arg(conData[1].toInt()).arg(conData[0].toInt());
-    m_sbDocumentInfoLabel->setText(msg);
-}
+{ m_editorUiController->refreshCursorInfo(data); }
 
 void MainWindow::on_currentLanguageChanged(Editor* sender, QString /*id*/, QString /*name*/)
-{
-    if (currentEditor() == sender) {
-        refreshEditorUiInfo(sender);
-    }
-}
+{ m_editorUiController->currentLanguageChanged(sender); }
 
 void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResult* result, SearchUserInteraction type)
 {
@@ -730,98 +485,19 @@ void MainWindow::searchDockItemInteracted(const DocResult& doc, const MatchResul
 }
 
 void MainWindow::refreshEditorUiInfo(Editor* editor)
-{
-    // Update current language in statusbar
-    QString name = editor->getLanguage()->name;
-    m_sbFileFormatBtn->setText(name);
-
-    // Update MainWindow title
-    QString newTitle;
-    if (editor->filePath().isEmpty()) {
-        EditorTabWidget* tabWidget = m_topEditorContainer->tabWidgetFromEditor(editor);
-        if (tabWidget != 0) {
-            int tab = tabWidget->indexOf(editor);
-            if (tab != -1) {
-                newTitle = QString("%1 - %2").arg(tabWidget->tabText(tab)).arg(QApplication::applicationName());
-            }
-        }
-
-    } else {
-        QUrl url = editor->filePath();
-
-        QString path =
-            url.toDisplayString(QUrl::RemovePassword | QUrl::RemoveUserInfo | QUrl::RemovePort | QUrl::RemoveAuthority |
-                                QUrl::RemoveQuery | QUrl::RemoveFragment | QUrl::PreferLocalFile |
-                                QUrl::RemoveFilename | QUrl::NormalizePathSegments | QUrl::StripTrailingSlash);
-
-        newTitle = QString("%1%2 (%3) - %4")
-                       .arg(Notepadqq::fileNameFromUrl(editor->filePath()))
-                       .arg(editor->isClean() ? "" : "*")
-                       .arg(path)
-                       .arg(QApplication::applicationName());
-    }
-
-    if (newTitle != windowTitle()) {
-        setWindowTitle(newTitle.isNull() ? QApplication::applicationName() : newTitle);
-    }
-
-    // Enable / disable menus
-    QPointer<Editor> guardedEditor = editor;
-    editor->isCleanP().then([this, guardedEditor](bool isClean) {
-        if (!guardedEditor || currentEditor() != guardedEditor)
-            return;
-        QUrl fileName = guardedEditor->filePath();
-        ui->actionRename->setEnabled(!fileName.isEmpty());
-        ui->actionMove_to_New_Window->setEnabled(isClean);
-        ui->actionOpen_in_New_Window->setEnabled(isClean);
-    });
-
-    bool allowReloading = !editor->filePath().isEmpty();
-    ui->actionReload_File_Interpreted_As->setEnabled(allowReloading);
-    ui->actionReload_from_Disk->setEnabled(allowReloading);
-
-    // EOL
-    QString eol = editor->endOfLineSequence();
-    if (eol == "\r\n") {
-        ui->actionWindows_Format->setChecked(true);
-        m_sbEOLFormatBtn->setText(tr("Windows"));
-    } else if (eol == "\n") {
-        ui->actionUNIX_Format->setChecked(true);
-        m_sbEOLFormatBtn->setText(tr("UNIX / OS X"));
-    } else if (eol == "\r") {
-        ui->actionMac_Format->setChecked(true);
-        m_sbEOLFormatBtn->setText(tr("Old Mac"));
-    }
-
-    // Encoding
-    QString encoding;
-    if (editor->codec()->mibEnum() == MIB_UTF_8 && !editor->bom()) {
-        // Is UTF-8 without BOM
-        encoding = tr("%1 w/o BOM").arg(QString::fromUtf8(editor->codec()->name()));
-    } else {
-        encoding = QString::fromUtf8(editor->codec()->name());
-    }
-    m_sbTextFormatBtn->setText(encoding);
-
-    // Indentation
-    if (editor->isUsingCustomIndentationMode()) {
-        ui->actionIndentation_Custom->setChecked(true);
-    } else {
-        ui->actionIndentation_Default_Settings->setChecked(true);
-    }
-}
+{ m_editorUiController->refreshCurrentEditor(editor); }
 
 void MainWindow::on_actionDelete_triggered()
-{ currentEditor()->setSelectionsText(QStringList("")); }
+{ m_editorUiController->deleteSelections(); }
 
 void MainWindow::on_actionSelect_All_triggered()
-{ currentEditor()->sendMessage("C_CMD_SELECT_ALL"); }
+{ m_editorUiController->selectAll(); }
 
 void MainWindow::on_actionSet_RTL_triggered()
-{ currentEditor()->sendMessage("C_CMD_SET_RTL"); }
+{ m_editorUiController->setRightToLeft(); }
 
 void MainWindow::on_actionSet_LTR_triggered()
-{ currentEditor()->sendMessage("C_CMD_SET_LTR"); }
+{ m_editorUiController->setLeftToRight(); }
 
 void MainWindow::on_actionAbout_Notepadqq_triggered()
 {
@@ -836,10 +512,10 @@ void MainWindow::on_actionAbout_Qt_triggered()
 { QApplication::aboutQt(); }
 
 void MainWindow::on_actionUndo_triggered()
-{ currentEditor()->sendMessage("C_CMD_UNDO"); }
+{ m_editorUiController->undo(); }
 
 void MainWindow::on_actionRedo_triggered()
-{ currentEditor()->sendMessage("C_CMD_REDO"); }
+{ m_editorUiController->redo(); }
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -956,64 +632,28 @@ void MainWindow::on_actionReplace_triggered()
 }
 
 void MainWindow::on_actionPlain_text_triggered()
-{ currentEditor()->setLanguage("plaintext"); }
+{ m_editorUiController->setPlainText(); }
 
 void MainWindow::on_actionRestore_Default_Zoom_triggered()
-{
-    const qreal newZoom = m_settings.General.resetZoom();
-    m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-}
+{ m_editorUiController->restoreDefaultZoom(); }
 
 void MainWindow::on_actionZoom_In_triggered()
-{
-    qreal curZoom = currentEditor()->zoomFactor();
-    qreal newZoom = curZoom + 0.25;
-    m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    m_settings.General.setZoom(newZoom);
-}
+{ m_editorUiController->adjustZoom(0.25); }
 
 void MainWindow::on_actionZoom_Out_triggered()
-{
-    qreal curZoom = currentEditor()->zoomFactor();
-    qreal newZoom = curZoom - 0.25;
-    m_topEditorContainer->currentTabWidget()->setZoomFactor(newZoom);
-    m_settings.General.setZoom(newZoom);
-}
+{ m_editorUiController->adjustZoom(-0.25); }
 
 void MainWindow::on_editorMouseWheel(EditorTabWidget* tabWidget, int tab, QWheelEvent* ev)
-{
-    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        qreal curZoom = tabWidget->editor(tab)->zoomFactor();
-        qreal diff = ev->angleDelta().y() / 120;
-        diff /= 10;
-
-        // Increment/Decrement zoom factor by 0.1 at each step.
-        qreal newZoom = curZoom + diff;
-        tabWidget->setZoomFactor(newZoom);
-        m_settings.General.setZoom(newZoom);
-    }
-}
-
-void MainWindow::transformSelectedText(std::function<QString(const QString&)> func)
-{
-    auto editor = currentEditor();
-    editor->selectedTexts().then([=, this](QStringList sel) {
-        for (int i = 0; i < sel.length(); i++) {
-            sel.replace(i, func(sel.at(i)));
-        }
-
-        editor->setSelectionsText(sel, Editor::SelectMode::Selected);
-    });
-}
+{ m_editorUiController->handleMouseWheel(tabWidget, tab, ev); }
 
 void MainWindow::on_actionUPPERCASE_triggered()
 {
-    transformSelectedText([](const QString& str) { return str.toUpper(); });
+    m_editorUiController->transformSelectedText([](const QString& str) { return str.toUpper(); });
 }
 
 void MainWindow::on_actionLowercase_triggered()
 {
-    transformSelectedText([](const QString& str) { return str.toLower(); });
+    m_editorUiController->transformSelectedText([](const QString& str) { return str.toLower(); });
 }
 
 void MainWindow::on_actionClose_All_BUT_Current_Document_triggered()
@@ -1029,63 +669,10 @@ void MainWindow::on_actionSave_All_triggered()
 { m_documentController->saveAll(); }
 
 void MainWindow::on_bannerRemoved(QWidget* banner)
-{ delete banner; }
+{ m_editorUiController->removeBanner(banner); }
 
 void MainWindow::checkIndentationMode(Editor* editor)
-{
-    QPointer<Editor> guardedEditor = editor;
-    editor->detectDocumentIndentation().then([this, guardedEditor](const std::pair<IndentationMode, bool> result) {
-        if (!guardedEditor)
-            return;
-        IndentationMode detected = result.first;
-        bool found = result.second;
-
-        if (found) {
-            guardedEditor->indentationModeP().then([this, guardedEditor, detected](IndentationMode curr) {
-                if (!guardedEditor)
-                    return;
-                bool differentTabSpaces = detected.useTabs != curr.useTabs;
-                bool differentSpaceSize =
-                    detected.useTabs == false && curr.useTabs == false && detected.size != curr.size;
-
-                if (differentTabSpaces || differentSpaceSize) {
-                    // Show msg
-                    BannerIndentationDetected* banner =
-                        new BannerIndentationDetected(differentSpaceSize, detected, curr, this);
-                    banner->setObjectName("indentationdetected");
-
-                    guardedEditor->insertBanner(banner);
-
-                    connect(banner,
-                        &BannerIndentationDetected::useApplicationSettings,
-                        this,
-                        [this, guardedEditor, banner] {
-                            if (!guardedEditor)
-                                return;
-                            guardedEditor->removeBanner(banner);
-                            guardedEditor->setFocus();
-                        });
-
-                    connect(banner,
-                        &BannerIndentationDetected::useDocumentSettings,
-                        this,
-                        [this, guardedEditor, banner, detected] {
-                            if (!guardedEditor)
-                                return;
-                            guardedEditor->removeBanner(banner);
-                            if (detected.useTabs) {
-                                guardedEditor->setCustomIndentationMode(true);
-                            } else {
-                                guardedEditor->setCustomIndentationMode(detected.useTabs, detected.size);
-                            }
-                            ui->actionIndentation_Custom->setChecked(true);
-                            guardedEditor->setFocus();
-                        });
-                }
-            });
-        }
-    });
-}
+{ m_editorUiController->checkIndentationMode(editor); }
 
 void MainWindow::updateRecentDocsInMenu()
 {
@@ -1137,14 +724,7 @@ void MainWindow::on_actionRename_triggered()
 { m_documentController->renameCurrentDocument(); }
 
 void MainWindow::on_actionWord_wrap_toggled(bool on)
-{
-    m_topEditorContainer->forEachEditor(
-        [&](const int /*tabWidgetId*/, const int /*editorId*/, EditorTabWidget* /*tabWidget*/, Editor* editor) {
-            editor->setLineWrap(on);
-            return true;
-        });
-    m_settings.General.setWordWrap(on);
-}
+{ m_editorUiController->setWordWrap(on); }
 
 void MainWindow::on_actionEmpty_Recent_Files_List_triggered()
 { m_documentController->clearRecentFiles(); }
@@ -1153,148 +733,52 @@ void MainWindow::on_actionOpen_All_Recent_Files_triggered()
 { m_documentController->openAllRecentFiles(); }
 
 void MainWindow::on_actionUNIX_Format_triggered()
-{
-    auto editor = currentEditor();
-    editor->setEndOfLineSequence("\n");
-    editor->markDirty();
-}
+{ m_editorUiController->setEndOfLineSequence("\n"); }
 
 void MainWindow::on_actionWindows_Format_triggered()
-{
-    auto editor = currentEditor();
-    editor->setEndOfLineSequence("\r\n");
-    editor->markDirty();
-}
+{ m_editorUiController->setEndOfLineSequence("\r\n"); }
 
 void MainWindow::on_actionMac_Format_triggered()
-{
-    auto editor = currentEditor();
-    editor->setEndOfLineSequence("\r");
-    editor->markDirty();
-}
-
-void MainWindow::convertEditorEncoding(Editor* editor, QTextCodec* codec, bool bom)
-{
-    editor->setCodec(codec);
-    editor->setBom(bom);
-    editor->markDirty();
-
-    if (editor == currentEditor())
-        refreshEditorUiInfo(editor);
-}
+{ m_editorUiController->setEndOfLineSequence("\r"); }
 
 void MainWindow::on_actionUTF_8_triggered()
-{ convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true); }
+{ m_editorUiController->convertCurrentEditorEncoding(QTextCodec::codecForName("UTF-8"), true); }
 
 void MainWindow::on_actionUTF_8_without_BOM_triggered()
-{ convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false); }
+{ m_editorUiController->convertCurrentEditorEncoding(QTextCodec::codecForName("UTF-8"), false); }
 
 void MainWindow::on_actionUTF_16BE_triggered()
-{ convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true); }
+{ m_editorUiController->convertCurrentEditorEncoding(QTextCodec::codecForName("UTF-16BE"), true); }
 
 void MainWindow::on_actionUTF_16LE_triggered()
-{ convertEditorEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true); }
+{ m_editorUiController->convertCurrentEditorEncoding(QTextCodec::codecForName("UTF-16LE"), true); }
 
 void MainWindow::on_actionInterpret_as_UTF_8_triggered()
-{
-    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), true);
-    refreshEditorUiInfo(currentEditor());
-}
+{ m_editorUiController->reinterpretCurrentEditorEncoding(QTextCodec::codecForName("UTF-8"), true); }
 
 void MainWindow::on_actionInterpret_as_UTF_8_without_BOM_triggered()
-{
-    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-8"), false);
-    refreshEditorUiInfo(currentEditor());
-}
+{ m_editorUiController->reinterpretCurrentEditorEncoding(QTextCodec::codecForName("UTF-8"), false); }
 
 void MainWindow::on_actionInterpret_as_UTF_16BE_UCS_2_Big_Endian_triggered()
-{
-    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16BE"), true);
-    refreshEditorUiInfo(currentEditor());
-}
+{ m_editorUiController->reinterpretCurrentEditorEncoding(QTextCodec::codecForName("UTF-16BE"), true); }
 
 void MainWindow::on_actionInterpret_as_UTF_16LE_UCS_2_Little_Endian_triggered()
-{
-    m_docEngine->reinterpretEncoding(currentEditor(), QTextCodec::codecForName("UTF-16LE"), true);
-    refreshEditorUiInfo(currentEditor());
-}
+{ m_editorUiController->reinterpretCurrentEditorEncoding(QTextCodec::codecForName("UTF-16LE"), true); }
 
 void MainWindow::on_actionConvert_to_triggered()
-{
-    auto editor = currentEditor();
-    frmEncodingChooser* dialog = new frmEncodingChooser(this);
-    dialog->setEncoding(editor->codec());
-    dialog->setInfoText(tr("Convert to:"));
-
-    if (dialog->exec() == QDialog::Accepted) {
-        convertEditorEncoding(editor, dialog->selectedCodec(), false);
-    }
-
-    dialog->deleteLater();
-}
+{ m_editorUiController->chooseEncodingForConversion(); }
 
 void MainWindow::on_actionReload_File_Interpreted_As_triggered()
-{
-    auto editor = currentEditor();
-
-    if (editor->filePath().isEmpty())
-        return;
-
-    frmEncodingChooser* dialog = new frmEncodingChooser(this);
-    dialog->setEncoding(editor->codec());
-    dialog->setInfoText(tr("Reload as:"));
-
-    if (dialog->exec() == QDialog::Accepted) {
-        EditorTabWidget* tabWidget = m_topEditorContainer->currentTabWidget();
-
-        m_docEngine->getDocumentLoader()
-            .setUrl(editor->filePath())
-            .setTabWidget(tabWidget)
-            .setTextCodec(dialog->selectedCodec())
-            .execute();
-    }
-
-    dialog->deleteLater();
-}
+{ m_editorUiController->chooseEncodingForReload(); }
 
 void MainWindow::on_actionIndentation_Default_Settings_triggered()
-{ currentEditor()->clearCustomIndentationMode(); }
+{ m_editorUiController->useDefaultIndentation(); }
 
 void MainWindow::on_actionIndentation_Custom_triggered()
-{
-    auto editor = currentEditor();
-
-    frmIndentationMode* dialog = new frmIndentationMode(this);
-    dialog->populateWidgets(editor->indentationMode());
-
-    if (dialog->exec() == QDialog::Accepted) {
-        IndentationMode indent = dialog->indentationMode();
-        editor->setCustomIndentationMode(indent.useTabs, indent.size);
-    }
-
-    // Make sure the UI is consistent even if the user canceled the dialog.
-    if (editor->isUsingCustomIndentationMode()) {
-        ui->actionIndentation_Custom->setChecked(true);
-    } else {
-        ui->actionIndentation_Default_Settings->setChecked(true);
-    }
-
-    dialog->deleteLater();
-}
+{ m_editorUiController->chooseCustomIndentation(); }
 
 void MainWindow::on_actionInterpret_As_triggered()
-{
-    auto editor = currentEditor();
-    frmEncodingChooser* dialog = new frmEncodingChooser(this);
-    dialog->setEncoding(editor->codec());
-    dialog->setInfoText(tr("Interpret as:"));
-
-    if (dialog->exec() == QDialog::Accepted) {
-        m_docEngine->reinterpretEncoding(editor, dialog->selectedCodec(), false);
-    }
-
-    dialog->deleteLater();
-}
+{ m_editorUiController->chooseEncodingForInterpretation(); }
 
 void MainWindow::generateRunMenu()
 { m_windowUiController->generateRunMenu(); }
@@ -1303,13 +787,7 @@ void MainWindow::generateRunMenu()
  * @brief Configure any user interface after loading session
  */
 void MainWindow::configurePostSessionUserInterface()
-{
-    // Restore zoom after load session
-    const qreal zoom = m_settings.General.getZoom();
-    for (int i = 0; i < m_topEditorContainer->count(); i++) {
-        m_topEditorContainer->tabWidget(i)->setZoomFactor(zoom);
-    }
-}
+{ m_editorUiController->restoreSavedZoom(); }
 
 void MainWindow::modifyRunCommands()
 {
@@ -1409,29 +887,10 @@ void MainWindow::on_actionLaunch_in_Chrome_triggered()
 }
 */
 QtPromise::QPromise<QStringList> MainWindow::currentWordOrSelections()
-{
-    QPointer<Editor> editor = currentEditor();
-    return editor->selectedTexts().then([editor](QStringList selection) {
-        if (!editor)
-            return QtPromise::QPromise<QStringList>::resolve({});
-        if (selection.isEmpty() || selection.first().isEmpty()) {
-            return editor->getCurrentWord().then([](QString word) { return QStringList(word); });
-        } else {
-            return QtPromise::QPromise<QStringList>::resolve(selection);
-        }
-    });
-}
+{ return m_editorUiController->currentWordOrSelections(); }
 
 QtPromise::QPromise<QString> MainWindow::currentWordOrSelection()
-{
-    return currentWordOrSelections().then([=, this](QStringList terms) {
-        if (terms.isEmpty()) {
-            return QString();
-        } else {
-            return terms.first();
-        }
-    });
-}
+{ return m_editorUiController->currentWordOrSelection(); }
 
 void MainWindow::currentWordOnlineSearch(const QString& searchUrl)
 {
@@ -1518,55 +977,43 @@ void MainWindow::on_actionFind_in_Files_triggered()
 { m_advSearchDock->show(!m_advSearchDock->isVisible(), true); }
 
 void MainWindow::on_actionDelete_Line_triggered()
-{ currentEditor()->sendMessage("C_CMD_DELETE_LINE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_DELETE_LINE"); }
 
 void MainWindow::on_actionDuplicate_Line_triggered()
-{ currentEditor()->sendMessage("C_CMD_DUPLICATE_LINE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_DUPLICATE_LINE"); }
 
 void MainWindow::on_actionMove_Line_Up_triggered()
-{ currentEditor()->sendMessage("C_CMD_MOVE_LINE_UP"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_MOVE_LINE_UP"); }
 
 void MainWindow::on_actionMove_Line_Down_triggered()
-{ currentEditor()->sendMessage("C_CMD_MOVE_LINE_DOWN"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_MOVE_LINE_DOWN"); }
 
 void MainWindow::on_actionTranspose_Line_triggered()
-{ currentEditor()->sendMessage("C_CMD_TRANSPOSE_LINE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_TRANSPOSE_LINE"); }
 
 void MainWindow::on_actionTrim_Trailing_Space_triggered()
-{ currentEditor()->sendMessage("C_CMD_TRIM_TRAILING_SPACE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_TRIM_TRAILING_SPACE"); }
 
 void MainWindow::on_actionTrim_Leading_Space_triggered()
-{ currentEditor()->sendMessage("C_CMD_TRIM_LEADING_SPACE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_TRIM_LEADING_SPACE"); }
 
 void MainWindow::on_actionTrim_Leading_and_Trailing_Space_triggered()
-{ currentEditor()->sendMessage("C_CMD_TRIM_LEADING_TRAILING_SPACE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_TRIM_LEADING_TRAILING_SPACE"); }
 
 void MainWindow::on_actionEOL_to_Space_triggered()
-{ currentEditor()->sendMessage("C_CMD_EOL_TO_SPACE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_EOL_TO_SPACE"); }
 
 void MainWindow::on_actionTAB_to_Space_triggered()
-{ currentEditor()->sendMessage("C_CMD_TAB_TO_SPACE"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_TAB_TO_SPACE"); }
 
 void MainWindow::on_actionSpace_to_TAB_All_triggered()
-{ currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_ALL"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_SPACE_TO_TAB_ALL"); }
 
 void MainWindow::on_actionSpace_to_TAB_Leading_triggered()
-{ currentEditor()->sendMessage("C_CMD_SPACE_TO_TAB_LEADING"); }
+{ m_editorUiController->sendEditorCommand("C_CMD_SPACE_TO_TAB_LEADING"); }
 
 void MainWindow::on_actionGo_to_Line_triggered()
-{
-    QPointer<Editor> editor = currentEditor();
-    int currentLine = editor->cursorPosition().first;
-    editor->lineCount().then([this, editor, currentLine](int lines) {
-        if (!editor)
-            return;
-        frmLineNumberChooser* frm = new frmLineNumberChooser(1, lines, currentLine + 1, this);
-        if (frm->exec() == QDialog::Accepted) {
-            int line = frm->value();
-            editor->setSelection(line - 1, 0, line - 1, 0);
-        }
-    });
-}
+{ m_editorUiController->goToLine(); }
 
 void MainWindow::on_actionInstall_Extension_triggered()
 {
@@ -1619,13 +1066,7 @@ void MainWindow::on_actionFull_Screen_toggled(bool on)
 { m_windowUiController->setFullScreen(on); }
 
 void MainWindow::on_actionToggle_Smart_Indent_toggled(bool on)
-{
-    m_topEditorContainer->forEachEditor([&](const int, const int, EditorTabWidget*, Editor* editor) {
-        editor->setSmartIndent(on);
-        return true;
-    });
-    m_settings.General.setSmartIndentation(on);
-}
+{ m_editorUiController->setSmartIndent(on); }
 
 void MainWindow::on_actionLoad_Session_triggered()
 { m_documentController->loadSession(); }

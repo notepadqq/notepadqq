@@ -7,6 +7,7 @@
 #include "include/commandlineopenruntime.h"
 #include "include/docengine.h"
 #include "include/documentcontroller.h"
+#include "include/editoruicontroller.h"
 #include "include/localsockethelpers.h"
 #include "include/notepadqq.h"
 #include "include/statsruntime.h"
@@ -180,6 +181,7 @@ private Q_SLOTS:
     void commandLineOpenContinuesOnlyAfterLoadingCompletes();
     void commandLineOpenDiscardsContinuationWhenOwnerIsDestroyed();
     void documentControllerHasExpectedConstructionContract();
+    void editorUiControllerHasExpectedConstructionContract();
     void linePositions_data();
     void linePositions();
 };
@@ -190,6 +192,19 @@ void CppCorrectnessTest::documentControllerHasExpectedConstructionContract()
     QVERIFY((std::is_base_of_v<QObject, DocumentController>));
     QVERIFY((std::is_constructible_v<DocumentController, MainWindow&, DocEngine&, TopEditorContainer&, NqqSettings&>));
     QVERIFY((!std::is_copy_constructible_v<DocumentController>));
+}
+
+// Guards the editor UI controller's QObject, collaborator-constructor, and non-copyable API shape.
+void CppCorrectnessTest::editorUiControllerHasExpectedConstructionContract()
+{
+    QVERIFY((std::is_base_of_v<QObject, EditorUiController>));
+    QVERIFY((std::is_constructible_v<EditorUiController,
+        MainWindow&,
+        Ui::MainWindow&,
+        DocEngine&,
+        TopEditorContainer&,
+        NqqSettings&>));
+    QVERIFY((!std::is_copy_constructible_v<EditorUiController>));
 }
 
 // Guards the bridge dispatch against invoking an Editor callback after the Editor is destroyed.
