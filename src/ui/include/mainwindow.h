@@ -21,11 +21,13 @@ class MainWindow;
 }
 
 class WindowUiController;
+class DocumentController;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
     friend class WindowUiController;
+    friend class DocumentController;
 
 public:
     explicit MainWindow(const QString& workingDirectory, const QStringList& arguments, QWidget* parent = nullptr);
@@ -131,7 +133,6 @@ private slots:
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
     void on_actionClose_All_triggered();
-    void on_fileOnDiskChanged(EditorTabWidget* tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
     void on_currentLanguageChanged(Editor* sender, QString, QString);
@@ -146,9 +147,6 @@ private slots:
     void on_actionCloseRight_triggered();
     void on_actionSave_All_triggered();
     void on_bannerRemoved(QWidget* banner);
-    void on_documentSaved(EditorTabWidget* tabWidget, int tab);
-    void on_documentReloaded(EditorTabWidget* tabWidget, int tab);
-    void on_documentLoaded(EditorTabWidget* tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
@@ -224,6 +222,7 @@ private:
     QPushButton* m_sbTextFormatBtn;
     QPushButton* m_sbOvertypeBtn;
     WindowUiController* m_windowUiController = nullptr;
+    DocumentController* m_documentController = nullptr;
     NqqSettings& m_settings;
     frmSearchReplace* m_frmSearchReplace = nullptr;
     bool m_overwrite = false; // Overwrite mode vs Insert mode
@@ -233,23 +232,6 @@ private:
     bool beginSelectPositionSet = false;
 
     AdvancedSearchDock* m_advSearchDock;
-
-    /**
-     * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and
-     *        saves all unsaved progress in the cache.
-     */
-    bool saveTabsToCache();
-
-    /**
-     * @brief Acts like closing all tabs, asking to the user for input before discarding
-     *        changes, etc. However, the tabs will remain opened. This can be used right
-     *        when the MainWindow received a close signal and actually closing all tabs
-     *        is unnecessary.
-     * @return Whether all files would have been properly closed.
-     */
-    bool finalizeAllTabs();
-
-    int askIfWantToSave(EditorTabWidget* tabWidget, int tab, int reason);
 
     /**
      * @brief Removes the specified tab. Doesn't remove the tab if it's the
@@ -279,7 +261,6 @@ private:
      */
     int save(EditorTabWidget* tabWidget, int tab);
     int saveAs(EditorTabWidget* tabWidget, int tab, bool copy);
-    QUrl getSaveDialogDefaultFileName(EditorTabWidget* tabWidget, int tab);
     void setupLanguagesMenu();
     void transformSelectedText(std::function<QString(const QString&)> func);
     void updateRecentDocsInMenu();
