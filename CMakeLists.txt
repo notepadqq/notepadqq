@@ -330,7 +330,21 @@ endif()
 if(NQQ_BUILD_TESTS)
     enable_testing()
 
-    qt_add_executable(ui-tests src/ui-tests/tst_notepadqqtest.cpp)
+    set(NQQ_UI_TEST_SOURCES ${NQQ_APP_SOURCES})
+    list(REMOVE_ITEM NQQ_UI_TEST_SOURCES src/ui/main.cpp)
+    qt_add_executable(ui-tests
+        src/ui-tests/tst_notepadqqtest.cpp
+        ${NQQ_UI_TEST_SOURCES}
+        ${NQQ_APP_HEADERS}
+        ${NQQ_APP_FORMS}
+        ${NQQ_GENERATED_ICONS_QRC}
+    )
+    if(APPLE)
+        set_target_properties(ui-tests PROPERTIES MACOSX_BUNDLE TRUE)
+    endif()
+    set_target_properties(ui-tests PROPERTIES
+        AUTOUIC_SEARCH_PATHS "${NQQ_UI_DIR};${NQQ_UI_DIR}/Search;${NQQ_UI_DIR}/Extensions"
+    )
     target_include_directories(ui-tests PRIVATE
         src/ui
         src/ui/include
@@ -359,6 +373,29 @@ if(NQQ_BUILD_TESTS)
     target_compile_options(ui-tests PRIVATE
         -include qtpromise/qpromiseexceptions.h
     )
+    target_compile_definitions(ui-tests PRIVATE QT_NO_URL_CAST_FROM_STRING)
+    if(NQQ_USE_MONACO)
+        target_compile_definitions(ui-tests PRIVATE NQQ_USE_MONACO)
+    endif()
+    if(NQQ_MAKE_EXECUTABLE)
+        if(APPLE)
+            add_custom_command(TARGET ui-tests POST_BUILD
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:ui-tests>/Resources/editor"
+                COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="$<TARGET_BUNDLE_CONTENT_DIR:ui-tests>/Resources/editor" ${NQQ_MAKE_MONACO_ARGS}
+                WORKING_DIRECTORY "${NQQ_ROOT_DIR}/src/editor"
+                COMMENT "Staging editor assets for UI tests"
+                VERBATIM
+            )
+        else()
+            add_custom_command(TARGET ui-tests POST_BUILD
+                COMMAND "${CMAKE_COMMAND}" -E rm -rf "${NQQ_STAGED_APPDATA_DIR}/editor"
+                COMMAND "${NQQ_MAKE_EXECUTABLE}" DESTDIR="${NQQ_STAGED_APPDATA_DIR}/editor" ${NQQ_MAKE_MONACO_ARGS}
+                WORKING_DIRECTORY "${NQQ_ROOT_DIR}/src/editor"
+                COMMENT "Staging editor assets for UI tests"
+                VERBATIM
+            )
+        endif()
+    endif()
     add_test(NAME ui-tests COMMAND ui-tests)
 
     qt_add_executable(cpp-correctness-tests

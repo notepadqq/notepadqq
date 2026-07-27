@@ -139,6 +139,8 @@ MainWindow::~MainWindow()
 {
     MainWindow::m_instances.removeAll(this);
 
+    delete m_editorUiController;
+    m_editorUiController = nullptr;
     delete ui;
     delete m_docEngine;
 }
@@ -534,6 +536,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
     // the UI is being destroyed.
     m_topEditorContainer->disconnectAllTabWidgets(); // Fixes segfault on exit
     disconnect(m_topEditorContainer, 0, this, 0);
+    for (QObject* signalSource : findChildren<QObject*>())
+        QObject::disconnect(signalSource, nullptr, m_editorUiController, nullptr);
 }
 
 void MainWindow::on_actionExit_triggered()
