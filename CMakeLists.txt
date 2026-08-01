@@ -397,6 +397,9 @@ if(NQQ_BUILD_TESTS)
         endif()
     endif()
     add_test(NAME ui-tests COMMAND ui-tests)
+    set_tests_properties(ui-tests PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QTWEBENGINE_DISABLE_SANDBOX=1"
+    )
 
     qt_add_executable(cpp-correctness-tests
         src/ui-tests/tst_cppcorrectness.cpp

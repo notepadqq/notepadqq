@@ -120,9 +120,16 @@ public:
     QUrl stringToUrl(const QString& fileName, const QString& workingDirectory = QString()) const;
 
 private:
+    /// Persists the current tabs to the recovery cache, allowing retry or ignore on failure.
     bool saveTabsToCache();
+
+    /// Confirms every dirty tab can be finalized without removing it.
     bool finalizeAllTabs();
+
+    /// Prompts whether a dirty tab should be saved, discarded, or kept open.
     int askIfWantToSave(EditorTabWidget* tabWidget, int tab, int reason);
+
+    /// Chooses the existing path or a language-aware default for the save dialog.
     QUrl saveDialogDefaultFileName(EditorTabWidget* tabWidget, int tab) const;
 
     MainWindow& m_window;

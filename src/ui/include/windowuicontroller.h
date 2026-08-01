@@ -16,6 +16,7 @@ class MainWindow;
  */
 class WindowUiController : public QObject {
 public:
+    /// Creates a controller for the window's static widgets using non-owning references.
     WindowUiController(
         MainWindow& window, Ui::MainWindow& ui, NqqSettings& settings, AdvancedSearchDock& advancedSearchDock);
 

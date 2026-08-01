@@ -32,7 +32,6 @@ NotepadqqTest::NotepadqqTest() {}
 void NotepadqqTest::initTestCase()
 {
     QVERIFY(m_settingsDirectory.isValid());
-    qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
     QCoreApplication::setOrganizationName("Notepadqq-tests");
     QCoreApplication::setApplicationName("Notepadqq-tests");
     QSettings::setDefaultFormat(QSettings::IniFormat);
