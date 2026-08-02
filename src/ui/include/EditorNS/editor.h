@@ -309,6 +309,53 @@ private:
         QString message;
     };
 
+    /** Stores a one-way bridge command until the JavaScript editor is ready to receive it. */
+    struct QueuedOneWayMessage {
+        QString message;
+        QVariant payload;
+    };
+
+    /** Emits one already-formatted one-way bridge command to the JavaScript editor. */
+    using EmitOneWayMessage = std::function<void(const QString&, const QVariant&)>;
+
+    /**
+     * Sends a one-way command immediately when the editor is ready, otherwise retains it in FIFO order.
+     * This keeps callers responsive during WebEngine startup without losing commands sent before J_EVT_READY.
+     */
+    static void sendOrQueueOneWayMessage(bool ready,
+        std::deque<QueuedOneWayMessage>& pendingMessages,
+        const QString& message,
+        const QVariant& payload,
+        const EmitOneWayMessage& emitMessage)
+    {
+        if (ready) {
+            emitMessage(message, payload);
+            return;
+        }
+
+        pendingMessages.push_back({message, payload});
+    }
+
+    /** Drains queued one-way commands in FIFO order after the JavaScript editor reports readiness. */
+    static void flushQueuedOneWayMessages(
+        std::deque<QueuedOneWayMessage>& pendingMessages, const EmitOneWayMessage& emitMessage)
+    {
+        while (!pendingMessages.empty()) {
+            QueuedOneWayMessage message = std::move(pendingMessages.front());
+            pendingMessages.pop_front();
+            emitMessage(message.message, message.payload);
+        }
+    }
+
+    /** Notifies request/reply listeners before draining one-way commands queued during editor startup. */
+    static void notifyReadyAndFlushOneWayMessages(std::deque<QueuedOneWayMessage>& pendingMessages,
+        const std::function<void()>& notifyReady,
+        const EmitOneWayMessage& emitMessage)
+    {
+        notifyReady();
+        flushQueuedOneWayMessages(pendingMessages, emitMessage);
+    }
+
     /** Registers the QtPromise with the tracker before the caller emits its bridge request. */
     static QtPromise::QPromise<QVariant> registerAsyncPromise(
         AsyncRequestTracker& tracker, unsigned int id, const QString& message)
@@ -416,6 +463,7 @@ private:
     void setTabName(const QString& name);
 
     static std::deque<std::unique_ptr<Editor>> m_editorBuffer;
+    std::deque<QueuedOneWayMessage> m_pendingOneWayMessages;
     QVBoxLayout* m_layout;
     CustomQWebView* m_webView;
     JsToCppProxy* m_jsToCppProxy;
@@ -425,12 +473,12 @@ private:
     QString m_tabName;
     bool m_fileOnDiskChanged = false;
     bool m_loaded = false;
+    bool m_deferringOneWayMessages = true;
     QString m_endOfLineSequence = "\n";
     QTextCodec* m_codec = QTextCodec::codecForName("UTF-8");
     bool m_bom = false;
     bool m_customIndentationMode = false;
     const Language* m_currentLanguage = nullptr;
-    inline void waitAsyncLoad();
 
     static bool useMonaco();
 

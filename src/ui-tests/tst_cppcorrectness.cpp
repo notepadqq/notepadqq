@@ -56,6 +56,14 @@ signals:
 // Test-only friend that exercises the private Editor/tracker seam without expanding Editor's public API.
 class EditorCorrectnessAccess {
 public:
+    struct OneWayDispatchResult {
+        int queuedMessageCount = 0;
+        int queuedAfterReadyNotification = 0;
+        int queuedAfterFlush = 0;
+        QStringList deliveredMessages;
+        QVariantList deliveredPayloads;
+    };
+
     // Uses the same registration helper as Editor's QtPromise overload.
     static QtPromise::QPromise<QVariant> registerPromise(
         EditorNS::AsyncRequestTracker& tracker, unsigned int id, const QString& message)
@@ -88,6 +96,40 @@ public:
     // Routes a synthetic wire reply through the same parser and tracker resolution helper as Editor.
     static bool receiveReply(EditorNS::AsyncRequestTracker& tracker, const QString& wireMessage, const QVariant& data)
     { return EditorNS::Editor::resolveAsyncReply(tracker, wireMessage, data).has_value(); }
+
+    // Exercises the one-way bridge queue without constructing a QWebEngine-backed Editor.
+    static OneWayDispatchResult queueOneWayMessagesUntilReadyTransitionCompletes()
+    {
+        std::deque<EditorNS::Editor::QueuedOneWayMessage> pending;
+        OneWayDispatchResult result;
+        bool deferOneWayMessages = true;
+        const auto deliver = [&result](const QString& message, const QVariant& payload) {
+            result.deliveredMessages.append(message);
+            result.deliveredPayloads.append(payload);
+        };
+
+        EditorNS::Editor::sendOrQueueOneWayMessage(
+            false, pending, QStringLiteral("C_CMD_BEFORE_READY"), 1, deliver);
+        result.queuedMessageCount = static_cast<int>(pending.size());
+
+        EditorNS::Editor::notifyReadyAndFlushOneWayMessages(
+            pending,
+            [&] {
+                EditorNS::Editor::sendOrQueueOneWayMessage(!deferOneWayMessages,
+                    pending,
+                    QStringLiteral("C_CMD_DURING_READY"),
+                    2,
+                    deliver);
+                result.queuedAfterReadyNotification = static_cast<int>(pending.size());
+            },
+            deliver);
+        result.queuedAfterFlush = static_cast<int>(pending.size());
+
+        deferOneWayMessages = false;
+        EditorNS::Editor::sendOrQueueOneWayMessage(
+            !deferOneWayMessages, pending, QStringLiteral("C_CMD_AFTER_READY"), 3, deliver);
+        return result;
+    }
 };
 
 // In-process reply used to deterministically exercise the telemetry cleanup helper.
@@ -169,6 +211,7 @@ private Q_SLOTS:
     void editorTrackerDestructionLeavesNoLiveTimeoutTimers();
     void editorDoesNotEmitTimedOutPromiseWhenReadyLate();
     void editorLegacyWaitExitsOnTimeoutBeforeReady();
+    void editorQueuesOneWayMessagesUntilReadyTransitionCompletes();
     void deferredCallbackIsDiscardedWhenContextIsDestroyed();
     void cancellationRequestsInterruptionAndStopsFilesystemSearch();
     void searchPlainText_handlesContentEndingInLf();
@@ -395,6 +438,22 @@ void CppCorrectnessTest::editorLegacyWaitExitsOnTimeoutBeforeReady()
     readyEmitter.becomeReady();
     QCoreApplication::processEvents();
     QVERIFY(!emitted);
+}
+
+// Guards legacy one-way commands against blocking on WebEngine startup while retaining their payload.
+void CppCorrectnessTest::editorQueuesOneWayMessagesUntilReadyTransitionCompletes()
+{
+    const auto result = EditorCorrectnessAccess::queueOneWayMessagesUntilReadyTransitionCompletes();
+
+    QCOMPARE(result.queuedMessageCount, 1);
+    QCOMPARE(result.queuedAfterReadyNotification, 2);
+    QCOMPARE(result.queuedAfterFlush, 0);
+    const QStringList expectedMessages{QStringLiteral("C_CMD_BEFORE_READY"),
+        QStringLiteral("C_CMD_DURING_READY"),
+        QStringLiteral("C_CMD_AFTER_READY")};
+    const QVariantList expectedPayloads{QVariant(1), QVariant(2), QVariant(3)};
+    QCOMPARE(result.deliveredMessages, expectedMessages);
+    QCOMPARE(result.deliveredPayloads, expectedPayloads);
 }
 
 // Guards single settlement and late-duplicate rejection.
