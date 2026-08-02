@@ -14,14 +14,20 @@
 #include <QMainWindow>
 #include <QtPromise>
 
-#include <functional>
-
 namespace Ui {
 class MainWindow;
 }
 
+class WindowUiController;
+class DocumentController;
+class EditorUiController;
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
+
+    friend class WindowUiController;
+    friend class DocumentController;
+    friend class EditorUiController;
 
 public:
     explicit MainWindow(const QString& workingDirectory, const QStringList& arguments, QWidget* parent = nullptr);
@@ -127,7 +133,6 @@ private slots:
     void on_actionPreferences_triggered();
     void on_actionClose_triggered();
     void on_actionClose_All_triggered();
-    void on_fileOnDiskChanged(EditorTabWidget* tabWidget, int tab, bool removed);
     void on_actionReplace_triggered();
     void on_actionPlain_text_triggered();
     void on_currentLanguageChanged(Editor* sender, QString, QString);
@@ -142,9 +147,6 @@ private slots:
     void on_actionCloseRight_triggered();
     void on_actionSave_All_triggered();
     void on_bannerRemoved(QWidget* banner);
-    void on_documentSaved(EditorTabWidget* tabWidget, int tab);
-    void on_documentReloaded(EditorTabWidget* tabWidget, int tab);
-    void on_documentLoaded(EditorTabWidget* tabWidget, int tab, bool wasAlreadyOpened, bool updateRecentDocs);
     void on_actionReload_from_Disk_triggered();
     void on_actionFind_Next_triggered();
     void on_actionFind_Previous_triggered();
@@ -219,32 +221,15 @@ private:
     QPushButton* m_sbEOLFormatBtn;
     QPushButton* m_sbTextFormatBtn;
     QPushButton* m_sbOvertypeBtn;
+    WindowUiController* m_windowUiController = nullptr;
+    DocumentController* m_documentController = nullptr;
+    EditorUiController* m_editorUiController = nullptr;
     NqqSettings& m_settings;
     frmSearchReplace* m_frmSearchReplace = nullptr;
-    bool m_overwrite = false; // Overwrite mode vs Insert mode
     QString m_workingDirectory;
     QMap<QSharedPointer<Extensions::Extension>, QMenu*> m_extensionMenus;
-    QPair<int, int> beginSelectPosition;
-    bool beginSelectPositionSet = false;
 
     AdvancedSearchDock* m_advSearchDock;
-
-    /**
-     * @brief saveTabsToCache Saves tabs to cache. Utilizes the saveSession function and
-     *        saves all unsaved progress in the cache.
-     */
-    bool saveTabsToCache();
-
-    /**
-     * @brief Acts like closing all tabs, asking to the user for input before discarding
-     *        changes, etc. However, the tabs will remain opened. This can be used right
-     *        when the MainWindow received a close signal and actually closing all tabs
-     *        is unnecessary.
-     * @return Whether all files would have been properly closed.
-     */
-    bool finalizeAllTabs();
-
-    int askIfWantToSave(EditorTabWidget* tabWidget, int tab, int reason);
 
     /**
      * @brief Removes the specified tab. Doesn't remove the tab if it's the
@@ -274,13 +259,8 @@ private:
      */
     int save(EditorTabWidget* tabWidget, int tab);
     int saveAs(EditorTabWidget* tabWidget, int tab, bool copy);
-    QUrl getSaveDialogDefaultFileName(EditorTabWidget* tabWidget, int tab);
     void setupLanguagesMenu();
-    void transformSelectedText(std::function<QString(const QString&)> func);
-    void restoreWindowSettings();
-    void loadIcons();
     void updateRecentDocsInMenu();
-    void convertEditorEncoding(Editor* editor, QTextCodec* codec, bool bom);
     void toggleOverwrite();
     void checkIndentationMode(Editor* editor);
     QtPromise::QPromise<QStringList> currentWordOrSelections();
@@ -301,19 +281,8 @@ private:
     void instantiateFrmSearchReplace();
     QUrl stringToUrl(QString fileName, QString workingDirectory = QString());
 
-    /**
-     * @brief Initialize UI from settings
-     */
+    /** @brief Initializes dynamic UI from settings. */
     void configureUserInterface();
-    void configureStatusBar();
-
-    /**
-     * @brief Update symbol options using parameter `on` and Show_All_Characters toggle status.
-     * @param on  `true` or `false` based on the calling element's toggle status.
-     * @return bool: `true` if `on` is `false` and Show_All_Characters is checked. False otherwise.
-     *               On a `true` return, default symbol saving behavior is modified.
-     */
-    bool updateSymbols(bool on);
 };
 
 #endif // MAINWINDOW_H
