@@ -136,7 +136,8 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 
         } else if (msg == "J_EVT_READY") {
             m_loaded = true;
-            notifyReadyAndFlushOneWayMessages(m_pendingOneWayMessages,
+            notifyReadyAndFlushOneWayMessages(
+                m_pendingOneWayMessages,
                 [this] { emit editorReady(); },
                 [this](const QString& message, const QVariant& payload) {
                     emit m_jsToCppProxy->messageReceivedByJs(message, payload);

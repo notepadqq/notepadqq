@@ -108,18 +108,14 @@ public:
             result.deliveredPayloads.append(payload);
         };
 
-        EditorNS::Editor::sendOrQueueOneWayMessage(
-            false, pending, QStringLiteral("C_CMD_BEFORE_READY"), 1, deliver);
+        EditorNS::Editor::sendOrQueueOneWayMessage(false, pending, QStringLiteral("C_CMD_BEFORE_READY"), 1, deliver);
         result.queuedMessageCount = static_cast<int>(pending.size());
 
         EditorNS::Editor::notifyReadyAndFlushOneWayMessages(
             pending,
             [&] {
-                EditorNS::Editor::sendOrQueueOneWayMessage(!deferOneWayMessages,
-                    pending,
-                    QStringLiteral("C_CMD_DURING_READY"),
-                    2,
-                    deliver);
+                EditorNS::Editor::sendOrQueueOneWayMessage(
+                    !deferOneWayMessages, pending, QStringLiteral("C_CMD_DURING_READY"), 2, deliver);
                 result.queuedAfterReadyNotification = static_cast<int>(pending.size());
             },
             deliver);
