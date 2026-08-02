@@ -55,8 +55,8 @@ void WindowUiController::loadToolBar()
             continue;
         }
 
-        const auto it =
-            std::find_if(actions.cbegin(), actions.cend(), [&part](QAction* action) { return action->objectName() == part; });
+        const auto it = std::find_if(
+            actions.cbegin(), actions.cend(), [&part](QAction* action) { return action->objectName() == part; });
         if (it != actions.cend())
             m_window.m_mainToolBar->addAction(*it);
     }
@@ -188,10 +188,7 @@ void WindowUiController::configureToolBar()
     m_window.m_mainToolBar->setIconSize(QSize(16, 16));
     m_window.m_mainToolBar->setObjectName("toolbar");
     m_window.addToolBar(m_window.m_mainToolBar);
-    connect(m_window.m_mainToolBar,
-        &QToolBar::visibilityChanged,
-        m_ui.actionShow_Toolbar,
-        &QAction::setChecked);
+    connect(m_window.m_mainToolBar, &QToolBar::visibilityChanged, m_ui.actionShow_Toolbar, &QAction::setChecked);
     m_ui.actionShow_Toolbar->setChecked(m_window.m_mainToolBar->isVisible());
     m_ui.menuBar->setVisible(m_settings.MainWindow.getMenuBarVisible());
     m_ui.actionShow_Menubar->setChecked(m_settings.MainWindow.getMenuBarVisible());
@@ -230,8 +227,6 @@ void WindowUiController::configureAdvancedSearchDock()
 {
     m_window.addDockWidget(Qt::BottomDockWidgetArea, m_advancedSearchDock.getDockWidget());
     m_advancedSearchDock.getDockWidget()->hide(); // Saved preference is applied by restoreWindowState().
-    connect(&m_advancedSearchDock,
-        &AdvancedSearchDock::itemInteracted,
-        &m_window,
-        &MainWindow::searchDockItemInteracted);
+    connect(
+        &m_advancedSearchDock, &AdvancedSearchDock::itemInteracted, &m_window, &MainWindow::searchDockItemInteracted);
 }
