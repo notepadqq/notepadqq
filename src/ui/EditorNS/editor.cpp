@@ -5,7 +5,6 @@
 #include "include/nqqsettings.h"
 
 #include <QDir>
-#include <QEventLoop>
 #include <QMessageBox>
 #include <QTimer>
 #include <QUrlQuery>
@@ -125,16 +124,6 @@ void Editor::addEditorToBuffer(const int howMany)
 void Editor::invalidateEditorBuffer()
 { m_editorBuffer.clear(); }
 
-void Editor::waitAsyncLoad()
-{
-    if (!m_loaded) {
-        QEventLoop loop;
-        connect(this, &Editor::editorReady, &loop, &QEventLoop::quit);
-        // Block until a J_EVT_READY message is received
-        loop.exec();
-    }
-}
-
 void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 {
     deferToObject(this, [this, msg, data] {
@@ -147,7 +136,13 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
 
         } else if (msg == "J_EVT_READY") {
             m_loaded = true;
-            emit editorReady();
+            notifyReadyAndFlushOneWayMessages(
+                m_pendingOneWayMessages,
+                [this] { emit editorReady(); },
+                [this](const QString& message, const QVariant& payload) {
+                    emit m_jsToCppProxy->messageReceivedByJs(message, payload);
+                });
+            m_deferringOneWayMessages = false;
         } else if (msg == "J_EVT_CONTENT_CHANGED")
             emit contentChanged();
         else if (msg == "J_EVT_CLEAN_CHANGED")
@@ -352,9 +347,13 @@ void Editor::sendMessage(const QString msg, const QVariant data)
 #ifdef QT_DEBUG
     qDebug() << "Legacy message " << msg << " sent.";
 #endif
-    waitAsyncLoad();
-
-    emit m_jsToCppProxy->messageReceivedByJs(msg, data);
+    sendOrQueueOneWayMessage(m_loaded && !m_deferringOneWayMessages,
+        m_pendingOneWayMessages,
+        msg,
+        data,
+        [this](const QString& message, const QVariant& payload) {
+            emit m_jsToCppProxy->messageReceivedByJs(message, payload);
+        });
 }
 
 void Editor::sendMessage(const QString msg)
