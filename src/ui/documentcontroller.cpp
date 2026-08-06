@@ -13,6 +13,7 @@
 #include "include/iconprovider.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
+#include "include/nqqfiledialog.h"
 #include "include/nqqsettings.h"
 #include "include/topeditorcontainer.h"
 #include "ui_mainwindow.h"
@@ -145,7 +146,7 @@ void DocumentController::openDroppedUrls(QList<QUrl> urls, EditorNS::Editor* sou
         const QFileInfo fileInfo(path);
         if (fileInfo.isDir()) {
             urls.clear();
-            for (const QFileInfo& entry : QDir(path).entryInfoList(QDir::Files))
+            for (const QFileInfo& entry : QDir(path).entryInfoList(NqqFileDialog::entryFilters(QDir::Files)))
                 urls.push_back(QUrl::fromLocalFile(entry.filePath()));
         }
     }
@@ -162,10 +163,8 @@ void DocumentController::openFiles()
     BackupServicePauser backupServicePauser;
     backupServicePauser.pause();
 
-    const auto dialogOption =
-        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
-    const QList<QUrl> fileNames = QFileDialog::getOpenFileUrls(
-        &m_window, m_window.tr("Open"), defaultUrl, m_window.tr("All files (*)"), nullptr, dialogOption);
+    const QList<QUrl> fileNames =
+        NqqFileDialog::getOpenFileUrls(&m_window, m_window.tr("Open"), defaultUrl, m_window.tr("All files (*)"));
     if (fileNames.isEmpty())
         return;
 
@@ -181,16 +180,14 @@ void DocumentController::openFolder()
     BackupServicePauser backupServicePauser;
     backupServicePauser.pause();
 
-    const auto dialogOption =
-        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
-    const QString folder = QFileDialog::getExistingDirectory(
-        &m_window, m_window.tr("Open Folder"), defaultUrl.toLocalFile(), dialogOption);
+    const QString folder =
+        NqqFileDialog::getExistingDirectory(&m_window, m_window.tr("Open Folder"), defaultUrl.toLocalFile());
     if (folder.isEmpty())
         return;
 
     QList<QUrl> fileNames;
-    for (const QString& file : QDir(folder).entryList(QStringList(), QDir::Files)) {
-        if (!file.startsWith('.') && !file.endsWith('~'))
+    for (const QString& file : QDir(folder).entryList(QStringList(), NqqFileDialog::entryFilters(QDir::Files))) {
+        if (!file.endsWith('~'))
             fileNames.append(stringToUrl(file, folder));
     }
     if (fileNames.isEmpty())
@@ -376,14 +373,10 @@ int DocumentController::saveAs(EditorTabWidget* tabWidget, int tab, bool copy)
     BackupServicePauser backupServicePauser;
     backupServicePauser.pause();
 
-    const auto dialogOption =
-        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
-    const QString filename = QFileDialog::getSaveFileName(&m_window,
+    const QString filename = NqqFileDialog::getSaveFileName(&m_window,
         m_window.tr("Save as"),
         saveDialogDefaultFileName(tabWidget, tab).toLocalFile(),
-        m_window.tr("Any file (*)"),
-        nullptr,
-        dialogOption);
+        m_window.tr("Any file (*)"));
     if (filename.isEmpty())
         return DocEngine::saveFileResult_Canceled;
 
@@ -648,14 +641,8 @@ void DocumentController::loadSession()
     backupServicePauser.pause();
 
     const QString recentFolder = QUrl::fromLocalFile(m_settings.General.getLastSelectedSessionDir()).toLocalFile();
-    const auto dialogOption =
-        m_settings.General.getUseNativeFilePicker() ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog;
-    const QString filePath = QFileDialog::getOpenFileName(&m_window,
-        m_window.tr("Open Session..."),
-        recentFolder,
-        m_window.tr("Session file (*.xml);;Any file (*)"),
-        nullptr,
-        dialogOption);
+    const QString filePath = NqqFileDialog::getOpenFileName(
+        &m_window, m_window.tr("Open Session..."), recentFolder, m_window.tr("Session file (*.xml);;Any file (*)"));
     if (filePath.isEmpty())
         return;
 
@@ -674,7 +661,7 @@ void DocumentController::saveSession()
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("xml");
     dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setOption(QFileDialog::DontUseNativeDialog, !m_settings.General.getUseNativeFilePicker());
+    NqqFileDialog::applySettings(dialog);
     if (!dialog.exec() || dialog.selectedFiles().isEmpty())
         return;
 

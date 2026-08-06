@@ -173,6 +173,26 @@
           </widget>
          </item>
          <item>
+          <widget class="QCheckBox" name="chkUseNativeFilePicker">
+           <property name="toolTip">
+            <string>Use the file dialog provided by your desktop environment instead of the one built into Notepadqq.</string>
+           </property>
+           <property name="text">
+            <string>Use the native file dialog</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkShowHiddenFiles">
+           <property name="toolTip">
+            <string>The native file dialog cannot be asked to reveal hidden files, so enabling this option makes Notepadqq use its own file dialog.</string>
+           </property>
+           <property name="text">
+            <string>Show hidden files in file dialogs</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QFormLayout" name="formLayout">
            <item row="1" column="0">
             <widget class="QLabel" name="localizationLabel">

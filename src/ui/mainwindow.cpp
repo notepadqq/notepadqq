@@ -12,13 +12,13 @@
 #include "include/frmabout.h"
 #include "include/frmpreferences.h"
 #include "include/notepadqq.h"
+#include "include/nqqfiledialog.h"
 #include "include/nqqrun.h"
 #include "include/windowuicontroller.h"
 #include "ui_mainwindow.h"
 
 #include <QClipboard>
 #include <QDesktopServices>
-#include <QFileDialog>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -1025,7 +1025,7 @@ void MainWindow::on_actionInstall_Extension_triggered()
     BackupServicePauser bsp;
     bsp.pause();
 
-    QString file = QFileDialog::getOpenFileName(this, tr("Extension"), QString(), "Notepadqq extensions (*.nqqext)");
+    QString file = NqqFileDialog::getOpenFileName(this, tr("Extension"), QString(), "Notepadqq extensions (*.nqqext)");
     if (!file.isNull()) {
         Extensions::InstallExtension* installExt = new Extensions::InstallExtension(file, this);
         installExt->exec();

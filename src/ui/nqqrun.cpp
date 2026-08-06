@@ -1,10 +1,10 @@
 #include "include/nqqrun.h"
 
 #include "include/iconprovider.h"
+#include "include/nqqfiledialog.h"
 
 #include <QApplication>
 #include <QEasingCurve>
-#include <QFileDialog>
 #include <QGraphicsOpacityEffect>
 #include <QHeaderView>
 #include <QInputDialog>
@@ -233,7 +233,7 @@ bool RunDelegate::editorEvent(
             y = r.top();
             if (clickX > x && clickX < x + 16) {
                 if (clickY > y && clickY < y + 16) {
-                    QString f = QFileDialog::getOpenFileName(qobject_cast<QWidget*>(parent()), tr("Open File"));
+                    QString f = NqqFileDialog::getOpenFileName(qobject_cast<QWidget*>(parent()), tr("Open File"));
                     QString oldData = model->data(index, Qt::EditRole).toString();
                     oldData.prepend(f);
                     model->setData(index, oldData, Qt::EditRole);

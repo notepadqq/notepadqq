@@ -112,6 +112,8 @@ public:
     NQQ_SETTING(SmartIndentation, bool, true)
     NQQ_SETTING(MathRendering, bool, true)
     NQQ_SETTING(UseNativeFilePicker, bool, true)
+    // Forces the non-native dialog when enabled: a platform file picker ignores QDir::Hidden.
+    NQQ_SETTING(ShowHiddenFiles, bool, true)
     NQQ_SETTING(EditorEngine, QString, "auto")
     END_CATEGORY(General)
 
