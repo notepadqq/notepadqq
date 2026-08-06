@@ -5,6 +5,7 @@
 #include "include/Search/searchstring.h"
 #include "include/iconprovider.h"
 #include "include/mainwindow.h"
+#include "include/nqqfiledialog.h"
 #include "include/nqqsettings.h"
 
 #include <QApplication>
@@ -750,7 +751,7 @@ AdvancedSearchDock::AdvancedSearchDock(MainWindow* mainWindow)
             defaultDir = NqqSettings::getInstance().General.getLastSelectedDir();
         }
 
-        QString dir = QFileDialog::getExistingDirectory(QApplication::activeWindow(),
+        QString dir = NqqFileDialog::getExistingDirectory(QApplication::activeWindow(),
             QObject::tr("Search in..."),
             defaultDir,
             QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly | QFileDialog::DontResolveSymlinks);

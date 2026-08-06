@@ -6,11 +6,11 @@
 #include "include/keygrabber.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
+#include "include/nqqfiledialog.h"
 #include "include/stats.h"
 #include "ui_frmpreferences.h"
 
 #include <QDialogButtonBox>
-#include <QFileDialog>
 #include <QInputDialog>
 #include <QSortFilterProxyModel>
 #include <QToolBar>
@@ -63,6 +63,8 @@ frmPreferences::frmPreferences(TopEditorContainer* topEditorContainer, QWidget* 
     ui->chkWarnForDifferentIndentation->setChecked(m_settings.General.getWarnForDifferentIndentation());
     ui->chkRememberSession->setChecked(m_settings.General.getRememberTabsOnExit());
     ui->chkExitOnLastTabClose->setChecked(m_settings.General.getExitOnLastTabClose());
+    ui->chkUseNativeFilePicker->setChecked(m_settings.General.getUseNativeFilePicker());
+    ui->chkShowHiddenFiles->setChecked(m_settings.General.getShowHiddenFiles());
 
     ui->chkAutosave->setChecked(m_settings.General.getAutosaveInterval() > 0);
     ui->sbAutosaveInterval->setValue(m_settings.General.getAutosaveInterval());
@@ -397,6 +399,8 @@ bool frmPreferences::applySettings()
     m_settings.General.setWarnForDifferentIndentation(ui->chkWarnForDifferentIndentation->isChecked());
     m_settings.General.setRememberTabsOnExit(ui->chkRememberSession->isChecked());
     m_settings.General.setExitOnLastTabClose(ui->chkExitOnLastTabClose->isChecked());
+    m_settings.General.setUseNativeFilePicker(ui->chkUseNativeFilePicker->isChecked());
+    m_settings.General.setShowHiddenFiles(ui->chkShowHiddenFiles->isChecked());
 
     const int autosaveInSeconds = ui->chkAutosave->isChecked() ? ui->sbAutosaveInterval->value() : 0;
     m_settings.General.setAutosaveInterval(autosaveInSeconds);
@@ -509,7 +513,7 @@ void frmPreferences::on_localizationComboBox_activated(int /*index*/)
 
 bool frmPreferences::extensionBrowseRuntime(QLineEdit* lineEdit)
 {
-    QString fn = QFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
+    QString fn = NqqFileDialog::getOpenFileName(this, tr("Browse"), lineEdit->text());
     if (fn.isNull())
         return false;
     lineEdit->setText(fn);

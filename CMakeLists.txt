@@ -89,6 +89,7 @@ set(NQQ_APP_SOURCES
     src/ui/Sessions/sessions.cpp
     src/ui/Sessions/persistentcache.cpp
     src/ui/nqqsettings.cpp
+    src/ui/nqqfiledialog.cpp
     src/ui/nqqrun.cpp
     src/ui/Search/filesearcher.cpp
     src/ui/Search/filereplacer.cpp
@@ -147,6 +148,7 @@ set(NQQ_APP_HEADERS
     src/ui/include/Sessions/sessions.h
     src/ui/include/Sessions/persistentcache.h
     src/ui/include/nqqsettings.h
+    src/ui/include/nqqfiledialog.h
     src/ui/include/nqqrun.h
     src/ui/include/Search/filesearcher.h
     src/ui/include/Search/searchobjects.h

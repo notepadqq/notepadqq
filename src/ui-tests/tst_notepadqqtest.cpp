@@ -2,8 +2,14 @@
 #include "include/editoruicontroller.h"
 #include "include/mainwindow.h"
 #include "include/notepadqq.h"
+#include "include/nqqfiledialog.h"
+#include "include/nqqsettings.h"
 
 #include <QCloseEvent>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QFileSystemModel>
 #include <QPointer>
 #include <QSettings>
 #include <QString>
@@ -22,6 +28,10 @@ private Q_SLOTS:
     void editorPathIsHtml();
     void acceptedCloseDisconnectsEditorUiController();
     void directWindowDeletionDestroysEditorUiControllerFirst();
+    void hiddenFilesSettingDrivesDialogFilter();
+    void showingHiddenFilesGivesUpTheNativeDialog();
+    void entryFiltersRevealDotFiles();
+    void forcedQtDialogActuallyListsHiddenEntries();
 
 private:
     QTemporaryDir m_settingsDirectory;
@@ -107,6 +117,117 @@ void NotepadqqTest::directWindowDeletionDestroysEditorUiControllerFirst()
     delete window;
 
     QCOMPARE(destructionOrder, QStringList({"controller", "window"}));
+}
+
+// Restores the file dialog settings whatever the test does with them.
+class FileDialogSettingsGuard {
+public:
+    FileDialogSettingsGuard()
+        : m_native(NqqSettings::getInstance().General.getUseNativeFilePicker())
+        , m_hidden(NqqSettings::getInstance().General.getShowHiddenFiles())
+    {
+    }
+    ~FileDialogSettingsGuard()
+    {
+        NqqSettings::getInstance().General.setUseNativeFilePicker(m_native);
+        NqqSettings::getInstance().General.setShowHiddenFiles(m_hidden);
+    }
+
+private:
+    const bool m_native;
+    const bool m_hidden;
+};
+
+// The dialog filter must gain QDir::Hidden only when the user asked for hidden files.
+void NotepadqqTest::hiddenFilesSettingDrivesDialogFilter()
+{
+    FileDialogSettingsGuard guard;
+    NqqSettings::getInstance().General.setUseNativeFilePicker(false);
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(false);
+    QFileDialog withoutHidden;
+    NqqFileDialog::applySettings(withoutHidden);
+    QVERIFY(!withoutHidden.filter().testFlag(QDir::Hidden));
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(true);
+    QFileDialog withHidden;
+    NqqFileDialog::applySettings(withHidden);
+    QVERIFY(withHidden.filter().testFlag(QDir::Hidden));
+}
+
+// A native dialog ignores QDir::Hidden, so asking for hidden files has to force Qt's own dialog.
+void NotepadqqTest::showingHiddenFilesGivesUpTheNativeDialog()
+{
+    FileDialogSettingsGuard guard;
+    NqqSettings::getInstance().General.setUseNativeFilePicker(true);
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(false);
+    QFileDialog nativeDialog;
+    NqqFileDialog::applySettings(nativeDialog);
+    QVERIFY(!nativeDialog.testOption(QFileDialog::DontUseNativeDialog));
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(true);
+    QFileDialog forcedQtDialog;
+    NqqFileDialog::applySettings(forcedQtDialog);
+    QVERIFY(forcedQtDialog.testOption(QFileDialog::DontUseNativeDialog));
+    QVERIFY(forcedQtDialog.filter().testFlag(QDir::Hidden));
+}
+
+// "Open Folder" enumerates the directory itself: dot files must follow the same setting.
+void NotepadqqTest::entryFiltersRevealDotFiles()
+{
+    FileDialogSettingsGuard guard;
+
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    for (const QString& name : {QStringLiteral("visible.txt"), QStringLiteral(".hidden.txt")}) {
+        QFile file(QDir(directory.path()).filePath(name));
+        QVERIFY(file.open(QIODevice::WriteOnly));
+        file.close();
+    }
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(false);
+    QCOMPARE(QDir(directory.path()).entryList(QStringList(), NqqFileDialog::entryFilters(QDir::Files)),
+        QStringList({"visible.txt"}));
+
+    NqqSettings::getInstance().General.setShowHiddenFiles(true);
+    QCOMPARE(QDir(directory.path()).entryList(QStringList(), NqqFileDialog::entryFilters(QDir::Files)),
+        QStringList({".hidden.txt", "visible.txt"}));
+}
+
+// QFileDialog::setFilter() only reaches the file system model once the widgets exist, so assert
+// on the model that actually populates the list rather than on the dialog options.
+void NotepadqqTest::forcedQtDialogActuallyListsHiddenEntries()
+{
+    FileDialogSettingsGuard guard;
+    NqqSettings::getInstance().General.setUseNativeFilePicker(true);
+    NqqSettings::getInstance().General.setShowHiddenFiles(true);
+
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    QFile hidden(QDir(directory.path()).filePath(".hidden.txt"));
+    QVERIFY(hidden.open(QIODevice::WriteOnly));
+    hidden.close();
+
+    QFileDialog dialog;
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setDirectory(directory.path());
+    NqqFileDialog::applySettings(dialog);
+
+    // Builds the widget hierarchy without ever putting the dialog on screen.
+    dialog.setAttribute(Qt::WA_DontShowOnScreen);
+    dialog.show();
+
+    auto* model = dialog.findChild<QFileSystemModel*>();
+    QVERIFY(model);
+    QVERIFY(model->filter().testFlag(QDir::Hidden));
+
+    const QModelIndex root = model->index(directory.path());
+    QTRY_COMPARE(model->rowCount(root), 1);
+    QCOMPARE(model->index(0, 0, root).data(Qt::DisplayRole).toString(), QStringLiteral(".hidden.txt"));
+
+    dialog.hide();
 }
 
 QTEST_MAIN(NotepadqqTest)
