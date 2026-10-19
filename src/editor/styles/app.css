@@ -39,7 +39,7 @@ body {
     height: 100%;
     /*cursor: text;*/
     line-height: 1.3em;
-    font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+    font-family: "DejaVu Sans Mono", "Liberation Mono", "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", "Noto Sans Mono", monospace;
 }
 
 .CodeMirror-scroll {
