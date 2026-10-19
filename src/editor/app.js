@@ -396,9 +396,11 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
 
     if (link === undefined) {
         editor.setOption("theme", data.name);
+        ScrollbarTheme.update(".CodeMirror");
     } else {
         link.onload = function () {
             editor.setOption("theme", data.name);
+            ScrollbarTheme.update(".CodeMirror");
         }
     }
 });
@@ -792,6 +794,8 @@ $(document).ready(function () {
     });
 
     editor.focus();
+
+    ScrollbarTheme.update(".CodeMirror");
 
     UiDriver.sendMessage("J_EVT_READY", null);
 });
