@@ -414,9 +414,11 @@ UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn)
     var name = data.name || "vs";
     if (_builtinThemes.indexOf(name) >= 0) {
         monaco.editor.setTheme(name);
+        ScrollbarTheme.update(".monaco-editor");
     } else {
         loadTheme(name, function() {
             monaco.editor.setTheme(name);
+            ScrollbarTheme.update(".monaco-editor");
         });
     }
 });
@@ -673,6 +675,8 @@ $(document).ready(function () {
     });
 
     editor.focus();
+
+    ScrollbarTheme.update(".monaco-editor");
 
     UiDriver.sendMessage("J_EVT_READY", null);
 });
