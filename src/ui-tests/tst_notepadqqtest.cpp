@@ -22,6 +22,8 @@ private Q_SLOTS:
     void editorPathIsHtml();
     void acceptedCloseDisconnectsEditorUiController();
     void directWindowDeletionDestroysEditorUiControllerFirst();
+    void readToStringDetectsEncoding_data();
+    void readToStringDetectsEncoding();
 
 private:
     QTemporaryDir m_settingsDirectory;
@@ -107,6 +109,75 @@ void NotepadqqTest::directWindowDeletionDestroysEditorUiControllerFirst()
     delete window;
 
     QCOMPARE(destructionOrder, QStringList({"controller", "window"}));
+}
+
+// Encodes text with the named codec, as an editor saving in that encoding would write it to disk.
+static QByteArray encodeAs(const char* codecName, const QString& text)
+{ return QTextCodec::codecForName(codecName)->fromUnicode(text); }
+
+// Every row is a file content and the text a user expects to see when opening it. The expected codec is only
+// checked where it is unambiguous: for single-byte encodings uchardet may pick any codec that decodes the
+// sample correctly, e.g. ISO-8859-3 instead of ISO-8859-1 for German text.
+void NotepadqqTest::readToStringDetectsEncoding_data()
+{
+    QTest::addColumn<QByteArray>("contents");
+    QTest::addColumn<QString>("expectedText");
+    QTest::addColumn<QByteArray>("expectedCodec");
+
+    // A long ASCII part pushes the non-ASCII bytes beyond the 64 KiB uchardet used to look at.
+    const QString asciiFiller = QStringLiteral("This line is plain ASCII text used as filler.\n").repeated(1600);
+    // Source code with a single umlaut in a comment: uchardet took this for ISO-8859-1.
+    const QString code = QStringLiteral("int add(int a, int b)\n{\n    return a + b;\n}\n").repeated(3);
+    const QString codeWithUmlaut = code + QStringLiteral("// Prüfung\n") + code;
+
+    // UTF-8 that uchardet guessed wrong, shown as "Ã„rger", "StraÃŸe" or "PrÃ¼fung" before.
+    QTest::newRow("utf8-capital-umlaut") << QStringLiteral("Ärger\n").toUtf8() << QStringLiteral("Ärger\n")
+                                         << QByteArray("UTF-8");
+    QTest::newRow("utf8-sharp-s") << QStringLiteral("Straße\n").toUtf8() << QStringLiteral("Straße\n")
+                                  << QByteArray("UTF-8");
+    QTest::newRow("utf8-single-umlaut-in-code") << codeWithUmlaut.toUtf8() << codeWithUmlaut << QByteArray("UTF-8");
+
+    // Behaviour that must not change.
+    QTest::newRow("utf8-sentence") << QStringLiteral("Die Größe der Straße ändert sich.\n").toUtf8()
+                                   << QStringLiteral("Die Größe der Straße ändert sich.\n") << QByteArray("UTF-8");
+    QTest::newRow("ascii-is-utf8") << QByteArray("Just ASCII.\n") << QStringLiteral("Just ASCII.\n")
+                                   << QByteArray("UTF-8");
+    QTest::newRow("empty-is-utf8") << QByteArray() << QString() << QByteArray("UTF-8");
+    QTest::newRow("latin1-sentence") << encodeAs("ISO-8859-1", QStringLiteral("Die Größe der Straße ändert sich.\n"))
+                                     << QStringLiteral("Die Größe der Straße ändert sich.\n") << QByteArray();
+    QTest::newRow("windows1251-russian") << encodeAs("windows-1251",
+                                                QStringLiteral("Привет, это тестовый текст на русском языке.\n"))
+                                         << QStringLiteral("Привет, это тестовый текст на русском языке.\n")
+                                         << QByteArray("windows-1251");
+
+    // Latin-1 after a long ASCII part was decoded as UTF-8, turning every umlaut into U+FFFD.
+    QTest::newRow("latin1-after-64k") << encodeAs("ISO-8859-1", asciiFiller + QStringLiteral("Grüße\n"))
+                                      << asciiFiller + QStringLiteral("Grüße\n") << QByteArray();
+}
+
+// Ensures files are decoded with the encoding they were written in when no BOM tells it.
+void NotepadqqTest::readToStringDetectsEncoding()
+{
+    QFETCH(QByteArray, contents);
+    QFETCH(QString, expectedText);
+    QFETCH(QByteArray, expectedCodec);
+
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    QFile file(directory.filePath("sample.txt"));
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    QCOMPARE(file.write(contents), contents.size());
+    file.close();
+
+    const DocEngine::DecodedText decoded = DocEngine::readToString(&file);
+
+    QVERIFY(!decoded.error);
+    QVERIFY(decoded.codec != nullptr);
+    QVERIFY(!decoded.bom);
+    QCOMPARE(decoded.text, expectedText);
+    if (!expectedCodec.isEmpty()) {
+        QCOMPARE(decoded.codec->name(), expectedCodec);
+    }
 }
 
 QTEST_MAIN(NotepadqqTest)
