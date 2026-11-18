@@ -521,7 +521,7 @@ QtPromise::QPromise<void> DocEngine::loadDocuments(const DocEngine::DocumentLoad
         // If there was only a new empty tab opened, remove it
         if (tabWidget->count() == 2) {
             auto victim = tabWidget->editor(0);
-            if (victim->filePath().isEmpty() && victim->isClean()) {
+            if (!victim->isLoading && victim->filePath().isEmpty() && victim->isClean()) {
                 tabWidget->closeEditorTab(0);
                 tabIndex--;
             }

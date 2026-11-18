@@ -22,6 +22,8 @@ private Q_SLOTS:
     void editorPathIsHtml();
     void acceptedCloseDisconnectsEditorUiController();
     void directWindowDeletionDestroysEditorUiControllerFirst();
+    void openingFileReplacesUntouchedNewTab();
+    void openingFileKeepsTabThatIsStillLoading();
 
 private:
     QTemporaryDir m_settingsDirectory;
@@ -107,6 +109,70 @@ void NotepadqqTest::directWindowDeletionDestroysEditorUiControllerFirst()
     delete window;
 
     QCOMPARE(destructionOrder, QStringList({"controller", "window"}));
+}
+
+// Creates an empty file in the given directory and returns its URL.
+static QUrl createEmptyFile(const QTemporaryDir& directory, const QString& fileName)
+{
+    QFile file(directory.filePath(fileName));
+    if (!file.open(QIODevice::WriteOnly))
+        return QUrl();
+    return QUrl::fromLocalFile(file.fileName());
+}
+
+// Guards the intended behaviour: the untouched "new 1" tab of a fresh window gives way to the opened file.
+void NotepadqqTest::openingFileReplacesUntouchedNewTab()
+{
+    QTemporaryDir files;
+    QVERIFY(files.isValid());
+    const QUrl openedUrl = createEmptyFile(files, "opened.txt");
+    QVERIFY(!openedUrl.isEmpty());
+
+    auto* window = new MainWindow(QStringList());
+    EditorTabWidget* tabWidget = window->topEditorContainer()->currentTabWidget();
+    QCOMPARE(tabWidget->count(), 1);
+
+    window->getDocEngine()->getDocumentLoader().setUrl(openedUrl).setTabWidget(tabWidget).execute().wait();
+
+    QCOMPARE(tabWidget->count(), 1);
+    QCOMPARE(tabWidget->editor(0)->filePath(), openedUrl);
+
+    delete window;
+}
+
+// Ensures opening a file does not close a tab whose background load has not finished yet.
+//
+// On startup the session restores tabs with DocEngine::loadDocumentsInBackground(), which marks each editor as
+// isLoading until its content has been read. An unsaved tab restored from an empty cache file looks exactly like
+// the untouched "new 1" tab meanwhile: no file path and clean. When a file passed on the command line was opened
+// in that window, the foreground loader closed the restored tab, and the pending session callback then crashed on
+// a tab index of -1 (Editor::tabName() called on a null editor).
+void NotepadqqTest::openingFileKeepsTabThatIsStillLoading()
+{
+    QTemporaryDir files;
+    QVERIFY(files.isValid());
+    const QUrl openedUrl = createEmptyFile(files, "opened.txt");
+    QVERIFY(!openedUrl.isEmpty());
+
+    auto* window = new MainWindow(QStringList());
+    EditorTabWidget* tabWidget = window->topEditorContainer()->currentTabWidget();
+    QCOMPARE(tabWidget->count(), 1);
+
+    // Put the only tab into the state of a restored tab whose background load is still running. Setting the flag
+    // directly keeps the test deterministic instead of depending on the timing of a real background load.
+    QPointer<EditorNS::Editor> loadingEditor = tabWidget->editor(0);
+    QVERIFY(loadingEditor->filePath().isEmpty());
+    loadingEditor->isLoading = true;
+
+    window->getDocEngine()->getDocumentLoader().setUrl(openedUrl).setTabWidget(tabWidget).execute().wait();
+
+    QVERIFY(loadingEditor);
+    QCOMPARE(tabWidget->count(), 2);
+    QCOMPARE(tabWidget->indexOf(loadingEditor), 0);
+    QCOMPARE(tabWidget->editor(1)->filePath(), openedUrl);
+
+    loadingEditor->isLoading = false;
+    delete window;
 }
 
 QTEST_MAIN(NotepadqqTest)
