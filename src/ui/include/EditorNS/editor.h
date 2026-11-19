@@ -5,6 +5,7 @@
 #include "include/EditorNS/customqwebview.h"
 #include "include/EditorNS/editor_properties.h"
 #include "include/EditorNS/languageservice.h"
+#include "include/uithemepalette.h"
 
 #include <QCoreApplication>
 #include <QEventLoop>
@@ -503,6 +504,7 @@ signals:
     void cursorActivity(QMap<QString, QVariant> data);
     void documentInfoRequested(QMap<QString, QVariant> data);
     void cleanChanged(bool isClean);
+    void themeColorsChanged(const UiThemePalette::EditorColors& colors);
     void fileNameChanged(const QUrl& oldFileName, const QUrl& newFileName);
 
     /**

@@ -11,6 +11,7 @@
 #include "include/localsockethelpers.h"
 #include "include/notepadqq.h"
 #include "include/statsruntime.h"
+#include "include/uithemepalette.h"
 
 #include <QElapsedTimer>
 #include <QFile>
@@ -223,6 +224,14 @@ private Q_SLOTS:
     void editorUiControllerHasExpectedConstructionContract();
     void linePositions_data();
     void linePositions();
+    void themePaletteUsesEditorColorsOnDarkTheme();
+    void themePaletteDarkensControlsOnLightTheme();
+    void themePaletteSetsEveryRole();
+    void themePaletteFallsBackWithoutSelectionAndLink();
+    void themePaletteRaisesLowContrastText_data();
+    void themePaletteRaisesLowContrastText();
+    void themeContrastRatioMatchesWcag();
+    void themeColorSchemeCarriesThemeColorsForKde();
 };
 
 // Guards the extracted controller's QObject, collaborator-constructor, and non-copyable API shape.
@@ -640,6 +649,167 @@ void CppCorrectnessTest::linePositions()
     QFETCH(std::vector<int>, expected);
 
     QCOMPARE(SearchHelpers::linePositions(data), expected);
+}
+
+// Guards that a dark editor theme colors window, text and selection, and lifts controls off the background.
+void CppCorrectnessTest::themePaletteUsesEditorColorsOnDarkTheme()
+{
+    const QColor background(40, 40, 40);
+    const QColor foreground(235, 219, 178);
+    const QColor selection(80, 73, 69);
+    const QColor link(250, 189, 47);
+
+    const QPalette palette = UiThemePalette::fromEditorColors({background, foreground, selection, link});
+
+    QCOMPARE(palette.color(QPalette::Window), background);
+    QCOMPARE(palette.color(QPalette::Base), background);
+    QCOMPARE(palette.color(QPalette::WindowText), foreground);
+    QCOMPARE(palette.color(QPalette::ButtonText), foreground);
+    QVERIFY(palette.color(QPalette::Button).lightness() > background.lightness());
+    QCOMPARE(palette.color(QPalette::Highlight), selection);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    QCOMPARE(palette.color(QPalette::Accent), selection);
+#endif
+    QCOMPARE(palette.color(QPalette::Link), link);
+
+    const QColor disabledText = palette.color(QPalette::Disabled, QPalette::WindowText);
+    QVERIFY(disabledText.lightness() < foreground.lightness());
+    QVERIFY(disabledText.lightness() > background.lightness());
+}
+
+// Guards that a light editor theme darkens controls instead of lightening them into the white background.
+void CppCorrectnessTest::themePaletteDarkensControlsOnLightTheme()
+{
+    const QColor background(255, 255, 255);
+    const QPalette palette = UiThemePalette::fromEditorColors({background, QColor(0, 0, 0), QColor(), QColor()});
+
+    QVERIFY(palette.color(QPalette::Button).lightness() < background.lightness());
+}
+
+// Guards that the palette sets every color role itself. A role left unset would be filled in from the desktop
+// palette, so the user interface would look different on every desktop instead of following the theme.
+void CppCorrectnessTest::themePaletteSetsEveryRole()
+{
+    const QPalette palette =
+        UiThemePalette::fromEditorColors({QColor(40, 33, 28), QColor(157, 155, 151), QColor(), QColor()});
+
+    for (const QPalette::ColorGroup group : {QPalette::Active, QPalette::Inactive, QPalette::Disabled}) {
+        for (int role = 0; role < QPalette::NColorRoles; ++role) {
+            if (role == QPalette::NoRole) {
+                continue;
+            }
+            QVERIFY2(palette.isBrushSet(group, static_cast<QPalette::ColorRole>(role)),
+                qPrintable(QString("group %1, role %2 falls back to the desktop").arg(group).arg(role)));
+        }
+    }
+}
+
+// Guards the fallbacks for an editor that reports no selection or link color: both are derived from the theme's
+// own colors instead of the desktop's accent.
+void CppCorrectnessTest::themePaletteFallsBackWithoutSelectionAndLink()
+{
+    const QColor background(40, 40, 40);
+    const QColor foreground(235, 219, 178);
+
+    const QPalette palette = UiThemePalette::fromEditorColors({background, foreground, QColor(), QColor()});
+
+    QVERIFY(palette.color(QPalette::Highlight) != background);
+    QVERIFY(palette.color(QPalette::Highlight).lightness() > background.lightness());
+    QVERIFY(palette.color(QPalette::Highlight).lightness() < foreground.lightness());
+    QCOMPARE(palette.color(QPalette::Link), palette.color(QPalette::WindowText));
+}
+
+void CppCorrectnessTest::themePaletteRaisesLowContrastText_data()
+{
+    QTest::addColumn<QColor>("background");
+    QTest::addColumn<QColor>("foreground");
+    QTest::addColumn<QColor>("selection");
+    QTest::addColumn<QColor>("link");
+
+    // Real colors reported by bundled CodeMirror themes. yeti and duotone-dark give the editor a deliberately faint
+    // base text color (1.36:1 and 2.72:1), because the code itself is drawn with token colors; their link colors are
+    // just as faint. railscasts selects text with a color almost equal to its background (1.02:1). cobalt selects
+    // with a mid-tone orange on which neither white nor black text reaches 7:1, so the selection itself must move.
+    QTest::newRow("yeti (light)") << QColor(0xec, 0xea, 0xe8) << QColor(0xd1, 0xc9, 0xc0) << QColor(0xdc, 0xd8, 0xd2)
+                                  << QColor(0xd1, 0xc9, 0xc0);
+    QTest::newRow("duotone-dark (dark)") << QColor(0x2a, 0x27, 0x34) << QColor(0x6c, 0x67, 0x83)
+                                         << QColor(0x54, 0x51, 0x67) << QColor(0x6c, 0x67, 0x83);
+    QTest::newRow("railscasts (dark)") << QColor(0x2b, 0x2b, 0x2b) << QColor(0xf4, 0xf1, 0xed)
+                                       << QColor(0x27, 0x29, 0x35) << QColor(0xb6, 0xb3, 0xeb);
+    QTest::newRow("cobalt (dark)") << QColor(0x00, 0x22, 0x40) << QColor(0xff, 0xff, 0xff) << QColor(0xb3, 0x65, 0x39)
+                                   << QColor(0x84, 0x5d, 0xc4);
+}
+
+// Guards that every text role reaches WCAG AAA (7:1) on the surface it is drawn on, that disabled and placeholder
+// text stay readable (3:1) while still looking different from enabled text, and that a selection stands out from
+// the background (1.5:1).
+void CppCorrectnessTest::themePaletteRaisesLowContrastText()
+{
+    QFETCH(QColor, background);
+    QFETCH(QColor, foreground);
+    QFETCH(QColor, selection);
+    QFETCH(QColor, link);
+
+    const QPalette palette = UiThemePalette::fromEditorColors({background, foreground, selection, link});
+    auto contrast = [&palette](QPalette::ColorRole text, QPalette::ColorRole surface) {
+        return UiThemePalette::contrastRatio(palette.color(text), palette.color(surface));
+    };
+
+    // The editor background itself must stay untouched: only the colors drawn on it may be corrected.
+    QCOMPARE(palette.color(QPalette::Window), background);
+
+    const double minimumText = 7.0;
+    QVERIFY(contrast(QPalette::WindowText, QPalette::Window) >= minimumText);
+    QVERIFY(contrast(QPalette::ButtonText, QPalette::Button) >= minimumText);
+    QVERIFY(contrast(QPalette::Text, QPalette::AlternateBase) >= minimumText);
+    QVERIFY(contrast(QPalette::HighlightedText, QPalette::Highlight) >= minimumText);
+    QVERIFY(contrast(QPalette::Link, QPalette::Base) >= minimumText);
+
+    // A selected menu entry or list row must be recognisable as such.
+    QVERIFY(contrast(QPalette::Highlight, QPalette::Window) >= 1.5);
+
+    // Disabled text: readable, yet visibly weaker than the enabled text.
+    const double minimumMuted = 3.0;
+    const QColor disabled = palette.color(QPalette::Disabled, QPalette::WindowText);
+    const QColor window = palette.color(QPalette::Window);
+    QVERIFY(UiThemePalette::contrastRatio(disabled, window) >= minimumMuted);
+    QVERIFY(UiThemePalette::contrastRatio(disabled, window) < contrast(QPalette::WindowText, QPalette::Window));
+    QVERIFY(contrast(QPalette::PlaceholderText, QPalette::Base) >= minimumMuted);
+}
+
+// Guards the WCAG 2 contrast formula against its two reference points: black on white and a color on itself.
+void CppCorrectnessTest::themeContrastRatioMatchesWcag()
+{
+    QCOMPARE(qRound(UiThemePalette::contrastRatio(Qt::black, Qt::white) * 100), 2100);
+    QCOMPARE(qRound(UiThemePalette::contrastRatio(Qt::white, Qt::black) * 100), 2100);
+    QCOMPARE(UiThemePalette::contrastRatio(QColor(0x9c, 0x8e, 0x78), QColor(0x9c, 0x8e, 0x78)), 1.0);
+}
+
+// Guards the KDE color scheme handed to styles like Breeze. Breeze draws hovered menu entries and focus frames with
+// the scheme's decoration colors instead of the Qt palette, so without them the desktop's accent color would show up
+// in an otherwise themed user interface.
+void CppCorrectnessTest::themeColorSchemeCarriesThemeColorsForKde()
+{
+    const QPalette palette = UiThemePalette::fromEditorColors(
+        {QColor(0x28, 0x21, 0x1c), QColor(0x9d, 0x9b, 0x97), QColor(0x36, 0x31, 0x2e), QColor(0x9b, 0x85, 0x9d)});
+    auto rgb = [&palette](QPalette::ColorRole role) {
+        const QColor color = palette.color(role);
+        return QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
+    };
+
+    const QString scheme = UiThemePalette::toKdeColorScheme(palette);
+
+    // Every color set Breeze reads must be present, each with the theme's surface and text color.
+    for (const QString& set : {"Window", "View", "Button", "Selection", "Tooltip", "Header", "Complementary"}) {
+        QVERIFY2(scheme.contains(QString("[Colors:%1]\n").arg(set)), qPrintable(set));
+    }
+    QVERIFY(scheme.contains("[Colors:Window]\nBackgroundNormal=" + rgb(QPalette::Window) + "\n"));
+    QVERIFY(scheme.contains("ForegroundNormal=" + rgb(QPalette::WindowText) + "\n"));
+    QVERIFY(scheme.contains("[Colors:Selection]\nBackgroundNormal=" + rgb(QPalette::Highlight) + "\n"));
+
+    // The decoration colors Breeze uses for hover and focus are the theme's selection, never left to the desktop.
+    QCOMPARE(scheme.count("DecorationFocus=" + rgb(QPalette::Highlight) + "\n"), 7);
+    QCOMPARE(scheme.count("DecorationHover=" + rgb(QPalette::Highlight) + "\n"), 7);
 }
 
 QTEST_GUILESS_MAIN(CppCorrectnessTest)

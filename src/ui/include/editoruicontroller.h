@@ -1,6 +1,8 @@
 #ifndef EDITORUICONTROLLER_H
 #define EDITORUICONTROLLER_H
 
+#include "include/uithemepalette.h"
+
 #include <QMap>
 #include <QObject>
 #include <QPair>
@@ -54,6 +56,10 @@ public:
 
     /// Connects one newly added editor and applies the current editor preferences to it.
     void connectEditor(EditorTabWidget* tabWidget, int tab);
+
+    /// Colors the application with the editor theme @p colors when enabled in the preferences, or restores the
+    /// desktop palette when the option was switched off.
+    void applyThemeColors(const UiThemePalette::EditorColors& colors);
 
     /// Refreshes and focuses the editor selected in @p tabWidget at @p tab.
     void currentEditorChanged(EditorTabWidget* tabWidget, int tab);
