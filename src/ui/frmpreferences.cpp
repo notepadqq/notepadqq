@@ -226,6 +226,8 @@ void frmPreferences::loadAppearanceTab()
     if (showLineNumbers) {
         ui->chkShowLineNumbers->setChecked(true);
     }
+
+    ui->chkApplyThemeToUi->setChecked(m_settings.Appearance.getApplyThemeToUi());
 }
 
 void frmPreferences::saveAppearanceTab()
@@ -241,6 +243,7 @@ void frmPreferences::saveAppearanceTab()
     m_settings.Appearance.setOverrideFontSize(fontSize);
     m_settings.Appearance.setOverrideLineHeight(lineHeight);
     m_settings.Appearance.setShowLineNumbers(showLineNumbers);
+    m_settings.Appearance.setApplyThemeToUi(ui->chkApplyThemeToUi->isChecked());
 }
 
 void frmPreferences::loadTranslations()

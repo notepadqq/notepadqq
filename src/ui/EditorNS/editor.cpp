@@ -14,6 +14,20 @@
 
 namespace EditorNS {
 
+namespace {
+
+QColor colorFromRgb(const QVariant& rgb)
+{
+    const QVariantList channels = rgb.toList();
+    if (channels.size() != 3) {
+        return QColor();
+    }
+
+    return QColor(channels[0].toInt(), channels[1].toInt(), channels[2].toInt());
+}
+
+} // namespace
+
 std::deque<std::unique_ptr<Editor>> Editor::m_editorBuffer;
 
 Editor::Editor(QWidget* parent)
@@ -151,6 +165,12 @@ void Editor::on_proxyMessageReceived(QString msg, QVariant data)
             emit cursorActivity(data.toMap());
         } else if (msg == "J_EVT_DOCUMENT_INFO") {
             emit documentInfoRequested(data.toMap());
+        } else if (msg == "J_EVT_THEME_COLORS") {
+            const QVariantMap colors = data.toMap();
+            emit themeColorsChanged({colorFromRgb(colors.value("background")),
+                colorFromRgb(colors.value("foreground")),
+                colorFromRgb(colors.value("selection")),
+                colorFromRgb(colors.value("link"))});
         }
     });
 }

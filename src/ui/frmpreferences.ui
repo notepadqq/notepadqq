@@ -357,6 +357,13 @@
              </property>
             </widget>
            </item>
+           <item row="4" column="0" colspan="2">
+            <widget class="QCheckBox" name="chkApplyThemeToUi">
+             <property name="text">
+              <string>Apply the color scheme to the whole user interface</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>

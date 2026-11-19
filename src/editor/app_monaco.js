@@ -410,13 +410,27 @@ function loadTheme(name, callback) {
     document.body.appendChild(s);
 }
 
+/**
+ * Selection and link colors of the current Monaco theme, which Monaco publishes as CSS variables on the editor.
+ */
+function readMonacoAccentColors(themedElement) {
+    var style = window.getComputedStyle(themedElement);
+
+    return {
+        selection: style.getPropertyValue("--vscode-editor-selectionBackground"),
+        link: style.getPropertyValue("--vscode-textLink-foreground")
+    };
+}
+
 UiDriver.registerEventHandler("C_CMD_SET_THEME", function(msg, data, prevReturn) {
     var name = data.name || "vs";
     if (_builtinThemes.indexOf(name) >= 0) {
         monaco.editor.setTheme(name);
+        ThemeColors.report(".monaco-editor", readMonacoAccentColors);
     } else {
         loadTheme(name, function() {
             monaco.editor.setTheme(name);
+            ThemeColors.report(".monaco-editor", readMonacoAccentColors);
         });
     }
 });
@@ -673,6 +687,8 @@ $(document).ready(function () {
     });
 
     editor.focus();
+
+    ThemeColors.report(".monaco-editor", readMonacoAccentColors);
 
     UiDriver.sendMessage("J_EVT_READY", null);
 });

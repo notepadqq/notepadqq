@@ -13,6 +13,7 @@
 #include "include/notepadqq.h"
 #include "include/nqqsettings.h"
 #include "include/topeditorcontainer.h"
+#include "include/uithemepalette.h"
 #include "ui_mainwindow.h"
 
 #include <QApplication>
@@ -28,6 +29,12 @@
 #include <map>
 
 using EditorNS::Editor;
+
+namespace {
+
+bool isThemePaletteApplied = false;
+
+} // namespace
 using EditorNS::LanguageService;
 
 EditorUiController::EditorUiController(MainWindow& window,
@@ -87,6 +94,21 @@ void EditorUiController::setupLanguagesMenu()
 Editor* EditorUiController::currentEditor() const
 { return m_editorContainer.currentTabWidget()->currentEditor(); }
 
+void EditorUiController::applyThemeColors(const UiThemePalette::EditorColors& colors)
+{
+    if (!colors.background.isValid() || !colors.foreground.isValid()) {
+        return;
+    }
+
+    if (m_settings.Appearance.getApplyThemeToUi()) {
+        UiThemePalette::applyToApplication(UiThemePalette::fromEditorColors(colors));
+        isThemePaletteApplied = true;
+    } else if (isThemePaletteApplied) {
+        UiThemePalette::restoreApplication();
+        isThemePaletteApplied = false;
+    }
+}
+
 void EditorUiController::connectEditor(EditorTabWidget* tabWidget, int tab)
 {
     Editor* editor = tabWidget->editor(tab);
@@ -109,6 +131,7 @@ void EditorUiController::connectEditor(EditorTabWidget* tabWidget, int tab)
     connect(editor, &Editor::urlsDropped, this, [this, editor](const QList<QUrl>& urls) {
         m_window.m_documentController->openDroppedUrls(urls, editor);
     });
+    connect(editor, &Editor::themeColorsChanged, this, &EditorUiController::applyThemeColors);
 
     editor->setLineWrap(m_ui.actionWord_wrap->isChecked());
     editor->setTabsVisible(m_ui.actionShow_Tabs->isChecked());

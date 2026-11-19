@@ -121,6 +121,7 @@ public:
     NQQ_SETTING(OverrideFontSize, int, 0)
     NQQ_SETTING(OverrideLineHeight, double, 0)
     NQQ_SETTING(ShowLineNumbers, bool, true)
+    NQQ_SETTING(ApplyThemeToUi, bool, false)
     END_CATEGORY(Appearance)
 
     BEGIN_CATEGORY(Search)

@@ -80,6 +80,7 @@ private:
 
     int m_formerTabIndex = 0;
     int m_mostRecentTabIndex = 0;
+    bool m_isTabBarHighlighted = false;
 
     void setTabBarHidden(bool yes);
     void setTabBarHighlight(bool yes);
@@ -112,6 +113,14 @@ public slots:
 
 protected:
     void mouseReleaseEvent(QMouseEvent* ev);
+
+    /**
+     * @brief Re-applies the tab bar highlight once the palette changes.
+     *
+     * The highlight is copied from the application palette into the tab bar, so it would otherwise keep the colors
+     * of the palette that was active when this tab widget was created.
+     */
+    void changeEvent(QEvent* event) override;
 };
 
 #endif // EDITORTABWIDGET_H
