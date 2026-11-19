@@ -18,6 +18,54 @@
 
 #include <uchardet.h>
 
+namespace {
+
+// Decodes every byte and is a superset of the printable ISO-8859-1 range, so Western European text stays readable.
+const char* const kLegacyFallbackCodec = "windows-1252";
+
+// uchardet gets slow on large input, while this much text is plenty for a reliable guess.
+constexpr qsizetype kDetectionWindowSize = 65536;
+
+/**
+ * Codec for content that is not valid UTF-8, as guessed by uchardet.
+ *
+ * uchardet answers "ASCII" when the bytes that rule out UTF-8 are rare, and nothing at all when it is unsure.
+ * Decoding with either would turn those bytes into replacement characters, so both fall back to
+ * kLegacyFallbackCodec, as does a charset Qt has no codec for.
+ *
+ * @param contents Complete content without BOM. uchardet sees kDetectionWindowSize bytes of it (or all of it,
+ *                 if shorter) that include the first non-ASCII byte: the window starts there, because a long
+ *                 leading ASCII-only part tells nothing about the encoding, but moves back as far as needed
+ *                 to stay full, because a few non-ASCII bytes alone are too little for a reliable guess.
+ * @return Codec to decode the content with, never nullptr.
+ */
+QTextCodec* detectLegacyCodec(const QByteArray& contents)
+{
+    const auto isNonAscii = [](char byte) { return static_cast<unsigned char>(byte) >= 0x80; };
+    const qsizetype firstNonAscii = std::find_if(contents.cbegin(), contents.cend(), isNonAscii) - contents.cbegin();
+    const qsizetype windowStart =
+        std::max<qsizetype>(0, std::min(firstNonAscii, contents.size() - kDetectionWindowSize));
+    const qsizetype windowSize = std::min(kDetectionWindowSize, contents.size() - windowStart);
+
+    QByteArray charset;
+    uchardet_t encodingDetector = uchardet_new();
+    if (uchardet_handle_data(encodingDetector, contents.constData() + windowStart, windowSize) == 0) {
+        uchardet_data_end(encodingDetector);
+        charset = uchardet_get_charset(encodingDetector);
+    }
+    uchardet_delete(encodingDetector);
+
+    QTextCodec* codec = charset.isEmpty() ? nullptr : QTextCodec::codecForName(charset);
+    const QByteArray upperCharset = charset.toUpper();
+    if (codec == nullptr || upperCharset == "ASCII" || upperCharset == "US-ASCII") {
+        return QTextCodec::codecForName(kLegacyFallbackCodec);
+    }
+
+    return codec;
+}
+
+} // namespace
+
 DocEngine::DocEngine(TopEditorContainer* topEditorContainer, QObject* parent)
     : QObject(parent)
     , m_topEditorContainer(topEditorContainer)
@@ -1038,39 +1086,21 @@ DocEngine::DecodedText DocEngine::decodeText(const QByteArray& contents)
         return decodeText(contents, bomCodec, true);
     }
 
-    QTextCodec* codec = nullptr;
+    // Check for valid UTF-8 before asking uchardet: its statistical guess takes short UTF-8 text with
+    // a few umlauts, such as "Ärger", for a single-byte encoding. ASCII is valid UTF-8 too (issue #904).
+    QTextCodec* utf8Codec = QTextCodec::codecForName("UTF-8");
+    QTextCodec::ConverterState state;
+    const QString utf8Text = utf8Codec->toUnicode(contents.constData(), contents.size(), &state);
+    if (state.invalidChars == 0 && state.remainingChars == 0) {
+        DecodedText utf8Decoded;
+        utf8Decoded.codec = utf8Codec;
+        utf8Decoded.text = utf8Text;
+        utf8Decoded.bom = false;
 
-    // Limit decoding to the first 64 kilobytes
-    size_t detectionSize = std::min<size_t>(contents.size(), 65536);
-
-    // Use uchardet to try and detect file encoding if no BOM was found
-    uchardet_t encodingDetector = uchardet_new();
-    if (uchardet_handle_data(encodingDetector, contents.data(), detectionSize) == 0) {
-        uchardet_data_end(encodingDetector);
-        codec = QTextCodec::codecForName(uchardet_get_charset(encodingDetector));
-        uchardet_delete(encodingDetector);
+        return utf8Decoded;
     }
 
-    // Fallback to UTF-8 if for some reason uchardet fails
-    if (!codec) {
-        codec = QTextCodec::codecForName("UTF-8");
-    }
-
-    auto codecName = QString::fromUtf8(codec->name()).toUpper();
-    if (codecName == "US-ASCII" || codecName == "ASCII") {
-        // Since these are subsets of UTF-8, we prefer returning
-        // UTF-8 so that in case of ambiguity we have the
-        // expected outcome. See issue #904.
-        // Note that Qt handles destruction of the previous codec.
-        codec = QTextCodec::codecForName("UTF-8");
-    }
-
-    DecodedText bestDecodedText;
-    bestDecodedText.codec = codec;
-    bestDecodedText.text = codec->toUnicode(contents);
-    bestDecodedText.bom = false;
-
-    return bestDecodedText;
+    return decodeText(contents, detectLegacyCodec(contents), false);
 }
 
 DocEngine::DecodedText DocEngine::decodeText(const QByteArray& contents, QTextCodec* codec, bool contentHasBOM)

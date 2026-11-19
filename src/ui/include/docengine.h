@@ -258,8 +258,12 @@ private:
     /**
      * @brief Decodes a byte array into a string, trying to guess the best
      *        codec.
-     * @param contents
-     * @return
+     *
+     * A BOM wins, then valid UTF-8 (including pure ASCII). Only content
+     * that is neither is handed to uchardet, falling back to windows-1252.
+     * @param contents Complete file content, possibly starting with a BOM.
+     * @return The decoded text and the codec used; bom is set when the
+     *         content started with one.
      */
     static DecodedText decodeText(const QByteArray& contents);
     /**
